@@ -407,20 +407,18 @@ void FileSystemModel::remove(const QModelIndex &index)
 	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
 	{
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
-		QDir dir = info.absoluteDir();
 
 		if (info.isDir())
 		{
-			if (!dir.rmdir(info.fileName()))
-				return;
+
 		}
 		else
-			if (!dir.remove(info.fileName()))
-				return;
-
-		beginRemoveRows(QModelIndex(), index.row(), index.row());
-		static_cast<FileSystemTree*>(m_currentFsTree)->remove(index.row());
-		endRemoveRows();
+			if (info.absoluteDir().remove(info.fileName()))
+			{
+				beginRemoveRows(QModelIndex(), index.row(), index.row());
+				static_cast<FileSystemTree*>(m_currentFsTree)->remove(index.row());
+				endRemoveRows();
+			}
 	}
 }
 

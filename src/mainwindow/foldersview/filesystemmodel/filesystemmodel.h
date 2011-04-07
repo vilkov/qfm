@@ -57,10 +57,6 @@ protected:
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 
 private:
-	void initialize();
-
-private:
-//	FileInfoGatherer m_gatherer;
 	FileSystemItem *m_currentFsTree;
 };
 

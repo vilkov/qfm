@@ -15,14 +15,14 @@ FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *paren
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {
-	initialize();
+	list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 }
 
 FileSystemModel::FileSystemModel(const QFileInfo &fileInfo, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(fileInfo))
 {
-	initialize();
+	list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 }
 
 FileSystemModel::~FileSystemModel()
@@ -493,13 +493,4 @@ QModelIndex FileSystemModel::index(int row, int column, FileSystemItem *parentIt
         return createIndex(row, column, childItem);
     else
         return QModelIndex();
-}
-
-void FileSystemModel::initialize()
-{
-//	qRegisterMetaType<ChangesList>("ChangesList");
-//	connect(&m_gatherer, SIGNAL(updates(const QList<ExtendedInformation>&)), this, SLOT(updates(const QList<ExtendedInformation>&)));
-//	connect(&m_gatherer, SIGNAL(updates(const ChangesList&)), this, SLOT(updates(const ChangesList&)));
-//	m_gatherer.list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
-	Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath(), this));
 }

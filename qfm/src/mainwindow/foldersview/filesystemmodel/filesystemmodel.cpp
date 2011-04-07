@@ -35,21 +35,25 @@ FileSystemModel::~FileSystemModel()
 
 bool FileSystemModel::event(QEvent *e)
 {
-	if ((FileSystemModelBaseEvent::EventType)e->type() == FileSystemModelBaseEvent::NewFileInfo)
+	switch ((FileSystemModelBaseEvent::EventType)e->type())
 	{
-		e->accept();
-		updates(static_cast<ListFilesEvent*>(e)->info());
-		return true;
-	}
-	else
-		if ((FileSystemModelBaseEvent::EventType)e->type() == FileSystemModelBaseEvent::UpdateFileInfo)
+		case FileSystemModelBaseEvent::NewFileInfo:
+		{
+			e->accept();
+			updates(static_cast<ListFilesEvent*>(e)->info());
+			return true;
+		}
+		case FileSystemModelBaseEvent::UpdateFileInfo:
 		{
 			e->accept();
 			updates(static_cast<ChangesListEvent*>(e)->info());
 			return true;
 		}
-		else
-			return QAbstractItemModel::event(e);
+		default:
+			break;
+	}
+
+	return QAbstractItemModel::event(e);
 }
 
 int FileSystemModel::rowCount(const QModelIndex &parent) const

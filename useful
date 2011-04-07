@@ -1,0 +1,17 @@
+void FileInfoGatherer::updateFile(const QString &filePath)
+{
+    QString dir = filePath.mid(0, filePath.lastIndexOf(QDir::separator()));
+    QString fileName = filePath.mid(dir.length() + 1);
+}
+
+
+
+QFileInfo FileInfoGatherer::resolveName(const QFileInfo &fileInfo) const
+{
+	QFileInfo resolvedInfo;
+
+    if (fileInfo.isSymLink())
+        resolvedInfo = QFileInfo(fileInfo.symLinkTarget()).canonicalFilePath();
+
+    return resolvedInfo;
+}

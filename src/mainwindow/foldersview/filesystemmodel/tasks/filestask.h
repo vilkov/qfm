@@ -5,23 +5,29 @@
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
 #include "../filesysteminfo.h"
+#include "../items/filesystemtree.h"
 #include "../../../../tools/taskspool/task.h"
 
 
 class FilesTask : public TasksPool::Task
 {
 public:
-	FilesTask(const QString &directory, QObject *receiver);
+	FilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver);
 
-    static FileSystemInfo info(const QFileInfo &fileInfo);
+	static FileSystemInfo info(const QFileInfo &fileInfo);
 
 protected:
+    FileSystemTree *tree() const { return m_tree; }
 	const QString directory() const { return m_directory; }
 	QObject *receiver() const { return m_receiver; }
 
-	static QFile::Permissions translatePermissions(const QFileInfo &fileInfo);
+    FileSystemInfo getInfo(const QFileInfo &fileInfo) const;
+#ifndef Q_OS_WIN
+    static QFile::Permissions translatePermissions(const QFileInfo &fileInfo, uint userId, uint groupId);
+#endif
 
 private:
+    FileSystemTree *m_tree;
 	QString m_directory;
 	QObject *m_receiver;
 #ifndef Q_OS_WIN

@@ -6,6 +6,7 @@
 #include <QtCore/QList>
 #include "../filesysteminfo.h"
 #include "../filesystemchangeslist.h"
+#include "../items/filesystemtree.h"
 
 
 class FileSystemModelBaseEvent : public QEvent
@@ -18,7 +19,12 @@ public:
 	};
 
 public:
-	FileSystemModelBaseEvent(EventType type);
+	FileSystemModelBaseEvent(FileSystemTree *fileSystemTree, EventType type);
+
+	FileSystemTree *fileSystemTree() const { return m_fileSystemTree; }
+
+private:
+	FileSystemTree *m_fileSystemTree;
 };
 
 
@@ -28,7 +34,7 @@ public:
 	typedef QList<FileSystemInfo> value_type;
 
 public:
-	ListFilesEvent(const value_type &info);
+	ListFilesEvent(FileSystemTree *fileSystemTree, const value_type &info);
 
 	const value_type &info() const { return m_info; }
 
@@ -43,7 +49,7 @@ public:
 	typedef ChangesList value_type;
 
 public:
-	ChangesListEvent(const value_type &info);
+	ChangesListEvent(FileSystemTree *fileSystemTree, const value_type &info);
 
 	const value_type &info() const { return m_info; }
 

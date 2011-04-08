@@ -8,8 +8,8 @@
 #include <QDirIterator>
 
 
-UpdateFilesTask::UpdateFilesTask(const QString &directory, const ChangesList &list, QObject *receiver) :
-	FilesTask(directory, receiver),
+UpdateFilesTask::UpdateFilesTask(FileSystemTree *tree, const QString &directory, const ChangesList &list, QObject *receiver) :
+	FilesTask(tree, directory, receiver),
 	m_list(list)
 {}
 
@@ -17,7 +17,10 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 {
     if (!directory().isEmpty())
     {
-		QTime base = QTime::currentTime();
+    	IconProvider &iconProvider = Application::instance()->iconProvider();
+    	iconProvider.lock();
+
+    	QTime base = QTime::currentTime();
 	    QTime current;
 
 	    QFileInfo localInfo;
@@ -35,18 +38,18 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 				localInfo = dirIt.fileInfo();
 
 				if (localInfo.lastModified() != static_cast<FileSystemEntry*>(m_list.at(index).entry())->fileInfo().lastModified())
-					updatedFiles.push_back(Change(Change::Updated, m_list.at(index).entry(), info(localInfo)));
+					updatedFiles.push_back(Change(Change::Updated, m_list.at(index).entry(), getInfo(localInfo)));
 
 				m_list.removeAt(index);
 			}
 			else
-				updatedFiles.push_back(Change(Change::Added, info(dirIt.fileInfo())));
+				updatedFiles.push_back(Change(Change::Added, getInfo(dirIt.fileInfo())));
 
 			if (base.msecsTo(current) > 300)
 			{
 				if (!updatedFiles.isEmpty())
 				{
-					Application::postEvent(receiver(), new ChangesListEvent(updatedFiles));
+					Application::postEvent(receiver(), new ChangesListEvent(tree(), updatedFiles));
 					updatedFiles.clear();
 				}
 
@@ -59,7 +62,9 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 				updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
 
 		if (!updatedFiles.isEmpty())
-			Application::postEvent(receiver(), new ChangesListEvent(updatedFiles));
+			Application::postEvent(receiver(), new ChangesListEvent(tree(), updatedFiles));
+
+		iconProvider.unlock();
     }
 }
 

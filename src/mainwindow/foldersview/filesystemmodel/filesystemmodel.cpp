@@ -15,14 +15,14 @@ FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *paren
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {
-	list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
+	list(m_currentFsTree, static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 }
 
 FileSystemModel::FileSystemModel(const QFileInfo &fileInfo, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(fileInfo))
 {
-	list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
+	list(m_currentFsTree, static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 }
 
 FileSystemModel::~FileSystemModel()
@@ -40,13 +40,19 @@ bool FileSystemModel::event(QEvent *e)
 		case FileSystemModelBaseEvent::NewFileInfo:
 		{
 			e->accept();
-			updates(static_cast<ListFilesEvent*>(e)->info());
+
+			if (static_cast<ListFilesEvent*>(e)->fileSystemTree() == m_currentFsTree)
+				updates(static_cast<ListFilesEvent*>(e)->info());
+
 			return true;
 		}
 		case FileSystemModelBaseEvent::UpdateFileInfo:
 		{
 			e->accept();
-			updates(static_cast<ChangesListEvent*>(e)->info());
+
+			if (static_cast<ChangesListEvent*>(e)->fileSystemTree() == m_currentFsTree)
+				updates(static_cast<ChangesListEvent*>(e)->info());
+
 			return true;
 		}
 		default:
@@ -222,7 +228,7 @@ void FileSystemModel::refresh()
 	tree->fileInfo().refresh();
 
 	if (tree->fileInfo().exists())
-		update(tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
+		update(tree, tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
 	else
 	{
 		beginRemoveRows(QModelIndex(), 0, tree->size() - 1);
@@ -233,7 +239,7 @@ void FileSystemModel::refresh()
 
 		delete m_currentFsTree;
 		m_currentFsTree = new FileSystemTree(dir.absolutePath(), 0);
-		list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
+		list(m_currentFsTree, static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 
 		endRemoveRows();
 	}
@@ -245,7 +251,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 		if (FileSystemTree *parent = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->parent()))
 		{
 			beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-			update(parent->fileInfo().absoluteFilePath(), parent->makeChangeSet());
+			update(parent, parent->fileInfo().absoluteFilePath(), parent->makeChangeSet());
 			endRemoveRows();
 
 			beginInsertRows(QModelIndex(), 0, parent->size() - 1);
@@ -276,7 +282,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 			endRemoveRows();
 
 			beginInsertRows(QModelIndex(), 0, parent->size() - 1);
-			update(parent->fileInfo().absoluteFilePath(), parent->makeChangeSet());
+			update(parent, parent->fileInfo().absoluteFilePath(), parent->makeChangeSet());
 			m_currentFsTree = parent;
 			endInsertRows();
 		}
@@ -290,7 +296,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 				if (FileSystemTree *tree = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->subtree(entry)))
 				{
 					beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					update(tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
+					update(tree, tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
 					endRemoveRows();
 
 					beginInsertRows(QModelIndex(), 0, tree->size() - 1);
@@ -306,7 +312,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 					endRemoveRows();
 
 					beginInsertRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					list(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
+					list(m_currentFsTree, static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absoluteFilePath());
 					endInsertRows();
 				}
 			else
@@ -345,12 +351,12 @@ void FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 	{
 		tree = new FileSystemTree(info.absolutePath(), 0);
 		tree->add<FileSystemEntry>(FilesTask::info(info));
-		update(tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
+		update(tree, tree->fileInfo().absoluteFilePath(), tree->makeChangeSet());
 	}
 	else
 	{
 		tree = new FileSystemTree(info, 0);
-		list(tree->fileInfo().absoluteFilePath());
+		list(tree, tree->fileInfo().absoluteFilePath());
 	}
 
 	endRemoveRows();
@@ -422,14 +428,14 @@ void FileSystemModel::remove(const QModelIndex &index)
 	}
 }
 
-void FileSystemModel::list(const QString &directory) const
+void FileSystemModel::list(FileSystemItem *fileSystemTree, const QString &directory) const
 {
-	Application::instance()->taskPool().handle(new ListFilesTask(directory, (QObject*)this));
+	Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(fileSystemTree), directory, (QObject*)this));
 }
 
-void FileSystemModel::update(const QString &directory, const ChangesList &list) const
+void FileSystemModel::update(FileSystemItem *fileSystemTree, const QString &directory, const ChangesList &list) const
 {
-	Application::instance()->taskPool().handle(new UpdateFilesTask(directory, list, (QObject*)this));
+	Application::instance()->taskPool().handle(new UpdateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), directory, list, (QObject*)this));
 }
 
 void FileSystemModel::updates(const QList<FileSystemInfo> &updates)

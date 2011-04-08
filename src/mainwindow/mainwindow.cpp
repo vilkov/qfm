@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splitter(&m_centralWidget),
 #ifdef Q_OS_WIN32
     m_leftFoldersView(QStringList() << QString::fromLatin1("C:/"), &m_splitter),
-//    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/"), &m_splitter),
+    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/"), &m_splitter),
 #else
     m_leftFoldersView(QStringList() << QString::fromLatin1("/home"), &m_splitter),
-//    m_rightFoldersView(QStringList() << QString::fromLatin1("/"), &m_splitter),
+    m_rightFoldersView(QStringList() << QString::fromLatin1("/"), &m_splitter),
 #endif
     /* Actions */
     m_fileMenuActions(this),
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	m_layout.addWidget(&m_splitter);
 	m_splitter.addWidget(&m_leftFoldersView);
-//	m_splitter.addWidget(&m_rightFoldersView);
+	m_splitter.addWidget(&m_rightFoldersView);
 
 	m_leftFoldersView.setFocus();
 	Application::instance()->config().loadState(this);
@@ -47,12 +47,12 @@ bool MainWindow::switchToOtherPanel(QObject *receiver)
 			return true;
 		}
 		else
-//			if (receiver == &m_rightFoldersView)
-//			{
-//				m_rightFoldersView.setFocus();
-//				return true;
-//			}
-//			else
+			if (receiver == &m_rightFoldersView)
+			{
+				m_rightFoldersView.setFocus();
+				return true;
+			}
+			else
 				receiver = receiver->parent();
 	while (receiver);
 

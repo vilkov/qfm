@@ -6,15 +6,18 @@
 #include <QDirIterator>
 
 
-ListFilesTask::ListFilesTask(const QString &directory, QObject *receiver) :
-	FilesTask(directory, receiver)
+ListFilesTask::ListFilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver) :
+	FilesTask(tree, directory, receiver)
 {}
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
 {
     if (!directory().isEmpty())
     {
-		QTime base = QTime::currentTime();
+    	IconProvider &iconProvider = Application::instance()->iconProvider();
+    	iconProvider.lock();
+
+    	QTime base = QTime::currentTime();
 		QTime current;
 		QList<FileSystemInfo> updatedFiles;
 		QDirIterator dirIt(directory(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
@@ -23,17 +26,19 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		{
 			dirIt.next();
 			current = QTime::currentTime();
-			updatedFiles.push_back(info(dirIt.fileInfo()));
+			updatedFiles.push_back(getInfo(dirIt.fileInfo()));
 
 			if (base.msecsTo(current) > 300)
 			{
-				Application::postEvent(receiver(), new ListFilesEvent(updatedFiles));
+				Application::postEvent(receiver(), new ListFilesEvent(tree(), updatedFiles));
 				updatedFiles.clear();
 				base = current;
 			}
 		}
 
 		if (!updatedFiles.isEmpty())
-			Application::postEvent(receiver(), new ListFilesEvent(updatedFiles));
+			Application::postEvent(receiver(), new ListFilesEvent(tree(), updatedFiles));
+
+		iconProvider.unlock();
     }
 }

@@ -11,3 +11,4 @@ export PATH="/media/VIDEO/workspace/3rdparty/boost:${PATH}"
 cd debug
 cmake -G "Unix Makefiles" -D CMAKE_BUILD_TYPE:STRING=$1 ../
 make
+cd ../

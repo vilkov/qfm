@@ -44,13 +44,19 @@ bool FileSystemModel::event(QEvent *e)
 		case FileSystemModelBaseEvent::ListFilesType:
 		{
 			e->accept();
-			updates(static_cast<ListFilesEvent*>(e)->info());
+
+			if (m_currentFsTree == static_cast<FileSystemModelBaseEvent*>(e)->fileSystemTree())
+				updates(static_cast<ListFilesEvent*>(e)->info());
+
 			return true;
 		}
 		case FileSystemModelBaseEvent::ChangesListType:
 		{
 			e->accept();
-			updates(static_cast<ChangesListEvent*>(e)->info());
+
+			if (m_currentFsTree == static_cast<FileSystemModelBaseEvent*>(e)->fileSystemTree())
+				updates(static_cast<ChangesListEvent*>(e)->info());
+
 			return true;
 		}
 		case FileSystemModelBaseEvent::PopulateFilesForRemoveType:
@@ -228,6 +234,9 @@ void FileSystemModel::pathToClipboard(const FileSystemModelAdaptor &list) const
 
 void FileSystemModel::refresh()
 {
+	if (isLocked())
+		return;
+
 	FileSystemTree *tree = static_cast<FileSystemTree*>(m_currentFsTree);
 	tree->fileInfo().refresh();
 
@@ -251,6 +260,9 @@ void FileSystemModel::refresh()
 
 void FileSystemModel::activated(const QModelIndex &index)
 {
+	if (isLocked())
+		return;
+
 	if (static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
 		if (FileSystemTree *parent = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->parent()))
 		{
@@ -335,6 +347,9 @@ void FileSystemModel::activated(const QModelIndex &index)
 
 void FileSystemModel::setCurrentDirectory(const QString &filePath)
 {
+	if (isLocked())
+		return;
+
 	QFileInfo info(filePath);
 
 	if (info.exists())
@@ -343,6 +358,9 @@ void FileSystemModel::setCurrentDirectory(const QString &filePath)
 
 void FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 {
+	if (isLocked())
+		return;
+
 	beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
 
 	while (m_currentFsTree->parent() != 0)
@@ -382,6 +400,9 @@ QModelIndex FileSystemModel::find(const QString &fileName)
 
 void FileSystemModel::rename(const QModelIndex &index, const QString &newFileName)
 {
+	if (isLocked())
+		return;
+
 	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
 	{
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
@@ -397,6 +418,9 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 void FileSystemModel::createDirectory(const QString &dirName)
 {
+	if (isLocked())
+		return;
+
 	const QFileInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 
 	if (info.exists())
@@ -414,6 +438,9 @@ void FileSystemModel::createDirectory(const QString &dirName)
 
 void FileSystemModel::remove(const QModelIndex &index)
 {
+	if (isLocked())
+		return;
+
 	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
 	{
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
@@ -432,13 +459,11 @@ void FileSystemModel::remove(const QModelIndex &index)
 
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
-	++m_locked;
 	Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(fileSystemTree), (QObject*)this));
 }
 
 void FileSystemModel::updates(const QList<FileSystemInfo> &updates)
 {
-	--m_locked;
 	beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size() + updates.size() - 1);
 	static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(updates);
 	endInsertRows();
@@ -446,13 +471,11 @@ void FileSystemModel::updates(const QList<FileSystemInfo> &updates)
 
 void FileSystemModel::update(FileSystemItem *fileSystemTree)
 {
-	++m_locked;
 	Application::instance()->taskPool().handle(new UpdateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemTree*>(fileSystemTree)->makeChangeSet(), (QObject*)this));
 }
 
 void FileSystemModel::updates(const ChangesList &updates)
 {
-	--m_locked;
 	ChangesList list = updates;
 	RangeIntersection updateRange(1);
 

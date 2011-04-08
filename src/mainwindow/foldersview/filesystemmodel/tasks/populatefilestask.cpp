@@ -51,5 +51,7 @@ PopulateFilesForRemoveTask::PopulateFilesForRemoveTask(FileSystemTree *tree, Fil
 void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
 {
 	PopulateFilesTask::run(stopedFlag);
-	Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), entry(), subtree()));
+
+	if (!stopedFlag)
+		Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), entry(), subtree()));
 }

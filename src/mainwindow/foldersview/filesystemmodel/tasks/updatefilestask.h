@@ -8,7 +8,7 @@
 class UpdateFilesTask : public FilesTask
 {
 public:
-	UpdateFilesTask(FileSystemTree *tree, const QString &directory, const ChangesList &list, QObject *receiver);
+	UpdateFilesTask(FileSystemTree *tree, const ChangesList &list, QObject *receiver);
 
 	virtual void run(const volatile bool &stopedFlag);
 

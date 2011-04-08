@@ -20,9 +20,10 @@ public:
 
 	virtual bool notify(QObject *receiver, QEvent *event);
 
+	TasksPool::TaskPool &taskPool() { return m_taskPool; }
 	ApplicationSettings &config() { return m_settings; }
 	IconProvider &iconProvider() { return m_iconProvider; }
-	TasksPool::TaskPool &taskPool() { return m_taskPool; }
+	MainWindow &mainWindow() { return m_mainWindow; }
 
 	qint32 exec();
 	QString version() const;

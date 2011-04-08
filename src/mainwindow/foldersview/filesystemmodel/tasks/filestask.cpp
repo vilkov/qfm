@@ -6,9 +6,8 @@
 #endif
 
 
-FilesTask::FilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver) :
+FilesTask::FilesTask(FileSystemTree *tree, QObject *receiver) :
 	m_tree(tree),
-	m_directory(directory),
 	m_receiver(receiver)
 #ifndef Q_OS_WIN
     ,m_userId(getuid())

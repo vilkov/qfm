@@ -12,13 +12,12 @@
 class FilesTask : public TasksPool::Task
 {
 public:
-	FilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver);
+	FilesTask(FileSystemTree *tree, QObject *receiver);
 
 	static FileSystemInfo info(const QFileInfo &fileInfo);
 
 protected:
     FileSystemTree *tree() const { return m_tree; }
-	const QString directory() const { return m_directory; }
 	QObject *receiver() const { return m_receiver; }
 
     FileSystemInfo getInfo(const QFileInfo &fileInfo) const;
@@ -28,7 +27,6 @@ protected:
 
 private:
     FileSystemTree *m_tree;
-	QString m_directory;
 	QObject *m_receiver;
 #ifndef Q_OS_WIN
     uint m_userId;

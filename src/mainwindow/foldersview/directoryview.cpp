@@ -218,7 +218,7 @@ void DirectoryView::initialize()
 //	m_proxy.setSourceModel(&m_model);
 //	m_view.setUniformRowHeights(true);
 	m_view.setModel(&m_model);
-	m_view.setSelectionMode(QAbstractItemView::ExtendedSelection);
+	m_view.setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view.setItemDelegate(&m_delegate);
 //	m_view.setSortingEnabled(true);
 

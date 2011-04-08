@@ -14,8 +14,9 @@ class FileSystemModelBaseEvent : public QEvent
 public:
 	enum EventType
 	{
-		NewFileInfo = QEvent::User + 1,
-		UpdateFileInfo = QEvent::User + 2
+		ListFilesType = QEvent::User + 1,
+		ChangesListType = QEvent::User + 2,
+		PopulateFilesForRemoveType = QEvent::User + 3
 	};
 
 public:
@@ -55,6 +56,18 @@ public:
 
 private:
 	value_type m_info;
+};
+
+
+class PopulateFilesForRemoveEvent : public FileSystemModelBaseEvent
+{
+public:
+	PopulateFilesForRemoveEvent(FileSystemTree *fileSystemTree, FileSystemTree *subtree);
+
+	FileSystemTree *subtree() const { return m_subtree; }
+
+private:
+	FileSystemTree *m_subtree;
 };
 
 #endif /* FILESYSTEMMODELEVENTS_H_ */

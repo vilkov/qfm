@@ -4,6 +4,7 @@
 #include "events/filesystemmodelevents.h"
 #include "tasks/listfilestask.h"
 #include "tasks/updatefilestask.h"
+#include "tasks/populatefilestask.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
 #include <QtCore/QSet>
@@ -37,7 +38,7 @@ bool FileSystemModel::event(QEvent *e)
 {
 	switch ((FileSystemModelBaseEvent::EventType)e->type())
 	{
-		case FileSystemModelBaseEvent::NewFileInfo:
+		case FileSystemModelBaseEvent::ListFilesType:
 		{
 			e->accept();
 
@@ -46,13 +47,18 @@ bool FileSystemModel::event(QEvent *e)
 
 			return true;
 		}
-		case FileSystemModelBaseEvent::UpdateFileInfo:
+		case FileSystemModelBaseEvent::ChangesListType:
 		{
 			e->accept();
 
 			if (static_cast<ChangesListEvent*>(e)->fileSystemTree() == m_currentFsTree)
 				updates(static_cast<ChangesListEvent*>(e)->info());
 
+			return true;
+		}
+		case FileSystemModelBaseEvent::PopulateFilesForRemoveType:
+		{
+			e->accept();
 			return true;
 		}
 		default:
@@ -415,9 +421,7 @@ void FileSystemModel::remove(const QModelIndex &index)
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
 
 		if (info.isDir())
-		{
-
-		}
+			populate(static_cast<FileSystemTree*>(m_currentFsTree), info.absoluteFilePath());
 		else
 			if (info.absoluteDir().remove(info.fileName()))
 			{
@@ -436,6 +440,11 @@ void FileSystemModel::list(FileSystemItem *fileSystemTree, const QString &direct
 void FileSystemModel::update(FileSystemItem *fileSystemTree, const QString &directory, const ChangesList &list) const
 {
 	Application::instance()->taskPool().handle(new UpdateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), directory, list, (QObject*)this));
+}
+
+void FileSystemModel::populate(FileSystemItem *fileSystemTree, const QString &directory) const
+{
+	Application::instance()->taskPool().handle(new PopulateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), directory, (QObject*)this));
 }
 
 void FileSystemModel::updates(const QList<FileSystemInfo> &updates)

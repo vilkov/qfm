@@ -48,6 +48,7 @@ public:
 protected:
 	void list(FileSystemItem *fileSystemTree, const QString &directory) const;
 	void update(FileSystemItem *fileSystemTree, const QString &directory, const ChangesList &list) const;
+	void populate(FileSystemItem *fileSystemTree, const QString &directory) const;
 
 	void updates(const QList<FileSystemInfo> &updates);
 	void updates(const ChangesList &updates);

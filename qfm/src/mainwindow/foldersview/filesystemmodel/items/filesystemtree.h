@@ -82,15 +82,19 @@ public:
 		Q_ASSERT(indexOf(entry) != InvalidIndex);
 		return m_childs.at(indexOf(entry)).subtree;
 	}
-	void setSubtree(FileSystemItem *entry, FileSystemItem *value)
+	void setSubtree(FileSystemItem *entry, FileSystemItem *tree)
 	{
 		Q_ASSERT(indexOf(entry) != InvalidIndex);
-		m_childs[indexOf(entry)].subtree = value;
+		FileSystemPair &pair = m_childs[indexOf(entry)];
+		delete pair.subtree;
+		pair.subtree = tree;
 	}
 	void setSubtree(FileSystemTree *tree)
 	{
 		Q_ASSERT(!m_childs.isEmpty());
-		m_childs.last().subtree = tree;
+		FileSystemPair &pair = m_childs.last();
+		delete pair.subtree;
+		pair.subtree = tree;
 		tree->setParent(this);
 	}
 

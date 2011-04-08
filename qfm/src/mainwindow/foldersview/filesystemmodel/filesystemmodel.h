@@ -46,18 +46,21 @@ public:
 	void remove(const QModelIndex &index);
 
 protected:
-	void list(FileSystemItem *fileSystemTree, const QString &directory) const;
-	void update(FileSystemItem *fileSystemTree, const QString &directory, const ChangesList &list) const;
-	void populate(FileSystemItem *fileSystemTree, const QString &directory) const;
-
+	void list(FileSystemItem *fileSystemTree);
 	void updates(const QList<FileSystemInfo> &updates);
+
+	void update(FileSystemItem *fileSystemTree);
 	void updates(const ChangesList &updates);
+
+	void populateForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void remove(FileSystemItem *entry, FileSystemItem *subtree);
 
 protected:
 	QModelIndex index(int column, FileSystemItem *item) const;
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 
 private:
+	quint16 m_locked;
 	FileSystemItem *m_currentFsTree;
 };
 

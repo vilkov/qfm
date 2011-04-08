@@ -62,11 +62,13 @@ private:
 class PopulateFilesForRemoveEvent : public FileSystemModelBaseEvent
 {
 public:
-	PopulateFilesForRemoveEvent(FileSystemTree *fileSystemTree, FileSystemTree *subtree);
+	PopulateFilesForRemoveEvent(FileSystemTree *fileSystemTree, FileSystemEntry *entry, FileSystemTree *subtree);
 
+	FileSystemEntry *entry() const { return m_entry; }
 	FileSystemTree *subtree() const { return m_subtree; }
 
 private:
+	FileSystemEntry *m_entry;
 	FileSystemTree *m_subtree;
 };
 

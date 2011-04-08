@@ -6,23 +6,22 @@
 #include <QScopedPointer>
 
 
-PopulateFilesTask::PopulateFilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver) :
-	FilesTask(tree, directory, receiver),
+PopulateFilesTask::PopulateFilesTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
+	FilesTask(tree, receiver),
+	m_entry(entry),
 	m_subtree(0)
 {}
 
 void PopulateFilesTask::run(const volatile bool &stopedFlag)
 {
-    if (!directory().isEmpty())
-    {
-    	IconProvider &iconProvider = Application::instance()->iconProvider();
-    	iconProvider.lock();
+	IconProvider &iconProvider = Application::instance()->iconProvider();
+	iconProvider.lock();
 
-    	populate(m_subtree = new FileSystemTree(directory()), stopedFlag);
+	QScopedPointer<FileSystemTree> subtree(new FileSystemTree(m_entry->fileInfo().absoluteFilePath()));
+	populate(subtree.data(), stopedFlag);
 
-    	iconProvider.unlock();
-		Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), m_subtree));
-    }
+	iconProvider.unlock();
+	m_subtree = subtree.take();
 }
 
 void PopulateFilesTask::populate(FileSystemTree *tree, const volatile bool &stopedFlag)
@@ -38,8 +37,19 @@ void PopulateFilesTask::populate(FileSystemTree *tree, const volatile bool &stop
 		if (info.isDir() && !info.isSymLink())
 		{
 			QScopedPointer<FileSystemTree> subtree(new FileSystemTree(info.absoluteFilePath(), tree));
-			tree->setSubtree(tree->last(), subtree.data());
-			populate(subtree.take(), stopedFlag);
+			populate(subtree.data(), stopedFlag);
+			tree->setSubtree(subtree.take());
 		}
 	}
+}
+
+
+PopulateFilesForRemoveTask::PopulateFilesForRemoveTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
+	PopulateFilesTask(tree, entry, receiver)
+{}
+
+void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
+{
+	PopulateFilesTask::run(stopedFlag);
+	Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), entry(), subtree()));
 }

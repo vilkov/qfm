@@ -20,9 +20,9 @@ public:
 
 	virtual bool notify(QObject *receiver, QEvent *event);
 
+	IconProvider &iconProvider() { return m_iconProvider; }
 	TasksPool::TaskPool &taskPool() { return m_taskPool; }
 	ApplicationSettings &config() { return m_settings; }
-	IconProvider &iconProvider() { return m_iconProvider; }
 	MainWindow &mainWindow() { return m_mainWindow; }
 
 	qint32 exec();
@@ -34,9 +34,9 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const QString &message);
 
 private:
+	IconProvider m_iconProvider;
 	TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
-	IconProvider m_iconProvider;
 	MainWindow m_mainWindow;
 };
 

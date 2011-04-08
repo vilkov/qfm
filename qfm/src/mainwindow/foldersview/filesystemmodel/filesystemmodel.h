@@ -56,6 +56,7 @@ protected:
 	void remove(FileSystemItem *entry, FileSystemItem *subtree);
 
 protected:
+	bool isLocked() const { return m_locked > 0; }
 	QModelIndex index(int column, FileSystemItem *item) const;
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 

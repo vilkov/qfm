@@ -46,8 +46,8 @@ public:
 	void remove(const QModelIndex &index);
 
 protected:
-	void list(const QString &directory) const;
-	void update(const QString &directory, const ChangesList &list) const;
+	void list(FileSystemItem *fileSystemTree, const QString &directory) const;
+	void update(FileSystemItem *fileSystemTree, const QString &directory, const ChangesList &list) const;
 
 	void updates(const QList<FileSystemInfo> &updates);
 	void updates(const ChangesList &updates);

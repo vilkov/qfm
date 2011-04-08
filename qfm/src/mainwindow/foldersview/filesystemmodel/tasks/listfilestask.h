@@ -7,7 +7,7 @@
 class ListFilesTask : public FilesTask
 {
 public:
-	ListFilesTask(const QString &directory, QObject *receiver);
+	ListFilesTask(FileSystemTree *tree, const QString &directory, QObject *receiver);
 
 	virtual void run(const volatile bool &stopedFlag);
 };

@@ -1,16 +1,17 @@
 #include "filesystemmodelevents.h"
 
 
-FileSystemModelBaseEvent::FileSystemModelBaseEvent(EventType type) :
-	QEvent((QEvent::Type)type)
+FileSystemModelBaseEvent::FileSystemModelBaseEvent(FileSystemTree *fileSystemTree, EventType type) :
+	QEvent((QEvent::Type)type),
+	m_fileSystemTree(fileSystemTree)
 {}
 
-ListFilesEvent::ListFilesEvent(const value_type &info) :
-	FileSystemModelBaseEvent(NewFileInfo),
+ListFilesEvent::ListFilesEvent(FileSystemTree *fileSystemTree, const value_type &info) :
+	FileSystemModelBaseEvent(fileSystemTree, NewFileInfo),
 	m_info(info)
 {}
 
-ChangesListEvent::ChangesListEvent(const value_type &info) :
-	FileSystemModelBaseEvent(UpdateFileInfo),
+ChangesListEvent::ChangesListEvent(FileSystemTree *fileSystemTree, const value_type &info) :
+	FileSystemModelBaseEvent(fileSystemTree, UpdateFileInfo),
 	m_info(info)
 {}

@@ -7,6 +7,7 @@
 #include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
+#include "events/filesystemmodelevents.h"
 
 
 class FileSystemModel : public QAbstractItemModel
@@ -48,24 +49,23 @@ public:
 
 protected:
 	void list(FileSystemItem *fileSystemTree);
-	void updates(const QList<FileSystemInfo> &updates);
+	void listFinished(const FileSystemModelEvent::Params *p);
 
 	void update(FileSystemItem *fileSystemTree);
-	void updates(const ChangesList &updates);
+	void updateFinished(const FileSystemModelEvent::Params *p);
 
 	void populateForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void remove(FileSystemItem *entry, FileSystemItem *subtree);
+	void populateForRemoveFinished(const FileSystemModelEvent::Params *p);
 
 	void populateForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void updateSize(FileSystemItem *fileSystemTree, FileSystemItem *entry, quint64 size);
+	void populateForSizeFinished(const FileSystemModelEvent::Params *p);
 
 protected:
-	bool isLocked() const { return m_locked > 0; }
+	bool isLocked() const;
 	QModelIndex index(int column, FileSystemItem *item) const;
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 
 private:
-	quint16 m_locked;
 	FileSystemItem *m_currentFsTree;
 };
 

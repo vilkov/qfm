@@ -7,6 +7,15 @@
 class PopulateFilesTask : public FilesTask
 {
 public:
+	struct EventParams : public FilesTask::EventParams
+	{
+		quint64 size;
+		FileSystemEntry *entry;
+		FileSystemTree *subtree;
+	};
+	typedef FileSystemModelEventTemplate<EventParams> Event;
+
+public:
 	PopulateFilesTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver);
 
 	quint64 size() const { return m_size; }

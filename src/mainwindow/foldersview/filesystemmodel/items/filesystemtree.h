@@ -39,8 +39,12 @@ public:
 	virtual size_type size() const { return m_childs.size(); }
 	virtual size_type indexOf(FileSystemItem *item) const;
 	virtual QVariant data(qint32 column, qint32 role) const { return QVariant(); }
+	virtual void accept(FileSystemModelVisitor *visitor) const;
 
 	FileSystemItem *last() const { return m_childs.last().entry; }
+
+	bool isUpdating() const { return m_updating; }
+	void setUpdating(bool value) { m_updating = value; }
 
 	const QFileInfo &fileInfo() const { return m_fileInfo; }
 	QFileInfo &fileInfo() { return m_fileInfo; }
@@ -80,6 +84,7 @@ protected:
 	}
 
 private:
+	bool m_updating;
 	QFileInfo m_fileInfo;
 	value_type m_childs;
 	FileSystemItem *m_parentEntry;

@@ -6,11 +6,18 @@
 #include <QtCore/QFileInfo>
 #include "../filesysteminfo.h"
 #include "../items/filesystemtree.h"
+#include "../events/filesystemmodelevents.h"
 #include "../../../../tools/taskspool/task.h"
 
 
 class FilesTask : public TasksPool::Task
 {
+public:
+	struct EventParams : public FileSystemModelEvent::Params
+	{
+		FileSystemTree *fileSystemTree;
+	};
+
 public:
 	FilesTask(FileSystemTree *tree, QObject *receiver);
 

@@ -1,13 +1,16 @@
 #include "filesystementry.h"
+#include "../visitor/filesystemmodelvisitor.h"
 
 
 FileSystemEntry::FileSystemEntry(const FileSystemInfo &info, FileSystemItem *parent) :
 	FileSystemItem(parent),
+	m_locked(false),
 	m_info(info)
 {}
 
 FileSystemEntry::FileSystemEntry(const Change &change, FileSystemItem *parent) :
 	FileSystemItem(parent),
+	m_locked(false),
 	m_info(change.info())
 {}
 
@@ -72,4 +75,9 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 	}
 
 	return QVariant();
+}
+
+void FileSystemEntry::accept(FileSystemModelVisitor *visitor) const
+{
+	visitor->visit(this);
 }

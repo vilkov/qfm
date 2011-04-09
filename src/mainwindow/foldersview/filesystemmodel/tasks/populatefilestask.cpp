@@ -48,19 +48,6 @@ void PopulateFilesTask::populate(FileSystemTree *tree, const volatile bool &stop
 }
 
 
-PopulateFilesForRemoveTask::PopulateFilesForRemoveTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
-	PopulateFilesTask(tree, entry, receiver)
-{}
-
-void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
-{
-	PopulateFilesTask::run(stopedFlag);
-
-	if (!stopedFlag)
-		Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), entry(), subtree()));
-}
-
-
 PopulateFilesForSizeTask::PopulateFilesForSizeTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
 	PopulateFilesTask(tree, entry, receiver)
 {}
@@ -70,5 +57,32 @@ void PopulateFilesForSizeTask::run(const volatile bool &stopedFlag)
 	PopulateFilesTask::run(stopedFlag);
 
 	if (!stopedFlag)
-		Application::postEvent(receiver(), new PopulateFilesForSizeEvent(tree(), entry(), size()));
+	{
+		QScopedPointer<Event> event(new Event(Event::PopulateFilesForSizeType));
+		event->params().fileSystemTree = tree();
+		event->params().size = size();
+		event->params().entry = entry();
+		event->params().subtree = subtree();
+		Application::postEvent(receiver(), event.take());
+	}
+}
+
+
+PopulateFilesForRemoveTask::PopulateFilesForRemoveTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
+	PopulateFilesTask(tree, entry, receiver)
+{}
+
+void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
+{
+	PopulateFilesTask::run(stopedFlag);
+
+	if (!stopedFlag)
+	{
+		QScopedPointer<Event> event(new Event(Event::PopulateFilesForRemoveType));
+		event->params().fileSystemTree = tree();
+		event->params().size = size();
+		event->params().entry = entry();
+		event->params().subtree = subtree();
+		Application::postEvent(receiver(), event.take());
+	}
 }

@@ -17,6 +17,7 @@ public:
 	FileSystemEntry(const Change &change, FileSystemItem *parent = 0);
 
 	virtual QVariant data(qint32 column, qint32 role) const;
+	virtual void accept(FileSystemModelVisitor *visitor) const;
 
 	QIcon icon() const { return m_info.icon(); }
 
@@ -28,7 +29,11 @@ public:
 	const QVariant &fileSize() const { return m_fileSize; }
 	void setFileSize(const QVariant &value) { m_fileSize = value; }
 
+	bool isLocked() const { return m_locked; }
+	void setLocked(bool value) { m_locked = value; }
+
 private:
+	bool m_locked;
 	QVariant m_fileSize;
 	FileSystemInfo m_info;
 };

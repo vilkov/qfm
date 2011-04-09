@@ -16,7 +16,8 @@ public:
 	{
 		ListFilesType = QEvent::User + 1,
 		ChangesListType = QEvent::User + 2,
-		PopulateFilesForRemoveType = QEvent::User + 3
+		PopulateFilesForRemoveType = QEvent::User + 3,
+		PopulateFilesForSizeType = QEvent::User + 4
 	};
 
 public:
@@ -70,6 +71,20 @@ public:
 private:
 	FileSystemEntry *m_entry;
 	FileSystemTree *m_subtree;
+};
+
+
+class PopulateFilesForSizeEvent : public FileSystemModelBaseEvent
+{
+public:
+	PopulateFilesForSizeEvent(FileSystemTree *fileSystemTree, FileSystemEntry *entry, quint64 size);
+
+	quint64 size() { return m_size; }
+	FileSystemEntry *entry() const { return m_entry; }
+
+private:
+	quint64 m_size;
+	FileSystemEntry *m_entry;
 };
 
 #endif /* FILESYSTEMMODELEVENTS_H_ */

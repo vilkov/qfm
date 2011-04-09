@@ -166,6 +166,14 @@ void DirectoryView::remove()
 		m_model.remove(index);
 }
 
+void DirectoryView::calculateSize()
+{
+	QModelIndex index = m_view.selectionModel()->currentIndex();
+
+	if (index.isValid())
+		m_model.refreshSize(index);
+}
+
 void DirectoryView::openInNewTab()
 {
 //	QModelIndex index = m_proxy.mapToSource(m_view.selectionModel()->currentIndex());
@@ -235,6 +243,7 @@ void DirectoryView::initialize()
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F2,        &DirectoryView::rename);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F7,        &DirectoryView::createDirectory);
 	m_eventHandler.registerShortcut(Qt::SHIFT,          Qt::Key_Delete,    &DirectoryView::remove);
+	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
 }
 
 DirectoryView::Header::Header(PathEventHandler *eventHandler, QWidget *parent) :

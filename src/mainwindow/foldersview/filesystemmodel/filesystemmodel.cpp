@@ -65,6 +65,12 @@ bool FileSystemModel::event(QEvent *e)
 			remove(static_cast<PopulateFilesForRemoveEvent*>(e)->entry(), static_cast<PopulateFilesForRemoveEvent*>(e)->subtree());
 			return true;
 		}
+		case FileSystemModelBaseEvent::PopulateFilesForSizeType:
+		{
+			e->accept();
+			updateSize(static_cast<PopulateFilesForSizeEvent*>(e)->fileSystemTree(), static_cast<PopulateFilesForSizeEvent*>(e)->entry(), static_cast<PopulateFilesForSizeEvent*>(e)->size());
+			return true;
+		}
 		default:
 			break;
 	}
@@ -255,6 +261,18 @@ void FileSystemModel::refresh()
 		list(m_currentFsTree);
 
 		endRemoveRows();
+	}
+}
+
+void FileSystemModel::refreshSize(const QModelIndex &index)
+{
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
+	{
+		FileSystemEntry *entry = static_cast<FileSystemEntry*>(index.internalPointer());
+		entry->fileInfo().refresh();
+
+		if (entry->fileInfo().exists() && entry->fileInfo().isDir())
+			populateForSize(m_currentFsTree, entry);
 	}
 }
 
@@ -539,6 +557,26 @@ void FileSystemModel::remove(FileSystemItem *entry, FileSystemItem *subtree)
 	}
 	else
 		static_cast<FileSystemTree*>(m_currentFsTree)->setSubtree(entry, subtree);
+}
+
+void FileSystemModel::populateForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+{
+	++m_locked;
+	Application::setOverrideCursor(Qt::WaitCursor);
+	Application::instance()->taskPool().handle(new PopulateFilesForSizeTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemEntry*>(entry), (QObject*)this));
+}
+
+void FileSystemModel::updateSize(FileSystemItem *fileSystemTree, FileSystemItem *entry, quint64 size)
+{
+	--m_locked;
+	Application::restoreOverrideCursor();
+	static_cast<FileSystemEntry*>(entry)->setFileSize(size);
+
+	if (m_currentFsTree == fileSystemTree)
+	{
+		QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 1, entry);
+		emit dataChanged(index, index);
+	}
 }
 
 QModelIndex FileSystemModel::index(int column, FileSystemItem *item) const

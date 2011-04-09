@@ -21,3 +21,9 @@ PopulateFilesForRemoveEvent::PopulateFilesForRemoveEvent(FileSystemTree *fileSys
 	m_entry(entry),
 	m_subtree(subtree)
 {}
+
+PopulateFilesForSizeEvent::PopulateFilesForSizeEvent(FileSystemTree *fileSystemTree, FileSystemEntry *entry, quint64 size) :
+	FileSystemModelBaseEvent(fileSystemTree, PopulateFilesForSizeType),
+	m_size(size),
+	m_entry(entry)
+{}

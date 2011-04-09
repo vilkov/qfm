@@ -12,6 +12,7 @@ ListFilesTask::ListFilesTask(FileSystemTree *tree, QObject *receiver) :
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
 {
+	sleep(5);
 	IconProvider &iconProvider = Application::instance()->iconProvider();
 	iconProvider.lock();
 
@@ -20,7 +21,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 	QList<FileSystemInfo> updatedFiles;
 	QDirIterator dirIt(tree()->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!stopedFlag && dirIt.hasNext())
+	while (!stopedFlag && !isReceiverDead() && dirIt.hasNext())
 	{
 		dirIt.next();
 		current = QTime::currentTime();
@@ -38,7 +39,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	if (!stopedFlag)
+	if (!stopedFlag && !isReceiverDead())
 		if (updatedFiles.isEmpty())
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));

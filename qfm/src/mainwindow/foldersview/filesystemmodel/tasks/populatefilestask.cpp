@@ -30,7 +30,7 @@ void PopulateFilesTask::populate(FileSystemTree *tree, const volatile bool &stop
 	QFileInfo info;
 	QDirIterator dirIt(tree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!stopedFlag && dirIt.hasNext())
+	while (!stopedFlag && !isReceiverDead() && dirIt.hasNext())
 	{
 		dirIt.next();
 		tree->add<FileSystemEntry>(getInfo(info = dirIt.fileInfo()));
@@ -56,7 +56,7 @@ void PopulateFilesForSizeTask::run(const volatile bool &stopedFlag)
 {
 	PopulateFilesTask::run(stopedFlag);
 
-	if (!stopedFlag)
+	if (!stopedFlag && !isReceiverDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForSize));
 		event->params().fileSystemTree = tree();
@@ -76,7 +76,7 @@ void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
 {
 	PopulateFilesTask::run(stopedFlag);
 
-	if (!stopedFlag)
+	if (!stopedFlag && !isReceiverDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForRemove));
 		event->params().fileSystemTree = tree();

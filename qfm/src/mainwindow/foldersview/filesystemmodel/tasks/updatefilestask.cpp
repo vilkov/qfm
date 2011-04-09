@@ -28,7 +28,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	ChangesList::size_type index;
 	QDirIterator dirIt(tree()->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while(!stopedFlag && dirIt.hasNext())
+	while(!stopedFlag && !isReceiverDead() && dirIt.hasNext())
 	{
 		current = QTime::currentTime();
 
@@ -60,10 +60,11 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	for (ChangesList::size_type i = 0, size = m_list.size(); i < size; ++i)
-		updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
+	if (!stopedFlag && !isReceiverDead())
+	{
+		for (ChangesList::size_type i = 0, size = m_list.size(); i < size; ++i)
+			updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
 
-	if (!stopedFlag)
 		if (updatedFiles.isEmpty())
 		{
 			QScopedPointer<Event> event(new Event(Event::UpdateFiles));
@@ -79,6 +80,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 			event->params().updates = updatedFiles;
 			Application::postEvent(receiver(), event.take());
 		}
+	}
 
 	iconProvider.unlock();
 }

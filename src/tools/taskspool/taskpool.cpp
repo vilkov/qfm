@@ -10,8 +10,8 @@ TaskPool::TaskPool(qint32 maxThreads) :
 
 TaskPool::~TaskPool()
 {
-	qDeleteAll(m_tasks);
 	qDeleteAll(m_threads);
+	qDeleteAll(m_tasks);
 }
 
 void TaskPool::handle(Task *task)
@@ -25,6 +25,18 @@ void TaskPool::handle(Task *task)
 			m_tasks.enqueue(task);
 	else
 		m_freeThreads.takeFirst()->handle(task);
+}
+
+void TaskPool::clear()
+{
+	QMutexLocker locker(&m_mutex);
+
+	qDeleteAll(m_tasks);
+	m_tasks.clear();
+
+	qDeleteAll(m_threads);
+	m_threads.clear();
+	m_freeThreads.clear();
 }
 
 Task *TaskPool::nextTask(TaskThread *thread)

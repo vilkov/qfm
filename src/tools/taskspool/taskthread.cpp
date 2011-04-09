@@ -18,10 +18,10 @@ TaskThread::TaskThread(TaskPool *pool, Task *task, Priority priority) :
 TaskThread::~TaskThread()
 {
     QMutexLocker locker(&m_mutex);
-    m_abort = true;
-    m_condition.wakeOne();
-    locker.unlock();
-    wait();
+	m_abort = true;
+	m_condition.wakeOne();
+	locker.unlock();
+	wait();
     delete m_task;
 }
 
@@ -60,7 +60,10 @@ void TaskThread::run()
 				)
 				locker.relock();
 
-				m_task = m_pool->nextTask(this);
+				if (m_abort)
+					return;
+				else
+					m_task = m_pool->nextTask(this);
 			}
     }
 }

@@ -28,8 +28,9 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 
 		if (base.msecsTo(current) > 300)
 		{
-			QScopedPointer<Event> event(new Event(Event::ListFilesType));
+			QScopedPointer<Event> event(new Event(Event::ListFiles));
 			event->params().fileSystemTree = tree();
+			event->params().isLastEvent = false;
 			event->params().updates = updatedFiles;
 			Application::postEvent(receiver(), event.take());
 			updatedFiles.clear();
@@ -37,13 +38,22 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	if (!updatedFiles.isEmpty())
-	{
-		QScopedPointer<Event> event(new Event(Event::ListFilesType));
-		event->params().fileSystemTree = tree();
-		event->params().updates = updatedFiles;
-		Application::postEvent(receiver(), event.take());
-	}
+	if (!stopedFlag)
+		if (updatedFiles.isEmpty())
+		{
+			QScopedPointer<Event> event(new Event(Event::ListFiles));
+			event->params().fileSystemTree = tree();
+			event->params().isLastEvent = true;
+			Application::postEvent(receiver(), event.take());
+		}
+		else
+		{
+			QScopedPointer<Event> event(new Event(Event::ListFiles));
+			event->params().fileSystemTree = tree();
+			event->params().isLastEvent = true;
+			event->params().updates = updatedFiles;
+			Application::postEvent(receiver(), event.take());
+		}
 
 	iconProvider.unlock();
 }

@@ -48,8 +48,9 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		{
 			if (!updatedFiles.isEmpty())
 			{
-				QScopedPointer<Event> event(new Event(Event::ChangesListType));
+				QScopedPointer<Event> event(new Event(Event::UpdateFiles));
 				event->params().fileSystemTree = tree();
+				event->params().isLastEvent = false;
 				event->params().updates = updatedFiles;
 				Application::postEvent(receiver(), event.take());
 				updatedFiles.clear();
@@ -59,17 +60,25 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	if (!stopedFlag)
-		for (ChangesList::size_type i = 0, size = m_list.size(); i < size; ++i)
-			updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
+	for (ChangesList::size_type i = 0, size = m_list.size(); i < size; ++i)
+		updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
 
-	if (!updatedFiles.isEmpty())
-	{
-		QScopedPointer<Event> event(new Event(Event::ChangesListType));
-		event->params().fileSystemTree = tree();
-		event->params().updates = updatedFiles;
-		Application::postEvent(receiver(), event.take());
-	}
+	if (!stopedFlag)
+		if (updatedFiles.isEmpty())
+		{
+			QScopedPointer<Event> event(new Event(Event::UpdateFiles));
+			event->params().fileSystemTree = tree();
+			event->params().isLastEvent = true;
+			Application::postEvent(receiver(), event.take());
+		}
+		else
+		{
+			QScopedPointer<Event> event(new Event(Event::UpdateFiles));
+			event->params().fileSystemTree = tree();
+			event->params().isLastEvent = true;
+			event->params().updates = updatedFiles;
+			Application::postEvent(receiver(), event.take());
+		}
 
 	iconProvider.unlock();
 }

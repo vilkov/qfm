@@ -58,7 +58,7 @@ void PopulateFilesForSizeTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag)
 	{
-		QScopedPointer<Event> event(new Event(Event::PopulateFilesForSizeType));
+		QScopedPointer<Event> event(new Event(Event::ScanFilesForSize));
 		event->params().fileSystemTree = tree();
 		event->params().size = size();
 		event->params().entry = entry();
@@ -78,7 +78,7 @@ void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag)
 	{
-		QScopedPointer<Event> event(new Event(Event::PopulateFilesForRemoveType));
+		QScopedPointer<Event> event(new Event(Event::ScanFilesForRemove));
 		event->params().fileSystemTree = tree();
 		event->params().size = size();
 		event->params().entry = entry();

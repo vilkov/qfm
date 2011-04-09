@@ -9,6 +9,7 @@ class ListFilesTask : public FilesTask
 public:
 	struct EventParams : public FilesTask::EventParams
 	{
+		bool isLastEvent;
 		QList<FileSystemInfo> updates;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;

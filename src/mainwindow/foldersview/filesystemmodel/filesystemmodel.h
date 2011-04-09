@@ -36,29 +36,29 @@ public:
 	const QFileInfo &fileInfo(const QModelIndex &index) const;
 	void pathToClipboard(const QModelIndexList &list) const;
 	void pathToClipboard(const FileSystemModelAdaptor &list) const;
+	QModelIndex find(const QString &fileName) const;
 
 	void refresh();
 	void refreshSize(const QModelIndex &index);
 	void activated(const QModelIndex &index);
 	void setCurrentDirectory(const QString &filePath);
 	void setCurrentDirectory(const QFileInfo &info);
-	QModelIndex find(const QString &fileName);
 	void rename(const QModelIndex &index, const QString &newFileName);
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);
 
 protected:
 	void list(FileSystemItem *fileSystemTree);
-	void listFinished(const FileSystemModelEvent::Params *p);
+	void listEvent(const FileSystemModelEvent::Params *p);
 
 	void update(FileSystemItem *fileSystemTree);
-	void updateFinished(const FileSystemModelEvent::Params *p);
+	void updateEvent(const FileSystemModelEvent::Params *p);
 
-	void populateForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void populateForRemoveFinished(const FileSystemModelEvent::Params *p);
+	void scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void scanForRemoveEvent(const FileSystemModelEvent::Params *p);
 
-	void populateForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void populateForSizeFinished(const FileSystemModelEvent::Params *p);
+	void scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void scanForSizeEvent(const FileSystemModelEvent::Params *p);
 
 protected:
 	bool isLocked() const;

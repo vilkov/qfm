@@ -2,21 +2,19 @@
 #define FILESYSTEMMODELEVENTS_H_
 
 #include <QtCore/QEvent>
-#include "../../../../tools/memory/memory_manager.h"
 
 
 class FileSystemModelEvent : public QEvent
 {
 public:
-	struct Params : public MemoryManagerTag
-	{};
+	struct Params {};
 
 	enum EventType
 	{
-		ListFilesType = QEvent::User + 1,
-		ChangesListType = QEvent::User + 2,
-		PopulateFilesForRemoveType = QEvent::User + 3,
-		PopulateFilesForSizeType = QEvent::User + 4
+		ListFiles = QEvent::User + 1,
+		UpdateFiles = QEvent::User + 2,
+		ScanFilesForRemove = QEvent::User + 3,
+		ScanFilesForSize = QEvent::User + 4
 	};
 
 public:

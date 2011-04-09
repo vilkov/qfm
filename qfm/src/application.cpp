@@ -14,6 +14,11 @@ Application::Application(const QString &name, const QString &label, const QStrin
 	QApplication::setApplicationVersion(version());
 }
 
+Application::~Application()
+{
+	m_taskPool.clear();
+}
+
 QString Application::version() const
 {
 	if (RELEASE_VERSION_NUMBER % 2 == 0)

@@ -10,6 +10,7 @@ class UpdateFilesTask : public FilesTask
 public:
 	struct EventParams : public FilesTask::EventParams
 	{
+		bool isLastEvent;
 		ChangesList updates;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;

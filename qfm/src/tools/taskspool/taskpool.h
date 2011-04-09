@@ -18,6 +18,7 @@ public:
 	~TaskPool();
 
 	void handle(Task *task);
+	void clear();
 
 protected:
 	friend class TaskThread;

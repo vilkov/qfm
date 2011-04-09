@@ -19,6 +19,7 @@ public:
     ~TaskThread();
 
     void handle(Task *task);
+    void terminate();
 
 protected:
     virtual void run();

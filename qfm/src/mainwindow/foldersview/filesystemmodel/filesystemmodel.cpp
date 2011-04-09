@@ -40,28 +40,28 @@ bool FileSystemModel::event(QEvent *e)
 {
 	switch (static_cast<FileSystemModelEvent::EventType>(e->type()))
 	{
-		case FileSystemModelEvent::ListFilesType:
+		case FileSystemModelEvent::ListFiles:
 		{
 			e->accept();
-			listFinished(static_cast<FileSystemModelEvent*>(e)->parameters());
+			listEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
-		case FileSystemModelEvent::ChangesListType:
+		case FileSystemModelEvent::UpdateFiles:
 		{
 			e->accept();
-			updateFinished(static_cast<FileSystemModelEvent*>(e)->parameters());
+			updateEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
-		case FileSystemModelEvent::PopulateFilesForRemoveType:
+		case FileSystemModelEvent::ScanFilesForRemove:
 		{
 			e->accept();
-			populateForRemoveFinished(static_cast<FileSystemModelEvent*>(e)->parameters());
+			scanForRemoveEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
-		case FileSystemModelEvent::PopulateFilesForSizeType:
+		case FileSystemModelEvent::ScanFilesForSize:
 		{
 			e->accept();
-			populateForSizeFinished(static_cast<FileSystemModelEvent*>(e)->parameters());
+			scanForSizeEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
 		default:
@@ -231,6 +231,16 @@ void FileSystemModel::pathToClipboard(const FileSystemModelAdaptor &list) const
 	Application::clipboard()->setText(text);
 }
 
+QModelIndex FileSystemModel::find(const QString &fileName) const
+{
+	for (FileSystemItem::size_type i = 0, size = m_currentFsTree->size(); i < size; ++i)
+		if (!static_cast<FileSystemItem*>(m_currentFsTree->child(i))->isRoot() &&
+			static_cast<FileSystemEntry*>(m_currentFsTree->child(i))->fileInfo().fileName() == fileName)
+			return createIndex(i, 0, m_currentFsTree->child(i));
+
+	return QModelIndex();
+}
+
 void FileSystemModel::refresh()
 {
 	if (isLocked())
@@ -259,26 +269,25 @@ void FileSystemModel::refresh()
 
 void FileSystemModel::refreshSize(const QModelIndex &index)
 {
-	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
 	{
 		FileSystemEntry *entry = static_cast<FileSystemEntry*>(index.internalPointer());
 		entry->fileInfo().refresh();
 
 		if (entry->fileInfo().exists() && entry->fileInfo().isDir())
-			populateForSize(m_currentFsTree, entry);
+			scanForSize(m_currentFsTree, entry);
 	}
 }
 
 void FileSystemModel::activated(const QModelIndex &index)
 {
-	if (isLocked())
-		return;
-
 	if (static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
 		if (FileSystemTree *parent = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->parent()))
 		{
 			beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-			update(parent);
+			if (!parent->isUpdating())
+				update(parent);
 			endRemoveRows();
 
 			beginInsertRows(QModelIndex(), 0, parent->size() - 1);
@@ -314,46 +323,48 @@ void FileSystemModel::activated(const QModelIndex &index)
 			endInsertRows();
 		}
 	else
-	{
-		FileSystemEntry *entry = static_cast<FileSystemEntry*>(index.internalPointer());
-		entry->fileInfo().refresh();
+		if (!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
+		{
+			FileSystemEntry *entry = static_cast<FileSystemEntry*>(index.internalPointer());
+			entry->fileInfo().refresh();
 
-		if (entry->fileInfo().exists())
-			if (entry->fileInfo().isDir())
-				if (FileSystemTree *tree = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->subtree(entry)))
-				{
-					beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					update(tree);
-					endRemoveRows();
+			if (entry->fileInfo().exists())
+				if (entry->fileInfo().isDir())
+					if (FileSystemTree *tree = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->subtree(entry)))
+					{
+						beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
+						if (!tree->isUpdating())
+							update(tree);
+						endRemoveRows();
 
-					beginInsertRows(QModelIndex(), 0, tree->size() - 1);
-					m_currentFsTree = tree;
-					endInsertRows();
-				}
+						beginInsertRows(QModelIndex(), 0, tree->size() - 1);
+						m_currentFsTree = tree;
+						endInsertRows();
+					}
+					else
+					{
+						beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
+						tree = static_cast<FileSystemTree*>(m_currentFsTree);
+						tree->setSubtree(entry, m_currentFsTree = new FileSystemTree(entry->fileInfo().absoluteFilePath(), tree));
+						static_cast<FileSystemTree*>(m_currentFsTree)->setParentEntry(entry);
+						endRemoveRows();
+
+						beginInsertRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
+						list(m_currentFsTree);
+						endInsertRows();
+					}
 				else
 				{
-					beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					tree = static_cast<FileSystemTree*>(m_currentFsTree);
-					tree->setSubtree(entry, m_currentFsTree = new FileSystemTree(entry->fileInfo().absoluteFilePath(), tree));
-					static_cast<FileSystemTree*>(m_currentFsTree)->setParentEntry(entry);
-					endRemoveRows();
 
-					beginInsertRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					list(m_currentFsTree);
-					endInsertRows();
 				}
 			else
 			{
-
+				FileSystemEntry::size_type index = m_currentFsTree->indexOf(entry);
+				beginRemoveRows(QModelIndex(), index, index);
+				static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
+				endRemoveRows();
 			}
-		else
-		{
-			FileSystemEntry::size_type index = m_currentFsTree->indexOf(entry);
-			beginRemoveRows(QModelIndex(), index, index);
-			static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
-			endRemoveRows();
 		}
-	}
 }
 
 void FileSystemModel::setCurrentDirectory(const QString &filePath)
@@ -399,22 +410,10 @@ void FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 	endInsertRows();
 }
 
-QModelIndex FileSystemModel::find(const QString &fileName)
-{
-	for (FileSystemItem::size_type i = 0, size = m_currentFsTree->size(); i < size; ++i)
-		if (!static_cast<FileSystemItem*>(m_currentFsTree->child(i))->isRoot() &&
-			static_cast<FileSystemEntry*>(m_currentFsTree->child(i))->fileInfo().fileName() == fileName)
-			return createIndex(i, 0, m_currentFsTree->child(i));
-
-	return QModelIndex();
-}
-
 void FileSystemModel::rename(const QModelIndex &index, const QString &newFileName)
 {
-	if (isLocked())
-		return;
-
-	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
 	{
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
 		QDir dir = info.absoluteDir();
@@ -429,9 +428,6 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 void FileSystemModel::createDirectory(const QString &dirName)
 {
-	if (isLocked())
-		return;
-
 	const QFileInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 
 	if (info.exists())
@@ -449,15 +445,13 @@ void FileSystemModel::createDirectory(const QString &dirName)
 
 void FileSystemModel::remove(const QModelIndex &index)
 {
-	if (isLocked())
-		return;
-
-	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot())
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
 	{
 		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
 
 		if (info.isDir())
-			populateForRemove(static_cast<FileSystemTree*>(m_currentFsTree), static_cast<FileSystemEntry*>(index.internalPointer()));
+			scanForRemove(static_cast<FileSystemTree*>(m_currentFsTree), static_cast<FileSystemEntry*>(index.internalPointer()));
 		else
 			if (info.absoluteDir().remove(info.fileName()))
 			{
@@ -470,37 +464,39 @@ void FileSystemModel::remove(const QModelIndex &index)
 
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
-	if (!static_cast<FileSystemTree*>(fileSystemTree)->isUpdating())
-	{
-		static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-		Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(fileSystemTree), (QObject*)this));
-	}
+	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
+	Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(fileSystemTree), (QObject*)this));
 }
 
-void FileSystemModel::listFinished(const FileSystemModelEvent::Params *p)
+void FileSystemModel::listEvent(const FileSystemModelEvent::Params *p)
 {
-	const ListFilesTask::EventParams *params = static_cast<const ListFilesTask::EventParams*>(p);
+	typedef const ListFilesTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
-	if (m_currentFsTree == params->fileSystemTree)
-	{
-		beginInsertRows(QModelIndex(), params->fileSystemTree->size(), params->fileSystemTree->size() + params->updates.size() - 1);
-		static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
-		endInsertRows();
-	}
-	else
-		static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
+	if (!params->updates.isEmpty())
+		if (m_currentFsTree == params->fileSystemTree)
+		{
+			beginInsertRows(QModelIndex(), params->fileSystemTree->size(), params->fileSystemTree->size() + params->updates.size() - 1);
+			static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
+			endInsertRows();
+		}
+		else
+			static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
 
-	static_cast<FileSystemTree*>(params->fileSystemTree)->setUpdating(false);
+	if (params->isLastEvent)
+		static_cast<FileSystemTree*>(params->fileSystemTree)->setUpdating(false);
 }
 
 void FileSystemModel::update(FileSystemItem *fileSystemTree)
 {
+	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
 	Application::instance()->taskPool().handle(new UpdateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemTree*>(fileSystemTree)->makeChangeSet(), (QObject*)this));
 }
 
-void FileSystemModel::updateFinished(const FileSystemModelEvent::Params *p)
+void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
 {
-	const UpdateFilesTask::EventParams *params = static_cast<const UpdateFilesTask::EventParams*>(p);
+	typedef const UpdateFilesTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 	ChangesList list = params->updates;
 	RangeIntersection updateRange(1);
 
@@ -535,50 +531,57 @@ void FileSystemModel::updateFinished(const FileSystemModelEvent::Params *p)
 		static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(list);
 		endInsertRows();
 	}
+
+	if (params->isLastEvent)
+		static_cast<FileSystemTree*>(params->fileSystemTree)->setUpdating(false);
 }
 
-void FileSystemModel::populateForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+void FileSystemModel::scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry)
 {
-//	++m_locked;
-	Application::setOverrideCursor(Qt::WaitCursor);
+	static_cast<FileSystemEntry*>(entry)->setLocked(true);
 	Application::instance()->taskPool().handle(new PopulateFilesForRemoveTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemEntry*>(entry), (QObject*)this));
 }
 
-void FileSystemModel::populateForRemoveFinished(const FileSystemModelEvent::Params *p)
+void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 {
-//	--m_locked;
-	Application::restoreOverrideCursor();
-	const PopulateFilesForRemoveTask::EventParams *params = static_cast<const PopulateFilesForRemoveTask::EventParams*>(p);
+	typedef const PopulateFilesForRemoveTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
 	if (QMessageBox::question(
 			&Application::instance()->mainWindow(),
 			tr("Remove directory..."),
 			tr("Would you like to remove \"%1\" directory?").arg(static_cast<FileSystemEntry*>(params->entry)->fileInfo().absoluteFilePath()),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-	{
-		FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
+		if (params->fileSystemTree == m_currentFsTree)
+		{
+			FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
 
-		beginRemoveRows(QModelIndex(), index, index);
-		static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
-		delete params->subtree;
-		endRemoveRows();
-	}
+			beginRemoveRows(QModelIndex(), index, index);
+			static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
+			delete params->subtree;
+			endRemoveRows();
+		}
+		else
+		{
+			params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
+			delete params->subtree;
+		}
 	else
-		static_cast<FileSystemTree*>(m_currentFsTree)->setSubtree(params->entry, params->subtree);
+		static_cast<FileSystemTree*>(params->fileSystemTree)->setSubtree(params->entry, params->subtree);
+
+	params->entry->setLocked(false);
 }
 
-void FileSystemModel::populateForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
 {
-//	++m_locked;
-	Application::setOverrideCursor(Qt::WaitCursor);
+	static_cast<FileSystemEntry*>(entry)->setLocked(true);
 	Application::instance()->taskPool().handle(new PopulateFilesForSizeTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemEntry*>(entry), (QObject*)this));
 }
 
-void FileSystemModel::populateForSizeFinished(const FileSystemModelEvent::Params *p)
+void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 {
-//	--m_locked;
-	Application::restoreOverrideCursor();
-	const PopulateFilesForSizeTask::EventParams *params = static_cast<const PopulateFilesForSizeTask::EventParams*>(p);
+	typedef const PopulateFilesForSizeTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
 	if (m_currentFsTree == params->fileSystemTree)
@@ -586,6 +589,8 @@ void FileSystemModel::populateForSizeFinished(const FileSystemModelEvent::Params
 		QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 1, params->entry);
 		emit dataChanged(index, index);
 	}
+
+	params->entry->setLocked(false);
 }
 
 bool FileSystemModel::isLocked() const

@@ -369,9 +369,6 @@ void FileSystemModel::activated(const QModelIndex &index)
 
 void FileSystemModel::setCurrentDirectory(const QString &filePath)
 {
-	if (isLocked())
-		return;
-
 	QFileInfo info(filePath);
 
 	if (info.exists())

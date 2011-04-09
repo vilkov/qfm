@@ -37,6 +37,7 @@ public:
 	void pathToClipboard(const FileSystemModelAdaptor &list) const;
 
 	void refresh();
+	void refreshSize(const QModelIndex &index);
 	void activated(const QModelIndex &index);
 	void setCurrentDirectory(const QString &filePath);
 	void setCurrentDirectory(const QFileInfo &info);
@@ -54,6 +55,9 @@ protected:
 
 	void populateForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void remove(FileSystemItem *entry, FileSystemItem *subtree);
+
+	void populateForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void updateSize(FileSystemItem *fileSystemTree, FileSystemItem *entry, quint64 size);
 
 protected:
 	bool isLocked() const { return m_locked > 0; }

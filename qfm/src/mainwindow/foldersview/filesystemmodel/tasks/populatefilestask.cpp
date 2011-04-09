@@ -8,6 +8,7 @@
 
 PopulateFilesTask::PopulateFilesTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
 	FilesTask(tree, receiver),
+	m_size(0),
 	m_entry(entry),
 	m_subtree(0)
 {}
@@ -34,12 +35,15 @@ void PopulateFilesTask::populate(FileSystemTree *tree, const volatile bool &stop
 		dirIt.next();
 		tree->add<FileSystemEntry>(getInfo(info = dirIt.fileInfo()));
 
-		if (info.isDir() && !info.isSymLink())
-		{
-			QScopedPointer<FileSystemTree> subtree(new FileSystemTree(info.absoluteFilePath(), tree));
-			populate(subtree.data(), stopedFlag);
-			tree->setSubtree(subtree.take());
-		}
+		if (!info.isSymLink())
+			if (info.isDir())
+			{
+				QScopedPointer<FileSystemTree> subtree(new FileSystemTree(info.absoluteFilePath(), tree));
+				populate(subtree.data(), stopedFlag);
+				tree->setSubtree(subtree.take());
+			}
+			else
+				m_size += info.size();
 	}
 }
 
@@ -54,4 +58,17 @@ void PopulateFilesForRemoveTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag)
 		Application::postEvent(receiver(), new PopulateFilesForRemoveEvent(tree(), entry(), subtree()));
+}
+
+
+PopulateFilesForSizeTask::PopulateFilesForSizeTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver) :
+	PopulateFilesTask(tree, entry, receiver)
+{}
+
+void PopulateFilesForSizeTask::run(const volatile bool &stopedFlag)
+{
+	PopulateFilesTask::run(stopedFlag);
+
+	if (!stopedFlag)
+		Application::postEvent(receiver(), new PopulateFilesForSizeEvent(tree(), entry(), size()));
 }

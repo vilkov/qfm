@@ -37,6 +37,7 @@ public Q_SLOTS:
 	void rename();
 	void createDirectory();
 	void remove();
+	void calculateSize();
 
 private:
 	void openInNewTab();

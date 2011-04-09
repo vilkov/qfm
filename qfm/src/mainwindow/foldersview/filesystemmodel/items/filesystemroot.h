@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMROOT_H_
 #define FILESYSTEMROOT_H_
 
-#include <QString>
+#include <QVariant>
 #include "filesystemitem.h"
 
 
@@ -30,7 +30,7 @@ public:
 	virtual bool isRoot() const { return true; }
 
 private:
-	QString m_directory;
+	QVariant m_directory;
 };
 
 #endif /* FILESYSTEMROOT_H_ */

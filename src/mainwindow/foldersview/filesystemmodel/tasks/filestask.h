@@ -19,7 +19,11 @@ public:
 	};
 
 public:
-	/* This class and it's subclasses should be created only in the same thread as "receiver" */
+	/*
+	 * This class and it's subclasses should be created only
+	 * in the same thread as "receiver" because of DeleteHandler!
+	 *
+	 */
 	FilesTask(FileSystemTree *tree, QObject *receiver);
 	virtual ~FilesTask();
 

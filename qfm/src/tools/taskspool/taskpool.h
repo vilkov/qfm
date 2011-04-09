@@ -26,6 +26,7 @@ protected:
 
 private:
     QMutex m_mutex;
+    bool m_clearing;
 	qint32 m_maxThreads;
     QQueue<Task*> m_tasks;
 	QList<TaskThread*> m_threads;

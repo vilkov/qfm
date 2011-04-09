@@ -8,12 +8,22 @@
 
 FilesTask::FilesTask(FileSystemTree *tree, QObject *receiver) :
 	m_tree(tree),
-	m_receiver(receiver)
+	m_receiver(receiver),
+	m_handler(new DeleteHandler(this, m_receiver))
 #ifndef Q_OS_WIN
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
 {}
+
+FilesTask::~FilesTask()
+{
+	if (m_handler)
+	{
+		m_handler->m_task = 0;
+		m_handler->deleteLater();
+	}
+}
 
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)
 {

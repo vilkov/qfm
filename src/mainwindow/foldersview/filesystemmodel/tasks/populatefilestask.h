@@ -18,11 +18,11 @@ public:
 public:
 	PopulateFilesTask(FileSystemTree *tree, FileSystemEntry *entry, QObject *receiver);
 
+	virtual void run(const volatile bool &stopedFlag);
+
 	quint64 size() const { return m_size; }
 	FileSystemEntry *entry() const { return m_entry; }
 	FileSystemTree *subtree() const { return m_subtree; }
-
-	virtual void run(const volatile bool &stopedFlag);
 
 private:
 	void populate(FileSystemTree *tree, const volatile bool &stopedFlag);

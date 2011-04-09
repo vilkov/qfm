@@ -1,6 +1,6 @@
 #include "foldersview.h"
 #include "directoryview.h"
-#include <QMessageBox>
+#include <QScopedPointer>
 
 
 FoldersView::FoldersView(const QStringList &folders, QWidget *parent) :
@@ -34,16 +34,17 @@ void FoldersView::openInNewTab(const QFileInfo &fileInfo)
 {
 	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(fileInfo, this), QString()));
 	updateCurrentDirectory(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryInfo());
+	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 }
 
 void FoldersView::closeCurrentTab()
 {
 	if (m_tabWidget.count() > 1)
 	{
-		QWidget *widget = m_tabWidget.currentWidget();
+		QScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
 		updateCurrentDirectory(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryInfo());
-		delete widget;
+		static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 	}
 }
 

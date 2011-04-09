@@ -12,7 +12,6 @@ ListFilesTask::ListFilesTask(FileSystemTree *tree, QObject *receiver) :
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
 {
-	sleep(5);
 	IconProvider &iconProvider = Application::instance()->iconProvider();
 	iconProvider.lock();
 

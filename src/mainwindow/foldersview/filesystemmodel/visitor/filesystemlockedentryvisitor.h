@@ -11,11 +11,11 @@
 class FileSystemLockedEntryVisitor : public FileSystemModelVisitor
 {
 public:
-	typedef QList<FileSystemEntry*>          EntryList;
+	typedef QList<const FileSystemEntry*>    EntryList;
 	typedef QMap<FileSystemTree*, EntryList> EntryMap;
 
 public:
-	virtual void visit(FileSystemEntry *entry)
+	virtual void visit(const FileSystemEntry *entry)
 	{
 		if (entry->isLocked())
 		{

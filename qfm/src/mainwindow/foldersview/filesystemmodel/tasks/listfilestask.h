@@ -7,6 +7,13 @@
 class ListFilesTask : public FilesTask
 {
 public:
+	struct EventParams : public FilesTask::EventParams
+	{
+		QList<FileSystemInfo> updates;
+	};
+	typedef FileSystemModelEventTemplate<EventParams> Event;
+
+public:
 	ListFilesTask(FileSystemTree *tree, QObject *receiver);
 
 	virtual void run(const volatile bool &stopedFlag);

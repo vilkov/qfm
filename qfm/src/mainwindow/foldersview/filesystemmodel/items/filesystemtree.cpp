@@ -1,8 +1,10 @@
 #include "filesystemtree.h"
+#include "../visitor/filesystemmodelvisitor.h"
 
 
 FileSystemTree::FileSystemTree(const QString &directory, FileSystemItem *parent) :
 	FileSystemItem(parent),
+	m_updating(false),
 	m_fileInfo(directory),
 	m_parentEntry(0)
 {
@@ -12,6 +14,7 @@ FileSystemTree::FileSystemTree(const QString &directory, FileSystemItem *parent)
 
 FileSystemTree::FileSystemTree(const QFileInfo &info, FileSystemItem *parent) :
 	FileSystemItem(parent),
+	m_updating(false),
 	m_fileInfo(info),
 	m_parentEntry(0)
 {
@@ -35,6 +38,17 @@ FileSystemTree::size_type FileSystemTree::indexOf(FileSystemItem *item) const
 			return static_cast<size_type>(i);
 
 	return InvalidIndex;
+}
+
+void FileSystemTree::accept(FileSystemModelVisitor *visitor) const
+{
+	for (value_type::size_type i = 0, size = m_childs.size(); i < size; ++i)
+	{
+		visitor->visit(static_cast<FileSystemEntry*>(m_childs.at(i).entry));
+
+		if (m_childs.at(i).subtree)
+			static_cast<FileSystemTree*>(m_childs.at(i).subtree)->accept(visitor);
+	}
 }
 
 FileSystemItem *FileSystemTree::subtree(FileSystemItem *entry) const

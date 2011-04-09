@@ -1,9 +1,9 @@
 #include "listfilestask.h"
-#include "../events/filesystemmodelevents.h"
 #include "../../../../application.h"
 #include <QDir>
 #include <QDateTime>
 #include <QDirIterator>
+#include <QScopedPointer>
 
 
 ListFilesTask::ListFilesTask(FileSystemTree *tree, QObject *receiver) :
@@ -28,14 +28,22 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 
 		if (base.msecsTo(current) > 300)
 		{
-			Application::postEvent(receiver(), new ListFilesEvent(tree(), updatedFiles));
+			QScopedPointer<Event> event(new Event(Event::ListFilesType));
+			event->params().fileSystemTree = tree();
+			event->params().updates = updatedFiles;
+			Application::postEvent(receiver(), event.take());
 			updatedFiles.clear();
 			base = current;
 		}
 	}
 
 	if (!updatedFiles.isEmpty())
-		Application::postEvent(receiver(), new ListFilesEvent(tree(), updatedFiles));
+	{
+		QScopedPointer<Event> event(new Event(Event::ListFilesType));
+		event->params().fileSystemTree = tree();
+		event->params().updates = updatedFiles;
+		Application::postEvent(receiver(), event.take());
+	}
 
 	iconProvider.unlock();
 }

@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <QDirIterator>
+#include <QScopedPointer>
 
 
 UpdateFilesTask::UpdateFilesTask(FileSystemTree *tree, const ChangesList &list, QObject *receiver) :
@@ -47,7 +48,10 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		{
 			if (!updatedFiles.isEmpty())
 			{
-				Application::postEvent(receiver(), new ChangesListEvent(tree(), updatedFiles));
+				QScopedPointer<Event> event(new Event(Event::ChangesListType));
+				event->params().fileSystemTree = tree();
+				event->params().updates = updatedFiles;
+				Application::postEvent(receiver(), event.take());
 				updatedFiles.clear();
 			}
 
@@ -60,7 +64,12 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 			updatedFiles.push_back(Change(Change::Deleted, m_list.at(i).entry()));
 
 	if (!updatedFiles.isEmpty())
-		Application::postEvent(receiver(), new ChangesListEvent(tree(), updatedFiles));
+	{
+		QScopedPointer<Event> event(new Event(Event::ChangesListType));
+		event->params().fileSystemTree = tree();
+		event->params().updates = updatedFiles;
+		Application::postEvent(receiver(), event.take());
+	}
 
 	iconProvider.unlock();
 }

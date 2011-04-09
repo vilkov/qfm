@@ -8,6 +8,13 @@
 class UpdateFilesTask : public FilesTask
 {
 public:
+	struct EventParams : public FilesTask::EventParams
+	{
+		ChangesList updates;
+	};
+	typedef FileSystemModelEventTemplate<EventParams> Event;
+
+public:
 	UpdateFilesTask(FileSystemTree *tree, const ChangesList &list, QObject *receiver);
 
 	virtual void run(const volatile bool &stopedFlag);

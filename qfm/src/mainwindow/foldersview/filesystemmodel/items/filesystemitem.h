@@ -6,6 +6,8 @@
 #include "../../../../tools/memory/memory_manager.h"
 
 
+class FileSystemModelVisitor;
+
 class FileSystemItem : public MemoryManagerTag
 {
 	Q_DISABLE_COPY(FileSystemItem)
@@ -28,6 +30,7 @@ public:
 	virtual size_type indexOf(FileSystemItem *item) const { return InvalidIndex; }
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 	virtual bool isRoot() const { return false; }
+	virtual void accept(FileSystemModelVisitor *visitor) const {}
 
 protected:
 	void setParent(FileSystemItem *parent) { m_parent = parent; }

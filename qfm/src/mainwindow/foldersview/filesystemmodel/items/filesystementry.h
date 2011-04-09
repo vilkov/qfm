@@ -32,6 +32,8 @@ public:
 	bool isLocked() const { return m_locked; }
 	void setLocked(bool value) { m_locked = value; }
 
+	QString humanReadableSize(quint64 size) const;
+
 private:
 	bool m_locked;
 	QVariant m_fileSize;

@@ -41,12 +41,12 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 				case Qt::EditRole:
 				case Qt::DisplayRole:
 					if (m_info.fileInfo().isFile())
-						return QString::number(m_info.fileInfo().size()).append(QString::fromLatin1(" b"));
+						return humanReadableSize(m_info.fileInfo().size());
 					else
 						if (m_fileSize.isNull())
 							return QString::fromLatin1("<DIR>");
 						else
-							return QString::number(m_fileSize.toULongLong()).append(QString::fromLatin1(" b"));
+							return humanReadableSize(m_fileSize.toULongLong());
 //					case Qt::DecorationRole:
 //						return m_info.icon();
 				case Qt::TextAlignmentRole:
@@ -80,4 +80,27 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 void FileSystemEntry::accept(FileSystemModelVisitor *visitor) const
 {
 	visitor->visit(this);
+}
+
+QString FileSystemEntry::humanReadableSize(quint64 size) const
+{
+	if (quint64 gigabytes = size / (1024 * 1024 * 1024))
+		if (quint64 megabytes = (size - gigabytes * 1024 * 1024 * 1024) / (1024 * 1024))
+			return QString::number(gigabytes).append(QChar(',')).append(QString::number(megabytes)).append(QString::fromLatin1(" Gb"));
+		else
+			return QString::number(gigabytes).append(QString::fromLatin1(" Gb"));
+	else
+		if (gigabytes = size / (1024 * 1024))
+			if (quint64 kilobytes = (size - gigabytes * 1024 * 1024) / (1024))
+				return QString::number(gigabytes).append(QChar(',')).append(QString::number(kilobytes)).append(QString::fromLatin1(" Mb"));
+			else
+				return QString::number(gigabytes).append(QString::fromLatin1(" Mb"));
+		else
+			if (gigabytes = size / (1024))
+				if (quint64 bytes = (size - gigabytes * 1024) / (1024))
+					return QString::number(gigabytes).append(QChar(',')).append(QString::number(bytes)).append(QString::fromLatin1(" Kb"));
+				else
+					return QString::number(gigabytes).append(QString::fromLatin1(" Kb"));
+			else
+				return QString::number(size).append(QString::fromLatin1(" b"));
 }

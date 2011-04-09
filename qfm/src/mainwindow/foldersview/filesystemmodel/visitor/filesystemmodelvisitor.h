@@ -7,7 +7,7 @@
 class FileSystemModelVisitor
 {
 public:
-	virtual void visit(FileSystemEntry *entry) = 0;
+	virtual void visit(const FileSystemEntry *entry) = 0;
 };
 
 #endif /* FILESYSTEMMODELVISITOR_H_ */

@@ -60,10 +60,7 @@ void TaskThread::run()
 				)
 				locker.relock();
 
-				if (m_abort)
-					return;
-				else
-					m_task = m_pool->nextTask(this);
+				m_task = m_pool->nextTask(this);
 			}
     }
 }

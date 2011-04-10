@@ -37,6 +37,7 @@ public:
 	void pathToClipboard(const QModelIndexList &list) const;
 	void pathToClipboard(const FileSystemModelAdaptor &list) const;
 	QModelIndex find(const QString &fileName) const;
+	void copy(const QModelIndex &index, FileSystemModel *destination) const;
 
 	void refresh();
 	void refreshSize(const QModelIndex &index);

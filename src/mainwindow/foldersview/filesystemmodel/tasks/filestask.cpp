@@ -6,18 +6,24 @@
 #endif
 
 
-FilesTask::FilesTask(FileSystemTree *tree, QObject *receiver) :
-	m_tree(tree),
-	m_receiver(receiver),
-	m_handler(new DeleteHandler(this, m_receiver))
+FilesTask::FilesTask(Params *parameters) :
+	m_params(parameters),
+	m_handler(new DeleteHandler(this, m_params->receiver))
 #ifndef Q_OS_WIN
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
-{}
+{
+	Q_ASSERT(m_params);
+	Q_ASSERT(m_params->fileSystemTree);
+	Q_ASSERT(m_params->receiver);
+	Q_ASSERT(m_params->receiver->thread() != QThread::currentThread());
+}
 
 FilesTask::~FilesTask()
 {
+	QMutexLocker locker(&m_params->m_mutex);
+
 	if (m_handler)
 	{
 		m_handler->m_task = 0;

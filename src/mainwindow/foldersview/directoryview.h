@@ -38,6 +38,7 @@ public Q_SLOTS:
 	void createDirectory();
 	void remove();
 	void calculateSize();
+	void copy();
 
 private:
 	void openInNewTab();

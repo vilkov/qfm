@@ -10,11 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),
 #ifdef Q_OS_WIN32
-    m_leftFoldersView(QStringList() << QString::fromLatin1("C:/"), &m_splitter),
-    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/"), &m_splitter),
+    m_leftFoldersView(QStringList() << QString::fromLatin1("C:/"), m_rightFoldersView, &m_splitter),
+    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/"), m_leftFoldersView, &m_splitter),
 #else
-    m_leftFoldersView(QStringList() << QString::fromLatin1("/home"), &m_splitter),
-    m_rightFoldersView(QStringList() << QString::fromLatin1("/"), &m_splitter),
+    m_leftFoldersView(QStringList() << QString::fromLatin1("/home"), m_rightFoldersView, &m_splitter),
+    m_rightFoldersView(QStringList() << QString::fromLatin1("/"), m_leftFoldersView, &m_splitter),
 #endif
     /* Actions */
     m_fileMenuActions(this),

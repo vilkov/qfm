@@ -4,7 +4,7 @@
 #include "events/filesystemmodelevents.h"
 #include "tasks/listfilestask.h"
 #include "tasks/updatefilestask.h"
-#include "tasks/populatefilestask.h"
+#include "tasks/scanfilestask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
@@ -241,6 +241,15 @@ QModelIndex FileSystemModel::find(const QString &fileName) const
 	return QModelIndex();
 }
 
+void FileSystemModel::copy(const QModelIndex &index, FileSystemModel *destination) const
+{
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
+	{
+		const QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
+	}
+}
+
 void FileSystemModel::refresh()
 {
 	if (isLocked())
@@ -461,8 +470,12 @@ void FileSystemModel::remove(const QModelIndex &index)
 
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
+	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+	params->receiver = (QObject*)this;
+
+	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-	Application::instance()->taskPool().handle(new ListFilesTask(static_cast<FileSystemTree*>(fileSystemTree), (QObject*)this));
 }
 
 void FileSystemModel::listEvent(const FileSystemModelEvent::Params *p)
@@ -486,8 +499,13 @@ void FileSystemModel::listEvent(const FileSystemModelEvent::Params *p)
 
 void FileSystemModel::update(FileSystemItem *fileSystemTree)
 {
+	QScopedPointer<UpdateFilesTask::Params> params(new UpdateFilesTask::Params());
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+	params->list = static_cast<FileSystemTree*>(fileSystemTree)->makeChangeSet();
+	params->receiver = (QObject*)this;
+
+	Application::instance()->taskPool().handle(new UpdateFilesTask(params.take()));
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-	Application::instance()->taskPool().handle(new UpdateFilesTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemTree*>(fileSystemTree)->makeChangeSet(), (QObject*)this));
 }
 
 void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
@@ -535,13 +553,18 @@ void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
 
 void FileSystemModel::scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry)
 {
+	QScopedPointer<ScanFilesForRemoveTask::Params> params(new ScanFilesForRemoveTask::Params());
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+	params->entry = static_cast<FileSystemEntry*>(entry);
+	params->receiver = (QObject*)this;
+
+	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
 	static_cast<FileSystemEntry*>(entry)->setLocked(true);
-	Application::instance()->taskPool().handle(new PopulateFilesForRemoveTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemEntry*>(entry), (QObject*)this));
 }
 
 void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const PopulateFilesForRemoveTask::EventParams *ParamsType;
+	typedef const ScanFilesForRemoveTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	if (QMessageBox::question(
@@ -571,13 +594,18 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 
 void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
 {
+	QScopedPointer<ScanFilesForSizeTask::Params> params(new ScanFilesForSizeTask::Params());
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+	params->entry = static_cast<FileSystemEntry*>(entry);
+	params->receiver = (QObject*)this;
+
+	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
 	static_cast<FileSystemEntry*>(entry)->setLocked(true);
-	Application::instance()->taskPool().handle(new PopulateFilesForSizeTask(static_cast<FileSystemTree*>(fileSystemTree), static_cast<FileSystemEntry*>(entry), (QObject*)this));
 }
 
 void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const PopulateFilesForSizeTask::EventParams *ParamsType;
+	typedef const ScanFilesForSizeTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 

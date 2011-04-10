@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
+#include <QtCore/QMutex>
 #include "../filesysteminfo.h"
 #include "../items/filesystemtree.h"
 #include "../events/filesystemmodelevents.h"
@@ -13,6 +14,18 @@
 class FilesTask : public TasksPool::Task
 {
 public:
+	struct Params : public QSharedData, public MemoryManagerTag
+	{
+		QObject *receiver;
+		FileSystemTree *fileSystemTree;
+
+	private:
+		friend class FilesTask;
+	    friend class DeleteHandler;
+		QMutex m_mutex;
+	};
+	typedef QExplicitlySharedDataPointer<Params> ParamsPointer;
+
 	struct EventParams : public FileSystemModelEvent::Params
 	{
 		FileSystemTree *fileSystemTree;
@@ -24,15 +37,16 @@ public:
 	 * in the same thread as "receiver" because of DeleteHandler!
 	 *
 	 */
-	FilesTask(FileSystemTree *tree, QObject *receiver);
+	FilesTask(Params *parameters);
 	virtual ~FilesTask();
 
 	static FileSystemInfo info(const QFileInfo &fileInfo);
 
 protected:
-    FileSystemTree *tree() const { return m_tree; }
-	QObject *receiver() const { return m_receiver; }
-	inline volatile bool isReceiverDead() const { return m_receiver == 0; }
+	/* Should be checked as well as "stopedFlag" in "run" function! */
+	inline volatile bool isReceiverDead() const { return m_params->receiver == 0; }
+
+	Params *parameters() const { return m_params.data(); }
 
     FileSystemInfo getInfo(const QFileInfo &fileInfo) const;
 #ifndef Q_OS_WIN
@@ -40,32 +54,31 @@ protected:
 #endif
 
 private:
+    friend class DeleteHandler;
     class DeleteHandler : public QObject
     {
     public:
     	DeleteHandler(FilesTask *task, QObject *parent) :
     		QObject(parent),
     		m_task(task),
-    		m_isDetached(false)
-    	{
-    		Q_ASSERT(task != 0);
-    	}
+    		m_params(m_task->m_params)
+    	{}
     	virtual ~DeleteHandler()
     	{
-    		if (m_task != 0) /* TODO: Fix it - race condition! */
-				m_task->m_receiver = m_task->m_handler = 0;
+    		QMutexLocker locker(&m_params->m_mutex);
+
+    		if (m_task != 0)
+				m_task->m_params->receiver = m_task->m_handler = 0;
     	}
 
     private:
     	friend class FilesTask;
     	FilesTask *m_task;
-    	bool m_isDetached;
+    	ParamsPointer m_params;
     };
-    friend class DeleteHandler;
 
 private:
-    FileSystemTree *m_tree;
-	QObject *m_receiver;
+    ParamsPointer m_params;
     DeleteHandler *m_handler;
 #ifndef Q_OS_WIN
     uint m_userId;

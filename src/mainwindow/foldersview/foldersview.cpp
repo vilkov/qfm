@@ -3,10 +3,11 @@
 #include <QScopedPointer>
 
 
-FoldersView::FoldersView(const QStringList &folders, QWidget *parent) :
+FoldersView::FoldersView(const QStringList &folders, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
     m_layout(this),
-    m_tabWidget(this)
+    m_tabWidget(this),
+	m_other(other)
 {
 	setLayout(&m_layout);
 	m_layout.setMargin(1);

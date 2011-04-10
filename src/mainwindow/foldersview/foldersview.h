@@ -19,16 +19,23 @@ class FoldersView : public QWidget
     Q_OBJECT
 
 public:
-    FoldersView(const QStringList &folders, QWidget *parent = 0);
+    typedef const FoldersView & FoldersViewRef;
+
+public:
+    FoldersView(const QStringList &folders, FoldersViewRef other, QWidget *parent = 0);
 
     void updateCurrentDirectory(const QFileInfo &info);
     void openInNewTab(const QFileInfo &fileInfo);
     void closeCurrentTab();
 	void setFocus();
 
+	FoldersViewRef other() const { return m_other; }
+	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
+
 private:
     QVBoxLayout m_layout;
     QTabWidget m_tabWidget;
+    FoldersViewRef m_other;
 };
 
 #endif /* FOLDERSVIEW_H_ */

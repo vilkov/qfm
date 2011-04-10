@@ -70,6 +70,12 @@ bool FileSystemModel::event(QEvent *e)
 			scanForCopyEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
+		case FileSystemModelEvent::ScanFilesForMove:
+		{
+			e->accept();
+			scanForMoveEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
+			return true;
+		}
 		default:
 			break;
 	}
@@ -498,6 +504,21 @@ void FileSystemModel::copy(const QModelIndex &index, FileSystemModel *destinatio
 	}
 }
 
+void FileSystemModel::move(const QModelIndex &index, FileSystemModel *destination)
+{
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
+	{
+		FileSystemEntry *entry = static_cast<FileSystemEntry*>(index.internalPointer());
+		entry->fileInfo().refresh();
+
+		if (entry->fileInfo().exists())
+			scanForMove(m_currentFsTree, entry, destination);
+		else
+			removeEntry(index);
+	}
+}
+
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
 	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
@@ -663,6 +684,27 @@ void FileSystemModel::scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem
 void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::Params *p)
 {
 	typedef const ScanFilesForCopyTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
+	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
+
+	params->entry->setLocked(false);
+}
+
+void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination)
+{
+	QScopedPointer<ScanFilesForMoveTask::Params> params(new ScanFilesForMoveTask::Params());
+	params->receiver = (QObject*)this;
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+	params->entry = static_cast<FileSystemEntry*>(entry);
+	params->destination = destination;
+
+	Application::instance()->taskPool().handle(new ScanFilesForMoveTask(params.take()));
+	static_cast<FileSystemEntry*>(entry)->setLocked(true);
+}
+
+void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
+{
+	typedef const ScanFilesForMoveTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 

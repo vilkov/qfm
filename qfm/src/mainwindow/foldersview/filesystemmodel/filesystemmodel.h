@@ -47,6 +47,7 @@ public:
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);
 	void copy(const QModelIndex &index, FileSystemModel *destination);
+	void move(const QModelIndex &index, FileSystemModel *destination);
 
 protected:
 	void list(FileSystemItem *fileSystemTree);
@@ -63,6 +64,9 @@ protected:
 
 	void scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForCopyEvent(const FileSystemModelEvent::Params *p);
+
+	void scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
+	void scanForMoveEvent(const FileSystemModelEvent::Params *p);
 
 protected:
 	bool isLocked() const;

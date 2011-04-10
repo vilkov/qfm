@@ -17,7 +17,7 @@ FilesTask::FilesTask(Params *parameters) :
 	Q_ASSERT(m_params);
 	Q_ASSERT(m_params->fileSystemTree);
 	Q_ASSERT(m_params->receiver);
-	Q_ASSERT(m_params->receiver->thread() != QThread::currentThread());
+	Q_ASSERT(m_params->receiver->thread() == QThread::currentThread());
 }
 
 FilesTask::~FilesTask()

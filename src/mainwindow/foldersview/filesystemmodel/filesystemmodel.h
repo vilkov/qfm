@@ -37,7 +37,6 @@ public:
 	void pathToClipboard(const QModelIndexList &list) const;
 	void pathToClipboard(const FileSystemModelAdaptor &list) const;
 	QModelIndex find(const QString &fileName) const;
-	void copy(const QModelIndex &index, FileSystemModel *destination) const;
 
 	void refresh();
 	void refreshSize(const QModelIndex &index);
@@ -47,6 +46,7 @@ public:
 	void rename(const QModelIndex &index, const QString &newFileName);
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);
+	void copy(const QModelIndex &index, FileSystemModel *destination);
 
 protected:
 	void list(FileSystemItem *fileSystemTree);
@@ -61,10 +61,14 @@ protected:
 	void scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForSizeEvent(const FileSystemModelEvent::Params *p);
 
+	void scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
+	void scanForCopyEvent(const FileSystemModelEvent::Params *p);
+
 protected:
 	bool isLocked() const;
 	QModelIndex index(int column, FileSystemItem *item) const;
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
+	void removeEntry(const QModelIndex &index);
 
 private:
 	FileSystemItem *m_currentFsTree;

@@ -15,7 +15,8 @@ public:
 		UpdateFiles = QEvent::User + 2,
 		ScanFilesForRemove = QEvent::User + 3,
 		ScanFilesForSize = QEvent::User + 4,
-		ScanFilesForCopy = QEvent::User + 5
+		ScanFilesForCopy = QEvent::User + 5,
+		ScanFilesForMove = QEvent::User + 6
 	};
 
 public:

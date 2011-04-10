@@ -105,3 +105,23 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 		Application::postEvent(parameters()->receiver, event.take());
 	}
 }
+
+ScanFilesForMoveTask::ScanFilesForMoveTask(Params *parameters) :
+	ScanFilesForCopyTask(parameters)
+{}
+
+void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
+{
+	ScanFilesTask::run(stopedFlag);
+
+	if (!stopedFlag && !isReceiverDead())
+	{
+		QScopedPointer<Event> event(new Event(Event::ScanFilesForMove));
+		event->params().fileSystemTree = parameters()->fileSystemTree;
+		event->params().size = parameters()->size;
+		event->params().entry = parameters()->entry;
+		event->params().subtree = parameters()->subtree;
+		event->params().destination = parameters()->destination;
+		Application::postEvent(parameters()->receiver, event.take());
+	}
+}

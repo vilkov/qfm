@@ -75,4 +75,13 @@ protected:
 	Params *parameters() const { return static_cast<Params*>(FilesTask::parameters()); }
 };
 
+
+class ScanFilesForMoveTask : public ScanFilesForCopyTask
+{
+public:
+	ScanFilesForMoveTask(Params *parameters);
+
+	virtual void run(const volatile bool &stopedFlag);
+};
+
 #endif /* SCANFILESTASK_H_ */

@@ -8,6 +8,10 @@
 class UpdateFilesTask : public FilesTask
 {
 public:
+	struct Params : public FilesTask::Params
+	{
+		ChangesList list;
+	};
 	struct EventParams : public FilesTask::EventParams
 	{
 		bool isLastEvent;
@@ -16,15 +20,15 @@ public:
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
-	UpdateFilesTask(FileSystemTree *tree, const ChangesList &list, QObject *receiver);
+	UpdateFilesTask(Params *parameters);
 
 	virtual void run(const volatile bool &stopedFlag);
 
-private:
-    ChangesList::size_type indexOf(const QString &directoryPath, const ChangesList &list) const;
+protected:
+	Params *parameters() const { return static_cast<Params*>(FilesTask::parameters()); }
 
 private:
-    ChangesList m_list;
+    ChangesList::size_type indexOf(const QString &directoryPath, const ChangesList &list) const;
 };
 
 #endif /* UPDATEFILESTASK_H_ */

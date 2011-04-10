@@ -6,8 +6,8 @@
 #include <QScopedPointer>
 
 
-ListFilesTask::ListFilesTask(FileSystemTree *tree, QObject *receiver) :
-	FilesTask(tree, receiver)
+ListFilesTask::ListFilesTask(Params *parameters) :
+	FilesTask(parameters)
 {}
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
@@ -18,7 +18,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 	QTime base = QTime::currentTime();
 	QTime current;
 	QList<FileSystemInfo> updatedFiles;
-	QDirIterator dirIt(tree()->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(parameters()->fileSystemTree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	while (!stopedFlag && !isReceiverDead() && dirIt.hasNext())
 	{
@@ -29,10 +29,11 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		if (base.msecsTo(current) > 300)
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().fileSystemTree = tree();
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = false;
 			event->params().updates = updatedFiles;
-			Application::postEvent(receiver(), event.take());
+			Application::postEvent(parameters()->receiver, event.take());
+
 			updatedFiles.clear();
 			base = current;
 		}
@@ -42,17 +43,17 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		if (updatedFiles.isEmpty())
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().fileSystemTree = tree();
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
-			Application::postEvent(receiver(), event.take());
+			Application::postEvent(parameters()->receiver, event.take());
 		}
 		else
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().fileSystemTree = tree();
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			event->params().updates = updatedFiles;
-			Application::postEvent(receiver(), event.take());
+			Application::postEvent(parameters()->receiver, event.take());
 		}
 
 	iconProvider.unlock();

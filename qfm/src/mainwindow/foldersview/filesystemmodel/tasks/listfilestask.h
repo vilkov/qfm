@@ -15,7 +15,7 @@ public:
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
-	ListFilesTask(FileSystemTree *tree, QObject *receiver);
+	ListFilesTask(Params *parameters);
 
 	virtual void run(const volatile bool &stopedFlag);
 };

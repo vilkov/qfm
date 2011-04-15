@@ -14,13 +14,8 @@ ScanFilesTask::ScanFilesTask(Params *parameters) :
 
 void ScanFilesTask::run(const volatile bool &stopedFlag)
 {
-	IconProvider &iconProvider = Application::instance()->iconProvider();
-	iconProvider.lock();
-
 	QScopedPointer<FileSystemTree> subtree(new FileSystemTree(parameters()->entry->fileInfo().absoluteFilePath()));
 	scan(subtree.data(), stopedFlag);
-
-	iconProvider.unlock();
 	parameters()->subtree = subtree.take();
 }
 

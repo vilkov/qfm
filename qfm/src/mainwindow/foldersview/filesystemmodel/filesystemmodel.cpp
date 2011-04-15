@@ -386,13 +386,13 @@ void FileSystemModel::activated(const QModelIndex &index)
 
 void FileSystemModel::setCurrentDirectory(const QString &filePath)
 {
-	QFileInfo info(filePath);
+	FileSystemInfo info(filePath);
 
 	if (info.exists())
 		setCurrentDirectory(info);
 }
 
-void FileSystemModel::setCurrentDirectory(const QFileInfo &info)
+void FileSystemModel::setCurrentDirectory(const FileSystemInfo &info)
 {
 	if (isLocked())
 		return;
@@ -429,7 +429,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
 		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
 	{
-		QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
+		FileSystemInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
 		info.refresh();
 
 		if (info.exists())
@@ -438,7 +438,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 			if (dir.rename(info.fileName(), newFileName))
 			{
-				static_cast<FileSystemEntry*>(index.internalPointer())->update(FilesTask::info(QFileInfo(dir.absoluteFilePath(newFileName))));
+				static_cast<FileSystemEntry*>(index.internalPointer())->update(FilesTask::info(FileSystemInfo(dir.absoluteFilePath(newFileName))));
 				emit dataChanged(index, index);
 			}
 		}
@@ -449,7 +449,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 void FileSystemModel::createDirectory(const QString &dirName)
 {
-	const QFileInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
+	const FileSystemInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 
 	if (info.exists())
 	{
@@ -458,7 +458,7 @@ void FileSystemModel::createDirectory(const QString &dirName)
 		if (dir.mkdir(dirName))
 		{
 			beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size());
-			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FilesTask::info(QFileInfo(dir.absoluteFilePath(dirName))));
+			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FilesTask::info(FileSystemInfo(dir.absoluteFilePath(dirName))));
 			endInsertRows();
 		}
 	}
@@ -469,7 +469,7 @@ void FileSystemModel::remove(const QModelIndex &index)
 	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
 		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
 	{
-		QFileInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
+		FileSystemInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
 		info.refresh();
 
 		if (info.exists())
@@ -610,7 +610,9 @@ void FileSystemModel::scanForRemove(FileSystemItem *fileSystemTree, FileSystemIt
 	params->entry = static_cast<FileSystemEntry*>(entry);
 
 	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->setLocked(true);
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for remove..."));
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
@@ -640,7 +642,7 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 	else
 		static_cast<FileSystemTree*>(params->fileSystemTree)->setSubtree(params->entry, params->subtree);
 
-	params->entry->setLocked(false);
+	params->entry->unlock();
 }
 
 void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
@@ -651,7 +653,9 @@ void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem
 	params->entry = static_cast<FileSystemEntry*>(entry);
 
 	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->setLocked(true);
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for size..."));
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
@@ -666,7 +670,7 @@ void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 		emit dataChanged(index, index);
 	}
 
-	params->entry->setLocked(false);
+	params->entry->unlock();
 }
 
 void FileSystemModel::scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination)
@@ -678,7 +682,9 @@ void FileSystemModel::scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem
 	params->destination = destination;
 
 	Application::instance()->taskPool().handle(new ScanFilesForCopyTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->setLocked(true);
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for copy..."));
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::Params *p)
@@ -687,7 +693,7 @@ void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::Params *p)
 	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
-	params->entry->setLocked(false);
+	params->entry->unlock();
 }
 
 void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination)
@@ -699,7 +705,9 @@ void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem
 	params->destination = destination;
 
 	Application::instance()->taskPool().handle(new ScanFilesForMoveTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->setLocked(true);
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for move..."));
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
@@ -708,7 +716,7 @@ void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
 	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
-	params->entry->setLocked(false);
+	params->entry->unlock();
 }
 
 bool FileSystemModel::isLocked() const

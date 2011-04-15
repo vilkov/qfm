@@ -2,16 +2,18 @@
 #define DIRECTORYVIEW_H
 
 #include <QtGui/QWidget>
+#include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include "foldersview.h"
 #include "widgets/pathedit.h"
-#include "widgets/directorylistview.h"
 #include "filesystemmodel/filesystemmodel.h"
 #include "filesystemmodel/filesystemproxymodel.h"
 #include "filesystemmodel/filesystemdecorationdelegate.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
+#include "../../tools/events/imp/mouseeventsource.h"
+#include "../../tools/events/imp/keyboardeventsource.h"
 
 
 class DirectoryView : public QWidget
@@ -80,6 +82,13 @@ private Q_SLOTS:
 	void actHeaderHistory();
 
 private:
+	typedef MouseDoubleClickEventSource<
+				KeyboardEventSource<
+					EventSourceBase<
+						QTreeView
+					>
+				>
+			> DirectoryListView;
 	typedef MouseDoubleClickEventHandler<
 				KeyboardEventHandler<
 					EventHandlerBase<

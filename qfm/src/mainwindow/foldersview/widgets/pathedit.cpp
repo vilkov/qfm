@@ -5,7 +5,9 @@
 PathEdit::PathEdit(EventHandler *eventHandler, QWidget *parent) :
 	QLineEdit(parent),
 	m_eventHandler(eventHandler)
-{}
+{
+	Q_ASSERT(m_eventHandler != 0);
+}
 
 void PathEdit::startEdit()
 {

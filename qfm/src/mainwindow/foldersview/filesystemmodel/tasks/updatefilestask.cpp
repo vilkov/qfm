@@ -17,9 +17,6 @@ UpdateFilesTask::UpdateFilesTask(Params *parameters) :
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
 {
-	IconProvider &iconProvider = Application::instance()->iconProvider();
-	iconProvider.lock();
-
 	QTime base = QTime::currentTime();
 	QTime current;
 
@@ -82,8 +79,6 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 			Application::postEvent(parameters()->receiver, event.take());
 		}
 	}
-
-	iconProvider.unlock();
 }
 
 ChangesList::size_type UpdateFilesTask::indexOf(const QString &directoryPath, const ChangesList &list) const

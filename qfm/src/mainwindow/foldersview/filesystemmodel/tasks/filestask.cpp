@@ -33,34 +33,24 @@ FilesTask::~FilesTask()
 
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)
 {
-	IconProvider &iconProvider = Application::instance()->iconProvider();
-	iconProvider.lock();
-
 	FileSystemInfo info(fileInfo);
-    info.setIcon(iconProvider.iconProvider()->icon(fileInfo));
 #ifdef Q_OS_WIN
     info.setPermissions(fileInfo.permissions());
 #else
     info.setPermissions(translatePermissions(fileInfo, getuid(), getgid()));
 #endif
-    info.setDisplayType(iconProvider.iconProvider()->type(fileInfo));
 
-    iconProvider.unlock();
     return info;
 }
 
 FileSystemInfo FilesTask::getInfo(const QFileInfo &fileInfo) const
 {
-	IconProvider &iconProvider = Application::instance()->iconProvider();
-
     FileSystemInfo info(fileInfo);
-    info.setIcon(iconProvider.iconProvider()->icon(fileInfo));
 #ifdef Q_OS_WIN
     info.setPermissions(fileInfo.permissions());
 #else
     info.setPermissions(translatePermissions(fileInfo, m_userId, m_groupId));
 #endif
-    info.setDisplayType(iconProvider.iconProvider()->type(fileInfo));
 
     return info;
 }

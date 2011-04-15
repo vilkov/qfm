@@ -1,8 +1,9 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
-#include <QThread>
-#include <QApplication>
+#include <QtCore/QThread>
+#include <QtGui/QApplication>
+#include <QtGui/QFileIconProvider>
 //#include <QtSingleInstance/QSingleApplication>
 #include "tools/exceptionshandler/exceptionshandler.h"
 #include "tools/taskspool/taskpool.h"
@@ -21,7 +22,7 @@ public:
 
 	virtual bool notify(QObject *receiver, QEvent *event);
 
-	IconProvider &iconProvider() { return m_iconProvider; }
+	QFileIconProvider &iconProvider() { return m_iconProvider; }
 	TasksPool::TaskPool &taskPool() { return m_taskPool; }
 	ApplicationSettings &config() { return m_settings; }
 	MainWindow &mainWindow() { return m_mainWindow; }
@@ -35,7 +36,7 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const QString &message);
 
 private:
-	IconProvider m_iconProvider;
+	QFileIconProvider m_iconProvider;
 	TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
 	MainWindow m_mainWindow;

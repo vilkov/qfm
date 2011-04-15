@@ -1,5 +1,6 @@
 #include "filesystementry.h"
 #include "../visitor/filesystemmodelvisitor.h"
+#include "../../../../application.h"
 
 
 FileSystemEntry::FileSystemEntry(const FileSystemInfo &info, FileSystemItem *parent) :
@@ -24,13 +25,19 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_info.fileInfo().fileName();
+					return m_info.fileName();
 				case Qt::DecorationRole:
-					return m_info.icon();
+					if (m_locked)
+						return Application::style()->standardIcon(QStyle::SP_BrowserReload);
+					else
+						return m_info.icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
-//					case Qt::ToolTipRole:
-//						return QDir::toNativeSeparators(QDir::cleanPath(m_info.fileInfo().absoluteDir().absolutePath()));
+				case Qt::ToolTipRole:
+					if (m_locked)
+						return m_lockReason;
+					else
+						break;
 			}
 			break;
 		}
@@ -40,15 +47,13 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					if (m_info.fileInfo().isFile())
-						return humanReadableSize(m_info.fileInfo().size());
+					if (m_info.isFile())
+						return humanReadableSize(m_info.size());
 					else
 						if (m_fileSize.isNull())
 							return QString::fromLatin1("<DIR>");
 						else
 							return humanReadableSize(m_fileSize.toULongLong());
-//					case Qt::DecorationRole:
-//						return m_info.icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 //					case Qt::ToolTipRole:
@@ -62,7 +67,7 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_info.fileInfo().lastModified();
+					return m_info.lastModified();
 //					case Qt::DecorationRole:
 //						return m_info.icon();
 				case Qt::TextAlignmentRole:
@@ -80,6 +85,18 @@ QVariant FileSystemEntry::data(qint32 column, qint32 role) const
 void FileSystemEntry::accept(FileSystemModelVisitor *visitor) const
 {
 	visitor->visit(this);
+}
+
+void FileSystemEntry::lock(const QString &reason)
+{
+	m_locked = true;
+	m_lockReason = reason;
+}
+
+void FileSystemEntry::unlock()
+{
+	m_locked = false;
+	m_lockReason.clear();
 }
 
 QString FileSystemEntry::humanReadableSize(quint64 size) const

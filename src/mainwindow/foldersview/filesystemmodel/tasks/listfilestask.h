@@ -15,7 +15,7 @@ public:
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
-	ListFilesTask(Params *parameters);
+	ListFilesTask(Params *params);
 
 	virtual void run(const volatile bool &stopedFlag);
 };

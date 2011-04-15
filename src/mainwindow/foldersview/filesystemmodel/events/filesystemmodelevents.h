@@ -16,7 +16,8 @@ public:
 		ScanFilesForRemove = QEvent::User + 3,
 		ScanFilesForSize = QEvent::User + 4,
 		ScanFilesForCopy = QEvent::User + 5,
-		ScanFilesForMove = QEvent::User + 6
+		ScanFilesForMove = QEvent::User + 6,
+		QuestionAnswer = QEvent::User + 7
 	};
 
 public:

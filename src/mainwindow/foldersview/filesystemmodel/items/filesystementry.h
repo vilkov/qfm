@@ -19,10 +19,8 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual void accept(FileSystemModelVisitor *visitor) const;
 
-	QIcon icon() const { return m_info.icon(); }
-
-	const QFileInfo &fileInfo() const { return m_info.fileInfo(); }
-	QFileInfo &fileInfo() { return m_info.fileInfo(); }
+	const FileSystemInfo &fileInfo() const { return m_info; }
+	FileSystemInfo &fileInfo() { return m_info; }
 
 	void update(const FileSystemInfo &info) { m_info = info; }
 
@@ -30,12 +28,14 @@ public:
 	void setFileSize(const QVariant &value) { m_fileSize = value; }
 
 	bool isLocked() const { return m_locked; }
-	void setLocked(bool value) { m_locked = value; }
+	void lock(const QString &reason);
+	void unlock();
 
 	QString humanReadableSize(quint64 size) const;
 
 private:
 	bool m_locked;
+	QString m_lockReason;
 	QVariant m_fileSize;
 	FileSystemInfo m_info;
 };

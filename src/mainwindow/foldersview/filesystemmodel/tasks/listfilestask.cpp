@@ -12,9 +12,6 @@ ListFilesTask::ListFilesTask(Params *parameters) :
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
 {
-	IconProvider &iconProvider = Application::instance()->iconProvider();
-	iconProvider.lock();
-
 	QTime base = QTime::currentTime();
 	QTime current;
 	QList<FileSystemInfo> updatedFiles;
@@ -55,6 +52,4 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 			event->params().updates = updatedFiles;
 			Application::postEvent(parameters()->receiver, event.take());
 		}
-
-	iconProvider.unlock();
 }

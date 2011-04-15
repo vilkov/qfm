@@ -2,7 +2,6 @@
 #define FILESYSTEMMODEL_H_
 
 #include <QAbstractItemModel>
-#include <QFileIconProvider>
 #include "filesystemmodeladaptor.h"
 #include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
@@ -42,7 +41,7 @@ public:
 	void refreshSize(const QModelIndex &index);
 	void activated(const QModelIndex &index);
 	void setCurrentDirectory(const QString &filePath);
-	void setCurrentDirectory(const QFileInfo &info);
+	void setCurrentDirectory(const FileSystemInfo &info);
 	void rename(const QModelIndex &index, const QString &newFileName);
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);

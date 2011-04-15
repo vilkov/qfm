@@ -1,5 +1,5 @@
 #include "filesystemdecorationdelegate.h"
-#include <QApplication>
+#include <QtGui/QApplication>
 
 
 FileSystemDecorationDelegate::FileSystemDecorationDelegate(QObject *parent) :

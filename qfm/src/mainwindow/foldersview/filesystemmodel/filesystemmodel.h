@@ -67,6 +67,8 @@ protected:
 	void scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForMoveEvent(const FileSystemModelEvent::Params *p);
 
+	void questionAnswerEvent(const FileSystemModelEvent::Params *p);
+
 protected:
 	bool isLocked() const;
 	QModelIndex index(int column, FileSystemItem *item) const;

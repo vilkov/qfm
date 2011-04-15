@@ -6,8 +6,8 @@
 #include <QScopedPointer>
 
 
-ListFilesTask::ListFilesTask(Params *parameters) :
-	FilesTask(parameters)
+ListFilesTask::ListFilesTask(Params *params) :
+	FilesTask(params, params->receiver)
 {}
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
@@ -17,7 +17,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 	QList<FileSystemInfo> updatedFiles;
 	QDirIterator dirIt(parameters()->fileSystemTree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!stopedFlag && !isReceiverDead() && dirIt.hasNext())
+	while (!stopedFlag && !shouldTerminate() && dirIt.hasNext())
 	{
 		dirIt.next();
 		current = QTime::currentTime();
@@ -36,7 +36,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 		if (updatedFiles.isEmpty())
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));

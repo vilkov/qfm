@@ -5,6 +5,7 @@
 #include "tasks/listfilestask.h"
 #include "tasks/updatefilestask.h"
 #include "tasks/scanfilestask.h"
+#include "tasks/performtask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
@@ -74,6 +75,12 @@ bool FileSystemModel::event(QEvent *e)
 		{
 			e->accept();
 			scanForMoveEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
+			return true;
+		}
+		case FileSystemModelEvent::QuestionAnswer:
+		{
+			e->accept();
+			questionAnswerEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
 		default:
@@ -641,8 +648,6 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 		}
 	else
 		static_cast<FileSystemTree*>(params->fileSystemTree)->setSubtree(params->entry, params->subtree);
-
-	params->entry->unlock();
 }
 
 void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
@@ -666,8 +671,8 @@ void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 
 	if (m_currentFsTree == params->fileSystemTree)
 	{
-		QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 1, params->entry);
-		emit dataChanged(index, index);
+		FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
+		emit dataChanged(createIndex(index, 0, params->entry), createIndex(index, 1, params->entry));
 	}
 
 	params->entry->unlock();
@@ -717,6 +722,14 @@ void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
 	params->entry->unlock();
+}
+
+void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::Params *p)
+{
+	typedef PerformTask::QuestionAnswerParams * ParamsType;
+	ParamsType params = (ParamsType)p;
+	params->answer = QMessageBox::question(&Application::instance()->mainWindow(), tr("Some title"), params->question, params->buttons);
+	params->condition.wakeAll();
 }
 
 bool FileSystemModel::isLocked() const

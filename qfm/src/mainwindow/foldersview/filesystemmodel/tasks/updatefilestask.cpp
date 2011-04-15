@@ -9,10 +9,10 @@
 #include <QScopedPointer>
 
 
-UpdateFilesTask::UpdateFilesTask(Params *parameters) :
-	FilesTask(parameters)
+UpdateFilesTask::UpdateFilesTask(Params *params) :
+	FilesTask(params, params->receiver)
 {
-	Q_ASSERT(!parameters->list.isEmpty());
+	Q_ASSERT(!params->list.isEmpty());
 }
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
@@ -26,7 +26,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	ChangesList::size_type index;
 	QDirIterator dirIt(parameters()->fileSystemTree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while(!stopedFlag && !isReceiverDead() && dirIt.hasNext())
+	while(!stopedFlag && !shouldTerminate() && dirIt.hasNext())
 	{
 		current = QTime::currentTime();
 
@@ -58,7 +58,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		}
 	}
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 	{
 		for (ChangesList::size_type i = 0, size = parameters()->list.size(); i < size; ++i)
 			updatedFiles.push_back(Change(Change::Deleted, parameters()->list.at(i).entry()));

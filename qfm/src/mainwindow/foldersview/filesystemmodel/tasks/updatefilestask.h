@@ -20,7 +20,7 @@ public:
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
-	UpdateFilesTask(Params *parameters);
+	UpdateFilesTask(Params *params);
 
 	virtual void run(const volatile bool &stopedFlag);
 

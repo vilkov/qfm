@@ -28,6 +28,7 @@ public:
 	void setFileSize(const QVariant &value) { m_fileSize = value; }
 
 	bool isLocked() const { return m_locked; }
+	const QString &lockReason() const { return m_lockReason; }
 	void lock(const QString &reason);
 	void unlock();
 

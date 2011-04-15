@@ -6,29 +6,37 @@
 #endif
 
 
-FilesTask::FilesTask(Params *parameters) :
-	m_params(parameters),
-	m_handler(new DeleteHandler(this, m_params->receiver))
+FilesTask::FilesTask(Params *params, QObject *controller1) :
+	ControlableTask(params, controller1)
 #ifndef Q_OS_WIN
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
 {
-	Q_ASSERT(m_params);
-	Q_ASSERT(m_params->fileSystemTree);
-	Q_ASSERT(m_params->receiver);
-	Q_ASSERT(m_params->receiver->thread() == QThread::currentThread());
+	Q_ASSERT(params->fileSystemTree);
+	Q_ASSERT(params->receiver);
 }
 
-FilesTask::~FilesTask()
+FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2) :
+	ControlableTask(params, controller1, controller2)
+#ifndef Q_OS_WIN
+    ,m_userId(getuid())
+    ,m_groupId(getgid())
+#endif
 {
-	QMutexLocker locker(&m_params->m_mutex);
+	Q_ASSERT(params->fileSystemTree);
+	Q_ASSERT(params->receiver);
+}
 
-	if (m_handler)
-	{
-		m_handler->m_task = 0;
-		m_handler->deleteLater();
-	}
+FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
+	ControlableTask(params, controller1, controller2, controller3)
+#ifndef Q_OS_WIN
+    ,m_userId(getuid())
+    ,m_groupId(getgid())
+#endif
+{
+	Q_ASSERT(params->fileSystemTree);
+	Q_ASSERT(params->receiver);
 }
 
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)

@@ -20,7 +20,7 @@ public:
 		if (entry->isLocked())
 		{
 			m_entrys[static_cast<FileSystemTree*>(entry->parent())].push_back(entry);
-			m_directories.push_back(entry->fileInfo().absoluteFilePath());
+			m_directories.push_back(QString(QChar('\"')).append(entry->fileInfo().absoluteFilePath()).append(QChar('\"')));
 		}
 	}
 

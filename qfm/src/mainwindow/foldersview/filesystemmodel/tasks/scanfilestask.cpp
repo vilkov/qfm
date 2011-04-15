@@ -6,10 +6,22 @@
 #include <QScopedPointer>
 
 
-ScanFilesTask::ScanFilesTask(Params *parameters) :
-	FilesTask(parameters)
+ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1) :
+	FilesTask(params, controller1)
 {
-	Q_ASSERT(parameters->entry);
+	Q_ASSERT(params->entry);
+}
+
+ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1, QObject *controller2) :
+	FilesTask(params, controller1, controller2)
+{
+	Q_ASSERT(params->entry);
+}
+
+ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
+	FilesTask(params, controller1, controller2, controller3)
+{
+	Q_ASSERT(params->entry);
 }
 
 void ScanFilesTask::run(const volatile bool &stopedFlag)
@@ -24,7 +36,7 @@ void ScanFilesTask::scan(FileSystemTree *tree, const volatile bool &stopedFlag)
 	QFileInfo info;
 	QDirIterator dirIt(tree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!stopedFlag && !isReceiverDead() && dirIt.hasNext())
+	while (!stopedFlag && !shouldTerminate() && dirIt.hasNext())
 	{
 		dirIt.next();
 		tree->add<FileSystemEntry>(getInfo(info = dirIt.fileInfo()));
@@ -42,15 +54,15 @@ void ScanFilesTask::scan(FileSystemTree *tree, const volatile bool &stopedFlag)
 }
 
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(Params *parameters) :
-	ScanFilesTask(parameters)
+ScanFilesForSizeTask::ScanFilesForSizeTask(Params *params) :
+	ScanFilesTask(params, params->receiver)
 {}
 
 void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 {
 	ScanFilesTask::run(stopedFlag);
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForSize));
 		event->params().fileSystemTree = parameters()->fileSystemTree;
@@ -62,15 +74,15 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(Params *parameters) :
-	ScanFilesTask(parameters)
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(Params *params) :
+	ScanFilesTask(params, params->receiver)
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 {
 	ScanFilesTask::run(stopedFlag);
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForRemove));
 		event->params().fileSystemTree = parameters()->fileSystemTree;
@@ -81,15 +93,28 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 	}
 }
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(Params *parameters) :
-	ScanFilesTask(parameters)
+
+ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params, QObject *controller1) :
+	ScanFilesTask(params, controller1)
+{}
+
+ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params, QObject *controller1, QObject *controller2) :
+	ScanFilesTask(params, controller1, controller2)
+{}
+
+ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
+	ScanFilesTask(params, controller1, controller2, controller3)
+{}
+
+ScanFilesForCopyTask::ScanFilesForCopyTask(Params *params) :
+	ScanFilesWithDestinationTask(params, params->receiver, params->destination)
 {}
 
 void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 {
-	ScanFilesTask::run(stopedFlag);
+	ScanFilesWithDestinationTask::run(stopedFlag);
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForCopy));
 		event->params().fileSystemTree = parameters()->fileSystemTree;
@@ -101,15 +126,15 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 	}
 }
 
-ScanFilesForMoveTask::ScanFilesForMoveTask(Params *parameters) :
-	ScanFilesForCopyTask(parameters)
+ScanFilesForMoveTask::ScanFilesForMoveTask(Params *params) :
+	ScanFilesWithDestinationTask(params, params->receiver, params->destination)
 {}
 
 void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
 {
-	ScanFilesTask::run(stopedFlag);
+	ScanFilesWithDestinationTask::run(stopedFlag);
 
-	if (!stopedFlag && !isReceiverDead())
+	if (!stopedFlag && !shouldTerminate())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForMove));
 		event->params().fileSystemTree = parameters()->fileSystemTree;

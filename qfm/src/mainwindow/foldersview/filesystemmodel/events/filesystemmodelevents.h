@@ -14,10 +14,12 @@ public:
 		ListFiles = QEvent::User + 1,
 		UpdateFiles = QEvent::User + 2,
 		ScanFilesForRemove = QEvent::User + 3,
-		ScanFilesForSize = QEvent::User + 4,
-		ScanFilesForCopy = QEvent::User + 5,
-		ScanFilesForMove = QEvent::User + 6,
-		QuestionAnswer = QEvent::User + 7
+		RemoveFilesComplete = QEvent::User + 4,
+		RemoveFilesCanceled = QEvent::User + 5,
+		ScanFilesForSize = QEvent::User + 6,
+		ScanFilesForCopy = QEvent::User + 7,
+		ScanFilesForMove = QEvent::User + 8,
+		QuestionAnswer = QEvent::User + 9
 	};
 
 public:

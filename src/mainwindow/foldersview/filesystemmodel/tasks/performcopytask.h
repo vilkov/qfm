@@ -43,6 +43,7 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
 private:
+	void copy(const QString &destination, FileSystemTree *tree, const volatile bool &stopedFlag);
 };
 
 #endif /* PERFORMCOPYTASK_H_ */

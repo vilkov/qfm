@@ -13,7 +13,12 @@ PerformCopyTask::PerformCopyTask(Params *params) :
 
 void PerformCopyTask::run(const volatile bool &stopedFlag)
 {
-	QDir dir(parameters()->destinationDirectory);
+	copy(parameters()->destinationDirectory, parameters()->fileSystemTree, stopedFlag);
+}
+
+void PerformCopyTask::copy(const QString &destination, FileSystemTree *tree, const volatile bool &stopedFlag)
+{
+	QDir dir(destination);
 
 	if (dir.exists())
 	{

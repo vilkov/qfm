@@ -1,7 +1,6 @@
 #ifndef SCANFILESTASK_H_
 #define SCANFILESTASK_H_
 
-#include <QtCore/QAbstractItemModel>
 #include "filestask.h"
 
 
@@ -64,11 +63,11 @@ class ScanFilesWithDestinationTask : public ScanFilesTask
 public:
 	struct Params : public ScanFilesTask::Params
 	{
-		QAbstractItemModel *destination;
+		QObject *destination;
 	};
 	struct EventParams : public ScanFilesTask::EventParams
 	{
-		QAbstractItemModel *destination;
+		QObject *destination;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 

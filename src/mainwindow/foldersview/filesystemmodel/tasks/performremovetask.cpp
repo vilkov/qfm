@@ -19,11 +19,14 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	QScopedPointer<FileSystemTree> subtree(parameters()->subtree);
 	remove(subtree.data(), stopedFlag);
 
-	QScopedPointer<Event> event(new Event(m_canceled ? Event::RemoveFilesCanceled : Event::RemoveFilesComplete));
-	event->params().fileSystemTree = parameters()->fileSystemTree;
-	event->params().entry = parameters()->entry;
-	event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-	Application::postEvent(parameters()->receiver, event.take());
+	if (!stopedFlag)
+	{
+		QScopedPointer<Event> event(new Event(m_canceled ? Event::RemoveFilesCanceled : Event::RemoveFilesComplete));
+		event->params().fileSystemTree = parameters()->fileSystemTree;
+		event->params().entry = parameters()->entry;
+		event->params().shoulRemoveEntry = m_shoulRemoveEntry;
+		Application::postEvent(parameters()->receiver, event.take());
+	}
 }
 
 void PerformRemoveTask::remove(FileSystemTree *tree, const volatile bool &stopedFlag)

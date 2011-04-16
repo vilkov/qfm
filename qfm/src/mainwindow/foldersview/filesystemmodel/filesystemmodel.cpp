@@ -657,16 +657,28 @@ void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
 	typedef const PerformRemoveTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	if (params->fileSystemTree == m_currentFsTree)
-	{
-		FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
+	if (params->shoulRemoveEntry)
+		if (params->fileSystemTree == m_currentFsTree)
+		{
+			FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
 
-		beginRemoveRows(QModelIndex(), index, index);
-		static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
-		endRemoveRows();
-	}
+			beginRemoveRows(QModelIndex(), index, index);
+			static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
+			endRemoveRows();
+		}
+		else
+			params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
 	else
-		params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
+	{
+		params->fileSystemTree->setSubtree(params->entry, 0);
+		params->entry->unlock();
+
+		if (params->fileSystemTree == m_currentFsTree)
+		{
+			QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 0, params->entry);
+			emit dataChanged(index, index);
+		}
+	}
 }
 
 void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
@@ -674,6 +686,7 @@ void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
 	typedef const PerformRemoveTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
+	params->fileSystemTree->setSubtree(params->entry, 0);
 	params->entry->unlock();
 
 	if (params->fileSystemTree == m_currentFsTree)

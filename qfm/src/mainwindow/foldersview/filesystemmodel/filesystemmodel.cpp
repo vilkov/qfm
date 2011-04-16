@@ -5,7 +5,7 @@
 #include "tasks/listfilestask.h"
 #include "tasks/updatefilestask.h"
 #include "tasks/scanfilestask.h"
-#include "tasks/performtask.h"
+#include "tasks/performremovetask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"

@@ -57,6 +57,8 @@ protected:
 
 	void scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForRemoveEvent(const FileSystemModelEvent::Params *p);
+	void removeCompleteEvent(const FileSystemModelEvent::Params *p);
+	void removeCanceledEvent(const FileSystemModelEvent::Params *p);
 
 	void scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForSizeEvent(const FileSystemModelEvent::Params *p);

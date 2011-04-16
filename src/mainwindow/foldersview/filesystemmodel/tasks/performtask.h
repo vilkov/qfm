@@ -3,8 +3,10 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QWaitCondition>
+#include <QtCore/QMutex>
 #include <QtGui/QMessageBox>
 #include "controlabletask.h"
+#include "scanfilestask.h"
 #include "../items/filesystemtree.h"
 #include "../events/filesystemmodelevents.h"
 
@@ -25,10 +27,43 @@ public:
 
 	struct QuestionAnswerParams : public FileSystemModelEvent::Params
 	{
+		class Result
+		{
+		public:
+			Result() :
+				m_answer(0)
+			{}
+
+			void lock() { m_mutex.lock(); }
+			void setAnswer(qint32 value) { m_answer = value; }
+			void unlock() { m_mutex.unlock(); }
+
+			bool waitFor(const volatile bool &stopedFlag)
+			{
+				QMutexLocker locker(&m_mutex);
+
+				while (!stopedFlag)
+				{
+					m_condition.wait(&m_mutex, 1000);
+
+					if (m_answer > 0)
+						return true;
+				}
+
+				return false;
+			}
+			qint32 answer() { return m_answer; }
+
+		private:
+			qint32 m_answer;
+			QMutex m_mutex;
+			QWaitCondition m_condition;
+		};
+
+		QString title;
 		QString question;
-		int answer;
-		QWaitCondition condition;
 		QMessageBox::StandardButtons buttons;
+		Result *result;
 	};
 	typedef FileSystemModelEventTemplate<QuestionAnswerParams> QuestionAnswerEvent;
 
@@ -50,6 +85,14 @@ class PerformRemoveTask : public PerformTask
 public:
 	struct Params : public PerformTask::Params
 	{
+		Params(QObject *rcv, const ScanFilesForRemoveTask::EventParams &params) :
+			entry(params.entry),
+			subtree(params.subtree)
+		{
+			receiver = rcv;
+			fileSystemTree = params.fileSystemTree;
+		}
+
 		FileSystemEntry *entry;
 		FileSystemTree *subtree;
 	};
@@ -68,7 +111,13 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
 private:
-	bool remove(FileSystemTree *tree, const volatile bool &stopedFlag);
+	void remove(FileSystemTree *tree, const volatile bool &stopedFlag);
+	void removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
+
+private:
+	bool m_skipAllIfNotRemove;
+	bool m_skipAllIfNotExists;
+	volatile bool m_canceled;
 };
 
 #endif /* PERFORMTASK_H_ */

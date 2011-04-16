@@ -59,6 +59,18 @@ bool FileSystemModel::event(QEvent *e)
 			scanForRemoveEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
+		case FileSystemModelEvent::RemoveFilesComplete:
+		{
+			e->accept();
+			removeCompleteEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
+			return true;
+		}
+		case FileSystemModelEvent::RemoveFilesCanceled:
+		{
+			e->accept();
+			removeCanceledEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
+			return true;
+		}
 		case FileSystemModelEvent::ScanFilesForSize:
 		{
 			e->accept();
@@ -632,22 +644,43 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 			tr("Remove directory..."),
 			tr("Would you like to remove \"%1\" directory?").arg(static_cast<FileSystemEntry*>(params->entry)->fileInfo().absoluteFilePath()),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-		if (params->fileSystemTree == m_currentFsTree)
-		{
-			FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
-
-			beginRemoveRows(QModelIndex(), index, index);
-			static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
-			delete params->subtree;
-			endRemoveRows();
-		}
-		else
-		{
-			params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
-			delete params->subtree;
-		}
+	{
+		Application::instance()->taskPool().handle(new PerformRemoveTask(new PerformRemoveTask::Params((QObject*)this, *params)));
+		params->entry->lock(tr("Removing..."));
+	}
 	else
 		static_cast<FileSystemTree*>(params->fileSystemTree)->setSubtree(params->entry, params->subtree);
+}
+
+void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
+{
+	typedef const PerformRemoveTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
+
+	if (params->fileSystemTree == m_currentFsTree)
+	{
+		FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
+
+		beginRemoveRows(QModelIndex(), index, index);
+		static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
+		endRemoveRows();
+	}
+	else
+		params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
+}
+
+void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
+{
+	typedef const PerformRemoveTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
+
+	params->entry->unlock();
+
+	if (params->fileSystemTree == m_currentFsTree)
+	{
+		QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 0, params->entry);
+		emit dataChanged(index, index);
+	}
 }
 
 void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
@@ -728,8 +761,10 @@ void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::Params *p)
 {
 	typedef PerformTask::QuestionAnswerParams * ParamsType;
 	ParamsType params = (ParamsType)p;
-	params->answer = QMessageBox::question(&Application::instance()->mainWindow(), tr("Some title"), params->question, params->buttons);
-	params->condition.wakeAll();
+
+	params->result->lock();
+	params->result->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), params->title, params->question, params->buttons));
+	params->result->unlock();
 }
 
 bool FileSystemModel::isLocked() const

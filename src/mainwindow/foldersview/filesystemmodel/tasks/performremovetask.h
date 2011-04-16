@@ -27,6 +27,7 @@ public:
 	struct EventParams : public PerformTask::EventParams
 	{
 		FileSystemEntry *entry;
+		bool shoulRemoveEntry;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
@@ -43,6 +44,7 @@ private:
 	void removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
 
 private:
+	bool m_shoulRemoveEntry;
 	bool m_skipAllIfNotRemove;
 	bool m_skipAllIfNotExists;
 	volatile bool m_canceled;

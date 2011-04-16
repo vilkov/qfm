@@ -5,6 +5,7 @@
 
 PerformRemoveTask::PerformRemoveTask(Params *params) :
 	PerformTask(params, params->receiver),
+	m_shoulRemoveEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false),
 	m_canceled(false)
@@ -21,6 +22,7 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	QScopedPointer<Event> event(new Event(m_canceled ? Event::RemoveFilesCanceled : Event::RemoveFilesComplete));
 	event->params().fileSystemTree = parameters()->fileSystemTree;
 	event->params().entry = parameters()->entry;
+	event->params().shoulRemoveEntry = m_shoulRemoveEntry;
 	Application::postEvent(parameters()->receiver, event.take());
 }
 
@@ -72,13 +74,18 @@ void PerformRemoveTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, cons
 
 			if (result.waitFor(stopedFlag))
 				if (result.answer() == QMessageBox::YesToAll)
+				{
+					m_shoulRemoveEntry = false;
 					m_skipAllIfNotRemove = true;
+				}
 				else
 					if (result.answer() == QMessageBox::Retry)
 						tryAgain = true;
 					else
 						if (result.answer() == QMessageBox::Cancel)
 							m_canceled = true;
+						else
+							m_shoulRemoveEntry = false;
 		}
 	}
 	else

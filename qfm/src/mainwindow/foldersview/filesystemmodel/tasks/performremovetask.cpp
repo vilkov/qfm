@@ -53,11 +53,17 @@ void PerformRemoveTask::remove(FileSystemTree *tree, const volatile bool &stoped
 
 void PerformRemoveTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {
-	QDir dir = entry->fileInfo().absoluteDir();
-
-	if (dir.exists(entry->fileInfo().fileName()))
+	if (entry->fileInfo().exists())
 	{
-		if (!dir.remove(entry->fileInfo().fileName()) && !m_skipAllIfNotRemove)
+		bool res;
+		QDir dir = entry->fileInfo().absoluteDir();
+
+		if (entry->fileInfo().isDir())
+			res = dir.rmdir(entry->fileInfo().fileName());
+		else
+			res = dir.remove(entry->fileInfo().fileName());
+
+		if (!res && !m_skipAllIfNotRemove)
 		{
 			QuestionAnswerParams::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));

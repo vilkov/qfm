@@ -65,6 +65,7 @@ protected:
 
 	void scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForCopyEvent(const FileSystemModelEvent::Params *p);
+	void copyCompleteEvent(const FileSystemModelEvent::Params *p);
 
 	void scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForMoveEvent(const FileSystemModelEvent::Params *p);
@@ -73,6 +74,9 @@ protected:
 
 protected:
 	bool isLocked() const;
+	void updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void updateSecondColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);
+	void updateBothColumns(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	QModelIndex index(int column, FileSystemItem *item) const;
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 	void removeEntry(const QModelIndex &index);

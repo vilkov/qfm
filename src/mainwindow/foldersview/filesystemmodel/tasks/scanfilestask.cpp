@@ -122,6 +122,7 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 		event->params().entry = parameters()->entry;
 		event->params().subtree = parameters()->subtree;
 		event->params().destination = parameters()->destination;
+		event->params().destinationDirectory = parameters()->destinationDirectory;
 		Application::postEvent(parameters()->receiver, event.take());
 	}
 }
@@ -142,6 +143,7 @@ void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
 		event->params().entry = parameters()->entry;
 		event->params().subtree = parameters()->subtree;
 		event->params().destination = parameters()->destination;
+		event->params().destinationDirectory = parameters()->destinationDirectory;
 		Application::postEvent(parameters()->receiver, event.take());
 	}
 }

@@ -6,6 +6,7 @@
 #include "tasks/updatefilestask.h"
 #include "tasks/scanfilestask.h"
 #include "tasks/performremovetask.h"
+#include "tasks/performcopytask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
@@ -544,8 +545,8 @@ void FileSystemModel::list(FileSystemItem *fileSystemTree)
 	params->receiver = (QObject*)this;
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 
-	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
+	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
 }
 
 void FileSystemModel::listEvent(const FileSystemModelEvent::Params *p)
@@ -574,8 +575,8 @@ void FileSystemModel::update(FileSystemItem *fileSystemTree)
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 	params->list = static_cast<FileSystemTree*>(fileSystemTree)->makeChangeSet();
 
-	Application::instance()->taskPool().handle(new UpdateFilesTask(params.take()));
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
+	Application::instance()->taskPool().handle(new UpdateFilesTask(params.take()));
 }
 
 void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
@@ -628,10 +629,10 @@ void FileSystemModel::scanForRemove(FileSystemItem *fileSystemTree, FileSystemIt
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 	params->entry = static_cast<FileSystemEntry*>(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
 	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for remove..."));
-	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
-	emit dataChanged(index, index);
+	updateFirstColumn(fileSystemTree, entry);
+
+	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
 }
 
 void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
@@ -645,11 +646,23 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 			tr("Would you like to remove \"%1\" directory?").arg(static_cast<FileSystemEntry*>(params->entry)->fileInfo().absoluteFilePath()),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
-		Application::instance()->taskPool().handle(new PerformRemoveTask(new PerformRemoveTask::Params((QObject*)this, *params)));
+		params->entry->setFileSize(params->size);
 		params->entry->lock(tr("Removing..."));
+
+		if (params->fileSystemTree == m_currentFsTree)
+			updateSecondColumn(m_currentFsTree, params->entry);
+
+		Application::instance()->taskPool().handle(new PerformRemoveTask(new PerformRemoveTask::Params((QObject*)this, *params)));
 	}
 	else
+	{
 		static_cast<FileSystemTree*>(params->fileSystemTree)->setSubtree(params->entry, params->subtree);
+		params->entry->setFileSize(params->size);
+		params->entry->unlock();
+
+		if (params->fileSystemTree == m_currentFsTree)
+			updateBothColumns(m_currentFsTree, params->entry);
+	}
 }
 
 void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
@@ -667,17 +680,17 @@ void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
 			endRemoveRows();
 		}
 		else
+		{
 			params->fileSystemTree->remove(params->fileSystemTree->indexOf(params->entry));
+			params->entry->unlock();
+		}
 	else
 	{
 		params->fileSystemTree->setSubtree(params->entry, 0);
 		params->entry->unlock();
 
 		if (params->fileSystemTree == m_currentFsTree)
-		{
-			QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 0, params->entry);
-			emit dataChanged(index, index);
-		}
+			updateFirstColumn(m_currentFsTree, params->entry);
 	}
 }
 
@@ -690,10 +703,7 @@ void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
 	params->entry->unlock();
 
 	if (params->fileSystemTree == m_currentFsTree)
-	{
-		QModelIndex index = createIndex(m_currentFsTree->indexOf(params->entry), 0, params->entry);
-		emit dataChanged(index, index);
-	}
+		updateFirstColumn(m_currentFsTree, params->entry);
 }
 
 void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry)
@@ -703,10 +713,10 @@ void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 	params->entry = static_cast<FileSystemEntry*>(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
 	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for size..."));
-	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
-	emit dataChanged(index, index);
+	updateFirstColumn(fileSystemTree, entry);
+
+	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
 }
 
 void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
@@ -715,13 +725,10 @@ void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 	ParamsType params = static_cast<ParamsType>(p);
 	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
-	if (m_currentFsTree == params->fileSystemTree)
-	{
-		FileSystemItem::size_type index = m_currentFsTree->indexOf(params->entry);
-		emit dataChanged(createIndex(index, 0, params->entry), createIndex(index, 1, params->entry));
-	}
-
 	params->entry->unlock();
+
+	if (m_currentFsTree == params->fileSystemTree)
+		updateBothColumns(m_currentFsTree, params->entry);
 }
 
 void FileSystemModel::scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination)
@@ -731,20 +738,31 @@ void FileSystemModel::scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 	params->entry = static_cast<FileSystemEntry*>(entry);
 	params->destination = destination;
+	params->destinationDirectory = static_cast<FileSystemTree*>(destination->m_currentFsTree)->fileInfo().absoluteFilePath();
+
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for copy..."));
+	updateFirstColumn(fileSystemTree, entry);
 
 	Application::instance()->taskPool().handle(new ScanFilesForCopyTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for copy..."));
-	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
-	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::Params *p)
 {
 	typedef const ScanFilesForCopyTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
-	params->entry->unlock();
+	params->entry->setFileSize(params->size);
+	params->entry->lock(tr("Copying..."));
+
+	if (m_currentFsTree == params->fileSystemTree)
+		updateSecondColumn(m_currentFsTree, params->entry);
+
+	Application::instance()->taskPool().handle(new PerformCopyTask(new PerformCopyTask::Params((QObject*)this, *params)));
+}
+
+void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::Params *p)
+{
+
 }
 
 void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination)
@@ -754,20 +772,24 @@ void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 	params->entry = static_cast<FileSystemEntry*>(entry);
 	params->destination = destination;
+	params->destinationDirectory = static_cast<FileSystemTree*>(destination->m_currentFsTree)->fileInfo().absoluteFilePath();
+
+	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for move..."));
+	updateFirstColumn(fileSystemTree, entry);
 
 	Application::instance()->taskPool().handle(new ScanFilesForMoveTask(params.take()));
-	static_cast<FileSystemEntry*>(entry)->lock(tr("Scanning folder for move..."));
-	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
-	emit dataChanged(index, index);
 }
 
 void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
 {
 	typedef const ScanFilesForMoveTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 
+	static_cast<FileSystemEntry*>(params->entry)->setFileSize(params->size);
 	params->entry->unlock();
+
+	if (m_currentFsTree == params->fileSystemTree)
+		updateSecondColumn(m_currentFsTree, params->entry);
 }
 
 void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::Params *p)
@@ -795,6 +817,24 @@ bool FileSystemModel::isLocked() const
 				tr("There is a busy directories:\n").append(visitor.directories().join(QChar('\n'))));
 		return true;
 	}
+}
+
+void FileSystemModel::updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+{
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
+}
+
+void FileSystemModel::updateSecondColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+{
+	QModelIndex index = createIndex(fileSystemTree->indexOf(entry), 1, entry);
+	emit dataChanged(index, index);
+}
+
+void FileSystemModel::updateBothColumns(FileSystemItem *fileSystemTree, FileSystemItem *entry)
+{
+	FileSystemItem::size_type index = fileSystemTree->indexOf(entry);
+	emit dataChanged(createIndex(index, 0, entry), createIndex(index, 1, entry));
 }
 
 QModelIndex FileSystemModel::index(int column, FileSystemItem *item) const

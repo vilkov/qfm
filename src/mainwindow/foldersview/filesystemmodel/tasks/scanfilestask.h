@@ -64,10 +64,12 @@ public:
 	struct Params : public ScanFilesTask::Params
 	{
 		QObject *destination;
+		QString destinationDirectory;
 	};
 	struct EventParams : public ScanFilesTask::EventParams
 	{
 		QObject *destination;
+		QString destinationDirectory;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 

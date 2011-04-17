@@ -7,7 +7,7 @@
 class FileSystemModelEvent : public QEvent
 {
 public:
-	struct Params {};
+	struct EventParams {};
 
 	enum EventType
 	{
@@ -18,8 +18,10 @@ public:
 		RemoveFilesCanceled = QEvent::User + 5,
 		ScanFilesForSize = QEvent::User + 6,
 		ScanFilesForCopy = QEvent::User + 7,
-		ScanFilesForMove = QEvent::User + 8,
-		QuestionAnswer = QEvent::User + 9
+		CopyFilesComplete = QEvent::User + 8,
+		CopyFilesCanceled = QEvent::User + 9,
+		ScanFilesForMove = QEvent::User + 10,
+		QuestionAnswer = QEvent::User + 11
 	};
 
 public:
@@ -27,7 +29,7 @@ public:
 		QEvent(static_cast<QEvent::Type>(type))
 	{}
 
-	virtual const Params *parameters() const = 0;
+	virtual const EventParams *parameters() const = 0;
 };
 
 
@@ -39,7 +41,7 @@ public:
 		FileSystemModelEvent(type)
 	{}
 
-	virtual const Params *parameters() const { return &m_params; }
+	virtual const EventParams *parameters() const { return &m_params; }
 
 	const T &params() const { return m_params; }
 	T &params() { return m_params; }

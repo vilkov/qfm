@@ -43,27 +43,20 @@ void PerformCopyTask::copy(QDir &destination, FileSystemTree *tree, const volati
 				}
 				else
 				{
-					QuestionAnswerParams::Result result;
-					QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
-					event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-					event->params().title = entry->lockReason();
-					event->params().result = &result;
-					event->params().question = tr("Failed to create directory \"%1\". Skip it?").
-							arg(entry->fileInfo().fileName()).
-							arg(entry->fileInfo().absolutePath()).
-							arg(destination.absolutePath());
+					if (!m_skipAllIfNotCopy)
+					{
+						tryAgain = false;
+						askForSkipAllIfNotCopy(
+								entry->lockReason(),
+								tr("Failed to create directory \"%1\" in \"%2\". Skip it?").
+									arg(entry->fileInfo().fileName()).
+									arg(destination.absolutePath()),
+								tryAgain,
+								stopedFlag);
 
-					Application::postEvent(parameters()->receiver, event.take());
-
-					if (result.waitFor(stopedFlag))
-						if (result.answer() == QMessageBox::YesToAll)
-							m_skipAllIfNotCreate = true;
-						else
-							if (result.answer() == QMessageBox::Retry)
-								--i;
-							else
-								if (result.answer() == QMessageBox::Cancel)
-									m_canceled = true;
+						if (tryAgain)
+							--i;
+					}
 				}
 		else
 		{
@@ -102,72 +95,66 @@ void PerformCopyTask::copy(QDir &destination, FileSystemTree *tree, const volati
 				{
 					while (!file.atEnd() && !stopedFlag && !m_canceled)
 						if (dest.write(buffer = file.read(ReadFileBufferSize)) != buffer.size())
-						{
-							QuestionAnswerParams::Result result;
-							QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
-							event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-							event->params().title = entry->lockReason();
-							event->params().result = &result;
-							event->params().question = tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
-									arg(dest.errorString()).
-									arg(entry->fileInfo().fileName()).
-									arg(entry->fileInfo().absolutePath()).
-									arg(destination.absolutePath());
+							if (m_skipAllIfNotCopy)
+							{
+								dest.close();
+								dest.remove();
+							}
+							else
+							{
+								tryAgain = false;
+								askForSkipAllIfNotCopy(
+										entry->lockReason(),
+										tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
+											arg(file.errorString()).
+											arg(entry->fileInfo().fileName()).
+											arg(entry->fileInfo().absolutePath()).
+											arg(destination.absolutePath()),
+										tryAgain,
+										stopedFlag);
 
-							Application::postEvent(parameters()->receiver, event.take());
-
-							if (result.waitFor(stopedFlag))
-								if (result.answer() == QMessageBox::YesToAll)
-									m_skipAllIfNotCopy = true;
-								else
-									if (result.answer() == QMessageBox::Retry)
-										--i;
-									else
-										if (result.answer() == QMessageBox::Cancel)
-											m_canceled = true;
-						}
+								if (tryAgain)
+									--i;
+							}
 				}
 				else
 				{
-					QuestionAnswerParams::Result result;
-					QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
-					event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-					event->params().title = entry->lockReason();
-					event->params().result = &result;
-					event->params().question = tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
-							arg(dest.errorString()).
-							arg(entry->fileInfo().fileName()).
-							arg(entry->fileInfo().absolutePath()).
-							arg(destination.absolutePath());
+					if (!m_skipAllIfNotCopy)
+					{
+						tryAgain = false;
+						askForSkipAllIfNotCopy(
+								entry->lockReason(),
+								tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
+									arg(file.errorString()).
+									arg(entry->fileInfo().fileName()).
+									arg(entry->fileInfo().absolutePath()).
+									arg(destination.absolutePath()),
+								tryAgain,
+								stopedFlag);
 
-					Application::postEvent(parameters()->receiver, event.take());
-
-					if (result.waitFor(stopedFlag))
-						if (result.answer() == QMessageBox::YesToAll)
-							m_skipAllIfNotCopy = true;
-						else
-							if (result.answer() == QMessageBox::Retry)
-								--i;
-							else
-								if (result.answer() == QMessageBox::Cancel)
-									m_canceled = true;
+						if (tryAgain)
+							--i;
+					}
 				}
 			}
 			else
 			{
-				tryAgain = false;
-				askForSkipAllIfNotCopy(
-						entry->lockReason(),
-						tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
-							arg(file.errorString()).
-							arg(entry->fileInfo().fileName()).
-							arg(entry->fileInfo().absolutePath()).
-							arg(destination.absolutePath()),
-						tryAgain,
-						stopedFlag);
+				if (!m_skipAllIfNotCopy)
+				{
+					tryAgain = false;
+					askForSkipAllIfNotCopy(
+							entry->lockReason(),
+							tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
+								arg(file.errorString()).
+								arg(entry->fileInfo().fileName()).
+								arg(entry->fileInfo().absolutePath()).
+								arg(destination.absolutePath()),
+							tryAgain,
+							stopedFlag);
 
-				if (tryAgain)
-					--i;
+					if (tryAgain)
+						--i;
+				}
 			}
 		}
 }

@@ -13,20 +13,18 @@ class PerformRemoveTask : public PerformTask
 public:
 	struct Params : public PerformTask::Params
 	{
-		Params(QObject *rcv, const ScanFilesForRemoveTask::EventParams &params) :
-			entry(params.entry),
+		Params(QObject *receiver, const ScanFilesForRemoveTask::EventParams &params) :
 			subtree(params.subtree)
 		{
-			receiver = rcv;
-			fileSystemTree = params.fileSystemTree;
+			source.object = receiver;
+			source.fileSystemTree = params.snapshot.fileSystemTree;
+			source.entry = params.snapshot.entry;
 		}
 
-		FileSystemEntry *entry;
 		FileSystemTree *subtree;
 	};
 	struct EventParams : public PerformTask::EventParams
 	{
-		FileSystemEntry *entry;
 		bool shoulRemoveEntry;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;

@@ -4,7 +4,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
 #include <QtCore/QSharedData>
-#include <QtCore/QVarLengthArray>
+#include "../items/filesystemtree.h"
+#include "../events/filesystemmodelevents.h"
 #include "../../../../tools/taskspool/task.h"
 
 
@@ -13,10 +14,49 @@ class ControlableTask : public TasksPool::Task
 public:
 	struct Params : public QSharedData, public MemoryManagerTag
 	{
+		struct EventListener
+		{
+			EventListener() :
+				object(0),
+				fileSystemTree(0),
+				entry(0)
+			{}
+			EventListener(QObject *object, FileSystemTree *fileSystemTree, FileSystemEntry *entry) :
+				object(object),
+				fileSystemTree(fileSystemTree),
+				entry(entry)
+			{}
+
+			QObject *object;
+			FileSystemTree *fileSystemTree;
+			FileSystemEntry *entry;
+		};
+
 	private:
 		friend class ControlableTask;
 	    friend class DeleteHandler;
 		QMutex m_mutex;
+	};
+	struct EventParams : public FileSystemModelEvent::EventParams
+	{
+		struct Snapshot
+		{
+			Snapshot() :
+				fileSystemTree(0),
+				entry(0)
+			{}
+			Snapshot(FileSystemTree *fileSystemTree, FileSystemEntry *entry) :
+				fileSystemTree(fileSystemTree),
+				entry(entry)
+			{}
+			Snapshot(const Params::EventListener &listener) :
+				fileSystemTree(listener.fileSystemTree),
+				entry(listener.entry)
+			{}
+
+			FileSystemTree *fileSystemTree;
+			FileSystemEntry *entry;
+		};
 	};
 
 public:
@@ -34,10 +74,7 @@ protected:
 	enum { MaxNumberOfControllers = 3 };
 
 	/* Should be checked as well as "stopedFlag" in "run" function! */
-	inline volatile bool shouldTerminate() const
-	{
-		memcmp(&m_handlers, &m_verificationHandlers, sizeof(DeleteHandler *) * MaxNumberOfControllers) != 0;
-	}
+	inline const volatile bool &isControllerDead() const { return m_isControllerDead; }
 
 	inline Params *parameters() const { return m_params.data(); }
 
@@ -59,7 +96,10 @@ private:
     		QMutexLocker locker(&m_params->m_mutex);
 
     		if (m_task != 0)
+    		{
+    			m_task->m_isControllerDead = true;
 				m_task->m_handlers[m_index] = 0;
+    		}
     	}
 
     private:
@@ -71,8 +111,8 @@ private:
 
 private:
     ParamsPointer m_params;
+    volatile bool m_isControllerDead;
     DeleteHandler *m_handlers[MaxNumberOfControllers];
-    DeleteHandler *m_verificationHandlers[MaxNumberOfControllers];
 };
 
 #endif /* CONTROLABLETASK_H_ */

@@ -11,13 +11,11 @@ public:
 	struct Params : public FilesTask::Params
 	{
 		quint64 size;
-		FileSystemEntry *entry;
 		FileSystemTree *subtree;
 	};
 	struct EventParams : public FilesTask::EventParams
 	{
 		quint64 size;
-		FileSystemEntry *entry;
 		FileSystemTree *subtree;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
@@ -63,13 +61,11 @@ class ScanFilesWithDestinationTask : public ScanFilesTask
 public:
 	struct Params : public ScanFilesTask::Params
 	{
-		QObject *destination;
-		QString destinationDirectory;
+		EventListener destination;
 	};
 	struct EventParams : public ScanFilesTask::EventParams
 	{
-		QObject *destination;
-		QString destinationDirectory;
+		Params::EventListener destination;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 

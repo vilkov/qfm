@@ -5,8 +5,6 @@
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
 #include "controlabletask.h"
-#include "../items/filesystemtree.h"
-#include "../events/filesystemmodelevents.h"
 
 
 class PerformTask : public ControlableTask
@@ -14,15 +12,14 @@ class PerformTask : public ControlableTask
 public:
 	struct Params : public ControlableTask::Params
 	{
-		QObject *receiver;
-		FileSystemTree *fileSystemTree;
+		EventListener source;
 	};
-	struct EventParams : public FileSystemModelEvent::Params
+	struct EventParams : public ControlableTask::EventParams
 	{
-		FileSystemTree *fileSystemTree;
+		Snapshot snapshot;
 	};
 
-	struct QuestionAnswerParams : public FileSystemModelEvent::Params
+	struct QuestionAnswerParams : public FileSystemModelEvent::EventParams
 	{
 		class Result
 		{
@@ -35,11 +32,11 @@ public:
 			void setAnswer(qint32 value) { m_answer = value; }
 			void unlock() { m_mutex.unlock(); }
 
-			bool waitFor(const volatile bool &stopedFlag)
+			bool waitFor(const volatile bool &stopedFlag, const volatile bool &isControllerDead)
 			{
 				QMutexLocker locker(&m_mutex);
 
-				while (!stopedFlag)
+				while (!stopedFlag && !isControllerDead)
 				{
 					m_condition.wait(&m_mutex, 1000);
 

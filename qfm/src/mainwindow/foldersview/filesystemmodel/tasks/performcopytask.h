@@ -14,24 +14,20 @@ class PerformCopyTask : public PerformTask
 public:
 	struct Params : public PerformTask::Params
 	{
-		Params(QObject *rcv, const ScanFilesForCopyTask::EventParams &params) :
-			entry(params.entry),
-			subtree(params.subtree),
+		Params(QObject *receiver, const ScanFilesForCopyTask::EventParams &params) :
+			source(receiver, params.snapshot.fileSystemTree, params.snapshot.entry),
 			destination(params.destination),
-			destinationDirectory(params.destinationDirectory)
-		{
-			receiver = rcv;
-			fileSystemTree = params.fileSystemTree;
-		}
+			subtree(params.subtree)
+		{}
 
-		FileSystemEntry *entry;
+		EventListener source;
+		EventListener destination;
 		FileSystemTree *subtree;
-		QObject *destination;
-		QString destinationDirectory;
 	};
 	struct EventParams : public PerformTask::EventParams
 	{
 		FileSystemEntry *entry;
+		FileSystemTree *subtree;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
@@ -45,11 +41,13 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
 private:
+	bool cd(QDir &destination, FileSystemEntry *entry, const volatile bool &stopedFlag);
 	void copy(QDir &destination, FileSystemTree *tree, const volatile bool &stopedFlag);
+	void copyFile(QDir &destination, FileSystemEntry *entry, const volatile bool &stopedFlag);
 	void askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag);
 
 private:
-	enum { ReadFileBufferSize = 1 * 1024 * 1024 };
+	enum { ReadFileBufferSize = 10 * 1024 * 1024 };
 
 private:
 	bool m_skipAllIfNotCreate;

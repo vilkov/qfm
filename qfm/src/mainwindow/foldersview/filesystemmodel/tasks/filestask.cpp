@@ -13,8 +13,8 @@ FilesTask::FilesTask(Params *params, QObject *controller1) :
     ,m_groupId(getgid())
 #endif
 {
-	Q_ASSERT(params->fileSystemTree);
-	Q_ASSERT(params->receiver);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2) :
@@ -24,8 +24,8 @@ FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2)
     ,m_groupId(getgid())
 #endif
 {
-	Q_ASSERT(params->fileSystemTree);
-	Q_ASSERT(params->receiver);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
@@ -35,8 +35,8 @@ FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2,
     ,m_groupId(getgid())
 #endif
 {
-	Q_ASSERT(params->fileSystemTree);
-	Q_ASSERT(params->receiver);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)

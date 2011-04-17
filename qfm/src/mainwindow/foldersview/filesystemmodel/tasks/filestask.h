@@ -5,8 +5,6 @@
 #include <QtCore/QFileInfo>
 #include "controlabletask.h"
 #include "../filesysteminfo.h"
-#include "../items/filesystemtree.h"
-#include "../events/filesystemmodelevents.h"
 
 
 class FilesTask : public ControlableTask
@@ -14,12 +12,11 @@ class FilesTask : public ControlableTask
 public:
 	struct Params : public ControlableTask::Params
 	{
-		QObject *receiver;
-		FileSystemTree *fileSystemTree;
+		EventListener source;
 	};
-	struct EventParams : public FileSystemModelEvent::Params
+	struct EventParams : public ControlableTask::EventParams
 	{
-		FileSystemTree *fileSystemTree;
+		Snapshot snapshot;
 	};
 
 public:

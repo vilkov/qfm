@@ -4,13 +4,13 @@
 
 
 PerformRemoveTask::PerformRemoveTask(Params *params) :
-	PerformTask(params, params->receiver),
+	PerformTask(params, params->source.object),
 	m_shoulRemoveEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false),
 	m_canceled(false)
 {
-	Q_ASSERT(params->entry);
+	Q_ASSERT(params->source.entry);
 	Q_ASSERT(params->subtree);
 }
 
@@ -19,13 +19,13 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	QScopedPointer<FileSystemTree> subtree(parameters()->subtree);
 	remove(subtree.data(), stopedFlag);
 
-	if (!stopedFlag)
+	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event(m_canceled ? Event::RemoveFilesCanceled : Event::RemoveFilesComplete));
-		event->params().fileSystemTree = parameters()->fileSystemTree;
-		event->params().entry = parameters()->entry;
+		event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+		event->params().snapshot.entry = parameters()->source.entry;
 		event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-		Application::postEvent(parameters()->receiver, event.take());
+		Application::postEvent(parameters()->source.object, event.take());
 	}
 }
 
@@ -33,7 +33,7 @@ void PerformRemoveTask::remove(FileSystemTree *tree, const volatile bool &stoped
 {
 	bool tryAgain;
 
-	for (FileSystemTree::size_type i = 1, size = tree->size(); i < size && !stopedFlag && !m_canceled; ++i)
+	for (FileSystemTree::size_type i = 1, size = tree->size(); i < size && !stopedFlag && !isControllerDead() && !m_canceled; ++i)
 		if (static_cast<FileSystemEntry*>(tree->child(i))->fileInfo().isDir())
 		{
 			remove(static_cast<FileSystemTree*>(tree->subtree(tree->child(i))), stopedFlag);
@@ -79,9 +79,9 @@ void PerformRemoveTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, cons
 			else
 				event->params().question = tr("Failed to remove file \"%1\". Skip it?").arg(entry->fileInfo().absoluteFilePath());
 
-			Application::postEvent(parameters()->receiver, event.take());
+			Application::postEvent(parameters()->source.object, event.take());
 
-			if (result.waitFor(stopedFlag))
+			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
 					m_shoulRemoveEntry = false;
@@ -111,9 +111,9 @@ void PerformRemoveTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, cons
 			else
 				event->params().question = tr("File \"%1\" does not exists. Skip it?").arg(entry->fileInfo().absoluteFilePath());
 
-			Application::postEvent(parameters()->receiver, event.take());
+			Application::postEvent(parameters()->source.object, event.take());
 
-			if (result.waitFor(stopedFlag))
+			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 					m_skipAllIfNotExists = true;
 				else

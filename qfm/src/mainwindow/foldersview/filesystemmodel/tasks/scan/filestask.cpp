@@ -1,5 +1,5 @@
 #include "filestask.h"
-#include "../../../../application.h"
+#include "../../../../../application.h"
 #ifndef Q_OS_WIN
 #  include <unistd.h>
 #  include <sys/types.h>
@@ -12,10 +12,7 @@ FilesTask::FilesTask(Params *params, QObject *controller1) :
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
-{
-	Q_ASSERT(params->source.object);
-	Q_ASSERT(params->source.fileSystemTree);
-}
+{}
 
 FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2) :
 	ControlableTask(params, controller1, controller2)
@@ -23,10 +20,7 @@ FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2)
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
-{
-	Q_ASSERT(params->source.object);
-	Q_ASSERT(params->source.fileSystemTree);
-}
+{}
 
 FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
 	ControlableTask(params, controller1, controller2, controller3)
@@ -34,10 +28,7 @@ FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2,
     ,m_userId(getuid())
     ,m_groupId(getgid())
 #endif
-{
-	Q_ASSERT(params->source.object);
-	Q_ASSERT(params->source.fileSystemTree);
-}
+{}
 
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)
 {

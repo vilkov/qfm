@@ -3,22 +3,12 @@
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
-#include "controlabletask.h"
-#include "../filesysteminfo.h"
+#include "../controlabletask.h"
+#include "../../filesysteminfo.h"
 
 
 class FilesTask : public ControlableTask
 {
-public:
-	struct Params : public ControlableTask::Params
-	{
-		EventListener source;
-	};
-	struct EventParams : public ControlableTask::EventParams
-	{
-		Snapshot snapshot;
-	};
-
 public:
 	FilesTask(Params *params, QObject *controller1);
 	FilesTask(Params *params, QObject *controller1, QObject *controller2);

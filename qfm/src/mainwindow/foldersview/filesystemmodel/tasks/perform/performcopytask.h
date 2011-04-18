@@ -4,7 +4,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
-#include "scanfilestask.h"
+#include "../scan/scanfilestask.h"
 
 
 class PerformCopyTask : public PerformTask
@@ -20,8 +20,8 @@ public:
 			subtree(params.subtree)
 		{}
 
-		EventListener source;
-		EventListener destination;
+		Snapshot source;
+		Listener destination;
 		FileSystemTree *subtree;
 	};
 	struct EventParams : public PerformTask::EventParams

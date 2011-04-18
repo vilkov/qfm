@@ -14,14 +14,28 @@ class ControlableTask : public TasksPool::Task
 public:
 	struct Params : public QSharedData, public MemoryManagerTag
 	{
-		struct EventListener
+		struct Listener
 		{
-			EventListener() :
+			Listener() :
+				object(0),
+				fileSystemTree(0)
+			{}
+			Listener(QObject *object, FileSystemTree *fileSystemTree) :
+				object(object),
+				fileSystemTree(fileSystemTree)
+			{}
+
+			QObject *object;
+			FileSystemTree *fileSystemTree;
+		};
+		struct Snapshot
+		{
+			Snapshot() :
 				object(0),
 				fileSystemTree(0),
 				entry(0)
 			{}
-			EventListener(QObject *object, FileSystemTree *fileSystemTree, FileSystemEntry *entry) :
+			Snapshot(QObject *object, FileSystemTree *fileSystemTree, FileSystemEntry *entry) :
 				object(object),
 				fileSystemTree(fileSystemTree),
 				entry(entry)
@@ -49,7 +63,7 @@ public:
 				fileSystemTree(fileSystemTree),
 				entry(entry)
 			{}
-			Snapshot(const Params::EventListener &listener) :
+			Snapshot(const Params::Snapshot &listener) :
 				fileSystemTree(listener.fileSystemTree),
 				entry(listener.entry)
 			{}

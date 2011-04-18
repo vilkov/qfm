@@ -42,7 +42,7 @@ FileSystemTree::size_type FileSystemTree::indexOf(FileSystemItem *item) const
 
 void FileSystemTree::accept(FileSystemModelVisitor *visitor) const
 {
-	for (value_type::size_type i = 0, size = m_childs.size(); i < size; ++i)
+	for (value_type::size_type i = m_fileInfo.isRoot() ? 0 : 1, size = m_childs.size(); i < size; ++i)
 	{
 		visitor->visit(static_cast<FileSystemEntry*>(m_childs.at(i).entry));
 

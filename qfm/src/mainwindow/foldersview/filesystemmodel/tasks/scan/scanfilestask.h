@@ -10,11 +10,13 @@ class ScanFilesTask : public FilesTask
 public:
 	struct Params : public FilesTask::Params
 	{
+		Snapshot source;
 		quint64 size;
 		FileSystemTree *subtree;
 	};
 	struct EventParams : public FilesTask::EventParams
 	{
+		Snapshot snapshot;
 		quint64 size;
 		FileSystemTree *subtree;
 	};
@@ -61,11 +63,11 @@ class ScanFilesWithDestinationTask : public ScanFilesTask
 public:
 	struct Params : public ScanFilesTask::Params
 	{
-		EventListener destination;
+		Listener destination;
 	};
 	struct EventParams : public ScanFilesTask::EventParams
 	{
-		Params::EventListener destination;
+		Params::Listener destination;
 	};
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 

@@ -1,5 +1,5 @@
 #include "listfilestask.h"
-#include "../../../../application.h"
+#include "../../../../../application.h"
 #include <QDir>
 #include <QDateTime>
 #include <QDirIterator>
@@ -7,15 +7,18 @@
 
 
 ListFilesTask::ListFilesTask(Params *params) :
-	FilesTask(params, params->source.object)
-{}
+	FilesTask(params, params->object)
+{
+	Q_ASSERT(params->object);
+	Q_ASSERT(params->fileSystemTree);
+}
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
 {
 	QTime base = QTime::currentTime();
 	QTime current;
 	QList<FileSystemInfo> updatedFiles;
-	QDirIterator dirIt(parameters()->source.fileSystemTree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(parameters()->fileSystemTree->fileInfo().absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	while (!stopedFlag && !isControllerDead() && dirIt.hasNext())
 	{
@@ -26,10 +29,10 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		if (base.msecsTo(current) > 300)
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = false;
 			event->params().updates = updatedFiles;
-			Application::postEvent(parameters()->source.object, event.take());
+			Application::postEvent(parameters()->object, event.take());
 
 			updatedFiles.clear();
 			base = current;
@@ -40,16 +43,16 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 		if (updatedFiles.isEmpty())
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
-			Application::postEvent(parameters()->source.object, event.take());
+			Application::postEvent(parameters()->object, event.take());
 		}
 		else
 		{
 			QScopedPointer<Event> event(new Event(Event::ListFiles));
-			event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			event->params().updates = updatedFiles;
-			Application::postEvent(parameters()->source.object, event.take());
+			Application::postEvent(parameters()->object, event.take());
 		}
 }

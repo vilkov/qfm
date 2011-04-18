@@ -4,7 +4,7 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
-#include "controlabletask.h"
+#include "../controlabletask.h"
 
 
 class PerformTask : public ControlableTask
@@ -12,7 +12,7 @@ class PerformTask : public ControlableTask
 public:
 	struct Params : public ControlableTask::Params
 	{
-		EventListener source;
+		Snapshot source;
 	};
 	struct EventParams : public ControlableTask::EventParams
 	{
@@ -68,6 +68,9 @@ public:
 
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(ControlableTask::parameters()); }
+
+protected:
+	volatile bool m_canceled;
 };
 
 #endif /* PERFORMTASK_H_ */

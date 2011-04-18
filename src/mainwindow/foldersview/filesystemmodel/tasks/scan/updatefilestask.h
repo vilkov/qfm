@@ -2,18 +2,21 @@
 #define UPDATEFILESTASK_H_
 
 #include "filestask.h"
-#include "../filesystemchangeslist.h"
+#include "../../filesystemchangeslist.h"
 
 
 class UpdateFilesTask : public FilesTask
 {
 public:
-	struct Params : public FilesTask::Params
+	struct Params : public ControlableTask::Params
 	{
+		QObject *object;
+		FileSystemTree *fileSystemTree;
 		ChangesList list;
 	};
-	struct EventParams : public FilesTask::EventParams
+	struct EventParams : public ControlableTask::EventParams
 	{
+		FileSystemTree *fileSystemTree;
 		bool isLastEvent;
 		ChangesList updates;
 	};

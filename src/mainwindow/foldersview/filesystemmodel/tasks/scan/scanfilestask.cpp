@@ -1,6 +1,6 @@
 #include "scanfilestask.h"
-#include "../events/filesystemmodelevents.h"
-#include "../../../../application.h"
+#include "../../events/filesystemmodelevents.h"
+#include "../../../../../application.h"
 #include <QDir>
 #include <QDirIterator>
 #include <QScopedPointer>
@@ -10,18 +10,24 @@ ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1) :
 	FilesTask(params, controller1)
 {
 	Q_ASSERT(params->source.entry);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1, QObject *controller2) :
 	FilesTask(params, controller1, controller2)
 {
 	Q_ASSERT(params->source.entry);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 ScanFilesTask::ScanFilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
 	FilesTask(params, controller1, controller2, controller3)
 {
 	Q_ASSERT(params->source.entry);
+	Q_ASSERT(params->source.object);
+	Q_ASSERT(params->source.fileSystemTree);
 }
 
 void ScanFilesTask::run(const volatile bool &stopedFlag)

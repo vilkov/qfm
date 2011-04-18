@@ -55,6 +55,7 @@ protected:
 	void update(FileSystemItem *fileSystemTree);
 	void updateEvent(const FileSystemModelEvent::EventParams *p);
 
+	void removeEntry(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForRemoveEvent(const FileSystemModelEvent::EventParams *p);
 	void removeCompleteEvent(const FileSystemModelEvent::EventParams *p);
@@ -63,6 +64,7 @@ protected:
 	void scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForSizeEvent(const FileSystemModelEvent::EventParams *p);
 
+	void copyEntry(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForCopyEvent(const FileSystemModelEvent::EventParams *p);
 	void copyCompleteEvent(const FileSystemModelEvent::EventParams *p);

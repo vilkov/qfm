@@ -2,7 +2,8 @@
 
 
 PerformTask::PerformTask(Params *params, QObject *controller1) :
-	ControlableTask(params, controller1)
+	ControlableTask(params, controller1),
+	m_canceled(false)
 {
 	Q_ASSERT(params->source.object);
 	Q_ASSERT(params->source.fileSystemTree);
@@ -10,7 +11,8 @@ PerformTask::PerformTask(Params *params, QObject *controller1) :
 }
 
 PerformTask::PerformTask(Params *params, QObject *controller1, QObject *controller2) :
-	ControlableTask(params, controller1, controller2)
+	ControlableTask(params, controller1, controller2),
+	m_canceled(false)
 {
 	Q_ASSERT(params->source.object);
 	Q_ASSERT(params->source.fileSystemTree);
@@ -18,7 +20,8 @@ PerformTask::PerformTask(Params *params, QObject *controller1, QObject *controll
 }
 
 PerformTask::PerformTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3) :
-	ControlableTask(params, controller1, controller2, controller3)
+	ControlableTask(params, controller1, controller2, controller3),
+	m_canceled(false)
 {
 	Q_ASSERT(params->source.object);
 	Q_ASSERT(params->source.fileSystemTree);

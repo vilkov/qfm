@@ -71,9 +71,8 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForSize));
-		event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().snapshot.entry = parameters()->source.entry;
 		event->params().subtree = parameters()->subtree;
 		Application::postEvent(parameters()->source.object, event.take());
 	}
@@ -91,9 +90,8 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForRemove));
-		event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().snapshot.entry = parameters()->source.entry;
 		event->params().subtree = parameters()->subtree;
 		Application::postEvent(parameters()->source.object, event.take());
 	}
@@ -123,9 +121,8 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForCopy));
-		event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().snapshot.entry = parameters()->source.entry;
 		event->params().subtree = parameters()->subtree;
 		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.object, event.take());
@@ -143,9 +140,8 @@ void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event(Event::ScanFilesForMove));
-		event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
+		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().snapshot.entry = parameters()->source.entry;
 		event->params().subtree = parameters()->subtree;
 		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.object, event.take());

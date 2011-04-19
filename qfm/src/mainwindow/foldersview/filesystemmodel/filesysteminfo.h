@@ -12,6 +12,7 @@ class FileSystemInfo : public QFileInfo, public MemoryManagerTag
 {
 public:
     FileSystemInfo();
+    FileSystemInfo(const QString &filePath);
     FileSystemInfo(const QFileInfo &info);
 
     bool operator ==(const FileSystemInfo &fileInfo) const;

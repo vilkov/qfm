@@ -19,7 +19,7 @@ public:
 		Snapshot snapshot;
 	};
 
-	struct QuestionAnswerParams : public FileSystemModelEvent::EventParams
+	struct QuestionAnswerParams : public ControlableTask::EventParams
 	{
 		class Result
 		{

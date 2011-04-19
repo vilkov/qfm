@@ -19,6 +19,16 @@ public:
 			source.fileSystemTree = params.snapshot.fileSystemTree;
 			source.entry = params.snapshot.entry;
 			destination = params.destination;
+			removeSource = false;
+		}
+		Params(QObject *receiver, const ScanFilesForMoveTask::EventParams &params) :
+			subtree(params.subtree)
+		{
+			source.object = receiver;
+			source.fileSystemTree = params.snapshot.fileSystemTree;
+			source.entry = params.snapshot.entry;
+			destination = params.destination;
+			removeSource = true;
 		}
 
 		FileSystemTree *subtree;

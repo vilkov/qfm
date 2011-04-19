@@ -21,7 +21,8 @@ public:
 		CopyFilesComplete = QEvent::User + 8,
 		CopyFilesCanceled = QEvent::User + 9,
 		ScanFilesForMove = QEvent::User + 10,
-		QuestionAnswer = QEvent::User + 11
+		QuestionAnswer = QEvent::User + 11,
+		NewEntry = QEvent::User + 12
 	};
 
 public:

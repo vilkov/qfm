@@ -68,6 +68,13 @@ public:
 				entry(listener.entry)
 			{}
 
+			Snapshot &operator=(const Params::Snapshot &other)
+			{
+				fileSystemTree = other.fileSystemTree;
+				entry = other.entry;
+				return *this;
+			}
+
 			FileSystemTree *fileSystemTree;
 			FileSystemEntry *entry;
 		};

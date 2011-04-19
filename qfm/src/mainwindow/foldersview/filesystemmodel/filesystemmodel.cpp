@@ -7,8 +7,8 @@
 #include "tasks/scan/scanfilestask.h"
 #include "tasks/perform/performremoveentrytask.h"
 #include "tasks/perform/performremovetreetask.h"
-#include "tasks/perform/performcopytask.h"
 #include "tasks/perform/performcopyentrytask.h"
+#include "tasks/perform/performcopytreetask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
@@ -794,7 +794,7 @@ void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::EventParams *
 	if (m_currentFsTree == params->snapshot.fileSystemTree)
 		updateSecondColumn(m_currentFsTree, params->snapshot.entry);
 
-	Application::instance()->taskPool().handle(new PerformCopyTask(new PerformCopyTask::Params((QObject*)this, *params)));
+	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params)));
 }
 
 void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::EventParams *p)

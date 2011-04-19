@@ -4,7 +4,6 @@
 #include <QtCore/QDir>
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
-#include "../scan/scanfilestask.h"
 
 
 class PerformCopyEntryTask : public PerformTask
@@ -29,14 +28,11 @@ public:
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
-private:
+protected:
 	void copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag);
 
-private:
-	enum { ReadFileBufferSize = 10 * 1024 * 1024 };
-
-private:
+protected:
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;
 	bool m_overwriteAll;

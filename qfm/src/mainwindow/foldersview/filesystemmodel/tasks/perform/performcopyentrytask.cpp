@@ -51,9 +51,7 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 		{
 			if (!dest.remove())
 			{
-				if (m_skipAllIfNotCopy)
-					return;
-				else
+				if (!m_skipAllIfNotCopy)
 					askForSkipAllIfNotCopy(
 							entry->lockReason(),
 							tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
@@ -63,6 +61,7 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 								arg(destination.absolutePath()),
 							tryAgain,
 							stopedFlag);
+				return;
 			}
 		}
 		else

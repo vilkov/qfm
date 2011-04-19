@@ -30,16 +30,27 @@ FilesTask::FilesTask(Params *params, QObject *controller1, QObject *controller2,
 #endif
 {}
 
+FileSystemInfo FilesTask::info(const QString &filePath)
+{
+	FileSystemInfo info(filePath);
+	updateInfo(info);
+    return info;
+}
+
 FileSystemInfo FilesTask::info(const QFileInfo &fileInfo)
 {
 	FileSystemInfo info(fileInfo);
-#ifdef Q_OS_WIN
-    info.setPermissions(fileInfo.permissions());
-#else
-    info.setPermissions(translatePermissions(fileInfo, getuid(), getgid()));
-#endif
-
+	updateInfo(info);
     return info;
+}
+
+void FilesTask::updateInfo(FileSystemInfo &info)
+{
+#ifdef Q_OS_WIN
+    info.setPermissions(info.permissions());
+#else
+    info.setPermissions(translatePermissions(info, getuid(), getgid()));
+#endif
 }
 
 FileSystemInfo FilesTask::getInfo(const QFileInfo &fileInfo) const

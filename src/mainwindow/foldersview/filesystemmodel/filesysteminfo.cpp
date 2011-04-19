@@ -7,6 +7,10 @@ FileSystemInfo::FileSystemInfo() :
 	QFileInfo()
 {}
 
+FileSystemInfo::FileSystemInfo(const QString &filePath) :
+	QFileInfo(filePath)
+{}
+
 FileSystemInfo::FileSystemInfo(const QFileInfo &info) :
 	QFileInfo(info)
 {}

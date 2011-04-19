@@ -17,19 +17,25 @@ void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))
 	{
 		copy(dir, parameters()->subtree, stopedFlag);
+		dir.cdUp();
 		type = m_canceled ? Event::CopyFilesCanceled : Event::CopyFilesComplete;
 	}
 	else
 		type = Event::CopyFilesCanceled;
 
-//	QScopedPointer<Event> event(new Event(type));
-//	event->params().fileSystemTree = parameters()->fileSystemTree;
-//	event->params().size = parameters()->size;
-//	event->params().entry = parameters()->entry;
-//	event->params().subtree = parameters()->subtree;
-//	event->params().destination = parameters()->destination;
-//	event->params().destinationDirectory = parameters()->destinationDirectory;
-//	Application::postEvent(parameters()->receiver, event.take());
+	if (!stopedFlag && !isControllerDead())
+	{
+		QScopedPointer<NewEntryEvent> newEntryEvent(new NewEntryEvent(Event::NewEntry));
+		newEntryEvent->params().fileSystemTree = parameters()->destination.fileSystemTree;
+		newEntryEvent->params().absoluteFilePath = dir.absoluteFilePath(parameters()->source.entry->fileInfo().fileName());
+		Application::postEvent(parameters()->destination.object, newEntryEvent.take());
+
+		QScopedPointer<Event> event(new Event(type));
+		event->params().snapshot = parameters()->source;
+		event->params().removeSource = parameters()->removeSource;
+		event->params().subtree = parameters()->subtree;
+		Application::postEvent(parameters()->source.object, event.take());
+	}
 }
 
 bool PerformCopyTreeTask::cd(QDir &destination, FileSystemEntry *entry, const volatile bool &stopedFlag)

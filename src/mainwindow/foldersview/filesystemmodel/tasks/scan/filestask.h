@@ -14,9 +14,12 @@ public:
 	FilesTask(Params *params, QObject *controller1, QObject *controller2);
 	FilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3);
 
+	static FileSystemInfo info(const QString &filePath);
 	static FileSystemInfo info(const QFileInfo &fileInfo);
 
 protected:
+	static void updateInfo(FileSystemInfo &info);
+
 	inline Params *parameters() const { return static_cast<Params*>(ControlableTask::parameters()); }
 
 	FileSystemInfo getInfo(const QFileInfo &fileInfo) const;

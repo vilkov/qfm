@@ -2,6 +2,7 @@
 #define PERFORMREMOVETREETASK_H_
 
 #include "performremoveentrytask.h"
+#include "performcopytreetask.h"
 
 
 class PerformRemoveTreeTask : public PerformRemoveEntryTask
@@ -12,6 +13,13 @@ public:
 	struct Params : public PerformRemoveEntryTask::Params
 	{
 		Params(QObject *receiver, const ScanFilesForRemoveTask::EventParams &params) :
+			subtree(params.subtree)
+		{
+			source.object = receiver;
+			source.fileSystemTree = params.snapshot.fileSystemTree;
+			source.entry = params.snapshot.entry;
+		}
+		Params(QObject *receiver, const PerformCopyTreeTask::EventParams &params) :
 			subtree(params.subtree)
 		{
 			source.object = receiver;

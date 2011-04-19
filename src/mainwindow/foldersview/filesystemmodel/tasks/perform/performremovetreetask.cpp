@@ -16,8 +16,7 @@ void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 		if (m_canceled)
 		{
 			QScopedPointer<Event> event(new Event(Event::RemoveFilesCanceled));
-			event->params().snapshot.fileSystemTree = parameters()->source.fileSystemTree;
-			event->params().snapshot.entry = parameters()->source.entry;
+			event->params().snapshot = parameters()->source;
 			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
 			Application::postEvent(parameters()->source.object, event.take());
 		}

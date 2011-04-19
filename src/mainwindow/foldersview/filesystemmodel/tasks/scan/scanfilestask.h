@@ -85,6 +85,13 @@ protected:
 class ScanFilesForCopyTask : public ScanFilesWithDestinationTask
 {
 public:
+	struct Params : public ScanFilesWithDestinationTask::Params
+	{};
+	struct EventParams : public ScanFilesWithDestinationTask::EventParams
+	{};
+	typedef FileSystemModelEventTemplate<EventParams> Event;
+
+public:
 	ScanFilesForCopyTask(Params *params);
 
 	virtual void run(const volatile bool &stopedFlag);
@@ -94,6 +101,13 @@ public:
 /********************************************************************************************************/
 class ScanFilesForMoveTask : public ScanFilesWithDestinationTask
 {
+public:
+	struct Params : public ScanFilesWithDestinationTask::Params
+	{};
+	struct EventParams : public ScanFilesWithDestinationTask::EventParams
+	{};
+	typedef FileSystemModelEventTemplate<EventParams> Event;
+
 public:
 	ScanFilesForMoveTask(Params *params);
 

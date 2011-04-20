@@ -10,10 +10,10 @@ bool FileSystemProxyModel::lessThan(const QModelIndex &left, const QModelIndex &
 {
 	if (left.column() == 0)
 		if (static_cast<FileSystemItem*>(left.internalPointer())->isRoot())
-			return false;
+			return true;
 		else
 			if (static_cast<FileSystemItem*>(right.internalPointer())->isRoot())
-				return true;
+				return false;
 			else
 			{
 				FileSystemEntry *leftItem = static_cast<FileSystemEntry*>(left.internalPointer());
@@ -21,14 +21,14 @@ bool FileSystemProxyModel::lessThan(const QModelIndex &left, const QModelIndex &
 
 				if (leftItem->fileInfo().isDir())
 					if (rightItem->fileInfo().isDir())
-						return leftItem->fileInfo().fileName() > rightItem->fileInfo().fileName();
+						return leftItem->fileInfo().fileName() < rightItem->fileInfo().fileName();
 					else
-						return false;
+						return true;
 				else
 					if (rightItem->fileInfo().isDir())
-						return true;
+						return false;
 					else
-						return leftItem->fileInfo().fileName() > rightItem->fileInfo().fileName();
+						return leftItem->fileInfo().fileName() < rightItem->fileInfo().fileName();
 			}
 
 	return true;

@@ -1,5 +1,6 @@
 #include "directoryview.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
+#include <QtGui/QHeaderView>
 
 
 DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
@@ -44,10 +45,10 @@ void DirectoryView::setCurrentDirectory(const QString &filePath)
 
 	if (info.exists())
 	{
-		m_model.setCurrentDirectory(info);
+		QModelIndex index = m_model.setCurrentDirectory(info);
 
-		if (info.isFile())
-			selectIndex(m_model.find(info.fileName()));
+		if (index.isValid())
+			selectIndex(toViewIndex(index));
 	}
 
 	updateCurrentDirectory(m_model.currentDirectoryInfo());
@@ -65,8 +66,7 @@ void DirectoryView::goUp()
 		updateCurrentDirectory(m_model.currentDirectoryInfo());
 
 		if (parentEntryIndex.isValid())
-//			selectIndex(m_proxy.mapFromSource(parentEntryIndex));
-			selectIndex(parentEntryIndex);
+			selectIndex(toViewIndex(parentEntryIndex));
 	}
 }
 
@@ -88,8 +88,7 @@ void DirectoryView::refresh()
 
 void DirectoryView::activated()
 {
-//	QModelIndex index = m_proxy.mapToSource(m_view.selectionModel()->currentIndex());
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 	{
@@ -99,15 +98,14 @@ void DirectoryView::activated()
 		{
 			m_model.activated(index);
 			updateCurrentDirectory(m_model.currentDirectoryInfo());
-//			selectIndex(m_proxy.mapFromSource(index2));
-			selectIndex(index2);
+			selectIndex(toViewIndex(index2));
 		}
 		else
 			if (m_model.fileInfo(index).isDir())
 			{
 				m_model.activated(index);
 				updateCurrentDirectory(m_model.currentDirectoryInfo());
-				selectIndex(m_model.rootIndex());
+				selectIndex(toViewIndex(m_model.rootIndex()));
 			}
 			else
 				m_model.activated(index);
@@ -116,13 +114,12 @@ void DirectoryView::activated()
 
 void DirectoryView::pathToClipboard()
 {
-//	m_model.pathToClipboard(FileSystemModelAdaptor(m_proxy, m_view.selectionModel()->selectedIndexes()));
-	m_model.pathToClipboard(m_view.selectionModel()->selectedIndexes());
+	m_model.pathToClipboard(selectedIndexes());
 }
 
 void DirectoryView::rename()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 	{
@@ -160,7 +157,7 @@ void DirectoryView::createDirectory()
 
 void DirectoryView::remove()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 		m_model.remove(index);
@@ -168,7 +165,7 @@ void DirectoryView::remove()
 
 void DirectoryView::calculateSize()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 		m_model.refreshSize(index);
@@ -176,7 +173,7 @@ void DirectoryView::calculateSize()
 
 void DirectoryView::copy()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 		m_model.copy(index, &static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_model);
@@ -184,7 +181,7 @@ void DirectoryView::copy()
 
 void DirectoryView::move()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 		m_model.move(index, &static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_model);
@@ -192,8 +189,7 @@ void DirectoryView::move()
 
 void DirectoryView::openInNewTab()
 {
-//	QModelIndex index = m_proxy.mapToSource(m_view.selectionModel()->currentIndex());
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 	{
@@ -239,12 +235,13 @@ void DirectoryView::initialize()
 	m_layout.addLayout(&m_header.layout);
 	m_layout.addWidget(&m_view);
 
-//	m_proxy.setSourceModel(&m_model);
-//	m_view.setUniformRowHeights(true);
-	m_view.setModel(&m_model);
+	m_proxy.setSourceModel(&m_model);
+	m_view.setModel(&m_proxy);
 	m_view.setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view.setItemDelegate(&m_delegate);
-//	m_view.setSortingEnabled(true);
+	m_view.setSortingEnabled(true);
+//	m_view.setUniformRowHeights(true);
+	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 
 	m_eventHandler.registerMouseDoubleClickEventHandler(&DirectoryView::activated);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Backspace, &DirectoryView::goUp);
@@ -263,6 +260,27 @@ void DirectoryView::initialize()
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
+}
+
+QModelIndex DirectoryView::currentIndex() const
+{
+	return m_proxy.mapToSource(m_view.selectionModel()->currentIndex());
+}
+
+QModelIndexList DirectoryView::selectedIndexes() const
+{
+	QModelIndexList res;
+	QModelIndexList list = m_view.selectionModel()->selectedIndexes();
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		res.push_back(m_proxy.mapToSource(list.at(i)));
+
+	return res;
+}
+
+QModelIndex DirectoryView::toViewIndex(const QModelIndex &index) const
+{
+	return m_proxy.mapFromSource(index);
 }
 
 DirectoryView::Header::Header(PathEventHandler *eventHandler, QWidget *parent) :
@@ -309,7 +327,7 @@ void DirectoryView::actHeaderPathReject()
 
 void DirectoryView::actHeaderFavorites()
 {
-
+	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), m_view.header()->sortIndicatorOrder());
 }
 
 void DirectoryView::actHeaderHistory()

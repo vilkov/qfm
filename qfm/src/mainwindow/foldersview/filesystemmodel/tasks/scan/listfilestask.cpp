@@ -6,11 +6,13 @@
 #include <QScopedPointer>
 
 
-ListFilesTask::ListFilesTask(Params *params) :
-	FilesTask(params, params->object)
+ListFilesTask::ListFilesTask(Event::EventType eventType, Params *params) :
+	FilesTask(params, params->object),
+	m_eventType(eventType)
 {
 	Q_ASSERT(params->object);
 	Q_ASSERT(params->fileSystemTree);
+	Q_ASSERT(m_eventType == Event::ListFiles || m_eventType == Event::FirstListFiles);
 }
 
 void ListFilesTask::run(const volatile bool &stopedFlag)
@@ -28,7 +30,7 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 
 		if (base.msecsTo(current) > 300)
 		{
-			QScopedPointer<Event> event(new Event(Event::ListFiles));
+			QScopedPointer<Event> event(new Event(m_eventType));
 			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = false;
 			event->params().updates = updatedFiles;
@@ -42,14 +44,14 @@ void ListFilesTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 		if (updatedFiles.isEmpty())
 		{
-			QScopedPointer<Event> event(new Event(Event::ListFiles));
+			QScopedPointer<Event> event(new Event(m_eventType));
 			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			Application::postEvent(parameters()->object, event.take());
 		}
 		else
 		{
-			QScopedPointer<Event> event(new Event(Event::ListFiles));
+			QScopedPointer<Event> event(new Event(m_eventType));
 			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			event->params().updates = updatedFiles;

@@ -9,8 +9,7 @@ PerformRemoveTreeTask::PerformRemoveTreeTask(Params *params) :
 
 void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 {
-	QScopedPointer<FileSystemTree> subtree(parameters()->subtree);
-	remove(subtree.data(), stopedFlag);
+	remove(parameters()->subtree, stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())
 		if (m_canceled)

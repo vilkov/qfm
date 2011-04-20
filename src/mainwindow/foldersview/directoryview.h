@@ -52,6 +52,9 @@ private:
 
 private:
 	void initialize();
+	QModelIndex currentIndex() const;
+	QModelIndexList selectedIndexes() const;
+	QModelIndex toViewIndex(const QModelIndex &index) const;
 
 private:
 	typedef MouseReleaseEventHandler<
@@ -104,7 +107,7 @@ private:
     Header m_header;
     DirectoryListView m_view;
     FileSystemModel m_model;
-//    FileSystemProxyModel m_proxy;
+    FileSystemProxyModel m_proxy;
     FileSystemDecorationDelegate m_delegate;
     DirectoryListViewEventHandler m_eventHandler;
 };

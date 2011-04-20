@@ -22,14 +22,34 @@ FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *paren
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {
-	list(m_currentFsTree);
+	if (m_currentFsTree->size() == 0)
+	{
+		/* FIXME: Why Qt does not sort after "InsertRows" if there is no rows? */
+		beginInsertRows(QModelIndex(), 0, 0);
+		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FileSystemInfo(tr("Loading...")));
+		endInsertRows();
+
+		firstList(m_currentFsTree);
+	}
+	else
+		list(m_currentFsTree);
 }
 
 FileSystemModel::FileSystemModel(const QFileInfo &fileInfo, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(fileInfo))
 {
-	list(m_currentFsTree);
+	if (m_currentFsTree->size() == 0)
+	{
+		/* FIXME: Why Qt does not sort after "InsertRows" if there is no rows? */
+		beginInsertRows(QModelIndex(), 0, 0);
+		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FileSystemInfo(tr("Loading...")));
+		endInsertRows();
+
+		firstList(m_currentFsTree);
+	}
+	else
+		list(m_currentFsTree);
 }
 
 FileSystemModel::~FileSystemModel()
@@ -48,6 +68,12 @@ bool FileSystemModel::event(QEvent *e)
 		{
 			e->accept();
 			listEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
+			return true;
+		}
+		case FileSystemModelEvent::FirstListFiles:
+		{
+			e->accept();
+			firstListEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
 		case FileSystemModelEvent::UpdateFiles:
@@ -259,30 +285,6 @@ void FileSystemModel::pathToClipboard(const QModelIndexList &list) const
 	Application::clipboard()->setText(text);
 }
 
-void FileSystemModel::pathToClipboard(const FileSystemModelAdaptor &list) const
-{
-	QString text;
-	QSet<FileSystemItem*> set;
-	FileSystemItem *item;
-#ifdef Q_OS_WIN32
-	QString endl = QString::fromLatin1("\r\n");
-#else
-	QString endl = QString::fromLatin1("\n");
-#endif
-
-	for (FileSystemModelAdaptor::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!set.contains(item = static_cast<FileSystemItem*>(list.at(i).internalPointer())))
-		{
-			set.insert(item);
-
-			if (!item->isRoot())
-				text.append(static_cast<FileSystemEntry*>(item)->fileInfo().absoluteFilePath()).append(endl);
-		}
-
-	text.chop(endl.size());
-	Application::clipboard()->setText(text);
-}
-
 QModelIndex FileSystemModel::find(const QString &fileName) const
 {
 	for (FileSystemItem::size_type i = 0, size = m_currentFsTree->size(); i < size; ++i)
@@ -427,18 +429,21 @@ void FileSystemModel::activated(const QModelIndex &index)
 		}
 }
 
-void FileSystemModel::setCurrentDirectory(const QString &filePath)
+QModelIndex FileSystemModel::setCurrentDirectory(const QString &filePath)
 {
+	QModelIndex res;
 	FileSystemInfo info(filePath);
 
 	if (info.exists())
-		setCurrentDirectory(info);
+		res = setCurrentDirectory(info);
+
+	return res;
 }
 
-void FileSystemModel::setCurrentDirectory(const FileSystemInfo &info)
+QModelIndex FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 {
 	if (isLocked())
-		return;
+		return QModelIndex();
 
 	beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
 
@@ -465,6 +470,8 @@ void FileSystemModel::setCurrentDirectory(const FileSystemInfo &info)
 	beginInsertRows(QModelIndex(), 0, tree->size() - 1);
 	m_currentFsTree = tree;
 	endInsertRows();
+
+	return createIndex(tree->size() - 1, 0, tree->child(tree->size() - 1));
 }
 
 void FileSystemModel::rename(const QModelIndex &index, const QString &newFileName)
@@ -561,6 +568,30 @@ void FileSystemModel::move(const QModelIndex &index, FileSystemModel *destinatio
 	}
 }
 
+void FileSystemModel::firstList(FileSystemItem *fileSystemTree)
+{
+	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
+	params->object = (QObject*)this;
+	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+
+	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
+	Application::instance()->taskPool().handle(new ListFilesTask(ListFilesTask::Event::FirstListFiles, params.take()));
+}
+
+void FileSystemModel::firstListEvent(const FileSystemModelEvent::EventParams *p)
+{
+	typedef const ListFilesTask::EventParams *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
+
+	listEvent(p);
+
+	if (params->isLastEvent)
+		if (params->fileSystemTree == m_currentFsTree)
+			removeEntry(0);
+		else
+			params->fileSystemTree->remove(0);
+}
+
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
 	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
@@ -568,7 +599,7 @@ void FileSystemModel::list(FileSystemItem *fileSystemTree)
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
+	Application::instance()->taskPool().handle(new ListFilesTask(ListFilesTask::Event::ListFiles, params.take()));
 }
 
 void FileSystemModel::listEvent(const FileSystemModelEvent::EventParams *p)
@@ -577,17 +608,17 @@ void FileSystemModel::listEvent(const FileSystemModelEvent::EventParams *p)
 	ParamsType params = static_cast<ParamsType>(p);
 
 	if (!params->updates.isEmpty())
-		if (m_currentFsTree == params->fileSystemTree)
+		if (params->fileSystemTree == m_currentFsTree)
 		{
-			beginInsertRows(QModelIndex(), params->fileSystemTree->size(), params->fileSystemTree->size() + params->updates.size() - 1);
-			static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
+			beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size() + params->updates.size() - 1);
+			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(params->updates);
 			endInsertRows();
 		}
 		else
-			static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(params->updates);
+			params->fileSystemTree->add<FileSystemEntry>(params->updates);
 
 	if (params->isLastEvent)
-		static_cast<FileSystemTree*>(params->fileSystemTree)->setUpdating(false);
+		params->fileSystemTree->setUpdating(false);
 }
 
 void FileSystemModel::update(FileSystemItem *fileSystemTree)
@@ -606,38 +637,58 @@ void FileSystemModel::updateEvent(const FileSystemModelEvent::EventParams *p)
 	typedef const UpdateFilesTask::EventParams *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 	ChangesList list = params->updates;
-	RangeIntersection updateRange(1);
 
-	for (ChangesList::size_type i = 0; i < list.size();)
-		if (list.at(i).type() == Change::Updated)
-		{
-			FileSystemEntry *entry = static_cast<FileSystemEntry*>(list.at(i).entry());
-			FileSystemEntry::size_type index = params->fileSystemTree->indexOf(entry);
-			entry->update(list.at(i).info());
-			updateRange.add(index, index);
-			list.removeAt(i);
-		}
-		else
-			if (list.at(i).type() == Change::Deleted)
+	if (params->fileSystemTree == m_currentFsTree)
+	{
+		RangeIntersection updateRange(1);
+
+		for (ChangesList::size_type i = 0; i < list.size();)
+			if (list.at(i).type() == Change::Updated)
 			{
-				FileSystemEntry::size_type index = params->fileSystemTree->indexOf(list.at(i).entry());
-				beginRemoveRows(QModelIndex(), index, index);
-				static_cast<FileSystemTree*>(params->fileSystemTree)->remove(index);
-				endRemoveRows();
+				FileSystemEntry *entry = static_cast<FileSystemEntry*>(list.at(i).entry());
+				FileSystemEntry::size_type index = m_currentFsTree->indexOf(entry);
+				entry->update(list.at(i).info());
+				updateRange.add(index, index);
 				list.removeAt(i);
 			}
 			else
-				++i;
+				if (list.at(i).type() == Change::Deleted)
+				{
+					removeEntry(m_currentFsTree->indexOf(list.at(i).entry()));
+					list.removeAt(i);
+				}
+				else
+					++i;
 
-	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
-		emit dataChanged(createIndex(updateRange.at(i).top(), 0, params->fileSystemTree),
-						 createIndex(updateRange.at(i).bottom(), columnCount(), params->fileSystemTree));
+		for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
+			emit dataChanged(createIndex(updateRange.at(i).top(), 0, m_currentFsTree),
+							 createIndex(updateRange.at(i).bottom(), columnCount(), m_currentFsTree));
 
-	if (!list.isEmpty())
+		if (!list.isEmpty())
+		{
+			beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size() + list.size() - 1);
+			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(list);
+			endInsertRows();
+		}
+	}
+	else
 	{
-		beginInsertRows(QModelIndex(), params->fileSystemTree->size(), params->fileSystemTree->size() + list.size() - 1);
-		static_cast<FileSystemTree*>(params->fileSystemTree)->add<FileSystemEntry>(list);
-		endInsertRows();
+		for (ChangesList::size_type i = 0; i < list.size();)
+			if (list.at(i).type() == Change::Updated)
+			{
+				static_cast<FileSystemEntry*>(list.at(i).entry())->update(list.at(i).info());
+				list.removeAt(i);
+			}
+			else
+				if (list.at(i).type() == Change::Deleted)
+				{
+					params->fileSystemTree->remove(params->fileSystemTree->indexOf(list.at(i).entry()));
+					list.removeAt(i);
+				}
+				else
+					++i;
+
+		params->fileSystemTree->add<FileSystemEntry>(list);
 	}
 
 	if (params->isLastEvent)

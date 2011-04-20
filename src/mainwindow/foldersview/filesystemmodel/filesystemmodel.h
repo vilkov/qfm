@@ -2,7 +2,6 @@
 #define FILESYSTEMMODEL_H_
 
 #include <QAbstractItemModel>
-#include "filesystemmodeladaptor.h"
 #include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
@@ -34,14 +33,13 @@ public:
 	const QFileInfo &currentDirectoryInfo() const;
 	const QFileInfo &fileInfo(const QModelIndex &index) const;
 	void pathToClipboard(const QModelIndexList &list) const;
-	void pathToClipboard(const FileSystemModelAdaptor &list) const;
 	QModelIndex find(const QString &fileName) const;
 
 	void refresh();
 	void refreshSize(const QModelIndex &index);
 	void activated(const QModelIndex &index);
-	void setCurrentDirectory(const QString &filePath);
-	void setCurrentDirectory(const FileSystemInfo &info);
+	QModelIndex setCurrentDirectory(const QString &filePath);
+	QModelIndex setCurrentDirectory(const QFileInfo &info);
 	void rename(const QModelIndex &index, const QString &newFileName);
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);
@@ -49,6 +47,8 @@ public:
 	void move(const QModelIndex &index, FileSystemModel *destination);
 
 protected:
+	void firstList(FileSystemItem *fileSystemTree);
+	void firstListEvent(const FileSystemModelEvent::EventParams *p);
 	void list(FileSystemItem *fileSystemTree);
 	void listEvent(const FileSystemModelEvent::EventParams *p);
 

@@ -22,12 +22,15 @@ public:
 	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
-	ListFilesTask(Params *params);
+	ListFilesTask(Event::EventType eventType, Params *params);
 
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(FilesTask::parameters()); }
+
+private:
+	Event::EventType m_eventType;
 };
 
 #endif /* FILEINFOGATHERERTASK_H_ */

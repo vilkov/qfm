@@ -25,15 +25,11 @@ void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<NewEntryEvent> newEntryEvent(new NewEntryEvent(Event::NewEntry));
-		newEntryEvent->params().fileSystemTree = parameters()->destination.fileSystemTree;
-		newEntryEvent->params().absoluteFilePath = dir.absoluteFilePath(parameters()->source.entry->fileInfo().fileName());
-		Application::postEvent(parameters()->destination.object, newEntryEvent.take());
-
 		QScopedPointer<Event> event(new Event(type));
 		event->params().snapshot = parameters()->source;
 		event->params().removeSource = parameters()->removeSource;
 		event->params().subtree = parameters()->subtree;
+		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.object, event.take());
 	}
 }

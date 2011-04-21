@@ -2,7 +2,7 @@
 #define PERFORMCOPYTREETASK_H_
 
 #include "performcopyentrytask.h"
-#include "../scan/scanfilestask.h"
+#include "../scan/scanfilestasks.h"
 
 
 class PerformCopyTreeTask : public PerformCopyEntryTask

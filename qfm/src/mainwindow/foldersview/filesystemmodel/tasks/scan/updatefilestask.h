@@ -2,19 +2,23 @@
 #define UPDATEFILESTASK_H_
 
 #include "filestask.h"
+#include "../controlabletask.h"
 #include "../../filesystemchangeslist.h"
 
 
-class UpdateFilesTask : public FilesTask
+class UpdateFilesTask : public TemplateFilesTask<ControlableTask>
 {
 public:
-	struct Params : public ControlableTask::Params
+	typedef TemplateFilesTask<ControlableTask> parent_class;
+
+public:
+	struct Params : public parent_class::Params
 	{
 		QObject *object;
 		FileSystemTree *fileSystemTree;
 		ChangesList list;
 	};
-	struct EventParams : public ControlableTask::EventParams
+	struct EventParams : public parent_class::EventParams
 	{
 		FileSystemTree *fileSystemTree;
 		bool isLastEvent;
@@ -28,7 +32,7 @@ public:
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
-	Params *parameters() const { return static_cast<Params*>(FilesTask::parameters()); }
+	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 private:
     ChangesList::size_type indexOf(const QString &directoryPath, const ChangesList &list) const;

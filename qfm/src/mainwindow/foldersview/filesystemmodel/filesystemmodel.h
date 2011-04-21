@@ -28,6 +28,8 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	bool isLocked() const;
+	QStringList lockedEntries() const;
 	QModelIndex rootIndex() const;
 	QModelIndex parentEntryIndex() const;
 	const QFileInfo &currentDirectoryInfo() const;
@@ -47,8 +49,6 @@ public:
 	void move(const QModelIndex &index, FileSystemModel *destination);
 
 protected:
-	void firstList(FileSystemItem *fileSystemTree);
-	void firstListEvent(const FileSystemModelEvent::EventParams *p);
 	void list(FileSystemItem *fileSystemTree);
 	void listEvent(const FileSystemModelEvent::EventParams *p);
 
@@ -74,10 +74,8 @@ protected:
 	void copyCanceledEvent(const FileSystemModelEvent::EventParams *p);
 
 	void questionAnswerEvent(const FileSystemModelEvent::EventParams *p);
-	void newEntryEvent(const FileSystemModelEvent::EventParams *p);
 
 protected:
-	bool isLocked() const;
 	void updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void updateSecondColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void updateBothColumns(FileSystemItem *fileSystemTree, FileSystemItem *entry);
@@ -85,6 +83,7 @@ protected:
 	QModelIndex index(int row, int column, FileSystemItem *parentItem) const;
 	void removeEntry(FileSystemItem::size_type index);
 	void removeEntry(const QModelIndex &index);
+	void refresh(FileSystemItem *fileSystemTree);
 
 private:
 	FileSystemItem *m_currentFsTree;

@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_layout.setSpacing(1);
 
 	m_layout.addWidget(&m_splitter);
+	m_splitter.setChildrenCollapsible(false);
 	m_splitter.addWidget(&m_leftFoldersView);
 	m_splitter.addWidget(&m_rightFoldersView);
 

@@ -1,6 +1,7 @@
 #include "directoryview.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include <QtGui/QHeaderView>
+#include <QtGui/QMessageBox>
 
 
 DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
@@ -202,7 +203,15 @@ void DirectoryView::openInNewTab()
 
 void DirectoryView::closeTab()
 {
-	m_parent->closeCurrentTab();
+	QStringList list = m_model.lockedEntries();
+
+	if (list.isEmpty())
+		m_parent->closeCurrentTab();
+	else
+		QMessageBox::information(
+				this,
+				tr("Unfinished tasks..."),
+				tr("There is a busy entries:\n").append(list.join(QChar('\n'))));
 }
 
 void DirectoryView::editPath()
@@ -235,6 +244,7 @@ void DirectoryView::initialize()
 	m_layout.addLayout(&m_header.layout);
 	m_layout.addWidget(&m_view);
 
+	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(&m_model);
 	m_view.setModel(&m_proxy);
 	m_view.setSelectionMode(QAbstractItemView::SingleSelection);

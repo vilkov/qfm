@@ -1,14 +1,14 @@
 #include "performcopyentrytask.h"
+#include "../commontasksevents.h"
 #include "../../../../../application.h"
 #include <QtCore/QFile>
 
 
 PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
-	PerformTask(params, params->source.object),
+	parent_class(params),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
-	m_overwriteAll(false),
-	m_canceled(false)
+	m_overwriteAll(false)
 {
 	Q_ASSERT(params->destination.object != 0);
 	Q_ASSERT(params->destination.fileSystemTree != 0);
@@ -34,14 +34,10 @@ void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<NewEntryEvent> newEntryEvent(new NewEntryEvent(Event::NewEntry));
-		newEntryEvent->params().fileSystemTree = parameters()->destination.fileSystemTree;
-		newEntryEvent->params().absoluteFilePath = dir.absoluteFilePath(parameters()->source.entry->fileInfo().fileName());
-		Application::postEvent(parameters()->destination.object, newEntryEvent.take());
-
 		QScopedPointer<Event> event(new Event(type));
 		event->params().snapshot = parameters()->source;
 		event->params().removeSource = parameters()->removeSource;
+		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.object, event.take());
 	}
 }
@@ -71,8 +67,9 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 		}
 		else
 		{
+			using namespace CommonTasksEvents;
 			QuestionAnswerParams::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
+			QScopedPointer<CommonTasksEvents::QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Ignore | QMessageBox::Cancel;
 			event->params().title = entry->lockReason();
 			event->params().result = &result;
@@ -112,6 +109,7 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 
 void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag)
 {
+	using namespace CommonTasksEvents;
 	QuestionAnswerParams::Result result;
 	QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
 	event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;

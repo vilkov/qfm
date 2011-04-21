@@ -1,4 +1,5 @@
 #include "performremoveentrytask.h"
+#include "../commontasksevents.h"
 #include "../../../../../application.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
@@ -7,7 +8,7 @@
 
 
 PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
-	PerformTask(params, params->source.object),
+	parent_class(params),
 	m_shoulRemoveEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false)
@@ -57,6 +58,7 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 
 		if (!res && !m_skipAllIfNotRemove)
 		{
+			using namespace CommonTasksEvents;
 			QuestionAnswerParams::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
@@ -91,6 +93,7 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 	else
 		if (!m_skipAllIfNotExists)
 		{
+			using namespace CommonTasksEvents;
 			QuestionAnswerParams::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel;

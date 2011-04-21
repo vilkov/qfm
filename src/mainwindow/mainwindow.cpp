@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "../application.h"
-#include <QMenuBar>
-#include <QMenu>
+#include <QtGui/QMenuBar>
+#include <QtGui/QMenu>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -58,6 +58,17 @@ bool MainWindow::switchToOtherPanel(QObject *receiver)
 	while (receiver);
 
 	return false;
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+	if (event->type() == QEvent::ActivationChange && isActiveWindow())
+	{
+		m_leftFoldersView.refresh();
+		m_rightFoldersView.refresh();
+	}
+
+	QMainWindow::changeEvent(event);
 }
 
 MainWindow::FileMenuActions::FileMenuActions(QMainWindow *parent) :

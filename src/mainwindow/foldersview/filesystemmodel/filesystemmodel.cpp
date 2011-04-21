@@ -11,6 +11,7 @@
 #include "tasks/perform/performcopyentrytask.h"
 #include "tasks/perform/performcopytreetask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
+#include "../directoryview.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
 #include <QtCore/QSet>
@@ -19,7 +20,7 @@
 #include <QtGui/QMessageBox>
 
 
-FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *parent) :
+FileSystemModel::FileSystemModel(const QString &currentDirectory, DirectoryView *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {
@@ -279,7 +280,7 @@ QModelIndex FileSystemModel::find(const QString &fileName) const
 void FileSystemModel::refresh()
 {
 	if (!isLocked())
-		refresh(m_currentFsTree);
+		doRefresh();
 }
 
 void FileSystemModel::refreshSize(const QModelIndex &index)
@@ -957,28 +958,31 @@ void FileSystemModel::removeEntry(const QModelIndex &index)
 void FileSystemModel::refresh(FileSystemItem *fileSystemTree)
 {
 	if (fileSystemTree == m_currentFsTree)
+		doRefresh();
+}
+
+void FileSystemModel::doRefresh()
+{
+	FileSystemTree *tree = static_cast<FileSystemTree*>(m_currentFsTree);
+
+	if (tree->isUpdating())
+		return;
+
+	tree->fileInfo().refresh();
+	if (tree->fileInfo().exists())
+		update(tree);
+	else
 	{
-		FileSystemTree *tree = static_cast<FileSystemTree*>(fileSystemTree);
+		beginRemoveRows(QModelIndex(), 0, tree->size() - 1);
 
-		if (tree->isUpdating())
-			return;
+		QDir dir = tree->fileInfo().absoluteDir();
+		while (!dir.exists())
+			dir.cdUp();
 
-		tree->fileInfo().refresh();
-		if (tree->fileInfo().exists())
-			update(tree);
-		else
-		{
-			beginRemoveRows(QModelIndex(), 0, tree->size() - 1);
+		delete m_currentFsTree;
+		m_currentFsTree = new FileSystemTree(dir.absolutePath(), 0);
+		list(m_currentFsTree);
 
-			QDir dir = tree->fileInfo().absoluteDir();
-			while (!dir.exists())
-				dir.cdUp();
-
-			delete m_currentFsTree;
-			m_currentFsTree = new FileSystemTree(dir.absolutePath(), 0);
-			list(m_currentFsTree);
-
-			endRemoveRows();
-		}
+		endRemoveRows();
 	}
 }

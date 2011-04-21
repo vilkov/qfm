@@ -30,11 +30,12 @@ public:
 	}
 
 	void registerMouseReleaseEventHandler(Method handler) { m_handler = handler; }
-	void unregisterMouseReleaseEventHandler() { m_handler = 0;	}
+	void unregisterMouseReleaseEventHandler() { m_handler = 0; }
 
 private:
 	Method m_handler;
 };
+
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
@@ -61,7 +62,7 @@ public:
 	}
 
 	void registerMouseDoubleClickEventHandler(Method handler) { m_handler = handler; }
-	void unregisterMouseDoubleClickEventHandler() { m_handler = 0;	}
+	void unregisterMouseDoubleClickEventHandler() { m_handler = 0; }
 
 private:
 	Method m_handler;

@@ -19,6 +19,9 @@ public:
 
 	bool switchToOtherPanel(QObject *receiver);
 
+protected:
+    virtual void changeEvent(QEvent *event);
+
 private:
     struct FileMenuActions
     {

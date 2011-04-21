@@ -11,7 +11,7 @@ DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
     m_view(&m_eventHandler, this),
-    m_model(directory),
+    m_model(directory, this),
 	m_eventHandler(this)
 {
 	initialize();
@@ -24,7 +24,7 @@ DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
 	m_view(&m_eventHandler, this),
-	m_model(fileInfo),
+	m_model(fileInfo, this),
 	m_eventHandler(this)
 {
 	initialize();
@@ -235,6 +235,11 @@ void DirectoryView::updateCurrentDirectory(const QFileInfo &info)
 {
 	m_header.pathEdit.setText(info.absoluteFilePath());
 	m_parent->updateCurrentDirectory(info);
+}
+
+void DirectoryView::refreshOther()
+{
+	static_cast<DirectoryView*>(m_parent->other().currentWidget())->refresh();
 }
 
 void DirectoryView::initialize()

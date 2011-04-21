@@ -24,6 +24,7 @@ public:
 public:
     FoldersView(const QStringList &folders, FoldersViewRef other, QWidget *parent = 0);
 
+    void refresh();
     void updateCurrentDirectory(const QFileInfo &info);
     void openInNewTab(const QFileInfo &fileInfo);
     void closeCurrentTab();
@@ -32,7 +33,14 @@ public:
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
 
+private Q_SLOTS:
+	void refreshTab(int index);
+
 private:
+	void doRefresh(QWidget *tab);
+
+private:
+	bool m_doNotRefreshTab;
     QVBoxLayout m_layout;
     QTabWidget m_tabWidget;
     FoldersViewRef m_other;

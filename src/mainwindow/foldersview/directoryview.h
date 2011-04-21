@@ -51,6 +51,10 @@ private:
     void updateCurrentDirectory(const QFileInfo &info);
 
 private:
+    friend class FileSystemModel;
+    void refreshOther();
+
+private:
 	void initialize();
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;

@@ -8,13 +8,15 @@
 #include "events/filesystemmodelevents.h"
 
 
+class DirectoryView;
+
 class FileSystemModel : public QAbstractItemModel
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(FileSystemModel)
 
 public:
-	FileSystemModel(const QString &currentDirectory, QObject *parent = 0);
+	FileSystemModel(const QString &currentDirectory, DirectoryView *parent);
 	FileSystemModel(const QFileInfo &fileInfo, QObject *parent = 0);
 	~FileSystemModel();
 
@@ -84,6 +86,7 @@ protected:
 	void removeEntry(FileSystemItem::size_type index);
 	void removeEntry(const QModelIndex &index);
 	void refresh(FileSystemItem *fileSystemTree);
+	void doRefresh();
 
 private:
 	FileSystemItem *m_currentFsTree;

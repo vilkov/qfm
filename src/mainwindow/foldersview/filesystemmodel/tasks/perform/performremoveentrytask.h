@@ -3,17 +3,21 @@
 
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
+#include "../controlabletask.h"
 #include "../scan/scanfilestask.h"
 
 
-class PerformRemoveEntryTask : public PerformTask
+class PerformRemoveEntryTask : public PerformTask<ControlableTask>
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveEntryTask)
 
 public:
-	struct Params : public PerformTask::Params
+	typedef PerformTask<ControlableTask> parent_class;
+
+public:
+	struct Params : public parent_class::Params
 	{};
-	struct EventParams : public PerformTask::EventParams
+	struct EventParams : public parent_class::EventParams
 	{
 		bool shoulRemoveEntry;
 	};
@@ -25,7 +29,7 @@ public:
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 protected:
 	void removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);

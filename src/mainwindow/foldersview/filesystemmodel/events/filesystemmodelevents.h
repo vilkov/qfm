@@ -12,18 +12,16 @@ public:
 	enum EventType
 	{
 		ListFiles = QEvent::User + 1,
-		FirstListFiles = QEvent::User + 2,
-		UpdateFiles = QEvent::User + 3,
-		ScanFilesForRemove = QEvent::User + 4,
-		RemoveFilesComplete = QEvent::User + 5,
-		RemoveFilesCanceled = QEvent::User + 6,
-		ScanFilesForSize = QEvent::User + 7,
-		ScanFilesForCopy = QEvent::User + 8,
-		CopyFilesComplete = QEvent::User + 9,
-		CopyFilesCanceled = QEvent::User + 10,
-		ScanFilesForMove = QEvent::User + 11,
-		QuestionAnswer = QEvent::User + 12,
-		NewEntry = QEvent::User + 13
+		UpdateFiles = QEvent::User + 2,
+		ScanFilesForRemove = QEvent::User + 3,
+		RemoveFilesComplete = QEvent::User + 4,
+		RemoveFilesCanceled = QEvent::User + 5,
+		ScanFilesForSize = QEvent::User + 6,
+		ScanFilesForCopy = QEvent::User + 7,
+		CopyFilesComplete = QEvent::User + 8,
+		CopyFilesCanceled = QEvent::User + 9,
+		ScanFilesForMove = QEvent::User + 10,
+		QuestionAnswer = QEvent::User + 11
 	};
 
 public:

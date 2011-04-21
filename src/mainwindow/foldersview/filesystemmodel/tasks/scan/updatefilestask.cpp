@@ -10,7 +10,7 @@
 
 
 UpdateFilesTask::UpdateFilesTask(Params *params) :
-	FilesTask(params, params->object)
+	parent_class(params)
 {
 	Q_ASSERT(params->object);
 	Q_ASSERT(params->fileSystemTree);

@@ -4,19 +4,22 @@
 #include <QtCore/QDir>
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
+#include "../destcontrolabletask.h"
 
 
-class PerformCopyEntryTask : public PerformTask
+class PerformCopyEntryTask : public PerformTask<DestControlableTask>
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
-	struct Params : public PerformTask::Params
+	typedef PerformTask<DestControlableTask> parent_class;
+
+public:
+	struct Params : public parent_class::Params
 	{
-		Listener destination;
 		bool removeSource;
 	};
-	struct EventParams : public PerformTask::EventParams
+	struct EventParams : public parent_class::EventParams
 	{
 		bool removeSource;
 	};
@@ -35,7 +38,7 @@ public:
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 protected:
 	void copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);

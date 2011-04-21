@@ -3,29 +3,93 @@
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
-#include "../controlabletask.h"
 #include "../../filesysteminfo.h"
+#ifndef Q_OS_WIN
+#  include <unistd.h>
+#  include <sys/types.h>
+#endif
 
 
-class FilesTask : public ControlableTask
+class FilesTask
 {
 public:
-	FilesTask(Params *params, QObject *controller1);
-	FilesTask(Params *params, QObject *controller1, QObject *controller2);
-	FilesTask(Params *params, QObject *controller1, QObject *controller2, QObject *controller3);
-
-	static FileSystemInfo info(const QString &filePath);
-	static FileSystemInfo info(const QFileInfo &fileInfo);
+	static FileSystemInfo info(const QString &filePath)
+	{
+		FileSystemInfo info(filePath);
+		updateInfo(info);
+	    return info;
+	}
+	static FileSystemInfo info(const QFileInfo &fileInfo)
+	{
+		FileSystemInfo info(fileInfo);
+		updateInfo(info);
+	    return info;
+	}
 
 protected:
-	static void updateInfo(FileSystemInfo &info);
-
-	inline Params *parameters() const { return static_cast<Params*>(ControlableTask::parameters()); }
-
-	FileSystemInfo getInfo(const QFileInfo &fileInfo) const;
+	static void updateInfo(FileSystemInfo &info)
+	{
+	#ifdef Q_OS_WIN
+	   	info.setPermissions(info.permissions());
+	#else
+	   	info.setPermissions(translatePermissions(info, getuid(), getgid()));
+	#endif
+	}
 #ifndef Q_OS_WIN
-    static QFile::Permissions translatePermissions(const QFileInfo &fileInfo, uint userId, uint groupId);
+    static QFile::Permissions translatePermissions(const QFileInfo &fileInfo, uint userId, uint groupId)
+    {
+        QFile::Permissions permissions = fileInfo.permissions();
+        QFile::Permissions p = permissions;
+        p &= ~(QFile::ReadUser|QFile::WriteUser|QFile::ExeUser);
+
+        if (permissions & QFile::ReadOther || (fileInfo.ownerId() == userId  && permissions & QFile::ReadOwner) ||
+    										  (fileInfo.groupId() == groupId && permissions & QFile::ReadGroup))
+            p |= QFile::ReadUser;
+
+        if (permissions & QFile::WriteOther || (fileInfo.ownerId() == userId  && permissions & QFile::WriteOwner) ||
+    										   (fileInfo.groupId() == groupId && permissions & QFile::WriteGroup))
+            p |= QFile::WriteUser;
+
+        if (permissions & QFile::ExeOther || (fileInfo.ownerId() == userId  && permissions & QFile::ExeOwner) ||
+    										 (fileInfo.groupId() == groupId && permissions & QFile::ExeGroup))
+            p |= QFile::ExeUser;
+
+        return p;
+    }
 #endif
+};
+
+
+template <typename BaseClass>
+class TemplateFilesTask : public BaseClass, public FilesTask
+{
+public:
+	typedef BaseClass parent_class;
+	typedef typename parent_class::Params      Params;
+	typedef typename parent_class::EventParams EventParams;
+
+public:
+	TemplateFilesTask(Params *params) :
+		parent_class(params)
+	#ifndef Q_OS_WIN
+		,m_userId(getuid())
+		,m_groupId(getgid())
+	#endif
+	{}
+
+
+protected:
+	FileSystemInfo getInfo(const QFileInfo &fileInfo) const
+	{
+	    FileSystemInfo info(fileInfo);
+	#ifdef Q_OS_WIN
+	    info.setPermissions(fileInfo.permissions());
+	#else
+	    info.setPermissions(translatePermissions(fileInfo, m_userId, m_groupId));
+	#endif
+
+	    return info;
+	}
 
 private:
 #ifndef Q_OS_WIN

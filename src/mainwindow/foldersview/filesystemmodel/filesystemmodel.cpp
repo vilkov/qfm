@@ -2,9 +2,10 @@
 #include "items/filesystemtree.h"
 #include "items/filesystementry.h"
 #include "events/filesystemmodelevents.h"
+#include "tasks/commontasksevents.h"
 #include "tasks/scan/listfilestask.h"
 #include "tasks/scan/updatefilestask.h"
-#include "tasks/scan/scanfilestask.h"
+#include "tasks/scan/scanfilestasks.h"
 #include "tasks/perform/performremoveentrytask.h"
 #include "tasks/perform/performremovetreetask.h"
 #include "tasks/perform/performcopyentrytask.h"
@@ -22,34 +23,14 @@ FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *paren
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {
-	if (m_currentFsTree->size() == 0)
-	{
-		/* FIXME: Why Qt does not sort after "InsertRows" if there is no rows? */
-		beginInsertRows(QModelIndex(), 0, 0);
-		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FileSystemInfo(tr("Loading...")));
-		endInsertRows();
-
-		firstList(m_currentFsTree);
-	}
-	else
-		list(m_currentFsTree);
+	list(m_currentFsTree);
 }
 
 FileSystemModel::FileSystemModel(const QFileInfo &fileInfo, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(fileInfo))
 {
-	if (m_currentFsTree->size() == 0)
-	{
-		/* FIXME: Why Qt does not sort after "InsertRows" if there is no rows? */
-		beginInsertRows(QModelIndex(), 0, 0);
-		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FileSystemInfo(tr("Loading...")));
-		endInsertRows();
-
-		firstList(m_currentFsTree);
-	}
-	else
-		list(m_currentFsTree);
+	list(m_currentFsTree);
 }
 
 FileSystemModel::~FileSystemModel()
@@ -68,12 +49,6 @@ bool FileSystemModel::event(QEvent *e)
 		{
 			e->accept();
 			listEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
-			return true;
-		}
-		case FileSystemModelEvent::FirstListFiles:
-		{
-			e->accept();
-			firstListEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
 		case FileSystemModelEvent::UpdateFiles:
@@ -134,12 +109,6 @@ bool FileSystemModel::event(QEvent *e)
 		{
 			e->accept();
 			questionAnswerEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
-			return true;
-		}
-		case FileSystemModelEvent::NewEntry:
-		{
-			e->accept();
-			newEntryEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
 		default:
@@ -227,6 +196,18 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+bool FileSystemModel::isLocked() const
+{
+	return !lockedEntries().isEmpty();
+}
+
+QStringList FileSystemModel::lockedEntries() const
+{
+	FileSystemLockedEntryVisitor visitor;
+	m_currentFsTree->accept(&visitor);
+	return visitor.directories();
+}
+
 QModelIndex FileSystemModel::rootIndex() const
 {
 	if (m_currentFsTree->size() > 0 && m_currentFsTree->child(0)->isRoot())
@@ -297,31 +278,8 @@ QModelIndex FileSystemModel::find(const QString &fileName) const
 
 void FileSystemModel::refresh()
 {
-	if (isLocked())
-		return;
-
-	FileSystemTree *tree = static_cast<FileSystemTree*>(m_currentFsTree);
-
-	if (tree->isUpdating())
-		return;
-
-	tree->fileInfo().refresh();
-	if (tree->fileInfo().exists())
-		update(tree);
-	else
-	{
-		beginRemoveRows(QModelIndex(), 0, tree->size() - 1);
-
-		QDir dir = tree->fileInfo().absoluteDir();
-		while (!dir.exists())
-			dir.cdUp();
-
-		delete m_currentFsTree;
-		m_currentFsTree = new FileSystemTree(dir.absolutePath(), 0);
-		list(m_currentFsTree);
-
-		endRemoveRows();
-	}
+	if (!isLocked())
+		refresh(m_currentFsTree);
 }
 
 void FileSystemModel::refreshSize(const QModelIndex &index)
@@ -499,7 +457,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 void FileSystemModel::createDirectory(const QString &dirName)
 {
-	const FileSystemInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
+	const QFileInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 
 	if (info.exists())
 	{
@@ -568,30 +526,6 @@ void FileSystemModel::move(const QModelIndex &index, FileSystemModel *destinatio
 	}
 }
 
-void FileSystemModel::firstList(FileSystemItem *fileSystemTree)
-{
-	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
-	params->object = (QObject*)this;
-	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
-
-	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-	Application::instance()->taskPool().handle(new ListFilesTask(ListFilesTask::Event::FirstListFiles, params.take()));
-}
-
-void FileSystemModel::firstListEvent(const FileSystemModelEvent::EventParams *p)
-{
-	typedef const ListFilesTask::EventParams *ParamsType;
-	ParamsType params = static_cast<ParamsType>(p);
-
-	listEvent(p);
-
-	if (params->isLastEvent)
-		if (params->fileSystemTree == m_currentFsTree)
-			removeEntry(0);
-		else
-			params->fileSystemTree->remove(0);
-}
-
 void FileSystemModel::list(FileSystemItem *fileSystemTree)
 {
 	QScopedPointer<ListFilesTask::Params> params(new ListFilesTask::Params());
@@ -599,7 +533,7 @@ void FileSystemModel::list(FileSystemItem *fileSystemTree)
 	params->fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
 
 	static_cast<FileSystemTree*>(fileSystemTree)->setUpdating(true);
-	Application::instance()->taskPool().handle(new ListFilesTask(ListFilesTask::Event::ListFiles, params.take()));
+	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
 }
 
 void FileSystemModel::listEvent(const FileSystemModelEvent::EventParams *p)
@@ -950,6 +884,9 @@ void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::EventParams 
 		if (params->snapshot.fileSystemTree == m_currentFsTree)
 			updateBothColumns(m_currentFsTree, params->snapshot.entry);
 	}
+
+	if (params->destination.object)
+		static_cast<FileSystemModel*>(params->destination.object)->refresh(params->destination.fileSystemTree);
 }
 
 void FileSystemModel::copyCanceledEvent(const FileSystemModelEvent::EventParams *p)
@@ -959,44 +896,12 @@ void FileSystemModel::copyCanceledEvent(const FileSystemModelEvent::EventParams 
 
 void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::EventParams *p)
 {
-	typedef PerformTask::QuestionAnswerParams * ParamsType;
+	typedef CommonTasksEvents::QuestionAnswerParams * ParamsType;
 	ParamsType params = (ParamsType)p;
 
 	params->result->lock();
 	params->result->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), params->title, params->question, params->buttons));
 	params->result->unlock();
-}
-
-void FileSystemModel::newEntryEvent(const FileSystemModelEvent::EventParams *p)
-{
-	typedef PerformCopyEntryTask::NewEntryParams * ParamsType;
-	ParamsType params = (ParamsType)p;
-
-	if (params->fileSystemTree == m_currentFsTree)
-	{
-		beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size());
-		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FilesTask::info(params->absoluteFilePath));
-		endInsertRows();
-	}
-	else
-		static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FilesTask::info(params->absoluteFilePath));
-}
-
-bool FileSystemModel::isLocked() const
-{
-	FileSystemLockedEntryVisitor visitor;
-	m_currentFsTree->accept(&visitor);
-
-	if (visitor.entrys().isEmpty())
-		return false;
-	else
-	{
-		QMessageBox::information(
-				&Application::instance()->mainWindow(),
-				tr("Busy directories"),
-				tr("There is a busy directories:\n").append(visitor.directories().join(QChar('\n'))));
-		return true;
-	}
 }
 
 void FileSystemModel::updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry)
@@ -1047,4 +952,33 @@ void FileSystemModel::removeEntry(FileSystemItem::size_type index)
 void FileSystemModel::removeEntry(const QModelIndex &index)
 {
 	removeEntry(index.row());
+}
+
+void FileSystemModel::refresh(FileSystemItem *fileSystemTree)
+{
+	if (fileSystemTree == m_currentFsTree)
+	{
+		FileSystemTree *tree = static_cast<FileSystemTree*>(fileSystemTree);
+
+		if (tree->isUpdating())
+			return;
+
+		tree->fileInfo().refresh();
+		if (tree->fileInfo().exists())
+			update(tree);
+		else
+		{
+			beginRemoveRows(QModelIndex(), 0, tree->size() - 1);
+
+			QDir dir = tree->fileInfo().absoluteDir();
+			while (!dir.exists())
+				dir.cdUp();
+
+			delete m_currentFsTree;
+			m_currentFsTree = new FileSystemTree(dir.absolutePath(), 0);
+			list(m_currentFsTree);
+
+			endRemoveRows();
+		}
+	}
 }

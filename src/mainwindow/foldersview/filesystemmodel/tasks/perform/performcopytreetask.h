@@ -38,12 +38,6 @@ protected:
 private:
 	bool cd(QDir &destination, FileSystemEntry *entry, const volatile bool &stopedFlag);
 	void copy(QDir &destination, FileSystemTree *tree, const volatile bool &stopedFlag);
-
-private:
-	bool m_skipAllIfNotCreate;
-	bool m_skipAllIfNotCopy;
-	bool m_overwriteAll;
-	bool m_canceled;
 };
 
 #endif /* PERFORMCOPYTREETASK_H_ */

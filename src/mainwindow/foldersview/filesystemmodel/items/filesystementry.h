@@ -24,20 +24,30 @@ public:
 
 	void update(const FileSystemInfo &info) { m_info = info; }
 
-	const QVariant &fileSize() const { return m_fileSize; }
-	void setFileSize(const QVariant &value) { m_fileSize = value; }
+	const QVariant &totalSize() const { return m_totalSize; }
+	void setTotalSize(quint64 value) { m_totalSize = value; }
+	void clearTotalSize() { m_totalSize.clear(); }
+
+	const QVariant &doneSize() const { return m_doneSize; }
+	void setDoneSize(quint64 value) { m_doneSize = value; }
+
+	bool isInProgress() const { return !m_doneSize.isNull(); }
+	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
 
 	bool isLocked() const { return m_locked; }
 	const QString &lockReason() const { return m_lockReason; }
+	void lock(const QString &reason, quint64 totalSize);
 	void lock(const QString &reason);
 	void unlock();
 
-	QString humanReadableSize(quint64 size) const;
+	static QString humanReadableSize(quint64 size);
+	static QString humanReadableShortSize(quint64 size);
 
 private:
 	bool m_locked;
 	QString m_lockReason;
-	QVariant m_fileSize;
+	QVariant m_totalSize;
+	QVariant m_doneSize;
 	FileSystemInfo m_info;
 };
 

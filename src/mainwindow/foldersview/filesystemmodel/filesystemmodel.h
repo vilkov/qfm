@@ -76,6 +76,7 @@ protected:
 	void copyCanceledEvent(const FileSystemModelEvent::Params *p);
 
 	void questionAnswerEvent(const FileSystemModelEvent::Params *p);
+	void updateProgressEvent(const FileSystemModelEvent::Params *p);
 
 protected:
 	void updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);

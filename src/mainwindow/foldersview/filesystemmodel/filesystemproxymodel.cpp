@@ -40,7 +40,7 @@ bool FileSystemProxyModel::lessThan(const QModelIndex &left, const QModelIndex &
 				{
 					if (leftItem->fileInfo().isDir())
 						if (rightItem->fileInfo().isDir())
-							return leftItem->fileSize().toULongLong() < rightItem->fileSize().toULongLong();
+							return leftItem->totalSize().toULongLong() < rightItem->totalSize().toULongLong();
 						else
 							return true;
 					else

@@ -10,9 +10,9 @@
 class ScanFilesForSizeTask : public ScanFilesTask<ControlableTask>
 {
 public:
-	typedef ScanFilesTask<ControlableTask> parent_class;
-	typedef parent_class::Params           Params;
-	typedef parent_class::EventParams      EventParams;
+	typedef ScanFilesTask<ControlableTask>               parent_class;
+	typedef parent_class::Params                         Params;
+	typedef FileSystemModelEvents::ScanFilesForSizeEvent Event;
 
 public:
 	ScanFilesForSizeTask(Params *params);
@@ -25,9 +25,9 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask<ControlableTask>
 {
 public:
-	typedef ScanFilesTask<ControlableTask> parent_class;
-	typedef parent_class::Params           Params;
-	typedef parent_class::EventParams      EventParams;
+	typedef ScanFilesTask<ControlableTask>                 parent_class;
+	typedef parent_class::Params                           Params;
+	typedef FileSystemModelEvents::ScanFilesForRemoveEvent Event;
 
 public:
 	ScanFilesForRemoveTask(Params *params);
@@ -42,10 +42,6 @@ class ScanFilesWithDestinationTask : public ScanFilesTask<DestControlableTask>
 public:
 	typedef ScanFilesTask<DestControlableTask> parent_class;
 	typedef parent_class::Params               Params;
-	typedef parent_class::EventParams          EventParams;
-
-public:
-	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
 	ScanFilesWithDestinationTask(Params *params);
@@ -59,11 +55,7 @@ protected:
 class ScanFilesForCopyTask : public ScanFilesWithDestinationTask
 {
 public:
-	struct Params : public ScanFilesWithDestinationTask::Params
-	{};
-	struct EventParams : public ScanFilesWithDestinationTask::EventParams
-	{};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
+	typedef FileSystemModelEvents::ScanFilesForCopyEvent Event;
 
 public:
 	ScanFilesForCopyTask(Params *params);
@@ -76,11 +68,7 @@ public:
 class ScanFilesForMoveTask : public ScanFilesWithDestinationTask
 {
 public:
-	struct Params : public ScanFilesWithDestinationTask::Params
-	{};
-	struct EventParams : public ScanFilesWithDestinationTask::EventParams
-	{};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
+	typedef FileSystemModelEvents::ScanFilesForMoveEvent Event;
 
 public:
 	ScanFilesForMoveTask(Params *params);

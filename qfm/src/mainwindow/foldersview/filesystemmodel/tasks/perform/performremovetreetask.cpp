@@ -14,7 +14,7 @@ void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 		if (m_canceled)
 		{
-			QScopedPointer<Event> event(new Event(Event::RemoveFilesCanceled));
+			QScopedPointer<CanceledEvent> event(new CanceledEvent());
 			event->params().snapshot = parameters()->source;
 			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
 			Application::postEvent(parameters()->source.object, event.take());

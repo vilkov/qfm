@@ -2,7 +2,6 @@
 #define PERFORMCOPYTREETASK_H_
 
 #include "performcopyentrytask.h"
-#include "../scan/scanfilestasks.h"
 
 
 class PerformCopyTreeTask : public PerformCopyEntryTask
@@ -12,32 +11,20 @@ class PerformCopyTreeTask : public PerformCopyEntryTask
 public:
 	struct Params : public PerformCopyEntryTask::Params
 	{
-		Params(QObject *receiver, const ScanFilesForCopyTask::EventParams &params) :
+		Params(QObject *receiver, const FileSystemModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
 			subtree(params.subtree)
 		{
 			source.object = receiver;
 			source.fileSystemTree = params.snapshot.fileSystemTree;
 			source.entry = params.snapshot.entry;
 			destination = params.destination;
-			removeSource = false;
-		}
-		Params(QObject *receiver, const ScanFilesForMoveTask::EventParams &params) :
-			subtree(params.subtree)
-		{
-			source.object = receiver;
-			source.fileSystemTree = params.snapshot.fileSystemTree;
-			source.entry = params.snapshot.entry;
-			destination = params.destination;
-			removeSource = true;
+			removeSource = moveFiles;
 		}
 
 		FileSystemTree *subtree;
 	};
-	struct EventParams : public PerformCopyEntryTask::EventParams
-	{
-		FileSystemTree *subtree;
-	};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
+	typedef FileSystemModelEvents::CopyTreeFilesCompletedEvent CompletedEvent;
+	typedef FileSystemModelEvents::CopyTreeFilesCanceledEvent  CanceledEvent;
 
 
 public:

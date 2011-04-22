@@ -18,10 +18,6 @@ public:
 	    friend class DeleteHandler;
 		QMutex m_mutex;
 	};
-	struct EventParams : public ControlableTask::EventParams
-	{
-		Params::Listener destination;
-	};
 
 public:
 	/*

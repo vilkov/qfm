@@ -47,7 +47,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 		{
 			if (!updatedFiles.isEmpty())
 			{
-				QScopedPointer<Event> event(new Event(Event::UpdateFiles));
+				QScopedPointer<Event> event(new Event());
 				event->params().fileSystemTree = parameters()->fileSystemTree;
 				event->params().isLastEvent = false;
 				event->params().updates = updatedFiles;
@@ -66,14 +66,14 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 
 		if (updatedFiles.isEmpty())
 		{
-			QScopedPointer<Event> event(new Event(Event::UpdateFiles));
+			QScopedPointer<Event> event(new Event());
 			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			Application::postEvent(parameters()->object, event.take());
 		}
 		else
 		{
-			QScopedPointer<Event> event(new Event(Event::UpdateFiles));
+			QScopedPointer<Event> event(new Event());
 			event->params().fileSystemTree = parameters()->fileSystemTree;
 			event->params().isLastEvent = true;
 			event->params().updates = updatedFiles;

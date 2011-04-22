@@ -18,13 +18,7 @@ public:
 		FileSystemTree *fileSystemTree;
 		ChangesList list;
 	};
-	struct EventParams : public parent_class::EventParams
-	{
-		FileSystemTree *fileSystemTree;
-		bool isLastEvent;
-		ChangesList updates;
-	};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
+	typedef FileSystemModelEvents::UpdateFilesEvent Event;
 
 public:
 	UpdateFilesTask(Params *params);

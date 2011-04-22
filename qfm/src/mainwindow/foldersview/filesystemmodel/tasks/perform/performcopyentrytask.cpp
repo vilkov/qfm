@@ -1,5 +1,4 @@
 #include "performcopyentrytask.h"
-#include "../commontasksevents.h"
 #include "../../../../../application.h"
 #include <QtCore/QFile>
 
@@ -16,7 +15,6 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 
 void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 {
-	Event::EventType type;
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 
 	if (dir.exists())
@@ -26,20 +24,27 @@ void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 		do
 			copyFile(dir, parameters()->source.entry, tryAgain = false, stopedFlag);
 		while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
-
-		type = m_canceled ? Event::CopyFilesCanceled : Event::CopyFilesComplete;
 	}
 	else
-		type = Event::CopyFilesCanceled;
+		m_canceled = true;
 
 	if (!stopedFlag && !isControllerDead())
-	{
-		QScopedPointer<Event> event(new Event(type));
-		event->params().snapshot = parameters()->source;
-		event->params().removeSource = parameters()->removeSource;
-		event->params().destination = parameters()->destination;
-		Application::postEvent(parameters()->source.object, event.take());
-	}
+		if (m_canceled)
+		{
+			QScopedPointer<CanceledEvent> event(new CanceledEvent());
+			event->params().snapshot = parameters()->source;
+			event->params().removeSource = parameters()->removeSource;
+			event->params().destination = parameters()->destination;
+			Application::postEvent(parameters()->source.object, event.take());
+		}
+		else
+		{
+			QScopedPointer<CompletedEvent> event(new CompletedEvent());
+			event->params().snapshot = parameters()->source;
+			event->params().removeSource = parameters()->removeSource;
+			event->params().destination = parameters()->destination;
+			Application::postEvent(parameters()->source.object, event.take());
+		}
 }
 
 void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
@@ -67,9 +72,8 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 		}
 		else
 		{
-			using namespace CommonTasksEvents;
-			QuestionAnswerParams::Result result;
-			QScopedPointer<CommonTasksEvents::QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
+			QuestionAnswerEvent::Params::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Ignore | QMessageBox::Cancel;
 			event->params().title = entry->lockReason();
 			event->params().result = &result;
@@ -109,9 +113,8 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 
 void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag)
 {
-	using namespace CommonTasksEvents;
-	QuestionAnswerParams::Result result;
-	QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
+	QuestionAnswerEvent::Params::Result result;
+	QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 	event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
 	event->params().title = title;
 	event->params().result = &result;

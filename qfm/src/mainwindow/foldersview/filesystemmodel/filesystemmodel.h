@@ -5,7 +5,7 @@
 #include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
-#include "events/filesystemmodelevents.h"
+#include "events/filesystemmodelevent.h"
 
 
 class DirectoryView;
@@ -52,30 +52,30 @@ public:
 
 protected:
 	void list(FileSystemItem *fileSystemTree);
-	void listEvent(const FileSystemModelEvent::EventParams *p);
+	void listEvent(const FileSystemModelEvent::Params *p);
 
 	void update(FileSystemItem *fileSystemTree);
-	void updateEvent(const FileSystemModelEvent::EventParams *p);
+	void updateEvent(const FileSystemModelEvent::Params *p);
 
 	void removeEntry(FileSystemItem *fileSystemTree, FileSystemItem *entry);
 	void scanForRemove(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void scanForRemoveEvent(const FileSystemModelEvent::EventParams *p);
-	void removeCompleteEvent(const FileSystemModelEvent::EventParams *p);
-	void removeCanceledEvent(const FileSystemModelEvent::EventParams *p);
+	void scanForRemoveEvent(const FileSystemModelEvent::Params *p);
+	void removeCompleteEvent(const FileSystemModelEvent::Params *p);
+	void removeCanceledEvent(const FileSystemModelEvent::Params *p);
 
 	void scanForSize(FileSystemItem *fileSystemTree, FileSystemItem *entry);
-	void scanForSizeEvent(const FileSystemModelEvent::EventParams *p);
+	void scanForSizeEvent(const FileSystemModelEvent::Params *p);
 
 	void copyEntry(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForCopy(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void moveEntry(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
 	void scanForMove(FileSystemItem *fileSystemTree, FileSystemItem *entry, FileSystemModel *destination);
-	void scanForCopyEvent(const FileSystemModelEvent::EventParams *p);
-	void scanForMoveEvent(const FileSystemModelEvent::EventParams *p);
-	void copyCompleteEvent(const FileSystemModelEvent::EventParams *p);
-	void copyCanceledEvent(const FileSystemModelEvent::EventParams *p);
+	void scanForCopyEvent(const FileSystemModelEvent::Params *p);
+	void scanForMoveEvent(const FileSystemModelEvent::Params *p);
+	void copyCompleteEvent(const FileSystemModelEvent::Params *p);
+	void copyCanceledEvent(const FileSystemModelEvent::Params *p);
 
-	void questionAnswerEvent(const FileSystemModelEvent::EventParams *p);
+	void questionAnswerEvent(const FileSystemModelEvent::Params *p);
 
 protected:
 	void updateFirstColumn(FileSystemItem *fileSystemTree, FileSystemItem *entry);

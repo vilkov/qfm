@@ -23,13 +23,6 @@ public:
 		quint64 size;
 		FileSystemTree *subtree;
 	};
-	struct EventParams : public parent_class::EventParams
-	{
-		typename parent_class::EventParams::Snapshot snapshot;
-		quint64 size;
-		FileSystemTree *subtree;
-	};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
 
 public:
 	ScanFilesTask(Params *params) :

@@ -7,7 +7,8 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 	parent_class(params),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
-	m_overwriteAll(false)
+	m_overwriteAll(false),
+	m_doneSize(0)
 {
 	Q_ASSERT(params->destination.object != 0);
 	Q_ASSERT(params->destination.fileSystemTree != 0);
@@ -15,6 +16,8 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 
 void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 {
+	m_baseTime = m_currentTime = QDateTime::currentDateTime();
+
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 
 	if (dir.exists())
@@ -49,6 +52,8 @@ void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 
 void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {
+	m_currentTime = QDateTime::currentDateTime();
+
 	QFile file(entry->fileInfo().absoluteFilePath());
 	QFile dest(destination.absoluteFilePath(entry->fileInfo().fileName()));
 
@@ -67,6 +72,8 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 								arg(destination.absolutePath()),
 							tryAgain,
 							stopedFlag);
+
+				postUpdateEventIfNeed();
 				return;
 			}
 		}
@@ -91,14 +98,20 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 					if (result.answer() == QMessageBox::Cancel)
 					{
 						m_canceled = true;
+						postUpdateEventIfNeed();
 						return;
 					}
 					else
 						if (result.answer() == QMessageBox::Ignore)
+						{
+							postUpdateEventIfNeed();
 							return;
+						}
 		}
 
-	if (!file.copy(dest.fileName()))
+	if (file.copy(dest.fileName()))
+		m_doneSize += file.size();
+	else
 		if (!m_skipAllIfNotCopy)
 			askForSkipAllIfNotCopy(
 					entry->lockReason(),
@@ -109,6 +122,8 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 						arg(destination.absolutePath()),
 					tryAgain,
 					stopedFlag);
+
+	postUpdateEventIfNeed();
 }
 
 void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag)
@@ -131,4 +146,21 @@ void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QS
 			else
 				if (result.answer() == QMessageBox::Cancel)
 					m_canceled = true;
+}
+
+void PerformCopyEntryTask::postUpdateEventIfNeed()
+{
+	if (m_baseTime.secsTo(m_currentTime) > 1)
+	{
+		postUpdateEvent();
+		m_baseTime = m_currentTime;
+	}
+}
+
+void PerformCopyEntryTask::postUpdateEvent()
+{
+	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent());
+	event->params().snapshot = parameters()->source;
+	event->params().progress = m_doneSize;
+	Application::postEvent(parameters()->source.object, event.take());
 }

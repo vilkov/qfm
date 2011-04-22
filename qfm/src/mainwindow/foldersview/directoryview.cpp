@@ -12,6 +12,7 @@ DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
     m_header(&m_pathEventHandler, this),
     m_view(&m_eventHandler, this),
     m_model(directory, this),
+    m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
 	initialize();
@@ -25,6 +26,7 @@ DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
     m_header(&m_pathEventHandler, this),
 	m_view(&m_eventHandler, this),
 	m_model(fileInfo, this),
+    m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
 	initialize();

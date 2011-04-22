@@ -11,6 +11,8 @@ PerformCopyTreeTask::PerformCopyTreeTask(Params *params) :
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {
+	m_baseTime = m_currentTime = QDateTime::currentDateTime();
+
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 
 	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))

@@ -238,6 +238,15 @@ public:
 		Result *result;
 	};
 	typedef TemplateEvent<QuestionAnswerParams, BaseEvent::QuestionAnswer> QuestionAnswerEvent;
+
+
+	/********** UpdatePerformProgress **********/
+	struct UpdatePerformProgressParams : public BaseEvent::Params
+	{
+		Snapshot snapshot;
+		quint64 progress;
+	};
+	typedef TemplateEvent<UpdatePerformProgressParams, BaseEvent::UpdatePerformProgress> UpdatePerformProgressEvent;
 };
 
 #endif /* FILESYSTEMMODELEVENTS_H_ */

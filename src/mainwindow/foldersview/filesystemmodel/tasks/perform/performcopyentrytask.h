@@ -13,24 +13,15 @@ class PerformCopyEntryTask : public PerformTask<DestControlableTask>
 
 public:
 	typedef PerformTask<DestControlableTask> parent_class;
+	typedef FileSystemModelEvents::CopyFilesCompletedEvent CompletedEvent;
+	typedef FileSystemModelEvents::CopyFilesCanceledEvent  CanceledEvent;
+	typedef FileSystemModelEvents::QuestionAnswerEvent     QuestionAnswerEvent;
 
 public:
 	struct Params : public parent_class::Params
 	{
 		bool removeSource;
 	};
-	struct EventParams : public parent_class::EventParams
-	{
-		bool removeSource;
-	};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
-
-	struct NewEntryParams : public ControlableTask::EventParams
-	{
-		FileSystemTree *fileSystemTree;
-		QString absoluteFilePath;
-	};
-	typedef FileSystemModelEventTemplate<NewEntryParams> NewEntryEvent;
 
 public:
 	PerformCopyEntryTask(Params *params);
@@ -43,7 +34,6 @@ protected:
 protected:
 	void copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag);
-	void complete(const volatile bool &stopedFlag, Event::EventType type, const QString &destinationFilePath);
 
 protected:
 	bool m_skipAllIfNotCreate;

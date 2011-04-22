@@ -65,8 +65,7 @@ class TemplateFilesTask : public BaseClass, public FilesTask
 {
 public:
 	typedef BaseClass parent_class;
-	typedef typename parent_class::Params      Params;
-	typedef typename parent_class::EventParams EventParams;
+	typedef typename parent_class::Params Params;
 
 public:
 	TemplateFilesTask(Params *params) :

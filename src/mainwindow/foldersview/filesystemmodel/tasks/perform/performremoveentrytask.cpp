@@ -1,5 +1,4 @@
 #include "performremoveentrytask.h"
-#include "../commontasksevents.h"
 #include "../../../../../application.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
@@ -23,12 +22,20 @@ void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
 	while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
 
 	if (!stopedFlag && !isControllerDead())
-	{
-		QScopedPointer<Event> event(new Event(m_canceled ? Event::RemoveFilesCanceled : Event::RemoveFilesComplete));
-		event->params().snapshot = parameters()->source;
-		event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-		Application::postEvent(parameters()->source.object, event.take());
-	}
+		if (m_canceled)
+		{
+			QScopedPointer<CanceledEvent> event(new CanceledEvent());
+			event->params().snapshot = parameters()->source;
+			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
+			Application::postEvent(parameters()->source.object, event.take());
+		}
+		else
+		{
+			QScopedPointer<CompletedEvent> event(new CompletedEvent());
+			event->params().snapshot = parameters()->source;
+			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
+			Application::postEvent(parameters()->source.object, event.take());
+		}
 }
 
 void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
@@ -58,9 +65,8 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 
 		if (!res && !m_skipAllIfNotRemove)
 		{
-			using namespace CommonTasksEvents;
-			QuestionAnswerParams::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
+			QuestionAnswerEvent::Params::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
 			event->params().title = entry->lockReason();
 			event->params().result = &result;
@@ -93,9 +99,8 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 	else
 		if (!m_skipAllIfNotExists)
 		{
-			using namespace CommonTasksEvents;
-			QuestionAnswerParams::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent(QuestionAnswerEvent::QuestionAnswer));
+			QuestionAnswerEvent::Params::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel;
 			event->params().title = entry->lockReason();
 			event->params().result = &result;

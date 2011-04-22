@@ -2,7 +2,6 @@
 #include "items/filesystemtree.h"
 #include "items/filesystementry.h"
 #include "events/filesystemmodelevents.h"
-#include "tasks/commontasksevents.h"
 #include "tasks/scan/listfilestask.h"
 #include "tasks/scan/updatefilestask.h"
 #include "tasks/scan/scanfilestasks.h"
@@ -44,7 +43,7 @@ FileSystemModel::~FileSystemModel()
 
 bool FileSystemModel::event(QEvent *e)
 {
-	switch (static_cast<FileSystemModelEvent::EventType>(e->type()))
+	switch (static_cast<FileSystemModelEvent::Type>(e->type()))
 	{
 		case FileSystemModelEvent::ListFiles:
 		{
@@ -64,7 +63,7 @@ bool FileSystemModel::event(QEvent *e)
 			scanForRemoveEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
-		case FileSystemModelEvent::RemoveFilesComplete:
+		case FileSystemModelEvent::RemoveFilesCompleted:
 		{
 			e->accept();
 			removeCompleteEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
@@ -88,7 +87,7 @@ bool FileSystemModel::event(QEvent *e)
 			scanForCopyEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
 			return true;
 		}
-		case FileSystemModelEvent::CopyFilesComplete:
+		case FileSystemModelEvent::CopyFilesCompleted:
 		{
 			e->accept();
 			copyCompleteEvent(static_cast<FileSystemModelEvent*>(e)->parameters());
@@ -537,9 +536,9 @@ void FileSystemModel::list(FileSystemItem *fileSystemTree)
 	Application::instance()->taskPool().handle(new ListFilesTask(params.take()));
 }
 
-void FileSystemModel::listEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::listEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const ListFilesTask::EventParams *ParamsType;
+	typedef const ListFilesTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	if (!params->updates.isEmpty())
@@ -567,9 +566,9 @@ void FileSystemModel::update(FileSystemItem *fileSystemTree)
 	Application::instance()->taskPool().handle(new UpdateFilesTask(params.take()));
 }
 
-void FileSystemModel::updateEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const UpdateFilesTask::EventParams *ParamsType;
+	typedef const UpdateFilesTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 	ChangesList list = params->updates;
 
@@ -663,9 +662,9 @@ void FileSystemModel::scanForRemove(FileSystemItem *fileSystemTree, FileSystemIt
 	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
 }
 
-void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const ScanFilesForRemoveTask::EventParams *ParamsType;
+	typedef const ScanFilesForRemoveTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, params->subtree);
@@ -693,9 +692,9 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::EventParams
 	}
 }
 
-void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const PerformRemoveEntryTask::EventParams *ParamsType;
+	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	if (params->shoulRemoveEntry)
@@ -713,9 +712,9 @@ void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::EventParam
 	}
 }
 
-void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const PerformRemoveEntryTask::EventParams *ParamsType;
+	typedef const PerformRemoveEntryTask::CanceledEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, 0);
@@ -739,9 +738,9 @@ void FileSystemModel::scanForSize(FileSystemItem *fileSystemTree, FileSystemItem
 	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
 }
 
-void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const ScanFilesForSizeTask::EventParams *ParamsType;
+	typedef const ScanFilesForSizeTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	static_cast<FileSystemEntry*>(params->snapshot.entry)->setFileSize(params->size);
@@ -813,9 +812,9 @@ void FileSystemModel::scanForMove(FileSystemItem *fileSystemTree, FileSystemItem
 	Application::instance()->taskPool().handle(new ScanFilesForMoveTask(params.take()));
 }
 
-void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const ScanFilesForCopyTask::EventParams *ParamsType;
+	typedef const ScanFilesForCopyTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, params->subtree);
@@ -825,12 +824,12 @@ void FileSystemModel::scanForCopyEvent(const FileSystemModelEvent::EventParams *
 	if (m_currentFsTree == params->snapshot.fileSystemTree)
 		updateSecondColumn(m_currentFsTree, params->snapshot.entry);
 
-	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params)));
+	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, false)));
 }
 
-void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const ScanFilesForMoveTask::EventParams *ParamsType;
+	typedef const ScanFilesForMoveTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, params->subtree);
@@ -840,12 +839,12 @@ void FileSystemModel::scanForMoveEvent(const FileSystemModelEvent::EventParams *
 	if (m_currentFsTree == params->snapshot.fileSystemTree)
 		updateSecondColumn(m_currentFsTree, params->snapshot.entry);
 
-	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params)));
+	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, true)));
 }
 
-void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef const PerformCopyEntryTask::EventParams *ParamsType;
+	typedef const PerformCopyEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
 	if (params->removeSource)
@@ -856,7 +855,7 @@ void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::EventParams 
 		if (info.exists())
 			if (info.isDir())
 			{
-				typedef const PerformCopyTreeTask::EventParams *ParamsType;
+				typedef const PerformCopyTreeTask::CompletedEvent::Params *ParamsType;
 				ParamsType params = static_cast<ParamsType>(p);
 
 				params->snapshot.entry->lock(tr("Removing..."));
@@ -890,14 +889,14 @@ void FileSystemModel::copyCompleteEvent(const FileSystemModelEvent::EventParams 
 		static_cast<FileSystemModel*>(params->destination.object)->refresh(params->destination.fileSystemTree);
 }
 
-void FileSystemModel::copyCanceledEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::copyCanceledEvent(const FileSystemModelEvent::Params *p)
 {
 	copyCompleteEvent(p);
 }
 
-void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::EventParams *p)
+void FileSystemModel::questionAnswerEvent(const FileSystemModelEvent::Params *p)
 {
-	typedef CommonTasksEvents::QuestionAnswerParams * ParamsType;
+	typedef FileSystemModelEvents::QuestionAnswerParams * ParamsType;
 	ParamsType params = (ParamsType)p;
 
 	params->result->lock();

@@ -12,14 +12,14 @@ class PerformRemoveTreeTask : public PerformRemoveEntryTask
 public:
 	struct Params : public PerformRemoveEntryTask::Params
 	{
-		Params(QObject *receiver, const ScanFilesForRemoveTask::EventParams &params) :
+		Params(QObject *receiver, const FileSystemModelEvents::ScanFilesForRemoveEvent::Params &params) :
 			subtree(params.subtree)
 		{
 			source.object = receiver;
 			source.fileSystemTree = params.snapshot.fileSystemTree;
 			source.entry = params.snapshot.entry;
 		}
-		Params(QObject *receiver, const PerformCopyTreeTask::EventParams &params) :
+		Params(QObject *receiver, const FileSystemModelEvents::CopyTreeFilesCompletedEvent::Params &params) :
 			subtree(params.subtree)
 		{
 			source.object = receiver;

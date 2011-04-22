@@ -12,16 +12,10 @@ class PerformRemoveEntryTask : public PerformTask<ControlableTask>
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveEntryTask)
 
 public:
-	typedef PerformTask<ControlableTask> parent_class;
-
-public:
-	struct Params : public parent_class::Params
-	{};
-	struct EventParams : public parent_class::EventParams
-	{
-		bool shoulRemoveEntry;
-	};
-	typedef FileSystemModelEventTemplate<EventParams> Event;
+	typedef PerformTask<ControlableTask>                     parent_class;
+	typedef FileSystemModelEvents::RemoveFilesCompletedEvent CompletedEvent;
+	typedef FileSystemModelEvents::RemoveFilesCanceledEvent  CanceledEvent;
+	typedef FileSystemModelEvents::QuestionAnswerEvent       QuestionAnswerEvent;
 
 public:
 	PerformRemoveEntryTask(Params *params);

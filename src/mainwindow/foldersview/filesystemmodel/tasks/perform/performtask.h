@@ -13,10 +13,6 @@ public:
 	{
 		typename parent_class::Params::Snapshot source;
 	};
-	struct EventParams : public parent_class::EventParams
-	{
-		typename parent_class::EventParams::Snapshot snapshot;
-	};
 
 public:
 	PerformTask(Params *params) :

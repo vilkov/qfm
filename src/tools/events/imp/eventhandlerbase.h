@@ -23,6 +23,7 @@ public:
 	virtual bool mouseDoubleClickEvent(QMouseEvent *event) { return false; }
 	virtual bool keyboardEvent(QKeyEvent *event) { return false; }
     virtual bool focusOutEvent(QFocusEvent *event) { return false; }
+    virtual bool contextMenuEvent(QContextMenuEvent *event) { return false; }
 
 protected:
     inline bool invokeMethod1(Method method, QEvent *event)

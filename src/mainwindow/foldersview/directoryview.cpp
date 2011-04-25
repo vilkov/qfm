@@ -239,6 +239,12 @@ void DirectoryView::updateCurrentDirectory(const QFileInfo &info)
 	m_parent->updateCurrentDirectory(info);
 }
 
+void DirectoryView::contextMenu()
+{
+	ContextMenu menu = m_model.contextMenu(currentIndex());
+	menu.popup();
+}
+
 void DirectoryView::refreshOther()
 {
 	static_cast<DirectoryView*>(m_parent->other().currentWidget())->refresh();
@@ -259,7 +265,9 @@ void DirectoryView::initialize()
 	m_view.setSortingEnabled(true);
 //	m_view.setUniformRowHeights(true);
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
+	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
 
+	m_eventHandler.registerContextMenuEventHandler(&DirectoryView::contextMenu);
 	m_eventHandler.registerMouseDoubleClickEventHandler(&DirectoryView::activated);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Backspace, &DirectoryView::goUp);
 	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Left,      &DirectoryView::goBack);
@@ -267,6 +275,7 @@ void DirectoryView::initialize()
 	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Up,        &DirectoryView::editPath);
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_F5,        &DirectoryView::refresh);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Return,    &DirectoryView::activated);
+	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Enter,     &DirectoryView::activated);
 	m_eventHandler.registerShortcut(Qt::ALT + Qt::CTRL, Qt::Key_X,         &DirectoryView::pathToClipboard);
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_Return,    &DirectoryView::openInNewTab);
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_W,         &DirectoryView::closeTab);

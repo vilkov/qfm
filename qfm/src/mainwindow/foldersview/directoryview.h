@@ -12,8 +12,10 @@
 #include "filesystemmodel/filesystemdecorationdelegate.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
+#include "../../tools/events/imp/contextmenueventhandler.h"
 #include "../../tools/events/imp/mouseeventsource.h"
 #include "../../tools/events/imp/keyboardeventsource.h"
+#include "../../tools/events/imp/contextmenueventsource.h"
 
 
 class DirectoryView : public QWidget
@@ -49,6 +51,7 @@ private:
     void editPath();
 	void selectIndex(const QModelIndex &index);
     void updateCurrentDirectory(const QFileInfo &info);
+    void contextMenu();
 
 private:
     friend class FileSystemModel;
@@ -90,16 +93,20 @@ private Q_SLOTS:
 
 private:
 	typedef MouseDoubleClickEventSource<
-				KeyboardEventSource<
-					EventSourceBase<
-						QTreeView
+				ContextMenuEventSource<
+					KeyboardEventSource<
+						EventSourceBase<
+							QTreeView
+						>
 					>
 				>
 			> DirectoryListView;
 	typedef MouseDoubleClickEventHandler<
-				KeyboardEventHandler<
-					EventHandlerBase<
-						DirectoryView
+				ContextMenuEventHandler<
+					KeyboardEventHandler<
+						EventHandlerBase<
+							DirectoryView
+						>
 					>
 				>
 			> DirectoryListViewEventHandler;

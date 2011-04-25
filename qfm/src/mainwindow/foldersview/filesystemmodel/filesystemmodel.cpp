@@ -282,6 +282,21 @@ QModelIndex FileSystemModel::find(const QString &fileName) const
 	return QModelIndex();
 }
 
+ContextMenu FileSystemModel::contextMenu(const QModelIndex &index)
+{
+	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
+		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
+	{
+		FileSystemInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
+		info.refresh();
+
+		if (info.exists())
+			return ContextMenu(info);
+		else
+			removeEntry(index);
+	}
+}
+
 void FileSystemModel::refresh()
 {
 	if (!isLocked())

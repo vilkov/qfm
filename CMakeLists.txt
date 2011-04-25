@@ -55,6 +55,11 @@ endif (USE_GPROF)
 # Definitions
 set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -DUNICODE)
 
+# We're require at least Windows 2000 (http://msdn.microsoft.com/en-us/library/Aa383745)
+if (WIN32)
+    set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -D_WIN32_WINNT=0x0500 -DWINVER=0x0500)
+endif ()
+
 
 # Sources
 add_subdirectory("src")
@@ -72,8 +77,11 @@ set (qfm_SOURCES ${qfm_SOURCES} ${qfm_RESOURCES_BIN})
 # Includes and Definitions
 include_directories (${qfm_INCLUDES})
 link_directories (${qfm_LIB_DIRS})
-add_definitions (${qfm_DEFINITIONS})
-
+if (WIN32)
+    add_definitions (-D_WIN32_WINNT=0x0500 -DWINVER=0x0500 ${qfm_DEFINITIONS})
+else ()
+    add_definitions (${qfm_DEFINITIONS})
+endif ()
 
 # Set some OS specific settings
 #if (WIN32)

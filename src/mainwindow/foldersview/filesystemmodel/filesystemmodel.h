@@ -6,7 +6,6 @@
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
 #include "events/filesystemmodelevent.h"
-#include "contextmenu/contextmenu.h"
 
 
 class DirectoryView;
@@ -39,6 +38,7 @@ public:
 	const QFileInfo &fileInfo(const QModelIndex &index) const;
 	void pathToClipboard(const QModelIndexList &list) const;
 	QModelIndex find(const QString &fileName) const;
+	QString selectedFiles(const QModelIndexList &list, QStringList &files) const;
 
 	void refresh();
 	void refreshSize(const QModelIndex &index);
@@ -50,7 +50,6 @@ public:
 	void remove(const QModelIndex &index);
 	void copy(const QModelIndex &index, FileSystemModel *destination);
 	void move(const QModelIndex &index, FileSystemModel *destination);
-	ContextMenu contextMenu(const QModelIndex &index);
 
 protected:
 	void list(FileSystemItem *fileSystemTree);

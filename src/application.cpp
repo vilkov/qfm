@@ -1,14 +1,22 @@
 #include "application.h"
 #include "version.h"
-#include <QtGui/QKeyEvent>
+#if defined(Q_WS_WIN)
+#	include <QtCore/qt_windows.h>
+#endif
 #include <QtCore/QThread>
 #include <QtCore/QLocale>
 #include <QtCore/QTranslator>
+#include <QtGui/QKeyEvent>
+
+#include <iostream>
 
 
 Application::Application(const QString &name, const QString &label, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
 	m_taskPool(QThread::idealThreadCount())
+#if defined(Q_WS_WIN)
+	,m_filter(0)
+#endif
 {
 	QApplication::setApplicationName(label);
 	QApplication::setApplicationVersion(version());
@@ -62,6 +70,16 @@ qint32 Application::exec()
 	m_mainWindow.show();
 	return QApplication::exec();
 }
+
+//#if defined(Q_WS_WIN)
+//bool Application::winEventFilter(MSG *message, long *result)
+//{
+//	if (m_filter && (*m_filter)(message, result))
+//		return true;
+//	else
+//		return QApplication::winEventFilter(message, result);
+//}
+//#endif
 
 void Application::handleException(const char *where)
 {

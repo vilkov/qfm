@@ -7,6 +7,7 @@
 #include <QtGui/QHBoxLayout>
 #include "foldersview.h"
 #include "widgets/pathedit.h"
+#include "contextmenu/contextmenu.h"
 #include "filesystemmodel/filesystemmodel.h"
 #include "filesystemmodel/filesystemproxymodel.h"
 #include "filesystemmodel/filesystemdecorationdelegate.h"
@@ -113,6 +114,7 @@ private:
 
 private:
 	FoldersView *m_parent;
+	ContextMenu m_menu;
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;
     Header m_header;

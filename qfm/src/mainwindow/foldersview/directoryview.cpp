@@ -7,6 +7,7 @@
 DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
+	m_menu(this),
     m_layout(this),
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
@@ -21,6 +22,7 @@ DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
 DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
+	m_menu(this),
 	m_layout(this),
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
@@ -241,8 +243,8 @@ void DirectoryView::updateCurrentDirectory(const QFileInfo &info)
 
 void DirectoryView::contextMenu()
 {
-	ContextMenu menu = m_model.contextMenu(currentIndex());
-	menu.popup();
+	QStringList selectedFiles;
+	m_menu.popup(m_model.selectedFiles(selectedIndexes(), selectedFiles), selectedFiles);
 }
 
 void DirectoryView::refreshOther()

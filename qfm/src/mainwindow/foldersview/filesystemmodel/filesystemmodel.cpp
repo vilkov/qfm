@@ -282,19 +282,21 @@ QModelIndex FileSystemModel::find(const QString &fileName) const
 	return QModelIndex();
 }
 
-ContextMenu FileSystemModel::contextMenu(const QModelIndex &index)
+QString FileSystemModel::selectedFiles(const QModelIndexList &list, QStringList &files) const
 {
-	if (!static_cast<FileSystemItem*>(index.internalPointer())->isRoot() &&
-		!static_cast<FileSystemEntry*>(index.internalPointer())->isLocked())
-	{
-		FileSystemInfo &info = static_cast<FileSystemEntry*>(index.internalPointer())->fileInfo();
-		info.refresh();
+	QSet<FileSystemItem*> done;
+	FileSystemItem *item;
 
-		if (info.exists())
-			return ContextMenu(info);
-		else
-			removeEntry(index);
-	}
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!done.contains(item = static_cast<FileSystemItem*>(list.at(i).internalPointer())) &&
+			!static_cast<FileSystemItem*>(item)->isRoot() &&
+			!static_cast<FileSystemEntry*>(item)->isLocked())
+		{
+			done.insert(item);
+			files.push_back(static_cast<FileSystemEntry*>(item)->fileInfo().fileName());
+		}
+
+	return static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absolutePath();
 }
 
 void FileSystemModel::refresh()

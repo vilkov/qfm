@@ -36,38 +36,49 @@ ContextMenu::ContextMenu(const FileSystemInfo &info) :
 
 	if (init.is_initialised())
 	{
-		IShellFolder *iDesktop;
+		IShellFolder *iFolder;
 
-		if (SUCCEEDED(SHGetDesktopFolder(&iDesktop)))
+		if (SUCCEEDED(SHGetDesktopFolder(&iFolder)))
 		{
 			ITEMIDLIST *pidl;
-			stlsoft::ref_ptr<IShellFolder> desktop(iDesktop, false);
-			QString path = QDir::toNativeSeparators(info.absoluteFilePath());
+			stlsoft::ref_ptr<IShellFolder> desktop(iFolder, false);
+			QString path = QDir::toNativeSeparators(info.absolutePath());
 
 			if (SUCCEEDED(desktop->ParseDisplayName(NULL, NULL, (wchar_t*)path.constData(), NULL, &pidl, NULL)))
 			{
-				IContextMenu *iMenu;
-				const ITEMIDLIST *files[1] = { pidl };
-
-				if (SUCCEEDED(desktop->GetUIObjectOf(NULL, 1, files, IID_IContextMenu, NULL, (void**)&iMenu)))
+				if (SUCCEEDED(desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&iFolder)))
 				{
-					stlsoft::ref_ptr<IContextMenu> menu(iMenu, false);
+					ITEMIDLIST *pidl2;
+					stlsoft::ref_ptr<IShellFolder> folder(iFolder, false);
 
-					if (HMENU hmenu = CreatePopupMenu())
+					if (SUCCEEDED(folder->ParseDisplayName(NULL, NULL, (wchar_t*)info.fileName().constData(), NULL, &pidl2, NULL)))
 					{
-						if (SUCCEEDED(menu->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL | CMF_EXPLORE | CMF_EXTENDEDVERBS)))
+						IContextMenu *iMenu;
+						const ITEMIDLIST *files[1] = { pidl2 };
+
+						if (SUCCEEDED(folder->GetUIObjectOf(NULL, 1, files, IID_IContextMenu, NULL, (void**)&iMenu)))
 						{
-							char buffer[BufferSize];
-							MENUITEMINFO info;
+							stlsoft::ref_ptr<IContextMenu> menu(iMenu, false);
 
-							memset(&info, 0, sizeof(MENUITEMINFO));
-							info.cbSize = sizeof(MENUITEMINFO);
-							info.dwTypeData = (wchar_t*)buffer;
+							if (HMENU hmenu = CreatePopupMenu())
+							{
+								if (SUCCEEDED(menu->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL | CMF_EXPLORE | CMF_EXTENDEDVERBS)))
+								{
+									char buffer[BufferSize];
+									MENUITEMINFO info;
 
-							populateMenu(&m_data->menu, hmenu, info, buffer);
+									memset(&info, 0, sizeof(MENUITEMINFO));
+									info.cbSize = sizeof(MENUITEMINFO);
+									info.dwTypeData = (wchar_t*)buffer;
+
+									populateMenu(&m_data->menu, hmenu, info, buffer);
+								}
+
+								DestroyMenu(hmenu);
+							}
 						}
 
-						DestroyMenu(hmenu);
+						CoTaskMemFree(pidl2);
 					}
 				}
 

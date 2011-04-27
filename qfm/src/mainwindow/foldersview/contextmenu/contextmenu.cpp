@@ -1,13 +1,13 @@
 #include "contextmenu.h"
 #ifdef Q_WS_WIN
-#	include "win/contextmenu_win.h"
+//#	include "win/contextmenu_win.h"
 #endif
 #include <QtGui/QCursor>
 
 
 ContextMenu::ContextMenu(QWidget *parent) :
 #ifdef Q_WS_WIN
-	m_data(new ContextMenuWin(parent))
+	m_data()//new ContextMenuWin(parent))
 #else
 	m_data()
 #endif

@@ -293,7 +293,7 @@ QString FileSystemModel::selectedFiles(const QModelIndexList &list, QStringList 
 			!static_cast<FileSystemEntry*>(item)->isLocked())
 		{
 			done.insert(item);
-			files.push_back(static_cast<FileSystemEntry*>(item)->fileInfo().fileName());
+			files.push_back(static_cast<FileSystemEntry*>(item)->fileInfo().absoluteFilePath());
 		}
 
 	return static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absolutePath();

@@ -4,9 +4,7 @@
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
-
-
-#define CMF_EXTENDEDVERBS       0x00000100
+#include <QMessageBox>
 
 
 //static ContextMenuWin *instance;
@@ -33,53 +31,51 @@ void ContextMenuWin::popup(const QString &parentDir, const QStringList &files, c
 {
 	if (m_init.is_initialised() && !m_desktop.empty())
 	{
+		HRESULT res;
 		ITEMIDLIST *pidl;
-		QString path = QDir::toNativeSeparators(parentDir);
+		ItemIdListStorage storage(files.size());
 
-		if (SUCCEEDED(m_desktop->ParseDisplayName(NULL, NULL, (wchar_t*)path.utf16(), NULL, &pidl, NULL)))
+		for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)
+			if (SUCCEEDED(m_desktop->ParseDisplayName(NULL, NULL, (wchar_t*)QDir::toNativeSeparators(files.at(i)).utf16(), NULL, &pidl, NULL)))
+				storage.push_back(pidl);
+
+		if (!storage.isEmpty() &&
+			SUCCEEDED(m_desktop->ParseDisplayName(NULL, NULL, (wchar_t*)QDir::toNativeSeparators(parentDir).utf16(), NULL, &pidl, NULL)))
 		{
 			IShellFolder *iFolder;
 
 			if (SUCCEEDED(m_desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&iFolder)))
 			{
 				stlsoft::ref_ptr<IShellFolder> folder(iFolder, false);
-				ItemIdListStorage storage;
-				ITEMIDLIST *pidlChild;
+				IContextMenu *iMenu;
 
-				for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)
-					if (SUCCEEDED(folder->ParseDisplayName(NULL, NULL, (wchar_t*)files.at(i).utf16(), NULL, &pidlChild, NULL)))
-						storage.push_back(pidlChild);
+				if (SUCCEEDED(res = folder->GetUIObjectOf(NULL, storage.size(), storage.data(), IID_IContextMenu, NULL, (void**)&iMenu)))
+				{					m_menu0.set(iMenu, false);
 
-				if (!storage.isEmpty())
-				{
-					IContextMenu *iMenu;
+					if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu2, (void**)&iMenu)))
+						m_menu2.set(static_cast<IContextMenu2*>(iMenu), false);
 
-					if (SUCCEEDED(folder->GetUIObjectOf(NULL, storage.size(), storage.data(), IID_IContextMenu, NULL, (void**)&iMenu)))
-					{						m_menu0.set(iMenu, false);
+					if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu3, (void**)&iMenu)))
+						m_menu3.set(static_cast<IContextMenu3*>(iMenu), false);
 
-						if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu2, (void**)&iMenu)))
-							m_menu2.set(static_cast<IContextMenu2*>(iMenu), false);
-
-						if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu3, (void**)&iMenu)))
-							m_menu3.set(static_cast<IContextMenu3*>(iMenu), false);
-
-						if (HMENU hmenu = CreatePopupMenu())
+					if (HMENU hmenu = CreatePopupMenu())
+					{
+						if (SUCCEEDED(m_menu0->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL)))
 						{
-							if (SUCCEEDED(m_menu0->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL | CMF_EXPLORE)))
-							{
-								populateMenu(hmenu);
-								invokeCommand(m_commands.value(m_menu.exec(pos)));
-							}
+							populateMenu(hmenu);
+							invokeCommand(m_commands.value(m_menu.exec(pos)));
+						}
 //							{
 //								oldFilter = Application::instance()->setWinEventFilter(eventFilter);
 //								TrackPopupMenuEx(hmenu, TPM_NONOTIFY | TPM_RETURNCMD | TPM_LEFTBUTTON, pos.x(), pos.y(), parent()->winId(), NULL);
 //								Application::instance()->setWinEventFilter(oldFilter);
 //							}
 
-							DestroyMenu(hmenu);
-						}
+						DestroyMenu(hmenu);
 					}
 				}
+				else
+					QMessageBox::critical(parent(), QString(), qt_error_string(res));
 			}
 
 			CoTaskMemFree(pidl);

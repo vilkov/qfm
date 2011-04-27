@@ -3,7 +3,6 @@
 
 #include <QtCore/qt_windows.h>
 #include <QtCore/QByteArray>
-#include <QtCore/QVector>
 #include <QtCore/QMap>
 #include <QtGui/QMenu>
 #include "../contextmenu.h"
@@ -45,26 +44,34 @@ private:
 	class ItemIdListStorage
 	{
 	public:
-		typedef const ITEMIDLIST *      value_type;
-		typedef QVector<value_type>     storage_type;
-		typedef storage_type::size_type size_type;
+		typedef const ITEMIDLIST * value_type;
+		typedef value_type       * storage_type;
+		typedef int                size_type;
+		enum { Bof = (size_type)-1 };
 
 	public:
-		ItemIdListStorage()
-		{}
+		ItemIdListStorage(size_type size) :
+			m_data(static_cast<storage_type>(CoTaskMemAlloc(size * sizeof(value_type)))),
+			m_index(Bof)
+		{
+			Q_ASSERT(size > 0);
+		}
 		~ItemIdListStorage()
 		{
-			for (size_type i = 0, size = m_data.size(); i < size; ++i)
-				CoTaskMemFree((void*)m_data.at(i));
+			for (size_type i = 0, sz = size(); i < sz; ++i)
+				CoTaskMemFree((void*)m_data[i]);
+
+			CoTaskMemFree(m_data);
 		}
 
-		inline size_type size() const { return m_data.size(); }
-		inline bool isEmpty() const { return m_data.isEmpty(); }
-		inline void push_back(value_type value) { m_data.push_back(value); }
-	    inline value_type *data() { return m_data.data(); }
+		inline size_type size() const { return m_index + 1; }
+		inline bool isEmpty() const { return m_index == Bof; }
+		inline void push_back(value_type value) { m_data[++m_index] = value; }
+	    inline storage_type data() { return m_data; }
 
 	private:
 	    storage_type m_data;
+	    size_type m_index;
 	};
 
 private:

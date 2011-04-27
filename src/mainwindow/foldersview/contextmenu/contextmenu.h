@@ -20,6 +20,8 @@ public:
 			QSharedData(),
 			m_parent(parent)
 		{}
+		virtual ~Implementation()
+		{}
 
 		QWidget *parent() const { return m_parent; }
 		virtual void popup(const QString &parentDir, const QStringList &files, const QPoint &pos) = 0;

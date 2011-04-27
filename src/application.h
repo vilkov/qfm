@@ -33,8 +33,8 @@ public:
 
 #if defined(Q_WS_WIN)
 	typedef bool (*WinEventFilter)(MSG *message, long *result);
-//	WinEventFilter setWinEventFilter(WinEventFilter filter) { WinEventFilter old = m_filter; m_filter = filter; return old; }
-//    virtual bool winEventFilter(MSG *message, long *result);
+	WinEventFilter setWinEventFilter(WinEventFilter filter) { WinEventFilter old = m_filter; m_filter = filter; return old; }
+    virtual bool winEventFilter(MSG *message, long *result);
 #endif
 
 protected: /* ExceptionHandler */

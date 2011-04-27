@@ -1,5 +1,5 @@
 #include "contextmenu_win.h"
-#include "../../../../application.h"
+//#include "../../../../application.h"
 #include <QtCore/QDir>
 #include <QtGui/QCursor>
 #include <QtGui/QPixmap>
@@ -8,17 +8,9 @@
 
 #define CMF_EXTENDEDVERBS       0x00000100
 
-namespace stlsoft
-{
-	namespace comstl_project
-	{
-		COMSTL_IID_TRAITS_DEFINE(IContextMenu)
-	}
-}
 
-
-static ContextMenuWin *instance;
-static Application::WinEventFilter oldFilter;
+//static ContextMenuWin *instance;
+//static Application::WinEventFilter oldFilter;
 
 ContextMenuWin::ContextMenuWin(QWidget *parent) :
 	ContextMenu::Implementation(parent),
@@ -26,7 +18,7 @@ ContextMenuWin::ContextMenuWin(QWidget *parent) :
 	m_menu2(),
 	m_menu3()
 {
-	instance = this;
+//	instance = this;
 
 	if (m_init.is_initialised())
 	{
@@ -63,23 +55,26 @@ void ContextMenuWin::popup(const QString &parentDir, const QStringList &files, c
 					IContextMenu *iMenu;
 
 					if (SUCCEEDED(folder->GetUIObjectOf(NULL, storage.size(), storage.data(), IID_IContextMenu, NULL, (void**)&iMenu)))
-					{
-						stlsoft::ref_ptr<IContextMenu> menu(iMenu, false);
+					{						m_menu0.set(iMenu, false);
 
-						if (SUCCEEDED(menu->QueryInterface(IID_IContextMenu2, (void**)&iMenu)))
+						if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu2, (void**)&iMenu)))
 							m_menu2.set(static_cast<IContextMenu2*>(iMenu), false);
 
-						if (SUCCEEDED(menu->QueryInterface(IID_IContextMenu3, (void**)&iMenu)))
+						if (SUCCEEDED(m_menu0->QueryInterface(IID_IContextMenu3, (void**)&iMenu)))
 							m_menu3.set(static_cast<IContextMenu3*>(iMenu), false);
 
 						if (HMENU hmenu = CreatePopupMenu())
 						{
-							if (SUCCEEDED(menu->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL | CMF_EXPLORE)))
+							if (SUCCEEDED(m_menu0->QueryContextMenu(hmenu, 0, 0, 1024, CMF_NORMAL | CMF_EXPLORE)))
 							{
+								populateMenu(hmenu);
+								invokeCommand(m_commands.value(m_menu.exec(pos)));
+							}
+//							{
 //								oldFilter = Application::instance()->setWinEventFilter(eventFilter);
 //								TrackPopupMenuEx(hmenu, TPM_NONOTIFY | TPM_RETURNCMD | TPM_LEFTBUTTON, pos.x(), pos.y(), parent()->winId(), NULL);
 //								Application::instance()->setWinEventFilter(oldFilter);
-							}
+//							}
 
 							DestroyMenu(hmenu);
 						}
@@ -101,6 +96,8 @@ void ContextMenuWin::populateMenu(HMENU hmenu)
 	info.cbSize = sizeof(MENUITEMINFO);
 	info.dwTypeData = (wchar_t*)buffer;
 
+	m_menu.clear();
+	m_commands.clear();
 	populateMenu(&m_menu, hmenu, info, buffer);
 }
 
@@ -120,7 +117,7 @@ void ContextMenuWin::populateMenu(QMenu *menu, HMENU hmenu, MENUITEMINFO &info, 
 				if ((info.fType & MFT_STRING) == MFT_STRING)
 				{
 					memset(buffer, 0, BufferSize);
-					info.fMask = MIIM_STRING | MIIM_BITMAP | MIIM_SUBMENU | MIIM_CHECKMARKS;
+					info.fMask = MIIM_ID | MIIM_STRING | MIIM_BITMAP | MIIM_SUBMENU | MIIM_CHECKMARKS;
 					info.cch = BufferSize;
 
 					if (GetMenuItemInfo(hmenu, i, true, &info))
@@ -148,42 +145,77 @@ void ContextMenuWin::populateMenu(QMenu *menu, HMENU hmenu, MENUITEMINFO &info, 
 							else
 								icon = QIcon();
 
-
 					if (info.hSubMenu != 0)
 						populateMenu(menu->addMenu(icon, title), info.hSubMenu, info, buffer);
 					else
-						menu->addAction(icon, title);
+					{
+						memset(buffer, 0, BufferSize);
+
+						if (SUCCEEDED(m_menu0->GetCommandString(info.wID, GCS_VERBA, NULL, buffer, BufferSize)))
+							m_commands[menu->addAction(icon, title)] = Command(QByteArray(buffer), info.wID);
+						else
+							m_commands[menu->addAction(icon, title)] = Command(QByteArray(), info.wID);
+					}
 				}
 	}
 }
 
-bool ContextMenuWin::eventFilter(MSG *msg, long *result)
+void ContextMenuWin::invokeCommand(const Command &command)
 {
-	switch (msg->message)
+	if (!command.first.isEmpty())
 	{
-		case WM_INITMENUPOPUP:
-		case WM_DRAWITEM:
-		case WM_MENUCHAR:
-		case WM_MEASUREITEM:
+		CMINVOKECOMMANDINFO info;
+
+		memset(&info, 0, sizeof(CMINVOKECOMMANDINFO));
+		info.cbSize = sizeof(CMINVOKECOMMANDINFO);
+		info.fMask = CMIC_MASK_FLAG_NO_UI;
+		info.hwnd = parent()->winId();
+		info.lpVerb = command.first.constData();
+
+		m_menu0->InvokeCommand(&info);
+	}
+	else
+		if (command.second != 0)
 		{
-			if (!instance->m_menu3.empty())
-			{
-				instance->m_menu3->HandleMenuMsg2(msg->message, msg->wParam, msg->lParam, result);
-				return true;
-			}
+			CMINVOKECOMMANDINFO info;
 
-			if (!instance->m_menu2.empty())
-			{
-				*result = 0;
-				instance->m_menu2->HandleMenuMsg(msg->message, msg->wParam, msg->lParam);
-				return true;
-			}
+			memset(&info, 0, sizeof(CMINVOKECOMMANDINFO));
+			info.cbSize = sizeof(CMINVOKECOMMANDINFO);
+			info.fMask = CMIC_MASK_FLAG_NO_UI;
+			info.hwnd = parent()->winId();
+			info.lpVerb = MAKEINTRESOURCEA(command.second);
 
-			break;
+			m_menu0->InvokeCommand(&info);
 		}
-		default:
-			break;
-	};
-
-	return oldFilter ? (*oldFilter)(msg, result) : false;
 }
+
+//bool ContextMenuWin::eventFilter(MSG *msg, long *result)
+//{
+//	switch (msg->message)
+//	{
+//		case WM_INITMENUPOPUP:
+//		case WM_DRAWITEM:
+//		case WM_MENUCHAR:
+//		case WM_MEASUREITEM:
+//		{
+//			if (!instance->m_menu3.empty())
+//			{
+//				instance->m_menu3->HandleMenuMsg2(msg->message, msg->wParam, msg->lParam, result);
+//				return true;
+//			}
+//
+//			if (!instance->m_menu2.empty())
+//			{
+//				*result = 0;
+//				instance->m_menu2->HandleMenuMsg(msg->message, msg->wParam, msg->lParam);
+//				return true;
+//			}
+//
+//			break;
+//		}
+//		default:
+//			break;
+//	};
+//
+//	return oldFilter ? (*oldFilter)(msg, result) : false;
+//}

@@ -71,15 +71,15 @@ qint32 Application::exec()
 	return QApplication::exec();
 }
 
-//#if defined(Q_WS_WIN)
-//bool Application::winEventFilter(MSG *message, long *result)
-//{
-//	if (m_filter && (*m_filter)(message, result))
-//		return true;
-//	else
-//		return QApplication::winEventFilter(message, result);
-//}
-//#endif
+#if defined(Q_WS_WIN)
+bool Application::winEventFilter(MSG *message, long *result)
+{
+	if (m_filter && (*m_filter)(message, result))
+		return true;
+	else
+		return QApplication::winEventFilter(message, result);
+}
+#endif
 
 void Application::handleException(const char *where)
 {

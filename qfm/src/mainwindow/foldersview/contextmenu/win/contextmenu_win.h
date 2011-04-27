@@ -2,7 +2,9 @@
 #define CONTEXTMENU_WIN_H_
 
 #include <QtCore/qt_windows.h>
+#include <QtCore/QByteArray>
 #include <QtCore/QVector>
+#include <QtCore/QMap>
 #include <stlsoft/smartptr/ref_ptr.hpp>
 #include <comstl/util/initialisers.hpp>
 #include <comstl/util/creation_functions.hpp>
@@ -20,12 +22,14 @@ namespace stlsoft
 	namespace comstl_project
 	{
 		COMSTL_IID_TRAITS_DEFINE(IShellFolder)
+		COMSTL_IID_TRAITS_DEFINE(IContextMenu)
 		COMSTL_IID_TRAITS_DEFINE(IContextMenu2)
 		COMSTL_IID_TRAITS_DEFINE(IContextMenu3)
 	}
 }
 
 
+/* TODO: Menu icons is not drawn for all elements (Tortoise SVN) */
 class ContextMenuWin : public ContextMenu::Implementation
 {
 public:
@@ -60,19 +64,23 @@ private:
 	};
 
 private:
+    typedef QPair<QByteArray, UINT> Command;
     enum { BufferSize = 256 };
     void populateMenu(HMENU hmenu);
     void populateMenu(QMenu *menu, HMENU hmenu, MENUITEMINFO &info, char *buffer);
+    void invokeCommand(const Command &command);
 
-private:
-    static bool eventFilter(MSG *message, long *result);
+//private:
+//    static bool eventFilter(MSG *message, long *result);
 
 private:
 	QMenu m_menu;
 	comstl::com_initialiser m_init;
 	stlsoft::ref_ptr<IShellFolder> m_desktop;
+	stlsoft::ref_ptr<IContextMenu> m_menu0;
 	stlsoft::ref_ptr<IContextMenu2> m_menu2;
 	stlsoft::ref_ptr<IContextMenu3> m_menu3;
+	QMap<QAction*, Command> m_commands;
 };
 
 #endif /* CONTEXTMENU_WIN_H_ */

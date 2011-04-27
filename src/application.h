@@ -31,11 +31,11 @@ public:
 	QString version() const;
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 
-#if defined(Q_WS_WIN)
-	typedef bool (*WinEventFilter)(MSG *message, long *result);
-	WinEventFilter setWinEventFilter(WinEventFilter filter) { WinEventFilter old = m_filter; m_filter = filter; return old; }
-    virtual bool winEventFilter(MSG *message, long *result);
-#endif
+//#if defined(Q_WS_WIN)
+//	typedef bool (*WinEventFilter)(MSG *message, long *result);
+//	WinEventFilter setWinEventFilter(WinEventFilter filter) { WinEventFilter old = m_filter; m_filter = filter; return old; }
+//    virtual bool winEventFilter(MSG *message, long *result);
+//#endif
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
@@ -46,9 +46,9 @@ private:
 	TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
 	MainWindow m_mainWindow;
-#if defined(Q_WS_WIN)
-	WinEventFilter m_filter;
-#endif
+//#if defined(Q_WS_WIN)
+//	WinEventFilter m_filter;
+//#endif
 };
 
 #endif /* APPLICATION_H_ */

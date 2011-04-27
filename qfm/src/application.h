@@ -43,8 +43,8 @@ protected: /* ExceptionHandler */
 
 private:
 	QFileIconProvider m_iconProvider;
-	TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
+	TasksPool::TaskPool m_taskPool;
 	MainWindow m_mainWindow;
 //#if defined(Q_WS_WIN)
 //	WinEventFilter m_filter;

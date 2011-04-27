@@ -5,6 +5,13 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QVector>
 #include <QtCore/QMap>
+#include <QtGui/QMenu>
+#include "../contextmenu.h"
+
+#include <stlsoft/stlsoft.h>
+#if defined(STLSOFT_CF_EXCEPTION_SUPPORT)
+#	undef STLSOFT_CF_EXCEPTION_SUPPORT
+#endif
 #include <stlsoft/smartptr/ref_ptr.hpp>
 #include <comstl/util/initialisers.hpp>
 #include <comstl/util/creation_functions.hpp>
@@ -12,9 +19,6 @@
 #include <comstl/util/variant.hpp>
 #include <comstl/string/bstr.hpp>
 #include <ShlObj.h>
-
-#include <QtGui/QMenu>
-#include "../contextmenu.h"
 
 
 namespace stlsoft

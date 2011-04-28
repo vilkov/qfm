@@ -10,6 +10,9 @@ class PerformRemoveTreeTask : public PerformRemoveEntryTask
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTreeTask)
 
 public:
+	typedef FileSystemModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
+
+public:
 	struct Params : public PerformRemoveEntryTask::Params
 	{
 		Params(QObject *receiver, const FileSystemModelEvents::ScanFilesForRemoveEvent::Params &params) :

@@ -5,6 +5,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
+#include "../taskprogress.h"
 #include "../destcontrolabletask.h"
 
 
@@ -36,18 +37,12 @@ protected:
 protected:
 	void copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag);
-	void postUpdateEventInit();
-	void postUpdateEventIfNeed();
-	void postUpdateEvent();
 
 protected:
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;
 	bool m_overwriteAll;
-	quint64 m_doneSize;
-	QDateTime m_baseTime;
-	QDateTime m_currentTime;
-	QDateTime m_timeElapsed;
+	TaskProgress m_progress;
 
 #ifdef Q_OS_WIN
 private:

@@ -50,9 +50,8 @@ private:
 			return PROGRESS_CANCEL;
 		else
 		{
-			self->m_instance->m_doneSize += TotalBytesTransferred.QuadPart - self->m_prevTotalBytesTransferred;
+			self->m_instance->m_progress.update(TotalBytesTransferred.QuadPart - self->m_prevTotalBytesTransferred);
 			self->m_prevTotalBytesTransferred = TotalBytesTransferred.QuadPart;
-			self->m_instance->postUpdateEventIfNeed();
 			return PROGRESS_CONTINUE;
 		}
 	}

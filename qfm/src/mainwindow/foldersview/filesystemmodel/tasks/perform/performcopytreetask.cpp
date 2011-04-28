@@ -11,7 +11,7 @@ PerformCopyTreeTask::PerformCopyTreeTask(Params *params) :
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {
-	postUpdateEventInit();
+	m_progress.init();
 
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 

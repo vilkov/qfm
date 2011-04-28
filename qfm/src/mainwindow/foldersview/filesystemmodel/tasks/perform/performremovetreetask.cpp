@@ -9,6 +9,8 @@ PerformRemoveTreeTask::PerformRemoveTreeTask(Params *params) :
 
 void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 {
+	m_progress.init();
+
 	remove(parameters()->subtree, stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())

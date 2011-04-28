@@ -10,12 +10,15 @@ PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
 	parent_class(params),
 	m_shoulRemoveEntry(true),
 	m_skipAllIfNotRemove(false),
-	m_skipAllIfNotExists(false)
+	m_skipAllIfNotExists(false),
+	m_progress(params->source)
 {}
 
 void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
 {
 	bool tryAgain;
+
+	m_progress.init();
 
 	do
 		removeEntry(parameters()->source.entry, tryAgain = false, stopedFlag);
@@ -59,7 +62,10 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 #			endif
 
 			QFile file(entry->fileInfo().absoluteFilePath());
-			res = file.remove();
+
+			if (res = file.remove())
+				m_progress.update(file.size());
+
 			error = file.errorString();
 		}
 

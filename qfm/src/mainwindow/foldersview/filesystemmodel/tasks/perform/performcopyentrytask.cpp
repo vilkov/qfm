@@ -14,7 +14,7 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
 	m_overwriteAll(false),
-	m_doneSize(0)
+	m_progress(params->source)
 {
 	Q_ASSERT(params->destination.object != 0);
 	Q_ASSERT(params->destination.fileSystemTree != 0);
@@ -22,7 +22,7 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 
 void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 {
-	postUpdateEventInit();
+	m_progress.init();
 
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 
@@ -124,27 +124,4 @@ void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QS
 			else
 				if (result.answer() == QMessageBox::Cancel)
 					m_canceled = true;
-}
-
-void PerformCopyEntryTask::postUpdateEventInit()
-{
-	m_baseTime = m_currentTime = m_timeElapsed = QDateTime::currentDateTime();
-}
-
-void PerformCopyEntryTask::postUpdateEventIfNeed()
-{
-	if (m_baseTime.secsTo(m_currentTime = QDateTime::currentDateTime()) > 1)
-	{
-		postUpdateEvent();
-		m_baseTime = m_currentTime;
-	}
-}
-
-void PerformCopyEntryTask::postUpdateEvent()
-{
-	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent());
-	event->params().snapshot = parameters()->source;
-	event->params().progress = m_doneSize;
-	event->params().timeElapsed = m_timeElapsed.msecsTo(m_currentTime);
-	Application::postEvent(parameters()->source.object, event.take());
 }

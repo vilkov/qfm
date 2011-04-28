@@ -245,6 +245,7 @@ public:
 	{
 		Snapshot snapshot;
 		quint64 progress;
+		quint64 timeElapsed;
 	};
 	typedef TemplateEvent<UpdatePerformProgressParams, BaseEvent::UpdatePerformProgress> UpdatePerformProgressEvent;
 };

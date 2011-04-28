@@ -29,7 +29,10 @@ public:
 	void clearTotalSize() { m_totalSize.clear(); }
 
 	const QVariant &doneSize() const { return m_doneSize; }
-	void setDoneSize(quint64 value) { m_doneSize = value; }
+	void setDoneSize(const QVariant &value) { m_doneSize = value; }
+
+	const QVariant &timeElapsed() const { return m_timeElapsed; }
+	void setTimeElapsed(const QVariant &value) { m_timeElapsed = value; }
 
 	bool isInProgress() const { return !m_doneSize.isNull(); }
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
@@ -40,6 +43,7 @@ public:
 	void lock(const QString &reason);
 	void unlock();
 
+	static QString humanReadableTime(quint64 msecs);
 	static QString humanReadableSize(quint64 size);
 	static QString humanReadableShortSize(quint64 size);
 
@@ -48,6 +52,7 @@ private:
 	QString m_lockReason;
 	QVariant m_totalSize;
 	QVariant m_doneSize;
+	QVariant m_timeElapsed;
 	FileSystemInfo m_info;
 };
 

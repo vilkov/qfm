@@ -1,6 +1,12 @@
 #include "performcopyentrytask.h"
 #include "../../../../../application.h"
-#include <QtCore/QFile>
+
+
+#ifdef Q_OS_WIN
+#	include "routines/copyprogressroutine_win.h"
+#else
+#	include "routines/copyprogressroutine_default.h"
+#endif
 
 
 PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
@@ -16,7 +22,7 @@ PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
 
 void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 {
-	m_baseTime = m_currentTime = QDateTime::currentDateTime();
+	postUpdateEventInit();
 
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 
@@ -52,32 +58,11 @@ void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 
 void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {
-	m_currentTime = QDateTime::currentDateTime();
-
 	QFile file(entry->fileInfo().absoluteFilePath());
 	QFile dest(destination.absoluteFilePath(entry->fileInfo().fileName()));
 
 	if (dest.exists())
-		if (m_overwriteAll)
-		{
-			if (!dest.remove())
-			{
-				if (!m_skipAllIfNotCopy)
-					askForSkipAllIfNotCopy(
-							entry->lockReason(),
-							tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
-								arg(entry->fileInfo().fileName()).
-								arg(file.errorString()).
-								arg(entry->fileInfo().absolutePath()).
-								arg(destination.absolutePath()),
-							tryAgain,
-							stopedFlag);
-
-				postUpdateEventIfNeed();
-				return;
-			}
-		}
-		else
+		if (!m_overwriteAll)
 		{
 			QuestionAnswerEvent::Params::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
@@ -98,32 +83,25 @@ void PerformCopyEntryTask::copyFile(const QDir &destination, FileSystemEntry *en
 					if (result.answer() == QMessageBox::Cancel)
 					{
 						m_canceled = true;
-						postUpdateEventIfNeed();
 						return;
 					}
 					else
 						if (result.answer() == QMessageBox::Ignore)
-						{
-							postUpdateEventIfNeed();
 							return;
-						}
 		}
 
-	if (file.copy(dest.fileName()))
-		m_doneSize += file.size();
-	else
-		if (!m_skipAllIfNotCopy)
-			askForSkipAllIfNotCopy(
-					entry->lockReason(),
-					tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
-						arg(entry->fileInfo().fileName()).
-						arg(file.errorString()).
-						arg(entry->fileInfo().absolutePath()).
-						arg(destination.absolutePath()),
-					tryAgain,
-					stopedFlag);
+	CopyProgressRoutine routine(this, stopedFlag);
 
-	postUpdateEventIfNeed();
+	if (!routine.copy(file, dest) && !m_skipAllIfNotCopy)
+		askForSkipAllIfNotCopy(
+				entry->lockReason(),
+				tr("Failed to copy file \"%1\" (%2) from \"%3\" to \"%4\". Skip it?").
+					arg(entry->fileInfo().fileName()).
+					arg(routine.lastError()).
+					arg(entry->fileInfo().absolutePath()).
+					arg(destination.absolutePath()),
+				tryAgain,
+				stopedFlag);
 }
 
 void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QString &text, bool &tryAgain, const volatile bool &stopedFlag)
@@ -148,9 +126,14 @@ void PerformCopyEntryTask::askForSkipAllIfNotCopy(const QString &title, const QS
 					m_canceled = true;
 }
 
+void PerformCopyEntryTask::postUpdateEventInit()
+{
+	m_baseTime = m_currentTime = m_timeElapsed = QDateTime::currentDateTime();
+}
+
 void PerformCopyEntryTask::postUpdateEventIfNeed()
 {
-	if (m_baseTime.secsTo(m_currentTime) > 1)
+	if (m_baseTime.secsTo(m_currentTime = QDateTime::currentDateTime()) > 1)
 	{
 		postUpdateEvent();
 		m_baseTime = m_currentTime;
@@ -162,5 +145,6 @@ void PerformCopyEntryTask::postUpdateEvent()
 	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent());
 	event->params().snapshot = parameters()->source;
 	event->params().progress = m_doneSize;
+	event->params().timeElapsed = m_timeElapsed.msecsTo(m_currentTime);
 	Application::postEvent(parameters()->source.object, event.take());
 }

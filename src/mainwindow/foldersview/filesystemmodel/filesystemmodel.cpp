@@ -361,8 +361,8 @@ void FileSystemModel::activated(const QModelIndex &index)
 			endRemoveRows();
 
 			beginInsertRows(QModelIndex(), 0, parent->size() - 1);
-			update(parent);
 			m_currentFsTree = parent;
+			update(parent);
 			endInsertRows();
 		}
 	else
@@ -619,7 +619,7 @@ void FileSystemModel::updateEvent(const FileSystemModelEvent::Params *p)
 
 		for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 			emit dataChanged(createIndex(updateRange.at(i).top(), 0, m_currentFsTree),
-							 createIndex(updateRange.at(i).bottom(), columnCount(), m_currentFsTree));
+							 createIndex(updateRange.at(i).bottom(), columnCount() - 1, m_currentFsTree));
 
 		if (!list.isEmpty())
 		{
@@ -720,19 +720,8 @@ void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
 	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	if (params->shoulRemoveEntry)
-		if (params->snapshot.fileSystemTree == m_currentFsTree)
-			removeEntry(m_currentFsTree->indexOf(params->snapshot.entry));
-		else
-			params->snapshot.fileSystemTree->remove(params->snapshot.fileSystemTree->indexOf(params->snapshot.entry));
-	else
-	{
-		params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, 0);
-		params->snapshot.entry->unlock();
-
-		if (params->snapshot.fileSystemTree == m_currentFsTree)
-			updateFirstColumn(m_currentFsTree, params->snapshot.entry);
-	}
+	if (params->snapshot.fileSystemTree == m_currentFsTree)
+		doRefresh();
 }
 
 void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)
@@ -931,6 +920,7 @@ void FileSystemModel::updateProgressEvent(const FileSystemModelEvent::Params *p)
 	ParamsType params = static_cast<ParamsType>(p);
 
 	params->snapshot.entry->setDoneSize(params->progress);
+	params->snapshot.entry->setTimeElapsed(params->timeElapsed);
 
 	if (params->snapshot.fileSystemTree == m_currentFsTree)
 		updateSecondColumn(m_currentFsTree, params->snapshot.entry);

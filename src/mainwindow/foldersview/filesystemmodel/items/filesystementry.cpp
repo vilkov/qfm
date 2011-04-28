@@ -93,6 +93,7 @@ void FileSystemEntry::lock(const QString &reason, quint64 totalSize)
 	m_lockReason = reason;
 	m_totalSize = totalSize;
 	m_doneSize = 0;
+	m_timeElapsed = 0;
 }
 
 void FileSystemEntry::lock(const QString &reason)
@@ -106,6 +107,27 @@ void FileSystemEntry::unlock()
 	m_locked = false;
 	m_lockReason.clear();
 	m_doneSize.clear();
+	m_timeElapsed.clear();
+}
+
+QString FileSystemEntry::humanReadableTime(quint64 msecs)
+{
+	if (quint64 hours = msecs / (1000 * 60 * 60))
+		if (quint64 min = (msecs - hours * 1000 * 60 * 60) / (1000 * 60))
+			return QString::number(hours).append(QChar(':')).append(QString::number(min)).append(QString::fromLatin1(" h"));
+		else
+			return QString::number(hours).append(QString::fromLatin1(" h"));
+	else
+		if (hours = msecs / (1000 * 60))
+			if (quint64 secs = (msecs - hours * 1000 * 60) / (1000))
+				return QString::number(hours).append(QChar(':')).append(QString::number(secs)).append(QString::fromLatin1(" m"));
+			else
+				return QString::number(hours).append(QString::fromLatin1(" m"));
+		else
+			if (hours = msecs / (1000))
+				return QString::number(hours).append(QString::fromLatin1(" s"));
+			else
+				return QString();
 }
 
 QString FileSystemEntry::humanReadableSize(quint64 size)

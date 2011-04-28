@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splitter(&m_centralWidget),
 #ifdef Q_OS_WIN32
     m_leftFoldersView(QStringList() << QString::fromLatin1("C:/"), m_rightFoldersView, &m_splitter),
-    m_rightFoldersView(QStringList() << QString::fromLatin1("f:/workspace/executables/qfm"), m_leftFoldersView, &m_splitter),
+    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/Temp"), m_leftFoldersView, &m_splitter),
 #else
     m_leftFoldersView(QStringList() << QString::fromLatin1("/home"), m_rightFoldersView, &m_splitter),
     m_rightFoldersView(QStringList() << QString::fromLatin1("/"), m_leftFoldersView, &m_splitter),

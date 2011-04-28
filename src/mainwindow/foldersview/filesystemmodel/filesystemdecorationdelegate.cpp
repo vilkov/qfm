@@ -31,7 +31,9 @@ void FileSystemDecorationDelegate::paint(QPainter *painter, const QStyleOptionVi
 				progressBarOption.text =
 						FileSystemEntry::humanReadableShortSize(entry->doneSize().toULongLong()).
 						append(QString::fromLatin1(" / ")).
-						append(FileSystemEntry::humanReadableShortSize(entry->totalSize().toULongLong()));
+						append(FileSystemEntry::humanReadableShortSize(entry->totalSize().toULongLong())).
+						append(QString::fromLatin1("  ")).
+						append(FileSystemEntry::humanReadableTime((entry->totalSize().toULongLong() / entry->doneSize().toULongLong()) * entry->timeElapsed().toULongLong()));
 				progressBarOption.textAlignment = Qt::AlignCenter;
 				progressBarOption.textVisible = true;
 

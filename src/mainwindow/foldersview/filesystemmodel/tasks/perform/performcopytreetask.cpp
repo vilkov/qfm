@@ -11,7 +11,7 @@ PerformCopyTreeTask::PerformCopyTreeTask(Params *params) :
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {
-	m_baseTime = m_currentTime = QDateTime::currentDateTime();
+	postUpdateEventInit();
 
 	QDir dir(parameters()->destination.fileSystemTree->fileInfo().absoluteFilePath());
 

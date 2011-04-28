@@ -15,5 +15,5 @@ ContextMenu::ContextMenu(QWidget *parent) :
 
 void ContextMenu::popup(const QString &parentDir, const QStringList &files)
 {
-	m_data->popup(parentDir, files, QCursor::pos());
+//	m_data->popup(parentDir, files, QCursor::pos());
 }

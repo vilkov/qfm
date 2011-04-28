@@ -3,6 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
+#include "../taskprogress.h"
 #include "../controlabletask.h"
 #include "../scan/scanfilestask.h"
 
@@ -32,6 +33,7 @@ protected:
 	bool m_shoulRemoveEntry;
 	bool m_skipAllIfNotRemove;
 	bool m_skipAllIfNotExists;
+	TaskProgress m_progress;
 };
 
 #endif /* PERFORMREMOVEENTRYTASK_H_ */

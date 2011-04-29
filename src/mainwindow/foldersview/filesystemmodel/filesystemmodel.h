@@ -8,15 +8,13 @@
 #include "events/filesystemmodelevent.h"
 
 
-class DirectoryView;
-
 class FileSystemModel : public QAbstractItemModel
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(FileSystemModel)
 
 public:
-	FileSystemModel(const QString &currentDirectory, DirectoryView *parent);
+	FileSystemModel(const QString &currentDirectory, QObject *parent = 0);
 	FileSystemModel(const QFileInfo &fileInfo, QObject *parent = 0);
 	~FileSystemModel();
 

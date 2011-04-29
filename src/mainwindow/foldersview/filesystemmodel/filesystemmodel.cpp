@@ -10,7 +10,6 @@
 #include "tasks/perform/performcopyentrytask.h"
 #include "tasks/perform/performcopytreetask.h"
 #include "visitor/filesystemlockedentryvisitor.h"
-#include "../directoryview.h"
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
 #include <QtCore/QSet>
@@ -19,7 +18,7 @@
 #include <QtGui/QMessageBox>
 
 
-FileSystemModel::FileSystemModel(const QString &currentDirectory, DirectoryView *parent) :
+FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(currentDirectory))
 {

@@ -288,6 +288,8 @@ void DirectoryView::initialize()
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
+
+	m_header.pathEdit.setText(m_model.currentDirectoryInfo().absoluteFilePath());
 }
 
 QModelIndex DirectoryView::currentIndex() const

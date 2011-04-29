@@ -54,9 +54,14 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 
 			QFile file(entry->fileInfo().absoluteFilePath());
 
+			if (file.open(QFile::ReadOnly))
+			{
+				m_progress.update(file.size());
+				file.close();
+			}
+
 			res = file.remove();
 			error = file.errorString();
-			m_progress.update(file.size());
 		}
 
 		if (!res && !m_skipAllIfNotRemove)

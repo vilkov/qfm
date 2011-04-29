@@ -28,7 +28,7 @@ endif ()
 
 
 # 3rdparty
-find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtNetwork QtSql QtXml REQUIRED)
+find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml REQUIRED)
 include (${QT_USE_FILE})
 set (qfm_LIBS ${qfm_LIBS} "${QT_LIBRARIES}")
 set (qfm_DEFINITIONS ${qfm_DEFINITIONS} ${QT_DEFINITIONS})
@@ -42,7 +42,6 @@ set (qfm_INCLUDES ${qfm_INCLUDES} "${STLSOFT_INCLUDE}")
 
 
 # Includes
-set (qfm_INCLUDES ${qfm_INCLUDES} "${qfm_BINARY_DIR}")
 
 # Link directories
 
@@ -77,18 +76,14 @@ set (qfm_SOURCES ${qfm_SOURCES} ${qfm_RESOURCES_BIN})
 # Includes and Definitions
 include_directories (${qfm_INCLUDES})
 link_directories (${qfm_LIB_DIRS})
-if (WIN32)
-    add_definitions (-D_WIN32_WINNT=0x0500 -DWINVER=0x0500 ${qfm_DEFINITIONS})
-else ()
-    add_definitions (${qfm_DEFINITIONS})
-endif ()
+add_definitions (${qfm_DEFINITIONS})
 
 # Set some OS specific settings
-#if (WIN32)
-#    set (GUI_TYPE WIN32)
-#elseif (APPLE)
-#    set (GUI_TYPE MACOSX_BUNDLE)
-#endif ()
+if (WIN32)
+    set (GUI_TYPE WIN32)
+elseif (APPLE)
+    set (GUI_TYPE MACOSX_BUNDLE)
+endif ()
 
 
 # Target - qfm

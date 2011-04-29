@@ -15,14 +15,24 @@ void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 		if (m_canceled)
-		{
-			QScopedPointer<CanceledEvent> event(new CanceledEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-			Application::postEvent(parameters()->source.object, event.take());
-		}
+			postCanceledEvent();
 		else
-			PerformRemoveEntryTask::run(stopedFlag);
+			if (m_removeParentEntry)
+			{
+				bool tryAgain;
+
+				do
+					removeEntry(parameters()->source.entry, tryAgain = false, stopedFlag);
+				while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+
+				if (!stopedFlag && !isControllerDead())
+					if (m_canceled)
+						postCanceledEvent();
+					else
+						postCompletedEvent();
+			}
+			else
+				postCompletedEvent();
 }
 
 void PerformRemoveTreeTask::remove(FileSystemTree *tree, const volatile bool &stopedFlag)

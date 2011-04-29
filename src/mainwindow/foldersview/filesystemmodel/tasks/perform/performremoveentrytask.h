@@ -28,9 +28,11 @@ protected:
 
 protected:
 	void removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	void postCompletedEvent() const;
+	void postCanceledEvent() const;
 
 protected:
-	bool m_shoulRemoveEntry;
+	bool m_removeParentEntry;
 	bool m_skipAllIfNotRemove;
 	bool m_skipAllIfNotExists;
 	TaskProgress m_progress;

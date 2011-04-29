@@ -8,7 +8,7 @@
 
 PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
 	parent_class(params),
-	m_shoulRemoveEntry(true),
+	m_removeParentEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false),
 	m_progress(params->source)
@@ -26,19 +26,9 @@ void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 		if (m_canceled)
-		{
-			QScopedPointer<CanceledEvent> event(new CanceledEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-			Application::postEvent(parameters()->source.object, event.take());
-		}
+			postCanceledEvent();
 		else
-		{
-			QScopedPointer<CompletedEvent> event(new CompletedEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().shoulRemoveEntry = m_shoulRemoveEntry;
-			Application::postEvent(parameters()->source.object, event.take());
-		}
+			postCompletedEvent();
 }
 
 void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
@@ -56,17 +46,17 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 		else
 		{
 #			ifdef Q_OS_WIN32
-				DWORD attr = GetFileAttributesW((const wchar_t*)entry->fileInfo().absoluteFilePath().data());
+				error = entry->fileInfo().absoluteFilePath();
+				DWORD attr = GetFileAttributesW((const wchar_t*)error.utf16());
 				if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
-					SetFileAttributesW((const wchar_t*)entry->fileInfo().absoluteFilePath().data(), attr &= ~FILE_ATTRIBUTE_READONLY);
+					SetFileAttributesW((const wchar_t*)error.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
 #			endif
 
 			QFile file(entry->fileInfo().absoluteFilePath());
 
-			if (res = file.remove())
-				m_progress.update(file.size());
-
+			res = file.remove();
 			error = file.errorString();
+			m_progress.update(file.size());
 		}
 
 		if (!res && !m_skipAllIfNotRemove)
@@ -89,7 +79,7 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
-					m_shoulRemoveEntry = false;
+					m_removeParentEntry = false;
 					m_skipAllIfNotRemove = true;
 				}
 				else
@@ -99,7 +89,7 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 						if (result.answer() == QMessageBox::Cancel)
 							m_canceled = true;
 						else
-							m_shoulRemoveEntry = false;
+							m_removeParentEntry = false;
 		}
 	}
 	else
@@ -125,4 +115,20 @@ void PerformRemoveEntryTask::removeEntry(FileSystemEntry *entry, bool &tryAgain,
 					if (result.answer() == QMessageBox::Cancel)
 						m_canceled = true;
 		}
+}
+
+void PerformRemoveEntryTask::postCompletedEvent() const
+{
+	QScopedPointer<CompletedEvent> event(new CompletedEvent());
+	event->params().snapshot = parameters()->source;
+	event->params().removeParentEntry = m_removeParentEntry;
+	Application::postEvent(parameters()->source.object, event.take());
+}
+
+void PerformRemoveEntryTask::postCanceledEvent() const
+{
+	QScopedPointer<CanceledEvent> event(new CanceledEvent());
+	event->params().snapshot = parameters()->source;
+	event->params().removeParentEntry = m_removeParentEntry;
+	Application::postEvent(parameters()->source.object, event.take());
 }

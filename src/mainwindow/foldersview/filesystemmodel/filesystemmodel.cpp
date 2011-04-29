@@ -448,11 +448,16 @@ QModelIndex FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 
 	endRemoveRows();
 
-	beginInsertRows(QModelIndex(), 0, tree->size() - 1);
-	m_currentFsTree = tree;
-	endInsertRows();
+	if (tree->size() > 0)
+	{
+		beginInsertRows(QModelIndex(), 0, tree->size() - 1);
+		m_currentFsTree = tree;
+		endInsertRows();
 
-	return createIndex(tree->size() - 1, 0, tree->child(tree->size() - 1));
+		return createIndex(tree->size() - 1, 0, tree->child(tree->size() - 1));
+	}
+	else
+		return QModelIndex();
 }
 
 void FileSystemModel::rename(const QModelIndex &index, const QString &newFileName)

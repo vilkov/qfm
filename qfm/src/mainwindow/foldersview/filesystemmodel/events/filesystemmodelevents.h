@@ -165,7 +165,7 @@ public:
 	/********** PerformRemoveFiles **********/
 	struct PerformRemoveFilesParams: public PerformParams
 	{
-		bool shoulRemoveEntry;
+		bool removeParentEntry;
 	};
 	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCompleted> RemoveFilesCompletedEvent;
 	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCanceled> RemoveFilesCanceledEvent;

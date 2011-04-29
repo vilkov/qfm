@@ -19,7 +19,7 @@ public:
 
 	bool copy(QFile &source, QFile &dest)
 	{
-		return CopyFileEx(
+		return CopyFileExW(
 				(const wchar_t *)source.fileName().utf16(),
 				(const wchar_t *)dest.fileName().utf16(),
 				progress,

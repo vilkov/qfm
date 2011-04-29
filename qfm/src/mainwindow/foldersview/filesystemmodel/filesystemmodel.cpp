@@ -695,7 +695,9 @@ void FileSystemModel::scanForRemoveEvent(const FileSystemModelEvent::Params *p)
 	if (QMessageBox::question(
 			&Application::instance()->mainWindow(),
 			tr("Remove directory..."),
-			tr("Would you like to remove \"%1\" directory?").arg(static_cast<FileSystemEntry*>(params->snapshot.entry)->fileInfo().absoluteFilePath()),
+			tr("Would you like to remove \"%1\" directory (%2)?").
+				arg(static_cast<FileSystemEntry*>(params->snapshot.entry)->fileInfo().absoluteFilePath()).
+				arg(FileSystemEntry::humanReadableSize(params->size)),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
 		params->snapshot.entry->lock(tr("Removing..."), params->size);
@@ -720,8 +722,20 @@ void FileSystemModel::removeCompleteEvent(const FileSystemModelEvent::Params *p)
 	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	if (params->snapshot.fileSystemTree == m_currentFsTree)
-		doRefresh();
+	if (params->removeParentEntry)
+		if (params->snapshot.fileSystemTree == m_currentFsTree)
+			removeEntry(m_currentFsTree->indexOf(params->snapshot.entry));
+		else
+			params->snapshot.fileSystemTree->remove(params->snapshot.fileSystemTree->indexOf(params->snapshot.entry));
+	else
+	{
+		params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, 0);
+		params->snapshot.entry->clearTotalSize();
+		params->snapshot.entry->unlock();
+
+		if (params->snapshot.fileSystemTree == m_currentFsTree)
+			updateBothColumns(m_currentFsTree, params->snapshot.entry);
+	}
 }
 
 void FileSystemModel::removeCanceledEvent(const FileSystemModelEvent::Params *p)

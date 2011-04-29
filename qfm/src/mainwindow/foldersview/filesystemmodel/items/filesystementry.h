@@ -29,10 +29,10 @@ public:
 	void clearTotalSize() { m_totalSize.clear(); }
 
 	const QVariant &doneSize() const { return m_doneSize; }
-	void setDoneSize(const QVariant &value) { m_doneSize = value; }
+	void setDoneSize(quint64 value) { m_doneSize = value; }
 
 	const QVariant &timeElapsed() const { return m_timeElapsed; }
-	void setTimeElapsed(const QVariant &value) { m_timeElapsed = value; }
+	void setTimeElapsed(quint64 value) { m_timeElapsed = value; }
 
 	bool isInProgress() const { return !m_doneSize.isNull(); }
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }

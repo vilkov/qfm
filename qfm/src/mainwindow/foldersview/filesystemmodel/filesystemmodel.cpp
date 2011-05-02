@@ -13,7 +13,6 @@
 #include "../../../tools/rangeintersection.h"
 #include "../../../application.h"
 #include <QtCore/QSet>
-#include <QtCore/QThreadPool>
 #include <QtGui/QClipboard>
 #include <QtGui/QMessageBox>
 
@@ -25,7 +24,7 @@ FileSystemModel::FileSystemModel(const QString &currentDirectory, QObject *paren
 	list(m_currentFsTree);
 }
 
-FileSystemModel::FileSystemModel(const QFileInfo &fileInfo, QObject *parent) :
+FileSystemModel::FileSystemModel(const FileSystemInfo &fileInfo, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_currentFsTree(new FileSystemTree(fileInfo))
 {
@@ -234,12 +233,12 @@ QModelIndex FileSystemModel::parentEntryIndex() const
 	return QModelIndex();
 }
 
-const QFileInfo &FileSystemModel::currentDirectoryInfo() const
+const FileSystemInfo &FileSystemModel::currentDirectoryInfo() const
 {
 	return static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 }
 
-const QFileInfo &FileSystemModel::fileInfo(const QModelIndex &index) const
+const FileSystemInfo &FileSystemModel::fileInfo(const QModelIndex &index) const
 {
 	if (m_currentFsTree->child(index.row())->isRoot())
 		return static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
@@ -344,7 +343,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 			if (static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().exists())
 			{
 				parent = new FileSystemTree(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absolutePath(), 0);
-				parent->add<FileSystemEntry>(FileSystemInfo(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo()));
+				parent->add<FileSystemEntry>(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo());
 				parent->setSubtree(static_cast<FileSystemTree*>(m_currentFsTree));
 				static_cast<FileSystemTree*>(m_currentFsTree)->setParentEntry(parent->last());
 			}
@@ -420,7 +419,7 @@ QModelIndex FileSystemModel::setCurrentDirectory(const QString &filePath)
 	return res;
 }
 
-QModelIndex FileSystemModel::setCurrentDirectory(const QFileInfo &info)
+QModelIndex FileSystemModel::setCurrentDirectory(const FileSystemInfo &info)
 {
 	if (isLocked())
 		return QModelIndex();
@@ -484,7 +483,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 void FileSystemModel::createDirectory(const QString &dirName)
 {
-	const QFileInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
+	const FileSystemInfo &info = static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo();
 
 	if (info.exists())
 	{

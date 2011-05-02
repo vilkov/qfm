@@ -27,7 +27,7 @@ DirectoryView::DirectoryView(const Tab &tab, FoldersView *parent) :
 	m_view.sortByColumn(tab.sort.column, tab.sort.order);
 }
 
-DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
+DirectoryView::DirectoryView(const FileSystemInfo &fileInfo, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
 	m_menu(this),
@@ -42,7 +42,7 @@ DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
 	initialize();
 }
 
-DirectoryView::DirectoryView(const QFileInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
+DirectoryView::DirectoryView(const FileSystemInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
 	m_menu(this),
@@ -62,7 +62,7 @@ DirectoryView::DirectoryView(const QFileInfo &fileInfo, const QList<qint32> &geo
 		m_view.setColumnWidth(i, geometry.at(i));
 }
 
-const QFileInfo &DirectoryView::currentDirectoryInfo() const
+const FileSystemInfo &DirectoryView::currentDirectoryInfo() const
 {
 	return m_model.currentDirectoryInfo();
 }
@@ -120,7 +120,7 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	QFileInfo info(filePath);
+	FileSystemInfo info(filePath);
 
 	if (info.exists())
 	{
@@ -202,7 +202,7 @@ void DirectoryView::rename()
 
 	if (index.isValid())
 	{
-		const QFileInfo &info = m_model.fileInfo(index);
+		const FileSystemInfo &info = m_model.fileInfo(index);
 
 		if (info.exists())
 		{
@@ -272,7 +272,7 @@ void DirectoryView::openInNewTab()
 
 	if (index.isValid())
 	{
-		const QFileInfo &info = m_model.fileInfo(index);
+		const FileSystemInfo &info = m_model.fileInfo(index);
 
 		if (info.isDir())
 			m_parent->openInNewTab(info, geometry());
@@ -309,7 +309,7 @@ void DirectoryView::selectIndex(const QModelIndex &index)
 	m_view.setFocus();
 }
 
-void DirectoryView::updateCurrentDirectory(const QFileInfo &info)
+void DirectoryView::updateCurrentDirectory(const FileSystemInfo &info)
 {
 	m_header.pathEdit.setText(info.absoluteFilePath());
 	m_parent->updateTitle(info);

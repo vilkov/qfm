@@ -1,7 +1,6 @@
 #ifndef FOLDERSVIEW_H_
 #define FOLDERSVIEW_H_
 
-#include <QtCore/QFileInfo>
 #include <QtGui/QWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
@@ -33,9 +32,9 @@ public:
     FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
-    void updateTitle(const QFileInfo &info);
-    void updateTitle(qint32 index, const QFileInfo &info);
-    void openInNewTab(const QFileInfo &fileInfo, const QList<qint32> &geometry);
+    void updateTitle(const FileSystemInfo &info);
+    void updateTitle(qint32 index, const FileSystemInfo &info);
+    void openInNewTab(const FileSystemInfo &fileInfo, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
 

@@ -45,10 +45,10 @@ public:
 
 public:
     DirectoryView(const Tab &tab, FoldersView *parent);
-    DirectoryView(const QFileInfo &fileInfo, FoldersView *parent);
-    DirectoryView(const QFileInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(const FileSystemInfo &fileInfo, FoldersView *parent);
+    DirectoryView(const FileSystemInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
 
-	const QFileInfo &currentDirectoryInfo() const;
+	const FileSystemInfo &currentDirectoryInfo() const;
 	void save(QXmlStreamWriter &stream) const;
 	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
 
@@ -74,7 +74,7 @@ private:
 	void closeTab();
     void editPath();
 	void selectIndex(const QModelIndex &index);
-    void updateCurrentDirectory(const QFileInfo &info);
+    void updateCurrentDirectory(const FileSystemInfo &info);
     void contextMenu();
 
 private:

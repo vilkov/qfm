@@ -50,12 +50,12 @@ void FoldersView::refresh()
 	doRefresh(m_tabWidget.currentWidget());
 }
 
-void FoldersView::updateTitle(const QFileInfo &info)
+void FoldersView::updateTitle(const FileSystemInfo &info)
 {
 	updateTitle(m_tabWidget.currentIndex(), info);
 }
 
-void FoldersView::updateTitle(qint32 index, const QFileInfo &info)
+void FoldersView::updateTitle(qint32 index, const FileSystemInfo &info)
 {
 	QString fileName = info.fileName();
 
@@ -65,7 +65,7 @@ void FoldersView::updateTitle(qint32 index, const QFileInfo &info)
 		m_tabWidget.setTabText(index, fileName);
 }
 
-void FoldersView::openInNewTab(const QFileInfo &fileInfo, const QList<qint32> &geometry)
+void FoldersView::openInNewTab(const FileSystemInfo &fileInfo, const QList<qint32> &geometry)
 {
 	m_doNotRefreshTab = true;
 	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(fileInfo, geometry, this), QString()));

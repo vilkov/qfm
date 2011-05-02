@@ -12,7 +12,7 @@ FileSystemTree::FileSystemTree(const QString &directory, FileSystemItem *parent)
 		m_childs.push_back(new FileSystemRoot(this));
 }
 
-FileSystemTree::FileSystemTree(const QFileInfo &info, FileSystemItem *parent) :
+FileSystemTree::FileSystemTree(const FileSystemInfo &info, FileSystemItem *parent) :
 	FileSystemItem(parent),
 	m_updating(false),
 	m_fileInfo(info),

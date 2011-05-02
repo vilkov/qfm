@@ -7,28 +7,32 @@
 class Services
 {
 public:
-	class View
+	class Service
 	{
 	public:
-		virtual ~View() {}
+		typedef void *  File;
+		typedef quint64 size_type;
 
-		virtual void view(const QString &filePath) = 0;
+	public:
+		virtual ~Service() {}
 	};
 
-	class Edit
+	class View : public Service
 	{
 	public:
-		virtual ~Edit() {}
+		virtual void view(const File file, size_type size) = 0;
+	};
 
+	class Edit : public Service
+	{
+	public:
 		virtual void edit(const QString &filePath) = 0;
 	};
 
-	class Open
+	class Open : public Service
 	{
 	public:
-		virtual ~Open() {}
-
-		virtual void open(const QString &filePath) = 0;
+		virtual void open(const File file, size_type size) = 0;
 	};
 
 

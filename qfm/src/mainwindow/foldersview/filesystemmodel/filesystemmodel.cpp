@@ -344,7 +344,7 @@ void FileSystemModel::activated(const QModelIndex &index)
 			if (static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().exists())
 			{
 				parent = new FileSystemTree(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo().absolutePath(), 0);
-				parent->add<FileSystemEntry>(FilesTask::info(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo()));
+				parent->add<FileSystemEntry>(FileSystemInfo(static_cast<FileSystemTree*>(m_currentFsTree)->fileInfo()));
 				parent->setSubtree(static_cast<FileSystemTree*>(m_currentFsTree));
 				static_cast<FileSystemTree*>(m_currentFsTree)->setParentEntry(parent->last());
 			}
@@ -436,7 +436,7 @@ QModelIndex FileSystemModel::setCurrentDirectory(const QFileInfo &info)
 	if (info.isFile())
 	{
 		tree = new FileSystemTree(info.absolutePath(), 0);
-		tree->add<FileSystemEntry>(FilesTask::info(info));
+		tree->add<FileSystemEntry>(FileSystemInfo(info));
 		update(tree);
 	}
 	else
@@ -473,7 +473,7 @@ void FileSystemModel::rename(const QModelIndex &index, const QString &newFileNam
 
 			if (dir.rename(info.fileName(), newFileName))
 			{
-				static_cast<FileSystemEntry*>(index.internalPointer())->update(FilesTask::info(FileSystemInfo(dir.absoluteFilePath(newFileName))));
+				static_cast<FileSystemEntry*>(index.internalPointer())->update(FileSystemInfo(dir.absoluteFilePath(newFileName)));
 				emit dataChanged(index, index);
 			}
 		}
@@ -493,7 +493,7 @@ void FileSystemModel::createDirectory(const QString &dirName)
 		if (dir.mkdir(dirName))
 		{
 			beginInsertRows(QModelIndex(), m_currentFsTree->size(), m_currentFsTree->size());
-			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FilesTask::info(FileSystemInfo(dir.absoluteFilePath(dirName))));
+			static_cast<FileSystemTree*>(m_currentFsTree)->add<FileSystemEntry>(FileSystemInfo(dir.absoluteFilePath(dirName)));
 			endInsertRows();
 		}
 	}

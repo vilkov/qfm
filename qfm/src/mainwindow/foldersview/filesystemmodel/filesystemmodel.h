@@ -2,7 +2,6 @@
 #define FILESYSTEMMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
 #include "events/filesystemmodelevent.h"

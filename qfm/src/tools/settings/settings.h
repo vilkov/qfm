@@ -19,7 +19,7 @@ public:
     typedef QPair<SettingsList, ConstraintsList> Argument;
 
 public:
-	Settings(const QString &title, const Argument &arg);
+	Settings(const QString &title, const QString &appStorage, const Argument &arg);
 	virtual ~Settings();
 
 	QVariant readValue(const qint32 &settingId);
@@ -33,6 +33,8 @@ protected:
 	QVariant value(const QString &setting) { return m_storage.value(setting); }
 	void setValue(const QString &setting, const QVariant &value) { m_storage.setValue(setting, value); }
 	void endGroup() { m_storage.endGroup(); }
+
+    static QString storageLocation(const QString &applicationFolder);
 
 private:
 	template <typename T>

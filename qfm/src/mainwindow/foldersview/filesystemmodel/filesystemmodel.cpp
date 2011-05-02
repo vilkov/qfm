@@ -773,7 +773,8 @@ void FileSystemModel::scanForSizeEvent(const FileSystemModelEvent::Params *p)
 	typedef const ScanFilesForSizeTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	static_cast<FileSystemEntry*>(params->snapshot.entry)->setTotalSize(params->size);
+	params->snapshot.fileSystemTree->setSubtree(params->snapshot.entry, params->subtree);
+	params->snapshot.entry->setTotalSize(params->size);
 	params->snapshot.entry->unlock();
 
 	if (m_currentFsTree == params->snapshot.fileSystemTree)

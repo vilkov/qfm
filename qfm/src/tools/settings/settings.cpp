@@ -1,12 +1,13 @@
 #include "settings.h"
 #include "dialog/settingsdialog.h"
-#include <QApplication>
+#include <QtCore/QDir>
+#include <QtGui/QDesktopServices>
 
 
-Settings::Settings(const QString &title, const Argument &arg) :
+Settings::Settings(const QString &title, const QString &appStorage, const Argument &arg) :
 	m_dialog(0),
 	m_title(title),
-	m_storage(QApplication::applicationDirPath().append(QString::fromLatin1("/settings.ini")), QSettings::IniFormat),
+	m_storage(appStorage, QSettings::IniFormat),
 	m_settings(arg.first),
 	m_constraints(arg.second)
 {
@@ -56,6 +57,19 @@ QVariant Settings::readValueFromEditor(const qint32 &settingId) const
 		value = cacheEntry.option->editorValue();
 
 	return value;
+}
+
+QString Settings::storageLocation(const QString &applicationFolder)
+{
+	QDir dir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation));
+
+	if (dir.exists(applicationFolder))
+		return dir.absoluteFilePath(applicationFolder);
+	else
+		if (dir.mkpath(dir.absoluteFilePath(applicationFolder)))
+			return dir.absoluteFilePath(applicationFolder);
+
+	return QString();
 }
 
 void Settings::makeSettingsCache()

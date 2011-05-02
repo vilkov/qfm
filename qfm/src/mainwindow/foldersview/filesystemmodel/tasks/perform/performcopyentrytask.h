@@ -44,10 +44,8 @@ protected:
 	bool m_overwriteAll;
 	TaskProgress m_progress;
 
-#ifdef Q_OS_WIN
 private:
 	friend class CopyProgressRoutine;
-#endif
 };
 
 #endif /* PERFORMCOPYENTRYTASK_H_ */

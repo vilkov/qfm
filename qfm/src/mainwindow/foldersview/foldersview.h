@@ -1,17 +1,14 @@
 #ifndef FOLDERSVIEW_H_
 #define FOLDERSVIEW_H_
 
-#include <QtCore/QStringList>
 #include <QtCore/QFileInfo>
 #include <QtGui/QWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QTabWidget>
-#include <QtGui/QToolButton>
-#include "widgets/pathedit.h"
-#include "../../tools/events/imp/mouseeventhandler.h"
-#include "../../tools/events/imp/focuseventhandler.h"
-#include "../../tools/events/imp/keyboardeventhandler.h"
+#include <QtXml/QXmlStreamWriter>
+#include <QtXml/QXmlStreamReader>
+#include "directoryview.h"
 
 
 class FoldersView : public QWidget
@@ -20,18 +17,35 @@ class FoldersView : public QWidget
 
 public:
     typedef const FoldersView & FoldersViewRef;
+    struct Tab
+    {
+    	Tab(const DirectoryView::Tab &tab) :
+			isActive(false),
+			tab(tab)
+    	{}
+
+    	bool isActive;
+    	DirectoryView::Tab tab;
+    };
+    typedef QList<Tab> TabList;
 
 public:
-    FoldersView(const QStringList &folders, FoldersViewRef other, QWidget *parent = 0);
+    FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
-    void updateCurrentDirectory(const QFileInfo &info);
-    void openInNewTab(const QFileInfo &fileInfo);
+    void updateTitle(const QFileInfo &info);
+    void updateTitle(qint32 index, const QFileInfo &info);
+    void openInNewTab(const QFileInfo &fileInfo, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
 
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
+	void saveTabs(QXmlStreamWriter &stream) const;
+	static TabList loadTabs(QXmlStreamReader &stream);
+
+protected:
+	QString rootPath() const;
 
 private Q_SLOTS:
 	void refreshTab(int index);

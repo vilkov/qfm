@@ -1,6 +1,6 @@
 #include "filesysteminfo.h"
-#include <QFSFileEngine>
 #include "../../../application.h"
+#include <QtCore/QFSFileEngine>
 
 
 FileSystemInfo::FileSystemInfo() :
@@ -15,7 +15,7 @@ FileSystemInfo::FileSystemInfo(const QFileInfo &info) :
 	QFileInfo(info)
 {}
 
-bool FileSystemInfo::operator ==(const FileSystemInfo &fileInfo) const
+bool FileSystemInfo::operator==(const FileSystemInfo &fileInfo) const
 {
    return QFileInfo::operator==(fileInfo) &&
    m_displayType == fileInfo.m_displayType &&

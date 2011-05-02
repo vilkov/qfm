@@ -15,7 +15,7 @@ public:
     FileSystemInfo(const QString &filePath);
     FileSystemInfo(const QFileInfo &info);
 
-    bool operator ==(const FileSystemInfo &fileInfo) const;
+    bool operator==(const FileSystemInfo &fileInfo) const;
 
     void refresh();
 

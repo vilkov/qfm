@@ -1,10 +1,11 @@
 #include "directoryview.h"
+#include "foldersview.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include <QtGui/QHeaderView>
 #include <QtGui/QMessageBox>
 
 
-DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
+DirectoryView::DirectoryView(const Tab &tab, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
 	m_menu(this),
@@ -12,11 +13,18 @@ DirectoryView::DirectoryView(const QString &directory, FoldersView *parent) :
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
     m_view(&m_eventHandler, this),
-    m_model(directory, this),
+    m_model(tab.path, this),
     m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
+	Q_ASSERT(m_model.columnCount() == tab.geometry.size());
+
 	initialize();
+
+	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
+		m_view.setColumnWidth(i, tab.geometry.at(i));
+
+	m_view.sortByColumn(tab.sort.column, tab.sort.order);
 }
 
 DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
@@ -34,9 +42,75 @@ DirectoryView::DirectoryView(const QFileInfo &fileInfo, FoldersView *parent) :
 	initialize();
 }
 
+DirectoryView::DirectoryView(const QFileInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
+	QWidget(),
+	m_parent(parent),
+	m_menu(this),
+	m_layout(this),
+	m_pathEventHandler(this),
+	m_header(&m_pathEventHandler, this),
+	m_view(&m_eventHandler, this),
+	m_model(fileInfo, this),
+	m_delegate(&m_proxy),
+	m_eventHandler(this)
+{
+	Q_ASSERT(m_model.columnCount() == geometry.size());
+
+	initialize();
+
+	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
+		m_view.setColumnWidth(i, geometry.at(i));
+}
+
 const QFileInfo &DirectoryView::currentDirectoryInfo() const
 {
 	return m_model.currentDirectoryInfo();
+}
+
+void DirectoryView::save(QXmlStreamWriter &stream) const
+{
+	stream.writeTextElement(QString::fromLatin1("Path"), m_model.currentDirectoryInfo().absoluteFilePath());
+
+	stream.writeStartElement(QString::fromLatin1("Sort"));
+	stream.writeTextElement(QString::fromLatin1("Column"), QString::number(m_view.header()->sortIndicatorSection()));
+	stream.writeTextElement(QString::fromLatin1("Order"), QString::number(m_view.header()->sortIndicatorOrder()));
+	stream.writeEndElement();
+
+	QString name = QString::fromLatin1("Column");
+	stream.writeStartElement(QString::fromLatin1("Geometry"));
+	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
+		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
+	stream.writeEndElement();
+}
+
+DirectoryView::Tab DirectoryView::load(QXmlStreamReader &stream, const QString &stopTagName)
+{
+	DirectoryView::Tab res;
+	QString column = QString::fromLatin1("Column");
+
+	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Path"))
+		res.path = stream.readElementText();
+
+	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Sort"))
+	{
+		if (stream.readNextStartElement() && stream.name() == column)
+			res.sort.column = stream.readElementText().toInt();
+
+		if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Order"))
+			res.sort.order = static_cast<Qt::SortOrder>(stream.readElementText().toInt());
+
+		stream.readNextStartElement();
+	}
+
+	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Geometry"))
+	{
+		while (stream.readNextStartElement() && stream.name().toString().startsWith(column))
+			res.geometry.push_back(stream.readElementText().toInt());
+
+		stream.readNextStartElement();
+	}
+
+	return res;
 }
 
 void DirectoryView::setFocus()
@@ -201,7 +275,7 @@ void DirectoryView::openInNewTab()
 		const QFileInfo &info = m_model.fileInfo(index);
 
 		if (info.isDir())
-			m_parent->openInNewTab(info);
+			m_parent->openInNewTab(info, geometry());
 	}
 }
 
@@ -238,7 +312,7 @@ void DirectoryView::selectIndex(const QModelIndex &index)
 void DirectoryView::updateCurrentDirectory(const QFileInfo &info)
 {
 	m_header.pathEdit.setText(info.absoluteFilePath());
-	m_parent->updateCurrentDirectory(info);
+	m_parent->updateTitle(info);
 }
 
 void DirectoryView::contextMenu()
@@ -250,6 +324,17 @@ void DirectoryView::contextMenu()
 void DirectoryView::refreshOther()
 {
 	static_cast<DirectoryView*>(m_parent->other().currentWidget())->refresh();
+}
+
+QList<qint32> DirectoryView::geometry() const
+{
+	QList<qint32> res;
+	res.reserve(m_model.columnCount());
+
+	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
+		res.push_back(m_view.columnWidth(i));
+
+	return res;
 }
 
 void DirectoryView::initialize()

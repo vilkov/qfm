@@ -57,16 +57,21 @@ bool Application::notify(QObject *receiver, QEvent *event)
 
 qint32 Application::exec()
 {
-	QTranslator qtTranslator;
-	qtTranslator.load(QString::fromLatin1("qt_").append(QLocale::system().name()), QApplication::applicationDirPath());
-	installTranslator(&qtTranslator);
+	if (m_settings.storageLocation().isEmpty())
+		return 1;
+	else
+	{
+		QTranslator qtTranslator;
+		qtTranslator.load(QString::fromLatin1("qt_").append(QLocale::system().name()), QApplication::applicationDirPath());
+		installTranslator(&qtTranslator);
 
-	QTranslator appTranslator;
-	qtTranslator.load(QString::fromLatin1("app_").append(QLocale::system().name()), QApplication::applicationDirPath());
-	installTranslator(&appTranslator);
+		QTranslator appTranslator;
+		qtTranslator.load(QString::fromLatin1("app_").append(QLocale::system().name()), QApplication::applicationDirPath());
+		installTranslator(&appTranslator);
 
-	m_mainWindow.show();
-	return QApplication::exec();
+		m_mainWindow.show();
+		return QApplication::exec();
+	}
 }
 
 //#if defined(Q_WS_WIN)

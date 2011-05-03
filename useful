@@ -15,3 +15,38 @@ QFileInfo FileInfoGatherer::resolveName(const QFileInfo &fileInfo) const
 
     return resolvedInfo;
 }
+
+
+
+
+
+#include <iostream>
+#include <stlsoft/smartptr/ref_ptr.hpp>
+#include <comstl/util/initialisers.hpp>
+#include <comstl/util/creation_functions.hpp>
+#include <comstl/util/interface_traits.hpp>
+#include <comstl/util/variant.hpp>
+#include <comstl/string/bstr.hpp>
+#include <ShlObj.h>
+
+
+
+	comstl::com_initialiser init;
+
+	IShellFolder *desktop;
+	if (SUCCEEDED(SHGetDesktopFolder(&desktop)))
+	{
+		ITEMIDLIST *pidl;
+		wchar_t str[] = L"f:\\workspace\\executables\\qfm";
+
+		if (SUCCEEDED(desktop->ParseDisplayName(NULL, NULL, str, NULL, &pidl, NULL)))
+		{
+			SHCreateDefaultContextMenu();
+
+
+			CoTaskMemFree(pidl);
+			std::cout << "123123123123123" << std::endl;
+		}
+
+		desktop->Release();
+	}

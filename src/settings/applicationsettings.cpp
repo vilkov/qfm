@@ -3,6 +3,7 @@
 #include "configoptions/colorconfigoption.h"
 #include "configoptions/checkconfigoption.h"
 #include "configoptions/passwordconfigoption.h"
+#include "../mainwindow/foldersview/foldersview.h"
 #include "../tools/settings/configoptions/configoptionvalue.h"
 #include "../tools/settings/configoptions/configoptiongroup.h"
 #include "../tools/settings/constraints/configoptionconstraintrange.h"
@@ -11,16 +12,16 @@
 #include "../tools/settings/constraints/configoptionconstraintempty.h"
 #include "../tools/settings/constraints/configoptionconstraintemail.h"
 #include "../application.h"
-#include <QDir>
-#include <QMessageBox>
-#include <QColorDialog>
-#include <QDesktopServices>
+#include <QtCore/QDir>
+#include <QtGui/QMessageBox>
+#include <QtGui/QColorDialog>
+#include <QtGui/QDesktopServices>
 
 #define FROM_RAW_DATA(a) QByteArray::fromRawData(a, qstrlen(a))
 
 
 ApplicationSettings::ApplicationSettings(QObject *parent) :
-	QObject(parent), Settings(tr("Settings"), createSettins())
+	QObject(parent), Settings(tr("Settings"), QDir(storageLocation()).absoluteFilePath(QString::fromLatin1("settings.ini")), createSettins())
 {}
 
 QVariant ApplicationSettings::readValue(const qint32 &settingId)
@@ -83,6 +84,11 @@ void ApplicationSettings::loadState(QWidget *widget, QSplitter *splitter, QAbstr
 	splitter->restoreState(value(QString::fromLatin1("Splitter")).toByteArray());
 	view->restoreGeometry(value(geometry.append(QChar('.')).append(view->objectName())).toByteArray());
 	endGroup();
+}
+
+QString ApplicationSettings::storageLocation()
+{
+	return Settings::storageLocation(QString::fromLatin1(".qfm"));
 }
 
 ApplicationSettings::Argument ApplicationSettings::createSettins()

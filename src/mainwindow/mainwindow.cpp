@@ -1,7 +1,11 @@
 #include "mainwindow.h"
+#include "xmlstreamreader.h"
 #include "../application.h"
+#include <QtCore/QDir>
+#include <QtCore/QTextCodec>
 #include <QtGui/QMenuBar>
 #include <QtGui/QMenu>
+#include <QtXml/QXmlStreamWriter>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,13 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_centralWidget(this),
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),
-#ifdef Q_OS_WIN32
-    m_leftFoldersView(QStringList() << QString::fromLatin1("C:/"), m_rightFoldersView, &m_splitter),
-    m_rightFoldersView(QStringList() << QString::fromLatin1("C:/Temp"), m_leftFoldersView, &m_splitter),
-#else
-    m_leftFoldersView(QStringList() << QString::fromLatin1("/home"), m_rightFoldersView, &m_splitter),
-    m_rightFoldersView(QStringList() << QString::fromLatin1("/"), m_leftFoldersView, &m_splitter),
-#endif
+    m_leftFoldersView(loadLeftPanelTabs(), m_rightFoldersView, &m_splitter),
+    m_rightFoldersView(loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
     /* Actions */
     m_fileMenuActions(this),
     m_toolsMenuActions(this)
@@ -30,13 +29,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_splitter.addWidget(&m_leftFoldersView);
 	m_splitter.addWidget(&m_rightFoldersView);
 
-	m_leftFoldersView.setFocus();
 	Application::instance()->config().loadState(this);
+	m_leftFoldersView.setFocus();
 }
 
 MainWindow::~MainWindow()
 {
 	Application::instance()->config().saveState(this);
+	saveTabs();
 }
 
 bool MainWindow::switchToOtherPanel(QObject *receiver)
@@ -69,6 +69,62 @@ void MainWindow::changeEvent(QEvent *event)
 	}
 
 	QMainWindow::changeEvent(event);
+}
+
+void MainWindow::saveTabs() const
+{
+	QDir dir(ApplicationSettings::storageLocation());
+
+	saveTabs(m_leftFoldersView, dir.absoluteFilePath(QString::fromLatin1("leftpaneltabs.xml")));
+	saveTabs(m_rightFoldersView, dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
+}
+
+void MainWindow::saveTabs(const FoldersView &panel, const QString &fileName) const
+{
+	QFile file(fileName);
+
+	if (file.open(QFile::WriteOnly | QFile::Truncate))
+	{
+		QXmlStreamWriter stream(&file);
+		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+		stream.setAutoFormatting(true);
+
+		stream.writeStartDocument(QString::fromLatin1("1.0"));
+
+		stream.writeStartElement(QString::fromLatin1("Tabs"));
+		panel.saveTabs(stream);
+		stream.writeEndElement();
+
+		stream.writeEndDocument();
+	}
+}
+
+FoldersView::TabList MainWindow::loadLeftPanelTabs() const
+{
+	QDir dir(ApplicationSettings::storageLocation());
+	return loadPanelTabs(dir.absoluteFilePath(QString::fromLatin1("leftpaneltabs.xml")));
+}
+
+FoldersView::TabList MainWindow::loadRightPanelTabs() const
+{
+	QDir dir(ApplicationSettings::storageLocation());
+	return loadPanelTabs(dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
+}
+
+FoldersView::TabList MainWindow::loadPanelTabs(const QString &fileName) const
+{
+	QFile file(fileName);
+
+	if (file.open(QFile::ReadOnly))
+	{
+		QXmlStreamReader stream(&file);
+
+		if (!stream.atEnd() && stream.readNext() == QXmlStreamReader::StartDocument)
+			if (stream.readNextStartElement() && stream.name() == QLatin1String("Tabs"))
+				return FoldersView::loadTabs(stream);
+	}
+
+	return FoldersView::TabList();
 }
 
 MainWindow::FileMenuActions::FileMenuActions(QMainWindow *parent) :

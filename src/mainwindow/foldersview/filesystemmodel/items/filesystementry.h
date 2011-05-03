@@ -4,7 +4,6 @@
 #include <QDir>
 #include <QString>
 #include "filesystemitem.h"
-#include "../filesysteminfo.h"
 #include "../filesystemchangeslist.h"
 
 

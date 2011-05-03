@@ -3,65 +3,11 @@
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
-#include "../../filesysteminfo.h"
-#ifndef Q_OS_WIN
-#  include <unistd.h>
-#  include <sys/types.h>
-#endif
-
-
-class FilesTask
-{
-public:
-	static FileSystemInfo info(const QString &filePath)
-	{
-		FileSystemInfo info(filePath);
-		updateInfo(info);
-	    return info;
-	}
-	static FileSystemInfo info(const QFileInfo &fileInfo)
-	{
-		FileSystemInfo info(fileInfo);
-		updateInfo(info);
-	    return info;
-	}
-
-protected:
-	static void updateInfo(FileSystemInfo &info)
-	{
-	#ifdef Q_OS_WIN
-	   	info.setPermissions(info.permissions());
-	#else
-	   	info.setPermissions(translatePermissions(info, getuid(), getgid()));
-	#endif
-	}
-#ifndef Q_OS_WIN
-    static QFile::Permissions translatePermissions(const QFileInfo &fileInfo, uint userId, uint groupId)
-    {
-        QFile::Permissions permissions = fileInfo.permissions();
-        QFile::Permissions p = permissions;
-        p &= ~(QFile::ReadUser|QFile::WriteUser|QFile::ExeUser);
-
-        if (permissions & QFile::ReadOther || (fileInfo.ownerId() == userId  && permissions & QFile::ReadOwner) ||
-    										  (fileInfo.groupId() == groupId && permissions & QFile::ReadGroup))
-            p |= QFile::ReadUser;
-
-        if (permissions & QFile::WriteOther || (fileInfo.ownerId() == userId  && permissions & QFile::WriteOwner) ||
-    										   (fileInfo.groupId() == groupId && permissions & QFile::WriteGroup))
-            p |= QFile::WriteUser;
-
-        if (permissions & QFile::ExeOther || (fileInfo.ownerId() == userId  && permissions & QFile::ExeOwner) ||
-    										 (fileInfo.groupId() == groupId && permissions & QFile::ExeGroup))
-            p |= QFile::ExeUser;
-
-        return p;
-    }
-#endif
-};
+#include "../../../../../filesysteminfo/filesysteminfo.h"
 
 
 template <typename BaseClass>
-class TemplateFilesTask : public BaseClass, public FilesTask
+class TemplateFilesTask : public BaseClass
 {
 public:
 	typedef BaseClass parent_class;
@@ -80,14 +26,11 @@ public:
 protected:
 	FileSystemInfo getInfo(const QFileInfo &fileInfo) const
 	{
-	    FileSystemInfo info(fileInfo);
 	#ifdef Q_OS_WIN
-	    info.setPermissions(fileInfo.permissions());
+	    return FileSystemInfo(fileInfo);
 	#else
-	    info.setPermissions(translatePermissions(fileInfo, m_userId, m_groupId));
+	    return FileSystemInfo(fileInfo, m_userId, m_groupId);
 	#endif
-
-	    return info;
 	}
 
 private:

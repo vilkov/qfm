@@ -19,14 +19,30 @@ public:
 		if (dest.exists())
 			if (dest.remove())
 				if (source.copy(dest.fileName()))
+				{
+					if (dest.open(QFile::ReadOnly))
+					{
+						m_instance->m_progress.update(dest.size());
+						dest.close();
+					}
+
 					return true;
+				}
 				else
 					m_lastError = source.errorString();
 			else
 				m_lastError = dest.errorString();
 		else
 			if (source.copy(dest.fileName()))
+			{
+				if (dest.open(QFile::ReadOnly))
+				{
+					m_instance->m_progress.update(dest.size());
+					dest.close();
+				}
+
 				return true;
+			}
 			else
 				m_lastError = source.errorString();
 

@@ -2,7 +2,6 @@
 #define FILESYSTEMMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "filesysteminfo.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemitem.h"
 #include "events/filesystemmodelevent.h"
@@ -15,7 +14,7 @@ class FileSystemModel : public QAbstractItemModel
 
 public:
 	FileSystemModel(const QString &currentDirectory, QObject *parent = 0);
-	FileSystemModel(const QFileInfo &fileInfo, QObject *parent = 0);
+	FileSystemModel(const FileSystemInfo &fileInfo, QObject *parent = 0);
 	~FileSystemModel();
 
     virtual bool event(QEvent *e);
@@ -32,8 +31,8 @@ public:
 	QStringList lockedEntries() const;
 	QModelIndex rootIndex() const;
 	QModelIndex parentEntryIndex() const;
-	const QFileInfo &currentDirectoryInfo() const;
-	const QFileInfo &fileInfo(const QModelIndex &index) const;
+	const FileSystemInfo &currentDirectoryInfo() const;
+	const FileSystemInfo &fileInfo(const QModelIndex &index) const;
 	void pathToClipboard(const QModelIndexList &list) const;
 	QModelIndex find(const QString &fileName) const;
 	QString selectedFiles(const QModelIndexList &list, QStringList &files) const;
@@ -42,7 +41,7 @@ public:
 	void refreshSize(const QModelIndex &index);
 	void activated(const QModelIndex &index);
 	QModelIndex setCurrentDirectory(const QString &filePath);
-	QModelIndex setCurrentDirectory(const QFileInfo &info);
+	QModelIndex setCurrentDirectory(const FileSystemInfo &info);
 	void rename(const QModelIndex &index, const QString &newFileName);
 	void createDirectory(const QString &dirName);
 	void remove(const QModelIndex &index);

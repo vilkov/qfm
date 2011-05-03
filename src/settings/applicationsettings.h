@@ -41,6 +41,8 @@ public:
 	void loadState(QWidget *widget, QAbstractItemView *view);
 	void loadState(QWidget *widget, QSplitter *splitter, QAbstractItemView *view);
 
+    static QString storageLocation();
+
 private Q_SLOTS:
 	void thumbnailerBackgroundColorSelect();
 	void thumbnailerBackgroundColorStateChanged(int state);

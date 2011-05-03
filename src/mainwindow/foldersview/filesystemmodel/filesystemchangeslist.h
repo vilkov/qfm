@@ -1,10 +1,10 @@
 #ifndef FILESYSTEMCHANGESLIST_H_
 #define FILESYSTEMCHANGESLIST_H_
 
-#include <QList>
-#include <QString>
-#include "filesysteminfo.h"
+#include <QtCore/QList>
+#include <QtCore/QString>
 #include "items/filesystemitem.h"
+#include "../../../filesysteminfo/filesysteminfo.h"
 #include "../../../tools/memory/memory_manager.h"
 
 

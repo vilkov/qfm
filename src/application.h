@@ -29,6 +29,7 @@ public:
 
 	qint32 exec();
 	QString version() const;
+
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 
 //#if defined(Q_WS_WIN)

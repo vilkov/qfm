@@ -1,11 +1,13 @@
 #ifndef EXTENDEDINFORMATION_H_
 #define EXTENDEDINFORMATION_H_
 
-#include <QString>
-#include <QFileInfo>
-#include <QFile>
-#include <QIcon>
-#include "../../../tools/memory/memory_manager.h"
+#include <QtCore/QFileInfo>
+#include <QtGui/QIcon>
+#ifndef Q_OS_WIN
+#  include <unistd.h>
+#  include <sys/types.h>
+#endif
+#include "../tools/memory/memory_manager.h"
 
 
 class FileSystemInfo : public QFileInfo, public MemoryManagerTag
@@ -14,8 +16,12 @@ public:
     FileSystemInfo();
     FileSystemInfo(const QString &filePath);
     FileSystemInfo(const QFileInfo &info);
+#ifndef Q_OS_WIN
+    FileSystemInfo(const QString &filePath, uint userId, uint groupId);
+    FileSystemInfo(const QFileInfo &info, uint userId, uint groupId);
+#endif
 
-    bool operator ==(const FileSystemInfo &fileInfo) const;
+    bool operator==(const FileSystemInfo &fileInfo) const;
 
     void refresh();
 
@@ -24,7 +30,11 @@ public:
     bool isCaseSensitive() const;
 
     const QFile::Permissions &permissions() const { return m_permissions; }
-    void setPermissions (QFile::Permissions permissions) { m_permissions = permissions; }
+
+private:
+#ifndef Q_OS_WIN
+    void translatePermissions(uint userId, uint groupId);
+#endif
 
 private:
     QFile::Permissions m_permissions;

@@ -3,7 +3,6 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QScopedPointer>
-#include <windows.h>
 
 
 ScanFilesForSizeTask::ScanFilesForSizeTask(Params *params) :
@@ -58,7 +57,6 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		Sleep(3000);
 		QScopedPointer<Event> event(new Event());
 		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;

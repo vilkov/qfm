@@ -1,11 +1,14 @@
 #ifndef DIRECTORYVIEW_H
 #define DIRECTORYVIEW_H
 
+#include <QtCore/QList>
 #include <QtGui/QWidget>
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
-#include "foldersview.h"
+#include <QtGui/QToolButton>
+#include <QtXml/QXmlStreamWriter>
+#include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
 #include "contextmenu/contextmenu.h"
 #include "filesystemmodel/filesystemmodel.h"
@@ -17,17 +20,37 @@
 #include "../../tools/events/imp/mouseeventsource.h"
 #include "../../tools/events/imp/keyboardeventsource.h"
 #include "../../tools/events/imp/contextmenueventsource.h"
+#include "../../tools/events/imp/focuseventhandler.h"
 
+
+class FoldersView;
 
 class DirectoryView : public QWidget
 {
     Q_OBJECT
 
 public:
-    DirectoryView(const QString &directory, FoldersView *parent);
-    DirectoryView(const QFileInfo &fileInfo, FoldersView *parent);
+    struct Tab
+    {
+    	struct Sort
+    	{
+    		qint32 column;
+    		Qt::SortOrder order;
+    	};
 
-	const QFileInfo &currentDirectoryInfo() const;
+    	QString path;
+    	Sort sort;
+    	QList<qint32> geometry;
+    };
+
+public:
+    DirectoryView(const Tab &tab, FoldersView *parent);
+    DirectoryView(const FileSystemInfo &fileInfo, FoldersView *parent);
+    DirectoryView(const FileSystemInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
+
+	const FileSystemInfo &currentDirectoryInfo() const;
+	void save(QXmlStreamWriter &stream) const;
+	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
 
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);
@@ -51,12 +74,13 @@ private:
 	void closeTab();
     void editPath();
 	void selectIndex(const QModelIndex &index);
-    void updateCurrentDirectory(const QFileInfo &info);
+    void updateCurrentDirectory(const FileSystemInfo &info);
     void contextMenu();
 
 private:
     friend class FileSystemModel;
     void refreshOther();
+    QList<qint32> geometry() const;
 
 private:
 	void initialize();

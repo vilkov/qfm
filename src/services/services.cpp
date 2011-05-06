@@ -8,17 +8,17 @@ Services::Services()
 	selfInstance = this;
 }
 
-void Services::view(const FileSystemInfo &file)
+void Services::view(const FileSystem::Info &file)
 {
 
 }
 
-void Services::edit(const FileSystemInfo &file)
+void Services::edit(const FileSystem::Info &file)
 {
 
 }
 
-void Services::open(const FileSystemInfo &file)
+void Services::open(const FileSystem::Info &file)
 {
 
 }

@@ -1,15 +1,17 @@
 #include "foldersview.h"
-#include "directoryview.h"
 #include <QtCore/QScopedPointer>
 
 
-FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent) :
+FoldersView::FoldersView(FileSystem::RootNode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
+	m_root(root),
 	m_doNotRefreshTab(true),
     m_layout(this),
     m_tabWidget(this),
 	m_other(other)
 {
+	Q_ASSERT(m_root != 0);
+
 	setLayout(&m_layout);
 	m_layout.setMargin(1);
 	m_layout.setSpacing(1);
@@ -19,8 +21,8 @@ FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *par
 	if (tabs.isEmpty())
 	{
 		DirectoryView *widget;
-		m_tabWidget.addTab(widget = new DirectoryView(rootPath(), this), QString());
-		updateTitle(widget->currentDirectoryInfo());
+		m_tabWidget.addTab(widget = new DirectoryView(m_root, rootPath(), this), QString());
+		updateTitle(widget->currentDirectoryName());
 	}
 	else
 	{
@@ -35,8 +37,8 @@ FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *par
 			if (tab.isActive)
 				activeWidget = i;
 
-			index = m_tabWidget.addTab(widget = new DirectoryView(tab.tab, this), QString());
-			updateTitle(index, widget->currentDirectoryInfo());
+			index = m_tabWidget.addTab(widget = new DirectoryView(m_root, tab.tab, this), QString());
+			updateTitle(index, widget->currentDirectoryName());
 		}
 
 		m_tabWidget.setCurrentIndex(activeWidget);
@@ -50,12 +52,12 @@ void FoldersView::refresh()
 	doRefresh(m_tabWidget.currentWidget());
 }
 
-void FoldersView::updateTitle(const FileSystemInfo &info)
+void FoldersView::updateTitle(const FileSystem::Info &info)
 {
 	updateTitle(m_tabWidget.currentIndex(), info);
 }
 
-void FoldersView::updateTitle(qint32 index, const FileSystemInfo &info)
+void FoldersView::updateTitle(qint32 index, const FileSystem::Info &info)
 {
 	QString fileName = info.fileName();
 
@@ -65,11 +67,11 @@ void FoldersView::updateTitle(qint32 index, const FileSystemInfo &info)
 		m_tabWidget.setTabText(index, fileName);
 }
 
-void FoldersView::openInNewTab(const FileSystemInfo &fileInfo, const QList<qint32> &geometry)
+void FoldersView::openInNewTab(const FileSystem::Info &fileInfo, const QList<qint32> &geometry)
 {
 	m_doNotRefreshTab = true;
-	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(fileInfo, geometry, this), QString()));
-	updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryInfo());
+	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(m_root, fileInfo, geometry, this), QString()));
+	updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
 	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 }
 
@@ -79,7 +81,7 @@ void FoldersView::closeCurrentTab()
 	{
 		QScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
-		updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryInfo());
+		updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
 		static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 	}
 }

@@ -2,7 +2,7 @@
 #define SERVICES_H_
 
 #include <QtCore/QString>
-#include "../filesysteminfo/filesysteminfo.h"
+#include "../filesystem/info/filesysteminfo.h"
 
 
 class Services
@@ -40,9 +40,9 @@ public:
 public:
 	Services();
 
-	void view(const FileSystemInfo &file);
-	void edit(const FileSystemInfo &file);
-	void open(const FileSystemInfo &file);
+	void view(const FileSystem::Info &file);
+	void edit(const FileSystem::Info &file);
+	void open(const FileSystem::Info &file);
 
 public:
 	static Services *instance();

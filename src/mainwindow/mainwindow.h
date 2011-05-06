@@ -7,6 +7,8 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
+#include "../filesystem/filesystemrootnode.h"
+#include "../filesystem/filesystempluginsmanager.h"
 
 
 class MainWindow : public QMainWindow
@@ -52,11 +54,14 @@ private Q_SLOTS:
     void actToolsMenuPreferences();
 
 private:
+    FileSystem::PluginsManager m_manager;
+    FileSystem::RootNode m_root;
+
     QWidget m_centralWidget;
     QVBoxLayout m_layout;
     QSplitter m_splitter;
     FoldersView m_leftFoldersView;
-    FoldersView m_rightFoldersView;
+//    FoldersView m_rightFoldersView;
 
     /* Actions */
     FileMenuActions m_fileMenuActions;

@@ -11,9 +11,11 @@
 #include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
 #include "contextmenu/contextmenu.h"
-#include "filesystemmodel/filesystemmodel.h"
-#include "filesystemmodel/filesystemproxymodel.h"
-#include "filesystemmodel/filesystemdecorationdelegate.h"
+//#include "filesystemmodel/filesystemmodel.h"
+//#include "filesystemmodel/filesystemproxymodel.h"
+//#include "filesystemmodel/filesystemdecorationdelegate.h"
+#include "../../filesystem/filesystemrootnode.h"
+#include "../../filesystem/info/filesysteminfo.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
 #include "../../tools/events/imp/contextmenueventhandler.h"
@@ -44,11 +46,11 @@ public:
     };
 
 public:
-    DirectoryView(const Tab &tab, FoldersView *parent);
-    DirectoryView(const FileSystemInfo &fileInfo, FoldersView *parent);
-    DirectoryView(const FileSystemInfo &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(FileSystem::RootNode *root, const Tab &tab, FoldersView *parent);
+    DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, FoldersView *parent);
+    DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
 
-	const FileSystemInfo &currentDirectoryInfo() const;
+	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;
 	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
 
@@ -74,16 +76,16 @@ private:
 	void closeTab();
     void editPath();
 	void selectIndex(const QModelIndex &index);
-    void updateCurrentDirectory(const FileSystemInfo &info);
+    void updateCurrentDirectory(const FileSystem::Info &info);
     void contextMenu();
 
 private:
-    friend class FileSystemModel;
+    friend class FileSystemModelBase;
     void refreshOther();
     QList<qint32> geometry() const;
 
 private:
-	void initialize();
+	void initialize(FileSystem::RootNode *root, const QString &filePath);
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 	QModelIndex toViewIndex(const QModelIndex &index) const;
@@ -143,9 +145,9 @@ private:
     PathEventHandler m_pathEventHandler;
     Header m_header;
     DirectoryListView m_view;
-    FileSystemModel m_model;
-    FileSystemProxyModel m_proxy;
-    FileSystemDecorationDelegate m_delegate;
+//    FileSystemModel m_model;
+//    FileSystemProxyModel m_proxy;
+//    FileSystemDecorationDelegate m_delegate;
     DirectoryListViewEventHandler m_eventHandler;
 };
 

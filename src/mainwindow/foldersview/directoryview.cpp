@@ -40,6 +40,7 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
 	m_eventHandler(this)
 {
 	initialize(root, fileInfo.absoluteFilePath());
+	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
@@ -64,7 +65,7 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
 
 QString DirectoryView::currentDirectoryName() const
 {
-	return static_cast<FileSystem::Node*>(m_view.model())->fileName();
+	return model()->fileName();
 }
 
 void DirectoryView::save(QXmlStreamWriter &stream) const
@@ -161,8 +162,27 @@ void DirectoryView::goForward()
 
 void DirectoryView::refresh()
 {
-//	m_model.refresh();
-//	updateCurrentDirectory(m_model.currentDirectoryInfo());
+	FileSystem::Node *model = DirectoryView::model();
+	model->refresh();
+
+	if (model->exists())
+		model->update();
+	else
+	{
+		FileSystem::Node *parent = model;
+
+		do
+		{
+			parent = static_cast<FileSystem::Node*>(model->parent());
+			parent->remove(model);
+			parent->refresh();
+			model = parent;
+		}
+		while (!model->exists());
+
+		model->view(&m_view);
+		updateCurrentDirectory(model->fileName(), model->absoluteFilePath());
+	}
 }
 
 void DirectoryView::activated()
@@ -309,10 +329,10 @@ void DirectoryView::selectIndex(const QModelIndex &index)
 	m_view.setFocus();
 }
 
-void DirectoryView::updateCurrentDirectory(const FileSystem::Info &info)
+void DirectoryView::updateCurrentDirectory(const QString &fileName, const QString &absoluteFilePath)
 {
-	m_header.pathEdit.setText(info.absoluteFilePath());
-//	m_parent->updateTitle(info);
+	m_header.pathEdit.setText(absoluteFilePath);
+	m_parent->updateTitle(fileName);
 }
 
 void DirectoryView::contextMenu()
@@ -344,14 +364,9 @@ void DirectoryView::initialize(FileSystem::RootNode *root, const QString &filePa
 	m_layout.addLayout(&m_header.layout);
 	m_layout.addWidget(&m_view);
 
-//	m_proxy.setDynamicSortFilter(true);
-//	m_proxy.setSourceModel(&m_model);
-//	m_view.setModel(&m_proxy);
+	root->view(filePath, &m_view);
 	m_view.setSelectionMode(QAbstractItemView::SingleSelection);
-//	m_view.setItemDelegate(&m_delegate);
 	m_view.setSortingEnabled(true);
-//	m_view.setUniformRowHeights(true);
-	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
 
 	m_eventHandler.registerContextMenuEventHandler(&DirectoryView::contextMenu);
@@ -374,8 +389,7 @@ void DirectoryView::initialize(FileSystem::RootNode *root, const QString &filePa
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
 
-//	m_header.pathEdit.setText(m_model.currentDirectoryInfo().absoluteFilePath());
-	root->view(filePath, &m_view);
+	m_header.pathEdit.setText(model()->absoluteFilePath());
 }
 
 QModelIndex DirectoryView::currentIndex() const

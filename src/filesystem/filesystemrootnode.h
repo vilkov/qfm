@@ -11,6 +11,8 @@ FILE_SYSTEM_NS_BEGIN
 
 class RootNode : public FolderNode
 {
+	Q_DISABLE_COPY(RootNode)
+
 public:
 	RootNode(PluginsManager *plugins);
 

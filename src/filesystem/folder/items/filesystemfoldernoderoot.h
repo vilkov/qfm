@@ -26,9 +26,13 @@ public:
 	}
 	virtual bool isRoot() const { return true; }
 
+	virtual bool exists() const { return m_info.exists(); }
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
+	virtual QDateTime lastModified() const { return m_info.lastModified(); }
+
+	virtual void refresh() { m_info.refresh(); }
 
 private:
 	Info m_info;

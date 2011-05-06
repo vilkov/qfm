@@ -1,6 +1,5 @@
 #include "filesystemrootnode.h"
 #include <QtCore/QStringList>
-#include <QDebug>
 
 
 FILE_SYSTEM_NS_BEGIN

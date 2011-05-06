@@ -5,7 +5,7 @@
 FoldersView::FoldersView(FileSystem::RootNode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
 	m_root(root),
-	m_doNotRefreshTab(true),
+	m_doNotRefreshTab(false),
     m_layout(this),
     m_tabWidget(this),
 	m_other(other)
@@ -52,15 +52,13 @@ void FoldersView::refresh()
 	doRefresh(m_tabWidget.currentWidget());
 }
 
-void FoldersView::updateTitle(const FileSystem::Info &info)
+void FoldersView::updateTitle(const QString &fileName)
 {
-	updateTitle(m_tabWidget.currentIndex(), info);
+	updateTitle(m_tabWidget.currentIndex(), fileName);
 }
 
-void FoldersView::updateTitle(qint32 index, const FileSystem::Info &info)
+void FoldersView::updateTitle(qint32 index, const QString &fileName)
 {
-	QString fileName = info.fileName();
-
 	if (fileName.isEmpty())
 		m_tabWidget.setTabText(index, rootPath());
 	else

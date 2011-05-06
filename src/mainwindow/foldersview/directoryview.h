@@ -76,7 +76,7 @@ private:
 	void closeTab();
     void editPath();
 	void selectIndex(const QModelIndex &index);
-    void updateCurrentDirectory(const FileSystem::Info &info);
+    void updateCurrentDirectory(const QString &fileName, const QString &absoluteFilePath);
     void contextMenu();
 
 private:
@@ -86,6 +86,7 @@ private:
 
 private:
 	void initialize(FileSystem::RootNode *root, const QString &filePath);
+	FileSystem::Node *model() const { return static_cast<FileSystem::Node*>(static_cast<QAbstractProxyModel*>(m_view.model())->sourceModel()); }
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 	QModelIndex toViewIndex(const QModelIndex &index) const;

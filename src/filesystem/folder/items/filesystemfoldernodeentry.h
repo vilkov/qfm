@@ -3,7 +3,6 @@
 
 #include "filesystemfoldernodeitem.h"
 #include "../filesystemchangeslist.h"
-#include "../../info/filesysteminfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -14,14 +13,23 @@ class FolderNodeEntry : public FolderNodeItem
 
 public:
 	FolderNodeEntry(const Info &info);
-	FolderNodeEntry(const Change &change);
 
+	/* FolderNodeEntry */
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isRoot() const { return false; }
 
+	/* IFileInfo */
+	virtual bool exists() const { return m_info.exists(); }
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
+	virtual QDateTime lastModified() const { return m_info.lastModified(); }
+
+	virtual void refresh() { m_info.refresh(); }
+
+public:
+	bool isDir() const { return m_info.isDir(); }
+	qint64 size() const { return m_info.size(); }
 
 	void update(const Info &info) { m_info = info; }
 

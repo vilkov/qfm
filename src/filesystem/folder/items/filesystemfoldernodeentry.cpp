@@ -9,11 +9,6 @@ FolderNodeEntry::FolderNodeEntry(const Info &info) :
 	m_info(info)
 {}
 
-FolderNodeEntry::FolderNodeEntry(const Change &change) :
-	m_locked(false),
-	m_info(change.info())
-{}
-
 QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 {
 	switch (column)

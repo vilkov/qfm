@@ -178,7 +178,7 @@ bool FolderNode::exists() const
 	if (isRoot())
 		return true;
 	else
-		rootItem()->exists();
+		return rootItem()->exists();
 }
 
 QString FolderNode::fileName() const
@@ -186,7 +186,7 @@ QString FolderNode::fileName() const
 	if (isRoot())
 		return QString();
 	else
-		rootItem()->fileName();
+		return rootItem()->fileName();
 }
 
 QString FolderNode::absolutePath() const
@@ -194,7 +194,7 @@ QString FolderNode::absolutePath() const
 	if (isRoot())
 		return QString();
 	else
-		rootItem()->absolutePath();
+		return rootItem()->absolutePath();
 }
 
 QString FolderNode::absoluteFilePath() const
@@ -202,7 +202,7 @@ QString FolderNode::absoluteFilePath() const
 	if (isRoot())
 		return QString::fromLatin1("/");
 	else
-		rootItem()->absoluteFilePath();
+		return rootItem()->absoluteFilePath();
 }
 
 QDateTime FolderNode::lastModified() const
@@ -210,7 +210,7 @@ QDateTime FolderNode::lastModified() const
 	if (isRoot())
 		return QDateTime();
 	else
-		rootItem()->lastModified();
+		return rootItem()->lastModified();
 }
 
 void FolderNode::refresh()
@@ -225,53 +225,39 @@ void FolderNode::update()
 		updateFiles();
 }
 
-void FolderNode::activated(const QModelIndex &idx)
+Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (!static_cast<FolderNodeItem*>(index.internalPointer())->isRoot() &&
-		!static_cast<FolderNodeEntry*>(index.internalPointer())->isLocked())
-	{
-		FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(index.internalPointer());
-		entry->fileInfo().refresh();
+	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRoot())
+		return static_cast<Node*>(Node::parent());
+	else
+		if (!static_cast<FolderNodeEntry*>(index.internalPointer())->isLocked())
+		{
+			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(index.internalPointer());
+			entry->refresh();
 
-		if (entry->fileInfo().exists())
-			if (entry->fileInfo().isDir())
-				if (FileSystemTree *tree = static_cast<FileSystemTree*>(static_cast<FileSystemTree*>(m_currentFsTree)->subtree(entry)))
-				{
-					beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					if (!tree->isUpdating())
-						update(tree);
-					endRemoveRows();
+			if (entry->exists())
+			{
+				Q_ASSERT(m_items.indexOf(entry) != Values::InvalidIndex);
+				Values::Value &value = m_items[m_items.indexOf(entry)];
 
-					beginInsertRows(QModelIndex(), 0, tree->size() - 1);
-					m_currentFsTree = tree;
-					endInsertRows();
-				}
-				else
-				{
-					beginRemoveRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					tree = static_cast<FileSystemTree*>(m_currentFsTree);
-					tree->setSubtree(entry, m_currentFsTree = new FileSystemTree(entry->fileInfo().absoluteFilePath(), tree));
-					static_cast<FileSystemTree*>(m_currentFsTree)->setParentEntry(entry);
-					endRemoveRows();
+				if (value.node == 0)
+					if (value.node = createNode(static_cast<FolderNodeEntry*>(value.item)->info(), plugins))
+						value.node->setParentEntryIndex(idx);
 
-					beginInsertRows(QModelIndex(), 0, m_currentFsTree->size() - 1);
-					list(m_currentFsTree);
-					endInsertRows();
-				}
+				return value.node;
+			}
 			else
 			{
-
+				Values::size_type index = m_items.indexOf(entry);
+				beginRemoveRows(QModelIndex(), index, index);
+				m_items.remove(index);
+				endRemoveRows();
 			}
-		else
-		{
-			FolderNodeEntry::size_type index = m_currentFsTree->indexOf(entry);
-			beginRemoveRows(QModelIndex(), index, index);
-			static_cast<FileSystemTree*>(m_currentFsTree)->remove(index);
-			endRemoveRows();
 		}
-	}
+
+	return 0;
 }
 
 void FolderNode::remove(Node *subnode)
@@ -310,36 +296,40 @@ void FolderNode::view(QAbstractItemView *itemView)
 	itemView->setItemDelegate(&m_delegate);
 }
 
+QModelIndex FolderNode::rootIndex() const
+{
+	if (isRoot())
+		return QModelIndex();
+	else
+		return m_proxy.mapFromSource(createIndex(0, 0, rootItem()));
+}
+
+bool FolderNode::isRootIndex(const QModelIndex &index) const
+{
+	if (isRoot())
+		return false;
+	else
+		return static_cast<FolderNodeItem*>(m_proxy.mapToSource(index).internalPointer())->isRoot();
+}
+
 Node *FolderNode::node(const QString &fileName, PluginsManager *plugins)
 {
 	Values::size_type index = m_items.indexOf(fileName);
 
-	if (index != Values::InvalidIndex)
-		return m_items.at(index).node;
+	if (index == Values::InvalidIndex)
+	{
+		Node *res;
+		m_items.add(createNode(fileName, plugins, res));
+		return res;
+	}
 	else
 	{
-		QString path;
+		Values::Value &value = m_items[index];
 
-		if (isRoot())
-			path = QString(fileName).prepend(QChar('/'));
+		if (value.node)
+			return value.node;
 		else
-			path = rootItem()->absoluteFilePath().append(QChar('/')).append(fileName);
-
-		Info info(path);
-		Node *res = plugins->node(info, this);
-
-		if (res == 0)
-			if (info.isFile())
-				return this;
-			else
-				if (info.isDir())
-				{
-					beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-					m_items.add(new FolderNodeEntry(info), res = new FolderNode(info, this));
-					endInsertRows();
-				}
-
-		return res;
+			return value.node = createNode(static_cast<FolderNodeEntry*>(value.item)->info(), plugins);
 	}
 }
 
@@ -489,6 +479,28 @@ void FolderNode::updateProgressEvent(const ModelEvent::Params *p)
 
 }
 
+ChangesList FolderNode::makeChangeSet() const
+{
+	ChangesList list;
+
+	if (isRoot())
+	{
+		list.reserve(m_items.size());
+
+		for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
+			list.push_back(Change(Change::NoChange, m_items.at(i).item));
+	}
+	else
+	{
+		list.reserve(m_items.size() - 1);
+
+		for (Values::size_type i = 1, size = m_items.size(); i < size; ++i)
+			list.push_back(Change(Change::NoChange, m_items.at(i).item));
+	}
+
+	return list;
+}
+
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const
 {
 	int index = m_items.indexOf(item);
@@ -497,6 +509,27 @@ QModelIndex FolderNode::index(int column, FolderNodeItem *item) const
 		return createIndex(index, column, item);
 	else
 		return QModelIndex();
+}
+
+Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
+{
+	if (Node *res = plugins->node(info, (FolderNode*)this))
+		return res;
+	else
+		if (info.isDir())
+			return new FolderNode(info, (FolderNode*)this);
+		else
+			return 0;
+}
+
+FolderNode::Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
+{
+	Info info(
+		isRoot() ?
+			QString(fileName).prepend(QChar('/')) :
+			rootItem()->absoluteFilePath().append(QChar('/')).append(fileName));
+
+	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
 }
 
 void FolderNode::updateFirstColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
@@ -533,28 +566,6 @@ void FolderNode::doRefresh()
 {
 	if (!isUpdating())
 		updateFiles();
-}
-
-ChangesList FolderNode::makeChangeSet() const
-{
-	ChangesList list;
-
-	if (isRoot())
-	{
-		list.reserve(m_items.size());
-
-		for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
-	}
-	else
-	{
-		list.reserve(m_items.size() - 1);
-
-		for (Values::size_type i = 1, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
-	}
-
-	return list;
 }
 
 FILE_SYSTEM_NS_END

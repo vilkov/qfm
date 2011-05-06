@@ -20,7 +20,7 @@ public:
 	{}
 
 	virtual void update() = 0;
-	virtual void activated(const QModelIndex &index) = 0;
+	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins) = 0;
 	virtual void remove(Node *subnode) = 0;
 	virtual void remove(const QModelIndex &index) = 0;
 	virtual void copy(const QModelIndex &index, Node *destination) = 0;
@@ -28,6 +28,12 @@ public:
 	virtual void createFolder(const QString &name) = 0;
 	virtual void createFile(const QString &name) = 0;
 	virtual void view(QAbstractItemView *itemView) = 0;
+
+	virtual QModelIndex parentEntryIndex() const = 0;
+	virtual void setParentEntryIndex(const QModelIndex &value) = 0;
+
+	virtual QModelIndex rootIndex() const = 0;
+	virtual bool isRootIndex(const QModelIndex &index) const = 0;
 
 protected:
 	friend class RootNode;

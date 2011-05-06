@@ -187,28 +187,23 @@ void DirectoryView::refresh()
 
 void DirectoryView::activated()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//	{
-//		QModelIndex index2 = m_model.rootIndex();
-//
-//		if (index == index2 && (index2 = m_model.parentEntryIndex()).isValid())
-//		{
-//			m_model.activated(index);
-//			updateCurrentDirectory(m_model.currentDirectoryInfo());
-//			selectIndex(toViewIndex(index2));
-//		}
-//		else
-//			if (m_model.fileInfo(index).isDir())
-//			{
-//				m_model.activated(index);
-//				updateCurrentDirectory(m_model.currentDirectoryInfo());
-//				selectIndex(toViewIndex(m_model.rootIndex()));
-//			}
-//			else
-//				m_model.activated(index);
-//	}
+	QModelIndex index = currentIndex();
+
+	if (index.isValid())
+	{
+		FileSystem::Node *model = DirectoryView::model();
+		FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins());
+
+		if (model->isRootIndex(index))
+			index = model->parentEntryIndex();
+		else
+			index = node->rootIndex();
+
+		node->view(&m_view);
+		node->update();
+		updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
+		selectIndex(index);
+	}
 }
 
 void DirectoryView::pathToClipboard()
@@ -394,7 +389,7 @@ void DirectoryView::initialize(FileSystem::RootNode *root, const QString &filePa
 
 QModelIndex DirectoryView::currentIndex() const
 {
-//	return m_proxy.mapToSource(m_view.selectionModel()->currentIndex());
+	return m_view.selectionModel()->currentIndex();
 }
 
 QModelIndexList DirectoryView::selectedIndexes() const

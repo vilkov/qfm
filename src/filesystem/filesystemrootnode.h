@@ -16,6 +16,7 @@ class RootNode : public FolderNode
 public:
 	RootNode(PluginsManager *plugins);
 
+	PluginsManager *plugins() const { return m_plugins; }
 	void view(const QString &absoluteFilePath, QAbstractItemView *itemView);
 
 protected:

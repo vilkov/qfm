@@ -28,6 +28,8 @@ public:
 	virtual void refresh() { m_info.refresh(); }
 
 public:
+	const Info &info() const { return m_info; }
+
 	bool isDir() const { return m_info.isDir(); }
 	qint64 size() const { return m_info.size(); }
 

@@ -45,7 +45,7 @@ public:
 
 	/* Node */
 	virtual void update();
-	virtual void activated(const QModelIndex &idx);
+	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins);
 	virtual void remove(Node *subnode);
 	virtual void remove(const QModelIndex &index);
 	virtual void copy(const QModelIndex &index, Node *destination);
@@ -53,6 +53,12 @@ public:
 	virtual void createFolder(const QString &name);
 	virtual void createFile(const QString &name);
 	virtual void view(QAbstractItemView *itemView);
+
+	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
+	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
+
+	virtual QModelIndex rootIndex() const;
+	virtual bool isRootIndex(const QModelIndex &index) const;
 
 protected:
 	virtual bool isRoot() const { return m_items.size() == 0 || !m_items.at(0).item->isRoot(); }
@@ -148,6 +154,11 @@ private:
 		size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }
 		size_type indexOf(const QString &fileName) const { return m_map.value(fileName, InvalidIndex); }
 
+		void add(const Value &value)
+		{
+			m_list.push_back(value);
+			m_map[value.item->fileName()] = m_list.size() - 1;
+		}
 		void add(FolderNodeItem *item)
 		{
 			m_list.push_back(item);
@@ -174,7 +185,11 @@ private:
 	};
 
 private:
+	ChangesList makeChangeSet() const;
 	QModelIndex index(int column, FolderNodeItem *item) const;
+	Node *createNode(const Info &info, PluginsManager *plugins) const;
+	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
+
 	void updateFirstColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
 	void updateBothColumns(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
@@ -182,13 +197,13 @@ private:
 	void removeEntry(const QModelIndex &index);
 	void refresh(FolderNodeItem *fileSystemTree);
 	void doRefresh();
-	ChangesList makeChangeSet() const;
 
 private:
 	bool m_updating;
 	Values m_items;
 	ProxyModel m_proxy;
 	Delegate m_delegate;
+	QModelIndex m_parentEntryIndex;
 };
 
 FILE_SYSTEM_NS_END

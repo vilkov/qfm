@@ -41,6 +41,7 @@ public:
 
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
+	FileSystem::RootNode *root() const { return m_root; }
 	void saveTabs(QXmlStreamWriter &stream) const;
 	static TabList loadTabs(QXmlStreamReader &stream);
 

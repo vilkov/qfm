@@ -14,8 +14,6 @@ RootNode::RootNode(PluginsManager *plugins) :
 
 void RootNode::view(const QString &absoluteFilePath, QAbstractItemView *itemView)
 {
-	bool ok;
-	Node *tree = 0;
 	Node *parent = this;
 	QStringList list = absoluteFilePath.split(QChar('/'), QString::SkipEmptyParts);
 

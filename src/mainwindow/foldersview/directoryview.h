@@ -11,9 +11,6 @@
 #include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
 #include "contextmenu/contextmenu.h"
-//#include "filesystemmodel/filesystemmodel.h"
-//#include "filesystemmodel/filesystemproxymodel.h"
-//#include "filesystemmodel/filesystemdecorationdelegate.h"
 #include "../../filesystem/filesystemrootnode.h"
 #include "../../filesystem/info/filesysteminfo.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
@@ -85,7 +82,10 @@ private:
     QList<qint32> geometry() const;
 
 private:
-	void initialize(FileSystem::RootNode *root, const QString &filePath);
+	void initialize();
+	void setupModel(FileSystem::RootNode *root, const Tab &tab);
+	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath);
+	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
 	FileSystem::Node *model() const { return static_cast<FileSystem::Node*>(static_cast<QAbstractProxyModel*>(m_view.model())->sourceModel()); }
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
@@ -146,9 +146,6 @@ private:
     PathEventHandler m_pathEventHandler;
     Header m_header;
     DirectoryListView m_view;
-//    FileSystemModel m_model;
-//    FileSystemProxyModel m_proxy;
-//    FileSystemDecorationDelegate m_delegate;
     DirectoryListViewEventHandler m_eventHandler;
 };
 

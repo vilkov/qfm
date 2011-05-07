@@ -53,6 +53,7 @@ public:
 	virtual void createFolder(const QString &name);
 	virtual void createFile(const QString &name);
 	virtual void view(QAbstractItemView *itemView);
+	virtual QModelIndex indexFor(const QString &fileName);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
@@ -117,7 +118,6 @@ private:
 				node(node),
 				item(item)
 			{
-				Q_ASSERT(node);
 				Q_ASSERT(item);
 			}
 
@@ -149,6 +149,7 @@ private:
 		Value &operator[](size_type index) { return m_list[index]; }
 		const Value &operator[](size_type index) const { return m_list[index]; }
 		const Value &at(size_type index) const { return m_list.at(index); }
+		const Value &last() const { return m_list.last(); }
 
 		size_type size() const { return m_list.size(); }
 		size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }
@@ -189,6 +190,7 @@ private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
+	Info fileInfo(const QString &fileName) const;
 
 	void updateFirstColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);

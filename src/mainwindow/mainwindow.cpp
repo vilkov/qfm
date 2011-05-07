@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_centralWidget(this),
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),
-    m_leftFoldersView(&m_root, loadLeftPanelTabs(), m_leftFoldersView, &m_splitter),
-//    m_rightFoldersView(&m_root, loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
+    m_leftFoldersView(&m_root, loadLeftPanelTabs(), m_rightFoldersView, &m_splitter),
+    m_rightFoldersView(&m_root, loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
     /* Actions */
     m_fileMenuActions(this),
     m_toolsMenuActions(this)
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_layout.addWidget(&m_splitter);
 	m_splitter.setChildrenCollapsible(false);
 	m_splitter.addWidget(&m_leftFoldersView);
-//	m_splitter.addWidget(&m_rightFoldersView);
+	m_splitter.addWidget(&m_rightFoldersView);
 
 	Application::instance()->config().loadState(this);
 	m_leftFoldersView.setFocus();
@@ -48,12 +48,12 @@ bool MainWindow::switchToOtherPanel(QObject *receiver)
 			return true;
 		}
 		else
-//			if (receiver == &m_rightFoldersView)
-//			{
-//				m_rightFoldersView.setFocus();
-//				return true;
-//			}
-//			else
+			if (receiver == &m_rightFoldersView)
+			{
+				m_rightFoldersView.setFocus();
+				return true;
+			}
+			else
 				receiver = receiver->parent();
 	while (receiver);
 
@@ -65,7 +65,7 @@ void MainWindow::changeEvent(QEvent *event)
 	if (event->type() == QEvent::ActivationChange && isActiveWindow())
 	{
 		m_leftFoldersView.refresh();
-//		m_rightFoldersView.refresh();
+		m_rightFoldersView.refresh();
 	}
 
 	QMainWindow::changeEvent(event);
@@ -76,7 +76,7 @@ void MainWindow::saveTabs() const
 	QDir dir(ApplicationSettings::storageLocation());
 
 	saveTabs(m_leftFoldersView, dir.absoluteFilePath(QString::fromLatin1("leftpaneltabs.xml")));
-//	saveTabs(m_rightFoldersView, dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
+	saveTabs(m_rightFoldersView, dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
 }
 
 void MainWindow::saveTabs(const FoldersView &panel, const QString &fileName) const

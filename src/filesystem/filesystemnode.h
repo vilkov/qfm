@@ -28,6 +28,7 @@ public:
 	virtual void createFolder(const QString &name) = 0;
 	virtual void createFile(const QString &name) = 0;
 	virtual void view(QAbstractItemView *itemView) = 0;
+	virtual QModelIndex indexFor(const QString &fileName) = 0;
 
 	virtual QModelIndex parentEntryIndex() const = 0;
 	virtual void setParentEntryIndex(const QModelIndex &value) = 0;
@@ -36,6 +37,7 @@ public:
 	virtual bool isRootIndex(const QModelIndex &index) const = 0;
 
 protected:
+	friend class FolderNode;
 	friend class RootNode;
 	virtual bool isRoot() const = 0;
 	virtual Node *node(const QString &fileName, PluginsManager *plugins) = 0;

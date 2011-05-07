@@ -13,18 +13,10 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const Tab &tab, Folders
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
     m_view(&m_eventHandler, this),
-//    m_model(tab.path, this),
-//    m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
-//	Q_ASSERT(m_model.columnCount() == tab.geometry.size());
-
-	initialize(root, tab.path);
-
-//	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
-//		m_view.setColumnWidth(i, tab.geometry.at(i));
-//
-//	m_view.sortByColumn(tab.sort.column, tab.sort.order);
+	initialize();
+	setupModel(root, tab);
 }
 
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, FoldersView *parent) :
@@ -35,12 +27,10 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
 	m_view(&m_eventHandler, this),
-//	m_model(fileInfo, this),
-//    m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
-	initialize(root, fileInfo.absoluteFilePath());
-	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
+	initialize();
+	setupModel(root, fileInfo.absoluteFilePath());
 }
 
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
@@ -51,16 +41,10 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
 	m_pathEventHandler(this),
 	m_header(&m_pathEventHandler, this),
 	m_view(&m_eventHandler, this),
-//	m_model(fileInfo, this),
-//	m_delegate(&m_proxy),
 	m_eventHandler(this)
 {
-//	Q_ASSERT(m_model.columnCount() == geometry.size());
-//
-	initialize(root, fileInfo.absoluteFilePath());
-//
-//	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
-//		m_view.setColumnWidth(i, geometry.at(i));
+	initialize();
+	setupModel(root, fileInfo.absoluteFilePath(), geometry);
 }
 
 QString DirectoryView::currentDirectoryName() const
@@ -70,7 +54,7 @@ QString DirectoryView::currentDirectoryName() const
 
 void DirectoryView::save(QXmlStreamWriter &stream) const
 {
-//	stream.writeTextElement(QString::fromLatin1("Path"), m_model.currentDirectoryInfo().absoluteFilePath());
+	stream.writeTextElement(QString::fromLatin1("Path"), model()->absoluteFilePath());
 
 	stream.writeStartElement(QString::fromLatin1("Sort"));
 	stream.writeTextElement(QString::fromLatin1("Column"), QString::number(m_view.header()->sortIndicatorSection()));
@@ -79,8 +63,8 @@ void DirectoryView::save(QXmlStreamWriter &stream) const
 
 	QString name = QString::fromLatin1("Column");
 	stream.writeStartElement(QString::fromLatin1("Geometry"));
-//	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
-//		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
+	for (qint32 i = 0, size = model()->columnCount(); i < size; ++i)
+		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
 	stream.writeEndElement();
 }
 
@@ -121,33 +105,38 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-//	FileSystemInfo info(filePath);
-//
-//	if (info.exists())
-//	{
-//		QModelIndex index = m_model.setCurrentDirectory(info);
-//
-//		if (index.isValid())
-//			selectIndex(toViewIndex(index));
-//	}
-//
-//	updateCurrentDirectory(m_model.currentDirectoryInfo());
+	QModelIndex index;
+
+	m_parent->root()->view(filePath, &m_view, index);
+
+	if (index.isValid())
+		selectIndex(index);
+	else
+		if ((index = model()->rootIndex()).isValid())
+			selectIndex(index);
+
+	updateCurrentDirectory(model()->fileName(), model()->absoluteFilePath());
 }
 
 void DirectoryView::goUp()
 {
-//	QModelIndex index = m_model.rootIndex();
-//
-//	if (index.isValid())
-//	{
-//		QModelIndex parentEntryIndex = m_model.parentEntryIndex();
-//
-//		m_model.activated(index);
-//		updateCurrentDirectory(m_model.currentDirectoryInfo());
-//
-//		if (parentEntryIndex.isValid())
-//			selectIndex(toViewIndex(parentEntryIndex));
-//	}
+	FileSystem::Node *model = DirectoryView::model();
+	QModelIndex index = model->rootIndex();
+
+	if (index.isValid())
+	{
+		FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins());
+
+		node->view(&m_view);
+		node->update();
+		updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
+
+		if ((index = model->parentEntryIndex()).isValid())
+			selectIndex(index);
+		else
+			if ((index = node->rootIndex()).isValid())
+				selectIndex(index);
+	}
 }
 
 void DirectoryView::goBack()
@@ -192,9 +181,8 @@ void DirectoryView::activated()
 	if (index.isValid())
 	{
 		FileSystem::Node *model = DirectoryView::model();
-		FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins());
 
-		if (node)
+		if (FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins()))
 		{
 			if (model->isRootIndex(index))
 				index = model->parentEntryIndex();
@@ -355,14 +343,13 @@ QList<qint32> DirectoryView::geometry() const
 	return res;
 }
 
-void DirectoryView::initialize(FileSystem::RootNode *root, const QString &filePath)
+void DirectoryView::initialize()
 {
 	setLayout(&m_layout);
 	m_layout.setMargin(1);
 	m_layout.addLayout(&m_header.layout);
 	m_layout.addWidget(&m_view);
 
-	root->view(filePath, &m_view);
 	m_view.setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view.setSortingEnabled(true);
 	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
@@ -386,8 +373,51 @@ void DirectoryView::initialize(FileSystem::RootNode *root, const QString &filePa
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
+}
 
+void DirectoryView::setupModel(FileSystem::RootNode *root, const Tab &tab)
+{
+	QModelIndex index;
+
+	root->view(tab.path, &m_view, index);
 	m_header.pathEdit.setText(model()->absoluteFilePath());
+
+	if (index.isValid())
+		selectIndex(index);
+
+	for (qint32 i = 0, size = qMin(model()->columnCount(), tab.geometry.size()); i < size; ++i)
+		m_view.setColumnWidth(i, tab.geometry.at(i));
+
+	m_view.sortByColumn(tab.sort.column, tab.sort.order);
+}
+
+void DirectoryView::setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath)
+{
+	QModelIndex index;
+
+	root->view(absoluteFilePath, &m_view, index);
+	m_header.pathEdit.setText(model()->absoluteFilePath());
+
+	if (index.isValid())
+		selectIndex(index);
+
+	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
+}
+
+void DirectoryView::setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath, const QList<qint32> &geometry)
+{
+	QModelIndex index;
+
+	root->view(absoluteFilePath, &m_view, index);
+	m_header.pathEdit.setText(model()->absoluteFilePath());
+
+	if (index.isValid())
+		selectIndex(index);
+
+	for (qint32 i = 0, size = qMin(model()->columnCount(), geometry.size()); i < size; ++i)
+		m_view.setColumnWidth(i, geometry.at(i));
+
+	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 QModelIndex DirectoryView::currentIndex() const

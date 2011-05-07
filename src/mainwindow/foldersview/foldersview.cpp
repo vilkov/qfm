@@ -5,7 +5,7 @@
 FoldersView::FoldersView(FileSystem::RootNode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
 	m_root(root),
-	m_doNotRefreshTab(false),
+	m_doNotRefreshTab(true),
     m_layout(this),
     m_tabWidget(this),
 	m_other(other)
@@ -23,6 +23,7 @@ FoldersView::FoldersView(FileSystem::RootNode *root, const TabList &tabs, Folder
 		DirectoryView *widget;
 		m_tabWidget.addTab(widget = new DirectoryView(m_root, rootPath(), this), QString());
 		updateTitle(widget->currentDirectoryName());
+		static_cast<DirectoryView*>(widget)->refresh();
 	}
 	else
 	{
@@ -42,6 +43,7 @@ FoldersView::FoldersView(FileSystem::RootNode *root, const TabList &tabs, Folder
 		}
 
 		m_tabWidget.setCurrentIndex(activeWidget);
+		static_cast<DirectoryView*>(widget)->refresh();
 	}
 
 	connect(&m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshTab(int)));

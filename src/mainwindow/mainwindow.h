@@ -61,7 +61,7 @@ private:
     QVBoxLayout m_layout;
     QSplitter m_splitter;
     FoldersView m_leftFoldersView;
-//    FoldersView m_rightFoldersView;
+    FoldersView m_rightFoldersView;
 
     /* Actions */
     FileMenuActions m_fileMenuActions;

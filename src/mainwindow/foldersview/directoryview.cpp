@@ -335,10 +335,10 @@ void DirectoryView::refreshOther()
 QList<qint32> DirectoryView::geometry() const
 {
 	QList<qint32> res;
-//	res.reserve(m_model.columnCount());
+	res.reserve(model()->columnCount());
 
-//	for (qint32 i = 0, size = m_model.columnCount(); i < size; ++i)
-//		res.push_back(m_view.columnWidth(i));
+	for (qint32 i = 0, size = model()->columnCount(); i < size; ++i)
+		res.push_back(m_view.columnWidth(i));
 
 	return res;
 }
@@ -427,18 +427,7 @@ QModelIndex DirectoryView::currentIndex() const
 
 QModelIndexList DirectoryView::selectedIndexes() const
 {
-	QModelIndexList res;
-	QModelIndexList list = m_view.selectionModel()->selectedIndexes();
-
-//	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-//		res.push_back(m_proxy.mapToSource(list.at(i)));
-
-	return res;
-}
-
-QModelIndex DirectoryView::toViewIndex(const QModelIndex &index) const
-{
-//	return m_proxy.mapFromSource(index);
+	return m_view.selectionModel()->selectedIndexes();
 }
 
 DirectoryView::Header::Header(PathEventHandler *eventHandler, QWidget *parent) :

@@ -89,7 +89,6 @@ private:
 	FileSystem::Node *model() const { return static_cast<FileSystem::Node*>(static_cast<QAbstractProxyModel*>(m_view.model())->sourceModel()); }
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
-	QModelIndex toViewIndex(const QModelIndex &index) const;
 
 private:
 	typedef MouseReleaseEventHandler<

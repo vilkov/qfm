@@ -194,15 +194,18 @@ void DirectoryView::activated()
 		FileSystem::Node *model = DirectoryView::model();
 		FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins());
 
-		if (model->isRootIndex(index))
-			index = model->parentEntryIndex();
-		else
-			index = node->rootIndex();
+		if (node)
+		{
+			if (model->isRootIndex(index))
+				index = model->parentEntryIndex();
+			else
+				index = node->rootIndex();
 
-		node->view(&m_view);
-		node->update();
-		updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
-		selectIndex(index);
+			node->view(&m_view);
+			node->update();
+			updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
+			selectIndex(index);
+		}
 	}
 }
 

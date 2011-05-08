@@ -1,15 +1,15 @@
-#include "filesystemproxymodel.h"
+#include "filesystemfolderproxymodel.h"
 #include "items/filesystemfoldernodeentry.h"
 #include <QtCore/QDateTime>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-ProxyModel::ProxyModel(QObject *parent) :
+FolderProxyModel::FolderProxyModel(QObject *parent) :
 	QSortFilterProxyModel(parent)
 {}
 
-bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
 	if (static_cast<FolderNodeItem*>(left.internalPointer())->isRoot())
 		return true;

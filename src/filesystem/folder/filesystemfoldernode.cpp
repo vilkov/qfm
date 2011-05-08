@@ -219,17 +219,17 @@ void FolderNode::refresh()
 		rootItem()->refresh();
 }
 
-void FolderNode::remove(const QModelIndex &index)
+void FolderNode::remove(const QModelIndexList &index)
 {
 
 }
 
-void FolderNode::copy(const QModelIndex &index, Node *destination)
+void FolderNode::copy(const QModelIndexList &index, Node *destination)
 {
 
 }
 
-void FolderNode::move(const QModelIndex &index, Node *destination)
+void FolderNode::move(const QModelIndexList &index, Node *destination)
 {
 
 }

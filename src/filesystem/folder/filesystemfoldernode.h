@@ -3,8 +3,8 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
-#include "filesystemdelegate.h"
-#include "filesystemproxymodel.h"
+#include "filesystemfolderdelegate.h"
+#include "filesystemfolderproxymodel.h"
 #include "filesystemchangeslist.h"
 #include "items/filesystemfoldernodeitem.h"
 #include "events/filesystemmodelevent.h"
@@ -44,9 +44,9 @@ public:
 	virtual void refresh();
 
 	/* IFileOperations */
-	virtual void remove(const QModelIndex &index);
-	virtual void copy(const QModelIndex &index, Node *destination);
-	virtual void move(const QModelIndex &index, Node *destination);
+	virtual void remove(const QModelIndexList &index);
+	virtual void copy(const QModelIndexList &index, Node *destination);
+	virtual void move(const QModelIndexList &index, Node *destination);
 	virtual void createFolder(const QString &name);
 	virtual void createFile(const QString &name);
 
@@ -205,8 +205,8 @@ private:
 private:
 	bool m_updating;
 	Values m_items;
-	ProxyModel m_proxy;
-	Delegate m_delegate;
+	FolderProxyModel m_proxy;
+	FolderDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;
 };
 

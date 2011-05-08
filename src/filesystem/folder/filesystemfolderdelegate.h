@@ -1,20 +1,18 @@
-#ifndef FILESYSTEMDELEGATE_H_
-#define FILESYSTEMDELEGATE_H_
+#ifndef FILESYSTEMFOLDERDELEGATE_H_
+#define FILESYSTEMFOLDERDELEGATE_H_
 
-#include <QtGui/QStyledItemDelegate>
-#include <QtGui/QStyleOptionViewItem>
 #include <QtGui/QAbstractProxyModel>
-#include "../filesystem_ns.h"
+#include "../filesystemdelegate.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class Delegate : public QStyledItemDelegate
+class FolderDelegate : public Delegate
 {
-	Q_DISABLE_COPY(Delegate)
+	Q_DISABLE_COPY(FolderDelegate)
 
 public:
-	Delegate(QAbstractProxyModel *proxy, QObject *parent = 0);
+	FolderDelegate(QAbstractProxyModel *proxy, QObject *parent = 0);
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 //    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -25,4 +23,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMDELEGATE_H_ */
+#endif /* FILESYSTEMFOLDERDELEGATE_H_ */

@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMIFILEOPERATIONS_H_
 #define FILESYSTEMIFILEOPERATIONS_H_
 
-#include <QtCore/QModelIndex>
+#include <QtCore/QModelIndexList>
 #include "../filesystem_ns.h"
 
 
@@ -14,9 +14,9 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
-	virtual void remove(const QModelIndex &index) = 0;
-	virtual void copy(const QModelIndex &index, Node *destination) = 0;
-	virtual void move(const QModelIndex &index, Node *destination) = 0;
+	virtual void remove(const QModelIndexList &index) = 0;
+	virtual void copy(const QModelIndexList &index, Node *destination) = 0;
+	virtual void move(const QModelIndexList &index, Node *destination) = 0;
 	virtual void createFolder(const QString &name) = 0;
 	virtual void createFile(const QString &name) = 0;
 };

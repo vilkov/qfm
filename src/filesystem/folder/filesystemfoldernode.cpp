@@ -219,6 +219,31 @@ void FolderNode::refresh()
 		rootItem()->refresh();
 }
 
+void FolderNode::remove(const QModelIndex &index)
+{
+
+}
+
+void FolderNode::copy(const QModelIndex &index, Node *destination)
+{
+
+}
+
+void FolderNode::move(const QModelIndex &index, Node *destination)
+{
+
+}
+
+void FolderNode::createFolder(const QString &name)
+{
+
+}
+
+void FolderNode::createFile(const QString &name)
+{
+
+}
+
 void FolderNode::update()
 {
 	if (!isUpdating())
@@ -263,31 +288,6 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 }
 
 void FolderNode::remove(Node *subnode)
-{
-
-}
-
-void FolderNode::remove(const QModelIndex &index)
-{
-
-}
-
-void FolderNode::copy(const QModelIndex &index, Node *destination)
-{
-
-}
-
-void FolderNode::move(const QModelIndex &index, Node *destination)
-{
-
-}
-
-void FolderNode::createFolder(const QString &name)
-{
-
-}
-
-void FolderNode::createFile(const QString &name)
 {
 
 }

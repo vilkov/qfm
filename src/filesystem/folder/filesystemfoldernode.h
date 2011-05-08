@@ -43,15 +43,17 @@ public:
 
 	virtual void refresh();
 
-	/* Node */
-	virtual void update();
-	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins);
-	virtual void remove(Node *subnode);
+	/* IFileOperations */
 	virtual void remove(const QModelIndex &index);
 	virtual void copy(const QModelIndex &index, Node *destination);
 	virtual void move(const QModelIndex &index, Node *destination);
 	virtual void createFolder(const QString &name);
 	virtual void createFile(const QString &name);
+
+	/* Node */
+	virtual void update();
+	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins);
+	virtual void remove(Node *subnode);
 	virtual void view(QAbstractItemView *itemView);
 	virtual QModelIndex indexFor(const QString &fileName);
 

@@ -9,7 +9,8 @@ class M3uRoot : public M3uItem
 {
 public:
 	M3uRoot(const FileSystem::Info &info) :
-		m_info(info)
+		m_info(info),
+		m_label(QString::fromLatin1(".."))
 	{}
 
 	/* IFileInfo */
@@ -22,11 +23,18 @@ public:
 	virtual void refresh() {}
 
 	/* M3uItem */
-	virtual QVariant data(qint32 column, qint32 role) const { return QVariant(); }
+	virtual QVariant data(qint32 column, qint32 role) const
+	{
+		if (column == 0 && role == Qt::DisplayRole)
+			return m_label;
+		else
+			return QVariant();
+	}
 	virtual bool isRoot() const { return true; }
 
 private:
 	FileSystem::Info m_info;
+	QString m_label;
 };
 
 #endif /* M3UROOT_H_ */

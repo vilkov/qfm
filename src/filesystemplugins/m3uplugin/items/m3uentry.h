@@ -3,13 +3,17 @@
 
 #include "m3uitem.h"
 #include "../../../filesystem/info/filesysteminfo.h"
+#include "../../../application.h"
 
 
 class M3uEntry : public M3uItem
 {
 public:
-	M3uEntry(const FileSystem::Info &info) :
-		m_info(info)
+	M3uEntry(const FileSystem::Info &info, qint32 length, const QString &title) :
+		m_locked(false),
+		m_info(info),
+		m_length(length),
+		m_title(title)
 	{}
 
 	/* IFileInfo */
@@ -22,11 +26,75 @@ public:
 	virtual void refresh() {}
 
 	/* M3uItem */
-	virtual QVariant data(qint32 column, qint32 role) const { return QVariant(); }
+	virtual QVariant data(qint32 column, qint32 role) const
+	{
+		switch (column)
+		{
+			case 0:
+			{
+				switch (role)
+				{
+					case Qt::EditRole:
+					case Qt::DisplayRole:
+						return m_title;
+					case Qt::DecorationRole:
+						if (m_locked)
+							return Application::style()->standardIcon(QStyle::SP_BrowserReload);
+						else
+							return m_info.icon();
+					case Qt::TextAlignmentRole:
+						return Qt::AlignLeft;
+					case Qt::ToolTipRole:
+						return m_info.absoluteFilePath();
+				}
+				break;
+			}
+			case 1:
+			{
+				switch (role)
+				{
+					case Qt::EditRole:
+					case Qt::DisplayRole:
+						return humanReadableTime(m_length);
+					case Qt::TextAlignmentRole:
+						return Qt::AlignLeft;
+	//					case Qt::ToolTipRole:
+	//						return QDir::toNativeSeparators(QDir::cleanPath(m_info.fileInfo().absoluteDir().absolutePath()));
+				}
+				break;
+			}
+		}
+
+		return QVariant();
+	}
 	virtual bool isRoot() const { return false; }
 
+	qint32 length() const { return m_length; }
+	const QString &title() const { return m_title; }
+
+	static QString humanReadableTime(quint64 secs)
+	{
+		if (quint64 hours = secs / (60 * 60))
+			if (quint64 min = (secs - hours * 60 * 60) / (60))
+				return QString::number(hours).append(QChar(':')).append(QString::number(min)).append(QString::fromLatin1(" h"));
+			else
+				return QString::number(hours).append(QString::fromLatin1(" h"));
+		else
+			if (hours = secs / (60))
+				if (quint64 s = (secs - hours * 60))
+					return QString::number(hours).append(QChar(':')).append(QString::number(s)).append(QString::fromLatin1(" m"));
+				else
+					return QString::number(hours).append(QString::fromLatin1(" m"));
+			else
+				return QString::number(secs).append(QString::fromLatin1(" s"));
+	}
+
 private:
+	bool m_locked;
+	QString m_lockReason;
 	FileSystem::Info m_info;
+	qint32 m_length;
+	QString m_title;
 };
 
 #endif /* M3UENTRY_H_ */

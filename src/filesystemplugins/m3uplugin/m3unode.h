@@ -3,6 +3,7 @@
 
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
+#include "items/m3uitem.h"
 #include "../../filesystem/filesystemnode.h"
 #include "../../filesystem/filesystempluginsmanager.h"
 
@@ -11,6 +12,7 @@ class M3uNode : public FileSystem::Node
 {
 public:
 	M3uNode(const FileSystem::Info &info, Node *parent = 0);
+	virtual ~M3uNode();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -54,7 +56,18 @@ protected:
 	virtual bool isRoot() const { return false; }
 	virtual Node *node(const QString &fileName, FileSystem::PluginsManager *plugins);
 
+protected:
+	M3uItem *rootItem() const { return m_items.at(0); }
+	bool isUpdating() const { return m_updating; }
+	void setUpdating(bool value) { m_updating = value; }
+
 private:
+	typedef QList<M3uItem*> ItemsList;
+
+private:
+	QString m_tag;
+	bool m_updating;
+	ItemsList m_items;
 	M3uProxyModel m_proxy;
 	M3uDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;

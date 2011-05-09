@@ -19,10 +19,19 @@ public:
 		virtual ~Plugin() {}
 	};
 	class FilePlugin : public Plugin
-	{};
+	{
+	public:
+		typedef const uchar * File;
+		typedef qint64        size_type;
+
+	public:
+		virtual Node *node(const Info &info, File file, size_type size, Node *parent) const = 0;
+	};
 	class FolderPlugin : public Plugin
-	{};
-	typedef QList<Plugin*> PluginList;
+	{
+	public:
+		virtual Node *node(const Info &info, Node *parent) const = 0;
+	};
 
 
 public:
@@ -37,13 +46,14 @@ public:
 	void registerDynamic(const QString &filePath, FolderPlugin *plugin) { m_dynamicFoldersPlugins[filePath] = plugin; }
 
 private:
-	typedef QMap<QString, Plugin*> FoldersMap;
+	typedef QList<FilePlugin*>           PluginsList;
+	typedef QMap<QString, FolderPlugin*> PluginsMap;
 
 private:
-	PluginList m_staticFilePlugins;
-	PluginList m_dynamicFilePlugins;
-	FoldersMap m_staticFoldersPlugins;
-	FoldersMap m_dynamicFoldersPlugins;
+	PluginsList m_staticFilePlugins;
+	PluginsList m_dynamicFilePlugins;
+	PluginsMap m_staticFoldersPlugins;
+	PluginsMap m_dynamicFoldersPlugins;
 };
 
 FILE_SYSTEM_NS_END

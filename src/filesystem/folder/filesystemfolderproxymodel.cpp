@@ -24,7 +24,6 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 			switch (left.column())
 			{
 				case 0:
-				{
 					if (leftItem->isDir())
 						if (rightItem->isDir())
 							return leftItem->fileName() < rightItem->fileName();
@@ -35,11 +34,7 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 							return false;
 						else
 							return leftItem->fileName() < rightItem->fileName();
-
-					break;
-				}
 				case 1:
-				{
 					if (leftItem->isDir())
 						if (rightItem->isDir())
 							return leftItem->totalSize().toULongLong() < rightItem->totalSize().toULongLong();
@@ -50,11 +45,7 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 							return false;
 						else
 							return leftItem->size() < rightItem->size();
-
-					break;
-				}
 				case 2:
-				{
 					if (leftItem->isDir())
 						if (rightItem->isDir())
 							return leftItem->lastModified() < rightItem->lastModified();
@@ -65,9 +56,6 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 							return false;
 						else
 							return leftItem->lastModified() < rightItem->lastModified();
-
-					break;
-				}
 			}
 		}
 

@@ -8,7 +8,7 @@
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
 #include "../filesystem/filesystemrootnode.h"
-#include "../filesystem/filesystempluginsmanager.h"
+#include "../filesystemplugins/pluginsmanager.h"
 
 
 class MainWindow : public QMainWindow
@@ -54,7 +54,7 @@ private Q_SLOTS:
     void actToolsMenuPreferences();
 
 private:
-    FileSystem::PluginsManager m_manager;
+    PluginsManager m_manager;
     FileSystem::RootNode m_root;
 
     QWidget m_centralWidget;

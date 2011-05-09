@@ -8,6 +8,8 @@
 
 class M3uEntry : public M3uItem
 {
+	Q_DECLARE_TR_FUNCTIONS(M3uEntry)
+
 public:
 	M3uEntry(const FileSystem::Info &info, qint32 length, const QString &title) :
 		m_locked(false),
@@ -45,7 +47,10 @@ public:
 					case Qt::TextAlignmentRole:
 						return Qt::AlignLeft;
 					case Qt::ToolTipRole:
-						return m_info.absoluteFilePath();
+						if (m_info.exists())
+							return m_info.absoluteFilePath();
+						else
+							return tr("File does not exists - ").append(m_info.absoluteFilePath());
 				}
 				break;
 			}

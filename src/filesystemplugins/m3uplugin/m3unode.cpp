@@ -7,6 +7,7 @@
 
 
 M3uNode::M3uNode(const FileSystem::Info &info, Node *parent) :
+	Node(parent),
 	m_tag(QString::fromLatin1("#EXTINF:")),
 	m_updating(false)
 {
@@ -152,6 +153,7 @@ void M3uNode::update()
 		QStringList list;
 		QTextStream stream(&file);
 		QString line;
+		ItemsList items;
 
 		stream.setCodec(QTextCodec::codecForName("UTF-8"));
 
@@ -167,18 +169,24 @@ void M3uNode::update()
 					if (!info.isAbsolute())
 						info = FileSystem::Info(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
 
-					m_items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
+					items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
 				}
 			}
 
-		beginInsertRows(QModelIndex(), 0, m_items.size() - 1);
+		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + items.size() - 1);
+		m_items.append(items);
 		endInsertRows();
 	}
 }
 
 FileSystem::Node *M3uNode::subnode(const QModelIndex &idx, FileSystem::PluginsManager *plugins)
 {
-	return 0;
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<M3uItem*>(index.internalPointer())->isRoot())
+		return static_cast<Node*>(Node::parent());
+	else
+		return 0;
 }
 
 void M3uNode::remove(Node *subnode)

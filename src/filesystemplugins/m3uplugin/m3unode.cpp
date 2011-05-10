@@ -190,9 +190,7 @@ FileSystem::Node *M3uNode::subnode(const QModelIndex &idx, FileSystem::PluginsMa
 }
 
 void M3uNode::remove(Node *subnode)
-{
-
-}
+{}
 
 void M3uNode::view(QAbstractItemView *itemView)
 {

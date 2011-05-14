@@ -16,7 +16,7 @@ FolderNode::FolderNode(const Info &info, Node *parent) :
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {
-	if (!info.isFileSystemRoot())
+	if (!info.isRoot())
 		m_items.add(new FolderNodeRoot(info));
 
 	m_proxy.setDynamicSortFilter(true);

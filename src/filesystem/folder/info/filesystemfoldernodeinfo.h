@@ -39,7 +39,7 @@ public:
 	virtual void refresh();
 
 public:
-	bool isFileSystemRoot() const { return m_info.isRoot(); }
+	bool isRoot() const { return m_info.isRoot(); }
 	qint64 size() const { return m_info.size(); }
     const QIcon &icon() const;
     const QString &displayType() const;

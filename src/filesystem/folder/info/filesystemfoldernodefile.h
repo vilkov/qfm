@@ -17,8 +17,8 @@ public:
 	virtual size_type size() const;
 
 	virtual bool seek(size_type off);
-	virtual size_type read(uchar *data, size_type size);
-	virtual size_type write(const uchar *data, size_type size);
+	virtual size_type read(value_type *data, size_type size);
+	virtual size_type write(const value_type *data, size_type size);
 
 public:
 	bool open(QFile::OpenMode mode);

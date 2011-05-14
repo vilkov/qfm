@@ -25,11 +25,16 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* IFileInfo */
+	virtual bool isDir() const { return false; }
+	virtual bool isFile() const { return false; }
 	virtual bool exists() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
 	virtual QDateTime lastModified() const;
+
+	virtual FileSystem::IFile *open(FileSystem::IFile::OpenMode mode, QString &error) const { return 0; }
+	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
 
 	virtual void refresh();
 
@@ -54,7 +59,7 @@ public:
 	virtual bool isRootIndex(const QModelIndex &index) const;
 
 protected:
-	virtual bool isRoot() const { return false; }
+	virtual bool isRootNode() const { return false; }
 	virtual Node *node(const QString &fileName, FileSystem::PluginsManager *plugins);
 
 protected:

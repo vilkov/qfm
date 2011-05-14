@@ -22,12 +22,12 @@ bool File::seek(size_type off)
 	return m_file.seek(off);
 }
 
-File::size_type File::read(uchar *data, size_type size)
+File::size_type File::read(value_type *data, size_type size)
 {
 	return m_file.read((char*)data, size);
 }
 
-File::size_type File::write(const uchar *data, size_type size)
+File::size_type File::write(const value_type *data, size_type size)
 {
 	return m_file.write((const char*)data, size);
 }

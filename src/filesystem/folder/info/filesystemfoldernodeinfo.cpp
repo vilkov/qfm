@@ -46,7 +46,25 @@ Info::Info(const QFileInfo &info, uint userId, uint groupId) :
 
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
+	QFile::OpenMode openMode;
 	QScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
+
+	switch (mode)
+	{
+		case IFile::ReadOnly:
+			openMode = QFile::ReadOnly;
+			break;
+		case IFile::WriteOnly:
+			openMode = QFile::WriteOnly;
+			break;
+	}
+
+	if (file->open(openMode))
+		return file.take();
+	else
+		error = file->lastError();
+
+	return 0;
 }
 
 void Info::refresh()

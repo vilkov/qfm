@@ -4,11 +4,6 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FolderNodeEntry::FolderNodeEntry(const Info &info) :
-	m_locked(false),
-	m_info(info)
-{}
-
 QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 {
 	switch (column)
@@ -19,12 +14,12 @@ QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_info.fileName();
+					return fileName();
 				case Qt::DecorationRole:
 					if (m_locked)
 						return Application::style()->standardIcon(QStyle::SP_BrowserReload);
 					else
-						return m_info.icon();
+						return icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 				case Qt::ToolTipRole:
@@ -41,8 +36,8 @@ QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					if (m_info.isFile())
-						return humanReadableSize(m_info.size());
+					if (isFile())
+						return humanReadableSize(size());
 					else
 						if (m_totalSize.isNull())
 							return QString::fromLatin1("<DIR>");
@@ -61,7 +56,7 @@ QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_info.lastModified();
+					return lastModified();
 //					case Qt::DecorationRole:
 //						return m_info.icon();
 				case Qt::TextAlignmentRole:

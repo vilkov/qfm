@@ -18,7 +18,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 	{
 		QModelIndex idx = m_proxy->mapToSource(index);
 
-		if (!static_cast<FolderNodeItem*>(idx.internalPointer())->isRoot() &&
+		if (!static_cast<FolderNodeItem*>(idx.internalPointer())->isRootItem() &&
 			static_cast<FolderNodeEntry*>(idx.internalPointer())->isInProgress())
 		{
 			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(idx.internalPointer());

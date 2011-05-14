@@ -1,10 +1,7 @@
 #ifndef FILESTASK_H_
 #define FILESTASK_H_
 
-#include <QtCore/QString>
-#include <QtCore/QFileInfo>
-#include "../../../filesystem_ns.h"
-#include "../../../info/filesysteminfo.h"
+#include "../../info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

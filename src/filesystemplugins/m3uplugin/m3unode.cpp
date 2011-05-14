@@ -6,7 +6,7 @@
 #include <QtCore/QTextStream>
 
 
-M3uNode::M3uNode(const FileSystem::Info &info, Node *parent) :
+M3uNode::M3uNode(const QFileInfo &info, Node *parent) :
 	Node(parent),
 	m_tag(QString::fromLatin1("#EXTINF:")),
 	m_updating(false)
@@ -164,10 +164,10 @@ void M3uNode::update()
 
 				if (list.size() == 2)
 				{
-					FileSystem::Info info(line = stream.readLine());
+					QFileInfo info(line = stream.readLine());
 
 					if (!info.isAbsolute())
-						info = FileSystem::Info(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
+						info = QFileInfo(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
 
 					items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
 				}

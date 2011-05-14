@@ -1,8 +1,8 @@
 #ifndef M3UENTRY_H_
 #define M3UENTRY_H_
 
+#include <QtCore/QFileInfo>
 #include "m3uitem.h"
-#include "../../../filesystem/info/filesysteminfo.h"
 #include "../../../application.h"
 
 
@@ -11,7 +11,7 @@ class M3uEntry : public M3uItem
 	Q_DECLARE_TR_FUNCTIONS(M3uEntry)
 
 public:
-	M3uEntry(const FileSystem::Info &info, qint32 length, const QString &title) :
+	M3uEntry(const QFileInfo &info, qint32 length, const QString &title) :
 		m_locked(false),
 		m_info(info),
 		m_length(length),
@@ -19,11 +19,16 @@ public:
 	{}
 
 	/* IFileInfo */
+	virtual bool isDir() const { return m_info.isDir(); }
+	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool exists() const { return m_info.exists(); }
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QDateTime lastModified() const { m_info.lastModified(); }
+
+	virtual FileSystem::IFile *open(OpenMode mode, QString &error) const { return 0; }
+	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
 
 	virtual void refresh() {}
 
@@ -39,11 +44,11 @@ public:
 					case Qt::EditRole:
 					case Qt::DisplayRole:
 						return m_title;
-					case Qt::DecorationRole:
-						if (m_locked)
-							return Application::style()->standardIcon(QStyle::SP_BrowserReload);
-						else
-							return m_info.icon();
+//					case Qt::DecorationRole:
+//						if (m_locked)
+//							return Application::style()->standardIcon(QStyle::SP_BrowserReload);
+//						else
+//							return m_info.icon();
 					case Qt::TextAlignmentRole:
 						return Qt::AlignLeft;
 					case Qt::ToolTipRole:
@@ -97,7 +102,7 @@ public:
 private:
 	bool m_locked;
 	QString m_lockReason;
-	FileSystem::Info m_info;
+	QFileInfo m_info;
 	qint32 m_length;
 	QString m_title;
 };

@@ -16,7 +16,7 @@ FolderNode::FolderNode(const Info &info, Node *parent) :
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {
-	if (!info.isRoot())
+	if (!info.isFileSystemRoot())
 		m_items.add(new FolderNodeRoot(info));
 
 	m_proxy.setDynamicSortFilter(true);
@@ -173,9 +173,19 @@ QModelIndex FolderNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+bool FolderNode::isDir() const
+{
+	return true;
+}
+
+bool FolderNode::isFile() const
+{
+	return false;
+}
+
 bool FolderNode::exists() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return true;
 	else
 		return rootItem()->exists();
@@ -183,7 +193,7 @@ bool FolderNode::exists() const
 
 QString FolderNode::fileName() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return QString();
 	else
 		return rootItem()->fileName();
@@ -191,7 +201,7 @@ QString FolderNode::fileName() const
 
 QString FolderNode::absolutePath() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return QString();
 	else
 		return rootItem()->absolutePath();
@@ -199,7 +209,7 @@ QString FolderNode::absolutePath() const
 
 QString FolderNode::absoluteFilePath() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return QString::fromLatin1("/");
 	else
 		return rootItem()->absoluteFilePath();
@@ -207,15 +217,25 @@ QString FolderNode::absoluteFilePath() const
 
 QDateTime FolderNode::lastModified() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return QDateTime();
 	else
 		return rootItem()->lastModified();
 }
 
+IFile *FolderNode::open(OpenMode mode, QString &error) const
+{
+	return 0;
+}
+
+IFileInfo *FolderNode::create(const QString &fileName, FileType type, QString &error) const
+{
+	return 0;
+}
+
 void FolderNode::refresh()
 {
-	if (!isRoot())
+	if (!isRootNode())
 		rootItem()->refresh();
 }
 
@@ -254,7 +274,7 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRoot())
+	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
 		return static_cast<Node*>(Node::parent());
 	else
 		if (!static_cast<FolderNodeEntry*>(index.internalPointer())->isLocked())
@@ -270,7 +290,7 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 				if (value.node != 0)
 					value.node->setParentEntryIndex(idx);
 				else
-					if (value.node = createNode(static_cast<FolderNodeEntry*>(value.item)->info(), plugins))
+					if (value.node = createNode(*value.item, plugins))
 						value.node->setParentEntryIndex(idx);
 
 				return value.node;
@@ -320,7 +340,7 @@ QModelIndex FolderNode::indexFor(const QString &fileName)
 
 QModelIndex FolderNode::rootIndex() const
 {
-	if (isRoot())
+	if (isRootNode())
 		return QModelIndex();
 	else
 		return m_proxy.mapFromSource(createIndex(0, 0, rootItem()));
@@ -328,10 +348,10 @@ QModelIndex FolderNode::rootIndex() const
 
 bool FolderNode::isRootIndex(const QModelIndex &index) const
 {
-	if (isRoot())
+	if (isRootNode())
 		return false;
 	else
-		return static_cast<FolderNodeItem*>(m_proxy.mapToSource(index).internalPointer())->isRoot();
+		return static_cast<FolderNodeItem*>(m_proxy.mapToSource(index).internalPointer())->isRootItem();
 }
 
 Node *FolderNode::node(const QString &fileName, PluginsManager *plugins)
@@ -351,7 +371,7 @@ Node *FolderNode::node(const QString &fileName, PluginsManager *plugins)
 		if (value.node)
 			return value.node;
 		else
-			return value.node = createNode(static_cast<FolderNodeEntry*>(value.item)->info(), plugins);
+			return value.node = createNode(*value.item, plugins);
 	}
 }
 
@@ -387,7 +407,7 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 		{
 			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(list.at(i).entry());
 			Values::size_type index = m_items.indexOf(entry);
-			entry->update(list.at(i).info());
+			(*entry) = list.at(i).info();
 			updateRange.add(index, index);
 			list.removeAt(i);
 		}
@@ -505,7 +525,7 @@ ChangesList FolderNode::makeChangeSet() const
 {
 	ChangesList list;
 
-	if (isRoot())
+	if (isRootNode())
 	{
 		list.reserve(m_items.size());
 
@@ -535,7 +555,7 @@ QModelIndex FolderNode::index(int column, FolderNodeItem *item) const
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(info, (FolderNode*)this))
+	if (Node *res = plugins->node(&info, (FolderNode*)this))
 		return res;
 	else
 		if (info.isDir())
@@ -553,7 +573,7 @@ FolderNode::Values::Value FolderNode::createNode(const QString &fileName, Plugin
 Info FolderNode::fileInfo(const QString &fileName) const
 {
 	return Info(
-			isRoot() ?
+			isRootNode() ?
 				QString(fileName).prepend(QChar('/')) :
 				rootItem()->absoluteFilePath().append(QChar('/')).append(fileName));
 }

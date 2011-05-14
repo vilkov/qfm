@@ -11,10 +11,10 @@ FolderProxyModel::FolderProxyModel(QObject *parent) :
 
 bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-	if (static_cast<FolderNodeItem*>(left.internalPointer())->isRoot())
+	if (static_cast<FolderNodeItem*>(left.internalPointer())->isRootItem())
 		return true;
 	else
-		if (static_cast<FolderNodeItem*>(right.internalPointer())->isRoot())
+		if (static_cast<FolderNodeItem*>(right.internalPointer())->isRootItem())
 			return false;
 		else
 		{

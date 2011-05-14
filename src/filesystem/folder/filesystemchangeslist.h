@@ -2,8 +2,8 @@
 #define FILESYSTEMCHANGESLIST_H_
 
 #include <QtCore/QList>
+#include "info/filesystemfoldernodeinfo.h"
 #include "items/filesystemfoldernodeitem.h"
-#include "../info/filesysteminfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

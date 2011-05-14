@@ -9,7 +9,7 @@ class M3uPlugin : public FileSystem::PluginsManager::FilePlugin
 public:
 	M3uPlugin();
 
-	virtual FileSystem::Node *node(const FileSystem::Info &info, File file, size_type size, FileSystem::Node *parent) const;
+	virtual FileSystem::Node *node(const FileSystem::IFileInfo *info, FileSystem::IFile *file, FileSystem::Node *parent) const;
 
 private:
 	QString m_identity;

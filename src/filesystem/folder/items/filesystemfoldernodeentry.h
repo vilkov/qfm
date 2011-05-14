@@ -3,38 +3,24 @@
 
 #include "filesystemfoldernodeitem.h"
 #include "../filesystemchangeslist.h"
+#include "../info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 class FolderNodeEntry : public FolderNodeItem
 {
-	Q_DISABLE_COPY(FolderNodeEntry)
-
 public:
-	FolderNodeEntry(const Info &info);
+	FolderNodeEntry(const Info &info) :
+		FolderNodeItem(info),
+		m_locked(false)
+	{}
 
 	/* FolderNodeEntry */
 	virtual QVariant data(qint32 column, qint32 role) const;
-	virtual bool isRoot() const { return false; }
-
-	/* IFileInfo */
-	virtual bool exists() const { return m_info.exists(); }
-	virtual QString fileName() const { return m_info.fileName(); }
-	virtual QString absolutePath() const { return m_info.absolutePath(); }
-	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
-	virtual QDateTime lastModified() const { return m_info.lastModified(); }
-
-	virtual void refresh() { m_info.refresh(); }
+	virtual bool isRootItem() const { return false; }
 
 public:
-	const Info &info() const { return m_info; }
-
-	bool isDir() const { return m_info.isDir(); }
-	qint64 size() const { return m_info.size(); }
-
-	void update(const Info &info) { m_info = info; }
-
 	const QVariant &totalSize() const { return m_totalSize; }
 	void setTotalSize(quint64 value) { m_totalSize = value; }
 	void clearTotalSize() { m_totalSize.clear(); }
@@ -59,7 +45,6 @@ public:
 	static QString humanReadableShortSize(quint64 size);
 
 private:
-	Info m_info;
 	bool m_locked;
 	QString m_lockReason;
 	QVariant m_totalSize;

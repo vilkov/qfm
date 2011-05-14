@@ -6,11 +6,12 @@
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
 #include "filesystemchangeslist.h"
-#include "items/filesystemfoldernodeitem.h"
 #include "events/filesystemmodelevent.h"
+#include "info/filesystemfoldernodeinfo.h"
+#include "items/filesystemfoldernodeitem.h"
+#include "items/filesystemfoldernodeentry.h"
 #include "../filesystem_ns.h"
 #include "../filesystemnode.h"
-#include "../info/filesysteminfo.h"
 #include "../../tools/metatemplates.h"
 
 
@@ -35,11 +36,16 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* IFileInfo */
+	virtual bool isDir() const;
+	virtual bool isFile() const;
 	virtual bool exists() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
 	virtual QDateTime lastModified() const;
+
+	virtual IFile *open(OpenMode mode, QString &error) const;
+	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
 
 	virtual void refresh();
 
@@ -64,7 +70,7 @@ public:
 	virtual bool isRootIndex(const QModelIndex &index) const;
 
 protected:
-	virtual bool isRoot() const { return m_items.size() == 0 || !m_items.at(0).item->isRoot(); }
+	virtual bool isRootNode() const { return m_items.size() == 0 || !m_items.at(0).item->isRootItem(); }
 	virtual Node *node(const QString &fileName, PluginsManager *plugins);
 
 protected:

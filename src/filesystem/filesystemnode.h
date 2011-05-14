@@ -34,7 +34,7 @@ public:
 
 protected:
 	friend class RootNode;
-	virtual bool isRoot() const = 0;
+	virtual bool isRootNode() const = 0;
 	virtual Node *node(const QString &fileName, PluginsManager *plugins) = 0;
 };
 

@@ -16,32 +16,30 @@ PluginsManager::~PluginsManager()
 	qDeleteAll(m_dynamicFoldersPlugins);
 }
 
-Node *PluginsManager::node(const Info &info, Node *parent) const
+Node *PluginsManager::node(const IFileInfo *info, Node *parent) const
 {
 	Node *res = 0;
 
-	if (info.isFile())
+	if (info->isFile())
 	{
-		QFile file(info.absoluteFilePath());
+		QString error;
+		QScopedPointer<IFile> file(info->open(IFileInfo::ReadOnly, error));
 
-		if (file.open(QFile::ReadOnly))
-			if (FilePlugin::File mapped = file.map(0, file.size()))
-			{
-				for (PluginsList::size_type i = 0, size = m_staticFilePlugins.size(); i < size; ++i)
-					if (res = m_staticFilePlugins.at(i)->node(info, mapped, file.size(), parent))
+		if (file)
+		{
+			for (PluginsList::size_type i = 0, size = m_staticFilePlugins.size(); i < size; ++i)
+				if (res = m_staticFilePlugins.at(i)->node(info, file.data(), parent))
+					break;
+
+			if (res == 0)
+				for (PluginsList::size_type i = 0, size = m_dynamicFilePlugins.size(); i < size; ++i)
+					if (res = m_dynamicFilePlugins.at(i)->node(info, file.data(), parent))
 						break;
-
-				if (res == 0)
-					for (PluginsList::size_type i = 0, size = m_dynamicFilePlugins.size(); i < size; ++i)
-						if (res = m_dynamicFilePlugins.at(i)->node(info, mapped, file.size(), parent))
-							break;
-
-				file.unmap((uchar*)mapped);
-			}
+		}
 	}
 	else
-		if (info.isDir())
-			if (FolderPlugin *plugin = m_staticFoldersPlugins.value(info.absoluteFilePath(), 0))
+		if (info->isDir())
+			if (FolderPlugin *plugin = m_staticFoldersPlugins.value(info->absoluteFilePath(), 0))
 				res = plugin->node(info, parent);
 
 	return res;

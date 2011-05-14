@@ -50,3 +50,47 @@ QFileInfo FileInfoGatherer::resolveName(const QFileInfo &fileInfo) const
 
 		desktop->Release();
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		class File
+	{
+	    inline File(IFileInfo *info, IFile *file = 0) :
+			m_info(info),
+			m_file(file)
+	    {
+	    	Q_ASSERT(m_info != 0);
+	    }
+	    inline File(const File &other) :
+			m_info(other.m_info),
+			m_file(other.m_file)
+	    {
+	    	other.m_file = 0;
+	    }
+	    inline ~FileDeleter() { if (m_file) m_info->close(m_file); }
+	    inline IFile *operator->() const { Q_ASSERT(m_file); return m_file; }
+	    inline bool operator!() const { return !m_file; }
+	    inline bool operator bool() const { return m_file; }
+	    inline File &operator=(const File &other) const { m_info = other.m_info; m_file = other.m_file; other.m_file = 0; }
+
+	private:
+	    IFileInfo *m_info;
+	    IFile *m_file;
+	};
+	

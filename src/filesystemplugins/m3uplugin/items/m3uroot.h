@@ -1,24 +1,29 @@
 #ifndef M3UROOT_H_
 #define M3UROOT_H_
 
+#include <QtCore/QFileInfo>
 #include "m3uitem.h"
-#include "../../../filesystem/info/filesysteminfo.h"
 
 
 class M3uRoot : public M3uItem
 {
 public:
-	M3uRoot(const FileSystem::Info &info) :
+	M3uRoot(const QFileInfo &info) :
 		m_info(info),
 		m_label(QString::fromLatin1(".."))
 	{}
 
 	/* IFileInfo */
+	virtual bool isDir() const { return m_info.isDir(); }
+	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool exists() const { return m_info.exists(); }
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QDateTime lastModified() const { m_info.lastModified(); }
+
+	virtual FileSystem::IFile *open(OpenMode mode, QString &error) const { return 0; }
+	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
 
 	virtual void refresh() {}
 
@@ -33,7 +38,7 @@ public:
 	virtual bool isRoot() const { return true; }
 
 private:
-	FileSystem::Info m_info;
+	QFileInfo m_info;
 	QString m_label;
 };
 

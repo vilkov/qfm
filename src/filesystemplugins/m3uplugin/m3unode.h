@@ -1,6 +1,7 @@
 #ifndef M3UNODE_H_
 #define M3UNODE_H_
 
+#include <QtCore/QFileInfo>
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
 #include "items/m3uitem.h"
@@ -11,7 +12,7 @@
 class M3uNode : public FileSystem::Node
 {
 public:
-	M3uNode(const FileSystem::Info &info, Node *parent = 0);
+	M3uNode(const QFileInfo &info, Node *parent = 0);
 	virtual ~M3uNode();
 
     /* QAbstractItemModel */

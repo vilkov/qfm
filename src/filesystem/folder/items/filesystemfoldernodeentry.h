@@ -11,10 +11,12 @@ FILE_SYSTEM_NS_BEGIN
 class FolderNodeEntry : public FolderNodeItem
 {
 public:
-	FolderNodeEntry(const Info &info) :
+	explicit FolderNodeEntry(const Info &info) :
 		FolderNodeItem(info),
 		m_locked(false)
 	{}
+
+	void operator=(const Info &info) { FolderNodeItem::operator=(info); }
 
 	/* FolderNodeEntry */
 	virtual QVariant data(qint32 column, qint32 role) const;

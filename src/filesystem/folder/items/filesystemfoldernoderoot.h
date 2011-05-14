@@ -9,7 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 class FolderNodeRoot : public FolderNodeItem
 {
 public:
-	FolderNodeRoot(const Info &info) :
+	explicit FolderNodeRoot(const Info &info) :
 		FolderNodeItem(info),
 		m_label(QString::fromLatin1(".."))
 	{}

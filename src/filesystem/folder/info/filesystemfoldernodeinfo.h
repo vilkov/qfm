@@ -24,7 +24,7 @@ public:
     Info(const QFileInfo &info, uint userId, uint groupId);
 #endif
 
-    /* IFileInfo */
+	/* IFileInfo */
 	virtual bool isDir() const { return m_info.isDir(); }
 	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool exists() const { return m_info.exists(); }

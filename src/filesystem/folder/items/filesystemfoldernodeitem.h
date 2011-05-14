@@ -10,9 +10,11 @@ FILE_SYSTEM_NS_BEGIN
 class FolderNodeItem : public Info
 {
 public:
-	FolderNodeItem(const Info &info) :
+	explicit FolderNodeItem(const Info &info) :
 		Info(info)
 	{}
+
+	void operator=(const Info &info) { Info::operator=(info); }
 
     virtual QVariant data(qint32 column, qint32 role) const = 0;
 	virtual bool isRootItem() const = 0;

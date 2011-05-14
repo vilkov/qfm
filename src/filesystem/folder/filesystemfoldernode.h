@@ -75,7 +75,10 @@ protected:
 
 protected:
 	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
+	void removeFunctor(FolderNodeItem *entry);
+	void calculateSizeFunctor(FolderNodeItem *entry);
 	void copyFunctor(FolderNodeItem *entry, Node *destination);
+	void moveFunctor(FolderNodeItem *entry, Node *destination);
 
 protected:
 	FolderNodeItem *rootItem() const { return m_items.at(0).item; }

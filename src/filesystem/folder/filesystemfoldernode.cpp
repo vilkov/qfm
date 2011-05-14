@@ -242,33 +242,12 @@ void FolderNode::refresh()
 
 void FolderNode::remove(const QModelIndexList &list)
 {
-
+	processIndexList(list, Functors::callTo(this, &FolderNode::removeFunctor));
 }
 
 void FolderNode::calculateSize(const QModelIndexList &list)
 {
-	QModelIndex index;
-	FolderNodeItem *entry;
-	QSet<FolderNodeItem*> done;
-
-	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!done.contains(entry = static_cast<FolderNodeItem*>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
-		{
-			done.insert(entry);
-
-			if (!entry->isRootItem() && !static_cast<FolderNodeEntry*>(entry)->isLocked())
-			{
-				entry->refresh();
-
-				if (entry->exists())
-					if (entry->isDir())
-						scanForSize(entry);
-					else
-						updateSecondColumn(entry);
-				else
-					removeEntry(index);
-			}
-		}
+	processIndexList(list, Functors::callTo(this, &FolderNode::calculateSizeFunctor));
 }
 
 void FolderNode::copy(const QModelIndexList &list, Node *destination)
@@ -278,7 +257,7 @@ void FolderNode::copy(const QModelIndexList &list, Node *destination)
 
 void FolderNode::move(const QModelIndexList &list, Node *destination)
 {
-
+	processIndexList(list, Functors::callTo(this, &FolderNode::moveFunctor, destination));
 }
 
 void FolderNode::update()
@@ -415,6 +394,22 @@ void FolderNode::processIndexList(const QModelIndexList &list, const Functors::F
 		}
 }
 
+void FolderNode::removeFunctor(FolderNodeItem *entry)
+{
+	if (entry->isDir())
+		scanForRemove(entry);
+	else
+		removeEntry(entry);
+}
+
+void FolderNode::calculateSizeFunctor(FolderNodeItem *entry)
+{
+	if (entry->isDir())
+		scanForSize(entry);
+	else
+		updateSecondColumn(entry);
+}
+
 void FolderNode::copyFunctor(FolderNodeItem *entry, Node *destination)
 {
 	if (entry->isDir())
@@ -422,6 +417,15 @@ void FolderNode::copyFunctor(FolderNodeItem *entry, Node *destination)
 	else
 		if (entry->isFile())
 			copyEntry(entry, destination);
+}
+
+void FolderNode::moveFunctor(FolderNodeItem *entry, Node *destination)
+{
+	if (entry->isDir())
+		scanForMove(entry, destination);
+	else
+		if (entry->isFile())
+			moveEntry(entry, destination);
 }
 
 void FolderNode::list(FolderNodeItem *fileSystemTree)

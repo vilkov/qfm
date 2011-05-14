@@ -5,9 +5,10 @@
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
 #include "filesystemmodelevent.h"
+#include "../filesystemfoldernode.h"
 #include "../items/filesystemfoldernodeentry.h"
-#include "../../filesystem_ns.h"
 #include "../../filesystemnode.h"
+#include "../../filesystem_ns.h"
 #include "../../../tools/taskspool/task.h"
 
 
@@ -15,6 +16,25 @@ FILE_SYSTEM_NS_BEGIN
 
 struct ModelEvents
 {
+	class FolderNode : public FileSystem::FolderNode
+	{
+		Q_DISABLE_COPY(FolderNode)
+
+	public:
+		FolderNode(const Info &info, Node *parent = 0) :
+			FileSystem::FolderNode(info, parent)
+		{}
+
+		void add(const Info &info) { items().add(new FolderNodeEntry(info)); }
+		void setSubnode(FileSystem::FolderNode *subnode)
+		{
+			FileSystem::FolderNode::Values::size_type index = items().indexOf(subnode->fileName());
+
+			if (index != FileSystem::FolderNode::Values::InvalidIndex)
+				items()[index].node = subnode;
+		}
+	};
+
 	class BaseTask : public TasksPool::Task
 	{
 	public:
@@ -25,8 +45,8 @@ struct ModelEvents
 				Listener() :
 					node(0)
 				{}
-				Listener(Node *object) :
-					node(object)
+				Listener(Node *node) :
+					node(node)
 				{}
 
 				Node *node;
@@ -37,8 +57,8 @@ struct ModelEvents
 					node(0),
 					entry(0)
 				{}
-				Snapshot(Node *object, FolderNodeEntry *entry) :
-					node(object),
+				Snapshot(Node *node, FolderNodeEntry *entry) :
+					node(node),
 					entry(entry)
 				{}
 

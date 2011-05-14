@@ -14,9 +14,10 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
-	virtual void remove(const QModelIndexList &index) = 0;
-	virtual void copy(const QModelIndexList &index, Node *destination) = 0;
-	virtual void move(const QModelIndexList &index, Node *destination) = 0;
+	virtual void remove(const QModelIndexList &list) = 0;
+	virtual void calculateSize(const QModelIndexList &list) = 0;
+	virtual void copy(const QModelIndexList &list, Node *destination) = 0;
+	virtual void move(const QModelIndexList &list, Node *destination) = 0;
 };
 
 FILE_SYSTEM_NS_END

@@ -258,10 +258,7 @@ void DirectoryView::calculateSize()
 
 void DirectoryView::copy()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//		m_model.copy(index, &static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_model);
+	model()->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->model());
 }
 
 void DirectoryView::move()

@@ -113,27 +113,22 @@ void M3uNode::refresh()
 	return rootItem()->refresh();
 }
 
-void M3uNode::remove(const QModelIndexList &index)
+void M3uNode::remove(const QModelIndexList &list)
 {
 
 }
 
-void M3uNode::copy(const QModelIndexList &index, Node *destination)
+void M3uNode::calculateSize(const QModelIndexList &list)
 {
 
 }
 
-void M3uNode::move(const QModelIndexList &index, Node *destination)
+void M3uNode::copy(const QModelIndexList &list, Node *destination)
 {
 
 }
 
-void M3uNode::createFolder(const QString &name)
-{
-
-}
-
-void M3uNode::createFile(const QString &name)
+void M3uNode::move(const QModelIndexList &list, Node *destination)
 {
 
 }

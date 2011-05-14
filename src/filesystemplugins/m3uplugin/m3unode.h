@@ -39,11 +39,10 @@ public:
 	virtual void refresh();
 
 	/* IFileOperations */
-	virtual void remove(const QModelIndexList &index);
-	virtual void copy(const QModelIndexList &index, Node *destination);
-	virtual void move(const QModelIndexList &index, Node *destination);
-	virtual void createFolder(const QString &name);
-	virtual void createFile(const QString &name);
+	virtual void remove(const QModelIndexList &list);
+	virtual void calculateSize(const QModelIndexList &list);
+	virtual void copy(const QModelIndexList &list, Node *destination);
+	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
 	virtual void update();

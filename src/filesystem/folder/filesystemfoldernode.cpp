@@ -3,6 +3,7 @@
 #include "items/filesystemfoldernodeentry.h"
 #include "events/filesystemmodelevents.h"
 #include "tasks/scan/updatefilestask.h"
+#include "tasks/scan/scanfilestasks.h"
 #include "../filesystempluginsmanager.h"
 #include "../../tools/rangeintersection.h"
 #include "../../application.h"
@@ -239,27 +240,43 @@ void FolderNode::refresh()
 		rootItem()->refresh();
 }
 
-void FolderNode::remove(const QModelIndexList &index)
+void FolderNode::remove(const QModelIndexList &list)
 {
 
 }
 
-void FolderNode::copy(const QModelIndexList &index, Node *destination)
+void FolderNode::calculateSize(const QModelIndexList &list)
 {
+	QModelIndex index;
+	FolderNodeItem *entry;
+	QSet<FolderNodeItem*> done;
 
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!done.contains(entry = static_cast<FolderNodeItem*>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
+		{
+			done.insert(entry);
+
+			if (!entry->isRootItem() && !static_cast<FolderNodeEntry*>(entry)->isLocked())
+			{
+				entry->refresh();
+
+				if (entry->exists())
+					if (entry->isDir())
+						scanForSize(entry);
+					else
+						updateSecondColumn(entry);
+				else
+					removeEntry(index);
+			}
+		}
 }
 
-void FolderNode::move(const QModelIndexList &index, Node *destination)
+void FolderNode::copy(const QModelIndexList &list, Node *destination)
 {
-
+	processIndexList(list, Functors::callTo(this, &FolderNode::copyFunctor, destination));
 }
 
-void FolderNode::createFolder(const QString &name)
-{
-
-}
-
-void FolderNode::createFile(const QString &name)
+void FolderNode::move(const QModelIndexList &list, Node *destination)
 {
 
 }
@@ -375,6 +392,38 @@ Node *FolderNode::node(const QString &fileName, PluginsManager *plugins)
 	}
 }
 
+void FolderNode::processIndexList(const QModelIndexList &list, const Functors::Functor &functor)
+{
+	QModelIndex index;
+	FolderNodeItem *entry;
+	QSet<FolderNodeItem*> done;
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!done.contains(entry = static_cast<FolderNodeItem*>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
+		{
+			done.insert(entry);
+
+			if (!entry->isRootItem() && !static_cast<FolderNodeEntry*>(entry)->isLocked())
+			{
+				entry->refresh();
+
+				if (entry->exists())
+					functor(entry);
+				else
+					removeEntry(index);
+			}
+		}
+}
+
+void FolderNode::copyFunctor(FolderNodeItem *entry, Node *destination)
+{
+	if (entry->isDir())
+		scanForCopy(entry, destination);
+	else
+		if (entry->isFile())
+			copyEntry(entry, destination);
+}
+
 void FolderNode::list(FolderNodeItem *fileSystemTree)
 {
 
@@ -436,12 +485,12 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 		setUpdating(false);
 }
 
-void FolderNode::removeEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::removeEntry(FolderNodeItem *entry)
 {
 
 }
 
-void FolderNode::scanForRemove(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::scanForRemove(FolderNodeItem *entry)
 {
 
 }
@@ -461,7 +510,7 @@ void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
 
 }
 
-void FolderNode::scanForSize(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::scanForSize(FolderNodeItem *entry)
 {
 
 }
@@ -471,29 +520,61 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 
 }
 
-void FolderNode::copyEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination)
+void FolderNode::copyEntry(FolderNodeItem *entry, Node *destination)
+{
+//	QScopedPointer<PerformCopyEntryTask::Params> params(new PerformCopyEntryTask::Params());
+//	params->source.object = (QObject*)this;
+//	params->source.fileSystemTree = static_cast<FileSystemTree*>(fileSystemTree);
+//	params->source.entry = static_cast<FileSystemEntry*>(entry);
+//	params->destination.object = destination;
+//	params->destination.fileSystemTree = static_cast<FileSystemTree*>(destination->m_currentFsTree);
+//	params->removeSource = false;
+//
+//	static_cast<FileSystemEntry*>(entry)->lock(tr("Copying..."), params->source.entry->fileInfo().size());
+//	updateFirstColumn(fileSystemTree, entry);
+//
+//	Application::instance()->taskPool().handle(new PerformCopyEntryTask(params.take()));
+}
+
+void FolderNode::scanForCopy(FolderNodeItem *entry, Node *destination)
+{
+	QScopedPointer<ScanFilesForCopyTask::Params> params(new ScanFilesForCopyTask::Params());
+	params->source.node = this;
+	params->source.entry = static_cast<FolderNodeEntry*>(entry);
+	params->destination.node = destination;
+
+	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
+	updateFirstColumn(entry);
+
+	Application::instance()->taskPool().handle(new ScanFilesForCopyTask(params.take()));
+}
+
+void FolderNode::moveEntry(FolderNodeItem *entry, Node *destination)
 {
 
 }
 
-void FolderNode::scanForCopy(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination)
-{
-
-}
-
-void FolderNode::moveEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination)
-{
-
-}
-
-void FolderNode::scanForMove(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination)
+void FolderNode::scanForMove(FolderNodeItem *entry, Node *destination)
 {
 
 }
 
 void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 {
+	typedef const ScanFilesForCopyTask::Event::Params *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
+	Values::size_type index = m_items.indexOf(params->snapshot.entry);
 
+	if (index != Values::InvalidIndex)
+	{
+		m_items[index].node = params->subnode;
+		params->snapshot.entry->lock(tr("Copying..."), params->size);
+		updateSecondColumn(params->snapshot.entry);
+
+	//	Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, false)));
+	}
+	else
+		delete params->subnode;
 }
 
 void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
@@ -578,19 +659,22 @@ Info FolderNode::fileInfo(const QString &fileName) const
 				rootItem()->absoluteFilePath().append(QChar('/')).append(fileName));
 }
 
-void FolderNode::updateFirstColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::updateFirstColumn(FolderNodeItem *entry)
 {
-
+	QModelIndex index = createIndex(m_items.indexOf(entry), 0, entry);
+	emit dataChanged(index, index);
 }
 
-void FolderNode::updateSecondColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::updateSecondColumn(FolderNodeItem *entry)
 {
-
+	QModelIndex index = createIndex(m_items.indexOf(entry), 1, entry);
+	emit dataChanged(index, index);
 }
 
-void FolderNode::updateBothColumns(FolderNodeItem *fileSystemTree, FolderNodeItem *entry)
+void FolderNode::updateBothColumns(FolderNodeItem *entry)
 {
-
+	Values::size_type index = m_items.indexOf(entry);
+	emit dataChanged(createIndex(index, 0, entry), createIndex(index, 1, entry));
 }
 
 void FolderNode::removeEntry(Values::size_type index)

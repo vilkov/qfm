@@ -3,13 +3,14 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
+#include "filesystemchangeslist.h"
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
-#include "filesystemchangeslist.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
 #include "items/filesystemfoldernodeitem.h"
 #include "items/filesystemfoldernodeentry.h"
+#include "functors/filesystemfoldernodefunctors.h"
 #include "../filesystem_ns.h"
 #include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
@@ -50,11 +51,10 @@ public:
 	virtual void refresh();
 
 	/* IFileOperations */
-	virtual void remove(const QModelIndexList &index);
-	virtual void copy(const QModelIndexList &index, Node *destination);
-	virtual void move(const QModelIndexList &index, Node *destination);
-	virtual void createFolder(const QString &name);
-	virtual void createFile(const QString &name);
+	virtual void remove(const QModelIndexList &list);
+	virtual void calculateSize(const QModelIndexList &list);
+	virtual void copy(const QModelIndexList &list, Node *destination);
+	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
 	virtual void update();
@@ -74,6 +74,10 @@ protected:
 	virtual Node *node(const QString &fileName, PluginsManager *plugins);
 
 protected:
+	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
+	void copyFunctor(FolderNodeItem *entry, Node *destination);
+
+protected:
 	FolderNodeItem *rootItem() const { return m_items.at(0).item; }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
@@ -85,19 +89,19 @@ protected:
 	void updateFiles();
 	void updateFilesEvent(const ModelEvent::Params *p);
 
-	void removeEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
-	void scanForRemove(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
+	void removeEntry(FolderNodeItem *entry);
+	void scanForRemove(FolderNodeItem *entry);
 	void scanForRemoveEvent(const ModelEvent::Params *p);
 	void removeCompleteEvent(const ModelEvent::Params *p);
 	void removeCanceledEvent(const ModelEvent::Params *p);
 
-	void scanForSize(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
+	void scanForSize(FolderNodeItem *entry);
 	void scanForSizeEvent(const ModelEvent::Params *p);
 
-	void copyEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination);
-	void scanForCopy(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination);
-	void moveEntry(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination);
-	void scanForMove(FolderNodeItem *fileSystemTree, FolderNodeItem *entry, Node *destination);
+	void copyEntry(FolderNodeItem *entry, Node *destination);
+	void scanForCopy(FolderNodeItem *entry, Node *destination);
+	void moveEntry(FolderNodeItem *entry, Node *destination);
+	void scanForMove(FolderNodeItem *entry, Node *destination);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void scanForMoveEvent(const ModelEvent::Params *p);
 	void copyCompleteEvent(const ModelEvent::Params *p);
@@ -106,7 +110,7 @@ protected:
 	void questionAnswerEvent(const ModelEvent::Params *p);
 	void updateProgressEvent(const ModelEvent::Params *p);
 
-private:
+protected:
 	class Values
 	{
 	public:
@@ -193,6 +197,9 @@ private:
 		ValueMap m_map;
 	};
 
+protected:
+	Values &items() { return m_items; }
+
 private:
 	ChangesList makeChangeSet() const;
 	QModelIndex index(int column, FolderNodeItem *item) const;
@@ -200,9 +207,9 @@ private:
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
 	Info fileInfo(const QString &fileName) const;
 
-	void updateFirstColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
-	void updateSecondColumn(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
-	void updateBothColumns(FolderNodeItem *fileSystemTree, FolderNodeItem *entry);
+	void updateFirstColumn(FolderNodeItem *entry);
+	void updateSecondColumn(FolderNodeItem *entry);
+	void updateBothColumns(FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 	void refresh(FolderNodeItem *fileSystemTree);

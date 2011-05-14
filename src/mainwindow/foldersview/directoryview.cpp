@@ -250,10 +250,7 @@ void DirectoryView::remove()
 
 void DirectoryView::calculateSize()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//		m_model.refreshSize(index);
+	model()->calculateSize(selectedIndexes());
 }
 
 void DirectoryView::copy()

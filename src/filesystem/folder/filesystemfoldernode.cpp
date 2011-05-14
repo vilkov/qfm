@@ -223,7 +223,7 @@ QDateTime FolderNode::lastModified() const
 		return rootItem()->lastModified();
 }
 
-IFile *FolderNode::open(OpenMode mode, QString &error) const
+IFile *FolderNode::open(IFile::OpenMode mode, QString &error) const
 {
 	return 0;
 }

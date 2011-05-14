@@ -17,11 +17,6 @@ public:
 		File,
 		Folder
 	};
-	enum OpenMode
-	{
-		ReadOnly,
-		WriteOnly
-	};
 
 public:
 	virtual ~IFileInfo() {}
@@ -34,7 +29,7 @@ public:
 	virtual QString absoluteFilePath() const = 0;
 	virtual QDateTime lastModified() const = 0;
 
-	virtual IFile *open(OpenMode mode, QString &error) const = 0;
+	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const = 0;
 
 	virtual void refresh() = 0;

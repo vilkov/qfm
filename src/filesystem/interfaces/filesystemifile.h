@@ -12,6 +12,11 @@ class IFile
 public:
 	typedef uchar * value_type;
 	typedef quint64 size_type;
+	enum OpenMode
+	{
+		ReadOnly,
+		WriteOnly
+	};
 
 public:
 	virtual ~IFile() {}

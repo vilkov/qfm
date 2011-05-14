@@ -33,7 +33,7 @@ public:
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 
-	virtual IFile *open(OpenMode mode, QString &error) const { return 0; }
+	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
 
 	virtual void refresh();

@@ -1,4 +1,5 @@
 #include "filesystemfoldernodeinfo.h"
+#include "filesystemfoldernodefile.h"
 #include "../../../application.h"
 #include <QtCore/QFSFileEngine>
 
@@ -42,6 +43,11 @@ Info::Info(const QFileInfo &info, uint userId, uint groupId) :
 	translatePermissions(userId, groupId);
 }
 #endif
+
+IFile *Info::open(IFile::OpenMode mode, QString &error) const
+{
+	QScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
+}
 
 void Info::refresh()
 {

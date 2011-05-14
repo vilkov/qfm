@@ -44,7 +44,7 @@ public:
 	virtual QString absoluteFilePath() const;
 	virtual QDateTime lastModified() const;
 
-	virtual IFile *open(OpenMode mode, QString &error) const;
+	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
 
 	virtual void refresh();

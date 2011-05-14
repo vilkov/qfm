@@ -23,7 +23,7 @@ Node *PluginsManager::node(const IFileInfo *info, Node *parent) const
 	if (info->isFile())
 	{
 		QString error;
-		QScopedPointer<IFile> file(info->open(IFileInfo::ReadOnly, error));
+		QScopedPointer<IFile> file(info->open(IFile::ReadOnly, error));
 
 		if (file)
 		{

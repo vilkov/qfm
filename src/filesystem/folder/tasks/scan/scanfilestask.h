@@ -15,7 +15,8 @@ template<typename BaseClass>
 class ScanFilesTask : public TemplateFilesTask<BaseClass>
 {
 public:
-	typedef TemplateFilesTask<BaseClass> parent_class;
+	typedef TemplateFilesTask<BaseClass>      parent_class;
+	typedef typename parent_class::FolderNode FolderNode;
 
 public:
 	struct Params : public parent_class::Params
@@ -36,7 +37,7 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-		QScopedPointer<ModelEvents::FolderNode> subnode(new ModelEvents::FolderNode(parameters()->source.entry->absoluteFilePath()));
+		QScopedPointer<FolderNode> subnode(new FolderNode(parameters()->source.entry->absoluteFilePath()));
 		scan(subnode.data(), stopedFlag);
 		parameters()->subnode = subnode.take();
 	}
@@ -45,7 +46,7 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 private:
-	void scan(ModelEvents::FolderNode *node, const volatile bool &stopedFlag)
+	void scan(FolderNode *node, const volatile bool &stopedFlag)
 	{
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
@@ -58,7 +59,7 @@ private:
 			if (!info.isSymLink())
 				if (info.isDir())
 				{
-					QScopedPointer<ModelEvents::FolderNode> subtree(new ModelEvents::FolderNode(info.absoluteFilePath(), node));
+					QScopedPointer<FolderNode> subtree(new FolderNode(info.absoluteFilePath(), node));
 					scan(subtree.data(), stopedFlag);
 					node->setSubnode(subtree.take());
 				}

@@ -14,7 +14,7 @@ Info::Info(const QString &filePath) :
 	m_info(filePath)
 {
 #ifdef Q_OS_WIN
-	m_permissions = info.permissions();
+	m_permissions = m_info.permissions();
 #else
 	translatePermissions(getuid(), getgid());
 #endif
@@ -24,7 +24,7 @@ Info::Info(const QFileInfo &info) :
 	m_info(info)
 {
 #ifdef Q_OS_WIN
-	m_permissions = info.permissions();
+	m_permissions = m_info.permissions();
 #else
 	translatePermissions(getuid(), getgid());
 #endif

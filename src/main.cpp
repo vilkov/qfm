@@ -1,5 +1,15 @@
 #include "application.h"
 #include "tools/memory/memory_manager.h"
+#include "tools/avltree/avltree.h"
+
+
+class AvlTest : public AvlTree<int, int>
+{
+protected:
+	virtual AvlNode* create_node(const key_type &value, AvlNode *&parent) { return new AvlNode(value, parent); }
+
+};
+
 
 
 extern "C" int main(int argc, char *argv[])

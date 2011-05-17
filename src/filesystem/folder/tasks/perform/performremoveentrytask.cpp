@@ -48,7 +48,7 @@ void PerformRemoveEntryTask::removeEntry(FolderNodeEntry *entry, bool &tryAgain,
 		else
 		{
 #			ifdef Q_OS_WIN32
-				error = entry->fileInfo().absoluteFilePath();
+				error = entry->absoluteFilePath();
 				DWORD attr = GetFileAttributesW((const wchar_t*)error.utf16());
 				if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
 					SetFileAttributesW((const wchar_t*)error.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);

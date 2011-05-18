@@ -53,9 +53,9 @@ public:
 
 	/* Node */
 	virtual bool isRootNode() const { return items().size() == 0 || !rootItem()->isRootItem(); }
-	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins);
-	virtual Node *subnode(const QString &fileName, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView);
+	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
+	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual QModelIndex indexFor(const QString &fileName);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
@@ -118,8 +118,15 @@ private:
 	void refresh(FolderNodeItem *fileSystemTree);
 	void doRefresh();
 
+	void addView(INodeView *view);
+	void removeView(INodeView *view);
+
+private:
+	typedef QSet<INodeView*> SetView;
+
 private:
 	bool m_updating;
+	SetView m_view;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;

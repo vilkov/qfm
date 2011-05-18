@@ -263,7 +263,12 @@ void FolderNode::move(const QModelIndexList &list, Node *destination)
 	processIndexList(list, Functors::callTo(this, &FolderNode::moveFunctor, destination));
 }
 
-Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
+void FolderNode::view(INodeView *nodeView)
+{
+	nodeView->setNode(this, &m_proxy, &m_delegate);
+}
+
+void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
@@ -295,35 +300,32 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 	return 0;
 }
 
-//void FolderNode::remove(Node *subnode)
-//{
-//
-//}
-
-Node *FolderNode::subnode(const QString &fileName, PluginsManager *plugins)
+void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
-	Values::size_type index = items().indexOf(fileName);
+	Node *next;
+	Values::size_type index = items().indexOf(*path);
 
 	if (index == Values::InvalidIndex)
-	{
-		Node *res;
-		items().add(createNode(fileName, plugins, res));
-		return res;
-	}
+		items().add(createNode(*path, plugins, next));
 	else
 	{
 		Values::Value &value = items()[index];
 
 		if (value.node)
-			return value.node;
+			next = value.node;
 		else
-			return value.node = createNode(*value.item, plugins);
+			value.node = next = createNode(*value.item, plugins);
 	}
-}
 
-void FolderNode::view(INodeView *nodeView)
-{
-	nodeView->setNode(this, &m_proxy, &m_delegate);
+	if (next)
+	{
+		removeView(nodeView);
+
+		if ((++path).atEnd())
+			next->view(nodeView);
+		else
+			next->view(nodeView, path, plugins);
+	}
 }
 
 QModelIndex FolderNode::indexFor(const QString &fileName)
@@ -764,6 +766,16 @@ void FolderNode::doRefresh()
 {
 	if (!isUpdating())
 		updateFiles();
+}
+
+void FolderNode::addView(INodeView *view)
+{
+	m_view.insert(view);
+}
+
+void FolderNode::removeView(INodeView *view)
+{
+	m_view.remove(view);
 }
 
 FILE_SYSTEM_NS_END

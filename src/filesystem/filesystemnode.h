@@ -3,6 +3,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include "filesystem_ns.h"
+#include "filesystempath.h"
 #include "interfaces/filesysteminodeview.h"
 #include "interfaces/filesystemifileinfo.h"
 #include "interfaces/filesystemifileoperations.h"
@@ -21,10 +22,9 @@ public:
 	{}
 
 	virtual bool isRootNode() const = 0;
-	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins) = 0;
-	virtual Node *subnode(const QString &fileName, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView) = 0;
-	virtual QModelIndex indexFor(const QString &fileName) = 0;
+	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) = 0;
+	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins) = 0;
 
 	virtual QModelIndex parentEntryIndex() const = 0;
 	virtual void setParentEntryIndex(const QModelIndex &value) = 0;

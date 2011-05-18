@@ -23,7 +23,7 @@
 
 class FoldersView;
 
-class DirectoryView : public QWidget
+class DirectoryView : public QWidget, public FileSystem::INodeView
 {
     Q_OBJECT
 
@@ -52,6 +52,10 @@ public:
 
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);
+
+	/* INodeView */
+	virtual void close();
+	virtual void setNode(FileSystem::Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
 public Q_SLOTS:
 	void goUp();
@@ -85,7 +89,6 @@ private:
 	void setupModel(FileSystem::RootNode *root, const Tab &tab);
 	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath);
 	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
-	FileSystem::Node *model() const { return static_cast<FileSystem::Node*>(static_cast<QAbstractProxyModel*>(m_view.model())->sourceModel()); }
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 
@@ -139,6 +142,7 @@ private:
 
 private:
 	FoldersView *m_parent;
+    FileSystem::Node *m_node;
 	ContextMenu m_menu;
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;

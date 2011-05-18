@@ -11,7 +11,7 @@ RootNode::RootNode(PluginsManager *plugins) :
 	Q_ASSERT(m_plugins != 0);
 }
 
-void RootNode::view(const QString &absoluteFilePath, QAbstractItemView *itemView, QModelIndex &index)
+void RootNode::view(const QString &absoluteFilePath, INodeView *nodeView, QModelIndex &index)
 {
 	Node *node = this;
 	Node *parent;
@@ -21,15 +21,15 @@ void RootNode::view(const QString &absoluteFilePath, QAbstractItemView *itemView
 	for (QStringList::size_type size = list.size(); idx < size && node; ++idx)
 	{
 		parent = node;
-		node = parent->node(list.at(idx), m_plugins);
+		node = parent->subnode(list.at(idx), m_plugins);
 	}
 
 	if (node)
-		node->view(itemView);
+		node->view(nodeView);
 	else
 	{
 		index = parent->indexFor(list.at(idx - 1));
-		parent->view(itemView);
+		parent->view(nodeView);
 	}
 }
 

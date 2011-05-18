@@ -1,24 +1,19 @@
 #ifndef FILESYSTEMFOLDERNODE_H_
 #define FILESYSTEMFOLDERNODE_H_
 
-#include <QtCore/QMap>
-#include <QtCore/QList>
+#include "filesystemfoldernodebase.h"
 #include "filesystemchangeslist.h"
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
-#include "items/filesystemfoldernodeitem.h"
-#include "items/filesystemfoldernodeentry.h"
 #include "functors/filesystemfoldernodefunctors.h"
-#include "../filesystem_ns.h"
-#include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderNode : public Node
+class FolderNode : public FolderNodeBase
 {
 	Q_DISABLE_COPY(FolderNode)
 
@@ -57,10 +52,10 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
-	virtual void update();
+	virtual bool isRootNode() const { return items().size() == 0 || !rootItem()->isRootItem(); }
 	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins);
-	virtual void remove(Node *subnode);
-	virtual void view(QAbstractItemView *itemView);
+	virtual Node *subnode(const QString &fileName, PluginsManager *plugins);
+	virtual void view(INodeView *nodeView);
 	virtual QModelIndex indexFor(const QString &fileName);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
@@ -70,10 +65,6 @@ public:
 	virtual bool isRootIndex(const QModelIndex &index) const;
 
 protected:
-	virtual bool isRootNode() const { return m_items.size() == 0 || !m_items.at(0).item->isRootItem(); }
-	virtual Node *node(const QString &fileName, PluginsManager *plugins);
-
-protected:
 	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
 	void removeFunctor(FolderNodeItem *entry);
 	void calculateSizeFunctor(FolderNodeItem *entry);
@@ -81,7 +72,6 @@ protected:
 	void moveFunctor(FolderNodeItem *entry, Node *destination);
 
 protected:
-	FolderNodeItem *rootItem() const { return m_items.at(0).item; }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
@@ -113,96 +103,6 @@ protected:
 	void questionAnswerEvent(const ModelEvent::Params *p);
 	void updateProgressEvent(const ModelEvent::Params *p);
 
-protected:
-	class Values
-	{
-	public:
-		struct Value
-		{
-			Value() :
-				node(0),
-				item(0)
-			{}
-			Value(FolderNodeItem *item) :
-				node(0),
-				item(item)
-			{
-				Q_ASSERT(item);
-			}
-			Value(FolderNodeItem *item, Node *node) :
-				node(node),
-				item(item)
-			{
-				Q_ASSERT(item);
-			}
-
-			bool operator==(const Value &other)
-			{
-				return item == other.item;
-			}
-
-			Node *node;
-			FolderNodeItem *item;
-		};
-		typedef QList<Value> 			 ValueList;
-		typedef ValueList::size_type     size_type;
-		typedef QMap<QString, size_type> ValueMap;
-		enum { InvalidIndex = (size_type)-1 };
-
-	public:
-		Values()
-		{}
-		~Values()
-		{
-			for (ValueList::size_type i = 0, size = m_list.size(); i < size; ++i)
-			{
-				delete m_list.at(i).node;
-				delete m_list.at(i).item;
-			}
-		}
-
-		Value &operator[](size_type index) { return m_list[index]; }
-		const Value &operator[](size_type index) const { return m_list[index]; }
-		const Value &at(size_type index) const { return m_list.at(index); }
-		const Value &last() const { return m_list.last(); }
-
-		size_type size() const { return m_list.size(); }
-		size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }
-		size_type indexOf(const QString &fileName) const { return m_map.value(fileName, InvalidIndex); }
-
-		void add(const Value &value)
-		{
-			m_list.push_back(value);
-			m_map[value.item->fileName()] = m_list.size() - 1;
-		}
-		void add(FolderNodeItem *item)
-		{
-			m_list.push_back(item);
-			m_map[item->fileName()] = m_list.size() - 1;
-		}
-		void add(FolderNodeItem *item, Node *node)
-		{
-			m_list.push_back(Value(item, node));
-			m_map[item->fileName()] = m_list.size() - 1;
-		}
-		void remove(size_type index)
-		{
-			Q_ASSERT(index != InvalidIndex);
-			const Value &value = m_list.at(index);
-			m_map.remove(value.item->fileName());
-			delete value.item;
-			delete value.node;
-			m_list.removeAt(index);
-		}
-
-	private:
-		ValueList m_list;
-		ValueMap m_map;
-	};
-
-protected:
-	Values &items() { return m_items; }
-
 private:
 	ChangesList makeChangeSet() const;
 	QModelIndex index(int column, FolderNodeItem *item) const;
@@ -220,7 +120,6 @@ private:
 
 private:
 	bool m_updating;
-	Values m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;

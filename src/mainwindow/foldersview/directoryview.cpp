@@ -8,6 +8,7 @@
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const Tab &tab, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
+    m_node(0),
 	m_menu(this),
     m_layout(this),
     m_pathEventHandler(this),
@@ -22,6 +23,7 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const Tab &tab, Folders
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
+    m_node(0),
 	m_menu(this),
 	m_layout(this),
     m_pathEventHandler(this),
@@ -36,6 +38,7 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
 DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
+    m_node(0),
 	m_menu(this),
 	m_layout(this),
 	m_pathEventHandler(this),
@@ -49,12 +52,12 @@ DirectoryView::DirectoryView(FileSystem::RootNode *root, const FileSystem::Info 
 
 QString DirectoryView::currentDirectoryName() const
 {
-	return model()->fileName();
+	return m_node->fileName();
 }
 
 void DirectoryView::save(QXmlStreamWriter &stream) const
 {
-	stream.writeTextElement(QString::fromLatin1("Path"), model()->absoluteFilePath());
+	stream.writeTextElement(QString::fromLatin1("Path"), m_node->absoluteFilePath());
 
 	stream.writeStartElement(QString::fromLatin1("Sort"));
 	stream.writeTextElement(QString::fromLatin1("Column"), QString::number(m_view.header()->sortIndicatorSection()));
@@ -63,7 +66,7 @@ void DirectoryView::save(QXmlStreamWriter &stream) const
 
 	QString name = QString::fromLatin1("Column");
 	stream.writeStartElement(QString::fromLatin1("Geometry"));
-	for (qint32 i = 0, size = model()->columnCount(); i < size; ++i)
+	for (qint32 i = 0, size = m_node->columnCount(); i < size; ++i)
 		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
 	stream.writeEndElement();
 }
@@ -107,31 +110,42 @@ void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
 	QModelIndex index;
 
-	m_parent->root()->view(filePath, &m_view, index);
+	m_parent->root()->view(filePath, this, index);
 
 	if (index.isValid())
 		selectIndex(index);
 	else
-		if ((index = model()->rootIndex()).isValid())
+		if ((index = m_node->rootIndex()).isValid())
 			selectIndex(index);
 
-	updateCurrentDirectory(model()->fileName(), model()->absoluteFilePath());
+	updateCurrentDirectory(m_node->fileName(), m_node->absoluteFilePath());
+}
+
+void DirectoryView::close()
+{
+
+}
+
+void DirectoryView::setNode(FileSystem::Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate)
+{
+    m_node = node;
+	m_view.setModel(model);
+	m_view.setItemDelegate(delegate);
 }
 
 void DirectoryView::goUp()
 {
-	FileSystem::Node *model = DirectoryView::model();
-	QModelIndex index = model->rootIndex();
+	QModelIndex index = m_node->rootIndex();
 
 	if (index.isValid())
 	{
-		FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins());
+		FileSystem::Node *node = m_node->subnode(index, m_parent->root()->plugins());
 
-		node->view(&m_view);
-		node->update();
+		node->view(this);
+		node->refresh();
 		updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
 
-		if ((index = model->parentEntryIndex()).isValid())
+		if ((index = m_node->parentEntryIndex()).isValid())
 			selectIndex(index);
 		else
 			if ((index = node->rootIndex()).isValid())
@@ -151,26 +165,25 @@ void DirectoryView::goForward()
 
 void DirectoryView::refresh()
 {
-	FileSystem::Node *model = DirectoryView::model();
-	model->refresh();
+	m_node->refresh();
 
-	if (model->exists())
-		model->update();
+	if (m_node->exists())
+		m_node->refresh();
 	else
 	{
-		FileSystem::Node *parent = model;
+		FileSystem::Node *parent = m_node;
 
 		do
 		{
-			parent = static_cast<FileSystem::Node*>(model->parent());
-			parent->remove(model);
+			parent = static_cast<FileSystem::Node*>(m_node->parent());
+//			parent->remove(model);
 			parent->refresh();
-			model = parent;
+//			model = parent;
 		}
-		while (!model->exists());
+		while (!m_node->exists());
 
-		model->view(&m_view);
-		updateCurrentDirectory(model->fileName(), model->absoluteFilePath());
+		m_node->view(this);
+		updateCurrentDirectory(m_node->fileName(), m_node->absoluteFilePath());
 	}
 }
 
@@ -179,22 +192,18 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-	{
-		FileSystem::Node *model = DirectoryView::model();
-
-		if (FileSystem::Node *node = model->subnode(index, m_parent->root()->plugins()))
+		if (FileSystem::Node *node = m_node->subnode(index, m_parent->root()->plugins()))
 		{
-			if (model->isRootIndex(index))
-				index = model->parentEntryIndex();
+			if (m_node->isRootIndex(index))
+				index = m_node->parentEntryIndex();
 			else
 				index = node->rootIndex();
 
-			node->view(&m_view);
-			node->update();
+			node->view(this);
+			node->refresh();
 			updateCurrentDirectory(node->fileName(), node->absoluteFilePath());
 			selectIndex(index);
 		}
-	}
 }
 
 void DirectoryView::pathToClipboard()
@@ -250,12 +259,12 @@ void DirectoryView::remove()
 
 void DirectoryView::calculateSize()
 {
-	model()->calculateSize(selectedIndexes());
+	m_node->calculateSize(selectedIndexes());
 }
 
 void DirectoryView::copy()
 {
-	model()->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->model());
+	m_node->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node);
 }
 
 void DirectoryView::move()
@@ -329,9 +338,9 @@ void DirectoryView::refreshOther()
 QList<qint32> DirectoryView::geometry() const
 {
 	QList<qint32> res;
-	res.reserve(model()->columnCount());
+	res.reserve(m_node->columnCount());
 
-	for (qint32 i = 0, size = model()->columnCount(); i < size; ++i)
+	for (qint32 i = 0, size = m_node->columnCount(); i < size; ++i)
 		res.push_back(m_view.columnWidth(i));
 
 	return res;
@@ -373,13 +382,13 @@ void DirectoryView::setupModel(FileSystem::RootNode *root, const Tab &tab)
 {
 	QModelIndex index;
 
-	root->view(tab.path, &m_view, index);
-	m_header.pathEdit.setText(model()->absoluteFilePath());
+	root->view(tab.path, this, index);
+	m_header.pathEdit.setText(m_node->absoluteFilePath());
 
 	if (index.isValid())
 		selectIndex(index);
 
-	for (qint32 i = 0, size = qMin(model()->columnCount(), tab.geometry.size()); i < size; ++i)
+	for (qint32 i = 0, size = qMin(m_node->columnCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
 
 	m_view.sortByColumn(tab.sort.column, tab.sort.order);
@@ -389,8 +398,8 @@ void DirectoryView::setupModel(FileSystem::RootNode *root, const QString &absolu
 {
 	QModelIndex index;
 
-	root->view(absoluteFilePath, &m_view, index);
-	m_header.pathEdit.setText(model()->absoluteFilePath());
+	root->view(absoluteFilePath, this, index);
+	m_header.pathEdit.setText(m_node->absoluteFilePath());
 
 	if (index.isValid())
 		selectIndex(index);
@@ -402,13 +411,13 @@ void DirectoryView::setupModel(FileSystem::RootNode *root, const QString &absolu
 {
 	QModelIndex index;
 
-	root->view(absoluteFilePath, &m_view, index);
-	m_header.pathEdit.setText(model()->absoluteFilePath());
+	root->view(absoluteFilePath, this, index);
+	m_header.pathEdit.setText(m_node->absoluteFilePath());
 
 	if (index.isValid())
 		selectIndex(index);
 
-	for (qint32 i = 0, size = qMin(model()->columnCount(), geometry.size()); i < size; ++i)
+	for (qint32 i = 0, size = qMin(m_node->columnCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
 
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);

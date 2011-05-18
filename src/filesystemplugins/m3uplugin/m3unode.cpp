@@ -110,31 +110,6 @@ QDateTime M3uNode::lastModified() const
 
 void M3uNode::refresh()
 {
-	return rootItem()->refresh();
-}
-
-void M3uNode::remove(const QModelIndexList &list)
-{
-
-}
-
-void M3uNode::calculateSize(const QModelIndexList &list)
-{
-
-}
-
-void M3uNode::copy(const QModelIndexList &list, Node *destination)
-{
-
-}
-
-void M3uNode::move(const QModelIndexList &list, Node *destination)
-{
-
-}
-
-void M3uNode::update()
-{
 	if (isUpdating())
 		return;
 	else
@@ -174,6 +149,26 @@ void M3uNode::update()
 	}
 }
 
+void M3uNode::remove(const QModelIndexList &list)
+{
+
+}
+
+void M3uNode::calculateSize(const QModelIndexList &list)
+{
+
+}
+
+void M3uNode::copy(const QModelIndexList &list, Node *destination)
+{
+
+}
+
+void M3uNode::move(const QModelIndexList &list, Node *destination)
+{
+
+}
+
 FileSystem::Node *M3uNode::subnode(const QModelIndex &idx, FileSystem::PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
@@ -184,13 +179,14 @@ FileSystem::Node *M3uNode::subnode(const QModelIndex &idx, FileSystem::PluginsMa
 		return 0;
 }
 
-void M3uNode::remove(Node *subnode)
-{}
-
-void M3uNode::view(QAbstractItemView *itemView)
+FileSystem::Node *M3uNode::subnode(const QString &fileName, FileSystem::PluginsManager *plugins)
 {
-	itemView->setModel(&m_proxy);
-	itemView->setItemDelegate(&m_delegate);
+	return 0;
+}
+
+void M3uNode::view(FileSystem::INodeView *nodeView)
+{
+	nodeView->setNode(this, &m_proxy, &m_delegate);
 }
 
 QModelIndex M3uNode::indexFor(const QString &fileName)
@@ -207,9 +203,3 @@ bool M3uNode::isRootIndex(const QModelIndex &index) const
 {
 	return static_cast<M3uItem*>(m_proxy.mapToSource(index).internalPointer())->isRoot();
 }
-
-FileSystem::Node *M3uNode::node(const QString &fileName, FileSystem::PluginsManager *plugins)
-{
-	return 0;
-}
-

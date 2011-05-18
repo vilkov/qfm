@@ -1,9 +1,6 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
-#include <QtCore/QMap>
-#include "filesystem_ns.h"
-#include "filesystempluginsmanager.h"
 #include "folder/filesystemfoldernode.h"
 
 
@@ -17,7 +14,7 @@ public:
 	RootNode(PluginsManager *plugins);
 
 	PluginsManager *plugins() const { return m_plugins; }
-	void view(const QString &absoluteFilePath, QAbstractItemView *itemView, QModelIndex &index);
+	void view(const QString &absoluteFilePath, INodeView *nodeView, QModelIndex &index);
 
 protected:
 	virtual bool isRoot() const { return true; }

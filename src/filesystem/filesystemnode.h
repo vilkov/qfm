@@ -2,8 +2,8 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QAbstractItemModel>
-#include <QtGui/QAbstractItemView>
 #include "filesystem_ns.h"
+#include "interfaces/filesysteminodeview.h"
 #include "interfaces/filesystemifileinfo.h"
 #include "interfaces/filesystemifileoperations.h"
 
@@ -20,10 +20,10 @@ public:
 		QAbstractItemModel(parent)
 	{}
 
-	virtual void update() = 0;
+	virtual bool isRootNode() const = 0;
 	virtual Node *subnode(const QModelIndex &idx, PluginsManager *plugins) = 0;
-	virtual void remove(Node *subnode) = 0;
-	virtual void view(QAbstractItemView *itemView) = 0;
+	virtual Node *subnode(const QString &fileName, PluginsManager *plugins) = 0;
+	virtual void view(INodeView *nodeView) = 0;
 	virtual QModelIndex indexFor(const QString &fileName) = 0;
 
 	virtual QModelIndex parentEntryIndex() const = 0;
@@ -31,11 +31,6 @@ public:
 
 	virtual QModelIndex rootIndex() const = 0;
 	virtual bool isRootIndex(const QModelIndex &index) const = 0;
-
-protected:
-	friend class RootNode;
-	virtual bool isRootNode() const = 0;
-	virtual Node *node(const QString &fileName, PluginsManager *plugins) = 0;
 };
 
 FILE_SYSTEM_NS_END

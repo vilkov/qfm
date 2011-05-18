@@ -45,10 +45,10 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
-	virtual void update();
+	virtual bool isRootNode() const { return false; }
 	virtual Node *subnode(const QModelIndex &idx, FileSystem::PluginsManager *plugins);
-	virtual void remove(Node *subnode);
-	virtual void view(QAbstractItemView *itemView);
+	virtual Node *subnode(const QString &fileName, FileSystem::PluginsManager *plugins);
+	virtual void view(FileSystem::INodeView *nodeView);
 	virtual QModelIndex indexFor(const QString &fileName);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
@@ -56,10 +56,6 @@ public:
 
 	virtual QModelIndex rootIndex() const;
 	virtual bool isRootIndex(const QModelIndex &index) const;
-
-protected:
-	virtual bool isRootNode() const { return false; }
-	virtual Node *node(const QString &fileName, FileSystem::PluginsManager *plugins);
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }

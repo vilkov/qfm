@@ -12,13 +12,13 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
-	Node(parent),
+	FolderNodeBase(parent),
 	m_updating(false),
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {
 	if (!info.isRoot())
-		m_items.add(new FolderNodeRoot(info));
+		items().add(new FolderNodeRoot(info));
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
@@ -112,7 +112,7 @@ int FolderNode::rowCount(const QModelIndex &parent) const
 	if (parent.isValid())
         return 0;
 	else
-    	return m_items.size();
+    	return items().size();
 }
 
 int FolderNode::columnCount(const QModelIndex &parent) const
@@ -125,7 +125,7 @@ QVariant FolderNode::data(const QModelIndex &index, int role) const
     if (index.isValid())
     	return static_cast<FolderNodeItem*>(index.internalPointer())->data(index.column(), role);
     else
-    	return m_items.at(index.row()).item->data(index.column(), role);
+    	return items().at(index.row()).item->data(index.column(), role);
 }
 
 Qt::ItemFlags FolderNode::flags(const QModelIndex &index) const
@@ -164,7 +164,7 @@ QVariant FolderNode::headerData(int section, Qt::Orientation orientation, int ro
 QModelIndex FolderNode::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
-		return createIndex(row, column, m_items.at(row).item);
+		return createIndex(row, column, items().at(row).item);
     else
         return QModelIndex();
 }
@@ -236,6 +236,9 @@ IFileInfo *FolderNode::create(const QString &fileName, FileType type, QString &e
 
 void FolderNode::refresh()
 {
+	if (!isUpdating())
+		updateFiles();
+
 	if (!isRootNode())
 		rootItem()->refresh();
 }
@@ -260,12 +263,6 @@ void FolderNode::move(const QModelIndexList &list, Node *destination)
 	processIndexList(list, Functors::callTo(this, &FolderNode::moveFunctor, destination));
 }
 
-void FolderNode::update()
-{
-	if (!isUpdating())
-		updateFiles();
-}
-
 Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
@@ -280,8 +277,8 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 
 			if (entry->exists())
 			{
-				Q_ASSERT(m_items.indexOf(entry) != Values::InvalidIndex);
-				Values::Value &value = m_items[m_items.indexOf(entry)];
+				Q_ASSERT(items().indexOf(entry) != Values::InvalidIndex);
+				Values::Value &value = items()[items().indexOf(entry)];
 
 				if (value.node != 0)
 					value.node->setParentEntryIndex(idx);
@@ -292,31 +289,46 @@ Node *FolderNode::subnode(const QModelIndex &idx, PluginsManager *plugins)
 				return value.node;
 			}
 			else
-			{
-				Values::size_type index = m_items.indexOf(entry);
-				beginRemoveRows(QModelIndex(), index, index);
-				m_items.remove(index);
-				endRemoveRows();
-			}
+				removeEntry(index);
 		}
 
 	return 0;
 }
 
-void FolderNode::remove(Node *subnode)
-{
+//void FolderNode::remove(Node *subnode)
+//{
+//
+//}
 
+Node *FolderNode::subnode(const QString &fileName, PluginsManager *plugins)
+{
+	Values::size_type index = items().indexOf(fileName);
+
+	if (index == Values::InvalidIndex)
+	{
+		Node *res;
+		items().add(createNode(fileName, plugins, res));
+		return res;
+	}
+	else
+	{
+		Values::Value &value = items()[index];
+
+		if (value.node)
+			return value.node;
+		else
+			return value.node = createNode(*value.item, plugins);
+	}
 }
 
-void FolderNode::view(QAbstractItemView *itemView)
+void FolderNode::view(INodeView *nodeView)
 {
-	itemView->setModel(&m_proxy);
-	itemView->setItemDelegate(&m_delegate);
+	nodeView->setNode(this, &m_proxy, &m_delegate);
 }
 
 QModelIndex FolderNode::indexFor(const QString &fileName)
 {
-	Values::size_type index = m_items.indexOf(fileName);
+	Values::size_type index = items().indexOf(fileName);
 
 	if (index == Values::InvalidIndex)
 	{
@@ -324,12 +336,12 @@ QModelIndex FolderNode::indexFor(const QString &fileName)
 
 		if (info.exists())
 		{
-			m_items.add(new FolderNodeEntry(info));
-			return m_proxy.mapFromSource(createIndex(m_items.size() - 1, 0, m_items.last().item));
+			items().add(new FolderNodeEntry(info));
+			return m_proxy.mapFromSource(createIndex(items().size() - 1, 0, items().last().item));
 		}
 	}
 	else
-		return m_proxy.mapFromSource(createIndex(index, 0, m_items.at(index).item));
+		return m_proxy.mapFromSource(createIndex(index, 0, items().at(index).item));
 
 	return QModelIndex();
 }
@@ -348,27 +360,6 @@ bool FolderNode::isRootIndex(const QModelIndex &index) const
 		return false;
 	else
 		return static_cast<FolderNodeItem*>(m_proxy.mapToSource(index).internalPointer())->isRootItem();
-}
-
-Node *FolderNode::node(const QString &fileName, PluginsManager *plugins)
-{
-	Values::size_type index = m_items.indexOf(fileName);
-
-	if (index == Values::InvalidIndex)
-	{
-		Node *res;
-		m_items.add(createNode(fileName, plugins, res));
-		return res;
-	}
-	else
-	{
-		Values::Value &value = m_items[index];
-
-		if (value.node)
-			return value.node;
-		else
-			return value.node = createNode(*value.item, plugins);
-	}
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, const Functors::Functor &functor)
@@ -459,7 +450,7 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 		if (list.at(i).type() == Change::Updated)
 		{
 			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(list.at(i).entry());
-			Values::size_type index = m_items.indexOf(entry);
+			Values::size_type index = items().indexOf(entry);
 			(*entry) = list.at(i).info();
 			updateRange.add(index, index);
 			list.removeAt(i);
@@ -467,7 +458,7 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 		else
 			if (list.at(i).type() == Change::Deleted)
 			{
-				removeEntry(m_items.indexOf(list.at(i).entry()));
+				removeEntry(items().indexOf(list.at(i).entry()));
 				list.removeAt(i);
 			}
 			else
@@ -479,9 +470,9 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 
 	if (!list.isEmpty())
 	{
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
+		beginInsertRows(QModelIndex(), items().size(), items().size() + list.size() - 1);
 		for (ChangesList::size_type i = 0, size = list.size(); i < size; ++i)
-			m_items.add(new FolderNodeEntry(list.at(i).info()));
+			items().add(new FolderNodeEntry(list.at(i).info()));
 		endInsertRows();
 	}
 
@@ -552,11 +543,11 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 {
 	typedef const ScanFilesForSizeTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	Values::size_type index = m_items.indexOf(params->snapshot.entry);
+	Values::size_type index = items().indexOf(params->snapshot.entry);
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+		items()[index].node = params->subnode;
 		params->snapshot.entry->setTotalSize(params->size);
 		params->snapshot.entry->unlock();
 		updateBothColumns(params->snapshot.entry);
@@ -627,11 +618,11 @@ void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 {
 	typedef const ScanFilesForCopyTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	Values::size_type index = m_items.indexOf(params->snapshot.entry);
+	Values::size_type index = items().indexOf(params->snapshot.entry);
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+		items()[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Copying..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
@@ -645,11 +636,11 @@ void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
 {
 	typedef const ScanFilesForMoveTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	Values::size_type index = m_items.indexOf(params->snapshot.entry);
+	Values::size_type index = items().indexOf(params->snapshot.entry);
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+		items()[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Moving..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
@@ -685,17 +676,17 @@ ChangesList FolderNode::makeChangeSet() const
 
 	if (isRootNode())
 	{
-		list.reserve(m_items.size());
+		list.reserve(items().size());
 
-		for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
+		for (Values::size_type i = 0, size = items().size(); i < size; ++i)
+			list.push_back(Change(Change::NoChange, items().at(i).item));
 	}
 	else
 	{
-		list.reserve(m_items.size() - 1);
+		list.reserve(items().size() - 1);
 
-		for (Values::size_type i = 1, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
+		for (Values::size_type i = 1, size = items().size(); i < size; ++i)
+			list.push_back(Change(Change::NoChange, items().at(i).item));
 	}
 
 	return list;
@@ -703,7 +694,7 @@ ChangesList FolderNode::makeChangeSet() const
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const
 {
-	int index = m_items.indexOf(item);
+	int index = items().indexOf(item);
 
 	if (index != -1)
 		return createIndex(index, column, item);
@@ -738,19 +729,19 @@ Info FolderNode::fileInfo(const QString &fileName) const
 
 void FolderNode::updateFirstColumn(FolderNodeItem *entry)
 {
-	QModelIndex index = createIndex(m_items.indexOf(entry), 0, entry);
+	QModelIndex index = createIndex(items().indexOf(entry), 0, entry);
 	emit dataChanged(index, index);
 }
 
 void FolderNode::updateSecondColumn(FolderNodeItem *entry)
 {
-	QModelIndex index = createIndex(m_items.indexOf(entry), 1, entry);
+	QModelIndex index = createIndex(items().indexOf(entry), 1, entry);
 	emit dataChanged(index, index);
 }
 
 void FolderNode::updateBothColumns(FolderNodeItem *entry)
 {
-	Values::size_type index = m_items.indexOf(entry);
+	Values::size_type index = items().indexOf(entry);
 	emit dataChanged(createIndex(index, 0, entry), createIndex(index, 1, entry));
 }
 

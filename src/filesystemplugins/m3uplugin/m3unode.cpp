@@ -169,29 +169,19 @@ void M3uNode::move(const QModelIndexList &list, Node *destination)
 
 }
 
-FileSystem::Node *M3uNode::subnode(const QModelIndex &idx, FileSystem::PluginsManager *plugins)
-{
-	QModelIndex index = m_proxy.mapToSource(idx);
-
-	if (static_cast<M3uItem*>(index.internalPointer())->isRoot())
-		return static_cast<Node*>(Node::parent());
-	else
-		return 0;
-}
-
-FileSystem::Node *M3uNode::subnode(const QString &fileName, FileSystem::PluginsManager *plugins)
-{
-	return 0;
-}
-
-void M3uNode::view(FileSystem::INodeView *nodeView)
+void M3uNode::view(FileSystem::INodeView *nodeView, const QModelIndex &selected)
 {
 	nodeView->setNode(this, &m_proxy, &m_delegate);
 }
 
-QModelIndex M3uNode::indexFor(const QString &fileName)
+void M3uNode::view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins)
 {
-	return QModelIndex();
+
+}
+
+void M3uNode::view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins)
+{
+
 }
 
 QModelIndex M3uNode::rootIndex() const

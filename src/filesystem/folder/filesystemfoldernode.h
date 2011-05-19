@@ -52,8 +52,8 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
-	virtual bool isRootNode() const { return items().size() == 0 || !rootItem()->isRootItem(); }
-	virtual void view(INodeView *nodeView);
+	virtual bool isRootNode() const { return m_info.isRoot(); }
+	virtual void view(INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual QModelIndex indexFor(const QString &fileName);
@@ -126,6 +126,7 @@ private:
 
 private:
 	bool m_updating;
+	Info m_info;
 	SetView m_view;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;

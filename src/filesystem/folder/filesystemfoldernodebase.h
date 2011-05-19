@@ -109,8 +109,6 @@ protected:
 	const Values &items() const { return m_items; }
 	Values &items() { return m_items; }
 
-	FolderNodeItem *rootItem() const { return m_items.at(0).item; }
-
 private:
 	Values m_items;
 };

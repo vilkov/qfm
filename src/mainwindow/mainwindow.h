@@ -19,6 +19,7 @@ public:
     MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
+    PluginsManager *plugins() { return &m_plugins; }
 	bool switchToOtherPanel(QObject *receiver);
 
 protected:
@@ -54,7 +55,7 @@ private Q_SLOTS:
     void actToolsMenuPreferences();
 
 private:
-    PluginsManager m_manager;
+    PluginsManager m_plugins;
     FileSystem::RootNode m_root;
 
     QWidget m_centralWidget;

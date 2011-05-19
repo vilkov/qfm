@@ -46,10 +46,9 @@ public:
 
 	/* Node */
 	virtual bool isRootNode() const { return false; }
-	virtual Node *subnode(const QModelIndex &idx, FileSystem::PluginsManager *plugins);
-	virtual Node *subnode(const QString &fileName, FileSystem::PluginsManager *plugins);
-	virtual void view(FileSystem::INodeView *nodeView);
-	virtual QModelIndex indexFor(const QString &fileName);
+	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &selected);
+	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);
+	virtual void view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }

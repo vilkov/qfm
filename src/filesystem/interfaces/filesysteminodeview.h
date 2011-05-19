@@ -17,6 +17,7 @@ public:
 	virtual ~INodeView() {}
 
 	virtual void close() = 0;
+	virtual void select(const QModelIndex &index) = 0;
 	virtual void setNode(Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0) = 0;
 };
 

@@ -8,7 +8,7 @@
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "directoryview.h"
-#include "../../filesystem/filesystemrootnode.h"
+#include "../../filesystem/filesystemnode.h"
 
 
 class FoldersView : public QWidget
@@ -30,7 +30,7 @@ public:
     typedef QList<Tab> TabList;
 
 public:
-    FoldersView(FileSystem::RootNode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
+    FoldersView(FileSystem::Node *root, const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
     void updateTitle(const QString &fileName);
@@ -41,7 +41,6 @@ public:
 
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
-	FileSystem::RootNode *root() const { return m_root; }
 	void saveTabs(QXmlStreamWriter &stream) const;
 	static TabList loadTabs(QXmlStreamReader &stream);
 
@@ -55,7 +54,6 @@ private:
 	void doRefresh(QWidget *tab);
 
 private:
-	FileSystem::RootNode *m_root;
 	bool m_doNotRefreshTab;
     QVBoxLayout m_layout;
     QTabWidget m_tabWidget;

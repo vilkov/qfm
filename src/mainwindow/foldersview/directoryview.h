@@ -42,9 +42,9 @@ public:
     };
 
 public:
-    DirectoryView(FileSystem::RootNode *root, const Tab &tab, FoldersView *parent);
-    DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, FoldersView *parent);
-    DirectoryView(FileSystem::RootNode *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(FileSystem::Node *root, const Tab &tab, FoldersView *parent);
+    DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, FoldersView *parent);
+    DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
 
 	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;
@@ -55,6 +55,7 @@ public:
 
 	/* INodeView */
 	virtual void close();
+	virtual void select(const QModelIndex &index);
 	virtual void setNode(FileSystem::Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
 public Q_SLOTS:
@@ -86,9 +87,9 @@ private:
 
 private:
 	void initialize();
-	void setupModel(FileSystem::RootNode *root, const Tab &tab);
-	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath);
-	void setupModel(FileSystem::RootNode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
+	void setupModel(FileSystem::Node *root, const Tab &tab);
+	void setupModel(FileSystem::Node *root, const QString &absoluteFilePath);
+	void setupModel(FileSystem::Node *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 

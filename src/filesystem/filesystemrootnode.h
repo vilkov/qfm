@@ -14,7 +14,7 @@ public:
 	RootNode(PluginsManager *plugins);
 
 	PluginsManager *plugins() const { return m_plugins; }
-	void view(const QString &absoluteFilePath, INodeView *nodeView, QModelIndex &index);
+//	void view(const QString &absoluteFilePath, INodeView *nodeView, QModelIndex &index);
 
 protected:
 	virtual bool isRoot() const { return true; }

@@ -47,10 +47,16 @@ public:
 public:
 	Path(const QString &path) :
 		m_path(path.split(QChar('/'), QString::SkipEmptyParts))
-	{}
+	{
+		/* TODO: This is Qt bug! */
+#ifdef Q_OS_WIN
+		if (isValid())
+			m_path[0].append(QChar('/'));
+#endif
+	}
 
 	bool isValid() const { return !m_path.isEmpty(); }
-	Iterator start() { return Iterator(m_path); }
+	Iterator begin() { return Iterator(m_path); }
 
 private:
 	QStringList m_path;

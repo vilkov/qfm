@@ -7,6 +7,7 @@
 #include "../filesystempluginsmanager.h"
 #include "../../tools/rangeintersection.h"
 #include "../../application.h"
+#include <iostream>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -320,18 +321,22 @@ void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManage
 void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
 	Node *node;
+	Values::Value *value;
 	Values::size_type index = items().indexOf(*path);
 
-	if (index == Values::InvalidIndex || items()[index].item->isRootItem())
+	if (index == Values::InvalidIndex)
+	{
 		items().add(createNode(*path, plugins, node));
+		value = &items().last();
+	}
 	else
 	{
-		Values::Value &value = items()[index];
+		value = &items()[index];
 
-		if (value.node)
-			node = value.node;
+		if (value->node)
+			node = value->node;
 		else
-			value.node = node = createNode(*value.item, plugins);
+			value->node = node = createNode(*(value->item), plugins);
 	}
 
 	if (node)
@@ -343,27 +348,21 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 		else
 			node->view(nodeView, path, plugins);
 	}
+	else
+		if (value->item->isFile())
+			view(nodeView, indexForFile(value->item));
 }
 
-//QModelIndex FolderNode::indexFor(const QString &fileName)
-//{
-//	Values::size_type index = items().indexOf(fileName);
-//
-//	if (index == Values::InvalidIndex)
-//	{
-//		Info info(absoluteFilePath(fileName));
-//
-//		if (info.exists())
-//		{
-//			items().add(new FolderNodeEntry(info));
-//			return m_proxy.mapFromSource(createIndex(items().size() - 1, 0, items().last().item));
-//		}
-//	}
-//	else
-//		return m_proxy.mapFromSource(createIndex(index, 0, items().at(index).item));
-//
-//	return QModelIndex();
-//}
+void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
+{
+	Node *node = this;
+	removeView(nodeView);
+
+	while (node->parent())
+		node = static_cast<Node*>(node->parent());
+
+	node->view(nodeView, Path(absoluteFilePath).begin(), plugins);
+}
 
 QModelIndex FolderNode::rootIndex() const
 {
@@ -729,13 +728,23 @@ Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 		if (info.isDir())
 			return new FolderNode(info, (FolderNode*)this);
 		else
-			return 0;
+			if (info.isFile())
+				return 0;
+
+	return 0;
 }
 
 FolderNode::Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
 {
 	Info info(absoluteFilePath(fileName));
 	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
+}
+
+QModelIndex FolderNode::indexForFile(FolderNodeItem *item)
+{
+	Q_ASSERT(items().indexOf(item) != Values::InvalidIndex);
+	Values::size_type index = items().indexOf(item);
+	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }
 
 void FolderNode::updateFirstColumn(FolderNodeItem *entry)

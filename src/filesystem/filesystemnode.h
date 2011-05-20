@@ -25,6 +25,7 @@ public:
 	virtual void view(INodeView *nodeView, const QModelIndex &selected) = 0;
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins) = 0;
+	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins) = 0;
 
 	virtual QModelIndex parentEntryIndex() const = 0;
 	virtual void setParentEntryIndex(const QModelIndex &value) = 0;

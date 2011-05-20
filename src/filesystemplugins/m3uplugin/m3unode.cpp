@@ -189,6 +189,11 @@ void M3uNode::view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iter
 
 }
 
+void M3uNode::view(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins)
+{
+
+}
+
 QModelIndex M3uNode::rootIndex() const
 {
 	return m_proxy.mapFromSource(createIndex(0, 0, rootItem()));

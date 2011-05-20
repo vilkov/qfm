@@ -70,6 +70,7 @@ protected:
 		const Value &operator[](size_type index) const { return m_list[index]; }
 		const Value &at(size_type index) const { return m_list.at(index); }
 		const Value &last() const { return m_list.last(); }
+		Value &last() { return m_list.last(); }
 
 		size_type size() const { return m_list.size(); }
 		size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }

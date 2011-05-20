@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMPATH_H_
 #define FILESYSTEMPATH_H_
 
+#include <QtCore/QDir>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include "filesystem_ns.h"
@@ -34,19 +35,26 @@ public:
 		bool atEnd() const { return m_pos == m_list.size(); }
 
 	private:
-		Iterator(QStringList &list) :
+		Iterator(Path &path, QStringList &list) :
+			m_path(path),
 			m_pos(0),
 			m_list(list)
 		{}
 
 	private:
+		Path &m_path;
 		mutable qint32 m_pos;
 		QStringList &m_list;
 	};
 
 public:
 	Path(const QString &path) :
-		m_path(path.split(QChar('/'), QString::SkipEmptyParts))
+#ifdef Q_OS_WIN
+		m_isAbsolute(path.size() >= 2 && path.at(1) == QChar(':')),
+#else
+		m_isAbsolute(path.startsWith(QChar('/'))),
+#endif
+		m_path(QDir::fromNativeSeparators(path).split(QChar('/'), QString::SkipEmptyParts))
 	{
 		/* TODO: This is Qt bug! */
 #ifdef Q_OS_WIN
@@ -56,9 +64,11 @@ public:
 	}
 
 	bool isValid() const { return !m_path.isEmpty(); }
-	Iterator begin() { return Iterator(m_path); }
+	bool isAbsolute() const { return m_isAbsolute; }
+	Iterator begin() { return Iterator(*this, m_path); }
 
 private:
+	bool m_isAbsolute;
 	QStringList m_path;
 };
 

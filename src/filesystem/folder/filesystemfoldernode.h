@@ -57,7 +57,7 @@ public:
 	virtual void view(INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-//	virtual QModelIndex indexFor(const QString &fileName);
+	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
@@ -109,6 +109,7 @@ private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
+	QModelIndex indexForFile(FolderNodeItem *item);
 
 	void updateFirstColumn(FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);

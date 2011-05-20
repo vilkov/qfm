@@ -109,7 +109,7 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	m_node->view(this, FileSystem::Path(filePath).begin(), Application::instance()->mainWindow().plugins());
+	m_node->view(this, filePath, Application::instance()->mainWindow().plugins());
 }
 
 void DirectoryView::select(const QModelIndex &index)
@@ -388,8 +388,7 @@ DirectoryView::Header::Header(PathEventHandler *eventHandler, QWidget *parent) :
 void DirectoryView::actHeaderPathAccept()
 {
 	m_header.pathEditFlag = true;
-	setCurrentDirectory(m_header.pathEdit.text());
-	setFocus();
+	setCurrentDirectory(m_header.pathEdit.text().trimmed());
 }
 
 void DirectoryView::actHeaderPathReject()

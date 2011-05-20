@@ -19,7 +19,7 @@ FolderNode::FolderNode(const Info &info, Node *parent) :
 	m_delegate(&m_proxy)
 {
 	if (!m_info.isRoot())
-		items().add(new FolderNodeRoot(m_info));
+		items().add(new FolderNodeRoot());
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
@@ -187,6 +187,7 @@ bool FolderNode::isFile() const
 
 bool FolderNode::exists() const
 {
+	((FolderNode*)this)->m_info.refresh();
 	return m_info.exists();
 }
 
@@ -203,6 +204,11 @@ QString FolderNode::absolutePath() const
 QString FolderNode::absoluteFilePath() const
 {
 	return m_info.absoluteFilePath();
+}
+
+QString FolderNode::absoluteFilePath(const QString &fileName) const
+{
+	return m_info.absoluteFilePath(fileName);
 }
 
 QDateTime FolderNode::lastModified() const
@@ -228,10 +234,7 @@ void FolderNode::refresh()
 	if (isRootNode())
 		updateFiles();
 	else
-	{
-		m_info.refresh();
-
-		if (m_info.exists())
+		if (exists())
 			updateFiles();
 		else
 		{
@@ -240,12 +243,8 @@ void FolderNode::refresh()
 			while (!node->exists())
 				node = static_cast<Node*>(node->Node::parent());
 
-			for (SetView::const_iterator it = m_view.constBegin(), end = m_view.constEnd(); it != end; ++it)
-				node->view(*it, QModelIndex());
-
-			node->refresh();
+			switchTo(node);
 		}
-	}
 }
 
 void FolderNode::remove(const QModelIndexList &list)
@@ -323,7 +322,7 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 	Node *node;
 	Values::size_type index = items().indexOf(*path);
 
-	if (index == Values::InvalidIndex)
+	if (index == Values::InvalidIndex || items()[index].item->isRootItem())
 		items().add(createNode(*path, plugins, node));
 	else
 	{
@@ -346,25 +345,25 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 	}
 }
 
-QModelIndex FolderNode::indexFor(const QString &fileName)
-{
-	Values::size_type index = items().indexOf(fileName);
-
-	if (index == Values::InvalidIndex)
-	{
-		Info info = fileInfo(fileName);
-
-		if (info.exists())
-		{
-			items().add(new FolderNodeEntry(info));
-			return m_proxy.mapFromSource(createIndex(items().size() - 1, 0, items().last().item));
-		}
-	}
-	else
-		return m_proxy.mapFromSource(createIndex(index, 0, items().at(index).item));
-
-	return QModelIndex();
-}
+//QModelIndex FolderNode::indexFor(const QString &fileName)
+//{
+//	Values::size_type index = items().indexOf(fileName);
+//
+//	if (index == Values::InvalidIndex)
+//	{
+//		Info info(absoluteFilePath(fileName));
+//
+//		if (info.exists())
+//		{
+//			items().add(new FolderNodeEntry(info));
+//			return m_proxy.mapFromSource(createIndex(items().size() - 1, 0, items().last().item));
+//		}
+//	}
+//	else
+//		return m_proxy.mapFromSource(createIndex(index, 0, items().at(index).item));
+//
+//	return QModelIndex();
+//}
 
 QModelIndex FolderNode::rootIndex() const
 {
@@ -735,21 +734,8 @@ Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 
 FolderNode::Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
 {
-	Info info = fileInfo(fileName);
+	Info info(absoluteFilePath(fileName));
 	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
-}
-
-Info FolderNode::fileInfo(const QString &fileName) const
-{
-#ifdef Q_OS_WIN
-	QString str = m_info.absoluteFilePath();
-	return Info(str.isEmpty() ? fileName : str.append(QChar('/')).append(fileName));
-#else
-	return Info(
-			isRootNode() ?
-				m_info.absoluteFilePath().append(fileName) :
-				m_info.absoluteFilePath().append(QChar('/')).append(fileName));
-#endif
 }
 
 void FolderNode::updateFirstColumn(FolderNodeItem *entry)
@@ -772,23 +758,26 @@ void FolderNode::updateBothColumns(FolderNodeItem *entry)
 
 void FolderNode::removeEntry(Values::size_type index)
 {
-
+	beginRemoveRows(QModelIndex(), index, index);
+	items().remove(index);
+	endRemoveRows();
 }
 
 void FolderNode::removeEntry(const QModelIndex &index)
 {
-
+	beginRemoveRows(QModelIndex(), index.row(), index.row());
+	items().remove(index.row());
+	endRemoveRows();
 }
 
-void FolderNode::refresh(FolderNodeItem *fileSystemTree)
+void FolderNode::switchTo(Node *node)
 {
+	QModelIndex index;
 
-}
+	for (SetView::const_iterator it = m_view.constBegin(), end = m_view.constEnd(); it != end; ++it)
+		node->view(*it, index);
 
-void FolderNode::doRefresh()
-{
-	if (!isUpdating())
-		updateFiles();
+	node->refresh();
 }
 
 void FolderNode::addView(INodeView *view)

@@ -44,6 +44,28 @@ Info::Info(const QFileInfo &info, uint userId, uint groupId) :
 }
 #endif
 
+QString Info::absoluteFilePath(const QString &fileName) const
+{
+#ifdef Q_OS_WIN
+	QString str = m_info.isDir() ? absoluteFilePath() : absolutePath();
+
+	if (str.isEmpty())
+		return fileName;
+	else
+		if (str.endsWith(QChar('/')))
+			return str.append(fileName);
+		else
+			return str.append(QChar('/')).append(fileName);
+#else
+	QString str = m_info.isDir() ? absoluteFilePath() : absolutePath();
+
+	if (str.isEmpty())
+		return fileName;
+	else
+		return str.append(QChar('/')).append(fileName);
+#endif
+}
+
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;

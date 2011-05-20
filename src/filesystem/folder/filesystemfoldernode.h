@@ -38,6 +38,7 @@ public:
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
+	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
@@ -56,7 +57,7 @@ public:
 	virtual void view(INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual QModelIndex indexFor(const QString &fileName);
+//	virtual QModelIndex indexFor(const QString &fileName);
 
 	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
@@ -108,16 +109,14 @@ private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
-	Info fileInfo(const QString &fileName) const;
 
 	void updateFirstColumn(FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);
 	void updateBothColumns(FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
-	void refresh(FolderNodeItem *fileSystemTree);
-	void doRefresh();
 
+	void switchTo(Node *node);
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
 

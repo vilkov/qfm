@@ -103,6 +103,11 @@ QString M3uNode::absoluteFilePath() const
 	return rootItem()->absoluteFilePath();
 }
 
+QString M3uNode::absoluteFilePath(const QString &fileName) const
+{
+	return rootItem()->absoluteFilePath(fileName);
+}
+
 QDateTime M3uNode::lastModified() const
 {
 	return rootItem()->lastModified();

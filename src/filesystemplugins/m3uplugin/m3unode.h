@@ -31,6 +31,7 @@ public:
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
+	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 
 	virtual FileSystem::IFile *open(FileSystem::IFile::OpenMode mode, QString &error) const { return 0; }

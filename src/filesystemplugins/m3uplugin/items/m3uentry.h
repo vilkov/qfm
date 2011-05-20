@@ -25,6 +25,7 @@ public:
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
+	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
 	virtual QDateTime lastModified() const { m_info.lastModified(); }
 
 	virtual FileSystem::IFile *open(FileSystem::IFile::OpenMode mode, QString &error) const { return 0; }

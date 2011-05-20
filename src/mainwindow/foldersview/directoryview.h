@@ -54,7 +54,6 @@ public:
 	void setCurrentDirectory(const QString &filePath);
 
 	/* INodeView */
-	virtual void close();
 	virtual void select(const QModelIndex &index);
 	virtual void setNode(FileSystem::Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
@@ -76,8 +75,6 @@ private:
 	void openInNewTab();
 	void closeTab();
     void editPath();
-	void selectIndex(const QModelIndex &index);
-    void updateCurrentDirectory(const QString &fileName, const QString &absoluteFilePath);
     void contextMenu();
 
 private:

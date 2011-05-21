@@ -44,9 +44,6 @@ public:
 	void saveTabs(QXmlStreamWriter &stream) const;
 	static TabList loadTabs(QXmlStreamReader &stream);
 
-protected:
-	QString rootPath() const;
-
 private Q_SLOTS:
 	void refreshTab(int index);
 

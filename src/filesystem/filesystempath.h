@@ -51,15 +51,18 @@ public:
 	Path(const QString &path) :
 #ifdef Q_OS_WIN
 		m_isAbsolute(path.size() >= 2 && path.at(1) == QChar(':')),
+		m_path(QDir::fromNativeSeparators(path).split(QChar('/'), QString::SkipEmptyParts))
 #else
 		m_isAbsolute(path.startsWith(QChar('/'))),
+		m_path(path.split(QChar('/'), QString::SkipEmptyParts))
 #endif
-		m_path(QDir::fromNativeSeparators(path).split(QChar('/'), QString::SkipEmptyParts))
 	{
-		/* TODO: This is Qt bug! */
 #ifdef Q_OS_WIN
 		if (isValid())
-			m_path[0].append(QChar('/'));
+			m_path[0].append(QChar('/')); /* TODO: This is Qt bug! */
+#else
+		if (path.startsWith(QChar('/')))
+			m_path.push_front(QString::fromLatin1("/"));
 #endif
 	}
 

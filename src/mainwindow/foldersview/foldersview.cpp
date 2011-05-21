@@ -20,7 +20,7 @@ FoldersView::FoldersView(FileSystem::Node *root, const TabList &tabs, FoldersVie
 	if (tabs.isEmpty())
 	{
 		DirectoryView *widget;
-		m_tabWidget.addTab(widget = new DirectoryView(root, rootPath(), this), QString());
+		m_tabWidget.addTab(widget = new DirectoryView(root, this), QString());
 		updateTitle(widget->currentDirectoryName());
 		static_cast<DirectoryView*>(widget)->refresh();
 	}
@@ -61,7 +61,7 @@ void FoldersView::updateTitle(const QString &fileName)
 void FoldersView::updateTitle(qint32 index, const QString &fileName)
 {
 	if (fileName.isEmpty())
-		m_tabWidget.setTabText(index, rootPath());
+		m_tabWidget.setTabText(index, DirectoryView::rootPath());
 	else
 		m_tabWidget.setTabText(index, fileName);
 }
@@ -122,15 +122,6 @@ FoldersView::TabList FoldersView::loadTabs(QXmlStreamReader &stream)
 		res[activeTab].isActive = true;
 
 	return res;
-}
-
-QString FoldersView::rootPath() const
-{
-#ifdef Q_OS_WIN
-	return QString::fromLatin1("C:\\");
-#else
-	return QString::fromLatin1("/");
-#endif
 }
 
 void FoldersView::refreshTab(int index)

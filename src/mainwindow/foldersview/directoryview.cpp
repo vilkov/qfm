@@ -6,6 +6,21 @@
 #include <QtGui/QMessageBox>
 
 
+DirectoryView::DirectoryView(FileSystem::Node *root, FoldersView *parent) :
+	QWidget(),
+	m_parent(parent),
+    m_node(0),
+	m_menu(this),
+	m_layout(this),
+    m_pathEventHandler(this),
+    m_header(&m_pathEventHandler, this),
+	m_view(&m_eventHandler, this),
+	m_eventHandler(this)
+{
+	initialize();
+	setupModel(root, rootPath());
+}
+
 DirectoryView::DirectoryView(FileSystem::Node *root, const Tab &tab, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
@@ -21,22 +36,7 @@ DirectoryView::DirectoryView(FileSystem::Node *root, const Tab &tab, FoldersView
 	setupModel(root, tab);
 }
 
-DirectoryView::DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, FoldersView *parent) :
-	QWidget(),
-	m_parent(parent),
-    m_node(0),
-	m_menu(this),
-	m_layout(this),
-    m_pathEventHandler(this),
-    m_header(&m_pathEventHandler, this),
-	m_view(&m_eventHandler, this),
-	m_eventHandler(this)
-{
-	initialize();
-	setupModel(root, fileInfo.absoluteFilePath());
-}
-
-DirectoryView::DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent) :
+DirectoryView::DirectoryView(FileSystem::Node *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
     m_node(0),
@@ -48,7 +48,16 @@ DirectoryView::DirectoryView(FileSystem::Node *root, const FileSystem::Info &fil
 	m_eventHandler(this)
 {
 	initialize();
-	setupModel(root, fileInfo.absoluteFilePath(), geometry);
+	setupModel(root, absoluteFilePath, geometry);
+}
+
+QString DirectoryView::rootPath()
+{
+#ifdef Q_OS_WIN
+	return QString::fromLatin1("C:\\");
+#else
+	return QString::fromLatin1("/");
+#endif
 }
 
 QString DirectoryView::currentDirectoryName() const

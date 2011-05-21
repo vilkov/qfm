@@ -12,6 +12,9 @@ Info::Info() :
 
 Info::Info(const QString &filePath) :
 	m_info(filePath)
+#ifndef Q_OS_WIN
+    ,m_root(QString::fromLatin1("/"))
+#endif
 {
 #ifdef Q_OS_WIN
 	m_permissions = m_info.permissions();
@@ -22,6 +25,9 @@ Info::Info(const QString &filePath) :
 
 Info::Info(const QFileInfo &info) :
 	m_info(info)
+#ifndef Q_OS_WIN
+    ,m_root(QString::fromLatin1("/"))
+#endif
 {
 #ifdef Q_OS_WIN
 	m_permissions = m_info.permissions();
@@ -32,13 +38,15 @@ Info::Info(const QFileInfo &info) :
 
 #ifndef Q_OS_WIN
 Info::Info(const QString &filePath, uint userId, uint groupId) :
-	m_info(filePath)
+	m_info(filePath),
+	m_root(QString::fromLatin1("/"))
 {
 	translatePermissions(userId, groupId);
 }
 
 Info::Info(const QFileInfo &info, uint userId, uint groupId) :
-	m_info(info)
+	m_info(info),
+	m_root(QString::fromLatin1("/"))
 {
 	translatePermissions(userId, groupId);
 }
@@ -59,7 +67,7 @@ QString Info::absoluteFilePath(const QString &fileName) const
 #else
 	QString str = m_info.isDir() ? absoluteFilePath() : absolutePath();
 
-	if (str.isEmpty())
+	if (fileName == m_root)
 		return fileName;
 	else
 		return str.append(QChar('/')).append(fileName);

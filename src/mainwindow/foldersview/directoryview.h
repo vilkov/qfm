@@ -42,9 +42,11 @@ public:
     };
 
 public:
+    DirectoryView(FileSystem::Node *root, FoldersView *parent);
     DirectoryView(FileSystem::Node *root, const Tab &tab, FoldersView *parent);
-    DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, FoldersView *parent);
-    DirectoryView(FileSystem::Node *root, const FileSystem::Info &fileInfo, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(FileSystem::Node *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent);
+
+	static QString rootPath();
 
 	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;

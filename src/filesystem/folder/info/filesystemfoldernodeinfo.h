@@ -58,6 +58,9 @@ private:
     QFile::Permissions m_permissions;
     mutable QString m_displayType;
     mutable QIcon m_icon;
+#ifndef Q_OS_WIN
+    QString m_root;
+#endif
 };
 
 FILE_SYSTEM_NS_END

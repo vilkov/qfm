@@ -119,6 +119,7 @@ void DirectoryView::setFocus()
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
 	m_node->view(this, filePath, Application::instance()->mainWindow().plugins());
+	m_node->refresh();
 }
 
 void DirectoryView::select(const QModelIndex &index)

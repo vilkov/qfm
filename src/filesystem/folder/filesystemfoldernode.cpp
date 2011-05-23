@@ -350,6 +350,8 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 	else
 		if (value->item->isFile())
 			view(nodeView, indexForFile(value->item));
+		else
+			view(nodeView, QModelIndex());
 }
 
 void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)

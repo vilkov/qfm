@@ -141,10 +141,7 @@ void DirectoryView::setNode(FileSystem::Node *node, QAbstractItemModel *model, Q
 
 void DirectoryView::goUp()
 {
-	QModelIndex index = m_node->rootIndex();
-
-	if (index.isValid())
-		m_node->view(this, index, Application::instance()->mainWindow().plugins());
+	m_node->viewParent(this);
 }
 
 void DirectoryView::goBack()

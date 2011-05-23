@@ -46,16 +46,12 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
+	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);
 	virtual void view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);
 	virtual void view(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins);
-
-	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
-	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-
-	virtual QModelIndex rootIndex() const;
-	virtual bool isRootIndex(const QModelIndex &index) const;
+	virtual void viewParent(FileSystem::INodeView *nodeView);
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }

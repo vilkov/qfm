@@ -194,12 +194,7 @@ void M3uNode::view(FileSystem::INodeView *nodeView, const QString &absoluteFileP
 
 }
 
-QModelIndex M3uNode::rootIndex() const
+void M3uNode::viewParent(FileSystem::INodeView *nodeView)
 {
-	return m_proxy.mapFromSource(createIndex(0, 0, rootItem()));
-}
 
-bool M3uNode::isRootIndex(const QModelIndex &index) const
-{
-	return static_cast<M3uItem*>(m_proxy.mapToSource(index).internalPointer())->isRoot();
 }

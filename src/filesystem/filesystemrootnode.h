@@ -45,17 +45,12 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination) {}
 
 	/* Node */
-	virtual bool isRootNode() const { return true; }
+	virtual void setParentEntryIndex(const QModelIndex &value) {}
 	virtual void view(INodeView *nodeView, const QModelIndex &selected) {}
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) {}
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
-	virtual QModelIndex parentEntryIndex() const { return QModelIndex(); }
-	virtual void setParentEntryIndex(const QModelIndex &value) {}
-
-	virtual QModelIndex rootIndex() const { return QModelIndex(); }
-	virtual bool isRootIndex(const QModelIndex &index) const { return false; }
+	virtual void viewParent(INodeView *nodeView) {}
 
 	PluginsManager *plugins() const { return m_plugins; }
 

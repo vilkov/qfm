@@ -54,16 +54,12 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
+	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 	virtual void view(INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
-	virtual QModelIndex parentEntryIndex() const { return m_parentEntryIndex; }
-	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-
-	virtual QModelIndex rootIndex() const;
-	virtual bool isRootIndex(const QModelIndex &index) const;
+	virtual void viewParent(INodeView *nodeView);
 
 protected:
 	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
@@ -109,7 +105,8 @@ private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
-	QModelIndex indexForFile(FolderNodeItem *item);
+	QModelIndex indexForFile(FolderNodeItem *item) const;
+	QModelIndex rootIndex() const;
 
 	void updateFirstColumn(FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);

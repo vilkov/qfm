@@ -286,7 +286,7 @@ void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManage
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
 	{
 		removeView(nodeView);
-		static_cast<Node*>(Node::parent())->view(nodeView, parentEntryIndex());
+		static_cast<Node*>(Node::parent())->view(nodeView, m_parentEntryIndex);
 		static_cast<Node*>(Node::parent())->refresh();
 	}
 	else
@@ -373,20 +373,14 @@ void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, Plug
 		view(nodeView, path.begin(), plugins);
 }
 
-QModelIndex FolderNode::rootIndex() const
+void FolderNode::viewParent(INodeView *nodeView)
 {
-	if (m_info.isRoot())
-		return QModelIndex();
-	else
-		return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0).item));
-}
-
-bool FolderNode::isRootIndex(const QModelIndex &index) const
-{
-	if (m_info.isRoot())
-		return false;
-	else
-		return static_cast<FolderNodeItem*>(m_proxy.mapToSource(index).internalPointer())->isRootItem();
+	if (!m_info.isRoot())
+	{
+		removeView(nodeView);
+		static_cast<Node*>(Node::parent())->view(nodeView, m_parentEntryIndex);
+		static_cast<Node*>(Node::parent())->refresh();
+	}
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, const Functors::Functor &functor)
@@ -746,11 +740,19 @@ Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *pl
 	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
 }
 
-QModelIndex FolderNode::indexForFile(FolderNodeItem *item)
+QModelIndex FolderNode::indexForFile(FolderNodeItem *item) const
 {
 	Q_ASSERT(m_items.indexOf(item) != Values::InvalidIndex);
 	Values::size_type index = m_items.indexOf(item);
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
+}
+
+QModelIndex FolderNode::rootIndex() const
+{
+	if (m_info.isRoot())
+		return QModelIndex();
+	else
+		return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0).item));
 }
 
 void FolderNode::updateFirstColumn(FolderNodeItem *entry)

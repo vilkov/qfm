@@ -21,16 +21,12 @@ public:
 		QAbstractItemModel(parent)
 	{}
 
+	virtual void setParentEntryIndex(const QModelIndex &value) = 0;
 	virtual void view(INodeView *nodeView, const QModelIndex &selected) = 0;
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins) = 0;
-
-	virtual QModelIndex parentEntryIndex() const = 0;
-	virtual void setParentEntryIndex(const QModelIndex &value) = 0;
-
-	virtual QModelIndex rootIndex() const = 0;
-	virtual bool isRootIndex(const QModelIndex &index) const = 0;
+	virtual void viewParent(INodeView *nodeView) = 0;
 };
 
 FILE_SYSTEM_NS_END

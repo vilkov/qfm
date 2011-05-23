@@ -7,7 +7,7 @@
 #include "../filesystempluginsmanager.h"
 #include "../../tools/rangeintersection.h"
 #include "../../application.h"
-#include <iostream>
+#include <QDebug>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -323,6 +323,8 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 	Node *node;
 	Values::Value *value;
 	Values::size_type index = items().indexOf(*path);
+	qDebug() << absoluteFilePath();
+	qDebug() << *path;
 
 	if (index == Values::InvalidIndex)
 	{
@@ -355,13 +357,20 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 
 void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
 {
-	Node *node = this;
-	removeView(nodeView);
+	Path path(absoluteFilePath);
 
-	while (node->parent())
-		node = static_cast<Node*>(node->parent());
+	if (path.isAbsolute())
+	{
+		Node *node = this;
+		removeView(nodeView);
 
-	node->view(nodeView, Path(absoluteFilePath).begin(), plugins);
+		while (node->parent())
+			node = static_cast<Node*>(node->parent());
+
+		node->view(nodeView, path.begin(), plugins);
+	}
+	else
+		view(nodeView, path.begin(), plugins);
 }
 
 QModelIndex FolderNode::rootIndex() const
@@ -728,10 +737,7 @@ Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 		if (info.isDir())
 			return new FolderNode(info, (FolderNode*)this);
 		else
-			if (info.isFile())
-				return 0;
-
-	return 0;
+			return 0;
 }
 
 FolderNode::Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const

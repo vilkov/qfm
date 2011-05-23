@@ -1,19 +1,20 @@
 #ifndef FILESYSTEMFOLDERNODE_H_
 #define FILESYSTEMFOLDERNODE_H_
 
-#include "filesystemfoldernodebase.h"
 #include "filesystemchangeslist.h"
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
+#include "filesystemfoldernodevalues.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
 #include "functors/filesystemfoldernodefunctors.h"
+#include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderNode : public FolderNodeBase
+class FolderNode : public Node
 {
 	Q_DISABLE_COPY(FolderNode)
 
@@ -53,7 +54,6 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
-	virtual bool isRootNode() const { return m_info.isRoot(); }
 	virtual void view(INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
@@ -127,6 +127,7 @@ private:
 private:
 	bool m_updating;
 	Info m_info;
+	Values m_items;
 	SetView m_view;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;

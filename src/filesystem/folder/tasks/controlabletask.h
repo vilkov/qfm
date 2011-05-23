@@ -41,13 +41,13 @@ protected:
 			FileSystem::FolderNode(info, parent)
 		{}
 
-		void add(const Info &info) { items().add(new FolderNodeEntry(info)); }
+		void add(const Info &info) { /* items().add(new FolderNodeEntry(info)); */ }
 		void setSubnode(FileSystem::FolderNode *subnode)
 		{
-			FileSystem::FolderNode::Values::size_type index = items().indexOf(subnode->fileName());
-
-			if (index != FileSystem::FolderNode::Values::InvalidIndex)
-				items()[index].node = subnode;
+//			FileSystem::FolderNode::Values::size_type index = items().indexOf(subnode->fileName());
+//
+//			if (index != FileSystem::FolderNode::Values::InvalidIndex)
+//				items()[index].node = subnode;
 		}
 	};
 

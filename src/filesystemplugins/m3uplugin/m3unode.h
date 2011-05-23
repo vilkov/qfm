@@ -46,7 +46,6 @@ public:
 	virtual void move(const QModelIndexList &list, Node *destination);
 
 	/* Node */
-	virtual bool isRootNode() const { return false; }
 	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &selected);
 	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);
 	virtual void view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);

@@ -21,6 +21,7 @@ public:
 	/* FolderNodeEntry */
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isRootItem() const { return false; }
+	virtual bool isListItem() const { return false; }
 
 public:
 	const QVariant &totalSize() const { return m_totalSize; }

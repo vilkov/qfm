@@ -7,7 +7,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 RootNode::RootNode(PluginsManager *plugins) :
-	FolderNodeBase(),
+	Node(),
 	m_plugins(plugins)
 {
 	Q_ASSERT(m_plugins != 0);
@@ -17,16 +17,16 @@ void RootNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMana
 {
 	Node *node;
 	Values::Value *value;
-	Values::size_type index = items().indexOf(*path);
+	Values::size_type index = m_items.indexOf(*path);
 
 	if (index == Values::InvalidIndex)
 	{
-		items().add(createNode(*path, plugins, node));
-		value = &items().last();
+		m_items.add(createNode(*path, plugins, node));
+		value = &m_items.last();
 	}
 	else
 	{
-		value = &items()[index];
+		value = &m_items[index];
 
 		if (value->node)
 			node = value->node;
@@ -60,7 +60,7 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins) const
 			return 0;
 }
 
-RootNode::Values::Value RootNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
+Values::Value RootNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
 {
 	Info info(fileName);
 	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));

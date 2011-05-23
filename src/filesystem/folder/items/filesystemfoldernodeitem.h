@@ -21,6 +21,7 @@ public:
 
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 	virtual bool isRootItem() const = 0;
+	virtual bool isListItem() const = 0;
 };
 
 FILE_SYSTEM_NS_END

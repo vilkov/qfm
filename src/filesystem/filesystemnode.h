@@ -21,7 +21,6 @@ public:
 		QAbstractItemModel(parent)
 	{}
 
-	virtual bool isRootNode() const = 0;
 	virtual void view(INodeView *nodeView, const QModelIndex &selected) = 0;
 	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins) = 0;

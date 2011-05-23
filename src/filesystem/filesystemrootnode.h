@@ -1,12 +1,13 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
-#include "folder/filesystemfoldernodebase.h"
+#include "folder/filesystemfoldernode.h"
+#include "folder/filesystemfoldernodevalues.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class RootNode : public FolderNodeBase
+class RootNode : public Node
 {
 	Q_DISABLE_COPY(RootNode)
 
@@ -63,6 +64,7 @@ private:
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
 
 private:
+	Values m_items;
 	PluginsManager *m_plugins;
 };
 

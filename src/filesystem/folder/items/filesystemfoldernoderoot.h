@@ -25,6 +25,7 @@ public:
 			return QVariant();
 	}
 	virtual bool isRootItem() const { return true; }
+	virtual bool isListItem() const { return false; }
 
 private:
 	QVariant m_label;

@@ -12,6 +12,7 @@
 #include "widgets/pathedit.h"
 #include "contextmenu/contextmenu.h"
 #include "../../filesystem/filesystemrootnode.h"
+#include "../../filesystem/folder/info/filesystemfoldernodeinfo.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
 #include "../../tools/events/imp/contextmenueventhandler.h"

@@ -14,6 +14,9 @@ public:
 		m_label(QString::fromLatin1(".."))
 	{}
 
+	/* IFileInfo */
+	virtual QString fileName() const { return QString(); }
+
 	virtual QVariant data(qint32 column, qint32 role) const
 	{
 		if (column == 0 && role == Qt::DisplayRole)

@@ -16,7 +16,10 @@ public:
 
 	void operator=(const Info &info) { Info::operator=(info); }
 
-    virtual QVariant data(qint32 column, qint32 role) const = 0;
+	/* IFileInfo */
+	virtual QString fileName() const { return isRoot() ? absoluteFilePath() : Info::fileName(); }
+
+	virtual QVariant data(qint32 column, qint32 role) const = 0;
 	virtual bool isRootItem() const = 0;
 };
 

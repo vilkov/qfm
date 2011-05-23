@@ -7,7 +7,6 @@
 #include "../filesystempluginsmanager.h"
 #include "../../tools/rangeintersection.h"
 #include "../../application.h"
-#include <QDebug>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -323,8 +322,6 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 	Node *node;
 	Values::Value *value;
 	Values::size_type index = items().indexOf(*path);
-	qDebug() << absoluteFilePath();
-	qDebug() << *path;
 
 	if (index == Values::InvalidIndex)
 	{

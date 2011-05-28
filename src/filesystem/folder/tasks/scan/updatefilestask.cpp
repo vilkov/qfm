@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 UpdateFilesTask::UpdateFilesTask(ParamsPointer &params) :
 	parent_class(params.take())
 {
-	Q_ASSERT(params->node);
+	Q_ASSERT(parameters()->node);
 }
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
@@ -28,7 +28,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	{
 		current = QTime::currentTime();
 
-		affected.insert(updatedFiles.update(dirIt.fileInfo(), m_userId, m_groupId));
+		affected.insert(updatedFiles.update(dirIt.next(), m_userId, m_groupId));
 
 		if (base.msecsTo(current) > 300)
 		{

@@ -100,8 +100,10 @@ public:
 		res.remove(Values::InvalidIndex);
 		res = m_values.indexes().subtract(res);
 
+		/* FIXME: Call isRootItem() only once */
 		for (QSet<Values::size_type>::const_iterator it = res.constBegin(), end = res.constEnd(); it != end; ++it)
-			m_changes.push_back(Change(Deleted, *it));
+			if (!m_values.at(*it).item->isRootItem())
+				m_changes.push_back(Change(Deleted, *it));
 	}
 
 private:

@@ -59,7 +59,7 @@ private:
     mutable QString m_displayType;
     mutable QIcon m_icon;
 #ifndef Q_OS_WIN
-    QString m_root;
+    static QString root;
 #endif
 };
 

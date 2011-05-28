@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
-#include "folder/filesystemfoldernode.h"
-#include "folder/filesystemfoldernodevalues.h"
+#include "filesystemnode.h"
+#include "folder/containers/filesystemfoldernodevalues.h"
 
 
 FILE_SYSTEM_NS_BEGIN

@@ -2,7 +2,6 @@
 #define FILESYSTEMFOLDERNODEENTRY_H_
 
 #include "filesystemfoldernodeitem.h"
-#include "../filesystemchangeslist.h"
 #include "../info/filesystemfoldernodeinfo.h"
 
 

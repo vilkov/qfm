@@ -3,7 +3,7 @@
 
 #include "filestask.h"
 #include "../controlabletask.h"
-#include "../../filesystemchangeslist.h"
+#include "../../containers/filesystemupdateslist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -16,21 +16,24 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
+		Params(Node *node, const UpdatesList &list) :
+			node(node),
+			list(list)
+		{}
+
 		Node *node;
-		ChangesList list;
+		UpdatesList list;
 	};
+	typedef QScopedPointer<Params> ParamsPointer;
 	typedef ModelEvents::UpdateFilesEvent Event;
 
 public:
-	UpdateFilesTask(Params *params);
+	UpdateFilesTask(ParamsPointer &params);
 
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
 	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
-
-private:
-    ChangesList::size_type indexOf(const QString &directoryPath, const ChangesList &list) const;
 };
 
 FILE_SYSTEM_NS_END

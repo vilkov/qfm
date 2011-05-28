@@ -119,10 +119,33 @@ public:
 	/********** UpdateFiles **********/
 	struct UpdateFilesParams : public BaseEvent::Params
 	{
+		UpdateFilesParams(bool isLastEvent, const UpdatesList &updates) :
+			isLastEvent(isLastEvent),
+			updates(updates)
+		{}
+
 		bool isLastEvent;
-		ChangesList updates;
+		UpdatesList updates;
 	};
-	typedef TemplateEvent<UpdateFilesParams, BaseEvent::UpdateFiles> UpdateFilesEvent;
+	class UpdateFilesEvent : public BaseEvent
+	{
+	public:
+		typedef UpdateFilesParams Params;
+
+	public:
+		UpdateFilesEvent(bool isLastEvent, const UpdatesList &updates) :
+			BaseEvent(BaseEvent::UpdateFiles),
+			m_params(isLastEvent, updates)
+		{}
+
+		virtual const ModelEvent::Params *parameters() const { return &m_params; }
+
+		const Params &params() const { return m_params; }
+		Params &params() { return m_params; }
+
+	private:
+		Params m_params;
+	};
 
 
 	/********** ScanFiles **********/

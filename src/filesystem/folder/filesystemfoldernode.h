@@ -1,12 +1,12 @@
 #ifndef FILESYSTEMFOLDERNODE_H_
 #define FILESYSTEMFOLDERNODE_H_
 
-#include "filesystemchangeslist.h"
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
-#include "filesystemfoldernodevalues.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
+#include "containers/filesystemupdateslist.h"
+#include "containers/filesystemfoldernodevalues.h"
 #include "functors/filesystemfoldernodefunctors.h"
 #include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
@@ -101,7 +101,6 @@ protected:
 	void updateProgressEvent(const ModelEvent::Params *p);
 
 private:
-	ChangesList makeChangeSet() const;
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;

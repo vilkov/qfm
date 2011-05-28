@@ -452,34 +452,31 @@ void FolderNode::listEvent(const ModelEvent::Params *p)
 
 void FolderNode::updateFiles()
 {
-	QScopedPointer<UpdateFilesTask::Params> params(new UpdateFilesTask::Params());
-	params->node = this;
-	params->list = makeChangeSet();
+	typedef UpdateFilesTask::Params Params;
+	QScopedPointer<Params> params(new Params(this, m_items));
 
 	setUpdating(true);
-	Application::instance()->taskPool().handle(new UpdateFilesTask(params.take()));
+	Application::instance()->taskPool().handle(new UpdateFilesTask(params));
 }
 
 void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 {
 	typedef const UpdateFilesTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	ChangesList list = params->updates;
+	UpdatesList list = params->updates;
 	RangeIntersection updateRange(1);
 
-	for (ChangesList::size_type i = 0; i < list.size();)
-		if (list.at(i).type() == Change::Updated)
+	for (UpdatesList::size_type i = 0; i < list.size();)
+		if (list.at(i).type() == UpdatesList::Updated)
 		{
-			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(list.at(i).entry());
-			Values::size_type index = m_items.indexOf(entry);
-			(*entry) = list.at(i).info();
-			updateRange.add(index, index);
+			(*m_items[list.at(i).index()].item) = list.at(i).info();
+			updateRange.add(list.at(i).index(), list.at(i).index());
 			list.removeAt(i);
 		}
 		else
-			if (list.at(i).type() == Change::Deleted)
+			if (list.at(i).type() == UpdatesList::Deleted)
 			{
-				removeEntry(m_items.indexOf(list.at(i).entry()));
+				removeEntry(list.at(i).index());
 				list.removeAt(i);
 			}
 			else
@@ -492,7 +489,7 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 	if (!list.isEmpty())
 	{
 		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
-		for (ChangesList::size_type i = 0, size = list.size(); i < size; ++i)
+		for (UpdatesList::size_type i = 0, size = list.size(); i < size; ++i)
 			m_items.add(new FolderNodeEntry(list.at(i).info()));
 		endInsertRows();
 	}
@@ -689,28 +686,6 @@ void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)
 void FolderNode::updateProgressEvent(const ModelEvent::Params *p)
 {
 
-}
-
-ChangesList FolderNode::makeChangeSet() const
-{
-	ChangesList list;
-
-	if (m_info.isRoot())
-	{
-		list.reserve(m_items.size());
-
-		for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
-	}
-	else
-	{
-		list.reserve(m_items.size() - 1);
-
-		for (Values::size_type i = 1, size = m_items.size(); i < size; ++i)
-			list.push_back(Change(Change::NoChange, m_items.at(i).item));
-	}
-
-	return list;
 }
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const

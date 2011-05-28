@@ -33,7 +33,7 @@ protected:
 	#endif
 	}
 
-private:
+protected:
 #ifndef Q_OS_WIN
     uint m_userId;
     uint m_groupId;

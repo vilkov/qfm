@@ -1,10 +1,11 @@
 #ifndef FILESYSTEMFOLDERNODEVALUES_H_
 #define FILESYSTEMFOLDERNODEVALUES_H_
 
+#include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QList>
-#include "items/filesystemfoldernodeitem.h"
-#include "../filesystemnode.h"
+#include "../items/filesystemfoldernodeitem.h"
+#include "../../filesystemnode.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -65,6 +66,7 @@ public:
 	size_type size() const { return m_list.size(); }
 	size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }
 	size_type indexOf(const QString &fileName) const { return m_map.value(fileName, InvalidIndex); }
+	QSet<size_type> indexes() const { return QSet<size_type>::fromList(m_map.values()); }
 
 	void add(const Value &value)
 	{

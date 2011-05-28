@@ -46,8 +46,9 @@ public:
 		Values::size_type m_index;
 	};
 
-	typedef QList<Change>   List;
-	typedef List::size_type size_type;
+	typedef QList<Change>           List;
+	typedef List::size_type         size_type;
+	typedef QSet<Values::size_type> Set;
 
 public:
 	UpdatesList(const Values &values) :
@@ -93,17 +94,18 @@ public:
 		return index;
 	}
 #endif
-	void update(const QSet<Values::size_type> &affected)
+	void update(const Set &affected)
 	{
-		QSet<Values::size_type> res = affected;
+		Set res = affected;
 
 		res.remove(Values::InvalidIndex);
 		res = m_values.indexes().subtract(res);
 
-		/* FIXME: Call isRootItem() only once */
-		for (QSet<Values::size_type>::const_iterator it = res.constBegin(), end = res.constEnd(); it != end; ++it)
-			if (!m_values.at(*it).item->isRootItem())
-				m_changes.push_back(Change(Deleted, *it));
+		if (m_values.at(0).item->isRootItem())
+			res.remove(0);
+
+		for (Set::const_iterator it = res.constBegin(), end = res.constEnd(); it != end; ++it)
+			m_changes.push_back(Change(Deleted, *it));
 	}
 
 private:

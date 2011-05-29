@@ -1,8 +1,5 @@
 #include "scanfilestasks.h"
 #include "../../../../application.h"
-#include <QDir>
-#include <QDirIterator>
-#include <QScopedPointer>
 
 
 FILE_SYSTEM_NS_BEGIN

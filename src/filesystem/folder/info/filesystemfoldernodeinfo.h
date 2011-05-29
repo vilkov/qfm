@@ -3,10 +3,6 @@
 
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
-#ifndef Q_OS_WIN
-#  include <unistd.h>
-#  include <sys/types.h>
-#endif
 #include "../../filesystem_ns.h"
 #include "../../interfaces/filesystemifileinfo.h"
 

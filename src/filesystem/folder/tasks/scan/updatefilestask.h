@@ -1,17 +1,19 @@
 #ifndef UPDATEFILESTASK_H_
 #define UPDATEFILESTASK_H_
 
-#include "filestask.h"
 #include "../controlabletask.h"
+#ifndef Q_OS_WIN
+#	include "../taskpermissionscache.h"
+#endif
 #include "../../containers/filesystemupdateslist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class UpdateFilesTask : public TemplateFilesTask<ControlableTask>
+class UpdateFilesTask : public ControlableTask
 {
 public:
-	typedef TemplateFilesTask<ControlableTask> parent_class;
+	typedef ControlableTask parent_class;
 
 public:
 	struct Params : public parent_class::Params
@@ -34,6 +36,11 @@ public:
 
 protected:
 	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+
+#ifndef Q_OS_WIN
+private:
+	TaskPermissionsCache m_permissions;
+#endif
 };
 
 FILE_SYSTEM_NS_END

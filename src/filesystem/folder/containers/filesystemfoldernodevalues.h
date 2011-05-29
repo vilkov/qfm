@@ -89,7 +89,6 @@ public:
 		const Value &value = m_list.at(index);
 		m_map.remove(value.item->fileName());
 		delete value.item;
-		delete value.node;
 		m_list.removeAt(index);
 	}
 

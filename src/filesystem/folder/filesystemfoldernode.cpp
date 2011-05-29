@@ -5,9 +5,11 @@
 #include "events/filesystemmodelevents.h"
 #include "tasks/scan/updatefilestask.h"
 #include "tasks/scan/scanfilestasks.h"
+#include "tasks/perform/performremovetreetask.h"
 #include "../filesystempluginsmanager.h"
 #include "../../tools/rangeintersection.h"
 #include "../../application.h"
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -238,14 +240,7 @@ void FolderNode::refresh()
 		if (exists())
 			updateFiles();
 		else
-		{
-			Node *node = static_cast<Node*>(Node::parent());
-
-			while (!node->exists())
-				node = static_cast<Node*>(node->Node::parent());
-
-			switchTo(node);
-		}
+			switchToParent();
 }
 
 void FolderNode::remove(const QModelIndexList &list)
@@ -376,11 +371,19 @@ void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, Plug
 void FolderNode::viewParent(INodeView *nodeView)
 {
 	if (!m_info.isRoot())
-	{
-		removeView(nodeView);
-		static_cast<Node*>(Node::parent())->view(nodeView, m_parentEntryIndex);
-		static_cast<Node*>(Node::parent())->refresh();
-	}
+		if (exists())
+			switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
+		else
+			switchToParent();
+}
+
+void FolderNode::viewParent()
+{
+	if (!m_info.isRoot())
+		if (exists())
+			switchTo(static_cast<Node*>(Node::parent()), m_parentEntryIndex);
+		else
+			switchToParent();
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, const Functors::Functor &functor)
@@ -520,19 +523,40 @@ void FolderNode::removeEntry(FolderNodeItem *entry)
 
 void FolderNode::scanForRemove(FolderNodeItem *entry)
 {
-	QScopedPointer<ScanFilesForRemoveTask::Params> params(new ScanFilesForRemoveTask::Params());
+	typedef ScanFilesForRemoveTask::Params Params;
+	QScopedPointer<Params> params(new Params());
 	params->source.node = this;
 	params->source.entry = static_cast<FolderNodeEntry*>(entry);
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for remove..."));
 	updateFirstColumn(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params.take()));
+	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params));
 }
 
 void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 {
+	typedef const ScanFilesForRemoveTask::Event::Params *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
+	if (QMessageBox::question(
+			&Application::instance()->mainWindow(),
+			tr("Remove directory..."),
+			tr("Would you like to remove \"%1\" directory (%2)?").
+				arg(params->snapshot.entry->absoluteFilePath()).
+				arg(FolderNodeEntry::humanReadableSize(params->size)),
+			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+	{
+		params->snapshot.entry->lock(tr("Removing..."), params->size);
+		updateSecondColumn(params->snapshot.entry);
+		Application::instance()->taskPool().handle(new PerformRemoveTreeTask(new PerformRemoveTreeTask::Params(this, *params)));
+	}
+	else
+	{
+		params->snapshot.entry->setTotalSize(params->size);
+		params->snapshot.entry->unlock();
+		updateBothColumns(params->snapshot.entry);
+	}
 }
 
 void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
@@ -565,7 +589,7 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+//		m_items[index].node = params->subnode;
 		params->snapshot.entry->setTotalSize(params->size);
 		params->snapshot.entry->unlock();
 		updateBothColumns(params->snapshot.entry);
@@ -640,7 +664,7 @@ void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+//		m_items[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Copying..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
@@ -658,7 +682,7 @@ void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
 
 	if (index != Values::InvalidIndex)
 	{
-		m_items[index].node = params->subnode;
+//		m_items[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Moving..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
@@ -751,25 +775,51 @@ void FolderNode::updateBothColumns(FolderNodeItem *entry)
 void FolderNode::removeEntry(Values::size_type index)
 {
 	beginRemoveRows(QModelIndex(), index, index);
+
+	if (m_items.at(index).node)
+		m_items.at(index).node->viewParent();
+
 	m_items.remove(index);
+
 	endRemoveRows();
 }
 
 void FolderNode::removeEntry(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
+
+	if (m_items.at(index.row()).node)
+		m_items.at(index.row()).node->viewParent();
+
 	m_items.remove(index.row());
+
 	endRemoveRows();
 }
 
-void FolderNode::switchTo(Node *node)
+void FolderNode::switchTo(Node *node, const QModelIndex &selected)
 {
-	QModelIndex index;
-
-	for (SetView::const_iterator it = m_view.constBegin(), end = m_view.constEnd(); it != end; ++it)
-		node->view(*it, index);
+	for (SetView::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
+		node->view(*it, selected);
 
 	node->refresh();
+}
+
+void FolderNode::switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected)
+{
+	removeView(nodeView);
+	node->view(nodeView, selected);
+	node->refresh();
+}
+
+void FolderNode::switchToParent()
+{
+	Node *parent = static_cast<Node*>(Node::parent());
+
+	while (!parent->exists())
+		parent = static_cast<Node*>(parent->Node::parent());
+
+	switchTo(parent, QModelIndex());
+	deleteLater();
 }
 
 void FolderNode::addView(INodeView *view)

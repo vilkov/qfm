@@ -7,6 +7,7 @@
 #include "filesystemmodelevent.h"
 #include "../filesystemfoldernode.h"
 #include "../items/filesystemfoldernodeentry.h"
+#include "../items/filesystemfoldernodeitemlist.h"
 #include "../../filesystemnode.h"
 #include "../../filesystem_ns.h"
 #include "../../../tools/taskspool/task.h"
@@ -89,14 +90,14 @@ private:
 	class TemplateEvent : public BaseEvent
 	{
 	public:
+		typedef T Params;
+
+	public:
 		TemplateEvent() :
 			BaseEvent(static_cast<Type>(EType))
 		{}
 
 		virtual const ModelEvent::Params *parameters() const { return &m_params; }
-
-	public:
-		typedef T Params;
 
 		const Params &params() const { return m_params; }
 		Params &params() { return m_params; }
@@ -152,7 +153,7 @@ public:
 	struct ScanFilesParams : public BaseEvent::Params
 	{
 		Snapshot snapshot;
-		Node *subnode;
+		FolderNodeItemList *subnode;
 		quint64 size;
 	};
 	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForRemove> ScanFilesForRemoveEvent;
@@ -203,7 +204,7 @@ public:
 	/********** PerformWithDestCopyTreeFiles **********/
 	struct PerformWithDestCopyTreeFilesParams : public PerformWithDestCopyFilesParams
 	{
-		Node *subnode;
+		FolderNodeItemList *subnode;
 	};
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCompleted> CopyTreeFilesCompletedEvent;
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCanceled> CopyTreeFilesCanceledEvent;

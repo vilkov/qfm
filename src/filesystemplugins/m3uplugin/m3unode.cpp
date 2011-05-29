@@ -198,3 +198,8 @@ void M3uNode::viewParent(FileSystem::INodeView *nodeView)
 {
 
 }
+
+void M3uNode::viewParent()
+{
+
+}

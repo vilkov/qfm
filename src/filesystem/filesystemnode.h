@@ -27,6 +27,7 @@ public:
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins) = 0;
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins) = 0;
 	virtual void viewParent(INodeView *nodeView) = 0;
+	virtual void viewParent() = 0;
 };
 
 FILE_SYSTEM_NS_END

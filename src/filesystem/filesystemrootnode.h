@@ -51,6 +51,7 @@ public:
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 	virtual void viewParent(INodeView *nodeView) {}
+	virtual void viewParent() {}
 
 	PluginsManager *plugins() const { return m_plugins; }
 

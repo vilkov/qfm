@@ -30,7 +30,7 @@ public:
 			source.entry = params.snapshot.entry;
 		}
 
-		Node *subnode;
+		FolderNodeItemList *subnode;
 	};
 
 public:

@@ -1,29 +1,32 @@
 #ifndef SCANFILESTASK_H_
 #define SCANFILESTASK_H_
 
-#include <QDir>
-#include <QDirIterator>
-#include <QScopedPointer>
-#include "filestask.h"
+#include <QtCore/QDir>
+#include <QtCore/QDirIterator>
+#include <QtCore/QScopedPointer>
+#ifndef Q_OS_WIN
+#	include "../taskpermissionscache.h"
+#endif
 #include "../../events/filesystemmodelevents.h"
+#include "../../items/filesystemfoldernodeentry.h"
+#include "../../items/filesystemfoldernodeitemlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 /********************************************************************************************************/
 template<typename BaseClass>
-class ScanFilesTask : public TemplateFilesTask<BaseClass>
+class ScanFilesTask : public BaseClass
 {
 public:
-	typedef TemplateFilesTask<BaseClass>      parent_class;
-	typedef typename parent_class::FolderNode FolderNode;
+	typedef BaseClass parent_class;
 
 public:
 	struct Params : public parent_class::Params
 	{
 		typename parent_class::Params::Snapshot source;
 		quint64 size;
-		Node *subnode;
+		FolderNodeItemList *subnode;
 	};
 
 public:
@@ -37,7 +40,7 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-		QScopedPointer<FolderNode> subnode(new FolderNode(parameters()->source.entry->absoluteFilePath()));
+		QScopedPointer<FolderNodeItemList> subnode(new FolderNodeItemList(*parameters()->source.entry));
 		scan(subnode.data(), stopedFlag);
 		parameters()->subnode = subnode.take();
 	}
@@ -46,27 +49,38 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 private:
-	void scan(FolderNode *node, const volatile bool &stopedFlag)
+	void scan(FolderNodeItemList *node, const volatile bool &stopedFlag)
 	{
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 		while (!stopedFlag && !parent_class::isControllerDead() && dirIt.hasNext())
-		{
-			dirIt.next();
-			node->add(getInfo(info = dirIt.fileInfo()));
-
-			if (!info.isSymLink())
+			if (!(info = dirIt.next()).isSymLink())
 				if (info.isDir())
 				{
-					QScopedPointer<FolderNode> subtree(new FolderNode(info.absoluteFilePath(), node));
+#ifndef Q_OS_WIN
+					QScopedPointer<FolderNodeItemList> subtree(new FolderNodeItemList(m_permissions.getInfo(info)));
+#else
+					QScopedPointer<FolderNodeItemList> subtree(new FolderNodeItemList(info));
+#endif
 					scan(subtree.data(), stopedFlag);
-					node->setSubnode(subtree.take());
+					node->add(subtree.take());
 				}
 				else
+				{
+#ifndef Q_OS_WIN
+					node->add(new FolderNodeEntry(m_permissions.getInfo(info)));
+#else
+					node->add(new FolderNodeEntry(info));
+#endif
 					parameters()->size += info.size();
-		}
+				}
 	}
+
+#ifndef Q_OS_WIN
+private:
+	TaskPermissionsCache m_permissions;
+#endif
 };
 
 FILE_SYSTEM_NS_END

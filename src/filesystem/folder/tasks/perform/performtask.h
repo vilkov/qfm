@@ -2,6 +2,7 @@
 #define PERFORMTASK_H_
 
 #include "../../../filesystem_ns.h"
+#include "../../items/filesystemfoldernodeitemlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -10,8 +11,7 @@ template <typename BaseClass>
 class PerformTask : public BaseClass
 {
 public:
-	typedef BaseClass                         parent_class;
-	typedef typename parent_class::FolderNode FolderNode;
+	typedef BaseClass parent_class;
 
 public:
 	struct Params : public parent_class::Params

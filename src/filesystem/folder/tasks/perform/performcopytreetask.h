@@ -22,7 +22,7 @@ public:
 			removeSource = moveFiles;
 		}
 
-		Node *subnode;
+		FolderNodeItemList *subnode;
 	};
 	typedef ModelEvents::CopyTreeFilesCompletedEvent CompletedEvent;
 	typedef ModelEvents::CopyTreeFilesCanceledEvent  CanceledEvent;

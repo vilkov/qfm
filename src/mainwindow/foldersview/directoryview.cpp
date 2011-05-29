@@ -215,10 +215,7 @@ void DirectoryView::createDirectory()
 
 void DirectoryView::remove()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//		m_model.remove(index);
+	m_node->remove(selectedIndexes());
 }
 
 void DirectoryView::calculateSize()

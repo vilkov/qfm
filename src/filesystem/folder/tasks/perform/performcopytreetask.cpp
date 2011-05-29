@@ -28,7 +28,7 @@ void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 			QScopedPointer<CanceledEvent> event(new CanceledEvent());
 			event->params().snapshot = parameters()->source;
 			event->params().removeSource = parameters()->removeSource;
-			event->params().subnode = parameters()->subnode;
+//			event->params().subnode = parameters()->subnode;
 			event->params().destination = parameters()->destination;
 			Application::postEvent(parameters()->source.node, event.take());
 		}
@@ -37,7 +37,7 @@ void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 			QScopedPointer<CompletedEvent> event(new CompletedEvent());
 			event->params().snapshot = parameters()->source;
 			event->params().removeSource = parameters()->removeSource;
-			event->params().subnode = parameters()->subnode;
+//			event->params().subnode = parameters()->subnode;
 			event->params().destination = parameters()->destination;
 			Application::postEvent(parameters()->source.node, event.take());
 		}

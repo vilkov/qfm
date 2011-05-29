@@ -26,8 +26,8 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(Params *params) :
-	parent_class(params)
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(ParamsPointer &params) :
+	parent_class(params.take())
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)

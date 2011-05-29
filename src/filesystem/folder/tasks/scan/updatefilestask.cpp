@@ -1,10 +1,10 @@
 #include "updatefilestask.h"
 #include "../../../../application.h"
 #include <QtCore/QSet>
-#include <QDir>
-#include <QDateTime>
-#include <QDirIterator>
-#include <QScopedPointer>
+#include <QtCore/QDir>
+#include <QtCore/QDateTime>
+#include <QtCore/QDirIterator>
+#include <QtCore/QScopedPointer>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -28,7 +28,11 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	{
 		current = QTime::currentTime();
 
-		affected.insert(updatedFiles.update(dirIt.next(), m_userId, m_groupId));
+#ifndef Q_OS_WIN
+		affected.insert(updatedFiles.update(m_permissions.getInfo(dirIt.next())));
+#else
+		affected.insert(updatedFiles.update(dirIt.next()));
+#endif
 
 		if (base.msecsTo(current) > 300)
 		{

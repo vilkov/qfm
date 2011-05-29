@@ -52,6 +52,7 @@ public:
 	virtual void view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);
 	virtual void view(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins);
 	virtual void viewParent(FileSystem::INodeView *nodeView);
+	virtual void viewParent();
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }

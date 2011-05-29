@@ -12,8 +12,8 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask<ControlableTask>
 {
 public:
-	typedef ScanFilesTask<ControlableTask>               parent_class;
-	typedef parent_class::Params                         Params;
+	typedef ScanFilesTask<ControlableTask>     parent_class;
+	typedef parent_class::Params               Params;
 	typedef ModelEvents::ScanFilesForSizeEvent Event;
 
 public:
@@ -27,12 +27,13 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask<ControlableTask>
 {
 public:
-	typedef ScanFilesTask<ControlableTask>                 parent_class;
-	typedef parent_class::Params                           Params;
+	typedef ScanFilesTask<ControlableTask>       parent_class;
+	typedef parent_class::Params                 Params;
+	typedef QScopedPointer<Params>               ParamsPointer;
 	typedef ModelEvents::ScanFilesForRemoveEvent Event;
 
 public:
-	ScanFilesForRemoveTask(Params *params);
+	ScanFilesForRemoveTask(ParamsPointer &params);
 
 	virtual void run(const volatile bool &stopedFlag);
 };

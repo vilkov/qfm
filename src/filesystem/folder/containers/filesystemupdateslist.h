@@ -67,21 +67,7 @@ public:
 
 	void removeAt(size_type index) { m_changes.removeAt(index); }
 
-#ifndef Q_OS_WIN
-	Values::size_type update(const QFileInfo &info, uint userId, uint groupId)
-	{
-		Values::size_type index = m_values.indexOf(info.fileName());
-
-		if (index == Values::InvalidIndex)
-			m_changes.push_back(Change(Added, Info(info, userId, groupId)));
-		else
-			if (m_values.at(index).item->lastModified() != info.lastModified())
-				m_changes.push_back(Change(Updated, Info(info, userId, groupId), index));
-
-		return index;
-	}
-#else
-	Values::size_type update(const QFileInfo &info)
+	Values::size_type update(const Info &info)
 	{
 		Values::size_type index = m_values.indexOf(info.fileName());
 
@@ -93,7 +79,6 @@ public:
 
 		return index;
 	}
-#endif
 	void update(const Set &affected)
 	{
 		Set res = affected;

@@ -60,6 +60,7 @@ public:
 	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 	virtual void viewParent(INodeView *nodeView);
+	virtual void viewParent();
 
 protected:
 	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
@@ -113,7 +114,9 @@ private:
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 
-	void switchTo(Node *node);
+	void switchTo(Node *node, const QModelIndex &selected);
+	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
+	void switchToParent();
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
 

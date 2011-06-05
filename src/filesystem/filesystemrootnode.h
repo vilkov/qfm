@@ -14,8 +14,8 @@ class RootNode : public Node
 public:
 	RootNode(PluginsManager *plugins);
 
-    /* QAbstractItemModel */
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
+	/* QAbstractItemModel */
+	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
 	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
 	virtual QVariant data(const QModelIndex &index, int role) const { return QVariant(); }
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const { return Qt::NoItemFlags; }
@@ -23,7 +23,10 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const { return QModelIndex(); }
 	virtual QModelIndex parent(const QModelIndex &child) const { return QModelIndex(); }
 
-	/* IFileInfo */
+	/* INode */
+	virtual int columnCount() const { return 0; }
+
+	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }
 	virtual bool isFile() const { return false; }
 	virtual bool exists() const { return true; }
@@ -38,20 +41,24 @@ public:
 
 	virtual void refresh() {}
 
-	/* IFileOperations */
+	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list) {}
 	virtual void calculateSize(const QModelIndexList &list) {}
-	virtual void copy(const QModelIndexList &list, Node *destination) {}
-	virtual void move(const QModelIndexList &list, Node *destination) {}
+	virtual void copy(const QModelIndexList &list, INode *destination) {}
+	virtual void move(const QModelIndexList &list, INode *destination) {}
+
+	/* INode::IFileNavigation */
+	virtual void viewParent(INodeView *nodeView) {}
+	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected) {}
+	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) {}
+	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
+	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) {}
-	virtual void view(INodeView *nodeView, const QModelIndex &selected) {}
-	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) {}
-	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-	virtual void viewParent(INodeView *nodeView) {}
-	virtual void viewParent() {}
+	virtual void removeThis() {}
+	virtual void switchTo(Node *node, const QModelIndex &selected) {}
+	virtual void removeEntry(Node *entry) {}
 
 	PluginsManager *plugins() const { return m_plugins; }
 

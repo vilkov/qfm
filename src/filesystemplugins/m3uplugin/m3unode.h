@@ -17,14 +17,17 @@ public:
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	virtual int columnCount(const QModelIndex &parent) const;
 	virtual QVariant data(const QModelIndex &index, int role) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	/* IFileInfo */
+	/* INode */
+	virtual int columnCount() const;
+
+	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }
 	virtual bool isFile() const { return false; }
 	virtual bool exists() const;
@@ -39,20 +42,24 @@ public:
 
 	virtual void refresh();
 
-	/* IFileOperations */
+	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
-	virtual void copy(const QModelIndexList &list, Node *destination);
-	virtual void move(const QModelIndexList &list, Node *destination);
+	virtual void copy(const QModelIndexList &list, INode *destination);
+	virtual void move(const QModelIndexList &list, INode *destination);
+
+	/* INode::IFileNavigation */
+	virtual void viewParent(FileSystem::INodeView *nodeView);
+	virtual void viewThis(FileSystem::INodeView *nodeView, const QModelIndex &selected);
+	virtual void viewChild(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);
+	virtual void viewChild(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);
+	virtual void viewAbsolute(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins);
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &selected);
-	virtual void view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);
-	virtual void view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins);
-	virtual void view(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins);
-	virtual void viewParent(FileSystem::INodeView *nodeView);
-	virtual void viewParent();
+	virtual void removeThis();
+	virtual void switchTo(Node *node, const QModelIndex &selected);
+	virtual void removeEntry(Node *entry);
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }

@@ -83,6 +83,11 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+int M3uNode::columnCount() const
+{
+	return columnCount(QModelIndex());
+}
+
 bool M3uNode::exists() const
 {
 	return rootItem()->exists();
@@ -164,32 +169,12 @@ void M3uNode::calculateSize(const QModelIndexList &list)
 
 }
 
-void M3uNode::copy(const QModelIndexList &list, Node *destination)
+void M3uNode::copy(const QModelIndexList &list, INode *destination)
 {
 
 }
 
-void M3uNode::move(const QModelIndexList &list, Node *destination)
-{
-
-}
-
-void M3uNode::view(FileSystem::INodeView *nodeView, const QModelIndex &selected)
-{
-	nodeView->setNode(this, &m_proxy, &m_delegate);
-}
-
-void M3uNode::view(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins)
-{
-
-}
-
-void M3uNode::view(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins)
-{
-
-}
-
-void M3uNode::view(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins)
+void M3uNode::move(const QModelIndexList &list, INode *destination)
 {
 
 }
@@ -199,7 +184,37 @@ void M3uNode::viewParent(FileSystem::INodeView *nodeView)
 
 }
 
-void M3uNode::viewParent()
+void M3uNode::viewThis(FileSystem::INodeView *nodeView, const QModelIndex &selected)
+{
+	nodeView->setNode(this, &m_proxy, &m_delegate);
+}
+
+void M3uNode::viewChild(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins)
+{
+
+}
+
+void M3uNode::viewChild(FileSystem::INodeView *nodeView, const FileSystem::Path::Iterator &path, FileSystem::PluginsManager *plugins)
+{
+
+}
+
+void M3uNode::viewAbsolute(FileSystem::INodeView *nodeView, const QString &absoluteFilePath, FileSystem::PluginsManager *plugins)
+{
+
+}
+
+void M3uNode::removeThis()
+{
+
+}
+
+void M3uNode::switchTo(Node *node, const QModelIndex &selected)
+{
+
+}
+
+void M3uNode::removeEntry(Node *entry)
 {
 
 }

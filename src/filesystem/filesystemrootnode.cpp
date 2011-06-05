@@ -13,7 +13,7 @@ RootNode::RootNode(PluginsManager *plugins) :
 	Q_ASSERT(m_plugins != 0);
 }
 
-void RootNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
+void RootNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
 	Node *node;
 	Values::Value *value;
@@ -36,17 +36,17 @@ void RootNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMana
 
 	if (node)
 		if ((++path).atEnd())
-			node->view(nodeView, QModelIndex());
+			node->viewThis(nodeView, QModelIndex());
 		else
-			node->view(nodeView, path, plugins);
+			node->viewChild(nodeView, path, plugins);
 }
 
-void RootNode::view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
+void RootNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
 {
 	Path path(absoluteFilePath);
 
 	if (path.isAbsolute())
-		view(nodeView, path.begin(), plugins);
+		viewChild(nodeView, path.begin(), plugins);
 }
 
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins) const

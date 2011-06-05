@@ -9,7 +9,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class Node;
+class INode;
 
 class INodeView
 {
@@ -17,7 +17,7 @@ public:
 	virtual ~INodeView() {}
 
 	virtual void select(const QModelIndex &index) = 0;
-	virtual void setNode(Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0) = 0;
+	virtual void setNode(INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0) = 0;
 };
 
 FILE_SYSTEM_NS_END

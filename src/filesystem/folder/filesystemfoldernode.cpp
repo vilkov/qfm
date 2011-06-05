@@ -178,6 +178,11 @@ QModelIndex FolderNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+int FolderNode::columnCount() const
+{
+	return columnCount(QModelIndex());
+}
+
 bool FolderNode::isDir() const
 {
 	return true;
@@ -240,7 +245,7 @@ void FolderNode::refresh()
 		if (exists())
 			updateFiles();
 		else
-			switchToParent();
+			static_cast<Node*>(Node::parent())->removeEntry(this);
 }
 
 void FolderNode::remove(const QModelIndexList &list)
@@ -253,17 +258,26 @@ void FolderNode::calculateSize(const QModelIndexList &list)
 	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::calculateSizeFunctor));
 }
 
-void FolderNode::copy(const QModelIndexList &list, Node *destination)
+void FolderNode::copy(const QModelIndexList &list, INode *destination)
 {
 	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::copyFunctor, destination));
 }
 
-void FolderNode::move(const QModelIndexList &list, Node *destination)
+void FolderNode::move(const QModelIndexList &list, INode *destination)
 {
 	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::moveFunctor, destination));
 }
 
-void FolderNode::view(INodeView *nodeView, const QModelIndex &selected)
+void FolderNode::viewParent(INodeView *nodeView)
+{
+	if (!m_info.isRoot())
+		if (exists())
+			switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
+		else
+			static_cast<Node*>(Node::parent())->removeEntry(this);
+}
+
+void FolderNode::viewThis(INodeView *nodeView, const QModelIndex &selected)
 {
 	addView(nodeView);
 	nodeView->setNode(this, &m_proxy, &m_delegate);
@@ -274,14 +288,14 @@ void FolderNode::view(INodeView *nodeView, const QModelIndex &selected)
 		nodeView->select(rootIndex());
 }
 
-void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
+void FolderNode::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
 	{
 		removeView(nodeView);
-		static_cast<Node*>(Node::parent())->view(nodeView, m_parentEntryIndex);
+		static_cast<Node*>(Node::parent())->viewThis(nodeView, m_parentEntryIndex);
 		static_cast<Node*>(Node::parent())->refresh();
 	}
 	else
@@ -304,7 +318,7 @@ void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManage
 				if (value.node)
 				{
 					removeView(nodeView);
-					value.node->view(nodeView, QModelIndex());
+					value.node->viewThis(nodeView, QModelIndex());
 					value.node->refresh();
 				}
 			}
@@ -313,7 +327,7 @@ void FolderNode::view(INodeView *nodeView, const QModelIndex &idx, PluginsManage
 		}
 }
 
-void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
+void FolderNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
 	Node *node;
 	Values::Value *value;
@@ -339,18 +353,18 @@ void FolderNode::view(INodeView *nodeView, const Path::Iterator &path, PluginsMa
 		removeView(nodeView);
 
 		if ((++path).atEnd())
-			node->view(nodeView, QModelIndex());
+			node->viewThis(nodeView, QModelIndex());
 		else
-			node->view(nodeView, path, plugins);
+			node->viewChild(nodeView, path, plugins);
 	}
 	else
 		if (value->item->isFile())
-			view(nodeView, indexForFile(value->item));
+			viewThis(nodeView, indexForFile(value->item));
 		else
-			view(nodeView, QModelIndex());
+			viewThis(nodeView, QModelIndex());
 }
 
-void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
+void FolderNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
 {
 	Path path(absoluteFilePath);
 
@@ -362,28 +376,40 @@ void FolderNode::view(INodeView *nodeView, const QString &absoluteFilePath, Plug
 		while (node->parent())
 			node = static_cast<Node*>(node->parent());
 
-		node->view(nodeView, path.begin(), plugins);
+		node->viewChild(nodeView, path.begin(), plugins);
 	}
 	else
-		view(nodeView, path.begin(), plugins);
+		viewChild(nodeView, path.begin(), plugins);
 }
 
-void FolderNode::viewParent(INodeView *nodeView)
+void FolderNode::removeThis()
 {
 	if (!m_info.isRoot())
-		if (exists())
-			switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
-		else
-			switchToParent();
+	{
+		Node *parent = static_cast<Node*>(Node::parent());
+
+		while (!parent->exists())
+			parent = static_cast<Node*>(parent->Node::parent());
+
+		switchTo(parent, QModelIndex());
+	}
 }
 
-void FolderNode::viewParent()
+void FolderNode::switchTo(Node *node, const QModelIndex &selected)
 {
-	if (!m_info.isRoot())
-		if (exists())
-			switchTo(static_cast<Node*>(Node::parent()), m_parentEntryIndex);
-		else
-			switchToParent();
+	Node *child;
+
+	for (SetView::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
+		node->viewThis(*it, selected);
+
+	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
+		if ((child = m_items.at(i).node))
+			child->switchTo(node, selected);
+}
+
+void FolderNode::removeEntry(Node *entry)
+{
+	removeEntry(m_items.indexOf(entry));
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, const FolderNodeFunctors::Functor &functor)
@@ -425,7 +451,7 @@ void FolderNode::calculateSizeFunctor(FolderNodeItem *entry)
 		updateSecondColumn(entry);
 }
 
-void FolderNode::copyFunctor(FolderNodeItem *entry, Node *destination)
+void FolderNode::copyFunctor(FolderNodeItem *entry, INode *destination)
 {
 	if (entry->isDir())
 		scanForCopy(entry, destination);
@@ -434,7 +460,7 @@ void FolderNode::copyFunctor(FolderNodeItem *entry, Node *destination)
 			copyEntry(entry, destination);
 }
 
-void FolderNode::moveFunctor(FolderNodeItem *entry, Node *destination)
+void FolderNode::moveFunctor(FolderNodeItem *entry, INode *destination)
 {
 	if (entry->isDir())
 		scanForMove(entry, destination);
@@ -471,20 +497,26 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 	RangeIntersection updateRange(1);
 
 	for (UpdatesList::size_type i = 0; i < list.size();)
-		if (list.at(i).type() == UpdatesList::Updated)
+	{
+		const UpdatesList::Change &change = list.at(i);
+
+		if (change.type() == UpdatesList::Updated)
 		{
-			(*m_items[list.at(i).index()].item) = list.at(i).info();
-			updateRange.add(list.at(i).index(), list.at(i).index());
+			(*m_items[change.index()].item) = change.info();
+			updateRange.add(change.index(), change.index());
 			list.removeAt(i);
 		}
 		else
-			if (list.at(i).type() == UpdatesList::Deleted)
+			if (change.type() == UpdatesList::Deleted)
 			{
-				removeEntry(list.at(i).index());
+				if (!static_cast<FolderNodeEntry*>(m_items.at(change.index()).item)->isLocked())
+					removeEntry(change.index());
+
 				list.removeAt(i);
 			}
 			else
 				++i;
+	}
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),
@@ -561,12 +593,27 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 
 void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 {
+	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
+	if (params->removeParentEntry)
+		removeEntry(m_items.indexOf(params->snapshot.entry));
+	else
+	{
+		params->snapshot.entry->clearTotalSize();
+		params->snapshot.entry->unlock();
+		updateBothColumns(params->snapshot.entry);
+	}
 }
 
 void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
 {
+	typedef const PerformRemoveEntryTask::CanceledEvent::Params *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
+	params->snapshot.entry->clearTotalSize();
+	params->snapshot.entry->unlock();
+	updateBothColumns(params->snapshot.entry);
 }
 
 void FolderNode::scanForSize(FolderNodeItem *entry)
@@ -598,7 +645,7 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 //		delete params->subnode;
 }
 
-void FolderNode::copyEntry(FolderNodeItem *entry, Node *destination)
+void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination)
 {
 //	QScopedPointer<PerformCopyEntryTask::Params> params(new PerformCopyEntryTask::Params());
 //	params->source.object = (QObject*)this;
@@ -614,12 +661,12 @@ void FolderNode::copyEntry(FolderNodeItem *entry, Node *destination)
 //	Application::instance()->taskPool().handle(new PerformCopyEntryTask(params.take()));
 }
 
-void FolderNode::scanForCopy(FolderNodeItem *entry, Node *destination)
+void FolderNode::scanForCopy(FolderNodeItem *entry, INode *destination)
 {
 	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask());
 	task->parameters()->source.node = this;
 	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
-	task->parameters()->destination.node = destination;
+//	task->parameters()->destination.node = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
 	updateFirstColumn(entry);
@@ -627,7 +674,7 @@ void FolderNode::scanForCopy(FolderNodeItem *entry, Node *destination)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNode::moveEntry(FolderNodeItem *entry, Node *destination)
+void FolderNode::moveEntry(FolderNodeItem *entry, INode *destination)
 {
 //	QScopedPointer<PerformCopyEntryTask::Params> params(new PerformCopyEntryTask::Params());
 //	params->source.object = (QObject*)this;
@@ -643,12 +690,12 @@ void FolderNode::moveEntry(FolderNodeItem *entry, Node *destination)
 //	Application::instance()->taskPool().handle(new PerformCopyEntryTask(params.take()));
 }
 
-void FolderNode::scanForMove(FolderNodeItem *entry, Node *destination)
+void FolderNode::scanForMove(FolderNodeItem *entry, INode *destination)
 {
 	QScopedPointer<ScanFilesForMoveTask> task(new ScanFilesForMoveTask());
 	task->parameters()->source.node = this;
 	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
-	task->parameters()->destination.node = destination;
+//	task->parameters()->destination.node = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for move..."));
 	updateFirstColumn(entry);
@@ -787,7 +834,7 @@ void FolderNode::removeEntry(Values::size_type index)
 	beginRemoveRows(QModelIndex(), index, index);
 
 	if (m_items.at(index).node)
-		m_items.at(index).node->viewParent();
+		m_items.at(index).node->removeThis();
 
 	m_items.remove(index);
 
@@ -799,37 +846,18 @@ void FolderNode::removeEntry(const QModelIndex &index)
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 
 	if (m_items.at(index.row()).node)
-		m_items.at(index.row()).node->viewParent();
+		m_items.at(index.row()).node->removeThis();
 
 	m_items.remove(index.row());
 
 	endRemoveRows();
 }
 
-void FolderNode::switchTo(Node *node, const QModelIndex &selected)
-{
-	for (SetView::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
-		node->view(*it, selected);
-
-	node->refresh();
-}
-
 void FolderNode::switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected)
 {
 	removeView(nodeView);
-	node->view(nodeView, selected);
+	node->viewThis(nodeView, selected);
 	node->refresh();
-}
-
-void FolderNode::switchToParent()
-{
-	Node *parent = static_cast<Node*>(Node::parent());
-
-	while (!parent->exists())
-		parent = static_cast<Node*>(parent->Node::parent());
-
-	switchTo(parent, QModelIndex());
-	deleteLater();
 }
 
 void FolderNode::addView(INodeView *view)

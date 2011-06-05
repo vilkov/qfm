@@ -25,14 +25,17 @@ public:
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	virtual int columnCount(const QModelIndex &parent) const;
 	virtual QVariant data(const QModelIndex &index, int role) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	/* IFileInfo */
+	/* INode */
+	virtual int columnCount() const;
+
+	/* INode::IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool exists() const;
@@ -47,27 +50,31 @@ public:
 
 	virtual void refresh();
 
-	/* IFileOperations */
+	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
-	virtual void copy(const QModelIndexList &list, Node *destination);
-	virtual void move(const QModelIndexList &list, Node *destination);
+	virtual void copy(const QModelIndexList &list, INode *destination);
+	virtual void move(const QModelIndexList &list, INode *destination);
+
+	/* INode::IFileNavigation */
+	virtual void viewParent(INodeView *nodeView);
+	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
+	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
+	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
+	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-	virtual void view(INodeView *nodeView, const QModelIndex &selected);
-	virtual void view(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual void view(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void view(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-	virtual void viewParent(INodeView *nodeView);
-	virtual void viewParent();
+	virtual void removeThis();
+	virtual void switchTo(Node *node, const QModelIndex &selected);
+	virtual void removeEntry(Node *entry);
 
 protected:
 	void processIndexList(const QModelIndexList &list, const FolderNodeFunctors::Functor &functor);
 	void removeFunctor(FolderNodeItem *entry);
 	void calculateSizeFunctor(FolderNodeItem *entry);
-	void copyFunctor(FolderNodeItem *entry, Node *destination);
-	void moveFunctor(FolderNodeItem *entry, Node *destination);
+	void copyFunctor(FolderNodeItem *entry, INode *destination);
+	void moveFunctor(FolderNodeItem *entry, INode *destination);
 
 protected:
 	bool isUpdating() const { return m_updating; }
@@ -89,10 +96,10 @@ protected:
 	void scanForSize(FolderNodeItem *entry);
 	void scanForSizeEvent(const ModelEvent::Params *p);
 
-	void copyEntry(FolderNodeItem *entry, Node *destination);
-	void scanForCopy(FolderNodeItem *entry, Node *destination);
-	void moveEntry(FolderNodeItem *entry, Node *destination);
-	void scanForMove(FolderNodeItem *entry, Node *destination);
+	void copyEntry(FolderNodeItem *entry, INode *destination);
+	void scanForCopy(FolderNodeItem *entry, INode *destination);
+	void moveEntry(FolderNodeItem *entry, INode *destination);
+	void scanForMove(FolderNodeItem *entry, INode *destination);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void scanForMoveEvent(const ModelEvent::Params *p);
 	void copyCompleteEvent(const ModelEvent::Params *p);
@@ -114,9 +121,7 @@ private:
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 
-	void switchTo(Node *node, const QModelIndex &selected);
 	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
-	void switchToParent();
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
 

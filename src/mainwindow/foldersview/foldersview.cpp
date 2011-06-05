@@ -2,7 +2,7 @@
 #include <QtCore/QScopedPointer>
 
 
-FoldersView::FoldersView(FileSystem::Node *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
+FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
 	m_doNotRefreshTab(true),
     m_layout(this),

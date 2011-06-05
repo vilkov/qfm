@@ -7,7 +7,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class Node;
+class INode;
 
 class IFileOperations
 {
@@ -16,8 +16,8 @@ public:
 
 	virtual void remove(const QModelIndexList &list) = 0;
 	virtual void calculateSize(const QModelIndexList &list) = 0;
-	virtual void copy(const QModelIndexList &list, Node *destination) = 0;
-	virtual void move(const QModelIndexList &list, Node *destination) = 0;
+	virtual void copy(const QModelIndexList &list, INode *destination) = 0;
+	virtual void move(const QModelIndexList &list, INode *destination) = 0;
 };
 
 FILE_SYSTEM_NS_END

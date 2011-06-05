@@ -11,8 +11,7 @@
 #include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
 #include "contextmenu/contextmenu.h"
-#include "../../filesystem/filesystemrootnode.h"
-#include "../../filesystem/folder/info/filesystemfoldernodeinfo.h"
+#include "../../filesystem/interfaces/filesysteminode.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
 #include "../../tools/events/imp/contextmenueventhandler.h"
@@ -43,9 +42,9 @@ public:
     };
 
 public:
-    DirectoryView(FileSystem::Node *root, FoldersView *parent);
-    DirectoryView(FileSystem::Node *root, const Tab &tab, FoldersView *parent);
-    DirectoryView(FileSystem::Node *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(FileSystem::INode *root, FoldersView *parent);
+    DirectoryView(FileSystem::INode *root, const Tab &tab, FoldersView *parent);
+    DirectoryView(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent);
 
 	static QString rootPath();
 
@@ -58,7 +57,7 @@ public:
 
 	/* INodeView */
 	virtual void select(const QModelIndex &index);
-	virtual void setNode(FileSystem::Node *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
+	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
 public Q_SLOTS:
 	void goUp();
@@ -87,9 +86,9 @@ private:
 
 private:
 	void initialize();
-	void setupModel(FileSystem::Node *root, const Tab &tab);
-	void setupModel(FileSystem::Node *root, const QString &absoluteFilePath);
-	void setupModel(FileSystem::Node *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
+	void setupModel(FileSystem::INode *root, const Tab &tab);
+	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath);
+	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 
@@ -143,7 +142,7 @@ private:
 
 private:
 	FoldersView *m_parent;
-    FileSystem::Node *m_node;
+    FileSystem::INode *m_node;
 	ContextMenu m_menu;
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;

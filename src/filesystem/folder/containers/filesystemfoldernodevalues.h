@@ -64,6 +64,14 @@ public:
 	Value &last() { return m_list.last(); }
 
 	size_type size() const { return m_list.size(); }
+	size_type indexOf(Node *item) const
+	{
+		for (ValueList::size_type i = 0, size = m_list.size(); i < size; ++i)
+			if (m_list.at(i).node == item)
+				return i;
+
+		return InvalidIndex;
+	}
 	size_type indexOf(FolderNodeItem *item) const { return m_list.indexOf(item); }
 	size_type indexOf(const QString &fileName) const { return m_map.value(fileName, InvalidIndex); }
 	QSet<size_type> indexes() const { return QSet<size_type>::fromList(m_map.values()); }
@@ -89,6 +97,7 @@ public:
 		const Value &value = m_list.at(index);
 		m_map.remove(value.item->fileName());
 		delete value.item;
+		delete value.node;
 		m_list.removeAt(index);
 	}
 

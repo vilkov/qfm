@@ -51,13 +51,14 @@ public:
 	typedef QSet<Values::size_type> Set;
 
 public:
+	UpdatesList() :
+		m_values(0)
+	{}
 	UpdatesList(const Values &values) :
-		m_values(values)
+		m_values(&values)
 	{
-		m_changes.reserve(m_values.size());
+		m_changes.reserve(m_values->size());
 	}
-
-	void operator=(const UpdatesList &other) { m_changes = other.m_changes; }
 
 	const Change &operator[](size_type index) const { return m_changes[index]; }
 	const Change &at(size_type index) const { return m_changes.at(index); }
@@ -69,12 +70,12 @@ public:
 
 	Values::size_type update(const Info &info)
 	{
-		Values::size_type index = m_values.indexOf(info.fileName());
+		Values::size_type index = m_values->indexOf(info.fileName());
 
 		if (index == Values::InvalidIndex)
 			m_changes.push_back(Change(Added, info));
 		else
-			if (m_values.at(index).item->lastModified() != info.lastModified())
+			if (m_values->at(index).item->lastModified() != info.lastModified())
 				m_changes.push_back(Change(Updated, info, index));
 
 		return index;
@@ -84,9 +85,9 @@ public:
 		Set res = affected;
 
 		res.remove(Values::InvalidIndex);
-		res = m_values.indexes().subtract(res);
+		res = m_values->indexes().subtract(res);
 
-		if (m_values.at(0).item->isRootItem())
+		if (m_values->at(0).item->isRootItem())
 			res.remove(0);
 
 		for (Set::const_iterator it = res.constBegin(), end = res.constEnd(); it != end; ++it)
@@ -95,7 +96,7 @@ public:
 
 private:
 	List m_changes;
-	const Values &m_values;
+	const Values *m_values;
 };
 
 FILE_SYSTEM_NS_END

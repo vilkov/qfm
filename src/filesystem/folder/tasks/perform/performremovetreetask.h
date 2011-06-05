@@ -17,24 +17,25 @@ public:
 public:
 	struct Params : public PerformRemoveEntryTask::Params
 	{
-		Params(Node *receiver, const ModelEvents::ScanFilesForRemoveEvent::Params &params) :
-			subnode(params.subnode)
+		Params(Node *receiver, ModelEvents::ScanFilesForRemoveEvent::Params &params) :
+			subnode(params.subnode.take())
 		{
 			source.node = receiver;
 			source.entry = params.snapshot.entry;
 		}
-		Params(Node *receiver, const ModelEvents::CopyTreeFilesCompletedEvent::Params &params) :
-			subnode(params.subnode)
+		Params(Node *receiver, ModelEvents::CopyTreeFilesCompletedEvent::Params &params) :
+			subnode(params.subnode.take())
 		{
 			source.node = receiver;
 			source.entry = params.snapshot.entry;
 		}
 
-		FolderNodeItemList *subnode;
+		QScopedPointer<FolderNodeItemList> subnode;
 	};
 
 public:
-	PerformRemoveTreeTask(Params *params);
+	PerformRemoveTreeTask(Node *receiver, ModelEvents::ScanFilesForRemoveEvent::Params &params);
+	PerformRemoveTreeTask(Node *receiver, ModelEvents::CopyTreeFilesCompletedEvent::Params &params);
 
 	virtual void run(const volatile bool &stopedFlag);
 
@@ -42,7 +43,7 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformRemoveEntryTask::parameters()); }
 
 private:
-	void remove(FolderNode *node, const volatile bool &stopedFlag);
+	void remove(FolderNodeItemList *node, const volatile bool &stopedFlag);
 };
 
 FILE_SYSTEM_NS_END

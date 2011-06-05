@@ -21,15 +21,14 @@ public:
 	typedef ModelEvents::QuestionAnswerEvent       QuestionAnswerEvent;
 
 public:
+	PerformRemoveEntryTask();
 	PerformRemoveEntryTask(Params *params);
 
 	virtual void run(const volatile bool &stopedFlag);
-
-protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 protected:
-	void removeEntry(FolderNodeEntry *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	void removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void postCompletedEvent() const;
 	void postCanceledEvent() const;
 

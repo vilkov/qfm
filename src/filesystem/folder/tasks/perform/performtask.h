@@ -23,10 +23,7 @@ public:
 	PerformTask(Params *params) :
 		parent_class(params),
 		m_canceled(false)
-	{
-		Q_ASSERT(params->source.node);
-		Q_ASSERT(params->source.entry);
-	}
+	{}
 
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }

@@ -18,23 +18,17 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
-		Params(Node *node, const UpdatesList &list) :
-			node(node),
-			list(list)
-		{}
-
 		Node *node;
 		UpdatesList list;
 	};
-	typedef QScopedPointer<Params> ParamsPointer;
 	typedef ModelEvents::UpdateFilesEvent Event;
 
 public:
-	UpdateFilesTask(ParamsPointer &params);
+	UpdateFilesTask();
 
 	virtual void run(const volatile bool &stopedFlag);
 
-protected:
+public:
 	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 #ifndef Q_OS_WIN

@@ -153,7 +153,7 @@ public:
 	struct ScanFilesParams : public BaseEvent::Params
 	{
 		Snapshot snapshot;
-		FolderNodeItemList *subnode;
+		QScopedPointer<FolderNodeItemList> subnode;
 		quint64 size;
 	};
 	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForRemove> ScanFilesForRemoveEvent;
@@ -204,7 +204,7 @@ public:
 	/********** PerformWithDestCopyTreeFiles **********/
 	struct PerformWithDestCopyTreeFilesParams : public PerformWithDestCopyFilesParams
 	{
-		FolderNodeItemList *subnode;
+		QScopedPointer<FolderNodeItemList> subnode;
 	};
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCompleted> CopyTreeFilesCompletedEvent;
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCanceled> CopyTreeFilesCanceledEvent;

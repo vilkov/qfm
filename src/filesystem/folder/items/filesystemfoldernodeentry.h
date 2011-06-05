@@ -33,7 +33,7 @@ public:
 	const QVariant &timeElapsed() const { return m_timeElapsed; }
 	void setTimeElapsed(quint64 value) { m_timeElapsed = value; }
 
-	bool isInProgress() const { return !m_doneSize.isNull(); }
+	bool isInProgress() const { return !m_doneSize.isNull() && m_totalSize.toULongLong() > 0; }
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
 
 	bool isLocked() const { return m_locked; }

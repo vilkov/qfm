@@ -9,11 +9,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask(ParamsPointer &params) :
-	parent_class(params.take())
-{
-	Q_ASSERT(parameters()->node);
-}
+UpdateFilesTask::UpdateFilesTask() :
+	parent_class(new Params())
+{}
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
 {

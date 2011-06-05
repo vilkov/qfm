@@ -25,24 +25,20 @@ public:
 	struct Params : public parent_class::Params
 	{
 		typename parent_class::Params::Snapshot source;
+		QScopedPointer<FolderNodeItemList> subnode;
 		quint64 size;
-		FolderNodeItemList *subnode;
 	};
 
 public:
 	ScanFilesTask(Params *params) :
 		parent_class(params)
-	{
-		Q_ASSERT(params->source.node);
-		Q_ASSERT(params->source.entry);
-	}
-
+	{}
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
 		QScopedPointer<FolderNodeItemList> subnode(new FolderNodeItemList(*parameters()->source.entry));
 		scan(subnode.data(), stopedFlag);
-		parameters()->subnode = subnode.take();
+		parameters()->subnode.swap(subnode);
 	}
 
 protected:

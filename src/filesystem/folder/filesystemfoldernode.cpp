@@ -245,22 +245,22 @@ void FolderNode::refresh()
 
 void FolderNode::remove(const QModelIndexList &list)
 {
-	processIndexList(list, Functors::callTo(this, &FolderNode::removeFunctor));
+	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::removeFunctor));
 }
 
 void FolderNode::calculateSize(const QModelIndexList &list)
 {
-	processIndexList(list, Functors::callTo(this, &FolderNode::calculateSizeFunctor));
+	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::calculateSizeFunctor));
 }
 
 void FolderNode::copy(const QModelIndexList &list, Node *destination)
 {
-	processIndexList(list, Functors::callTo(this, &FolderNode::copyFunctor, destination));
+	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::copyFunctor, destination));
 }
 
 void FolderNode::move(const QModelIndexList &list, Node *destination)
 {
-	processIndexList(list, Functors::callTo(this, &FolderNode::moveFunctor, destination));
+	processIndexList(list, FolderNodeFunctors::callTo(this, &FolderNode::moveFunctor, destination));
 }
 
 void FolderNode::view(INodeView *nodeView, const QModelIndex &selected)
@@ -386,7 +386,7 @@ void FolderNode::viewParent()
 			switchToParent();
 }
 
-void FolderNode::processIndexList(const QModelIndexList &list, const Functors::Functor &functor)
+void FolderNode::processIndexList(const QModelIndexList &list, const FolderNodeFunctors::Functor &functor)
 {
 	QModelIndex index;
 	FolderNodeItem *entry;
@@ -455,11 +455,12 @@ void FolderNode::listEvent(const ModelEvent::Params *p)
 
 void FolderNode::updateFiles()
 {
-	typedef UpdateFilesTask::Params Params;
-	QScopedPointer<Params> params(new Params(this, m_items));
+	QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask());
+	task->parameters()->node = this;
+	task->parameters()->list = m_items;
 
 	setUpdating(true);
-	Application::instance()->taskPool().handle(new UpdateFilesTask(params));
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
@@ -523,21 +524,20 @@ void FolderNode::removeEntry(FolderNodeItem *entry)
 
 void FolderNode::scanForRemove(FolderNodeItem *entry)
 {
-	typedef ScanFilesForRemoveTask::Params Params;
-	QScopedPointer<Params> params(new Params());
-	params->source.node = this;
-	params->source.entry = static_cast<FolderNodeEntry*>(entry);
+	QScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask());
+	task->parameters()->source.node = this;
+	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for remove..."));
 	updateFirstColumn(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForRemoveTask(params));
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 {
-	typedef const ScanFilesForRemoveTask::Event::Params *ParamsType;
-	ParamsType params = static_cast<ParamsType>(p);
+	typedef ScanFilesForRemoveTask::Event::Params *ParamsType;
+	ParamsType params = (ParamsType)p;
 
 	if (QMessageBox::question(
 			&Application::instance()->mainWindow(),
@@ -549,7 +549,7 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 	{
 		params->snapshot.entry->lock(tr("Removing..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
-		Application::instance()->taskPool().handle(new PerformRemoveTreeTask(new PerformRemoveTreeTask::Params(this, *params)));
+		Application::instance()->taskPool().handle(new PerformRemoveTreeTask(this, *params));
 	}
 	else
 	{
@@ -571,14 +571,14 @@ void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
 
 void FolderNode::scanForSize(FolderNodeItem *entry)
 {
-	QScopedPointer<ScanFilesForSizeTask::Params> params(new ScanFilesForSizeTask::Params());
-	params->source.node = this;
-	params->source.entry = static_cast<FolderNodeEntry*>(entry);
+	QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask());
+	task->parameters()->source.node = this;
+	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for size..."));
 	updateFirstColumn(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForSizeTask(params.take()));
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
@@ -594,8 +594,8 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 		params->snapshot.entry->unlock();
 		updateBothColumns(params->snapshot.entry);
 	}
-	else
-		delete params->subnode;
+//	else
+//		delete params->subnode;
 }
 
 void FolderNode::copyEntry(FolderNodeItem *entry, Node *destination)
@@ -616,15 +616,15 @@ void FolderNode::copyEntry(FolderNodeItem *entry, Node *destination)
 
 void FolderNode::scanForCopy(FolderNodeItem *entry, Node *destination)
 {
-	QScopedPointer<ScanFilesForCopyTask::Params> params(new ScanFilesForCopyTask::Params());
-	params->source.node = this;
-	params->source.entry = static_cast<FolderNodeEntry*>(entry);
-	params->destination.node = destination;
+	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask());
+	task->parameters()->source.node = this;
+	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
+	task->parameters()->destination.node = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
 	updateFirstColumn(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForCopyTask(params.take()));
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::moveEntry(FolderNodeItem *entry, Node *destination)
@@ -645,15 +645,15 @@ void FolderNode::moveEntry(FolderNodeItem *entry, Node *destination)
 
 void FolderNode::scanForMove(FolderNodeItem *entry, Node *destination)
 {
-	QScopedPointer<ScanFilesForMoveTask::Params> params(new ScanFilesForMoveTask::Params());
-	params->source.node = this;
-	params->source.entry = static_cast<FolderNodeEntry*>(entry);
-	params->destination.node = destination;
+	QScopedPointer<ScanFilesForMoveTask> task(new ScanFilesForMoveTask());
+	task->parameters()->source.node = this;
+	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
+	task->parameters()->destination.node = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for move..."));
 	updateFirstColumn(entry);
 
-	Application::instance()->taskPool().handle(new ScanFilesForMoveTask(params.take()));
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
@@ -670,8 +670,8 @@ void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 
 //		Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, false)));
 	}
-	else
-		delete params->subnode;
+//	else
+//		delete params->subnode;
 }
 
 void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
@@ -688,8 +688,8 @@ void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
 
 //		Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, true)));
 	}
-	else
-		delete params->subnode;
+//	else
+//		delete params->subnode;
 }
 
 void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)
@@ -704,12 +704,22 @@ void FolderNode::copyCanceledEvent(const ModelEvent::Params *p)
 
 void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)
 {
+	typedef ModelEvents::QuestionAnswerParams * ParamsType;
+	ParamsType params = (ParamsType)p;
 
+	params->result->lock();
+	params->result->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), params->title, params->question, params->buttons));
+	params->result->unlock();
 }
 
 void FolderNode::updateProgressEvent(const ModelEvent::Params *p)
 {
+	typedef const ModelEvents::UpdatePerformProgressEvent::Params *ParamsType;
+	ParamsType params = static_cast<ParamsType>(p);
 
+	params->snapshot.entry->setDoneSize(params->progress);
+	params->snapshot.entry->setTimeElapsed(params->timeElapsed);
+	updateSecondColumn(params->snapshot.entry);
 }
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const

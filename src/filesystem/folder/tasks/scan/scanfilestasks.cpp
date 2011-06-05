@@ -4,8 +4,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(Params *params) :
-	parent_class(params)
+ScanFilesForSizeTask::ScanFilesForSizeTask() :
+	parent_class(new Params())
 {}
 
 void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
@@ -17,14 +17,14 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 		QScopedPointer<Event> event(new Event());
 		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().subnode = parameters()->subnode;
+		event->params().subnode.swap(parameters()->subnode);
 		Application::postEvent(parameters()->source.node, event.take());
 	}
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(ParamsPointer &params) :
-	parent_class(params.take())
+ScanFilesForRemoveTask::ScanFilesForRemoveTask() :
+	parent_class(new Params())
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
@@ -36,7 +36,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 		QScopedPointer<Event> event(new Event());
 		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().subnode = parameters()->subnode;
+		event->params().subnode.swap(parameters()->subnode);
 		Application::postEvent(parameters()->source.node, event.take());
 	}
 }
@@ -46,8 +46,8 @@ ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params) :
 	parent_class(params)
 {}
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(Params *params) :
-	ScanFilesWithDestinationTask(params)
+ScanFilesForCopyTask::ScanFilesForCopyTask() :
+	ScanFilesWithDestinationTask(new Params())
 {}
 
 void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
@@ -59,14 +59,14 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 		QScopedPointer<Event> event(new Event());
 		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().subnode = parameters()->subnode;
+		event->params().subnode.swap(parameters()->subnode);
 		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.node, event.take());
 	}
 }
 
-ScanFilesForMoveTask::ScanFilesForMoveTask(Params *params) :
-	ScanFilesWithDestinationTask(params)
+ScanFilesForMoveTask::ScanFilesForMoveTask() :
+	ScanFilesWithDestinationTask(new Params())
 {}
 
 void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
@@ -78,7 +78,7 @@ void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
 		QScopedPointer<Event> event(new Event());
 		event->params().snapshot = parameters()->source;
 		event->params().size = parameters()->size;
-		event->params().subnode = parameters()->subnode;
+		event->params().subnode.swap(parameters()->subnode);
 		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.node, event.take());
 	}

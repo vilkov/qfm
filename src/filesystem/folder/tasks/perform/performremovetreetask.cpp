@@ -5,15 +5,19 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTreeTask::PerformRemoveTreeTask(Params *params) :
-	PerformRemoveEntryTask(params)
+PerformRemoveTreeTask::PerformRemoveTreeTask(Node *receiver, ModelEvents::ScanFilesForRemoveEvent::Params &params) :
+	PerformRemoveEntryTask(new Params(receiver, params))
+{}
+
+PerformRemoveTreeTask::PerformRemoveTreeTask(Node *receiver, ModelEvents::CopyTreeFilesCompletedEvent::Params &params) :
+	PerformRemoveEntryTask(new Params(receiver, params))
 {}
 
 void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 {
 	m_progress.init();
 
-//	remove(parameters()->subnode, stopedFlag);
+	remove(parameters()->subnode.data(), stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())
 		if (m_canceled)
@@ -37,30 +41,30 @@ void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 				postCompletedEvent();
 }
 
-void PerformRemoveTreeTask::remove(FolderNode *node, const volatile bool &stopedFlag)
+void PerformRemoveTreeTask::remove(FolderNodeItemList *node, const volatile bool &stopedFlag)
 {
 	bool tryAgain;
 
-//	for (FileSystemTree::size_type i = 1, size = node->size(); i < size && !stopedFlag && !isControllerDead() && !m_canceled; ++i)
-//		if (static_cast<FileSystemEntry*>(node->child(i))->fileInfo().isDir())
-//		{
-//			remove(static_cast<FileSystemTree*>(node->subnode(node->child(i))), stopedFlag);
-//
-//			if (!m_canceled)
-//			{
-//				removeEntry(static_cast<FileSystemEntry*>(node->child(i)), tryAgain = false, stopedFlag);
-//
-//				if (tryAgain)
-//					--i;
-//			}
-//		}
-//		else
-//		{
-//			removeEntry(static_cast<FileSystemEntry*>(node->child(i)), tryAgain = false, stopedFlag);
-//
-//			if (tryAgain)
-//				--i;
-//		}
+	for (FolderNodeItemList::size_type i = 0, size = node->size(); i < size && !stopedFlag && !isControllerDead() && !m_canceled; ++i)
+		if (node->at(i)->isListItem())
+		{
+			remove(static_cast<FolderNodeItemList*>(node->at(i)), stopedFlag);
+
+			if (!m_canceled)
+			{
+				removeEntry(node->at(i), tryAgain = false, stopedFlag);
+
+				if (tryAgain)
+					--i;
+			}
+		}
+		else
+		{
+			removeEntry(node->at(i), tryAgain = false, stopedFlag);
+
+			if (tryAgain)
+				--i;
+		}
 }
 
 FILE_SYSTEM_NS_END

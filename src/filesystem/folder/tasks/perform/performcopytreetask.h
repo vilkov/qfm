@@ -13,8 +13,8 @@ class PerformCopyTreeTask : public PerformCopyEntryTask
 public:
 	struct Params : public PerformCopyEntryTask::Params
 	{
-		Params(Node *receiver, const ModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
-			subnode(params.subnode)
+		Params(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
+			subnode(params.subnode.take())
 		{
 			source.node = receiver;
 			source.entry = params.snapshot.entry;
@@ -22,7 +22,7 @@ public:
 			removeSource = moveFiles;
 		}
 
-		FolderNodeItemList *subnode;
+		QScopedPointer<FolderNodeItemList> subnode;
 	};
 	typedef ModelEvents::CopyTreeFilesCompletedEvent CompletedEvent;
 	typedef ModelEvents::CopyTreeFilesCanceledEvent  CanceledEvent;

@@ -17,9 +17,10 @@ public:
 	typedef ModelEvents::ScanFilesForSizeEvent Event;
 
 public:
-	ScanFilesForSizeTask(Params *params);
+	ScanFilesForSizeTask();
 
 	virtual void run(const volatile bool &stopedFlag);
+	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 };
 
 
@@ -29,13 +30,13 @@ class ScanFilesForRemoveTask : public ScanFilesTask<ControlableTask>
 public:
 	typedef ScanFilesTask<ControlableTask>       parent_class;
 	typedef parent_class::Params                 Params;
-	typedef QScopedPointer<Params>               ParamsPointer;
 	typedef ModelEvents::ScanFilesForRemoveEvent Event;
 
 public:
-	ScanFilesForRemoveTask(ParamsPointer &params);
+	ScanFilesForRemoveTask();
 
 	virtual void run(const volatile bool &stopedFlag);
+	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 };
 
 
@@ -49,7 +50,6 @@ public:
 public:
 	ScanFilesWithDestinationTask(Params *params);
 
-protected:
 	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 };
 
@@ -61,7 +61,7 @@ public:
 	typedef ModelEvents::ScanFilesForCopyEvent Event;
 
 public:
-	ScanFilesForCopyTask(Params *params);
+	ScanFilesForCopyTask();
 
 	virtual void run(const volatile bool &stopedFlag);
 };
@@ -74,7 +74,7 @@ public:
 	typedef ModelEvents::ScanFilesForMoveEvent Event;
 
 public:
-	ScanFilesForMoveTask(Params *params);
+	ScanFilesForMoveTask();
 
 	virtual void run(const volatile bool &stopedFlag);
 };

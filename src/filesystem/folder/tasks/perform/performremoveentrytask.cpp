@@ -8,12 +8,20 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+PerformRemoveEntryTask::PerformRemoveEntryTask() :
+	parent_class(new Params()),
+	m_removeParentEntry(true),
+	m_skipAllIfNotRemove(false),
+	m_skipAllIfNotExists(false),
+	m_progress(parameters()->source)
+{}
+
 PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
 	parent_class(params),
 	m_removeParentEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false),
-	m_progress(params->source)
+	m_progress(parameters()->source)
 {}
 
 void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
@@ -33,7 +41,7 @@ void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
 			postCompletedEvent();
 }
 
-void PerformRemoveEntryTask::removeEntry(FolderNodeEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveEntryTask::removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {
 	if (entry->exists())
 	{
@@ -71,13 +79,13 @@ void PerformRemoveEntryTask::removeEntry(FolderNodeEntry *entry, bool &tryAgain,
 			QuestionAnswerEvent::Params::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-			event->params().title = entry->lockReason();
+			event->params().title = tr("Failed to remove");
 			event->params().result = &result;
 
 			if (entry->isDir())
-				event->params().question = tr("Failed to remove directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
+				event->params().question = tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
 			else
-				event->params().question = tr("Failed to remove file \"%1\" (%2). Skip it?").
+				event->params().question = tr("File \"%1\" (%2). Skip it?").
 					arg(entry->absoluteFilePath()).
 					arg(error);
 
@@ -105,7 +113,7 @@ void PerformRemoveEntryTask::removeEntry(FolderNodeEntry *entry, bool &tryAgain,
 			QuestionAnswerEvent::Params::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Cancel;
-			event->params().title = entry->lockReason();
+			event->params().title = tr("Failed to remove");
 			event->params().result = &result;
 
 			if (entry->isDir())

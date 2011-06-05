@@ -63,7 +63,7 @@ public:
 	virtual void viewParent();
 
 protected:
-	void processIndexList(const QModelIndexList &list, const Functors::Functor &functor);
+	void processIndexList(const QModelIndexList &list, const FolderNodeFunctors::Functor &functor);
 	void removeFunctor(FolderNodeItem *entry);
 	void calculateSizeFunctor(FolderNodeItem *entry);
 	void copyFunctor(FolderNodeItem *entry, Node *destination);

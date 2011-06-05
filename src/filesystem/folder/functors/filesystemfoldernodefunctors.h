@@ -5,9 +5,9 @@
 
 
 /**
- *  Closed namespace "Functors"
+ *  Closed namespace "FolderNodeFunctors"
  */
-struct Functors
+struct FolderNodeFunctors
 {
 	class Functor
 	{

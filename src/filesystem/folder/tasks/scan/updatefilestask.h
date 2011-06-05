@@ -19,7 +19,7 @@ public:
 	struct Params : public parent_class::Params
 	{
 		Node *node;
-		UpdatesList list;
+		UpdatesList updates;
 	};
 	typedef ModelEvents::UpdateFilesEvent Event;
 

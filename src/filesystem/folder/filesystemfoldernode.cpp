@@ -481,9 +481,14 @@ void FolderNode::listEvent(const ModelEvent::Params *p)
 
 void FolderNode::updateFiles()
 {
+	UpdatesList::Map changes;
 	QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask());
+
+	for (Values::size_type i = m_info.isRoot() ? 1 : 0, size = m_items.size(); i < size; ++i)
+		changes.insert(m_items.at(i).item->fileName(), *m_items.at(i).item);
+
 	task->parameters()->node = this;
-	task->parameters()->list = m_items;
+	task->parameters()->updates = changes;
 
 	setUpdating(true);
 	Application::instance()->taskPool().handle(task.take());
@@ -493,40 +498,33 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 {
 	typedef const UpdateFilesTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
-	UpdatesList list = params->updates;
+	UpdatesList updates = params->updates;
 	RangeIntersection updateRange(1);
+	Values::size_type index;
 
-	for (UpdatesList::size_type i = 0; i < list.size();)
-	{
-		const UpdatesList::Change &change = list.at(i);
-
-		if (change.type() == UpdatesList::Updated)
-		{
-			(*m_items[change.index()].item) = change.info();
-			updateRange.add(change.index(), change.index());
-			list.removeAt(i);
-		}
-		else
-			if (change.type() == UpdatesList::Deleted)
+	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end; update = updates.erase(update))
+		if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex)
+			if (update.value().type() == UpdatesList::Updated)
 			{
-				if (!static_cast<FolderNodeEntry*>(m_items.at(change.index()).item)->isLocked())
-					removeEntry(change.index());
-
-				list.removeAt(i);
+				(*m_items[index].item) = update.value().info();
+				updateRange.add(index, index);
 			}
 			else
-				++i;
-	}
+				if (update.value().type() == UpdatesList::Deleted &&
+					!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
+					removeEntry(index);
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),
 						 createIndex(updateRange.at(i).bottom(), columnCount() - 1));
 
-	if (!list.isEmpty())
+	if (!updates.isEmpty())
 	{
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
-		for (UpdatesList::size_type i = 0, size = list.size(); i < size; ++i)
-			m_items.add(new FolderNodeEntry(list.at(i).info()));
+		UpdatesList::Values added = updates.values();
+
+		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + added.size() - 1);
+		for (UpdatesList::Values::size_type i = 0, size = added.size(); i < size; ++i)
+			m_items.add(new FolderNodeEntry(added.at(i).info()));
 		endInsertRows();
 	}
 
@@ -596,7 +594,7 @@ void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	if (params->removeParentEntry)
+	if (params->removeParentEntry && !isUpdating())
 		removeEntry(m_items.indexOf(params->snapshot.entry));
 	else
 	{
@@ -833,8 +831,8 @@ void FolderNode::removeEntry(Values::size_type index)
 {
 	beginRemoveRows(QModelIndex(), index, index);
 
-	if (m_items.at(index).node)
-		m_items.at(index).node->removeThis();
+	if (Node *node = m_items.at(index).node)
+		node->removeThis();
 
 	m_items.remove(index);
 
@@ -845,8 +843,8 @@ void FolderNode::removeEntry(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 
-	if (m_items.at(index.row()).node)
-		m_items.at(index.row()).node->removeThis();
+	if (Node *node = m_items.at(index.row()).node)
+		node->removeThis();
 
 	m_items.remove(index.row());
 

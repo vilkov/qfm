@@ -3,8 +3,7 @@
 
 #include <QtCore/QSet>
 #include <QtCore/QList>
-#include "../items/filesystemfoldernodeitem.h"
-#include "../containers/filesystemfoldernodevalues.h"
+#include "../info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -23,80 +22,71 @@ public:
 	class Change
 	{
 	public:
-		Change(Type type = NoChange) :
-			m_type(type)
+		Change() :
+			m_type(Added)
 		{}
-		Change(Type type, Values::size_type index) :
-			m_type(type),
-			m_index(index)
-		{}
-		Change(Type type, const Info &info, Values::size_type index = Values::InvalidIndex) :
-			m_type(type),
+		Change(const Info &info) :
 			m_info(info),
-			m_index(index)
+			m_type(Deleted)
 		{}
 
 		Type type() const { return m_type; }
 		const Info &info() const { return m_info; }
-		Values::size_type index() const { return m_index; }
+		void update(Type type) { m_type = type; }
+		void update(const Info &info) { m_info = info; }
+		void update(const Info &info, Type type) { m_info = info; m_type = type; }
 
 	private:
-		Type m_type;
 		Info m_info;
-		Values::size_type m_index;
+		Type m_type;
 	};
-
-	typedef QList<Change>           List;
-	typedef List::size_type         size_type;
-	typedef QSet<Values::size_type> Set;
+	typedef QMap<QString, Change> Map;
+	typedef Map::iterator         iterator;
+	typedef QList<Change>         Values;
 
 public:
-	UpdatesList() :
-		m_values(0)
+	UpdatesList()
 	{}
-	UpdatesList(const Values &values) :
-		m_values(&values)
-	{
-		m_changes.reserve(m_values->size());
-	}
-
-	const Change &operator[](size_type index) const { return m_changes[index]; }
-	const Change &at(size_type index) const { return m_changes.at(index); }
+	UpdatesList(const Map &changes) :
+		m_changes(changes)
+	{}
 
 	bool isEmpty() const { return m_changes.isEmpty(); }
-	size_type size() const { return m_changes.size(); }
 
-	void removeAt(size_type index) { m_changes.removeAt(index); }
+	iterator begin() { return m_changes.begin(); }
+	iterator end() { return m_changes.end(); }
+	iterator erase(iterator it) { return m_changes.erase(it); }
+	Values values() const { return m_changes.values(); }
 
-	Values::size_type update(const Info &info)
+	void update(const Info &info)
 	{
-		Values::size_type index = m_values->indexOf(info.fileName());
+		Change &change = m_changes[info.fileName()];
 
-		if (index == Values::InvalidIndex)
-			m_changes.push_back(Change(Added, info));
+		if (change.type() == Added)
+			change.update(info);
 		else
-			if (m_values->at(index).item->lastModified() != info.lastModified())
-				m_changes.push_back(Change(Updated, info, index));
-
-		return index;
+			if (change.type() == Deleted)
+				if (change.info().lastModified() == info.lastModified())
+					change.update(NoChange);
+				else
+					change.update(info, Updated);
 	}
-	void update(const Set &affected)
+	UpdatesList takeUpdates()
 	{
-		Set res = affected;
+		Map changes;
 
-		res.remove(Values::InvalidIndex);
-		res = m_values->indexes().subtract(res);
+		for (Map::iterator it = m_changes.begin(), end = m_changes.end(); it != end;)
+			if (it.value().type() != Deleted)
+			{
+				changes.insert(it.key(), it.value());
+				it = m_changes.erase(it);
+			}
 
-		if (m_values->at(0).item->isRootItem())
-			res.remove(0);
-
-		for (Set::const_iterator it = res.constBegin(), end = res.constEnd(); it != end; ++it)
-			m_changes.push_back(Change(Deleted, *it));
+		return UpdatesList(changes);
 	}
 
 private:
-	List m_changes;
-	const Values *m_values;
+	Map m_changes;
 };
 
 FILE_SYSTEM_NS_END

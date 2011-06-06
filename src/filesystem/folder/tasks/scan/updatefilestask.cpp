@@ -43,7 +43,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	}
 
 	if (!stopedFlag && !isControllerDead())
-		Application::postEvent(parameters()->node, new Event(true, updatedFiles));
+		Application::postEvent(parameters()->node, new Event(true, updatedFiles.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

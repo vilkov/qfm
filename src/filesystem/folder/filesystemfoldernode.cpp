@@ -484,7 +484,7 @@ void FolderNode::updateFiles()
 	UpdatesList::Map changes;
 	QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask());
 
-	for (Values::size_type i = m_info.isRoot() ? 1 : 0, size = m_items.size(); i < size; ++i)
+	for (Values::size_type i = m_info.isRoot() ? 0 : 1, size = m_items.size(); i < size; ++i)
 		changes.insert(m_items.at(i).item->fileName(), *m_items.at(i).item);
 
 	task->parameters()->node = this;
@@ -504,22 +504,28 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 
 	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end;)
 		if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex)
-			if (update.value().type() == UpdatesList::Updated)
+			switch (update.value().type())
 			{
-				(*m_items[index].item) = update.value().info();
-				updateRange.add(index, index);
-				update = updates.erase(update);
-			}
-			else
-				if (update.value().type() == UpdatesList::Deleted)
+				case UpdatesList::Updated:
+				{
+					(*m_items[index].item) = update.value().info();
+					updateRange.add(index, index);
+					update = updates.erase(update);
+					break;
+				}
+				case UpdatesList::Deleted:
 				{
 					if (!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
 						removeEntry(index);
-
-					update = updates.erase(update);
 				}
-				else
+				default:
+				{
 					++update;
+					break;
+				}
+			}
+		else
+			++update;
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),

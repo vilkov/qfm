@@ -76,13 +76,16 @@ public:
 		Map changes;
 
 		for (Map::iterator it = m_changes.begin(), end = m_changes.end(); it != end;)
-			if (it.value().type() != Deleted)
-			{
-				changes.insert(it.key(), it.value());
+			if (it.value().type() == NoChange)
 				it = m_changes.erase(it);
-			}
 			else
-				++it;
+				if (it.value().type() != Deleted)
+				{
+					changes.insert(it.key(), it.value());
+					it = m_changes.erase(it);
+				}
+				else
+					++it;
 
 		return UpdatesList(changes);
 	}

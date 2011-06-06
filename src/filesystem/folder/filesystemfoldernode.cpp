@@ -503,29 +503,34 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 	Values::size_type index;
 
 	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end;)
-		if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex)
-			switch (update.value().type())
+		switch (update.value().type())
+		{
+			case UpdatesList::Updated:
 			{
-				case UpdatesList::Updated:
+				if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex)
 				{
 					(*m_items[index].item) = update.value().info();
 					updateRange.add(index, index);
-					update = updates.erase(update);
-					break;
 				}
-				case UpdatesList::Deleted:
-				{
-					if (!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
-						removeEntry(index);
-				}
-				default:
-				{
-					++update;
-					break;
-				}
+
+				update = updates.erase(update);
+				break;
 			}
-		else
-			++update;
+			case UpdatesList::Deleted:
+			{
+				if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex &&
+					!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
+					removeEntry(index);
+
+				update = updates.erase(update);
+				break;
+			}
+			default:
+			{
+				++update;
+				break;
+			}
+		}
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),

@@ -81,6 +81,8 @@ public:
 				changes.insert(it.key(), it.value());
 				it = m_changes.erase(it);
 			}
+			else
+				++it;
 
 		return UpdatesList(changes);
 	}

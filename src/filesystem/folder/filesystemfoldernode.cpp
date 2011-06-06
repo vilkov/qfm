@@ -502,17 +502,24 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 	RangeIntersection updateRange(1);
 	Values::size_type index;
 
-	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end; update = updates.erase(update))
+	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end;)
 		if ((index = m_items.indexOf(update.key())) != Values::InvalidIndex)
 			if (update.value().type() == UpdatesList::Updated)
 			{
 				(*m_items[index].item) = update.value().info();
 				updateRange.add(index, index);
+				update = updates.erase(update);
 			}
 			else
-				if (update.value().type() == UpdatesList::Deleted &&
-					!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
-					removeEntry(index);
+				if (update.value().type() == UpdatesList::Deleted)
+				{
+					if (!static_cast<FolderNodeEntry*>(m_items[index].item)->isLocked())
+						removeEntry(index);
+
+					update = updates.erase(update);
+				}
+				else
+					++update;
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),

@@ -29,7 +29,7 @@ public:
 
 
 public:
-	PerformCopyTreeTask(Params *params);
+	PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles);
 
 	virtual void run(const volatile bool &stopedFlag);
 

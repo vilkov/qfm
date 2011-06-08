@@ -684,19 +684,6 @@ void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination)
 //	Application::instance()->taskPool().handle(new PerformCopyEntryTask(params.take()));
 }
 
-void FolderNode::scanForCopy(FolderNodeItem *entry, INode *destination)
-{
-	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask());
-	task->parameters()->source.node = this;
-	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
-	task->parameters()->destination = destination;
-
-	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
-	updateFirstColumn(entry);
-
-	Application::instance()->taskPool().handle(task.take());
-}
-
 void FolderNode::moveEntry(FolderNodeItem *entry, INode *destination)
 {
 //	QScopedPointer<PerformCopyEntryTask::Params> params(new PerformCopyEntryTask::Params());
@@ -713,12 +700,25 @@ void FolderNode::moveEntry(FolderNodeItem *entry, INode *destination)
 //	Application::instance()->taskPool().handle(new PerformCopyEntryTask(params.take()));
 }
 
+void FolderNode::scanForCopy(FolderNodeItem *entry, INode *destination)
+{
+	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask());
+	task->parameters()->source.node = this;
+	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
+	task->parameters()->destination = destination;
+
+	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
+	updateFirstColumn(entry);
+
+	Application::instance()->taskPool().handle(task.take());
+}
+
 void FolderNode::scanForMove(FolderNodeItem *entry, INode *destination)
 {
 	QScopedPointer<ScanFilesForMoveTask> task(new ScanFilesForMoveTask());
 	task->parameters()->source.node = this;
 	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
-//	task->parameters()->destination.node = destination;
+	task->parameters()->destination = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for move..."));
 	updateFirstColumn(entry);
@@ -728,38 +728,32 @@ void FolderNode::scanForMove(FolderNodeItem *entry, INode *destination)
 
 void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 {
-	typedef const ScanFilesForCopyTask::Event::Params *ParamsType;
-	ParamsType params = static_cast<ParamsType>(p);
+	typedef ScanFilesForCopyTask::Event::Params *ParamsType;
+	ParamsType params = (ParamsType)p;
 	Values::size_type index = m_items.indexOf(params->snapshot.entry);
 
 	if (index != Values::InvalidIndex)
 	{
-//		m_items[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Copying..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
-//		Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, false)));
+		Application::instance()->taskPool().handle(new PerformCopyTreeTask(this, *params, false));
 	}
-//	else
-//		delete params->subnode;
 }
 
 void FolderNode::scanForMoveEvent(const ModelEvent::Params *p)
 {
-	typedef const ScanFilesForMoveTask::Event::Params *ParamsType;
-	ParamsType params = static_cast<ParamsType>(p);
+	typedef ScanFilesForMoveTask::Event::Params *ParamsType;
+	ParamsType params = (ParamsType)p;
 	Values::size_type index = m_items.indexOf(params->snapshot.entry);
 
 	if (index != Values::InvalidIndex)
 	{
-//		m_items[index].node = params->subnode;
 		params->snapshot.entry->lock(tr("Moving..."), params->size);
 		updateSecondColumn(params->snapshot.entry);
 
-//		Application::instance()->taskPool().handle(new PerformCopyTreeTask(new PerformCopyTreeTask::Params((QObject*)this, *params, true)));
+		Application::instance()->taskPool().handle(new PerformCopyTreeTask(this, *params, true));
 	}
-//	else
-//		delete params->subnode;
 }
 
 void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)

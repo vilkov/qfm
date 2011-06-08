@@ -5,11 +5,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTreeTask::PerformCopyTreeTask(Params *params) :
-	PerformCopyEntryTask(params)
-{
-	Q_ASSERT(params->subnode != 0);
-}
+PerformCopyTreeTask::PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
+	PerformCopyEntryTask(new Params(receiver, params, moveFiles))
+{}
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {

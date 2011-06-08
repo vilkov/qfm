@@ -97,8 +97,8 @@ protected:
 	void scanForSizeEvent(const ModelEvent::Params *p);
 
 	void copyEntry(FolderNodeItem *entry, INode *destination);
-	void scanForCopy(FolderNodeItem *entry, INode *destination);
 	void moveEntry(FolderNodeItem *entry, INode *destination);
+	void scanForCopy(FolderNodeItem *entry, INode *destination);
 	void scanForMove(FolderNodeItem *entry, INode *destination);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void scanForMoveEvent(const ModelEvent::Params *p);

@@ -371,7 +371,7 @@ void FolderNode::viewChild(INodeView *nodeView, const Path::Iterator &path, Plug
 		}
 		else
 			if (value.item->isFile())
-				viewThis(nodeView, indexForFile(value.item, m_items.lastIndex()));
+				viewThis(nodeView, indexForFile(value.item, index));
 			else
 				viewThis(nodeView, QModelIndex());
 	}

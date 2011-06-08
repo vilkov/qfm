@@ -111,8 +111,8 @@ protected:
 private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
-	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
 	QModelIndex indexForFile(FolderNodeItem *item) const;
+	QModelIndex indexForFile(FolderNodeItem *item, Values::size_type index) const;
 	QModelIndex rootIndex() const;
 
 	void updateFirstColumn(FolderNodeItem *entry);

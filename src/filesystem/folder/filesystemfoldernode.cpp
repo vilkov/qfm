@@ -329,39 +329,52 @@ void FolderNode::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsM
 
 void FolderNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
-	Node *node;
-	Values::Value *value;
 	Values::size_type index = m_items.indexOf(*path);
 
 	if (index == Values::InvalidIndex)
 	{
-		m_items.add(createNode(*path, plugins, node));
-		value = &m_items.last();
+		Info info(absoluteFilePath(*path));
+
+		if (Node *node = createNode(info, plugins))
+		{
+			removeView(nodeView);
+			m_items.add(Values::Value(new FolderNodeEntry(info), node));
+
+			if ((++path).atEnd())
+				node->viewThis(nodeView, QModelIndex());
+			else
+				node->viewChild(nodeView, path, plugins);
+		}
+		else
+			if (info.isFile())
+			{
+				FolderNodeItem *item;
+
+				m_items.add(Values::Value(item = new FolderNodeEntry(info)));
+				viewThis(nodeView, indexForFile(item, m_items.lastIndex()));
+			}
+			else
+				viewThis(nodeView, QModelIndex());
 	}
 	else
 	{
-		value = &m_items[index];
+		Values::Value &value = m_items[index];
 
-		if (value->node)
-			node = value->node;
+		if (value.node || (value.node = createNode(*value.item, plugins)))
+		{
+			removeView(nodeView);
+
+			if ((++path).atEnd())
+				value.node->viewThis(nodeView, QModelIndex());
+			else
+				value.node->viewChild(nodeView, path, plugins);
+		}
 		else
-			value->node = node = createNode(*(value->item), plugins);
+			if (value.item->isFile())
+				viewThis(nodeView, indexForFile(value.item, m_items.lastIndex()));
+			else
+				viewThis(nodeView, QModelIndex());
 	}
-
-	if (node)
-	{
-		removeView(nodeView);
-
-		if ((++path).atEnd())
-			node->viewThis(nodeView, QModelIndex());
-		else
-			node->viewChild(nodeView, path, plugins);
-	}
-	else
-		if (value->item->isFile())
-			viewThis(nodeView, indexForFile(value->item));
-		else
-			viewThis(nodeView, QModelIndex());
 }
 
 void FolderNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
@@ -403,7 +416,7 @@ void FolderNode::switchTo(Node *node, const QModelIndex &selected)
 		node->viewThis(*it, selected);
 
 	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
-		if ((child = m_items.at(i).node))
+		if (child = m_items.at(i).node)
 			child->switchTo(node, selected);
 }
 
@@ -806,16 +819,15 @@ Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 			return 0;
 }
 
-Values::Value FolderNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
-{
-	Info info(absoluteFilePath(fileName));
-	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
-}
-
 QModelIndex FolderNode::indexForFile(FolderNodeItem *item) const
 {
 	Q_ASSERT(m_items.indexOf(item) != Values::InvalidIndex);
 	Values::size_type index = m_items.indexOf(item);
+	return m_proxy.mapFromSource(createIndex(index, 0, item));
+}
+
+QModelIndex FolderNode::indexForFile(FolderNodeItem *item, Values::size_type index) const
+{
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }
 

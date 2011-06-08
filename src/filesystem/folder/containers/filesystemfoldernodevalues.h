@@ -61,6 +61,7 @@ public:
 	const Value &operator[](size_type index) const { return m_list[index]; }
 	const Value &at(size_type index) const { return m_list.at(index); }
 	const Value &last() const { return m_list.last(); }
+	size_type lastIndex() const { return m_list.size() - 1; }
 	Value &last() { return m_list.last(); }
 
 	size_type size() const { return m_list.size(); }

@@ -397,15 +397,12 @@ void FolderNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePa
 
 void FolderNode::removeThis()
 {
-	if (!m_info.isRoot())
-	{
-		Node *parent = static_cast<Node*>(Node::parent());
+	Node *parent = static_cast<Node*>(Node::parent());
 
-		while (!parent->exists())
-			parent = static_cast<Node*>(parent->Node::parent());
+	while (!parent->exists())
+		parent = static_cast<Node*>(parent->Node::parent());
 
-		switchTo(parent, QModelIndex());
-	}
+	switchTo(parent, QModelIndex());
 }
 
 void FolderNode::switchTo(Node *node, const QModelIndex &selected)
@@ -625,7 +622,7 @@ void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 	typedef const PerformRemoveEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 
-	if (params->removeParentEntry && !isUpdating())
+	if (params->removeParentEntry)
 		removeEntry(m_items.indexOf(params->snapshot.entry));
 	else
 	{

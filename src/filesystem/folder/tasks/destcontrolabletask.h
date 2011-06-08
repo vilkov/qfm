@@ -13,7 +13,7 @@ class DestControlableTask : public ControlableTask
 public:
 	struct Params : ControlableTask::Params
 	{
-		Listener destination;
+    	INode *destination;
 
 	private:
 		friend class DestControlableTask;
@@ -27,7 +27,7 @@ public:
 	 * in the same thread as "destination.object" because of DeleteHandler!
 	 *
 	 */
-	DestControlableTask(Params *parameters);
+	DestControlableTask(Params *parameters, QObject *listener);
 	virtual ~DestControlableTask();
 
 protected:
@@ -49,7 +49,7 @@ private:
     		if (m_task != 0)
     		{
 				m_task->m_handler = 0;
-				m_task->parameters()->destination.node = 0;
+				m_task->m_listener = 0;
     		}
     	}
 
@@ -64,6 +64,7 @@ private:
     };
 
 private:
+    QObject *m_listener;
     DeleteHandler *m_handler;
 };
 

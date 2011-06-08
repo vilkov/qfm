@@ -662,13 +662,10 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 
 	if (index != Values::InvalidIndex)
 	{
-//		m_items[index].node = params->subnode;
 		params->snapshot.entry->setTotalSize(params->size);
 		params->snapshot.entry->unlock();
 		updateBothColumns(params->snapshot.entry);
 	}
-//	else
-//		delete params->subnode;
 }
 
 void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination)
@@ -692,7 +689,7 @@ void FolderNode::scanForCopy(FolderNodeItem *entry, INode *destination)
 	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask());
 	task->parameters()->source.node = this;
 	task->parameters()->source.entry = static_cast<FolderNodeEntry*>(entry);
-//	task->parameters()->destination.node = destination;
+	task->parameters()->destination = destination;
 
 	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
 	updateFirstColumn(entry);

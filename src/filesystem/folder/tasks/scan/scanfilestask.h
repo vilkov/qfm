@@ -33,6 +33,9 @@ public:
 	ScanFilesTask(Params *params) :
 		parent_class(params)
 	{}
+	ScanFilesTask(Params *params, QObject *listener) :
+		parent_class(params, listener)
+	{}
 
 	virtual void run(const volatile bool &stopedFlag)
 	{

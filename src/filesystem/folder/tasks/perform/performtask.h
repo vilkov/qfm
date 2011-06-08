@@ -24,6 +24,10 @@ public:
 		parent_class(params),
 		m_canceled(false)
 	{}
+	PerformTask(Params *params, QObject *listener) :
+		parent_class(params, listener),
+		m_canceled(false)
+	{}
 
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }

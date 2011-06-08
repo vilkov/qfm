@@ -13,34 +13,34 @@ PerformCopyTreeTask::PerformCopyTreeTask(Params *params) :
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {
-	m_progress.init();
-
-	QDir dir(parameters()->destination.node->absoluteFilePath());
-
-//	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))
-//		copy(dir, parameters()->subnode, stopedFlag);
-//	else
-//		m_canceled = true;
-
-	if (!stopedFlag && !isControllerDead())
-		if (m_canceled)
-		{
-			QScopedPointer<CanceledEvent> event(new CanceledEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().removeSource = parameters()->removeSource;
-//			event->params().subnode = parameters()->subnode;
-			event->params().destination = parameters()->destination;
-			Application::postEvent(parameters()->source.node, event.take());
-		}
-		else
-		{
-			QScopedPointer<CompletedEvent> event(new CompletedEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().removeSource = parameters()->removeSource;
-//			event->params().subnode = parameters()->subnode;
-			event->params().destination = parameters()->destination;
-			Application::postEvent(parameters()->source.node, event.take());
-		}
+//	m_progress.init();
+//
+//	QDir dir(parameters()->destination.node->absoluteFilePath());
+//
+////	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))
+////		copy(dir, parameters()->subnode, stopedFlag);
+////	else
+////		m_canceled = true;
+//
+//	if (!stopedFlag && !isControllerDead())
+//		if (m_canceled)
+//		{
+//			QScopedPointer<CanceledEvent> event(new CanceledEvent());
+//			event->params().snapshot = parameters()->source;
+//			event->params().removeSource = parameters()->removeSource;
+////			event->params().subnode = parameters()->subnode;
+//			event->params().destination = parameters()->destination;
+//			Application::postEvent(parameters()->source.node, event.take());
+//		}
+//		else
+//		{
+//			QScopedPointer<CompletedEvent> event(new CompletedEvent());
+//			event->params().snapshot = parameters()->source;
+//			event->params().removeSource = parameters()->removeSource;
+////			event->params().subnode = parameters()->subnode;
+//			event->params().destination = parameters()->destination;
+//			Application::postEvent(parameters()->source.node, event.take());
+//		}
 }
 
 bool PerformCopyTreeTask::cd(QDir &destination, FolderNodeEntry *entry, const volatile bool &stopedFlag)

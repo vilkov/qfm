@@ -12,49 +12,49 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformCopyEntryTask::PerformCopyEntryTask(Params *params) :
-	parent_class(params),
+	parent_class(params, params->source.node),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
 	m_overwriteAll(false),
 	m_progress(params->source)
 {
-	Q_ASSERT(params->destination.node != 0);
+	Q_ASSERT(params->destination != 0);
 }
 
 void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 {
-	m_progress.init();
-
-	QDir dir(parameters()->destination.node->absoluteFilePath());
-
-	if (dir.exists())
-	{
-		bool tryAgain;
-
-		do
-			copyFile(dir, parameters()->source.entry, tryAgain = false, stopedFlag);
-		while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
-	}
-	else
-		m_canceled = true;
-
-	if (!stopedFlag && !isControllerDead())
-		if (m_canceled)
-		{
-			QScopedPointer<CanceledEvent> event(new CanceledEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().removeSource = parameters()->removeSource;
-			event->params().destination = parameters()->destination;
-			Application::postEvent(parameters()->source.node, event.take());
-		}
-		else
-		{
-			QScopedPointer<CompletedEvent> event(new CompletedEvent());
-			event->params().snapshot = parameters()->source;
-			event->params().removeSource = parameters()->removeSource;
-			event->params().destination = parameters()->destination;
-			Application::postEvent(parameters()->source.node, event.take());
-		}
+//	m_progress.init();
+//
+//	QDir dir(parameters()->destination.node->absoluteFilePath());
+//
+//	if (dir.exists())
+//	{
+//		bool tryAgain;
+//
+//		do
+//			copyFile(dir, parameters()->source.entry, tryAgain = false, stopedFlag);
+//		while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+//	}
+//	else
+//		m_canceled = true;
+//
+//	if (!stopedFlag && !isControllerDead())
+//		if (m_canceled)
+//		{
+//			QScopedPointer<CanceledEvent> event(new CanceledEvent());
+//			event->params().snapshot = parameters()->source;
+//			event->params().removeSource = parameters()->removeSource;
+//			event->params().destination = parameters()->destination;
+//			Application::postEvent(parameters()->source.node, event.take());
+//		}
+//		else
+//		{
+//			QScopedPointer<CompletedEvent> event(new CompletedEvent());
+//			event->params().snapshot = parameters()->source;
+//			event->params().removeSource = parameters()->removeSource;
+//			event->params().destination = parameters()->destination;
+//			Application::postEvent(parameters()->source.node, event.take());
+//		}
 }
 
 void PerformCopyEntryTask::copyFile(const QDir &destination, FolderNodeEntry *entry, bool &tryAgain, const volatile bool &stopedFlag)

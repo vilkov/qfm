@@ -163,7 +163,7 @@ public:
 	/********** ScanFilesWithDest **********/
 	struct ScanFilesWithDestParams : public ScanFilesParams
 	{
-		BaseTask::Params::Listener destination;
+		INode *destination;
 	};
 	typedef TemplateEvent<ScanFilesWithDestParams, BaseEvent::ScanFilesForCopy> ScanFilesForCopyEvent;
 	typedef TemplateEvent<ScanFilesWithDestParams, BaseEvent::ScanFilesForMove> ScanFilesForMoveEvent;

@@ -4,12 +4,14 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-DestControlableTask::DestControlableTask(Params *parameters) :
+DestControlableTask::DestControlableTask(Params *parameters, QObject *listener) :
 	ControlableTask(parameters),
-	m_handler(new DeleteHandler(this, parameters->destination.node))
+	m_listener(listener),
+	m_handler(new DeleteHandler(this, listener))
 {
-	Q_ASSERT(parameters->destination.node != 0);
-	Q_ASSERT(parameters->destination.node->thread() == QThread::currentThread());
+	Q_ASSERT(m_listener != 0);
+	Q_ASSERT(parameters->destination != 0);
+	Q_ASSERT(m_listener->thread() == QThread::currentThread());
 }
 
 DestControlableTask::~DestControlableTask()

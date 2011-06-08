@@ -43,7 +43,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 
 
 ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params) :
-	parent_class(params)
+	parent_class(params, params->source.node)
 {}
 
 ScanFilesForCopyTask::ScanFilesForCopyTask() :

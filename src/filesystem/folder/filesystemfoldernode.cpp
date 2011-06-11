@@ -724,47 +724,46 @@ void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)
 {
 	typedef const PerformCopyEntryTask::CompletedEvent::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
+	Values::size_type index = m_items.indexOf(params->snapshot.entry);
 
-//	if (params->removeSource)
-//	{
-//		FileSystemInfo &info = params->snapshot.entry->fileInfo();
-//		info.refresh();
-//
-//		if (info.exists())
-//			if (info.isDir())
-//			{
-//				typedef const PerformCopyTreeTask::CompletedEvent::Params *ParamsType;
-//				ParamsType params = static_cast<ParamsType>(p);
-//
-//				params->snapshot.entry->lock(tr("Removing..."));
-//				Application::instance()->taskPool().handle(new PerformRemoveTreeTask(new PerformRemoveTreeTask::Params((QObject*)this, *params)));
-//			}
-//			else
-//			{
-//				QScopedPointer<PerformRemoveEntryTask::Params> newParams(new PerformRemoveEntryTask::Params());
-//				newParams->source.object = (QObject*)this;
-//				newParams->source.fileSystemTree = params->snapshot.fileSystemTree;
-//				newParams->source.entry = params->snapshot.entry;
-//
-//				params->snapshot.entry->lock(tr("Removing..."));
-//				Application::instance()->taskPool().handle(new PerformRemoveEntryTask(newParams.take()));
-//			}
-//		else
-//			if (params->snapshot.fileSystemTree == m_currentFsTree)
-//				removeEntry(m_currentFsTree->indexOf(params->snapshot.entry));
-//			else
-//				params->snapshot.fileSystemTree->removeThis(params->snapshot.fileSystemTree->indexOf(params->snapshot.entry));
-//	}
-//	else
-//	{
-//		params->snapshot.entry->unlock();
-//
-//		if (params->snapshot.fileSystemTree == m_currentFsTree)
-//			updateBothColumns(m_currentFsTree, params->snapshot.entry);
-//	}
-//
-//	if (params->destination.node)
-//		static_cast<FileSystemModel*>(params->destination.node)->refresh(params->destination.fileSystemTree);
+	if (index != Values::InvalidIndex)
+		if (params->removeSource)
+		{
+	//		FileSystemInfo &info = params->snapshot.entry->fileInfo();
+	//		info.refresh();
+	//
+	//		if (info.exists())
+	//			if (info.isDir())
+	//			{
+	//				typedef const PerformCopyTreeTask::CompletedEvent::Params *ParamsType;
+	//				ParamsType params = static_cast<ParamsType>(p);
+	//
+	//				params->snapshot.entry->lock(tr("Removing..."));
+	//				Application::instance()->taskPool().handle(new PerformRemoveTreeTask(new PerformRemoveTreeTask::Params((QObject*)this, *params)));
+	//			}
+	//			else
+	//			{
+	//				QScopedPointer<PerformRemoveEntryTask::Params> newParams(new PerformRemoveEntryTask::Params());
+	//				newParams->source.object = (QObject*)this;
+	//				newParams->source.fileSystemTree = params->snapshot.fileSystemTree;
+	//				newParams->source.entry = params->snapshot.entry;
+	//
+	//				params->snapshot.entry->lock(tr("Removing..."));
+	//				Application::instance()->taskPool().handle(new PerformRemoveEntryTask(newParams.take()));
+	//			}
+	//		else
+	//			if (params->snapshot.fileSystemTree == m_currentFsTree)
+	//				removeEntry(m_currentFsTree->indexOf(params->snapshot.entry));
+	//			else
+	//				params->snapshot.fileSystemTree->removeThis(params->snapshot.fileSystemTree->indexOf(params->snapshot.entry));
+		}
+		else
+		{
+			params->snapshot.entry->unlock();
+			updateBothColumns(params->snapshot.entry);
+		}
+
+	params->destination->refresh();
 }
 
 void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)

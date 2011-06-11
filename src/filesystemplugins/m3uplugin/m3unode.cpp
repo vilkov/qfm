@@ -118,6 +118,11 @@ QDateTime M3uNode::lastModified() const
 	return rootItem()->lastModified();
 }
 
+bool M3uNode::exists(IFileInfo *info) const
+{
+	return false;
+}
+
 void M3uNode::refresh()
 {
 	if (isUpdating())

@@ -17,6 +17,11 @@ public:
 		File,
 		Folder
 	};
+	enum Error
+	{
+		OK,
+		Failed
+	};
 
 public:
 	virtual ~IFileInfo() {}
@@ -29,9 +34,14 @@ public:
 	virtual QString absoluteFilePath() const = 0;
 	virtual QString absoluteFilePath(const QString &fileName) const = 0;
 	virtual QDateTime lastModified() const = 0;
+	virtual bool exists(IFileInfo *info) const = 0;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
+	virtual void close(IFile *file) const = 0;
+
+	virtual IFileInfo *create(IFileInfo *info, QString &error) const = 0;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const = 0;
+	virtual void close(IFileInfo *info) const = 0;
 
 	virtual void refresh() = 0;
 };

@@ -71,6 +71,11 @@ QString Info::absoluteFilePath(const QString &fileName) const
 #endif
 }
 
+bool Info::exists(IFileInfo *info) const
+{
+	return QDir(m_info.absoluteFilePath()).exists(info->fileName());
+}
+
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;
@@ -82,7 +87,7 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 			openMode = QFile::ReadOnly;
 			break;
 		case IFile::WriteOnly:
-			openMode = QFile::WriteOnly;
+			openMode = QFile::WriteOnly | QFile::Truncate;
 			break;
 	}
 
@@ -92,6 +97,42 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 		error = file->lastError();
 
 	return 0;
+}
+
+void Info::close(IFile *file) const
+{
+	delete file;
+}
+
+IFileInfo *Info::create(IFileInfo *info, QString &error) const
+{
+	if (info->isFile())
+		return new Info(absoluteFilePath(info->fileName()));
+	else
+		if (m_info.absoluteDir().mkdir(info->fileName()))
+			return new Info(absoluteFilePath(info->fileName()));
+		else
+			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(info->fileName()));
+
+	return 0;
+}
+
+IFileInfo *Info::create(const QString &fileName, FileType type, QString &error) const
+{
+	if (type == File)
+		return new Info(absoluteFilePath(fileName));
+	else
+		if (m_info.absoluteDir().mkdir(fileName))
+			return new Info(absoluteFilePath(fileName));
+		else
+			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
+
+	return 0;
+}
+
+void Info::close(IFileInfo *info) const
+{
+	delete info;
 }
 
 void Info::refresh()

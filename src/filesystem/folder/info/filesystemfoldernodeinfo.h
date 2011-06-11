@@ -29,9 +29,14 @@ public:
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
+	virtual bool exists(IFileInfo *info) const;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
-	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
+	virtual void close(IFile *file) const;
+
+	virtual IFileInfo *create(IFileInfo *info, QString &error) const;
+	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
+	virtual void close(IFileInfo *info) const;
 
 	virtual void refresh();
 

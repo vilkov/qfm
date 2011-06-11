@@ -20,9 +20,8 @@ public:
 		ScanFilesForSize = QEvent::User + 6,
 		ScanFilesForCopy = QEvent::User + 7,
 		CopyFilesCompleted = QEvent::User + 8,
-		CopyFilesCanceled = QEvent::User + 9,
-		QuestionAnswer = QEvent::User + 10,
-		UpdatePerformProgress = QEvent::User + 11
+		QuestionAnswer = QEvent::User + 9,
+		UpdatePerformProgress = QEvent::User + 10
 	};
 
 public:

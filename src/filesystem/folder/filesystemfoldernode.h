@@ -44,9 +44,14 @@ public:
 	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
+	virtual bool exists(IFileInfo *info) const;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
+	virtual void close(IFile *file) const;
+
+	virtual IFileInfo *create(IFileInfo *info, QString &error) const;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
+	virtual void close(IFileInfo *info) const;
 
 	virtual void refresh();
 
@@ -100,7 +105,6 @@ protected:
 	void scanForCopy(FolderNodeItem *entry, INode *destination, bool move);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void copyCompleteEvent(const ModelEvent::Params *p);
-	void copyCanceledEvent(const ModelEvent::Params *p);
 
 	void questionAnswerEvent(const ModelEvent::Params *p);
 	void updateProgressEvent(const ModelEvent::Params *p);

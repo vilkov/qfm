@@ -13,23 +13,18 @@ class PerformCopyTreeTask : public PerformCopyEntryTask
 public:
 	struct Params : public PerformCopyEntryTask::Params
 	{
-		Params(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
+		Params(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool move) :
+			PerformCopyEntryTask::Params(receiver, params.snapshot.entry, params.destination, move),
 			subnode(params.subnode.take())
-		{
-			source.node = receiver;
-			source.entry = params.snapshot.entry;
-			destination = params.destination;
-			removeSource = moveFiles;
-		}
+		{}
 
 		QScopedPointer<FolderNodeItemList> subnode;
 	};
 	typedef ModelEvents::CopyTreeFilesCompletedEvent CompletedEvent;
-	typedef ModelEvents::CopyTreeFilesCanceledEvent  CanceledEvent;
 
 
 public:
-	PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles);
+	PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool move);
 
 	virtual void run(const volatile bool &stopedFlag);
 

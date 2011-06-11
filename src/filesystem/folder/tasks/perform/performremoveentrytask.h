@@ -34,10 +34,11 @@ public:
 	PerformRemoveEntryTask(Node *node, FolderNodeEntry *entry);
 
 	virtual void run(const volatile bool &stopedFlag);
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 protected:
 	PerformRemoveEntryTask(Params *params);
+
+	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 	void removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void postCompletedEvent() const;

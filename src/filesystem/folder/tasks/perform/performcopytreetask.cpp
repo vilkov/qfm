@@ -5,8 +5,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTreeTask::PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool moveFiles) :
-	PerformCopyEntryTask(new Params(receiver, params, moveFiles))
+PerformCopyTreeTask::PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesWithDestParams &params, bool move) :
+	PerformCopyEntryTask(new Params(receiver, params, move))
 {}
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
@@ -57,25 +57,23 @@ bool PerformCopyTreeTask::cd(QDir &destination, FolderNodeEntry *entry, const vo
 					if (m_skipAllIfNotCopy)
 						break;
 					else
-						askForSkipAllIfNotCopy(
+						askForSkipIfNotCopy(
 								entry->lockReason(),
 								tr("Failed to create directory \"%1\" in \"%2\". Skip it?").
 									arg(entry->fileName()).
 									arg(destination.absolutePath()),
-								tryAgain = false,
 								stopedFlag);
 			else
 				if (m_skipAllIfNotCopy)
 					break;
 				else
-					askForSkipAllIfNotCopy(
+					askForSkipIfNotCopy(
 							entry->lockReason(),
 							tr("Failed to create directory \"%1\" in \"%2\". Skip it?").
 								arg(entry->fileName()).
 								arg(destination.absolutePath()),
-							tryAgain = false,
 							stopedFlag);
-		while (tryAgain && !stopedFlag && !isControllerDead() && !m_canceled);
+		while (m_tryAgain && !stopedFlag && !isControllerDead() && !m_canceled);
 	}
 
 	return false;

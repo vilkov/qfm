@@ -188,7 +188,7 @@ public:
 	/********** PerformWithDest **********/
 	struct PerformWithDestParams : public PerformParams
 	{
-		BaseTask::Params::Listener destination;
+		INode *destination;
 	};
 
 
@@ -198,7 +198,6 @@ public:
 		bool removeSource;
 	};
 	typedef TemplateEvent<PerformWithDestCopyFilesParams, BaseEvent::CopyFilesCompleted> CopyFilesCompletedEvent;
-	typedef TemplateEvent<PerformWithDestCopyFilesParams, BaseEvent::CopyFilesCanceled> CopyFilesCanceledEvent;
 
 
 	/********** PerformWithDestCopyTreeFiles **********/
@@ -207,7 +206,6 @@ public:
 		QScopedPointer<FolderNodeItemList> subnode;
 	};
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCompleted> CopyTreeFilesCompletedEvent;
-	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCanceled> CopyTreeFilesCanceledEvent;
 
 
 	/********** QuestionAnswer **********/

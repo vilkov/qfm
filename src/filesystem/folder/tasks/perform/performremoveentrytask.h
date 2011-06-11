@@ -21,13 +21,24 @@ public:
 	typedef ModelEvents::QuestionAnswerEvent       QuestionAnswerEvent;
 
 public:
-	PerformRemoveEntryTask();
-	PerformRemoveEntryTask(Params *params);
+	struct Params : public parent_class::Params
+	{
+		Params(Node *node, FolderNodeEntry *entry)
+		{
+			source.node = node;
+			source.entry = entry;
+		}
+	};
+
+public:
+	PerformRemoveEntryTask(Node *node, FolderNodeEntry *entry);
 
 	virtual void run(const volatile bool &stopedFlag);
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 protected:
+	PerformRemoveEntryTask(Params *params);
+
 	void removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void postCompletedEvent() const;
 	void postCanceledEvent() const;

@@ -58,24 +58,16 @@ public:
 class ScanFilesForCopyTask : public ScanFilesWithDestinationTask
 {
 public:
+	struct Params : public parent_class::Params
+	{
+		bool move;
+	};
 	typedef ModelEvents::ScanFilesForCopyEvent Event;
 
 public:
 	ScanFilesForCopyTask();
 
-	virtual void run(const volatile bool &stopedFlag);
-};
-
-
-/********************************************************************************************************/
-class ScanFilesForMoveTask : public ScanFilesWithDestinationTask
-{
-public:
-	typedef ModelEvents::ScanFilesForMoveEvent Event;
-
-public:
-	ScanFilesForMoveTask();
-
+	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 	virtual void run(const volatile bool &stopedFlag);
 };
 

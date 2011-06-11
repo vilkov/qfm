@@ -18,17 +18,13 @@ public:
 	struct Params : public PerformRemoveEntryTask::Params
 	{
 		Params(Node *receiver, ModelEvents::ScanFilesForRemoveEvent::Params &params) :
+			PerformRemoveEntryTask::Params(receiver, params.snapshot.entry),
 			subnode(params.subnode.take())
-		{
-			source.node = receiver;
-			source.entry = params.snapshot.entry;
-		}
+		{}
 		Params(Node *receiver, ModelEvents::CopyTreeFilesCompletedEvent::Params &params) :
+			PerformRemoveEntryTask::Params(receiver, params.snapshot.entry),
 			subnode(params.subnode.take())
-		{
-			source.node = receiver;
-			source.entry = params.snapshot.entry;
-		}
+		{}
 
 		QScopedPointer<FolderNodeItemList> subnode;
 	};

@@ -19,11 +19,10 @@ public:
 		RemoveFilesCanceled = QEvent::User + 5,
 		ScanFilesForSize = QEvent::User + 6,
 		ScanFilesForCopy = QEvent::User + 7,
-		ScanFilesForMove = QEvent::User + 8,
-		CopyFilesCompleted = QEvent::User + 9,
-		CopyFilesCanceled = QEvent::User + 10,
-		QuestionAnswer = QEvent::User + 11,
-		UpdatePerformProgress = QEvent::User + 12
+		CopyFilesCompleted = QEvent::User + 8,
+		CopyFilesCanceled = QEvent::User + 9,
+		QuestionAnswer = QEvent::User + 10,
+		UpdatePerformProgress = QEvent::User + 11
 	};
 
 public:

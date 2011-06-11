@@ -8,16 +8,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveEntryTask::PerformRemoveEntryTask() :
-	parent_class(new Params()),
-	m_removeParentEntry(true),
-	m_skipAllIfNotRemove(false),
-	m_skipAllIfNotExists(false),
-	m_progress(parameters()->source)
-{}
-
-PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
-	parent_class(params),
+PerformRemoveEntryTask::PerformRemoveEntryTask(Node *node, FolderNodeEntry *entry) :
+	parent_class(new Params(node, entry)),
 	m_removeParentEntry(true),
 	m_skipAllIfNotRemove(false),
 	m_skipAllIfNotExists(false),
@@ -40,6 +32,14 @@ void PerformRemoveEntryTask::run(const volatile bool &stopedFlag)
 		else
 			postCompletedEvent();
 }
+
+PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
+	parent_class(params),
+	m_removeParentEntry(true),
+	m_skipAllIfNotRemove(false),
+	m_skipAllIfNotExists(false),
+	m_progress(parameters()->source)
+{}
 
 void PerformRemoveEntryTask::removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {

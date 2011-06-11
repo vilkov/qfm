@@ -61,25 +61,7 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 		event->params().size = parameters()->size;
 		event->params().subnode.swap(parameters()->subnode);
 		event->params().destination = parameters()->destination;
-		Application::postEvent(parameters()->source.node, event.take());
-	}
-}
-
-ScanFilesForMoveTask::ScanFilesForMoveTask() :
-	ScanFilesWithDestinationTask(new Params())
-{}
-
-void ScanFilesForMoveTask::run(const volatile bool &stopedFlag)
-{
-	ScanFilesWithDestinationTask::run(stopedFlag);
-
-	if (!stopedFlag && !isControllerDead())
-	{
-		QScopedPointer<Event> event(new Event());
-		event->params().snapshot = parameters()->source;
-		event->params().size = parameters()->size;
-		event->params().subnode.swap(parameters()->subnode);
-		event->params().destination = parameters()->destination;
+		event->params().move = parameters()->move;
 		Application::postEvent(parameters()->source.node, event.take());
 	}
 }

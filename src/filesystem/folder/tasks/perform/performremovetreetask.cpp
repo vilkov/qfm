@@ -41,14 +41,14 @@ void PerformRemoveTreeTask::run(const volatile bool &stopedFlag)
 				postCompletedEvent();
 }
 
-void PerformRemoveTreeTask::remove(FolderNodeItemList *node, const volatile bool &stopedFlag)
+void PerformRemoveTreeTask::remove(FileSystemList *node, const volatile bool &stopedFlag)
 {
 	bool tryAgain;
 
-	for (FolderNodeItemList::size_type i = 0, size = node->size(); i < size && !stopedFlag && !isControllerDead() && !m_canceled; ++i)
-		if (node->at(i)->isListItem())
+	for (FileSystemList::size_type i = 0, size = node->size(); i < size && !stopedFlag && !isControllerDead() && !m_canceled; ++i)
+		if (node->at(i)->isList())
 		{
-			remove(static_cast<FolderNodeItemList*>(node->at(i)), stopedFlag);
+			remove(static_cast<FileSystemList*>(node->at(i)), stopedFlag);
 
 			if (!m_canceled)
 			{

@@ -26,7 +26,7 @@ public:
 			subnode(params.subnode.take())
 		{}
 
-		QScopedPointer<FolderNodeItemList> subnode;
+		QScopedPointer<FileSystemList> subnode;
 	};
 
 public:
@@ -39,7 +39,7 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(PerformRemoveEntryTask::parameters()); }
 
 private:
-	void remove(FolderNodeItemList *node, const volatile bool &stopedFlag);
+	void remove(FileSystemList *node, const volatile bool &stopedFlag);
 };
 
 FILE_SYSTEM_NS_END

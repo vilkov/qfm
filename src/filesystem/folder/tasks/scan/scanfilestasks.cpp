@@ -1,11 +1,13 @@
 #include "scanfilestasks.h"
+#include "../items/filesystemlist.h"
+#include "../items/filesystementry.h"
 #include "../../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask() :
-	parent_class(new Params())
+ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *listener, const Info &node, const QStringList &entries) :
+	parent_class(new Params(listener, node, entries))
 {}
 
 void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
@@ -23,8 +25,8 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask() :
-	parent_class(new Params())
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *listener, const Info &node, const QStringList &entries) :
+	parent_class(new Params(listener, node, entries))
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
@@ -46,8 +48,8 @@ ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params) :
 	parent_class(params, params->source.node)
 {}
 
-ScanFilesForCopyTask::ScanFilesForCopyTask() :
-	ScanFilesWithDestinationTask(new Params())
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move) :
+	ScanFilesWithDestinationTask(new Params(listener, node, entries, destination, move))
 {}
 
 void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)

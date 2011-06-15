@@ -1,90 +1,67 @@
-#ifndef FILESYSTEMMODELEVENTS_H_
-#define FILESYSTEMMODELEVENTS_H_
+#ifndef BASETASK_H_
+#define BASETASK_H_
 
 #include <QtCore/QMutex>
+#include <QtCore/QStringList>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
-#include "filesystemmodelevent.h"
-#include "../filesystemfoldernode.h"
-#include "../items/filesystemfoldernodeentry.h"
-#include "../items/filesystemfoldernodeitemlist.h"
-#include "../../filesystemnode.h"
-#include "../../filesystem_ns.h"
+#include "items/filesystemlist.h"
+#include "items/filesystementry.h"
+#include "../info/filesystemfoldernodeinfo.h"
+#include "../events/filesystemmodelevent.h"
 #include "../../../tools/taskspool/task.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
+class BaseTask : public TasksPool::Task
+{
+public:
+	struct Params : public MemoryManagerTag
+	{
+		struct Snapshot
+		{
+			Snapshot(QObject *listener, const Info &node, const QStringList &entries) :
+				node(node),
+				entries(entries),
+				listener(listener)
+			{}
+
+			Info node;
+			QStringList entries;
+			QObject *listener;
+		};
+	};
+};
+
+
+class BaseEvent : public ModelEvent
+{
+public:
+	struct Params : public ModelEvent::Params
+	{
+		struct Snapshot
+		{
+			Snapshot(FileSystemItem *entry) :
+				entry(entry)
+			{}
+			Snapshot(QScopedPointer<FileSystemItem> &entry) :
+				entry(entry.take())
+			{}
+
+			QScopedPointer<FileSystemItem> entry;
+		};
+	};
+
+protected:
+	BaseEvent(Type type) :
+		ModelEvent(type)
+	{}
+};
+
+
 struct ModelEvents
 {
-	class BaseTask : public TasksPool::Task
-	{
-	public:
-		struct Params : public MemoryManagerTag
-		{
-			struct Listener
-			{
-				Listener() :
-					node(0)
-				{}
-				Listener(Node *node) :
-					node(node)
-				{}
-
-				Node *node;
-			};
-			struct Snapshot
-			{
-				Snapshot() :
-					node(0),
-					entry(0)
-				{}
-				Snapshot(Node *node, FolderNodeEntry *entry) :
-					node(node),
-					entry(entry)
-				{}
-
-				Node *node;
-				FolderNodeEntry *entry;
-			};
-		};
-	};
-
-
-	class BaseEvent : public ModelEvent
-	{
-	public:
-		struct Params : public ModelEvent::Params
-		{
-			struct Snapshot
-			{
-				Snapshot() :
-					entry(0)
-				{}
-				Snapshot(FolderNodeEntry *entry) :
-					entry(entry)
-				{}
-				Snapshot(const Params::Snapshot &listener) :
-					entry(listener.entry)
-				{}
-
-				Snapshot &operator=(const BaseTask::Params::Snapshot &other)
-				{
-					entry = other.entry;
-					return *this;
-				}
-
-				FolderNodeEntry *entry;
-			};
-		};
-
-	protected:
-		BaseEvent(Type type) :
-			ModelEvent(type)
-		{}
-	};
-
-
 private:
 	template <typename T, int EType>
 	class TemplateEvent : public BaseEvent
@@ -153,7 +130,7 @@ public:
 	struct ScanFilesParams : public BaseEvent::Params
 	{
 		Snapshot snapshot;
-		QScopedPointer<FolderNodeItemList> subnode;
+		QScopedPointer<FileSystemList> subnode;
 		quint64 size;
 	};
 	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForRemove> ScanFilesForRemoveEvent;
@@ -195,6 +172,7 @@ public:
 	/********** PerformWithDestCopyFiles **********/
 	struct PerformWithDestCopyFilesParams : public PerformWithDestParams
 	{
+		bool canceled;
 		bool removeSource;
 	};
 	typedef TemplateEvent<PerformWithDestCopyFilesParams, BaseEvent::CopyFilesCompleted> CopyFilesCompletedEvent;
@@ -203,7 +181,7 @@ public:
 	/********** PerformWithDestCopyTreeFiles **********/
 	struct PerformWithDestCopyTreeFilesParams : public PerformWithDestCopyFilesParams
 	{
-		QScopedPointer<FolderNodeItemList> subnode;
+		QScopedPointer<FileSystemList> subnode;
 	};
 	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCompleted> CopyTreeFilesCompletedEvent;
 
@@ -264,4 +242,4 @@ public:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMMODELEVENTS_H_ */
+#endif /* BASETASK_H_ */

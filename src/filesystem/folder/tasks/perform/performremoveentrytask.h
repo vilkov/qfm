@@ -40,7 +40,7 @@ protected:
 
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
-	void removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	void removeEntry(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
 	void postCompletedEvent() const;
 	void postCanceledEvent() const;
 

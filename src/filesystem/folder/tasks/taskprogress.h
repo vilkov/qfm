@@ -2,8 +2,7 @@
 #define TASKPROGRESS_H_
 
 #include <QtCore/QDateTime>
-#include "../../filesystem_ns.h"
-#include "../events/filesystemmodelevents.h"
+#include "basetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -11,7 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class TaskProgress
 {
 public:
-	typedef ModelEvents::BaseTask::Params::Snapshot Snapshot;
+	typedef BaseTask::Params::Snapshot              Snapshot;
 	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
 
 	TaskProgress(const Snapshot &snapshot);

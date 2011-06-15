@@ -7,7 +7,6 @@
 #include "info/filesystemfoldernodeinfo.h"
 #include "containers/filesystemupdateslist.h"
 #include "containers/filesystemfoldernodevalues.h"
-#include "functors/filesystemfoldernodefunctors.h"
 #include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
 
@@ -35,7 +34,7 @@ public:
 	/* INode */
 	virtual int columnCount() const;
 
-	/* INode::IFileInfo */
+	/* INode::IFileInfo::IInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool exists() const;
@@ -45,15 +44,15 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 	virtual bool exists(IFileInfo *info) const;
+	virtual void refresh();
 
+	/* INode::IFileInfo */
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual void close(IFile *file) const;
 
 	virtual IFileInfo *create(IFileInfo *info, QString &error) const;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
 	virtual void close(IFileInfo *info) const;
-
-	virtual void refresh();
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
@@ -75,11 +74,14 @@ public:
 	virtual void removeEntry(Node *entry);
 
 protected:
-	void processIndexList(const QModelIndexList &list, const FolderNodeFunctors::Functor &functor);
-	void removeFunctor(FolderNodeItem *entry);
-	void calculateSizeFunctor(FolderNodeItem *entry);
-	void copyFunctor(FolderNodeItem *entry, INode *destination);
-	void moveFunctor(FolderNodeItem *entry, INode *destination);
+	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
+	typedef QList<ProcessedValue>                     ProcessedList;
+
+	ProcessedList processIndexList(const QModelIndexList &list);
+//	void removeFunctor(const Functors::Functor::List &list);
+//	void calculateSizeFunctor(const Functors::Functor::List &list);
+//	void copyFunctor(const Functors::Functor::List &list, INode *destination);
+//	void moveFunctor(const Functors::Functor::List &list, INode *destination);
 
 protected:
 	bool isUpdating() const { return m_updating; }
@@ -117,14 +119,19 @@ private:
 	QModelIndex rootIndex() const;
 
 	void updateFirstColumn(FolderNodeItem *entry);
+	void updateFirstColumn(Values::size_type index, FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);
+	void updateSecondColumn(Values::size_type index, FolderNodeItem *entry);
 	void updateBothColumns(FolderNodeItem *entry);
+	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 
 	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
+	bool isVisible() const;
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
+
 
 private:
 	typedef QSet<INodeView*> SetView;

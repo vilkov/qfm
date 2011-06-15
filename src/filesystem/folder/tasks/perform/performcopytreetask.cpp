@@ -11,15 +11,38 @@ PerformCopyTreeTask::PerformCopyTreeTask(Node *receiver, ModelEvents::ScanFilesW
 
 void PerformCopyTreeTask::run(const volatile bool &stopedFlag)
 {
-//	m_progress.init();
+	m_progress.init();
+
+//	if (parameters()->destination->exists())
+//		copyFile(parameters()->destination, parameters()->source.entry, stopedFlag);
+//	else
+//		m_canceled = true;
 //
-//	QDir dir(parameters()->destination.node->absoluteFilePath());
+//	if (!stopedFlag && !isControllerDead())
+//	{
+//		QScopedPointer<CompletedEvent> event(new CompletedEvent());
+//		event->params().snapshot = parameters()->source;
 //
-////	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))
-////		copy(dir, parameters()->subnode, stopedFlag);
-////	else
-////		m_canceled = true;
+//		if (m_canceled)
+//		{
+//			event->params().canceled = true;
+//			event->params().removeSource = false;
+//		}
+//		else
+//		{
+//			event->params().canceled = false;
+//			event->params().removeSource = parameters()->removeSource;
+//		}
 //
+//		event->params().destination = parameters()->destination;
+//		Application::postEvent(parameters()->source.node, event.take());
+//	}
+
+//	if (dir.exists() && cd(dir, parameters()->source.entry, stopedFlag))
+//		copy(dir, parameters()->subnode, stopedFlag);
+//	else
+//		m_canceled = true;
+
 //	if (!stopedFlag && !isControllerDead())
 //		if (m_canceled)
 //		{

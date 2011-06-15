@@ -2,16 +2,15 @@
 #define CONTROLABLETASK_H_
 
 #include <QtCore/QSharedData>
-#include "../../filesystem_ns.h"
-#include "../events/filesystemmodelevents.h"
+#include "basetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class ControlableTask : public ModelEvents::BaseTask
+class ControlableTask : public BaseTask
 {
 public:
-	struct Params : public QSharedData, public ModelEvents::BaseTask::Params
+	struct Params : public QSharedData, public BaseTask::Params
 	{};
 
 public:

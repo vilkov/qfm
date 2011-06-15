@@ -1,26 +1,29 @@
 #ifndef FILESYSTEMFOLDERNODEFUNCTORS_H_
 #define FILESYSTEMFOLDERNODEFUNCTORS_H_
 
+#include <QtCore/QList>
 #include "../items/filesystemfoldernodeitem.h"
 
+
+FILE_SYSTEM_NS_BEGIN
 
 /**
  *  Closed namespace "FolderNodeFunctors"
  */
-struct FolderNodeFunctors
+struct Functors
 {
 	class Functor
 	{
 	public:
-		typedef FileSystem::FolderNodeItem Entry;
+		typedef QList<FolderNodeItem*> List;
 
 	public:
 		virtual ~Functor() {}
 
-		inline void operator()(Entry *entry) const { call(entry); }
+		inline void operator()(const List &list) const { call(list); }
 
 	protected:
-		virtual void call(Entry *entry) const = 0;
+		virtual void call(const List &list) const = 0;
 	};
 
 
@@ -29,7 +32,7 @@ struct FolderNodeFunctors
 	class Callable : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Entry *);
+		typedef void (T::*Method)(const List &list);
 
 	public:
 		Callable(T *object, Method method) :
@@ -38,7 +41,7 @@ struct FolderNodeFunctors
 		{}
 
 	protected:
-		virtual void call(Entry *entry) const { (m_object->*m_method)(entry); }
+		virtual void call(const List &list) const { (m_object->*m_method)(list); }
 
 	private:
 		T *m_object;
@@ -54,7 +57,7 @@ struct FolderNodeFunctors
 	class Callable1 : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Entry *, Arg1);
+		typedef void (T::*Method)(const List &list, Arg1);
 
 	public:
 		Callable1(T *object, Method method, Arg1 arg1) :
@@ -64,7 +67,7 @@ struct FolderNodeFunctors
 		{}
 
 	protected:
-		virtual void call(Entry *entry) const { (m_object->*m_method)(entry, m_arg1); }
+		virtual void call(const List &list) const { (m_object->*m_method)(list, m_arg1); }
 
 	private:
 		T *m_object;
@@ -75,5 +78,7 @@ struct FolderNodeFunctors
 	inline static Callable1<T, Arg1> callTo(T *object, typename Callable1<T, Arg1>::Method method, Arg1 arg1)
 	{ return Callable1<T, Arg1>(object, method, arg1); }
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* FILESYSTEMFOLDERNODEFUNCTORS_H_ */

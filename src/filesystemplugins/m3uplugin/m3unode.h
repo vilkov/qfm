@@ -37,6 +37,7 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 	virtual bool exists(IFileInfo *info) const;
+	virtual void refresh();
 
 	virtual FileSystem::IFile *open(FileSystem::IFile::OpenMode mode, QString &error) const { return 0; }
 	virtual void close(FileSystem::IFile *file) const {}
@@ -44,8 +45,6 @@ public:
 	virtual FileSystem::IFileInfo *create(FileSystem::IFileInfo *info, QString &error) const { return 0; }
 	virtual FileSystem::IFileInfo *create(const QString &fileName, FileSystem::IFileInfo::FileType type, QString &error) const { return 0; }
 	virtual void close(FileSystem::IFileInfo *info) const {}
-
-	virtual void refresh();
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);

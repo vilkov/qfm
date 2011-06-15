@@ -1,8 +1,7 @@
 #ifndef PERFORMTASK_H_
 #define PERFORMTASK_H_
 
-#include "../../../filesystem_ns.h"
-#include "../../items/filesystemfoldernodeitemlist.h"
+#include "../basetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN

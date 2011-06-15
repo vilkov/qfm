@@ -17,7 +17,7 @@ public:
 	typedef ModelEvents::ScanFilesForSizeEvent Event;
 
 public:
-	ScanFilesForSizeTask();
+	ScanFilesForSizeTask(QObject *listener, const Info &node, const QStringList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
@@ -33,7 +33,7 @@ public:
 	typedef ModelEvents::ScanFilesForRemoveEvent Event;
 
 public:
-	ScanFilesForRemoveTask();
+	ScanFilesForRemoveTask(QObject *listener, const Info &node, const QStringList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
@@ -60,12 +60,17 @@ class ScanFilesForCopyTask : public ScanFilesWithDestinationTask
 public:
 	struct Params : public parent_class::Params
 	{
+		Params(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move) :
+			parent_class::Params(listener, node, entries, destination),
+			move(move)
+		{}
+
 		bool move;
 	};
 	typedef ModelEvents::ScanFilesForCopyEvent Event;
 
 public:
-	ScanFilesForCopyTask();
+	ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move);
 
 	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 	virtual void run(const volatile bool &stopedFlag);

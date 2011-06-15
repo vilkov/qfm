@@ -18,7 +18,7 @@ public:
 			subnode(params.subnode.take())
 		{}
 
-		QScopedPointer<FolderNodeItemList> subnode;
+		QScopedPointer<FileSystemList> subnode;
 	};
 	typedef ModelEvents::CopyTreeFilesCompletedEvent CompletedEvent;
 

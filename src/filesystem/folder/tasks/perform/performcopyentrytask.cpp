@@ -36,9 +36,15 @@ void PerformCopyEntryTask::run(const volatile bool &stopedFlag)
 		event->params().snapshot = parameters()->source;
 
 		if (m_canceled)
+		{
+			event->params().canceled = true;
 			event->params().removeSource = false;
+		}
 		else
+		{
+			event->params().canceled = false;
 			event->params().removeSource = parameters()->removeSource;
+		}
 
 		event->params().destination = parameters()->destination;
 		Application::postEvent(parameters()->source.node, event.take());

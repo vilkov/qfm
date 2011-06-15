@@ -7,9 +7,7 @@
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
-#include "../../events/filesystemmodelevents.h"
-#include "../../items/filesystemfoldernodeentry.h"
-#include "../../items/filesystemfoldernodeitemlist.h"
+#include "../basetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -24,8 +22,17 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
+		Params(QObject *listener, const Info &node, const QStringList &entries) :
+			source(listener, node, entries)
+		{}
+
+		Params(QObject *listener, const Info &node, const QStringList &entries, INode *destination) :
+			parent_class::Params(destination),
+			source(listener, node, entries)
+		{}
+
 		typename parent_class::Params::Snapshot source;
-		QScopedPointer<FolderNodeItemList> subnode;
+		QScopedPointer<FileSystemList> subnode;
 		quint64 size;
 	};
 
@@ -39,7 +46,11 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-		QScopedPointer<FolderNodeItemList> subnode(new FolderNodeItemList(*parameters()->source.entry));
+#ifndef Q_OS_WIN
+		QScopedPointer<FileSystemList> subnode(new FileSystemList(m_permissions.getInfo(parameters()->source.node.absoluteFilePath(parameters()->source.entry))));
+#else
+		QScopedPointer<FileSystemList> subnode(new FileSystemList(parameters()->source.node.absoluteFilePath(parameters()->source.entry)));
+#endif
 		scan(subnode.data(), stopedFlag);
 		parameters()->subnode.swap(subnode);
 	}
@@ -48,7 +59,7 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 private:
-	void scan(FolderNodeItemList *node, const volatile bool &stopedFlag)
+	void scan(FileSystemList *node, const volatile bool &stopedFlag)
 	{
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
@@ -58,9 +69,9 @@ private:
 				if (info.isDir())
 				{
 #ifndef Q_OS_WIN
-					QScopedPointer<FolderNodeItemList> subtree(new FolderNodeItemList(m_permissions.getInfo(info)));
+					QScopedPointer<FileSystemList> subtree(new FileSystemList(m_permissions.getInfo(info)));
 #else
-					QScopedPointer<FolderNodeItemList> subtree(new FolderNodeItemList(info));
+					QScopedPointer<FileSystemList> subtree(new FileSystemList(info));
 #endif
 					scan(subtree.data(), stopedFlag);
 					node->add(subtree.take());
@@ -68,9 +79,9 @@ private:
 				else
 				{
 #ifndef Q_OS_WIN
-					node->add(new FolderNodeEntry(m_permissions.getInfo(info)));
+					node->add(new FileSystemEntry(m_permissions.getInfo(info)));
 #else
-					node->add(new FolderNodeEntry(info));
+					node->add(new FileSystemEntry(info));
 #endif
 					parameters()->size += info.size();
 				}

@@ -35,6 +35,7 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const = 0;
 	virtual QDateTime lastModified() const = 0;
 	virtual bool exists(IFileInfo *info) const = 0;
+	virtual void refresh() = 0;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
 	virtual void close(IFile *file) const = 0;
@@ -42,8 +43,6 @@ public:
 	virtual IFileInfo *create(IFileInfo *info, QString &error) const = 0;
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const = 0;
 	virtual void close(IFileInfo *info) const = 0;
-
-	virtual void refresh() = 0;
 };
 
 FILE_SYSTEM_NS_END

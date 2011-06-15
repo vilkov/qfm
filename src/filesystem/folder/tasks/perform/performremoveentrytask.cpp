@@ -41,7 +41,7 @@ PerformRemoveEntryTask::PerformRemoveEntryTask(Params *params) :
 	m_progress(parameters()->source)
 {}
 
-void PerformRemoveEntryTask::removeEntry(FolderNodeItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveEntryTask::removeEntry(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
 {
 	if (entry->exists())
 	{

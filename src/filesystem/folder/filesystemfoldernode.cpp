@@ -5,7 +5,6 @@
 #include "tasks/scan/scanfilestasks.h"
 #include "tasks/perform/performremovetreetask.h"
 #include "../filesystempluginsmanager.h"
-#include "../../tools/rangeintersection.h"
 #include "../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -501,7 +500,12 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 	return res;
 }
 
-//void FolderNode::removeFunctor(const Functors::Functor::List &list)
+//void FolderNode::addFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
+//{
+//	list.push_back(Functors::ProcessedValue(index, entry));
+//}
+//
+//void FolderNode::removeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
 //{
 //	if (entry->isDir())
 //		scanForRemove(entry);
@@ -509,7 +513,7 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 //		removeEntry(entry);
 //}
 //
-//void FolderNode::calculateSizeFunctor(const Functors::Functor::List &list)
+//void FolderNode::calculateSizeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
 //{
 //	if (entry->isDir())
 //		scanForSize(entry);
@@ -517,7 +521,7 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 //		updateSecondColumn(entry);
 //}
 //
-//void FolderNode::copyFunctor(const Functors::Functor::List &list, INode *destination)
+//void FolderNode::copyFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry, INode *destination)
 //{
 //	if (entry->isDir())
 //		scanForCopy(entry, destination, false);
@@ -526,7 +530,7 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 //			copyEntry(entry, destination, false);
 //}
 //
-//void FolderNode::moveFunctor(const Functors::Functor::List &list, INode *destination)
+//void FolderNode::moveFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry, INode *destination)
 //{
 //	if (entry->isDir())
 //		scanForCopy(entry, destination, true);
@@ -568,7 +572,7 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 	typedef const UpdateFilesTask::Event::Params *ParamsType;
 	ParamsType params = static_cast<ParamsType>(p);
 	UpdatesList updates = params->updates;
-	RangeIntersection updateRange(1);
+	RangeIntersection updateRange;
 	Values::size_type index;
 
 	for (UpdatesList::iterator update = updates.begin(), end = updates.end(); update != end;)
@@ -634,13 +638,27 @@ void FolderNode::removeEntry(FolderNodeItem *entry)
 	}
 }
 
-void FolderNode::scanForRemove(FolderNodeItem *entry)
+void FolderNode::scanForRemove(const ProcessedList &entries)
 {
-	QScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entry->fileName()));
+	QStringList list;
+	FolderNodeEntry *entry;
+	RangeIntersection updateRange;
 
-	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for remove..."));
-	updateFirstColumn(entry);
+	list.reserve(entries.size());
 
+	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
+	{
+		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
+			entry->lock(tr("Scanning folder for remove..."));
+		else
+			entry->lock(tr("Removing..."));
+
+		updateRange.add(entries.at(i).first, entries.at(i).first);
+		list.push_back(entry->fileName());
+	}
+
+	QScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, list));
+	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -691,13 +709,24 @@ void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
 	END_PROCESS_EVENT;
 }
 
-void FolderNode::scanForSize(FolderNodeItem *entry)
+void FolderNode::scanForSize(const ProcessedList &entries)
 {
-	QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entry->fileName()));
+	QStringList list;
+	FolderNodeEntry *entry;
+	RangeIntersection updateRange;
 
-	static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for size..."));
-	updateFirstColumn(entry);
+	list.reserve(entries.size());
 
+	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
+		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
+		{
+			entry->lock(tr("Scanning folder for size..."));
+			updateRange.add(entries.at(i).first, entries.at(i).first);
+			list.push_back(entry->fileName());
+		}
+
+	QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
+	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -722,7 +751,7 @@ void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination, bool move)
 	Application::instance()->taskPool().handle(new PerformCopyEntryTask(this, static_cast<FolderNodeEntry*>(entry), destination, move));
 }
 
-void FolderNode::scanForCopy(FolderNodeItem *entry, INode *destination, bool move)
+void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
 {
 	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entry->fileName(), destination, false));
 
@@ -853,6 +882,13 @@ QModelIndex FolderNode::rootIndex() const
 void FolderNode::updateFirstColumn(FolderNodeItem *entry)
 {
 	updateFirstColumn(m_items.indexOf(entry), entry);
+}
+
+void FolderNode::updateFirstColumn(const RangeIntersection &range)
+{
+	for (RangeIntersection::RangeList::size_type i = 0, size = range.size(); i < size; ++i)
+		emit dataChanged(createIndex(range.at(i).top(), 0),
+						 createIndex(range.at(i).bottom(), columnCount() - 1));
 }
 
 void FolderNode::updateFirstColumn(Values::size_type index, FolderNodeItem *entry)

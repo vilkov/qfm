@@ -9,6 +9,7 @@
 #include "containers/filesystemfoldernodevalues.h"
 #include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
+#include "../../tools/rangeintersection.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -78,10 +79,11 @@ protected:
 	typedef QList<ProcessedValue>                     ProcessedList;
 
 	ProcessedList processIndexList(const QModelIndexList &list);
-//	void removeFunctor(const Functors::Functor::List &list);
-//	void calculateSizeFunctor(const Functors::Functor::List &list);
-//	void copyFunctor(const Functors::Functor::List &list, INode *destination);
-//	void moveFunctor(const Functors::Functor::List &list, INode *destination);
+//	void addFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
+//	void removeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
+//	void calculateSizeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
+//	void copyFunctor(Functors::ProcessedList &list, FolderNodeItem *entry, INode *destination);
+//	void moveFunctor(Functors::ProcessedList &list, FolderNodeItem *entry, INode *destination);
 
 protected:
 	bool isUpdating() const { return m_updating; }
@@ -95,16 +97,16 @@ protected:
 	void updateFilesEvent(const ModelEvent::Params *p);
 
 	void removeEntry(FolderNodeItem *entry);
-	void scanForRemove(FolderNodeItem *entry);
+	void scanForRemove(const ProcessedList &entries);
 	void scanForRemoveEvent(const ModelEvent::Params *p);
 	void removeCompleteEvent(const ModelEvent::Params *p);
 	void removeCanceledEvent(const ModelEvent::Params *p);
 
-	void scanForSize(FolderNodeItem *entry);
+	void scanForSize(const ProcessedList &entries);
 	void scanForSizeEvent(const ModelEvent::Params *p);
 
 	void copyEntry(FolderNodeItem *entry, INode *destination, bool move);
-	void scanForCopy(FolderNodeItem *entry, INode *destination, bool move);
+	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void copyCompleteEvent(const ModelEvent::Params *p);
 
@@ -119,6 +121,7 @@ private:
 	QModelIndex rootIndex() const;
 
 	void updateFirstColumn(FolderNodeItem *entry);
+	void updateFirstColumn(const RangeIntersection &range);
 	void updateFirstColumn(Values::size_type index, FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);
 	void updateSecondColumn(Values::size_type index, FolderNodeItem *entry);

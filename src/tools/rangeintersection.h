@@ -37,7 +37,7 @@ public:
 	typedef QList<Range> RangeList;
 
 public:
-	RangeIntersection(distance_type maxDistance) :
+	RangeIntersection(distance_type maxDistance = 1) :
 		m_maxDistance(maxDistance)
 	{}
 

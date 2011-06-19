@@ -13,10 +13,10 @@ public:
 	typedef BaseTask::Params::Snapshot              Snapshot;
 	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
 
-	TaskProgress(const Snapshot &snapshot);
+	TaskProgress(QObject *receiver);
 
 public:
-	void init();
+	void init(const QString &fileName);
 	void update(quint64 progressIncrement);
 
 private:
@@ -24,10 +24,11 @@ private:
 
 private:
 	quint64 m_doneSize;
+	QString m_fileName;
+	QObject *m_receiver;
 	QDateTime m_baseTime;
 	QDateTime m_currentTime;
 	QDateTime m_timeElapsed;
-	const Snapshot &m_snapshot;
 };
 
 FILE_SYSTEM_NS_END

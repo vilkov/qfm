@@ -26,10 +26,11 @@ public:
 			source(listener, node, entries)
 		{}
 
-		Params(QObject *listener, const Info &node, const QStringList &entries, INode *destination) :
-			parent_class::Params(destination),
+		Params(QObject *listener, const Info &node, const QStringList &entries, INode *dest) :
 			source(listener, node, entries)
-		{}
+		{
+//			destination = dest;
+		}
 
 		typename parent_class::Params::Snapshot source;
 		QScopedPointer<FileSystemList> subnode;
@@ -46,13 +47,13 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-#ifndef Q_OS_WIN
-		QScopedPointer<FileSystemList> subnode(new FileSystemList(m_permissions.getInfo(parameters()->source.node.absoluteFilePath(parameters()->source.entry))));
-#else
-		QScopedPointer<FileSystemList> subnode(new FileSystemList(parameters()->source.node.absoluteFilePath(parameters()->source.entry)));
-#endif
-		scan(subnode.data(), stopedFlag);
-		parameters()->subnode.swap(subnode);
+//#ifndef Q_OS_WIN
+//		QScopedPointer<FileSystemList> subnode(new FileSystemList(m_permissions.getInfo(parameters()->source.node.absoluteFilePath(parameters()->source.entry))));
+//#else
+//		QScopedPointer<FileSystemList> subnode(new FileSystemList(parameters()->source.node.absoluteFilePath(parameters()->source.entry)));
+//#endif
+//		scan(subnode.data(), stopedFlag);
+//		parameters()->subnode.swap(subnode);
 	}
 
 protected:
@@ -81,7 +82,7 @@ private:
 #ifndef Q_OS_WIN
 					node->add(new FileSystemEntry(m_permissions.getInfo(info)));
 #else
-					node->add(new FileSystemEntry(info));
+					receiver->add(new FileSystemEntry(info));
 #endif
 					parameters()->size += info.size();
 				}

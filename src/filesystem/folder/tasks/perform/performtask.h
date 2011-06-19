@@ -14,9 +14,7 @@ public:
 
 public:
 	struct Params : public parent_class::Params
-	{
-		typename parent_class::Params::Snapshot source;
-	};
+	{};
 
 public:
 	PerformTask(Params *params) :

@@ -4,14 +4,15 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-TaskProgress::TaskProgress(const Snapshot &snapshot) :
+TaskProgress::TaskProgress(QObject *receiver) :
 	m_doneSize(0),
-	m_snapshot(snapshot)
+	m_receiver(receiver)
 {}
 
 
-void TaskProgress::init()
+void TaskProgress::init(const QString &fileName)
 {
+	m_fileName = fileName;
 	m_baseTime = m_currentTime = m_timeElapsed = QDateTime::currentDateTime();
 }
 
@@ -29,10 +30,10 @@ void TaskProgress::update(quint64 progressIncrement)
 void TaskProgress::postEvent()
 {
 	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent());
-	event->params().snapshot = m_snapshot;
+	event->params().fileName = m_fileName;
 	event->params().progress = m_doneSize;
 	event->params().timeElapsed = m_timeElapsed.msecsTo(m_currentTime);
-	Application::postEvent(m_snapshot.node, event.take());
+	Application::postEvent(m_receiver, event.take());
 }
 
 FILE_SYSTEM_NS_END

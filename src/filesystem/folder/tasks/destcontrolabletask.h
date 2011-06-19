@@ -13,10 +13,6 @@ class DestControlableTask : public ControlableTask
 public:
 	struct Params : ControlableTask::Params
 	{
-		Params(INode *destination) :
-	    	destination(destination)
-		{}
-
     	INode *destination;
 
 	private:

@@ -20,7 +20,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 
 	UpdatesList localUpdates;
 	UpdatesList &updatedFiles = parameters()->updates;
-	QDirIterator dirIt(parameters()->node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(parameters()->node.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	while(!stopedFlag && !isControllerDead() && dirIt.hasNext())
 	{
@@ -38,12 +38,12 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				Application::postEvent(parameters()->node, new Event(false, localUpdates));
+				Application::postEvent(parameters()->receiver, new Event(false, localUpdates));
 		}
 	}
 
 	if (!stopedFlag && !isControllerDead())
-		Application::postEvent(parameters()->node, new Event(true, updatedFiles.takeUpdates()));
+		Application::postEvent(parameters()->receiver, new Event(true, updatedFiles.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

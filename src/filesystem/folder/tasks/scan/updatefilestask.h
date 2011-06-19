@@ -18,7 +18,8 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
-		Node *node;
+		Info node;
+		QObject *receiver;
 		UpdatesList updates;
 	};
 	typedef ModelEvents::UpdateFilesEvent Event;

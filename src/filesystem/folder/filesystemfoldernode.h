@@ -124,8 +124,10 @@ private:
 	void updateFirstColumn(const RangeIntersection &range);
 	void updateFirstColumn(Values::size_type index, FolderNodeItem *entry);
 	void updateSecondColumn(FolderNodeItem *entry);
+	void updateSecondColumn(const RangeIntersection &range);
 	void updateSecondColumn(Values::size_type index, FolderNodeItem *entry);
 	void updateBothColumns(FolderNodeItem *entry);
+	void updateBothColumns(const RangeIntersection &range);
 	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);

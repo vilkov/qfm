@@ -9,6 +9,8 @@
 #include "items/filesystementry.h"
 #include "../info/filesystemfoldernodeinfo.h"
 #include "../events/filesystemmodelevent.h"
+#include "../containers/filesystemupdateslist.h"
+#include "../../interfaces/filesysteminode.h"
 #include "../../../tools/taskspool/task.h"
 
 
@@ -39,19 +41,7 @@ class BaseEvent : public ModelEvent
 {
 public:
 	struct Params : public ModelEvent::Params
-	{
-		struct Snapshot
-		{
-			Snapshot(FileSystemItem *entry) :
-				entry(entry)
-			{}
-			Snapshot(QScopedPointer<FileSystemItem> &entry) :
-				entry(entry.take())
-			{}
-
-			QScopedPointer<FileSystemItem> entry;
-		};
-	};
+	{};
 
 protected:
 	BaseEvent(Type type) :
@@ -129,7 +119,6 @@ public:
 	/********** ScanFiles **********/
 	struct ScanFilesParams : public BaseEvent::Params
 	{
-		Snapshot snapshot;
 		QScopedPointer<FileSystemList> subnode;
 		quint64 size;
 	};
@@ -148,15 +137,13 @@ public:
 
 	/********** Perform **********/
 	struct PerformParams : public BaseEvent::Params
-	{
-		Snapshot snapshot;
-	};
+	{};
 
 
 	/********** PerformRemoveFiles **********/
 	struct PerformRemoveFilesParams: public PerformParams
 	{
-		bool removeParentEntry;
+		QScopedPointer<FileSystemList> subnode;
 	};
 	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCompleted> RemoveFilesCompletedEvent;
 	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCanceled> RemoveFilesCanceledEvent;
@@ -233,7 +220,7 @@ public:
 	/********** UpdatePerformProgress **********/
 	struct UpdatePerformProgressParams : public BaseEvent::Params
 	{
-		Snapshot snapshot;
+		QString fileName;
 		quint64 progress;
 		quint64 timeElapsed;
 	};

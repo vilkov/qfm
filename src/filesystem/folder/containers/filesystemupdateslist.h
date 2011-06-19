@@ -2,6 +2,7 @@
 #define FILESYSTEMUPDATESLIST_H_
 
 #include <QtCore/QSet>
+#include <QtCore/QMap>
 #include <QtCore/QList>
 #include "../info/filesystemfoldernodeinfo.h"
 

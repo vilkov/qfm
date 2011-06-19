@@ -42,7 +42,7 @@ public:
 	{}
 
 	RangeList::size_type size() const { return m_ranges.size(); }
-	const Range &at(RangeList::size_type index) { return m_ranges.at(index); }
+	const Range &at(RangeList::size_type index) const { return m_ranges.at(index); }
 
 	void add(value_type top, value_type bottom)
 	{

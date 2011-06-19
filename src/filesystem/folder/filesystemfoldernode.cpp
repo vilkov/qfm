@@ -753,15 +753,27 @@ void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination, bool move)
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
 {
-	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entry->fileName(), destination, false));
+	QStringList list;
+	FolderNodeEntry *entry;
+	RangeIntersection updateRange;
+	QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
+	QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
 
-	if (move)
-		static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for move..."));
-	else
-		static_cast<FolderNodeEntry*>(entry)->lock(tr("Scanning folder for copy..."));
+	list.reserve(entries.size());
 
-	updateFirstColumn(entry);
+	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
+	{
+		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
+			entry->lock(folderLockReason);
+		else
+			entry->lock(fileLockReason);
 
+		updateRange.add(entries.at(i).first, entries.at(i).first);
+		list.push_back(entry->fileName());
+	}
+
+	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, destination, false));
+	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
 

@@ -5,13 +5,13 @@
 FILE_SYSTEM_NS_BEGIN
 
 TaskProgress::TaskProgress(QObject *receiver) :
-	m_doneSize(0),
 	m_receiver(receiver)
 {}
 
 
 void TaskProgress::init(const QString &fileName)
 {
+	m_doneSize = 0;
 	m_fileName = fileName;
 	m_baseTime = m_currentTime = m_timeElapsed = QDateTime::currentDateTime();
 }

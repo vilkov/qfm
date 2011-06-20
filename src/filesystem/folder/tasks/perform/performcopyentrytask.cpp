@@ -2,11 +2,11 @@
 #include "../../../../application.h"
 
 
-#ifdef Q_OS_WIN
-#	include "routines/copyprogressroutine_win.h"
-#else
-#	include "routines/copyprogressroutine_default.h"
-#endif
+//#ifdef Q_OS_WIN
+//#	include "routines/copyprogressroutine_win.h"
+//#else
+//#	include "routines/copyprogressroutine_default.h"
+//#endif
 
 
 FILE_SYSTEM_NS_BEGIN

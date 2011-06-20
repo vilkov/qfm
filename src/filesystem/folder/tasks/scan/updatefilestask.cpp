@@ -9,8 +9,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask() :
-	parent_class(new Params())
+UpdateFilesTask::UpdateFilesTask(const Info &info, QObject *receiver, const UpdatesList &updates) :
+	parent_class(new Params(info, receiver, updates))
 {}
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
@@ -20,7 +20,7 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 
 	UpdatesList localUpdates;
 	UpdatesList &updatedFiles = parameters()->updates;
-	QDirIterator dirIt(parameters()->node.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(parameters()->info.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	while(!stopedFlag && !isControllerDead() && dirIt.hasNext())
 	{

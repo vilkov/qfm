@@ -96,7 +96,6 @@ protected:
 	void updateFiles();
 	void updateFilesEvent(const ModelEvent::Params *p);
 
-	void removeEntry(FolderNodeItem *entry);
 	void scanForRemove(const ProcessedList &entries);
 	void scanForRemoveEvent(const ModelEvent::Params *p);
 	void removeCompleteEvent(const ModelEvent::Params *p);

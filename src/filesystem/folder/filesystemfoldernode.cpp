@@ -286,9 +286,7 @@ void FolderNode::remove(const QModelIndexList &list)
 	ProcessedList entries = processIndexList(list);
 
 	if (!entries.isEmpty())
-	{
-
-	}
+		scanForRemove(entries);
 }
 
 void FolderNode::calculateSize(const QModelIndexList &list)
@@ -555,14 +553,11 @@ void FolderNode::updateFiles()
 	if (isVisible())
 	{
 		UpdatesList::Map changes;
-		QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask());
 
 		for (Values::size_type i = m_info.isRoot() ? 0 : 1, size = m_items.size(); i < size; ++i)
 			changes.insert(m_items.at(i).item->fileName(), *m_items.at(i).item);
 
-		task->parameters()->receiver = this;
-		task->parameters()->updates = changes;
-
+		QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(m_info, this, changes));
 		setUpdating(true);
 		Application::instance()->taskPool().handle(task.take());
 	}
@@ -622,21 +617,6 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 
 	if (params->isLastEvent)
 		setUpdating(false);
-}
-
-void FolderNode::removeEntry(FolderNodeItem *entry)
-{
-	if (QMessageBox::question(
-			&Application::instance()->mainWindow(),
-			tr("Remove file..."),
-			tr("Would you like to remove \"%1\" file?").arg(static_cast<FolderNodeEntry*>(entry)->absoluteFilePath()),
-			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-	{
-		static_cast<FolderNodeEntry*>(entry)->lock(tr("Removing..."));
-		updateFirstColumn(entry);
-
-//		Application::instance()->taskPool().handle(new PerformRemoveEntryTask(this, static_cast<FolderNodeEntry*>(entry)));
-	}
 }
 
 void FolderNode::scanForRemove(const ProcessedList &entries)
@@ -733,25 +713,16 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 
 void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(const PerformRemoveEntryTask::CompletedEvent::Params, p);
-//		if (params->removeParentEntry)
-//			removeEntry(index);
-//		else
-//		{
-//			value.entry()->clearTotalSize();
-//			value.entry()->unlock();
-//			updateBothColumns(index, value.entry());
-//		}
-//	END_PROCESS_EVENT;
+	PerformRemoveTask::CompletedEvent::Params *params = (PerformRemoveTask::CompletedEvent::Params *)p;
+	QScopedPointer<FileSystemList> entries(params->subnode.take());
+
+	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		removeEntry(m_items.indexOf(entries->at(i)->fileName()));
 }
 
 void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(const PerformRemoveEntryTask::CanceledEvent::Params, p);
-//		value.entry()->clearTotalSize();
-//		value.entry()->unlock();
-//		updateBothColumns(index, value.entry());
-//	END_PROCESS_EVENT;
+	removeCompleteEvent(p);
 }
 
 void FolderNode::scanForSize(const ProcessedList &entries)

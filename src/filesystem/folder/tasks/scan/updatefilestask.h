@@ -18,14 +18,20 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
-		Info node;
+		Params(const Info &info, QObject *receiver, const UpdatesList &updates) :
+			info(info),
+			receiver(receiver),
+			updates(updates)
+		{}
+
+		Info info;
 		QObject *receiver;
 		UpdatesList updates;
 	};
 	typedef ModelEvents::UpdateFilesEvent Event;
 
 public:
-	UpdateFilesTask();
+	UpdateFilesTask(const Info &info, QObject *receiver, const UpdatesList &updates);
 
 	virtual void run(const volatile bool &stopedFlag);
 

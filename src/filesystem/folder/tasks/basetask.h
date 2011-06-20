@@ -23,13 +23,13 @@ public:
 	{
 		struct Snapshot
 		{
-			Snapshot(QObject *listener, const Info &node, const QStringList &entries) :
-				node(node),
+			Snapshot(QObject *listener, const Info &info, const QStringList &entries) :
+				info(info),
 				entries(entries),
 				listener(listener)
 			{}
 
-			Info node;
+			Info info;
 			QStringList entries;
 			QObject *listener;
 		};

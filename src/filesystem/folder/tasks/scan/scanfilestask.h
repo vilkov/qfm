@@ -23,11 +23,13 @@ public:
 	struct Params : public parent_class::Params
 	{
 		Params(QObject *listener, const Info &node, const QStringList &entries) :
-			source(listener, node, entries)
+			source(listener, node, entries),
+			size(0)
 		{}
 
 		Params(QObject *listener, const Info &node, const QStringList &entries, INode *dest) :
-			source(listener, node, entries)
+			source(listener, node, entries),
+			size(0)
 		{
 //			destination = dest;
 		}
@@ -47,13 +49,35 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-//#ifndef Q_OS_WIN
-//		QScopedPointer<FileSystemList> subnode(new FileSystemList(m_permissions.getInfo(parameters()->source.node.absoluteFilePath(parameters()->source.entry))));
-//#else
-//		QScopedPointer<FileSystemList> subnode(new FileSystemList(parameters()->source.node.absoluteFilePath(parameters()->source.entry)));
-//#endif
-//		scan(subnode.data(), stopedFlag);
-//		parameters()->subnode.swap(subnode);
+		const QStringList &entries = parameters()->source.entries;
+		QScopedPointer<FileSystemList> root(new FileSystemList(parameters()->source.info));
+
+		for (QStringList::size_type i = 0, size = entries.size(); i < size && !stopedFlag; ++i)
+		{
+#ifndef Q_OS_WIN
+			Info info(m_permissions.getInfo(root->absoluteFilePath(entries.at(i))));
+#else
+			Info info(root->absoluteFilePath(entries.at(i)));
+#endif
+
+			if (info.exists())
+				if (info.isDir())
+				{
+					QScopedPointer<FileSystemList> subnode(new FileSystemList(info));
+
+					scan(subnode.data(), stopedFlag);
+					root->add(subnode.take());
+				}
+				else
+				{
+					root->add(new FileSystemEntry(info));
+					parameters()->size += info.size();
+				}
+			else
+				root->add(new FileSystemEntry(info));
+		}
+
+		parameters()->subnode.swap(root);
 	}
 
 protected:
@@ -80,9 +104,9 @@ private:
 				else
 				{
 #ifndef Q_OS_WIN
-					node->add(new FileSystemEntry(m_permissions.getInfo(info)));
+					info->add(new FileSystemEntry(m_permissions.getInfo(info)));
 #else
-					receiver->add(new FileSystemEntry(info));
+					node->add(new FileSystemEntry(info));
 #endif
 					parameters()->size += info.size();
 				}

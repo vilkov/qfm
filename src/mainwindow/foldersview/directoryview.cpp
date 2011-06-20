@@ -300,7 +300,7 @@ void DirectoryView::initialize()
 	m_layout.addLayout(&m_header.layout);
 	m_layout.addWidget(&m_view);
 
-	m_view.setSelectionMode(QAbstractItemView::SingleSelection);
+	m_view.setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_view.setSortingEnabled(true);
 	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
 

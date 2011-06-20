@@ -723,9 +723,22 @@ void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 	ParamsType params = (ParamsType)p;
 
 	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	RangeIntersection updateRange;
+	Values::size_type index;
+	FileSystemItem *entry;
 
 	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
-		removeEntry(m_items.indexOf(entries->at(i)->fileName()));
+		if ((entry = entries->at(i))->shouldRemove())
+			removeEntry(m_items.indexOf(entry->fileName()));
+		else
+		{
+			index = m_items.indexOf(entry->fileName());
+			static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(0);
+			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+			updateRange.add(index, index);
+		}
+
+	updateBothColumns(updateRange);
 }
 
 void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)

@@ -28,9 +28,7 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 		if ((entry = parameters()->entries->at(i))->isDir())
 			m_progress.init(entry->fileName());
 
-		do
-			removeEntry(entry, tryAgain = false, stopedFlag);
-		while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+		removeEntry(entry, tryAgain = false, stopedFlag);
 	}
 
 	if (!stopedFlag && !isControllerDead())
@@ -45,72 +43,125 @@ void PerformRemoveTask::removeEntry(FileSystemItem *entry, bool &tryAgain, const
 	entry->refresh();
 
 	if (entry->exists())
-	{
-		bool res = true;
-		QString error;
-
 		if (entry->isDir())
 		{
-			for (FileSystemList::size_type i = 0, size = static_cast<FileSystemList*>(entry)->size(); i < size; ++i)
-				do
-					removeEntry(static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
-				while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+			FileSystemItem *localEntry;
 
-			if (!isControllerDead() && !stopedFlag && !m_canceled)
+			for (FileSystemList::size_type i = 0, size = static_cast<FileSystemList*>(entry)->size(); i < size; ++i)
 			{
-				QDir dir = entry->absolutePath();
-				res = dir.rmdir(entry->fileName());
+				removeEntry(localEntry = static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+
+				if (!localEntry->shouldRemove())
+					entry->setShouldRemove(false);
 			}
+
+			if (entry->shouldRemove())
+				do
+					removeDir(entry, tryAgain = false, stopedFlag);
+				while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
 		}
 		else
-		{
-#			ifdef Q_OS_WIN32
-				error = entry->absoluteFilePath();
-				DWORD attr = GetFileAttributesW((const wchar_t*)error.utf16());
-				if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
-					SetFileAttributesW((const wchar_t*)error.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
-#			endif
+			do
+				removeFile(entry, tryAgain = false, stopedFlag);
+			while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+}
 
-			QFile file(entry->absoluteFilePath());
+void PerformRemoveTask::removeDir(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+{
+	QDir dir = entry->absolutePath();
 
-			if (file.open(QFile::ReadOnly))
-			{
-				m_progress.update(file.size());
-				file.close();
-			}
-
-			res = file.remove();
-			error = file.errorString();
-		}
-
-		if (!res && !m_skipAllIfNotRemove)
+	if (!dir.rmdir(entry->fileName()))
+		if (m_skipAllIfNotRemove)
+			entry->setShouldRemove(false);
+		else
 		{
 			QuestionAnswerEvent::Params::Result result;
 			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
 			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
 			event->params().title = tr("Failed to remove");
 			event->params().result = &result;
-
-			if (entry->isDir())
-				event->params().question = tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
-			else
-				event->params().question = tr("File \"%1\" (%2). Skip it?").
-					arg(entry->absoluteFilePath()).
-					arg(error);
+			event->params().question = tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
 
 			Application::postEvent(parameters()->receiver, event.take());
 
 			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
+				{
 					m_skipAllIfNotRemove = true;
+					entry->setShouldRemove(false);
+				}
 				else
 					if (result.answer() == QMessageBox::Retry)
 						tryAgain = true;
 					else
+					{
 						if (result.answer() == QMessageBox::Cancel)
 							m_canceled = true;
+
+						entry->setShouldRemove(false);
+					}
 		}
+}
+
+void PerformRemoveTask::removeFile(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+{
+	if (!doRemoveFile(entry->absoluteFilePath(), m_error))
+		if (m_skipAllIfNotRemove)
+			entry->setShouldRemove(false);
+		else
+		{
+			QuestionAnswerEvent::Params::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
+			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
+			event->params().title = tr("Failed to remove");
+			event->params().result = &result;
+			event->params().question = tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error);
+
+			Application::postEvent(parameters()->receiver, event.take());
+
+			if (result.waitFor(stopedFlag, isControllerDead()))
+				if (result.answer() == QMessageBox::YesToAll)
+				{
+					m_skipAllIfNotRemove = true;
+					entry->setShouldRemove(false);
+				}
+				else
+					if (result.answer() == QMessageBox::Retry)
+						tryAgain = true;
+					else
+					{
+						if (result.answer() == QMessageBox::Cancel)
+							m_canceled = true;
+
+						entry->setShouldRemove(false);
+					}
+		}
+}
+
+bool PerformRemoveTask::doRemoveFile(const QString &filePath, QString &error)
+{
+#ifdef Q_OS_WIN32
+	DWORD attr = GetFileAttributesW((const wchar_t*)filePath.utf16());
+	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
+		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
+#endif
+
+	QFile file(filePath);
+
+	if (file.open(QFile::ReadOnly))
+	{
+		m_progress.update(file.size());
+		file.close();
+
+		if (file.remove())
+			return true;
+		else
+			error = file.errorString();
 	}
+	else
+		error = file.errorString();
+
+	return false;
 }
 
 void PerformRemoveTask::postCompletedEvent() const

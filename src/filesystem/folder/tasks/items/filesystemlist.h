@@ -18,7 +18,8 @@ public:
 #ifndef Q_OS_WIN
 	explicit FileSystemList(const Info &info, uint userId, uint groupId) :
 		FileSystemItem(info),
-		m_totalSize(0)
+		m_totalSize(0),
+		m_shouldRemove(true)
 	{}
 #endif
 	virtual ~FileSystemList()

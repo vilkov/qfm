@@ -17,10 +17,17 @@ public:
 
 public:
 	FileSystemItem(const Info &info) :
-		Info(info)
+		Info(info),
+		m_shouldRemove(true)
 	{}
 
 	virtual bool isList() const = 0;
+
+	bool shouldRemove() const { return m_shouldRemove; }
+	void setShouldRemove(bool value) { m_shouldRemove = value; }
+
+private:
+	bool m_shouldRemove;
 };
 
 FILE_SYSTEM_NS_END

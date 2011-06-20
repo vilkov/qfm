@@ -40,10 +40,14 @@ protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
 	void removeEntry(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	void removeDir(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	void removeFile(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag);
+	bool doRemoveFile(const QString &filePath, QString &error);
 	void postCompletedEvent() const;
 	void postCanceledEvent() const;
 
 protected:
+	QString m_error;
 	bool m_skipAllIfNotRemove;
 	TaskProgress m_progress;
 };

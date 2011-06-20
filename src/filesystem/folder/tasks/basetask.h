@@ -120,7 +120,6 @@ public:
 	struct ScanFilesParams : public BaseEvent::Params
 	{
 		QScopedPointer<FileSystemList> subnode;
-		quint64 size;
 	};
 	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForRemove> ScanFilesForRemoveEvent;
 	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForSize> ScanFilesForSizeEvent;

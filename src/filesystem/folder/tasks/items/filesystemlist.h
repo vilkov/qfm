@@ -12,11 +12,13 @@ class FileSystemList : public FileSystemItem
 {
 public:
 	explicit FileSystemList(const Info &info) :
-		FileSystemItem(info)
+		FileSystemItem(info),
+		m_totalSize(0)
 	{}
 #ifndef Q_OS_WIN
 	explicit FileSystemList(const Info &info, uint userId, uint groupId) :
-		FileSystemItem(info)
+		FileSystemItem(info),
+		m_totalSize(0)
 	{}
 #endif
 	virtual ~FileSystemList()
@@ -39,8 +41,13 @@ public:
 	void add(value_type item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
 
+	qint64 totalSize() const { return m_totalSize; }
+	void incTotalSize(qint64 count) { m_totalSize += count; }
+	void decTotalSize(qint64 count) { m_totalSize -= count; }
+
 private:
 	List m_items;
+	qint64 m_totalSize;
 };
 
 FILE_SYSTEM_NS_END

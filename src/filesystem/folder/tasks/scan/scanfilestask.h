@@ -23,20 +23,17 @@ public:
 	struct Params : public parent_class::Params
 	{
 		Params(QObject *listener, const Info &node, const QStringList &entries) :
-			source(listener, node, entries),
-			size(0)
+			source(listener, node, entries)
 		{}
 
 		Params(QObject *listener, const Info &node, const QStringList &entries, INode *dest) :
-			source(listener, node, entries),
-			size(0)
+			source(listener, node, entries)
 		{
 //			destination = dest;
 		}
 
 		typename parent_class::Params::Snapshot source;
 		QScopedPointer<FileSystemList> subnode;
-		quint64 size;
 	};
 
 public:
@@ -66,12 +63,13 @@ public:
 					QScopedPointer<FileSystemList> subnode(new FileSystemList(info));
 
 					scan(subnode.data(), stopedFlag);
+					root->incTotalSize(subnode->totalSize());
 					root->add(subnode.take());
 				}
 				else
 				{
 					root->add(new FileSystemEntry(info));
-					parameters()->size += info.size();
+					root->incTotalSize(info.size());
 				}
 			else
 				root->add(new FileSystemEntry(info));
@@ -99,16 +97,17 @@ private:
 					QScopedPointer<FileSystemList> subtree(new FileSystemList(info));
 #endif
 					scan(subtree.data(), stopedFlag);
+					node->incTotalSize(subtree->totalSize());
 					node->add(subtree.take());
 				}
 				else
 				{
 #ifndef Q_OS_WIN
-					info->add(new FileSystemEntry(m_permissions.getInfo(info)));
+					node->add(new FileSystemEntry(m_permissions.getInfo(info)));
 #else
 					node->add(new FileSystemEntry(info));
 #endif
-					parameters()->size += info.size();
+					node->incTotalSize(info.size());
 				}
 	}
 

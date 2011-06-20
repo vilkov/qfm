@@ -17,7 +17,6 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().size = parameters()->size;
 		event->params().subnode.swap(parameters()->subnode);
 		Application::postEvent(parameters()->source.listener, event.take());
 	}
@@ -35,7 +34,6 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().size = parameters()->size;
 		event->params().subnode.swap(parameters()->subnode);
 		Application::postEvent(parameters()->source.listener, event.take());
 	}
@@ -57,7 +55,6 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().size = parameters()->size;
 		event->params().subnode.swap(parameters()->subnode);
 		event->params().destination = parameters()->destination;
 		event->params().move = parameters()->move;

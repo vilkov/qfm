@@ -645,7 +645,9 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 
 void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 {
-	ScanFilesForRemoveTask::Event::Params *params = (ScanFilesForRemoveTask::Event::Params *)p;
+	typedef ScanFilesForRemoveTask::Event::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
 	QScopedPointer<FileSystemList> entries(params->subnode.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -669,6 +671,10 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 		else
 		{
 			removeEntry(m_items.indexOf(entry->fileName()));
+
+			if (entry->isDir())
+				entries->decTotalSize(static_cast<FileSystemList*>(entry)->totalSize());
+
 			entries->remove(i);
 		}
 	}
@@ -684,14 +690,14 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 				append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
 				append(files.join(QString::fromLatin1("\n\t\t"))).
 				append(QString::fromLatin1("\n")).
-				append(tr("it will free ").append(FolderNodeEntry::humanReadableSize(params->size))),
+				append(tr("it will free ").append(FolderNodeEntry::humanReadableSize(entries->totalSize()))),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
 		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 			if ((entry = entries->at(i))->isDir())
 			{
 				index = m_items.indexOf(entry->fileName());
-				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(tr("Removing..."), params->size);
+				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(tr("Removing..."), static_cast<FileSystemList*>(entry)->totalSize());
 				updateRange.add(index, index);
 			}
 
@@ -713,7 +719,9 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 
 void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 {
-	PerformRemoveTask::CompletedEvent::Params *params = (PerformRemoveTask::CompletedEvent::Params *)p;
+	typedef PerformRemoveTask::CompletedEvent::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
 	QScopedPointer<FileSystemList> entries(params->subnode.take());
 
 	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
@@ -748,11 +756,23 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 
 void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(const ScanFilesForSizeTask::Event::Params, p);
-//		value.entry()->setTotalSize(params->size);
-//		value.entry()->unlock();
-//		updateBothColumns(index, value.entry());
-//	END_PROCESS_EVENT;
+	typedef ScanFilesForSizeTask::Event::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
+	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	RangeIntersection updateRange;
+	Values::size_type index;
+	FolderNodeEntry *entry;
+
+	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	{
+		entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
+		entry->setTotalSize(static_cast<FileSystemList*>(entries->at(i))->totalSize());
+		entry->unlock();
+		updateRange.add(index, index);
+	}
+
+	updateBothColumns(updateRange);
 }
 
 void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination, bool move)
@@ -870,7 +890,7 @@ QModelIndex FolderNode::index(int column, FolderNodeItem *item) const
 {
 	int index = m_items.indexOf(item);
 
-	if (index != -1)
+	if (index != Values::InvalidIndex)
 		return createIndex(index, column, item);
 	else
 		return QModelIndex();

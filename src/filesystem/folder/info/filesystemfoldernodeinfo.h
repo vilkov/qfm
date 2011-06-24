@@ -4,12 +4,12 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
 #include "../../filesystem_ns.h"
-#include "../../interfaces/filesystemifileinfo.h"
+#include "../../interfaces/filesystemifilecontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class Info : public IFileInfo
+class Info : public IFileControl
 {
 public:
     Info();
@@ -20,7 +20,7 @@ public:
     Info(const QFileInfo &info, uint userId, uint groupId);
 #endif
 
-	/* IFileInfo */
+	/* IFileControl::IFileInfo */
 	virtual bool isDir() const { return m_info.isDir(); }
 	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool exists() const { return m_info.exists(); }
@@ -30,7 +30,9 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual bool exists(IFileInfo *info) const;
+	virtual void refresh();
 
+	/* IFileControl */
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual void close(IFile *file) const;
 
@@ -38,7 +40,6 @@ public:
 	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
 	virtual void close(IFileInfo *info) const;
 
-	virtual void refresh();
 
 public:
 	bool isRoot() const { return m_info.isRoot(); }

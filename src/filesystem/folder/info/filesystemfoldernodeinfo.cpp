@@ -76,6 +76,13 @@ bool Info::exists(IFileInfo *info) const
 	return QDir(m_info.absoluteFilePath()).exists(info->fileName());
 }
 
+void Info::refresh()
+{
+	m_displayType = QString();
+	m_icon = QIcon();
+	m_info.refresh();
+}
+
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;
@@ -133,13 +140,6 @@ IFileInfo *Info::create(const QString &fileName, FileType type, QString &error) 
 void Info::close(IFileInfo *info) const
 {
 	delete info;
-}
-
-void Info::refresh()
-{
-	m_displayType = QString();
-	m_icon = QIcon();
-	m_info.refresh();
 }
 
 const QIcon &Info::icon() const

@@ -35,7 +35,7 @@ public:
 	/* INode */
 	virtual int columnCount() const;
 
-	/* INode::IFileInfo::IInfo */
+	/* INode::IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool exists() const;
@@ -46,14 +46,6 @@ public:
 	virtual QDateTime lastModified() const;
 	virtual bool exists(IFileInfo *info) const;
 	virtual void refresh();
-
-	/* INode::IFileInfo */
-	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
-	virtual void close(IFile *file) const;
-
-	virtual IFileInfo *create(IFileInfo *info, QString &error) const;
-	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
-	virtual void close(IFileInfo *info) const;
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);

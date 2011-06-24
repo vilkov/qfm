@@ -3,8 +3,7 @@
 
 #include "filesystem_ns.h"
 #include "filesystemnode.h"
-#include "interfaces/filesystemifile.h"
-#include "interfaces/filesystemifileinfo.h"
+#include "interfaces/filesystemifilecontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -39,7 +38,7 @@ public:
 	PluginsManager();
 	virtual ~PluginsManager();
 
-	Node *node(const IFileInfo *info, Node *parent) const;
+	Node *node(const IFileControl *control, Node *parent) const;
 
 	void registerStatic(FilePlugin *plugin) { m_staticFilePlugins.push_back(plugin); }
 	void registerDynamic(FilePlugin *plugin) { m_dynamicFilePlugins.push_back(plugin); }

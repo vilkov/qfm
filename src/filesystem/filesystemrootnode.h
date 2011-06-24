@@ -38,13 +38,6 @@ public:
 	virtual bool exists(IFileInfo *info) const { return false; }
 	virtual void refresh() {}
 
-	virtual IFile *open(IFile::OpenMode mode, QString &error) const { return 0; }
-	virtual void close(IFile *file) const {}
-
-	virtual IFileInfo *create(IFileInfo *info, QString &error) const { return 0; }
-	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const { return 0; }
-	virtual void close(IFileInfo *info) const {}
-
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list) {}
 	virtual void calculateSize(const QModelIndexList &list) {}

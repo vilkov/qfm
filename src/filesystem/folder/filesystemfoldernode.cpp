@@ -256,31 +256,6 @@ void FolderNode::refresh()
 			static_cast<Node*>(Node::parent())->removeEntry(this);
 }
 
-IFile *FolderNode::open(IFile::OpenMode mode, QString &error) const
-{
-	return m_info.open(mode, error);
-}
-
-void FolderNode::close(IFile *file) const
-{
-	m_info.close(file);
-}
-
-IFileInfo *FolderNode::create(IFileInfo *info, QString &error) const
-{
-	return m_info.create(info, error);
-}
-
-IFileInfo *FolderNode::create(const QString &fileName, FileType type, QString &error) const
-{
-	return m_info.create(fileName, type, error);
-}
-
-void FolderNode::close(IFileInfo *info) const
-{
-	m_info.close(info);
-}
-
 void FolderNode::remove(const QModelIndexList &list)
 {
 	ProcessedList entries = processIndexList(list);

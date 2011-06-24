@@ -97,7 +97,6 @@ protected:
 	void scanForSize(const ProcessedList &entries);
 	void scanForSizeEvent(const ModelEvent::Params *p);
 
-	void copyEntry(FolderNodeItem *entry, INode *destination, bool move);
 	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
 	void scanForCopyEvent(const ModelEvent::Params *p);
 	void copyCompleteEvent(const ModelEvent::Params *p);

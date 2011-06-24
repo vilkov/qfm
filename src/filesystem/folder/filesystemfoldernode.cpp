@@ -284,9 +284,7 @@ void FolderNode::copy(const QModelIndexList &list, INode *destination)
 	ProcessedList entries = processIndexList(list);
 
 	if (!entries.isEmpty())
-	{
-
-	}
+		scanForCopy(entries, destination, false);
 }
 
 void FolderNode::move(const QModelIndexList &list, INode *destination)
@@ -766,18 +764,6 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 	}
 
 	updateBothColumns(updateRange);
-}
-
-void FolderNode::copyEntry(FolderNodeItem *entry, INode *destination, bool move)
-{
-	if (move)
-		static_cast<FolderNodeEntry*>(entry)->lock(tr("Moving..."), entry->size());
-	else
-		static_cast<FolderNodeEntry*>(entry)->lock(tr("Copying..."), entry->size());
-
-	updateFirstColumn(entry);
-
-//	Application::instance()->taskPool().handle(new PerformCopyEntryTask(this, static_cast<FolderNodeEntry*>(entry), destination, move));
 }
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)

@@ -25,12 +25,16 @@ public:
 public:
 	struct Params : public parent_class::Params
 	{
-		Params(QObject *receiver, QScopedPointer<FileSystemList> &entries, INode *dest, bool move) :
+		Params(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *dest, bool move) :
 			receiver(receiver),
 			entries(entries.take()),
 			removeSource(move)
 		{
 			destination = dest;
+		}
+		~Params()
+		{
+			delete destination;
 		}
 
 		QObject *receiver;
@@ -39,16 +43,18 @@ public:
 	};
 
 public:
-	PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, INode *destination, bool move);
+	PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move);
 
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
 	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
 
+	void copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
+	void copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
+	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag);
+	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag);
 //	void copyFile(IFileInfo *destination, FolderNodeEntry *entry, const volatile bool &stopedFlag);
-//	void askForOverwrite(const QString &title, const QString &text, const volatile bool &stopedFlag);
-//	void askForSkipIfNotCopy(const QString &title, const QString &text, const volatile bool &stopedFlag);
 
 protected:
 //	struct Messages
@@ -70,12 +76,11 @@ protected:
 	TaskProgress m_progress;
 
 private:
-//	bool doCopyFile(IFileInfo *destination, FolderNodeEntry *entry, IFile *sourceFile, const volatile bool &stopedFlag);
-	friend class CopyProgressRoutine;
+//	friend class CopyProgressRoutine;
 
 private:
 	IFile *m_destFile;
-	IFileInfo *m_destEntry;
+	IFileControl *m_destEntry;
 	IFile::size_type m_readed;
 	IFile::size_type m_written;
 	IFile::value_type m_buffer[FileReadWriteGranularity];

@@ -38,7 +38,7 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 			postCompletedEvent();
 }
 
-void PerformRemoveTask::removeEntry(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	entry->refresh();
 
@@ -66,7 +66,7 @@ void PerformRemoveTask::removeEntry(FileSystemItem *entry, bool &tryAgain, const
 			while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
 }
 
-void PerformRemoveTask::removeDir(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	QDir dir = entry->absolutePath();
 
@@ -103,7 +103,7 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, bool &tryAgain, const v
 		}
 }
 
-void PerformRemoveTask::removeFile(FileSystemItem *entry, bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	if (!doRemoveFile(entry->absoluteFilePath(), m_error))
 		if (m_skipAllIfNotRemove)

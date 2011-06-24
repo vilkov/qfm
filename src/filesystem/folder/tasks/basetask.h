@@ -128,7 +128,7 @@ public:
 	/********** ScanFilesWithDest **********/
 	struct ScanFilesWithDestParams : public ScanFilesParams
 	{
-		INode *destination;
+		IFileControl *destination;
 		bool move;
 	};
 	typedef TemplateEvent<ScanFilesWithDestParams, BaseEvent::ScanFilesForCopy> ScanFilesForCopyEvent;

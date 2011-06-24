@@ -13,7 +13,7 @@ class DestControlableTask : public ControlableTask
 public:
 	struct Params : ControlableTask::Params
 	{
-    	INode *destination;
+		IFileControl *destination;
 
 	private:
 		friend class DestControlableTask;

@@ -36,9 +36,10 @@ public:
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual void close(IFile *file) const;
 
-	virtual IFileInfo *create(IFileInfo *info, QString &error) const;
-	virtual IFileInfo *create(const QString &fileName, FileType type, QString &error) const;
-	virtual void close(IFileInfo *info) const;
+	virtual IFileControl *open(const QString &fileName, QString &error) const;
+	virtual IFileControl *create(IFileInfo *info, QString &error) const;
+	virtual IFileControl *create(const QString &fileName, FileType type, QString &error) const;
+	virtual void close(IFileControl *info) const;
 
 
 public:

@@ -111,7 +111,12 @@ void Info::close(IFile *file) const
 	delete file;
 }
 
-IFileInfo *Info::create(IFileInfo *info, QString &error) const
+IFileControl *Info::open(const QString &fileName, QString &error) const
+{
+	return new Info(absoluteFilePath(fileName));
+}
+
+IFileControl *Info::create(IFileInfo *info, QString &error) const
 {
 	if (info->isFile())
 		return new Info(absoluteFilePath(info->fileName()));
@@ -124,7 +129,7 @@ IFileInfo *Info::create(IFileInfo *info, QString &error) const
 	return 0;
 }
 
-IFileInfo *Info::create(const QString &fileName, FileType type, QString &error) const
+IFileControl *Info::create(const QString &fileName, FileType type, QString &error) const
 {
 	if (type == File)
 		return new Info(absoluteFilePath(fileName));
@@ -137,7 +142,7 @@ IFileInfo *Info::create(const QString &fileName, FileType type, QString &error) 
 	return 0;
 }
 
-void Info::close(IFileInfo *info) const
+void Info::close(IFileControl *info) const
 {
 	delete info;
 }

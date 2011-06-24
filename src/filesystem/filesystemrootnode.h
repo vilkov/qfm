@@ -25,6 +25,7 @@ public:
 
 	/* INode */
 	virtual int columnCount() const { return 0; }
+	virtual IFileControl *createControl() const { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }

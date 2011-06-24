@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMINODE_H_
 #define FILESYSTEMINODE_H_
 
-#include "filesystemifileinfo.h"
+#include "filesystemifilecontrol.h"
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
 #include "../filesystem_ns.h"
@@ -15,6 +15,7 @@ public:
 	virtual ~INode() {}
 
 	virtual int columnCount() const = 0;
+	virtual IFileControl *createControl() const = 0;
 };
 
 FILE_SYSTEM_NS_END

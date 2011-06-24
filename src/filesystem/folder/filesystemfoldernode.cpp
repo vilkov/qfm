@@ -196,6 +196,11 @@ int FolderNode::columnCount() const
 	return columnCount(QModelIndex());
 }
 
+IFileControl *FolderNode::createControl() const
+{
+	return 0;
+}
+
 bool FolderNode::isDir() const
 {
 	return true;

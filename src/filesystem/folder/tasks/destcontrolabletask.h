@@ -13,8 +13,6 @@ class DestControlableTask : public ControlableTask
 public:
 	struct Params : ControlableTask::Params
 	{
-		IFileControl *destination;
-
 	private:
 		friend class DestControlableTask;
 	    friend class DeleteHandler;

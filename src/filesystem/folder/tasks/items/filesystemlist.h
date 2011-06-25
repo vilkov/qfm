@@ -18,8 +18,7 @@ public:
 #ifndef Q_OS_WIN
 	explicit FileSystemList(const Info &info, uint userId, uint groupId) :
 		FileSystemItem(info),
-		m_totalSize(0),
-		m_shouldRemove(true)
+		m_totalSize(0)
 	{}
 #endif
 	virtual ~FileSystemList()
@@ -28,6 +27,9 @@ public:
 	}
 
 	virtual bool isList() const { return true; }
+	virtual qint64 totalSize() const { return m_totalSize; }
+	void incTotalSize(qint64 count) { m_totalSize += count; }
+	void decTotalSize(qint64 count) { m_totalSize -= count; }
 
 	value_type &operator[](size_type index) { return m_items[index]; }
 	const value_type &operator[](size_type index) const { return m_items[index]; }
@@ -41,10 +43,6 @@ public:
 
 	void add(value_type item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
-
-	qint64 totalSize() const { return m_totalSize; }
-	void incTotalSize(qint64 count) { m_totalSize += count; }
-	void decTotalSize(qint64 count) { m_totalSize -= count; }
 
 private:
 	List m_items;

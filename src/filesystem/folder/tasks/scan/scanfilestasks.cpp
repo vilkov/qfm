@@ -7,12 +7,12 @@
 FILE_SYSTEM_NS_BEGIN
 
 ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *listener, const Info &node, const QStringList &entries) :
-	parent_class(new Params(listener, node, entries))
+	ScanFilesTask(new Params(listener, node, entries), listener)
 {}
 
 void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 {
-	parent_class::run(stopedFlag);
+	ScanFilesTask::run(stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())
 	{
@@ -24,12 +24,12 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 
 
 ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *listener, const Info &node, const QStringList &entries) :
-	parent_class(new Params(listener, node, entries))
+	ScanFilesTask(new Params(listener, node, entries),  listener)
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 {
-	parent_class::run(stopedFlag);
+	ScanFilesTask::run(stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())
 	{
@@ -41,10 +41,10 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 
 
 ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params) :
-	parent_class(params, params->source.listener)
+	ScanFilesTask(params, params->source.listener)
 {}
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, IFileControl *destination, bool move) :
 	ScanFilesWithDestinationTask(new Params(listener, node, entries, destination, move))
 {}
 

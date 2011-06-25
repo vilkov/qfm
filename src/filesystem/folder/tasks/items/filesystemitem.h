@@ -22,6 +22,7 @@ public:
 	{}
 
 	virtual bool isList() const = 0;
+	virtual qint64 totalSize() const = 0;
 
 	bool shouldRemove() const { return m_shouldRemove; }
 	void setShouldRemove(bool value) { m_shouldRemove = value; }

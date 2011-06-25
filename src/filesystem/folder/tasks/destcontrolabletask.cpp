@@ -10,7 +10,6 @@ DestControlableTask::DestControlableTask(Params *parameters, QObject *listener) 
 	m_handler(new DeleteHandler(this, listener))
 {
 	Q_ASSERT(m_listener != 0);
-	Q_ASSERT(parameters->destination != 0);
 	Q_ASSERT(m_listener->thread() == QThread::currentThread());
 }
 

@@ -4,23 +4,21 @@
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
 #include "../taskprogress.h"
-#include "../controlabletask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformRemoveTask : public PerformTask<ControlableTask>
+class PerformRemoveTask : public PerformTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
 public:
-	typedef PerformTask<ControlableTask>           parent_class;
 	typedef ModelEvents::RemoveFilesCompletedEvent CompletedEvent;
 	typedef ModelEvents::RemoveFilesCanceledEvent  CanceledEvent;
 	typedef ModelEvents::QuestionAnswerEvent       QuestionAnswerEvent;
 
 public:
-	struct Params : public parent_class::Params
+	struct Params : public PerformTask::Params
 	{
 		Params(QObject *receiver, QScopedPointer<FileSystemList> &entries) :
 			receiver(receiver),
@@ -37,7 +35,7 @@ public:
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
 	void removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
 	void removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);

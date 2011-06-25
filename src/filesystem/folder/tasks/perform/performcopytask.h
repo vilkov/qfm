@@ -6,40 +6,39 @@
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
 #include "../taskprogress.h"
-#include "../destcontrolabletask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformCopyTask : public PerformTask<DestControlableTask>
+class PerformCopyTask : public PerformTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
 	enum { FileReadWriteGranularity = 1 * 1024 * 1024 };
-	typedef PerformTask<DestControlableTask>        parent_class;
-	typedef ModelEvents::CopyFilesCompletedEvent    CompletedEvent;
+	typedef ModelEvents::CopyFilesCompletedEvent    Event;
 	typedef ModelEvents::QuestionAnswerEvent        QuestionAnswerEvent;
 	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
 
 public:
-	struct Params : public parent_class::Params
+	struct Params : public PerformTask::Params
 	{
-		Params(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *dest, bool move) :
+		Params(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move) :
 			receiver(receiver),
 			entries(entries.take()),
-			removeSource(move)
-		{
-			destination = dest;
-		}
+			destination(destination),
+			move(move)
+		{}
 		~Params()
 		{
+			/* FIXME: Should be handled automatically. */
 			delete destination;
 		}
 
 		QObject *receiver;
 		QScopedPointer<FileSystemList> entries;
-		bool removeSource;
+		IFileControl *destination;
+		bool move;
 	};
 
 public:
@@ -48,7 +47,7 @@ public:
 	virtual void run(const volatile bool &stopedFlag);
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(PerformTask::parameters()); }
 
 	void copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
 	void copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
@@ -67,7 +66,6 @@ protected:
 //	};
 
 protected:
-	bool m_tryAgain;
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;
 	bool m_doNotOverwriteAll;

@@ -151,15 +151,16 @@ public:
 	/********** PerformWithDest **********/
 	struct PerformWithDestParams : public PerformParams
 	{
-		INode *destination;
+		IFileControl *destination;
 	};
 
 
 	/********** PerformWithDestCopyFiles **********/
 	struct PerformWithDestCopyFilesParams : public PerformWithDestParams
 	{
+		QScopedPointer<FileSystemList> entries;
 		bool canceled;
-		bool removeSource;
+		bool move;
 	};
 	typedef TemplateEvent<PerformWithDestCopyFilesParams, BaseEvent::CopyFilesCompleted> CopyFilesCompletedEvent;
 

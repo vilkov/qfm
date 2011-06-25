@@ -2,55 +2,58 @@
 #define SCANFILESTASKS_H_
 
 #include "scanfilestask.h"
-#include "../controlabletask.h"
-#include "../destcontrolabletask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 /********************************************************************************************************/
-class ScanFilesForSizeTask : public ScanFilesTask<ControlableTask>
+class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	typedef ScanFilesTask<ControlableTask>     parent_class;
-	typedef parent_class::Params               Params;
+	typedef ScanFilesTask::Params              Params;
 	typedef ModelEvents::ScanFilesForSizeEvent Event;
 
 public:
 	ScanFilesForSizeTask(QObject *listener, const Info &node, const QStringList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(ScanFilesTask::parameters()); }
 };
 
 
 /********************************************************************************************************/
-class ScanFilesForRemoveTask : public ScanFilesTask<ControlableTask>
+class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	typedef ScanFilesTask<ControlableTask>       parent_class;
-	typedef parent_class::Params                 Params;
+	typedef ScanFilesTask::Params                Params;
 	typedef ModelEvents::ScanFilesForRemoveEvent Event;
 
 public:
 	ScanFilesForRemoveTask(QObject *listener, const Info &node, const QStringList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(ScanFilesTask::parameters()); }
 };
 
 
 /********************************************************************************************************/
-class ScanFilesWithDestinationTask : public ScanFilesTask<DestControlableTask>
+class ScanFilesWithDestinationTask : public ScanFilesTask
 {
 public:
-	typedef ScanFilesTask<DestControlableTask> parent_class;
-	typedef parent_class::Params               Params;
+	struct Params : public ScanFilesTask::Params
+	{
+		Params(QObject *listener, const Info &node, const QStringList &entries, IFileControl *destination) :
+			ScanFilesTask::Params(listener, node, entries),
+			destination(destination)
+		{}
+
+		IFileControl *destination;
+	};
 
 public:
 	ScanFilesWithDestinationTask(Params *params);
 
-	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	Params *parameters() const { return static_cast<Params*>(ScanFilesTask::parameters()); }
 };
 
 
@@ -58,10 +61,10 @@ public:
 class ScanFilesForCopyTask : public ScanFilesWithDestinationTask
 {
 public:
-	struct Params : public parent_class::Params
+	struct Params : public ScanFilesWithDestinationTask::Params
 	{
-		Params(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move) :
-			parent_class::Params(listener, node, entries, destination),
+		Params(QObject *listener, const Info &node, const QStringList &entries, IFileControl *destination, bool move) :
+			ScanFilesWithDestinationTask::Params(listener, node, entries, destination),
 			move(move)
 		{}
 
@@ -70,9 +73,9 @@ public:
 	typedef ModelEvents::ScanFilesForCopyEvent Event;
 
 public:
-	ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, INode *destination, bool move);
+	ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, IFileControl *destination, bool move);
 
-	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	Params *parameters() const { return static_cast<Params*>(ScanFilesWithDestinationTask::parameters()); }
 	virtual void run(const volatile bool &stopedFlag);
 };
 

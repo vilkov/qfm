@@ -7,41 +7,27 @@
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
-#include "../basetask.h"
+#include "../destcontrolabletask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-/********************************************************************************************************/
-template<typename BaseClass>
-class ScanFilesTask : public BaseClass
+class ScanFilesTask : public DestControlableTask
 {
 public:
-	typedef BaseClass parent_class;
-
-public:
-	struct Params : public parent_class::Params
+	struct Params : public DestControlableTask::Params
 	{
 		Params(QObject *listener, const Info &node, const QStringList &entries) :
 			source(listener, node, entries)
 		{}
 
-		Params(QObject *listener, const Info &node, const QStringList &entries, INode *dest) :
-			source(listener, node, entries)
-		{
-//			destination = dest;
-		}
-
-		typename parent_class::Params::Snapshot source;
+		Snapshot source;
 		QScopedPointer<FileSystemList> subnode;
 	};
 
 public:
-	ScanFilesTask(Params *params) :
-		parent_class(params)
-	{}
 	ScanFilesTask(Params *params, QObject *listener) :
-		parent_class(params, listener)
+		DestControlableTask(params, listener)
 	{}
 
 	virtual void run(const volatile bool &stopedFlag)
@@ -79,7 +65,7 @@ public:
 	}
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+	inline Params *parameters() const { return static_cast<Params*>(DestControlableTask::parameters()); }
 
 private:
 	void scan(FileSystemList *node, const volatile bool &stopedFlag)
@@ -87,7 +73,7 @@ private:
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-		while (!stopedFlag && !parent_class::isControllerDead() && dirIt.hasNext())
+		while (!stopedFlag && !isControllerDead() && dirIt.hasNext())
 			if (!(info = dirIt.next()).isSymLink())
 				if (info.isDir())
 				{

@@ -14,6 +14,7 @@ public:
 	{}
 
 	virtual bool isList() const { return false; }
+	virtual qint64 totalSize() const { return size(); }
 };
 
 FILE_SYSTEM_NS_END

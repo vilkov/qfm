@@ -9,7 +9,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformRemoveTask::PerformRemoveTask(QObject *receiver, QScopedPointer<FileSystemList> &entries) :
-	parent_class(new Params(receiver, entries)),
+	PerformTask(new Params(receiver, entries), receiver),
 	m_progress(receiver)
 {}
 

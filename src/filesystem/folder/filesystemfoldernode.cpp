@@ -198,7 +198,7 @@ int FolderNode::columnCount() const
 
 IFileControl *FolderNode::createControl() const
 {
-	return 0;
+	return new Info(m_info);
 }
 
 bool FolderNode::isDir() const
@@ -671,11 +671,13 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 				append(tr("it will free ").append(FolderNodeEntry::humanReadableSize(entries->totalSize()))),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
+		QString lockReason = tr("Removing...");
+
 		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 			if ((entry = entries->at(i))->isDir())
 			{
 				index = m_items.indexOf(entry->fileName());
-				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(tr("Removing..."), static_cast<FileSystemList*>(entry)->totalSize());
+				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
 				updateRange.add(index, index);
 			}
 
@@ -787,63 +789,74 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 		list.push_back(entry->fileName());
 	}
 
-	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, destination, false));
+	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, destination->createControl(), false));
 	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(ScanFilesForCopyTask::Event::Params, p);
-//		if (params->move)
-//			value.entry()->lock(tr("Moving..."), params->size);
-//		else
-//			value.entry()->lock(tr("Copying..."), params->size);
-//
-//		updateSecondColumn(index, value.entry());
-//
-//		Application::instance()->taskPool().handle(new PerformCopyTreeTask(this, *params, params->move));
-//	END_PROCESS_EVENT;
+	typedef ScanFilesForCopyTask::Event::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
+	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	QString lockReason = params->move ? tr("Moving...") : tr("Copying...");
+	RangeIntersection updateRange;
+	Values::size_type index;
+	FileSystemItem *entry;
+
+	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	{
+		index = m_items.indexOf((entry = entries->at(i))->fileName());
+		static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
+		updateRange.add(index, index);
+	}
+
+	QScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, params->destination, params->move));
+	updateSecondColumn(updateRange);
+	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(const PerformCopyEntryTask::CompletedEvent::Params, p);
-//		if (params->canceled)
-//		{
-//			value.entry()->unlock();
-//			updateBothColumns(index, value.entry());
-//		}
-//		else
-//		{
-//			if (params->removeSource)
-//			{
-//				if (value.entry()->exists())
-//					if (value.entry()->isDir())
-//					{
-//						typedef PerformCopyTreeTask::CompletedEvent::Params *ParamsType;
-//						ParamsType params = (ParamsType)p;
-//
-//						value.entry()->lock(tr("Removing..."));
-//						Application::instance()->taskPool().handle(new PerformRemoveTreeTask(this, *params));
-//					}
-//					else
-//					{
-//						value.entry()->lock(tr("Removing..."));
-//						Application::instance()->taskPool().handle(new PerformRemoveEntryTask(this, value.entry()));
-//					}
-//				else
-//					removeEntry(index);
-//			}
-//			else
-//			{
-//				value.entry()->unlock();
-//				updateBothColumns(index, value.entry());
-//			}
-//
-//			params->destination->refresh();
-//		}
-//	END_PROCESS_EVENT;
+	typedef PerformCopyTask::Event::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
+	QScopedPointer<FileSystemList> entries(params->entries.take());
+	RangeIntersection updateRange;
+	Values::size_type index;
+	FileSystemItem *entry;
+
+	if (!params->canceled && params->move)
+	{
+		QString lockReason = tr("Removing...");
+
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			index = m_items.indexOf((entry = entries->at(i))->fileName());
+
+			if (entry->isDir())
+				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
+			else
+				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason);
+
+			updateRange.add(index, index);
+		}
+
+		updateSecondColumn(updateRange);
+		Application::instance()->taskPool().handle(new PerformRemoveTask(this, entries));
+	}
+	else
+	{
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			index = m_items.indexOf((entry = entries->at(i))->fileName());
+			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+			updateRange.add(index, index);
+		}
+
+		updateBothColumns(updateRange);
+	}
 }
 
 void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)
@@ -858,11 +871,15 @@ void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)
 
 void FolderNode::updateProgressEvent(const ModelEvent::Params *p)
 {
-//	START_PROCESS_EVENT(const ModelEvents::UpdatePerformProgressEvent::Params, p);
-//		value.entry()->setDoneSize(params->progress);
-//		value.entry()->setTimeElapsed(params->timeElapsed);
-//		updateSecondColumn(index, value.entry());
-//	END_PROCESS_EVENT;
+	typedef ModelEvents::UpdatePerformProgressEvent::Params * ParamsType;
+	ParamsType params = (ParamsType)p;
+
+	Values::size_type index = m_items.indexOf(params->fileName);
+	FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(m_items[index].item);
+
+	entry->setDoneSize(params->progress);
+	entry->setTimeElapsed(params->timeElapsed);
+	updateSecondColumn(index, entry);
 }
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const

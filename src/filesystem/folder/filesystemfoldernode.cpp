@@ -10,33 +10,6 @@
 #include <QtGui/QMessageBox>
 
 
-#define START_PROCESS_EVENT(Type, Var)                                             \
-	struct LocalValueCast                                                          \
-	{                                                                              \
-		LocalValueCast(Values::Value &value) :                                     \
-			m_value(value)                                                         \
-		{}                                                                         \
-		                                                                           \
-		inline Node *node()                                                        \
-		{ return m_value.node; }                                                   \
-                                                                                   \
-		inline FolderNodeEntry *entry()                                            \
-		{ return static_cast<FolderNodeEntry*>(m_value.item); }                    \
-                                                                                   \
-	private:                                                                       \
-		Values::Value &m_value;                                                    \
-	};                                                                             \
-	                                                                               \
-	Type *params = (Type *)Var;                                                    \
-	Values::size_type index = m_items.indexOf(params->snapshot.entry->fileName()); \
-                                                                                   \
-	if (index != Values::InvalidIndex)                                             \
-	{                                                                              \
-		LocalValueCast value(m_items[index]);
-
-#define END_PROCESS_EVENT }
-
-
 FILE_SYSTEM_NS_BEGIN
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
@@ -367,7 +340,10 @@ void FolderNode::viewChild(INodeView *nodeView, const Path::Iterator &path, Plug
 		if (Node *node = createNode(info, plugins))
 		{
 			removeView(nodeView);
+
+			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 			m_items.add(Values::Value(new FolderNodeEntry(info), node));
+			endInsertRows();
 
 			if ((++path).atEnd())
 				node->viewThis(nodeView, QModelIndex());
@@ -379,7 +355,10 @@ void FolderNode::viewChild(INodeView *nodeView, const Path::Iterator &path, Plug
 			{
 				FolderNodeItem *item;
 
+				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 				m_items.add(Values::Value(item = new FolderNodeEntry(info)));
+				endInsertRows();
+
 				viewThis(nodeView, indexForFile(item, m_items.lastIndex()));
 			}
 			else

@@ -5,7 +5,10 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformCopyTask::PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move) :
-	PerformTask(new Params(receiver, entries, destination, move), receiver),
+	PerformTask(receiver),
+	m_entries(entries.take()),
+	m_destination(destination),
+	m_move(move),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
 	m_doNotOverwriteAll(false),
@@ -15,22 +18,22 @@ PerformCopyTask::PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemLis
 
 void PerformCopyTask::run(const volatile bool &stopedFlag)
 {
-	parameters()->destination->refresh();
+	m_destination->refresh();
 
-	if (parameters()->destination->exists())
+	if (m_destination->exists())
 	{
 		bool tryAgain;
 		FileSystemItem *entry;
 
 		for (FileSystemList::size_type i = 0;
-				i < parameters()->entries->size() &&
+				i < m_entries->size() &&
 				!isControllerDead() &&
 				!stopedFlag &&
 				!m_canceled;
 				++i)
 		{
-			m_progress.init((entry = parameters()->entries->at(i))->fileName());
-			copyEntry(parameters()->destination, entry, tryAgain = false, stopedFlag);
+			m_progress.init((entry = m_entries->at(i))->fileName());
+			copyEntry(m_destination, entry, tryAgain = false, stopedFlag);
 		}
 	}
 	else
@@ -39,11 +42,11 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().entries.swap(parameters()->entries);
+		event->params().entries.swap(m_entries);
 		event->params().canceled = m_canceled;
-		event->params().move = parameters()->move;
-		event->params().destination = parameters()->destination;
-		Application::postEvent(parameters()->receiver, event.take());
+		event->params().move = m_move;
+		event->params().destination = m_destination;
+		Application::postEvent(receiver(), event.take());
 	}
 }
 
@@ -189,7 +192,7 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 	event->params().result = &result;
 	event->params().question = text;
 
-	Application::postEvent(parameters()->receiver, event.take());
+	Application::postEvent(receiver(), event.take());
 
 	if (result.waitFor(stopedFlag, isControllerDead()))
 		switch (result.answer())
@@ -225,7 +228,7 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &t
 	event->params().result = &result;
 	event->params().question = text;
 
-	Application::postEvent(parameters()->receiver, event.take());
+	Application::postEvent(receiver(), event.take());
 
 	if (result.waitFor(stopedFlag, isControllerDead()))
 		if (result.answer() == QMessageBox::YesToAll)

@@ -15,32 +15,22 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public DestControlableTask
 {
 public:
-	struct Params : public DestControlableTask::Params
-	{
-		Params(QObject *listener, const Info &node, const QStringList &entries) :
-			source(listener, node, entries)
-		{}
-
-		Snapshot source;
-		QScopedPointer<FileSystemList> subnode;
-	};
-
-public:
-	ScanFilesTask(Params *params, QObject *listener) :
-		DestControlableTask(params, listener)
+	ScanFilesTask(QObject *receiver, const Info &info, const QStringList &entries) :
+		DestControlableTask(receiver),
+		m_info(info),
+		m_entries(entries)
 	{}
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-		const QStringList &entries = parameters()->source.entries;
-		QScopedPointer<FileSystemList> root(new FileSystemList(parameters()->source.info));
+		QScopedPointer<FileSystemList> root(new FileSystemList(m_info));
 
-		for (QStringList::size_type i = 0, size = entries.size(); i < size && !stopedFlag; ++i)
+		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !stopedFlag; ++i)
 		{
 #ifndef Q_OS_WIN
-			Info info(m_permissions.getInfo(root->absoluteFilePath(entries.at(i))));
+			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i))));
 #else
-			Info info(root->absoluteFilePath(entries.at(i)));
+			Info info(root->absoluteFilePath(m_entries.at(i)));
 #endif
 
 			if (info.exists())
@@ -61,11 +51,12 @@ public:
 				root->add(new FileSystemEntry(info));
 		}
 
-		parameters()->subnode.swap(root);
+		m_subnode.swap(root);
 	}
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(DestControlableTask::parameters()); }
+	const QScopedPointer<FileSystemList> &subnode() const { return m_subnode; }
+	QScopedPointer<FileSystemList> &subnode() { return m_subnode; }
 
 private:
 	void scan(FileSystemList *node, const volatile bool &stopedFlag)
@@ -96,6 +87,11 @@ private:
 					node->incTotalSize(info.size());
 				}
 	}
+
+private:
+	Info m_info;
+	QStringList m_entries;
+	QScopedPointer<FileSystemList> m_subnode;
 
 #ifndef Q_OS_WIN
 private:

@@ -3,67 +3,66 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
-#include "controlabletask.h"
+#include "basetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class DestControlableTask : public ControlableTask
+class DestControlableTask : public BaseTask
 {
-public:
-	struct Params : ControlableTask::Params
-	{
-	private:
-		friend class DestControlableTask;
-	    friend class DeleteHandler;
-		QMutex m_mutex;
-	};
-
 public:
 	/*
 	 * This class and it's subclasses should be created only
 	 * in the same thread as "destination.object" because of DeleteHandler!
 	 *
 	 */
-	DestControlableTask(Params *parameters, QObject *listener);
+	DestControlableTask(QObject *receiver);
 	virtual ~DestControlableTask();
 
 protected:
-	inline Params *parameters() const { return static_cast<Params*>(ControlableTask::parameters()); }
+    inline QObject *receiver() const { return m_receiver; }
+	inline const volatile bool &isControllerDead() const { return m_controllerDead; }
 
 private:
-    class DeleteHandler : public QObject
+	struct MutexHolder : public QSharedData
+	{
+		QMutex mutex;
+	};
+	typedef QExplicitlySharedDataPointer<MutexHolder> MutexHolderPointer;
+
+	class DeleteHandler : public QObject
     {
     public:
     	DeleteHandler(DestControlableTask *task, QObject *parent) :
     		QObject(parent),
-    		m_task(task),
-    		m_params(m_task->params())
+    		mutexHolder(task->m_mutexHolder),
+    		task(task)
     	{}
     	virtual ~DeleteHandler()
     	{
-    		QMutexLocker locker(&static_cast<Params*>(m_params.data())->m_mutex);
+    		QMutexLocker locker(&mutexHolder->mutex);
 
-    		if (m_task != 0)
+    		if (task != 0)
     		{
-				m_task->m_handler = 0;
-				m_task->m_listener = 0;
+				task->m_handler = 0;
+				task->m_receiver = 0;
+				task->m_controllerDead = true;
     		}
     	}
 
-    private:
-    	friend class DestControlableTask;
-    	DestControlableTask *m_task;
     	/*
-    	 * Just holds the reference to DestControlableTask::m_params,
-    	 * so m_task->parameters() can not be deleted before this object.
+    	 * Just holds the reference to DestControlableTask::m_mutexHolder,
+    	 * so it can not be deleted before this object.
     	 */
-    	ParamsPointer m_params;
+    	MutexHolderPointer mutexHolder;
+    	DestControlableTask *task;
     };
 
 private:
-    QObject *m_listener;
+    MutexHolderPointer m_mutexHolder;
+    QObject *m_receiver;
     DeleteHandler *m_handler;
+	volatile bool m_controllerDead;
 };
 
 FILE_SYSTEM_NS_END

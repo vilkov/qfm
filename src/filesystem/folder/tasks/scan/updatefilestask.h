@@ -1,7 +1,7 @@
 #ifndef UPDATEFILESTASK_H_
 #define UPDATEFILESTASK_H_
 
-#include "../controlabletask.h"
+#include "../destcontrolabletask.h"
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
@@ -10,33 +10,19 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class UpdateFilesTask : public ControlableTask
+class UpdateFilesTask : public DestControlableTask
 {
 public:
-	typedef ControlableTask parent_class;
-
-public:
-	struct Params : public parent_class::Params
-	{
-		Params(const Info &info, QObject *receiver, const UpdatesList &updates) :
-			info(info),
-			receiver(receiver),
-			updates(updates)
-		{}
-
-		Info info;
-		QObject *receiver;
-		UpdatesList updates;
-	};
 	typedef ModelEvents::UpdateFilesEvent Event;
 
 public:
-	UpdateFilesTask(const Info &info, QObject *receiver, const UpdatesList &updates);
+	UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates);
 
 	virtual void run(const volatile bool &stopedFlag);
 
-public:
-	Params *parameters() const { return static_cast<Params*>(parent_class::parameters()); }
+private:
+	Info m_info;
+	UpdatesList m_updates;
 
 #ifndef Q_OS_WIN
 private:

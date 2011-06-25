@@ -6,8 +6,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *listener, const Info &node, const QStringList &entries) :
-	ScanFilesTask(new Params(listener, node, entries), listener)
+ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *receiver, const Info &info, const QStringList &entries) :
+	ScanFilesTask(receiver, info, entries)
 {}
 
 void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
@@ -17,14 +17,14 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().subnode.swap(parameters()->subnode);
-		Application::postEvent(parameters()->source.listener, event.take());
+		event->params().subnode.swap(subnode());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *listener, const Info &node, const QStringList &entries) :
-	ScanFilesTask(new Params(listener, node, entries),  listener)
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *receiver, const Info &info, const QStringList &entries) :
+	ScanFilesTask(receiver, info, entries)
 {}
 
 void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
@@ -34,31 +34,29 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().subnode.swap(parameters()->subnode);
-		Application::postEvent(parameters()->source.listener, event.take());
+		event->params().subnode.swap(subnode());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 
 
-ScanFilesWithDestinationTask::ScanFilesWithDestinationTask(Params *params) :
-	ScanFilesTask(params, params->source.listener)
-{}
-
-ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *listener, const Info &node, const QStringList &entries, IFileControl *destination, bool move) :
-	ScanFilesWithDestinationTask(new Params(listener, node, entries, destination, move))
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const QStringList &entries, IFileControl *destination, bool move) :
+	ScanFilesTask(receiver, info, entries),
+	m_destination(destination),
+	m_move(move)
 {}
 
 void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 {
-	ScanFilesWithDestinationTask::run(stopedFlag);
+	ScanFilesTask::run(stopedFlag);
 
 	if (!stopedFlag && !isControllerDead())
 	{
 		QScopedPointer<Event> event(new Event());
-		event->params().subnode.swap(parameters()->subnode);
-		event->params().destination = parameters()->destination;
-		event->params().move = parameters()->move;
-		Application::postEvent(parameters()->source.listener, event.take());
+		event->params().subnode.swap(subnode());
+		event->params().destination = m_destination;
+		event->params().move = m_move;
+		Application::postEvent(receiver(), event.take());
 	}
 }
 

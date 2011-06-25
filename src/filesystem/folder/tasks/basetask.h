@@ -19,20 +19,17 @@ FILE_SYSTEM_NS_BEGIN
 class BaseTask : public TasksPool::Task
 {
 public:
-	struct Params : public MemoryManagerTag
+	struct Snapshot
 	{
-		struct Snapshot
-		{
-			Snapshot(QObject *listener, const Info &info, const QStringList &entries) :
-				info(info),
-				entries(entries),
-				listener(listener)
-			{}
+		Snapshot(QObject *listener, const Info &info, const QStringList &entries) :
+			info(info),
+			entries(entries),
+			listener(listener)
+		{}
 
-			Info info;
-			QStringList entries;
-			QObject *listener;
-		};
+		Info info;
+		QStringList entries;
+		QObject *listener;
 	};
 };
 

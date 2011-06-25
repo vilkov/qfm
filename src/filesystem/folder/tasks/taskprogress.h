@@ -10,12 +10,11 @@ FILE_SYSTEM_NS_BEGIN
 class TaskProgress
 {
 public:
-	typedef BaseTask::Params::Snapshot              Snapshot;
 	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
 
+public:
 	TaskProgress(QObject *receiver);
 
-public:
 	void init(const QString &fileName);
 	void update(quint64 progressIncrement);
 

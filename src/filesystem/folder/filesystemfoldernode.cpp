@@ -535,7 +535,7 @@ void FolderNode::updateFiles()
 		for (Values::size_type i = m_info.isRoot() ? 0 : 1, size = m_items.size(); i < size; ++i)
 			changes.insert(m_items.at(i).item->fileName(), *m_items.at(i).item);
 
-		QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(m_info, this, changes));
+		QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, changes));
 		setUpdating(true);
 		Application::instance()->taskPool().handle(task.take());
 	}

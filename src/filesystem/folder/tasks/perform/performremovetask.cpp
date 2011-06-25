@@ -9,8 +9,9 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformRemoveTask::PerformRemoveTask(QObject *receiver, QScopedPointer<FileSystemList> &entries) :
-	PerformTask(new Params(receiver, entries), receiver),
-	m_progress(receiver)
+	PerformTask(receiver),
+	m_progress(receiver),
+	m_entries(entries.take())
 {}
 
 void PerformRemoveTask::run(const volatile bool &stopedFlag)
@@ -19,13 +20,13 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	FileSystemItem *entry;
 
 	for (FileSystemList::size_type i = 0;
-			i < parameters()->entries->size() &&
+			i < m_entries->size() &&
 			!isControllerDead() &&
 			!stopedFlag &&
 			!m_canceled;
 			++i)
 	{
-		if ((entry = parameters()->entries->at(i))->isDir())
+		if ((entry = m_entries->at(i))->isDir())
 			m_progress.init(entry->fileName());
 
 		removeEntry(entry, tryAgain = false, stopedFlag);
@@ -82,7 +83,7 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 			event->params().result = &result;
 			event->params().question = tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
 
-			Application::postEvent(parameters()->receiver, event.take());
+			Application::postEvent(receiver(), event.take());
 
 			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
@@ -117,7 +118,7 @@ void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgai
 			event->params().result = &result;
 			event->params().question = tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error);
 
-			Application::postEvent(parameters()->receiver, event.take());
+			Application::postEvent(receiver(), event.take());
 
 			if (result.waitFor(stopedFlag, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
@@ -164,18 +165,18 @@ bool PerformRemoveTask::doRemoveFile(const QString &filePath, QString &error)
 	return false;
 }
 
-void PerformRemoveTask::postCompletedEvent() const
+void PerformRemoveTask::postCompletedEvent()
 {
 	QScopedPointer<CompletedEvent> event(new CompletedEvent());
-	event->params().subnode.swap(parameters()->entries);
-	Application::postEvent(parameters()->receiver, event.take());
+	event->params().subnode.swap(m_entries);
+	Application::postEvent(receiver(), event.take());
 }
 
-void PerformRemoveTask::postCanceledEvent() const
+void PerformRemoveTask::postCanceledEvent()
 {
 	QScopedPointer<CanceledEvent> event(new CanceledEvent());
-	event->params().subnode.swap(parameters()->entries);
-	Application::postEvent(parameters()->receiver, event.take());
+	event->params().subnode.swap(m_entries);
+	Application::postEvent(receiver(), event.take());
 }
 
 FILE_SYSTEM_NS_END

@@ -9,8 +9,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask(const Info &info, QObject *receiver, const UpdatesList &updates) :
-	parent_class(new Params(info, receiver, updates))
+UpdateFilesTask::UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates) :
+	DestControlableTask(receiver),
+	m_info(info),
+	m_updates(updates)
 {}
 
 void UpdateFilesTask::run(const volatile bool &stopedFlag)
@@ -19,31 +21,30 @@ void UpdateFilesTask::run(const volatile bool &stopedFlag)
 	QTime current;
 
 	UpdatesList localUpdates;
-	UpdatesList &updatedFiles = parameters()->updates;
-	QDirIterator dirIt(parameters()->info.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(m_info.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
 	while(!stopedFlag && !isControllerDead() && dirIt.hasNext())
 	{
 		current = QTime::currentTime();
 
 #ifndef Q_OS_WIN
-		updatedFiles.update(m_permissions.getInfo(dirIt.next()));
+		m_updates.update(m_permissions.getInfo(dirIt.next()));
 #else
-		updatedFiles.update(dirIt.next());
+		m_updates.update(dirIt.next());
 #endif
 
 		if (base.msecsTo(current) > 300)
 		{
-			localUpdates = updatedFiles.takeUpdates();
+			localUpdates = m_updates.takeUpdates();
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				Application::postEvent(parameters()->receiver, new Event(false, localUpdates));
+				Application::postEvent(receiver(), new Event(false, localUpdates));
 		}
 	}
 
 	if (!stopedFlag && !isControllerDead())
-		Application::postEvent(parameters()->receiver, new Event(true, updatedFiles.takeUpdates()));
+		Application::postEvent(receiver(), new Event(true, m_updates.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

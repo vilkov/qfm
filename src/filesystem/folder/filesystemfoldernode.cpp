@@ -456,55 +456,6 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 	return res;
 }
 
-//void FolderNode::addFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
-//{
-//	list.push_back(Functors::ProcessedValue(index, entry));
-//}
-//
-//void FolderNode::removeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
-//{
-//	if (entry->isDir())
-//		scanForRemove(entry);
-//	else
-//		removeEntry(entry);
-//}
-//
-//void FolderNode::calculateSizeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry)
-//{
-//	if (entry->isDir())
-//		scanForSize(entry);
-//	else
-//		updateSecondColumn(entry);
-//}
-//
-//void FolderNode::copyFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry, INode *destination)
-//{
-//	if (entry->isDir())
-//		scanForCopy(entry, destination, false);
-//	else
-//		if (entry->isFile())
-//			copyEntry(entry, destination, false);
-//}
-//
-//void FolderNode::moveFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry, INode *destination)
-//{
-//	if (entry->isDir())
-//		scanForCopy(entry, destination, true);
-//	else
-//		if (entry->isFile())
-//			copyEntry(entry, destination, true);
-//}
-
-void FolderNode::list(FolderNodeItem *fileSystemTree)
-{
-
-}
-
-void FolderNode::listEvent(const ModelEvent::Params *p)
-{
-
-}
-
 void FolderNode::updateFiles()
 {
 	if (isVisible())

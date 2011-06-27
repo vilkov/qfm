@@ -70,22 +70,13 @@ public:
 protected:
 	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
 	typedef QList<ProcessedValue>                     ProcessedList;
-
 	ProcessedList processIndexList(const QModelIndexList &list);
-//	void addFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
-//	void removeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
-//	void calculateSizeFunctor(Functors::ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
-//	void copyFunctor(Functors::ProcessedList &list, FolderNodeItem *entry, INode *destination);
-//	void moveFunctor(Functors::ProcessedList &list, FolderNodeItem *entry, INode *destination);
 
 protected:
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
 protected:
-	void list(FolderNodeItem *fileSystemTree);
-	void listEvent(const ModelEvent::Params *p);
-
 	void updateFiles();
 	void updateFilesEvent(const ModelEvent::Params *p);
 

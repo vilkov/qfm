@@ -15,6 +15,10 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public DestControlableTask
 {
 public:
+	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
+	typedef QList<ProcessedValue>                     ProcessedList;
+
+public:
 	ScanFilesTask(QObject *receiver, const Info &info, const QStringList &entries) :
 		DestControlableTask(receiver),
 		m_info(info),

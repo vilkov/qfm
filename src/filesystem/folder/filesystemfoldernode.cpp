@@ -754,6 +754,8 @@ void FolderNode::copyCompleteEvent(const ModelEvent *e)
 	Values::size_type index;
 	FileSystemItem *entry;
 
+	delete event->destination;
+
 	if (!event->canceled && event->move)
 	{
 		QString lockReason = tr("Removing...");

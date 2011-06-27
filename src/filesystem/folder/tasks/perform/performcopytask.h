@@ -15,7 +15,7 @@ class PerformCopyTask : public PerformTask
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
-	enum { FileReadWriteGranularity = 1 * 1024 * 1024 };
+	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 
 	class Event : public PerformTask::Event
 	{

@@ -41,11 +41,7 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event());
-		event->params().entries.swap(m_entries);
-		event->params().canceled = m_canceled;
-		event->params().move = m_move;
-		event->params().destination = m_destination;
+		QScopedPointer<Event> event(new Event(m_entries, m_canceled, m_destination, m_move));
 		Application::postEvent(receiver(), event.take());
 	}
 }
@@ -185,12 +181,19 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 
 void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
-	QuestionAnswerEvent::Params::Result result;
-	QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
-	event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll | QMessageBox::Cancel;
-	event->params().title = title;
-	event->params().result = &result;
-	event->params().question = text;
+	QuestionAnswerEvent::Result result;
+	QScopedPointer<QuestionAnswerEvent> event(
+			new QuestionAnswerEvent(
+					title,
+					text,
+					QMessageBox::Yes |
+					QMessageBox::YesToAll |
+					QMessageBox::No |
+					QMessageBox::NoToAll |
+					QMessageBox::Cancel,
+					&result
+			)
+	);
 
 	Application::postEvent(receiver(), event.take());
 
@@ -221,12 +224,18 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 
 void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
-	QuestionAnswerEvent::Params::Result result;
-	QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
-	event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-	event->params().title = title;
-	event->params().result = &result;
-	event->params().question = text;
+	QuestionAnswerEvent::Result result;
+	QScopedPointer<QuestionAnswerEvent> event(
+			new QuestionAnswerEvent(
+					title,
+					text,
+					QMessageBox::Yes |
+					QMessageBox::YesToAll |
+					QMessageBox::Retry |
+					QMessageBox::Cancel,
+					&result
+			)
+	);
 
 	Application::postEvent(receiver(), event.take());
 

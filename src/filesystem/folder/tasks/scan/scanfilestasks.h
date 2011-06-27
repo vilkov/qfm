@@ -10,10 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	typedef ModelEvents::ScanFilesForSizeEvent Event;
-
-public:
-	ScanFilesForSizeTask(QObject *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForSizeTask(QObject *receiver, const Info &info, const EntryList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
 };
@@ -23,10 +20,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	typedef ModelEvents::ScanFilesForRemoveEvent Event;
-
-public:
-	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const EntryList &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
 };
@@ -36,10 +30,22 @@ public:
 class ScanFilesForCopyTask : public ScanFilesTask
 {
 public:
-	typedef ModelEvents::ScanFilesForCopyEvent Event;
+	class Event : public ScanFilesTask::Event
+	{
+	public:
+		Event(Type type, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move) :
+			ScanFilesTask::Event(type, entries),
+			destination(destination),
+			move(move)
+		{}
+
+		QScopedPointer<FileSystemList> entries;
+		IFileControl *destination;
+		bool move;
+	};
 
 public:
-	ScanFilesForCopyTask(QObject *receiver, const Info &info, const QStringList &entries, IFileControl *destination, bool move);
+	ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, IFileControl *destination, bool move);
 
 	virtual void run(const volatile bool &stopedFlag);
 

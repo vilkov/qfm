@@ -15,11 +15,19 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public DestControlableTask
 {
 public:
-	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
-	typedef QList<ProcessedValue>                     ProcessedList;
+	class Event : public ModelEvent
+	{
+	public:
+		Event(Type type, QScopedPointer<FileSystemList> &entries) :
+			ModelEvent(type),
+			entries(entries.take())
+		{}
+
+		QScopedPointer<FileSystemList> entries;
+	};
 
 public:
-	ScanFilesTask(QObject *receiver, const Info &info, const QStringList &entries) :
+	ScanFilesTask(QObject *receiver, const Info &info, const EntryList &entries) :
 		DestControlableTask(receiver),
 		m_info(info),
 		m_entries(entries)
@@ -34,7 +42,7 @@ public:
 #ifndef Q_OS_WIN
 			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i))));
 #else
-			Info info(root->absoluteFilePath(m_entries.at(i)));
+			Info info(root->absoluteFilePath(m_entries.at(i).fileName));
 #endif
 
 			if (info.exists())
@@ -94,7 +102,7 @@ private:
 
 private:
 	Info m_info;
-	QStringList m_entries;
+	EntryList m_entries;
 	QScopedPointer<FileSystemList> m_subnode;
 
 #ifndef Q_OS_WIN

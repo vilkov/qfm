@@ -16,9 +16,19 @@ class PerformCopyTask : public PerformTask
 
 public:
 	enum { FileReadWriteGranularity = 1 * 1024 * 1024 };
-	typedef ModelEvents::CopyFilesCompletedEvent    Event;
-	typedef ModelEvents::QuestionAnswerEvent        QuestionAnswerEvent;
-	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
+
+	class Event : public PerformTask::Event
+	{
+	public:
+		Event(QScopedPointer<FileSystemList> &entries, bool canceled, IFileControl *destination, bool move) :
+			PerformTask::Event(CopyFiles, entries, canceled),
+			destination(destination),
+			move(move)
+		{}
+
+		IFileControl *destination;
+		bool move;
+	};
 
 public:
 	PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move);

@@ -13,7 +13,18 @@ FILE_SYSTEM_NS_BEGIN
 class UpdateFilesTask : public DestControlableTask
 {
 public:
-	typedef ModelEvents::UpdateFilesEvent Event;
+	class Event : public ModelEvent
+	{
+	public:
+		Event(bool isLastEvent, const UpdatesList &updates) :
+			ModelEvent(UpdateFiles),
+			isLastEvent(isLastEvent),
+			updates(updates)
+		{}
+
+		bool isLastEvent;
+		UpdatesList updates;
+	};
 
 public:
 	UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates);

@@ -1,4 +1,5 @@
 #include "taskprogress.h"
+#include "basetask.h"
 #include "../../../application.h"
 
 
@@ -29,10 +30,9 @@ void TaskProgress::update(quint64 progressIncrement)
 
 void TaskProgress::postEvent()
 {
-	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent());
-	event->params().fileName = m_fileName;
-	event->params().progress = m_doneSize;
-	event->params().timeElapsed = m_timeElapsed.msecsTo(m_currentTime);
+	typedef BaseTask::UpdateProgressEvent UpdateProgressEvent;
+
+	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent(m_fileName, m_doneSize, m_timeElapsed.msecsTo(m_currentTime)));
 	Application::postEvent(m_receiver, event.take());
 }
 

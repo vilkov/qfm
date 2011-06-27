@@ -78,22 +78,21 @@ protected:
 
 protected:
 	void updateFiles();
-	void updateFilesEvent(const ModelEvent::Params *p);
+	void updateFilesEvent(const ModelEvent *event);
 
 	void scanForRemove(const ProcessedList &entries);
-	void scanForRemoveEvent(const ModelEvent::Params *p);
-	void removeCompleteEvent(const ModelEvent::Params *p);
-	void removeCanceledEvent(const ModelEvent::Params *p);
+	void scanForRemoveEvent(const ModelEvent *event);
+	void removeCompleteEvent(const ModelEvent *event);
 
 	void scanForSize(const ProcessedList &entries);
-	void scanForSizeEvent(const ModelEvent::Params *p);
+	void scanForSizeEvent(const ModelEvent *event);
 
 	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
-	void scanForCopyEvent(const ModelEvent::Params *p);
-	void copyCompleteEvent(const ModelEvent::Params *p);
+	void scanForCopyEvent(const ModelEvent *event);
+	void copyCompleteEvent(const ModelEvent *event);
 
-	void questionAnswerEvent(const ModelEvent::Params *p);
-	void updateProgressEvent(const ModelEvent::Params *p);
+	void questionAnswerEvent(const ModelEvent *event);
+	void updateProgressEvent(const ModelEvent *event);
 
 private:
 	QModelIndex index(int column, FolderNodeItem *item) const;

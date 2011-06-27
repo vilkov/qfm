@@ -30,64 +30,52 @@ bool FolderNode::event(QEvent *e)
 {
 	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
-		case ModelEvent::ListFiles:
-		{
-			e->accept();
-			listEvent(static_cast<ModelEvent*>(e)->parameters());
-			return true;
-		}
 		case ModelEvent::UpdateFiles:
 		{
 			e->accept();
-			updateFilesEvent(static_cast<ModelEvent*>(e)->parameters());
+			updateFilesEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
 		case ModelEvent::ScanFilesForRemove:
 		{
 			e->accept();
-			scanForRemoveEvent(static_cast<ModelEvent*>(e)->parameters());
+			scanForRemoveEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
-		case ModelEvent::RemoveFilesCompleted:
+		case ModelEvent::RemoveFiles:
 		{
 			e->accept();
-			removeCompleteEvent(static_cast<ModelEvent*>(e)->parameters());
-			return true;
-		}
-		case ModelEvent::RemoveFilesCanceled:
-		{
-			e->accept();
-			removeCanceledEvent(static_cast<ModelEvent*>(e)->parameters());
+			removeCompleteEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
 		case ModelEvent::ScanFilesForSize:
 		{
 			e->accept();
-			scanForSizeEvent(static_cast<ModelEvent*>(e)->parameters());
+			scanForSizeEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
 		case ModelEvent::ScanFilesForCopy:
 		{
 			e->accept();
-			scanForCopyEvent(static_cast<ModelEvent*>(e)->parameters());
+			scanForCopyEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
-		case ModelEvent::CopyFilesCompleted:
+		case ModelEvent::CopyFiles:
 		{
 			e->accept();
-			copyCompleteEvent(static_cast<ModelEvent*>(e)->parameters());
+			copyCompleteEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
 		case ModelEvent::QuestionAnswer:
 		{
 			e->accept();
-			questionAnswerEvent(static_cast<ModelEvent*>(e)->parameters());
+			questionAnswerEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
-		case ModelEvent::UpdatePerformProgress:
+		case ModelEvent::UpdateProgress:
 		{
 			e->accept();
-			updateProgressEvent(static_cast<ModelEvent*>(e)->parameters());
+			updateProgressEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
 		default:
@@ -471,11 +459,12 @@ void FolderNode::updateFiles()
 	}
 }
 
-void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
+void FolderNode::updateFilesEvent(const ModelEvent *e)
 {
-	typedef const UpdateFilesTask::Event::Params *ParamsType;
-	ParamsType params = static_cast<ParamsType>(p);
-	UpdatesList updates = params->updates;
+	typedef const UpdateFilesTask::Event * Event;
+	Event event = static_cast<Event>(e);
+
+	UpdatesList updates = event->updates;
 	RangeIntersection updateRange;
 	Values::size_type index;
 
@@ -523,27 +512,30 @@ void FolderNode::updateFilesEvent(const ModelEvent::Params *p)
 		endInsertRows();
 	}
 
-	if (params->isLastEvent)
+	if (event->isLastEvent)
 		setUpdating(false);
 }
 
 void FolderNode::scanForRemove(const ProcessedList &entries)
 {
-	QStringList list;
 	FolderNodeEntry *entry;
+	Values::size_type index;
 	RangeIntersection updateRange;
+	ScanFilesForRemoveTask::EntryList list;
 
 	list.reserve(entries.size());
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
 	{
+		index = entries.at(i).first;
+
 		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
 			entry->lock(tr("Scanning folder for remove..."));
 		else
 			entry->lock(tr("Removing..."));
 
-		updateRange.add(entries.at(i).first, entries.at(i).first);
-		list.push_back(entry->fileName());
+		updateRange.add(index, index);
+		list.push_back(ScanFilesForRemoveTask::Entry(index, entry->fileName()));
 	}
 
 	QScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, list));
@@ -551,12 +543,13 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
+void FolderNode::scanForRemoveEvent(const ModelEvent *e)
 {
-	typedef ScanFilesForRemoveTask::Event::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef ScanFilesForRemoveTask::Event * NotConstEvent;
+	typedef const ScanFilesForRemoveTask::Event * Event;
+	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
@@ -627,12 +620,13 @@ void FolderNode::scanForRemoveEvent(const ModelEvent::Params *p)
 	}
 }
 
-void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
+void FolderNode::removeCompleteEvent(const ModelEvent *e)
 {
-	typedef PerformRemoveTask::CompletedEvent::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef PerformRemoveTask::Event * NotConstEvent;
+	typedef const PerformRemoveTask::Event * Event;
+	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
@@ -651,25 +645,22 @@ void FolderNode::removeCompleteEvent(const ModelEvent::Params *p)
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::removeCanceledEvent(const ModelEvent::Params *p)
-{
-	removeCompleteEvent(p);
-}
-
 void FolderNode::scanForSize(const ProcessedList &entries)
 {
-	QStringList list;
 	FolderNodeEntry *entry;
+	Values::size_type index;
 	RangeIntersection updateRange;
+	ScanFilesForSizeTask::EntryList list;
 
 	list.reserve(entries.size());
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
 		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
 		{
+			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
-			updateRange.add(entries.at(i).first, entries.at(i).first);
-			list.push_back(entry->fileName());
+			updateRange.add(index, index);
+			list.push_back(ScanFilesForSizeTask::Entry(index, entry->fileName()));
 		}
 
 	QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
@@ -677,12 +668,13 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
+void FolderNode::scanForSizeEvent(const ModelEvent *e)
 {
-	typedef ScanFilesForSizeTask::Event::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef ScanFilesForSizeTask::Event * NotConstEvent;
+	typedef const ScanFilesForSizeTask::Event * Event;
+	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(params->subnode.take());
+	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FolderNodeEntry *entry;
@@ -700,23 +692,26 @@ void FolderNode::scanForSizeEvent(const ModelEvent::Params *p)
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
 {
-	QStringList list;
 	FolderNodeEntry *entry;
+	Values::size_type index;
 	RangeIntersection updateRange;
 	QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 	QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
+	ScanFilesForCopyTask::EntryList list;
 
 	list.reserve(entries.size());
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
 	{
+		index = entries.at(i).first;
+
 		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
 			entry->lock(folderLockReason);
 		else
 			entry->lock(fileLockReason);
 
-		updateRange.add(entries.at(i).first, entries.at(i).first);
-		list.push_back(entry->fileName());
+		updateRange.add(index, index);
+		list.push_back(ScanFilesForCopyTask::Entry(index, entry->fileName()));
 	}
 
 	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, destination->createControl(), false));
@@ -724,13 +719,14 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
+void FolderNode::scanForCopyEvent(const ModelEvent *e)
 {
-	typedef ScanFilesForCopyTask::Event::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef ScanFilesForCopyTask::Event * NotConstEvent;
+	typedef const ScanFilesForCopyTask::Event * Event;
+	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(params->subnode.take());
-	QString lockReason = params->move ? tr("Moving...") : tr("Copying...");
+	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	QString lockReason = event->move ? tr("Moving...") : tr("Copying...");
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
@@ -742,22 +738,23 @@ void FolderNode::scanForCopyEvent(const ModelEvent::Params *p)
 		updateRange.add(index, index);
 	}
 
-	QScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, params->destination, params->move));
+	QScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, event->destination, event->move));
 	updateSecondColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)
+void FolderNode::copyCompleteEvent(const ModelEvent *e)
 {
-	typedef PerformCopyTask::Event::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef PerformCopyTask::Event * NotConstEvent;
+	typedef const PerformCopyTask::Event * Event;
+	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(params->entries.take());
+	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
 
-	if (!params->canceled && params->move)
+	if (!event->canceled && event->move)
 	{
 		QString lockReason = tr("Removing...");
 
@@ -789,26 +786,28 @@ void FolderNode::copyCompleteEvent(const ModelEvent::Params *p)
 	}
 }
 
-void FolderNode::questionAnswerEvent(const ModelEvent::Params *p)
+void FolderNode::questionAnswerEvent(const ModelEvent *e)
 {
-	typedef ModelEvents::QuestionAnswerParams * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef BaseTask::QuestionAnswerEvent * NotConstEvent;
+	typedef const BaseTask::QuestionAnswerEvent * Event;
+	Event event = static_cast<Event>(e);
 
-	params->result->lock();
-	params->result->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), params->title, params->question, params->buttons));
-	params->result->unlock();
+	event->result()->lock();
+	event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+	event->result()->unlock();
 }
 
-void FolderNode::updateProgressEvent(const ModelEvent::Params *p)
+void FolderNode::updateProgressEvent(const ModelEvent *e)
 {
-	typedef ModelEvents::UpdatePerformProgressEvent::Params * ParamsType;
-	ParamsType params = (ParamsType)p;
+	typedef PerformTask::UpdateProgressEvent * NotConstEvent;
+	typedef const PerformTask::UpdateProgressEvent * Event;
+	Event event = static_cast<Event>(e);
 
-	Values::size_type index = m_items.indexOf(params->fileName);
+	Values::size_type index = m_items.indexOf(event->fileName);
 	FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(m_items[index].item);
 
-	entry->setDoneSize(params->progress);
-	entry->setTimeElapsed(params->timeElapsed);
+	entry->setDoneSize(event->progress);
+	entry->setTimeElapsed(event->timeElapsed);
 	updateSecondColumn(index, entry);
 }
 

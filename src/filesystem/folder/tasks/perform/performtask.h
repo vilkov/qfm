@@ -9,6 +9,20 @@ FILE_SYSTEM_NS_BEGIN
 class PerformTask : public DestControlableTask
 {
 public:
+	class Event : public ModelEvent
+	{
+	public:
+		Event(Type type, QScopedPointer<FileSystemList> &entries, bool canceled) :
+			ModelEvent(type),
+			entries(entries.take()),
+			canceled(canceled)
+		{}
+
+		QScopedPointer<FileSystemList> entries;
+		bool canceled;
+	};
+
+public:
 	PerformTask(QObject *receiver) :
 		DestControlableTask(receiver),
 		m_canceled(false)

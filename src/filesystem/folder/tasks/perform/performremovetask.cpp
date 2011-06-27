@@ -33,10 +33,10 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	}
 
 	if (!stopedFlag && !isControllerDead())
-		if (m_canceled)
-			postCanceledEvent();
-		else
-			postCompletedEvent();
+	{
+		QScopedPointer<Event> event(new Event(Event::RemoveFiles, m_entries, m_canceled));
+		Application::postEvent(receiver(), event.take());
+	}
 }
 
 void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
@@ -76,12 +76,18 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 			entry->setShouldRemove(false);
 		else
 		{
-			QuestionAnswerEvent::Params::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
-			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-			event->params().title = tr("Failed to remove");
-			event->params().result = &result;
-			event->params().question = tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath());
+			QuestionAnswerEvent::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(
+					new QuestionAnswerEvent(
+							tr("Failed to remove"),
+							tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath()),
+							QMessageBox::Yes |
+							QMessageBox::YesToAll |
+							QMessageBox::Retry |
+							QMessageBox::Cancel,
+							&result
+					)
+			);
 
 			Application::postEvent(receiver(), event.take());
 
@@ -111,12 +117,18 @@ void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgai
 			entry->setShouldRemove(false);
 		else
 		{
-			QuestionAnswerEvent::Params::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(new QuestionAnswerEvent());
-			event->params().buttons = QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Retry | QMessageBox::Cancel;
-			event->params().title = tr("Failed to remove");
-			event->params().result = &result;
-			event->params().question = tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error);
+			QuestionAnswerEvent::Result result;
+			QScopedPointer<QuestionAnswerEvent> event(
+					new QuestionAnswerEvent(
+							tr("Failed to remove"),
+							tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error),
+							QMessageBox::Yes |
+							QMessageBox::YesToAll |
+							QMessageBox::Retry |
+							QMessageBox::Cancel,
+							&result
+					)
+			);
 
 			Application::postEvent(receiver(), event.take());
 
@@ -163,20 +175,6 @@ bool PerformRemoveTask::doRemoveFile(const QString &filePath, QString &error)
 		error = file.errorString();
 
 	return false;
-}
-
-void PerformRemoveTask::postCompletedEvent()
-{
-	QScopedPointer<CompletedEvent> event(new CompletedEvent());
-	event->params().subnode.swap(m_entries);
-	Application::postEvent(receiver(), event.take());
-}
-
-void PerformRemoveTask::postCanceledEvent()
-{
-	QScopedPointer<CanceledEvent> event(new CanceledEvent());
-	event->params().subnode.swap(m_entries);
-	Application::postEvent(receiver(), event.take());
 }
 
 FILE_SYSTEM_NS_END

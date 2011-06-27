@@ -10,6 +10,7 @@
 #include "../info/filesystemfoldernodeinfo.h"
 #include "../events/filesystemmodelevent.h"
 #include "../containers/filesystemupdateslist.h"
+#include "../containers/filesystemfoldernodevalues.h"
 #include "../../interfaces/filesysteminode.h"
 #include "../../../tools/taskspool/task.h"
 
@@ -19,160 +20,24 @@ FILE_SYSTEM_NS_BEGIN
 class BaseTask : public TasksPool::Task
 {
 public:
-	struct Snapshot
+	struct Entry
 	{
-		Snapshot(QObject *listener, const Info &info, const QStringList &entries) :
-			info(info),
-			entries(entries),
-			listener(listener)
+		Entry()
+		{}
+		Entry(Values::size_type index, const QString &fileName) :
+			index(index),
+			fileName(fileName)
 		{}
 
-		Info info;
-		QStringList entries;
-		QObject *listener;
+		Values::size_type index;
+		QString fileName;
 	};
-};
+	typedef QList<Entry> EntryList;
 
 
-class BaseEvent : public ModelEvent
-{
-public:
-	struct Params : public ModelEvent::Params
-	{};
-
-protected:
-	BaseEvent(Type type) :
-		ModelEvent(type)
-	{}
-};
-
-
-struct ModelEvents
-{
-private:
-	template <typename T, int EType>
-	class TemplateEvent : public BaseEvent
+	class QuestionAnswerEvent: public ModelEvent
 	{
 	public:
-		typedef T Params;
-
-	public:
-		TemplateEvent() :
-			BaseEvent(static_cast<Type>(EType))
-		{}
-
-		virtual const ModelEvent::Params *parameters() const { return &m_params; }
-
-		const Params &params() const { return m_params; }
-		Params &params() { return m_params; }
-
-	private:
-		Params m_params;
-	};
-
-
-public:
-	/********** ListFiles **********/
-	struct ListFilesParams : public BaseEvent::Params
-	{
-		QList<Info> updates;
-		bool isLastEvent;
-	};
-	typedef TemplateEvent<ListFilesParams, BaseEvent::ListFiles> ListFilesEvent;
-
-
-	/********** UpdateFiles **********/
-	struct UpdateFilesParams : public BaseEvent::Params
-	{
-		UpdateFilesParams(bool isLastEvent, const UpdatesList &updates) :
-			isLastEvent(isLastEvent),
-			updates(updates)
-		{}
-
-		bool isLastEvent;
-		UpdatesList updates;
-	};
-	class UpdateFilesEvent : public BaseEvent
-	{
-	public:
-		typedef UpdateFilesParams Params;
-
-	public:
-		UpdateFilesEvent(bool isLastEvent, const UpdatesList &updates) :
-			BaseEvent(BaseEvent::UpdateFiles),
-			m_params(isLastEvent, updates)
-		{}
-
-		virtual const ModelEvent::Params *parameters() const { return &m_params; }
-
-		const Params &params() const { return m_params; }
-		Params &params() { return m_params; }
-
-	private:
-		Params m_params;
-	};
-
-
-	/********** ScanFiles **********/
-	struct ScanFilesParams : public BaseEvent::Params
-	{
-		QScopedPointer<FileSystemList> subnode;
-	};
-	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForRemove> ScanFilesForRemoveEvent;
-	typedef TemplateEvent<ScanFilesParams, BaseEvent::ScanFilesForSize> ScanFilesForSizeEvent;
-
-
-	/********** ScanFilesWithDest **********/
-	struct ScanFilesWithDestParams : public ScanFilesParams
-	{
-		IFileControl *destination;
-		bool move;
-	};
-	typedef TemplateEvent<ScanFilesWithDestParams, BaseEvent::ScanFilesForCopy> ScanFilesForCopyEvent;
-
-
-	/********** Perform **********/
-	struct PerformParams : public BaseEvent::Params
-	{};
-
-
-	/********** PerformRemoveFiles **********/
-	struct PerformRemoveFilesParams: public PerformParams
-	{
-		QScopedPointer<FileSystemList> subnode;
-	};
-	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCompleted> RemoveFilesCompletedEvent;
-	typedef TemplateEvent<PerformRemoveFilesParams, BaseEvent::RemoveFilesCanceled> RemoveFilesCanceledEvent;
-
-
-	/********** PerformWithDest **********/
-	struct PerformWithDestParams : public PerformParams
-	{
-		IFileControl *destination;
-	};
-
-
-	/********** PerformWithDestCopyFiles **********/
-	struct PerformWithDestCopyFilesParams : public PerformWithDestParams
-	{
-		QScopedPointer<FileSystemList> entries;
-		bool canceled;
-		bool move;
-	};
-	typedef TemplateEvent<PerformWithDestCopyFilesParams, BaseEvent::CopyFilesCompleted> CopyFilesCompletedEvent;
-
-
-	/********** PerformWithDestCopyTreeFiles **********/
-	struct PerformWithDestCopyTreeFilesParams : public PerformWithDestCopyFilesParams
-	{
-		QScopedPointer<FileSystemList> subnode;
-	};
-	typedef TemplateEvent<PerformWithDestCopyTreeFilesParams, BaseEvent::CopyFilesCompleted> CopyTreeFilesCompletedEvent;
-
-
-	/********** QuestionAnswer **********/
-	struct QuestionAnswerParams : public BaseEvent::Params
-	{
 		class Result
 		{
 		public:
@@ -206,22 +71,42 @@ public:
 			QWaitCondition m_condition;
 		};
 
-		QString title;
-		QString question;
-		QMessageBox::StandardButtons buttons;
-		Result *result;
+	public:
+		QuestionAnswerEvent(const QString &title, const QString &question, QMessageBox::StandardButtons buttons, Result *result) :
+			ModelEvent(QuestionAnswer),
+			m_title(title),
+			m_question(question),
+			m_buttons(buttons),
+			m_result(result)
+		{}
+
+		const QString &title() const { return m_title; }
+		const QString &question() const { return m_question; }
+		QMessageBox::StandardButtons buttons() const { return m_buttons; }
+		Result *result() const { return m_result; }
+
+	private:
+		QString m_title;
+		QString m_question;
+		QMessageBox::StandardButtons m_buttons;
+		Result *m_result;
 	};
-	typedef TemplateEvent<QuestionAnswerParams, BaseEvent::QuestionAnswer> QuestionAnswerEvent;
 
 
-	/********** UpdatePerformProgress **********/
-	struct UpdatePerformProgressParams : public BaseEvent::Params
+	class UpdateProgressEvent : public ModelEvent
 	{
+	public:
+		UpdateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) :
+			ModelEvent(UpdateProgress),
+			fileName(),
+			progress(),
+			timeElapsed()
+		{}
+
 		QString fileName;
 		quint64 progress;
 		quint64 timeElapsed;
 	};
-	typedef TemplateEvent<UpdatePerformProgressParams, BaseEvent::UpdatePerformProgress> UpdatePerformProgressEvent;
 };
 
 FILE_SYSTEM_NS_END

@@ -2,16 +2,13 @@
 #define TASKPROGRESS_H_
 
 #include <QtCore/QDateTime>
-#include "basetask.h"
+#include "../../filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 class TaskProgress
 {
-public:
-	typedef ModelEvents::UpdatePerformProgressEvent UpdateProgressEvent;
-
 public:
 	TaskProgress(QObject *receiver);
 

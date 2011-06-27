@@ -9,24 +9,20 @@ FILE_SYSTEM_NS_BEGIN
 
 class ModelEvent : public QEvent
 {
+	Q_DISABLE_COPY(ModelEvent)
+
 public:
 	enum Type
 	{
-		ListFiles = QEvent::User + 1,
-		UpdateFiles = QEvent::User + 2,
+		UpdateFiles = QEvent::User + 1,
+		ScanFilesForSize = QEvent::User + 2,
 		ScanFilesForRemove = QEvent::User + 3,
-		RemoveFilesCompleted = QEvent::User + 4,
-		RemoveFilesCanceled = QEvent::User + 5,
-		ScanFilesForSize = QEvent::User + 6,
-		ScanFilesForCopy = QEvent::User + 7,
-		CopyFilesCompleted = QEvent::User + 8,
-		QuestionAnswer = QEvent::User + 9,
-		UpdatePerformProgress = QEvent::User + 10
+		ScanFilesForCopy = QEvent::User + 4,
+		RemoveFiles = QEvent::User + 5,
+		CopyFiles = QEvent::User + 6,
+		QuestionAnswer = QEvent::User + 7,
+		UpdateProgress = QEvent::User + 8
 	};
-
-public:
-	struct Params {};
-	virtual const Params *parameters() const = 0;
 
 protected:
 	ModelEvent(Type type) :

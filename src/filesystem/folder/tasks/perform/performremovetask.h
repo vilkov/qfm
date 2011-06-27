@@ -13,11 +13,6 @@ class PerformRemoveTask : public PerformTask
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
 public:
-	typedef ModelEvents::RemoveFilesCompletedEvent CompletedEvent;
-	typedef ModelEvents::RemoveFilesCanceledEvent  CanceledEvent;
-	typedef ModelEvents::QuestionAnswerEvent       QuestionAnswerEvent;
-
-public:
 	PerformRemoveTask(QObject *receiver, QScopedPointer<FileSystemList> &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
@@ -27,8 +22,6 @@ protected:
 	void removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
 	void removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
 	bool doRemoveFile(const QString &filePath, QString &error);
-	void postCompletedEvent();
-	void postCanceledEvent();
 
 protected:
 	QString m_error;

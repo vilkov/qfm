@@ -98,9 +98,9 @@ public:
 	public:
 		UpdateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) :
 			ModelEvent(UpdateProgress),
-			fileName(),
-			progress(),
-			timeElapsed()
+			fileName(fileName),
+			progress(progress),
+			timeElapsed(timeElapsed)
 		{}
 
 		QString fileName;

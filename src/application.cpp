@@ -11,7 +11,7 @@
 
 Application::Application(const QString &name, const QString &label, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
-	m_taskPool(1)//QThread::idealThreadCount())
+	m_taskPool(QThread::idealThreadCount())
 //#if defined(Q_WS_WIN)
 //	,m_filter(0)
 //#endif

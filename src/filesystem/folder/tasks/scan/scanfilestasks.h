@@ -39,7 +39,6 @@ public:
 			move(move)
 		{}
 
-		QScopedPointer<FileSystemList> entries;
 		IFileControl *destination;
 		bool move;
 	};

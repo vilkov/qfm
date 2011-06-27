@@ -117,7 +117,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 				{
 					m_written = 0;
 
-					while (m_readed = sourceFile->read(m_buffer, FileReadWriteGranularity) &&
+					while ((m_readed = sourceFile->read(m_buffer, FileReadWriteGranularity)) &&
 							!isControllerDead() && !stopedFlag && !m_canceled)
 						if (m_destFile->write(m_buffer, m_readed) == m_readed)
 						{

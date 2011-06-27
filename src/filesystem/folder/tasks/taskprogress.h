@@ -14,6 +14,7 @@ public:
 
 	void init(const QString &fileName);
 	void update(quint64 progressIncrement);
+	void clear();
 
 private:
 	void postEvent();

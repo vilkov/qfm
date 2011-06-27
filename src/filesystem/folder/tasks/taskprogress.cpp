@@ -19,13 +19,21 @@ void TaskProgress::init(const QString &fileName)
 
 void TaskProgress::update(quint64 progressIncrement)
 {
-	m_doneSize += progressIncrement;
-
-	if (m_baseTime.secsTo(m_currentTime = QDateTime::currentDateTime()) > 1)
+	if (!m_fileName.isEmpty())
 	{
-		postEvent();
-		m_baseTime = m_currentTime;
+		m_doneSize += progressIncrement;
+
+		if (m_baseTime.secsTo(m_currentTime = QDateTime::currentDateTime()) > 1)
+		{
+			postEvent();
+			m_baseTime = m_currentTime;
+		}
 	}
+}
+
+void TaskProgress::clear()
+{
+	m_fileName.clear();
 }
 
 void TaskProgress::postEvent()

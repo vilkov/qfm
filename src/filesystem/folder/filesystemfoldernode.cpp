@@ -235,9 +235,7 @@ void FolderNode::calculateSize(const QModelIndexList &list)
 	ProcessedList entries = processIndexList(list);
 
 	if (!entries.isEmpty())
-	{
-
-	}
+		scanForSize(entries);
 }
 
 void FolderNode::copy(const QModelIndexList &list, INode *destination)
@@ -253,9 +251,7 @@ void FolderNode::move(const QModelIndexList &list, INode *destination)
 	ProcessedList entries = processIndexList(list);
 
 	if (!entries.isEmpty())
-	{
-
-	}
+		scanForCopy(entries, destination, true);
 }
 
 void FolderNode::viewParent(INodeView *nodeView)

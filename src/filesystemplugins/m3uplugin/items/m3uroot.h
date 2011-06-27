@@ -21,7 +21,7 @@ public:
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
-	virtual QDateTime lastModified() const { m_info.lastModified(); }
+	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual bool exists(IFileInfo *info) const { return false; }
 	virtual void refresh() {}
 

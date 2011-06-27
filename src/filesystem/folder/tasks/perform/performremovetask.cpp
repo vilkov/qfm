@@ -28,6 +28,8 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 	{
 		if ((entry = m_entries->at(i))->isDir())
 			m_progress.init(entry->fileName());
+		else
+			m_progress.clear();
 
 		removeEntry(entry, tryAgain = false, stopedFlag);
 	}

@@ -230,10 +230,7 @@ void DirectoryView::copy()
 
 void DirectoryView::move()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//		m_model.move(index, &static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_model);
+	m_node->move(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node);
 }
 
 void DirectoryView::openInNewTab()

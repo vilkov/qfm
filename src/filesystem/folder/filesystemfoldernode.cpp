@@ -659,9 +659,12 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 			list.push_back(ScanFilesForSizeTask::Entry(index, entry->fileName()));
 		}
 
-	QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
-	updateFirstColumn(updateRange);
-	Application::instance()->taskPool().handle(task.take());
+	if (!list.isEmpty())
+	{
+		QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
+		updateFirstColumn(updateRange);
+		Application::instance()->taskPool().handle(task.take());
+	}
 }
 
 void FolderNode::scanForSizeEvent(const ModelEvent *e)

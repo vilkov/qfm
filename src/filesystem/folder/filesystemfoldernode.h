@@ -68,9 +68,7 @@ public:
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-	virtual void removeThis();
 	virtual void switchTo(Node *node, const QModelIndex &selected);
-	virtual void removeEntry(Node *entry);
 
 protected:
 	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
@@ -135,6 +133,7 @@ private:
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 
+	void removeThis();
 	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
 	bool isVisible() const;
 	void addView(INodeView *view);

@@ -18,9 +18,7 @@ public:
 	{}
 
 	virtual void setParentEntryIndex(const QModelIndex &value) = 0;
-	virtual void removeThis() = 0;
 	virtual void switchTo(Node *node, const QModelIndex &selected) = 0;
-	virtual void removeEntry(Node *entry) = 0;
 };
 
 FILE_SYSTEM_NS_END

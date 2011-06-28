@@ -224,17 +224,7 @@ void M3uNode::viewAbsolute(FileSystem::INodeView *nodeView, const QString &absol
 
 }
 
-void M3uNode::removeThis()
-{
-
-}
-
 void M3uNode::switchTo(Node *node, const QModelIndex &selected)
-{
-
-}
-
-void M3uNode::removeEntry(Node *entry)
 {
 
 }

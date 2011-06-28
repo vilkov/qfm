@@ -34,7 +34,6 @@ public:
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);
-    void updateTitle(qint32 index, const QString &fileName);
     void openInNewTab(FileSystem::INode *root, const QString &fileName, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();

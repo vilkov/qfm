@@ -59,9 +59,7 @@ public:
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-	virtual void removeThis();
 	virtual void switchTo(Node *node, const QModelIndex &selected);
-	virtual void removeEntry(Node *entry);
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }

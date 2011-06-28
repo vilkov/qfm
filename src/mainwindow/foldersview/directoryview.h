@@ -42,10 +42,18 @@ public:
     };
 
 public:
-    DirectoryView(FileSystem::INode *root, FoldersView *parent);
-    DirectoryView(FileSystem::INode *root, const Tab &tab, FoldersView *parent);
-    DirectoryView(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent);
+    DirectoryView(FoldersView *parent);
     virtual ~DirectoryView();
+
+    /* Should be called immediately after construction and adding to the tabWidget! */
+	void setupModel(FileSystem::INode *root, const Tab &tab);
+	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath);
+	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
+
+public:
+	/* INodeView */
+	virtual void select(const QModelIndex &index);
+	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
 	static QString rootPath();
 
@@ -55,10 +63,6 @@ public:
 
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);
-
-	/* INodeView */
-	virtual void select(const QModelIndex &index);
-	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
 public Q_SLOTS:
 	void goUp();
@@ -86,10 +90,6 @@ private:
     QList<qint32> geometry() const;
 
 private:
-	void initialize();
-	void setupModel(FileSystem::INode *root, const Tab &tab);
-	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath);
-	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
 	QModelIndex currentIndex() const;
 	QModelIndexList selectedIndexes() const;
 

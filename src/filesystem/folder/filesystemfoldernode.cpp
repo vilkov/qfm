@@ -238,7 +238,7 @@ void FolderNode::refresh()
 		if (exists())
 			updateFiles();
 		else
-			static_cast<Node*>(Node::parent())->removeEntry(this);
+			removeThis();
 }
 
 void FolderNode::remove(const QModelIndexList &list)
@@ -295,7 +295,7 @@ void FolderNode::viewParent(INodeView *nodeView)
 		if (exists())
 			switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
 		else
-			static_cast<Node*>(Node::parent())->removeEntry(this);
+			removeThis();
 }
 
 void FolderNode::viewThis(INodeView *nodeView, const QModelIndex &selected)
@@ -422,16 +422,6 @@ void FolderNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePa
 		viewChild(nodeView, path.begin(), plugins);
 }
 
-void FolderNode::removeThis()
-{
-	Node *parent = static_cast<Node*>(Node::parent());
-
-	while (!parent->exists())
-		parent = static_cast<Node*>(parent->Node::parent());
-
-	switchTo(parent, QModelIndex());
-}
-
 void FolderNode::switchTo(Node *node, const QModelIndex &selected)
 {
 	Node *child;
@@ -442,11 +432,6 @@ void FolderNode::switchTo(Node *node, const QModelIndex &selected)
 	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
 		if (child = m_items.at(i).node)
 			child->switchTo(node, selected);
-}
-
-void FolderNode::removeEntry(Node *entry)
-{
-	removeEntry(m_items.indexOf(entry));
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, Functors::Functor &functor)
@@ -941,7 +926,7 @@ void FolderNode::removeEntry(Values::size_type index)
 	beginRemoveRows(QModelIndex(), index, index);
 
 	if (Node *node = m_items.at(index).node)
-		node->removeThis();
+		node->switchTo(this, rootIndex());
 
 	m_items.remove(index);
 
@@ -953,11 +938,21 @@ void FolderNode::removeEntry(const QModelIndex &index)
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 
 	if (Node *node = m_items.at(index.row()).node)
-		node->removeThis();
+		node->switchTo(this, rootIndex());
 
 	m_items.remove(index.row());
 
 	endRemoveRows();
+}
+
+void FolderNode::removeThis()
+{
+	Node *parent = static_cast<Node*>(Node::parent());
+
+	while (!parent->exists())
+		parent = static_cast<Node*>(parent->Node::parent());
+
+	switchTo(parent, QModelIndex());
 }
 
 void FolderNode::switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected)

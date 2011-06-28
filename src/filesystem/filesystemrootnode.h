@@ -58,9 +58,7 @@ public:
 
 	/* Node */
 	virtual void setParentEntryIndex(const QModelIndex &value) {}
-	virtual void removeThis() {}
 	virtual void switchTo(Node *node, const QModelIndex &selected) {}
-	virtual void removeEntry(Node *entry) {}
 
 	PluginsManager *plugins() const { return m_plugins; }
 

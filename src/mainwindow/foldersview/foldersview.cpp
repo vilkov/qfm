@@ -20,12 +20,11 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 	if (tabs.isEmpty())
 	{
 		DirectoryView *widget;
-		m_tabWidget.addTab(widget = new DirectoryView(root, this), QString());
-		updateTitle(m_tabWidget.currentIndex(), widget->currentDirectoryName());
+		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
+		widget->setupModel(root, DirectoryView::rootPath());
 	}
 	else
 	{
-		qint32 index;
 		qint32 activeWidget = 0;
 		DirectoryView *widget;
 
@@ -36,8 +35,8 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 			if (tab.isActive)
 				activeWidget = i;
 
-			index = m_tabWidget.addTab(widget = new DirectoryView(root, tab.tab, this), QString());
-			updateTitle(index, widget->currentDirectoryName());
+			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
+			widget->setupModel(root, tab.tab);
 		}
 
 		m_tabWidget.setCurrentIndex(activeWidget);
@@ -53,11 +52,8 @@ void FoldersView::refresh()
 
 void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 {
-	updateTitle(m_tabWidget.indexOf(widget), fileName);
-}
+	qint32 index = m_tabWidget.indexOf(widget);
 
-void FoldersView::updateTitle(qint32 index, const QString &fileName)
-{
 	if (fileName.isEmpty())
 		m_tabWidget.setTabText(index, DirectoryView::rootPath());
 	else
@@ -66,10 +62,12 @@ void FoldersView::updateTitle(qint32 index, const QString &fileName)
 
 void FoldersView::openInNewTab(FileSystem::INode *root, const QString &fileName, const QList<qint32> &geometry)
 {
+	DirectoryView *widget;
 	m_doNotRefreshTab = true;
-	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(root, fileName, geometry, this), QString()));
-	updateTitle(m_tabWidget.currentIndex(), static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
-	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
+	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget = new DirectoryView(this), QString()));
+	widget->setupModel(root, fileName, geometry);
+	widget->refresh();
+	widget->setFocus();
 }
 
 void FoldersView::closeCurrentTab()

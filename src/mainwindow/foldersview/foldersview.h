@@ -33,9 +33,9 @@ public:
     FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
-    void updateTitle(const QString &fileName);
+    void updateTitle(QWidget *widget, const QString &fileName);
     void updateTitle(qint32 index, const QString &fileName);
-    void openInNewTab(const FileSystem::Info &fileInfo, const QList<qint32> &geometry);
+    void openInNewTab(FileSystem::INode *root, const QString &fileName, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
 

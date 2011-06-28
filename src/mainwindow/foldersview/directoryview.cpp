@@ -51,6 +51,11 @@ DirectoryView::DirectoryView(FileSystem::INode *root, const QString &absoluteFil
 	setupModel(root, absoluteFilePath, geometry);
 }
 
+DirectoryView::~DirectoryView()
+{
+	m_node->viewClosed(this);
+}
+
 QString DirectoryView::rootPath()
 {
 #ifdef Q_OS_WIN
@@ -136,12 +141,12 @@ void DirectoryView::setNode(FileSystem::INode *node, QAbstractItemModel *model, 
 	m_view.setModel(model);
 	m_view.setItemDelegate(delegate);
 	m_header.pathEdit.setText(m_node->absoluteFilePath());
-	m_parent->updateTitle(m_node->fileName());
 }
 
 void DirectoryView::goUp()
 {
 	m_node->viewParent(this);
+	m_parent->updateTitle(this, m_node->fileName());
 }
 
 void DirectoryView::goBack()
@@ -166,6 +171,7 @@ void DirectoryView::activated()
 	if (index.isValid())
 	{
 		m_node->viewChild(this, index, Application::instance()->mainWindow().plugins());
+		m_parent->updateTitle(this, m_node->fileName());
 		refresh();
 	}
 }
@@ -235,28 +241,15 @@ void DirectoryView::move()
 
 void DirectoryView::openInNewTab()
 {
-//	QModelIndex index = currentIndex();
-//
-//	if (index.isValid())
-//	{
-//		const FileSystemInfo &info = m_model.fileInfo(index);
-//
-//		if (info.isDir())
-//			m_parent->openInNewTab(info, geometry());
-//	}
+	QModelIndex index = currentIndex();
+
+	if (index.isValid())
+		m_parent->openInNewTab(m_node->root(), m_node->absolutePath(index), geometry());
 }
 
 void DirectoryView::closeTab()
 {
-//	QStringList list = m_model.lockedEntries();
-//
-//	if (list.isEmpty())
-//		m_parent->closeCurrentTab();
-//	else
-//		QMessageBox::information(
-//				this,
-//				tr("Unfinished tasks..."),
-//				tr("There is a busy entries:\n").append(list.join(QChar('\n'))));
+	m_parent->closeCurrentTab();
 }
 
 void DirectoryView::editPath()

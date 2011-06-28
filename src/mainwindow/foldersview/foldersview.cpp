@@ -21,7 +21,7 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 	{
 		DirectoryView *widget;
 		m_tabWidget.addTab(widget = new DirectoryView(root, this), QString());
-		updateTitle(widget->currentDirectoryName());
+		updateTitle(m_tabWidget.currentIndex(), widget->currentDirectoryName());
 	}
 	else
 	{
@@ -51,9 +51,9 @@ void FoldersView::refresh()
 	doRefresh(m_tabWidget.currentWidget());
 }
 
-void FoldersView::updateTitle(const QString &fileName)
+void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 {
-	updateTitle(m_tabWidget.currentIndex(), fileName);
+	updateTitle(m_tabWidget.indexOf(widget), fileName);
 }
 
 void FoldersView::updateTitle(qint32 index, const QString &fileName)
@@ -64,12 +64,12 @@ void FoldersView::updateTitle(qint32 index, const QString &fileName)
 		m_tabWidget.setTabText(index, fileName);
 }
 
-void FoldersView::openInNewTab(const FileSystem::Info &fileInfo, const QList<qint32> &geometry)
+void FoldersView::openInNewTab(FileSystem::INode *root, const QString &fileName, const QList<qint32> &geometry)
 {
-//	m_doNotRefreshTab = true;
-//	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(root, fileInfo, geometry, this), QString()));
-//	updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
-//	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
+	m_doNotRefreshTab = true;
+	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(new DirectoryView(root, fileName, geometry, this), QString()));
+	updateTitle(m_tabWidget.currentIndex(), static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
+	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 }
 
 void FoldersView::closeCurrentTab()
@@ -78,7 +78,6 @@ void FoldersView::closeCurrentTab()
 	{
 		QScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
-		updateTitle(static_cast<DirectoryView*>(m_tabWidget.currentWidget())->currentDirectoryName());
 		static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 	}
 }

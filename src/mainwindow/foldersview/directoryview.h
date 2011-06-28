@@ -45,6 +45,7 @@ public:
     DirectoryView(FileSystem::INode *root, FoldersView *parent);
     DirectoryView(FileSystem::INode *root, const Tab &tab, FoldersView *parent);
     DirectoryView(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry, FoldersView *parent);
+    virtual ~DirectoryView();
 
 	static QString rootPath();
 

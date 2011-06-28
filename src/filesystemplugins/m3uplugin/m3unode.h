@@ -25,8 +25,10 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* INode */
+	virtual FileSystem::INode *root() const;
 	virtual int columnCount() const;
 	virtual FileSystem::IFileControl *createControl() const { return 0; }
+	virtual QString absolutePath(const QModelIndex &idx) const { return QString(); }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }
@@ -47,6 +49,7 @@ public:
 	virtual void move(const QModelIndexList &list, INode *destination);
 
 	/* INode::IFileNavigation */
+	virtual void viewClosed(FileSystem::INodeView *nodeView);
 	virtual void viewParent(FileSystem::INodeView *nodeView);
 	virtual void viewThis(FileSystem::INodeView *nodeView, const QModelIndex &selected);
 	virtual void viewChild(FileSystem::INodeView *nodeView, const QModelIndex &idx, FileSystem::PluginsManager *plugins);

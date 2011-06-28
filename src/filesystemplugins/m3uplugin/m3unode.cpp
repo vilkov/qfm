@@ -83,6 +83,11 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+FileSystem::INode *M3uNode::root() const
+{
+	return 0;
+}
+
 int M3uNode::columnCount() const
 {
 	return columnCount(QModelIndex());
@@ -180,6 +185,11 @@ void M3uNode::copy(const QModelIndexList &list, INode *destination)
 }
 
 void M3uNode::move(const QModelIndexList &list, INode *destination)
+{
+
+}
+
+void M3uNode::viewClosed(FileSystem::INodeView *nodeView)
 {
 
 }

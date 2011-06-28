@@ -152,6 +152,14 @@ QModelIndex FolderNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+INode *FolderNode::root() const
+{
+	if (INode *res = static_cast<Node*>(Node::parent()))
+		return res->root();
+	else
+		return (INode*)this;
+}
+
 int FolderNode::columnCount() const
 {
 	return columnCount(QModelIndex());
@@ -160,6 +168,16 @@ int FolderNode::columnCount() const
 IFileControl *FolderNode::createControl() const
 {
 	return new Info(m_info);
+}
+
+QString FolderNode::absolutePath(const QModelIndex &idx) const
+{
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
+		return static_cast<Node*>(Node::parent())->absoluteFilePath();
+	else
+		return m_items.at(index.row()).item->absoluteFilePath();
 }
 
 bool FolderNode::isDir() const
@@ -252,6 +270,11 @@ void FolderNode::move(const QModelIndexList &list, INode *destination)
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, true);
+}
+
+void FolderNode::viewClosed(INodeView *nodeView)
+{
+	removeView(nodeView);
 }
 
 void FolderNode::viewParent(INodeView *nodeView)

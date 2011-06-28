@@ -28,6 +28,8 @@ class DirectoryView : public QWidget, public FileSystem::INodeView
     Q_OBJECT
 
 public:
+    typedef QList<qint32> Geometry;
+
     struct Tab
     {
     	struct Sort
@@ -38,7 +40,7 @@ public:
 
     	QString path;
     	Sort sort;
-    	QList<qint32> geometry;
+    	Geometry geometry;
     };
 
 public:
@@ -48,7 +50,7 @@ public:
     /* Should be called immediately after construction and adding to the tabWidget! */
 	void setupModel(FileSystem::INode *root, const Tab &tab);
 	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath);
-	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
+	void setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const Geometry &geometry);
 
 public:
 	/* INodeView */

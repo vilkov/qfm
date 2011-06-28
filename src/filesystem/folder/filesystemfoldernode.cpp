@@ -284,6 +284,16 @@ void FolderNode::move(const QModelIndexList &list, INode *destination)
 		scanForCopy(entries, destination, true);
 }
 
+void FolderNode::createDirectory(const QString &fileName, QString &error)
+{
+	QDir dir(absoluteFilePath());
+
+	if (dir.mkdir(fileName))
+	{
+
+	}
+}
+
 void FolderNode::viewClosed(INodeView *nodeView)
 {
 	removeView(nodeView);

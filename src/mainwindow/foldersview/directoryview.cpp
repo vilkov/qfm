@@ -57,7 +57,7 @@ void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 {
 	root->viewChild(this, FileSystem::Path(tab.path).begin(), Application::instance()->mainWindow().plugins());
 
-	for (qint32 i = 0, size = qMin(m_node->columnCount(), tab.geometry.size()); i < size; ++i)
+	for (Geometry::size_type i = 0, size = qMin(m_node->columnCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
 
 	m_view.sortByColumn(tab.sort.column, tab.sort.order);
@@ -69,11 +69,11 @@ void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteF
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
-void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry)
+void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const Geometry &geometry)
 {
 	root->viewChild(this, FileSystem::Path(absoluteFilePath).begin(), Application::instance()->mainWindow().plugins());
 
-	for (qint32 i = 0, size = qMin(m_node->columnCount(), geometry.size()); i < size; ++i)
+	for (Geometry::size_type i = 0, size = qMin(m_node->columnCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
 
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
@@ -232,14 +232,18 @@ void DirectoryView::rename()
 
 void DirectoryView::createDirectory()
 {
-//	StringDialog dialog(
-//			tr("Enter name for directory"),
-//			tr("Name"),
-//			QString(),
-//			this);
-//
-//	if (dialog.exec() == QDialog::Accepted)
-//		m_model.createDirectory(dialog.value());
+	StringDialog dialog(
+			tr("Enter name for the new directory"),
+			tr("Name"),
+			QString(),
+			this);
+
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		QString error;
+
+		m_node->createDirectory(dialog.value(), error);
+	}
 }
 
 void DirectoryView::remove()

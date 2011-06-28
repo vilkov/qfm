@@ -194,6 +194,11 @@ void M3uNode::move(const QModelIndexList &list, INode *destination)
 
 }
 
+void M3uNode::createDirectory(const QString &fileName, QString &error)
+{
+
+}
+
 void M3uNode::viewClosed(FileSystem::INodeView *nodeView)
 {
 

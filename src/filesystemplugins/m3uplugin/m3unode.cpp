@@ -179,6 +179,11 @@ void M3uNode::calculateSize(const QModelIndexList &list)
 
 }
 
+void M3uNode::pathToClipboard(const QModelIndexList &list)
+{
+
+}
+
 void M3uNode::copy(const QModelIndexList &list, INode *destination)
 {
 

@@ -178,7 +178,7 @@ void DirectoryView::activated()
 
 void DirectoryView::pathToClipboard()
 {
-//	m_model.pathToClipboard(selectedIndexes());
+	m_node->pathToClipboard(selectedIndexes());
 }
 
 void DirectoryView::rename()

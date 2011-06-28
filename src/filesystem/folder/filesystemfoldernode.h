@@ -7,6 +7,7 @@
 #include "info/filesystemfoldernodeinfo.h"
 #include "containers/filesystemupdateslist.h"
 #include "containers/filesystemfoldernodevalues.h"
+#include "functors/filesystemfoldernodefunctors.h"
 #include "../filesystemnode.h"
 #include "../../tools/metatemplates.h"
 #include "../../tools/rangeintersection.h"
@@ -53,6 +54,7 @@ public:
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
+	virtual void pathToClipboard(const QModelIndexList &list);
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
 
@@ -72,8 +74,25 @@ public:
 
 protected:
 	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
-	typedef QList<ProcessedValue>                     ProcessedList;
-	ProcessedList processIndexList(const QModelIndexList &list);
+	class ProcessedList : public Functors::Functor, public QList<ProcessedValue>
+	{
+	protected:
+		virtual void call(Values::size_type index, FolderNodeItem *entry)
+		{
+			push_back(ProcessedValue(index, entry));
+		}
+	};
+
+	class AbsoluteFilePathList : public Functors::Functor, public QStringList
+	{
+	protected:
+		virtual void call(Values::size_type index, FolderNodeItem *entry)
+		{
+			push_back(entry->absoluteFilePath());
+		}
+	};
+
+	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);
 
 protected:
 	bool isUpdating() const { return m_updating; }

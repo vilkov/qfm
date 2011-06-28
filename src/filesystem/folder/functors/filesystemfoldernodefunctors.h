@@ -13,18 +13,15 @@ FILE_SYSTEM_NS_BEGIN
  */
 struct Functors
 {
-	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
-	typedef QList<ProcessedValue>                     ProcessedList;
-
 	class Functor
 	{
 	public:
 		virtual ~Functor() {}
 
-		inline void operator()(ProcessedList &list, Values::size_type index, FolderNodeItem *entry) const { call(list, index, entry); }
+		inline void operator()(Values::size_type index, FolderNodeItem *entry) { call(index, entry); }
 
 	protected:
-		virtual void call(ProcessedList &list, Values::size_type index, FolderNodeItem *entry) const = 0;
+		virtual void call(Values::size_type index, FolderNodeItem *entry) = 0;
 	};
 
 
@@ -33,7 +30,7 @@ struct Functors
 	class Callable : public Functor
 	{
 	public:
-		typedef void (T::*Method)(ProcessedList &list, Values::size_type index, FolderNodeItem *entry);
+		typedef void (T::*Method)(Values::size_type index, FolderNodeItem *entry);
 
 	public:
 		Callable(T *object, Method method) :
@@ -42,7 +39,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(ProcessedList &list, Values::size_type index, FolderNodeItem *entry) const { (m_object->*m_method)(list, entry); }
+		virtual void call(Values::size_type index, FolderNodeItem *entry) { (m_object->*m_method)(index, entry); }
 
 	private:
 		T *m_object;
@@ -58,7 +55,7 @@ struct Functors
 	class Callable1 : public Functor
 	{
 	public:
-		typedef void (T::*Method)(ProcessedList &list, Values::size_type index, FolderNodeItem *entry, Arg1);
+		typedef void (T::*Method)(Values::size_type index, FolderNodeItem *entry, Arg1);
 
 	public:
 		Callable1(T *object, Method method, Arg1 arg1) :
@@ -68,7 +65,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(ProcessedList &list, Values::size_type index, FolderNodeItem *entry) const { (m_object->*m_method)(list, entry, m_arg1); }
+		virtual void call(Values::size_type index, FolderNodeItem *entry) { (m_object->*m_method)(index, entry, m_arg1); }
 
 	private:
 		T *m_object;

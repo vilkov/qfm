@@ -8,6 +8,7 @@
 #include "../filesystempluginsmanager.h"
 #include "../../application.h"
 #include <QtGui/QMessageBox>
+#include <QtGui/QClipboard>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -242,7 +243,8 @@ void FolderNode::refresh()
 
 void FolderNode::remove(const QModelIndexList &list)
 {
-	ProcessedList entries = processIndexList(list);
+	ProcessedList entries;
+	processIndexList(list, entries);
 
 	if (!entries.isEmpty())
 		scanForRemove(entries);
@@ -250,15 +252,24 @@ void FolderNode::remove(const QModelIndexList &list)
 
 void FolderNode::calculateSize(const QModelIndexList &list)
 {
-	ProcessedList entries = processIndexList(list);
+	ProcessedList entries;
+	processIndexList(list, entries);
 
 	if (!entries.isEmpty())
 		scanForSize(entries);
 }
 
+void FolderNode::pathToClipboard(const QModelIndexList &list)
+{
+	AbsoluteFilePathList pathList;
+	processIndexList(list, pathList);
+	Application::instance()->clipboard()->setText(pathList.join(QChar('\r')));
+}
+
 void FolderNode::copy(const QModelIndexList &list, INode *destination)
 {
-	ProcessedList entries = processIndexList(list);
+	ProcessedList entries;
+	processIndexList(list, entries);
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, false);
@@ -266,7 +277,8 @@ void FolderNode::copy(const QModelIndexList &list, INode *destination)
 
 void FolderNode::move(const QModelIndexList &list, INode *destination)
 {
-	ProcessedList entries = processIndexList(list);
+	ProcessedList entries;
+	processIndexList(list, entries);
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, true);
@@ -437,7 +449,7 @@ void FolderNode::removeEntry(Node *entry)
 	removeEntry(m_items.indexOf(entry));
 }
 
-FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &list)
+void FolderNode::processIndexList(const QModelIndexList &list, Functors::Functor &functor)
 {
 	QModelIndex index;
 	ProcessedList res;
@@ -454,13 +466,11 @@ FolderNode::ProcessedList FolderNode::processIndexList(const QModelIndexList &li
 				entry->refresh();
 
 				if (entry->exists())
-					res.push_back(ProcessedValue(index.row(), entry));
+					functor(index.row(), entry);
 				else
 					removeEntry(index);
 			}
 		}
-
-	return res;
 }
 
 void FolderNode::updateFiles()

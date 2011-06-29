@@ -18,11 +18,11 @@
 //void operator delete[](void*, const std::nothrow_t&) throw();
 
 
-class MemoryManager
+class MemoryManager1
 {
 public:
-	MemoryManager(std::size_t pageSize, std::size_t maxObjectSize, std::size_t objectAlignSize);
-	~MemoryManager();
+	MemoryManager1(std::size_t pageSize, std::size_t maxObjectSize, std::size_t objectAlignSize);
+	~MemoryManager1();
 
 	bool isValid() const { return !m_allocator.isCorrupt(); }
 
@@ -30,7 +30,7 @@ public:
     void deallocate(void *p, std::size_t size);
     void deallocate(void *p);
 
-    static MemoryManager *instance();
+    static MemoryManager1 *instance();
 
 private:
 	QMutex m_mutex;
@@ -43,15 +43,15 @@ private:
 class MemoryManagerTag
 {
 public:
-	inline void *operator new(std::size_t size) throw(std::bad_alloc)             { return MemoryManager::instance()->allocate(size); }
-	inline void *operator new[](std::size_t size) throw(std::bad_alloc)           { return MemoryManager::instance()->allocate(size); }
-	inline void *operator new(std::size_t size, const std::nothrow_t&) throw()    { return MemoryManager::instance()->allocate(size); }
-	inline void *operator new[](std::size_t size, const std::nothrow_t&) throw()  { return MemoryManager::instance()->allocate(size); }
-	inline void operator delete(void *ptr, std::size_t size) throw()              { return MemoryManager::instance()->deallocate(ptr, size); }
-	inline void operator delete(void *ptr) throw()                                { return MemoryManager::instance()->deallocate(ptr); }
-	inline void operator delete[](void *ptr) throw()                              { return MemoryManager::instance()->deallocate(ptr); }
-	inline void operator delete(void *ptr, const std::nothrow_t&) throw()         { return MemoryManager::instance()->deallocate(ptr); }
-	inline void operator delete[](void *ptr, const std::nothrow_t&) throw()       { return MemoryManager::instance()->deallocate(ptr); }
+	inline void *operator new(std::size_t size) throw(std::bad_alloc)             { return MemoryManager1::instance()->allocate(size); }
+	inline void *operator new[](std::size_t size) throw(std::bad_alloc)           { return MemoryManager1::instance()->allocate(size); }
+	inline void *operator new(std::size_t size, const std::nothrow_t&) throw()    { return MemoryManager1::instance()->allocate(size); }
+	inline void *operator new[](std::size_t size, const std::nothrow_t&) throw()  { return MemoryManager1::instance()->allocate(size); }
+	inline void operator delete(void *ptr, std::size_t size) throw()              { return MemoryManager1::instance()->deallocate(ptr, size); }
+	inline void operator delete(void *ptr) throw()                                { return MemoryManager1::instance()->deallocate(ptr); }
+	inline void operator delete[](void *ptr) throw()                              { return MemoryManager1::instance()->deallocate(ptr); }
+	inline void operator delete(void *ptr, const std::nothrow_t&) throw()         { return MemoryManager1::instance()->deallocate(ptr); }
+	inline void operator delete[](void *ptr, const std::nothrow_t&) throw()       { return MemoryManager1::instance()->deallocate(ptr); }
 
 	// Default placement versions of operator new.
 	inline void *operator new(std::size_t, void *ptr) throw() { return ptr; }

@@ -1,12 +1,12 @@
-#ifndef POOL_H_
-#define POOL_H_
+#ifndef TASKPOOL_H_
+#define TASKPOOL_H_
 
-#include <QtCore/QList>
-#include <QtCore/QQueue>
-#include <QtCore/QMutex>
+#include <list>
 #include "ns_taskspool.h"
-#include "task.h"
 #include "taskthread.h"
+#include "task.h"
+#include "../types/ptypes.h"
+#include "../threads/pmutex.h"
 
 
 TASKSPOOL_NS_BEGIN
@@ -14,7 +14,7 @@ TASKSPOOL_NS_BEGIN
 class TaskPool
 {
 public:
-	TaskPool(qint32 maxThreads);
+	TaskPool(types::int32_t maxThreads);
 	~TaskPool();
 
 	void handle(Task *task);
@@ -25,14 +25,14 @@ protected:
 	Task *nextTask(TaskThread *thread);
 
 private:
-    QMutex m_mutex;
+	PMutex m_mutex;
     bool m_clearing;
-	qint32 m_maxThreads;
-    QQueue<Task*> m_tasks;
-	QList<TaskThread*> m_threads;
-	QList<TaskThread*> m_freeThreads;
+    types::int32_t m_maxThreads;
+    std::list<Task*> m_tasks;
+	std::list<TaskThread*> m_threads;
+	std::list<TaskThread*> m_freeThreads;
 };
 
 TASKSPOOL_NS_END
 
-#endif /* POOL_H_ */
+#endif /* TASKPOOL_H_ */

@@ -1,8 +1,7 @@
 #ifndef EXCEPTIONSHANDLER_H_
 #define EXCEPTIONSHANDLER_H_
 
-#include <QString>
-#include <QGlobalStatic>
+#include "../pstrings/pstring.h"
 
 
 class ExceptionHandler
@@ -13,19 +12,21 @@ public:
 
 #if defined(Q_CC_MSVC) && defined(USE_SEH_EXCEPTIONS)
 	static int exception(const char *where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
-	static int exception(const QString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
+	static int exception(const PString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
 #else
 	static void exception(const char *where);
-	static void exception(const QString &message);
+	static void exception(const PString &message);
+	static void exception(const char *where, const char *what);
 #endif
 
 protected:
 #ifdef USE_SEH_EXCEPTIONS
 	virtual int handleException(const char *where) = 0;
-	virtual int handleException(const QString &message) = 0;
+	virtual int handleException(const PString &message) = 0;
 #else
 	virtual void handleException(const char *where) = 0;
-	virtual void handleException(const QString &message) = 0;
+	virtual void handleException(const PString &message) = 0;
+	virtual void handleException(const char *where, const char *what) = 0;
 #endif
 
 private:
@@ -43,10 +44,16 @@ private:
 #		define CATCH(A) catch (A)
 #		define CATCH_ALL(where, execute_this_code) catch (...) { ExceptionHandler::exception(where); execute_this_code }
 #	endif
-#else
+#elif defined(QT_TRY)
 #	define TRY QT_TRY
 #	define CATCH(A) QT_CATCH(A)
 #	define CATCH_ALL(where, execute_this_code) QT_CATCH(...) { ExceptionHandler::exception(where); execute_this_code }
+#else
+#	define TRY try
+#	define CATCH(A) catch(A)
+#	define CATCH_ALL(where, execute_this_code) \
+		catch(const std::exception &__error__) { ExceptionHandler::exception(where, __error__.what()); execute_this_code } \
+		catch(...) { ExceptionHandler::exception(where); execute_this_code }
 #endif
 
 #define DO_NOTHING {}

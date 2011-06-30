@@ -1,10 +1,22 @@
 #include "taskpool.h"
-#include <QtCore/QScopedPointer>
+
+
+template <typename T>
+struct Destroy
+{
+	void operator()(T data) { delete data; }
+};
+
+template <typename Container>
+void deleteAll(Container &container)
+{
+	std::for_each(container.begin(), container.end(), Destroy<typename Container::value_type>());
+}
 
 
 TASKSPOOL_NS_BEGIN
 
-TaskPool::TaskPool(qint32 maxThreads) :
+TaskPool::TaskPool(types::int32_t maxThreads) :
 	m_clearing(false),
 	m_maxThreads(maxThreads)
 {}
@@ -16,16 +28,19 @@ TaskPool::~TaskPool()
 
 void TaskPool::handle(Task *task)
 {
-	QMutexLocker locker(&m_mutex);
+	PMutexLocker locker(m_mutex);
 
 	if (!m_clearing)
-		if (m_freeThreads.isEmpty())
+		if (m_freeThreads.empty())
 			if (m_threads.size() < m_maxThreads)
 				m_threads.push_back(new TaskThread(this, task));
 			else
-				m_tasks.enqueue(task);
+				m_tasks.push_front(task);
 		else
-			m_freeThreads.takeFirst()->handle(task);
+		{
+			m_freeThreads.front()->handle(task);
+			m_freeThreads.pop_front();
+		}
 }
 
 void TaskPool::clear()
@@ -34,10 +49,10 @@ void TaskPool::clear()
 	m_clearing = true;
 	m_mutex.unlock();
 
-	qDeleteAll(m_tasks);
+	deleteAll(m_tasks);
 	m_tasks.clear();
 
-	qDeleteAll(m_threads);
+	deleteAll(m_threads);
 	m_threads.clear();
 	m_freeThreads.clear();
 
@@ -48,13 +63,17 @@ void TaskPool::clear()
 
 Task *TaskPool::nextTask(TaskThread *thread)
 {
-	QMutexLocker locker(&m_mutex);
+	PMutexLocker locker(m_mutex);
 
 	if (!m_clearing)
-		if (m_tasks.isEmpty())
+		if (m_tasks.empty())
 			m_freeThreads.push_back(thread);
 		else
-			return m_tasks.dequeue();
+		{
+			Task *res = m_tasks.front();
+			m_tasks.pop_front();
+			return res;
+		}
 
 	return 0;
 }

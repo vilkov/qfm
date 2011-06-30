@@ -1,4 +1,5 @@
 #include "exceptionshandler.h"
+#include <assert.h>
 
 
 static ExceptionHandler *global_instance = 0;
@@ -23,7 +24,7 @@ ExceptionHandler::~ExceptionHandler()
 		else
 			return EXCEPTION_CONTINUE_SEARCH;    // если нет аварии
 	}
-	int ExceptionHandler::exception(const QString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep)
+	int ExceptionHandler::exception(const PString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep)
 	{
 		return ExceptionHandler::instance()->handleException(where);
 
@@ -37,14 +38,18 @@ ExceptionHandler::~ExceptionHandler()
 	{
 		ExceptionHandler::instance()->handleException(where);
 	}
-	void ExceptionHandler::exception(const QString &message)
+	void ExceptionHandler::exception(const PString &message)
 	{
 		ExceptionHandler::instance()->handleException(message);
+	}
+	void ExceptionHandler::exception(const char *where, const char *what)
+	{
+		ExceptionHandler::instance()->handleException(where, what);
 	}
 #endif
 
 ExceptionHandler *ExceptionHandler::instance()
 {
-	Q_ASSERT_X(global_instance, "ExceptionHandler::instance", "global_instance == 0");
+	assert(global_instance);
 	return global_instance;
 }

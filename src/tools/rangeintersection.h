@@ -2,17 +2,16 @@
 #define RANGEINTERSECTION_H_
 
 #include <QList>
-#include "memory/memory_manager.h"
 
 
-class RangeIntersection : public MemoryManagerTag
+class RangeIntersection
 {
 public:
 	typedef qint32     value_type;
 	typedef value_type distance_type;
 
 public:
-	class Range : public MemoryManagerTag
+	class Range
 	{
 	public:
 		Range()

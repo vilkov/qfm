@@ -3,10 +3,9 @@
 
 #include <QWidget>
 #include <QVariant>
-#include "../../memory/memory_manager.h"
 
 
-class ConfigOptionConstraint : public MemoryManagerTag
+class ConfigOptionConstraint
 {
 public:
 	virtual ~ConfigOptionConstraint() {}

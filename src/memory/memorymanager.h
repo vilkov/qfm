@@ -4,21 +4,21 @@
 #include "../tools/memory/memorymanagerbase.h"
 
 
-class MemoryManager : public MemoryManagerBase<3>
+class MemoryManager : public Memory::ManagerBase<3>
 {
 public:
 	enum Allocators
 	{
-		Malloc,
 		Qt,
-		Loki
+		Loki,
+		Malloc
 	};
 
 public:
 	MemoryManager();
 
 	static MemoryManager *instance();
-	Allocator *allocator(Allocators a) { return allocators()[a]; }
+	Memory::Allocator *allocator(Allocators a) { return allocators()[a]; }
 };
 
 #endif /* MEMORYMANAGER_H_ */

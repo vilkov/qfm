@@ -3,7 +3,6 @@
 
 #include <QString>
 #include <QGlobalStatic>
-#include "../memory/memory_manager.h"
 
 
 class ExceptionHandler

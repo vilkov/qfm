@@ -3,10 +3,9 @@
 
 #include <QString>
 #include <QVariant>
-#include "../../memory/memory_manager.h"
 
 
-class ConfigOption : public MemoryManagerTag
+class ConfigOption
 {
 public:
 	enum Type

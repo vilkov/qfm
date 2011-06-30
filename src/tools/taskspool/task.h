@@ -2,12 +2,11 @@
 #define TASK_H_
 
 #include "ns_taskspool.h"
-#include "../memory/memory_manager.h"
 
 
 TASKSPOOL_NS_BEGIN
 
-class Task : public MemoryManagerTag
+class Task
 {
 public:
 	virtual ~Task() {}

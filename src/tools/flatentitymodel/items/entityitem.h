@@ -3,10 +3,9 @@
 
 #include <QList>
 #include <QVariant>
-#include "../../memory/memory_manager.h"
 
 
-class EntityItem : public MemoryManagerTag
+class EntityItem
 {
 public:
     typedef QList<EntityItem*>    value_type;

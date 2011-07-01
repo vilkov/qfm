@@ -8,7 +8,7 @@
 class MallocAllocator : public Memory::Allocator
 {
 public:
-	virtual void *allocate(size_type n, const void *hint = 0) { malloc(n); }
+	virtual void *allocate(size_type n, const void *hint = 0) { return malloc(n); }
     virtual void deallocate(void *p, size_type n) { free(p); }
     virtual void deallocate(void *p) { free(p); }
 };

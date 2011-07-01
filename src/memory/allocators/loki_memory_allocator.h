@@ -14,7 +14,7 @@ public:
 
 	bool isValid() const { return !m_allocator.isCorrupt(); }
 
-	virtual void *allocate(size_type n, const void *hint = 0) { m_allocator.allocate(n); }
+	virtual void *allocate(size_type n, const void *hint = 0) { return m_allocator.allocate(n); }
     virtual void deallocate(void *p, size_type n) { m_allocator.deallocate(p, n); }
     virtual void deallocate(void *p) { m_allocator.deallocate(p); }
 

@@ -14,6 +14,9 @@ public:
 
 	void wait() { m_thread.join(); }
 
+protected:
+	virtual void run() = 0;
+
 private:
 	boost::thread m_thread;
 };

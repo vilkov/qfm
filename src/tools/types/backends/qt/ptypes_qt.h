@@ -7,19 +7,19 @@
 
 PTYPES_NAMESPACE_BEGIN
 
-	typedef boost::int8_t    int8_t;
-	typedef boost::uint8_t   uint8_t;
+	typedef qint8   int8_t;
+	typedef quint8  uint8_t;
 
-    typedef boost::int16_t   int16_t;
-    typedef boost::uint16_t  uint16_t;
+    typedef qint16  int16_t;
+    typedef quint8  uint16_t;
 
-    typedef boost::int32_t   int32_t;
-    typedef boost::uint32_t  uint32_t;
+    typedef qint32  int32_t;
+    typedef quint32 uint32_t;
 
-    typedef boost::intmax_t  intmax_t;
-    typedef boost::uintmax_t uintmax_t;
-    typedef boost::int64_t   int64_t;
-    typedef boost::uint64_t  uint64_t;
+    typedef qint32  intmax_t;
+    typedef quint32 uintmax_t;
+    typedef qint64  int64_t;
+    typedef quint64 uint64_t;
 
 PTYPES_NAMESPACE_END
 

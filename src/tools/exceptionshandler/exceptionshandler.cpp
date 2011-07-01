@@ -24,7 +24,7 @@ ExceptionHandler::~ExceptionHandler()
 		else
 			return EXCEPTION_CONTINUE_SEARCH;    // если нет аварии
 	}
-	int ExceptionHandler::exception(const PString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep)
+	int ExceptionHandler::exception(const QString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep)
 	{
 		return ExceptionHandler::instance()->handleException(where);
 
@@ -38,7 +38,7 @@ ExceptionHandler::~ExceptionHandler()
 	{
 		ExceptionHandler::instance()->handleException(where);
 	}
-	void ExceptionHandler::exception(const PString &message)
+	void ExceptionHandler::exception(const QString &message)
 	{
 		ExceptionHandler::instance()->handleException(message);
 	}

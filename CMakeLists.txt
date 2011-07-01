@@ -52,7 +52,7 @@ endif (USE_GPROF)
 
  
 # Definitions
-set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -DUNICODE)
+set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -DUNICODE -DTOOLS_THREADS_BACKEND_QT -DTOOLS_TYPES_BACKEND_QT -DTOOLS_POINTERS_BACKEND_QT)
 
 # We're require at least Windows 2000 (http://msdn.microsoft.com/en-us/library/Aa383745)
 if (WIN32)

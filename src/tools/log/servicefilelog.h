@@ -5,7 +5,7 @@
 #include <fstream>
 #include <stdarg.h>
 #include <string.h>
-#include <boost/thread/mutex.hpp>
+#include "../threads/pmutex.h"
 #include "../pstrings/pstring.h"
 
 
@@ -16,7 +16,7 @@ public:
 
 	ServiceFileLog &operator<<(const PString &string)
 	{
-		boost::unique_lock<boost::mutex> locker(m_mutex);
+		PMutexLocker locker(m_mutex);
 
 		printTime();
 
@@ -33,7 +33,7 @@ public:
 
 	void print(const PString &format, ...)
 	{
-		boost::unique_lock<boost::mutex> locker(m_mutex);
+		PMutexLocker locker(m_mutex);
 
 		printTime();
 
@@ -87,7 +87,7 @@ private:
 	}
 
 private:
-	boost::mutex m_mutex;
+	PMutex m_mutex;
 	std::ofstream m_file;
 	PString m_lastError;
 	static ServiceFileLog *m_instance;

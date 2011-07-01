@@ -14,9 +14,6 @@ public:
 
 public:
 	virtual ~ThreadBase() {}
-
-protected:
-	virtual void run() = 0;
 };
 
 #endif /* THREADBASE_H_ */

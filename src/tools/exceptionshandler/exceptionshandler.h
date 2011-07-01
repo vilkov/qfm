@@ -1,7 +1,7 @@
 #ifndef EXCEPTIONSHANDLER_H_
 #define EXCEPTIONSHANDLER_H_
 
-#include "../pstrings/pstring.h"
+#include <QtCore/QString>
 
 
 class ExceptionHandler
@@ -12,20 +12,20 @@ public:
 
 #if defined(Q_CC_MSVC) && defined(USE_SEH_EXCEPTIONS)
 	static int exception(const char *where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
-	static int exception(const PString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
+	static int exception(const QString &where, unsigned int code, struct _EXCEPTION_POINTERS *ep);
 #else
 	static void exception(const char *where);
-	static void exception(const PString &message);
+	static void exception(const QString &message);
 	static void exception(const char *where, const char *what);
 #endif
 
 protected:
 #ifdef USE_SEH_EXCEPTIONS
 	virtual int handleException(const char *where) = 0;
-	virtual int handleException(const PString &message) = 0;
+	virtual int handleException(const QString &message) = 0;
 #else
 	virtual void handleException(const char *where) = 0;
-	virtual void handleException(const PString &message) = 0;
+	virtual void handleException(const QString &message) = 0;
 	virtual void handleException(const char *where, const char *what) = 0;
 #endif
 

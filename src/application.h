@@ -41,6 +41,7 @@ public:
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
 	virtual void handleException(const QString &message);
+	virtual void handleException(const char *where, const char *what);
 
 private:
 	QFileIconProvider m_iconProvider;

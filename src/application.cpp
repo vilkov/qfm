@@ -93,3 +93,8 @@ void Application::handleException(const QString &message)
 {
 //	m_log << message;
 }
+
+void Application::handleException(const char *where, const char *what)
+{
+
+}

@@ -16,7 +16,7 @@ class TaskThread : public PThread
 {
 public:
     TaskThread(TaskPool *pool, Task *task);
-    ~TaskThread();
+    virtual ~TaskThread();
 
     void handle(Task *task);
     void terminate();
@@ -28,7 +28,7 @@ private:
     Task *m_task;
     TaskPool *m_pool;
     volatile bool m_abort;
-    mutable PMutex m_mutex;
+    PMutex m_mutex;
     PCondition m_condition;
 };
 

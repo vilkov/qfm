@@ -2,8 +2,8 @@
 #define DESTCONTROLABLETASK_H_
 
 #include <QtCore/QObject>
-#include <QtCore/QMutex>
 #include "basetask.h"
+#include "../../../tools/threads/pmutex.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -26,37 +26,10 @@ protected:
 private:
 	struct MutexHolder : public QSharedData
 	{
-		QMutex mutex;
+		PMutex mutex;
 	};
 	typedef QExplicitlySharedDataPointer<MutexHolder> MutexHolderPointer;
-
-	class DeleteHandler : public QObject
-    {
-    public:
-    	DeleteHandler(DestControlableTask *task, QObject *parent) :
-    		QObject(parent),
-    		mutexHolder(task->m_mutexHolder),
-    		task(task)
-    	{}
-    	virtual ~DeleteHandler()
-    	{
-    		QMutexLocker locker(&mutexHolder->mutex);
-
-    		if (task != 0)
-    		{
-				task->m_handler = 0;
-				task->m_receiver = 0;
-				task->m_controllerDead = true;
-    		}
-    	}
-
-    	/*
-    	 * Just holds the reference to DestControlableTask::m_mutexHolder,
-    	 * so it can not be deleted before this object.
-    	 */
-    	MutexHolderPointer mutexHolder;
-    	DestControlableTask *task;
-    };
+	class DeleteHandler;
 
 private:
     MutexHolderPointer m_mutexHolder;

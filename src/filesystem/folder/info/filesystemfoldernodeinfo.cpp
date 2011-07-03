@@ -129,7 +129,7 @@ IFileControl *Info::create(const QString &fileName, FileType type, QString &erro
 	if (type == File)
 		return new Info(absoluteFilePath(fileName));
 	else
-		if (m_info.absoluteDir().mkdir(fileName))
+		if (QDir(m_info.absoluteFilePath()).mkdir(fileName))
 			return new Info(absoluteFilePath(fileName));
 		else
 			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));

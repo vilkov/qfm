@@ -7,6 +7,7 @@
 TASKSPOOL_NS_BEGIN
 
 TaskThread::TaskThread(TaskPool *pool, Task *task) :
+	PThread(),
 	m_task(task),
 	m_pool(pool),
 	m_abort(false)

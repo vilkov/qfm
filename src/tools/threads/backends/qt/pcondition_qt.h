@@ -13,7 +13,7 @@ public:
 
     void wait(PMutex &mutex) { m_condition.wait(&mutex.m_mutex); }
     void wakeOne() { m_condition.wakeOne(); }
-    void wakeAll() { m_condition.wakeOne(); }
+    void wakeAll() { m_condition.wakeAll(); }
 
 private:
     QWaitCondition m_condition;

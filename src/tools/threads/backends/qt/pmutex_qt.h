@@ -3,6 +3,7 @@
 
 #include <QtCore/QMutex>
 
+
 class PMutex
 {
 public:
@@ -24,7 +25,7 @@ private:
 class PMutexLocker
 {
 public:
-	PMutexLocker(PMutex &mutex) :
+	explicit PMutexLocker(PMutex &mutex) :
 		m_locker(&mutex.m_mutex)
 	{}
 

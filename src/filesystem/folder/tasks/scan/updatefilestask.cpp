@@ -4,7 +4,6 @@
 #include <QtCore/QDir>
 #include <QtCore/QDateTime>
 #include <QtCore/QDirIterator>
-#include <QtCore/QScopedPointer>
 
 
 FILE_SYSTEM_NS_BEGIN

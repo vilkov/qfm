@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVariant>
+#include "../../pointers/pscopedpointer.h"
 
 
 class ConfigOption

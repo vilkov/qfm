@@ -1,6 +1,7 @@
 #include "filesystempluginsmanager.h"
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
+#include "../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -23,7 +24,7 @@ Node *PluginsManager::node(const IFileControl *control, Node *parent) const
 	if (control->isFile())
 	{
 		QString error;
-		QScopedPointer<IFile> file(control->open(IFile::ReadOnly, error));
+		PScopedPointer<IFile> file(control->open(IFile::ReadOnly, error));
 
 		if (file)
 		{

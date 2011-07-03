@@ -3,7 +3,6 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QDirIterator>
-#include <QtCore/QScopedPointer>
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
@@ -18,12 +17,12 @@ public:
 	class Event : public ModelEvent
 	{
 	public:
-		Event(Type type, QScopedPointer<FileSystemList> &entries) :
+		Event(Type type, PScopedPointer<FileSystemList> &entries) :
 			ModelEvent(type),
 			entries(entries.take())
 		{}
 
-		QScopedPointer<FileSystemList> entries;
+		PScopedPointer<FileSystemList> entries;
 	};
 
 public:
@@ -35,12 +34,12 @@ public:
 
 	virtual void run(const volatile bool &stopedFlag)
 	{
-		QScopedPointer<FileSystemList> root(new FileSystemList(m_info));
+		PScopedPointer<FileSystemList> root(new FileSystemList(m_info));
 
 		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !stopedFlag; ++i)
 		{
 #ifndef Q_OS_WIN
-			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i))));
+			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i).fileName)));
 #else
 			Info info(root->absoluteFilePath(m_entries.at(i).fileName));
 #endif
@@ -48,7 +47,7 @@ public:
 			if (info.exists())
 				if (info.isDir())
 				{
-					QScopedPointer<FileSystemList> subnode(new FileSystemList(info));
+					PScopedPointer<FileSystemList> subnode(new FileSystemList(info));
 
 					scan(subnode.data(), stopedFlag);
 					root->incTotalSize(subnode->totalSize());
@@ -67,8 +66,8 @@ public:
 	}
 
 protected:
-	const QScopedPointer<FileSystemList> &subnode() const { return m_subnode; }
-	QScopedPointer<FileSystemList> &subnode() { return m_subnode; }
+	const PScopedPointer<FileSystemList> &subnode() const { return m_subnode; }
+	PScopedPointer<FileSystemList> &subnode() { return m_subnode; }
 
 private:
 	void scan(FileSystemList *node, const volatile bool &stopedFlag)
@@ -81,9 +80,9 @@ private:
 				if (info.isDir())
 				{
 #ifndef Q_OS_WIN
-					QScopedPointer<FileSystemList> subtree(new FileSystemList(m_permissions.getInfo(info)));
+					PScopedPointer<FileSystemList> subtree(new FileSystemList(m_permissions.getInfo(info)));
 #else
-					QScopedPointer<FileSystemList> subtree(new FileSystemList(info));
+					PScopedPointer<FileSystemList> subtree(new FileSystemList(info));
 #endif
 					scan(subtree.data(), stopedFlag);
 					node->incTotalSize(subtree->totalSize());
@@ -103,7 +102,7 @@ private:
 private:
 	Info m_info;
 	EntryList m_entries;
-	QScopedPointer<FileSystemList> m_subnode;
+	PScopedPointer<FileSystemList> m_subnode;
 
 #ifndef Q_OS_WIN
 private:

@@ -1,5 +1,5 @@
 #include "foldersview.h"
-#include <QtCore/QScopedPointer>
+#include "../../tools/pointers/pscopedpointer.h"
 
 
 FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
@@ -74,7 +74,7 @@ void FoldersView::closeCurrentTab()
 {
 	if (m_tabWidget.count() > 1)
 	{
-		QScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
+		PScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
 		static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 	}

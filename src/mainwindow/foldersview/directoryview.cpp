@@ -241,8 +241,11 @@ void DirectoryView::createDirectory()
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
+		PScopedPointer<FileSystem::IFileControl> control(m_node->createControl());
+		PScopedPointer<FileSystem::IFileControl> folder(control->create(dialog.value(), FileSystem::IFileControl::Folder, error));
 
-		m_node->createDirectory(dialog.value(), error);
+		if (!folder)
+			QMessageBox::critical(this, tr("Failed to create directory..."), error);
 	}
 }
 

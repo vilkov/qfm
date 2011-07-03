@@ -8,7 +8,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTask::PerformRemoveTask(QObject *receiver, QScopedPointer<FileSystemList> &entries) :
+PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<FileSystemList> &entries) :
 	PerformTask(receiver),
 	m_progress(receiver),
 	m_entries(entries.take())
@@ -36,7 +36,7 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event(Event::RemoveFiles, m_entries, m_canceled));
+		PScopedPointer<Event> event(new Event(Event::RemoveFiles, m_entries, m_canceled));
 		Application::postEvent(receiver(), event.take());
 	}
 }
@@ -79,7 +79,7 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 		else
 		{
 			QuestionAnswerEvent::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(
+			PScopedPointer<QuestionAnswerEvent> event(
 					new QuestionAnswerEvent(
 							tr("Failed to remove"),
 							tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath()),
@@ -120,7 +120,7 @@ void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgai
 		else
 		{
 			QuestionAnswerEvent::Result result;
-			QScopedPointer<QuestionAnswerEvent> event(
+			PScopedPointer<QuestionAnswerEvent> event(
 					new QuestionAnswerEvent(
 							tr("Failed to remove"),
 							tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error),

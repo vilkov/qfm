@@ -13,7 +13,7 @@ class PerformRemoveTask : public PerformTask
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
 public:
-	PerformRemoveTask(QObject *receiver, QScopedPointer<FileSystemList> &entries);
+	PerformRemoveTask(QObject *receiver, PScopedPointer<FileSystemList> &entries);
 
 	virtual void run(const volatile bool &stopedFlag);
 
@@ -27,7 +27,7 @@ protected:
 	QString m_error;
 	bool m_skipAllIfNotRemove;
 	TaskProgress m_progress;
-	QScopedPointer<FileSystemList> m_entries;
+	PScopedPointer<FileSystemList> m_entries;
 };
 
 FILE_SYSTEM_NS_END

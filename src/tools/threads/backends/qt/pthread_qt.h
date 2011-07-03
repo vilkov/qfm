@@ -9,7 +9,9 @@ class PThread : public ThreadBase, protected QThread
 {
 public:
 	PThread()
-	{}
+	{
+		start();
+	}
 
 	void wait() { QThread::wait(); }
 };

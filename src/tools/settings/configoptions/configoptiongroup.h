@@ -5,7 +5,6 @@
 #include <QGroupBox>
 #include <QGridLayout>
 #include <QSpacerItem>
-#include <QScopedPointer>
 #include "configoption.h"
 #include "configoptionvaluetemplate.h"
 
@@ -28,7 +27,7 @@ public:
 	virtual void setEnabled(bool value) { m_container->setEnabled(value); }
 	virtual QWidget *createGroup(const QFont &font)
 	{
-		QScopedPointer<QWidget> parent(m_container = new QWidget());
+		PScopedPointer<QWidget> parent(m_container = new QWidget());
 		QGridLayout *layout = new QGridLayout(parent.data());
 
 		for (size_type i = 0, size = m_settings.size(); i < size; ++i)
@@ -50,7 +49,7 @@ public:
 
 	ConfigOptionGroup *add(const QString &title)
 	{
-		QScopedPointer<ConfigOptionGroup> group(new ConfigOptionGroup(title, this));
+		PScopedPointer<ConfigOptionGroup> group(new ConfigOptionGroup(title, this));
 		m_settings.push_back(group.data());
 		return group.take();
 	}
@@ -58,7 +57,7 @@ public:
 	template <typename UserConfigOptionClass>
 	ConfigOptionValue *add(const qint32 &id, const QString &title)
 	{
-		QScopedPointer<UserConfigOptionClass> setting(new UserConfigOptionClass(id, title, this));
+		PScopedPointer<UserConfigOptionClass> setting(new UserConfigOptionClass(id, title, this));
 		m_settings.push_back(setting.data());
 		return setting.take();
 	}
@@ -66,7 +65,7 @@ public:
 	template <typename Editor>
 	ConfigOptionValue *add(const qint32 &id, const QString &title, const QVariant &defaultValue)
 	{
-		QScopedPointer<ConfigOptionValueTemplate<Editor> > setting(new ConfigOptionValueTemplate<Editor>(id, title, defaultValue, this));
+		PScopedPointer<ConfigOptionValueTemplate<Editor> > setting(new ConfigOptionValueTemplate<Editor>(id, title, defaultValue, this));
 		m_settings.push_back(setting.data());
 		return setting.take();
 	}
@@ -74,7 +73,7 @@ public:
 protected:
 	QWidget *createChildGroup(QWidget *parentWidget, const QFont &font)
 	{
-		QScopedPointer<QGroupBox> parent(static_cast<QGroupBox*>(m_container = new QGroupBox(title(), parentWidget)));
+		PScopedPointer<QGroupBox> parent(static_cast<QGroupBox*>(m_container = new QGroupBox(title(), parentWidget)));
 		QGridLayout *layout = new QGridLayout(parent.data());
 
 		for (size_type i = 0, size = m_settings.size(); i < size; ++i)

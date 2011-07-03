@@ -86,7 +86,7 @@ void Info::refresh()
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;
-	QScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
+	PScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
 
 	switch (mode)
 	{
@@ -104,11 +104,6 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 		error = file->lastError();
 
 	return 0;
-}
-
-void Info::close(IFile *file) const
-{
-	delete file;
 }
 
 IFileControl *Info::open(const QString &fileName, QString &error) const
@@ -140,11 +135,6 @@ IFileControl *Info::create(const QString &fileName, FileType type, QString &erro
 			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
 
 	return 0;
-}
-
-void Info::close(IFileControl *info) const
-{
-	delete info;
 }
 
 const QIcon &Info::icon() const

@@ -4,10 +4,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move) :
+PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move) :
 	PerformTask(receiver),
 	m_entries(entries.take()),
-	m_destination(destination),
+	m_destination(destination.take()),
 	m_move(move),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
@@ -33,7 +33,7 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 				++i)
 		{
 			m_progress.init((entry = m_entries->at(i))->fileName());
-			copyEntry(m_destination, entry, tryAgain = false, stopedFlag);
+			copyEntry(m_destination.data(), entry, tryAgain = false, stopedFlag);
 		}
 	}
 	else
@@ -41,7 +41,7 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event(m_entries, m_canceled, m_destination, m_move));
+		PScopedPointer<Event> event(new Event(m_entries, m_canceled, m_destination, m_move));
 		Application::postEvent(receiver(), event.take());
 	}
 }
@@ -109,15 +109,14 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	do
-		if (IFile *sourceFile = entry->open(IFile::ReadOnly, m_lastError))
-		{
+		if (m_sourceFile = entry->open(IFile::ReadOnly, m_lastError))
 			if (m_destEntry = destination->create(entry, m_lastError))
 			{
 				if (m_destFile = m_destEntry->open(IFile::WriteOnly, m_lastError))
 				{
 					m_written = 0;
 
-					while ((m_readed = sourceFile->read(m_buffer, FileReadWriteGranularity)) &&
+					while ((m_readed = m_sourceFile->read(m_buffer, FileReadWriteGranularity)) &&
 							!isControllerDead() && !stopedFlag && !m_canceled)
 						if (m_destFile->write(m_buffer, m_readed) == m_readed)
 						{
@@ -139,17 +138,9 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 							break;
 						}
 
-					m_destEntry->close(m_destFile);
-
-					if (m_written == sourceFile->size())
-					{
-						destination->close(m_destEntry);
-						entry->close(sourceFile);
+					if (m_written == m_sourceFile->size())
 						break;
-					}
 				}
-
-				destination->close(m_destEntry);
 			}
 			else
 				if (m_skipAllIfNotCopy || tryAgain)
@@ -162,9 +153,6 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 								arg(m_lastError),
 							tryAgain = false,
 							stopedFlag);
-
-			entry->close(sourceFile);
-		}
 		else
 			if (m_skipAllIfNotCopy || tryAgain)
 				break;
@@ -182,7 +170,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	QuestionAnswerEvent::Result result;
-	QScopedPointer<QuestionAnswerEvent> event(
+	PScopedPointer<QuestionAnswerEvent> event(
 			new QuestionAnswerEvent(
 					title,
 					text,
@@ -225,7 +213,7 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	QuestionAnswerEvent::Result result;
-	QScopedPointer<QuestionAnswerEvent> event(
+	PScopedPointer<QuestionAnswerEvent> event(
 			new QuestionAnswerEvent(
 					title,
 					text,

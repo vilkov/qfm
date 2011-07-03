@@ -40,7 +40,7 @@ void TaskProgress::postEvent()
 {
 	typedef BaseTask::UpdateProgressEvent UpdateProgressEvent;
 
-	QScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent(m_fileName, m_doneSize, m_timeElapsed.msecsTo(m_currentTime)));
+	PScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent(m_fileName, m_doneSize, m_timeElapsed.msecsTo(m_currentTime)));
 	Application::postEvent(m_receiver, event.take());
 }
 

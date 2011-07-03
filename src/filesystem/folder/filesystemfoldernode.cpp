@@ -284,16 +284,6 @@ void FolderNode::move(const QModelIndexList &list, INode *destination)
 		scanForCopy(entries, destination, true);
 }
 
-void FolderNode::createDirectory(const QString &fileName, QString &error)
-{
-	QDir dir(absoluteFilePath());
-
-	if (dir.mkdir(fileName))
-	{
-
-	}
-}
-
 void FolderNode::viewClosed(INodeView *nodeView)
 {
 	removeView(nodeView);
@@ -477,7 +467,7 @@ void FolderNode::updateFiles()
 		for (Values::size_type i = m_info.isRoot() ? 0 : 1, size = m_items.size(); i < size; ++i)
 			changes.insert(m_items.at(i).item->fileName(), *m_items.at(i).item);
 
-		QScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, changes));
+		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, changes));
 		setUpdating(true);
 		Application::instance()->taskPool().handle(task.take());
 	}
@@ -562,7 +552,7 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 		list.push_back(ScanFilesForRemoveTask::Entry(index, entry->fileName()));
 	}
 
-	QScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, list));
+	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, list));
 	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
@@ -573,7 +563,7 @@ void FolderNode::scanForRemoveEvent(const ModelEvent *e)
 	typedef const ScanFilesForRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
@@ -650,7 +640,7 @@ void FolderNode::removeCompleteEvent(const ModelEvent *e)
 	typedef const PerformRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
@@ -689,7 +679,7 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 
 	if (!list.isEmpty())
 	{
-		QScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
+		PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, list));
 		updateFirstColumn(updateRange);
 		Application::instance()->taskPool().handle(task.take());
 	}
@@ -701,7 +691,7 @@ void FolderNode::scanForSizeEvent(const ModelEvent *e)
 	typedef const ScanFilesForSizeTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FolderNodeEntry *entry;
@@ -741,7 +731,8 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 		list.push_back(ScanFilesForCopyTask::Entry(index, entry->fileName()));
 	}
 
-	QScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, destination->createControl(), false));
+	PScopedPointer<IFileControl> control(destination->createControl());
+	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, list, control, false));
 	updateFirstColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
@@ -752,7 +743,7 @@ void FolderNode::scanForCopyEvent(const ModelEvent *e)
 	typedef const ScanFilesForCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	QString lockReason = event->move ? tr("Moving...") : tr("Copying...");
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -765,7 +756,7 @@ void FolderNode::scanForCopyEvent(const ModelEvent *e)
 		updateRange.add(index, index);
 	}
 
-	QScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, event->destination, event->move));
+	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, const_cast<NotConstEvent>(event)->destination, event->move));
 	updateSecondColumn(updateRange);
 	Application::instance()->taskPool().handle(task.take());
 }
@@ -776,12 +767,10 @@ void FolderNode::copyCompleteEvent(const ModelEvent *e)
 	typedef const PerformCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	QScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
+	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FileSystemItem *entry;
-
-	delete event->destination;
 
 	if (!event->canceled && event->move)
 	{

@@ -20,18 +20,18 @@ public:
 	class Event : public PerformTask::Event
 	{
 	public:
-		Event(QScopedPointer<FileSystemList> &entries, bool canceled, IFileControl *destination, bool move) :
+		Event(PScopedPointer<FileSystemList> &entries, bool canceled, PScopedPointer<IFileControl> &destination, bool move) :
 			PerformTask::Event(CopyFiles, entries, canceled),
-			destination(destination),
+			destination(destination.take()),
 			move(move)
 		{}
 
-		IFileControl *destination;
+		PScopedPointer<IFileControl> destination;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(QObject *receiver, QScopedPointer<FileSystemList> &entries, IFileControl *destination, bool move);
+	PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move);
 
 	virtual void run(const volatile bool &stopedFlag);
 
@@ -42,8 +42,8 @@ protected:
 	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag);
 
 private:
-	QScopedPointer<FileSystemList> m_entries;
-	IFileControl *m_destination;
+	PScopedPointer<FileSystemList> m_entries;
+	PScopedPointer<IFileControl> m_destination;
 	bool m_move;
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;
@@ -53,8 +53,9 @@ private:
 	TaskProgress m_progress;
 
 private:
-	IFile *m_destFile;
-	IFileControl *m_destEntry;
+	PScopedPointer<IFile> m_destFile;
+	PScopedPointer<IFile> m_sourceFile;
+	PScopedPointer<IFileControl> m_destEntry;
 	IFile::size_type m_readed;
 	IFile::size_type m_written;
 	IFile::value_type m_buffer[FileReadWriteGranularity];

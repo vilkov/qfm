@@ -57,7 +57,6 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list);
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
-	virtual void createDirectory(const QString &fileName, QString &error);
 
 	/* INode::IFileNavigation */
 	virtual void viewClosed(INodeView *nodeView);

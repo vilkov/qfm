@@ -16,7 +16,7 @@ void ScanFilesForSizeTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event(Event::ScanFilesForSize, subnode()));
+		PScopedPointer<Event> event(new Event(Event::ScanFilesForSize, subnode()));
 		Application::postEvent(receiver(), event.take());
 	}
 }
@@ -32,15 +32,15 @@ void ScanFilesForRemoveTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event(Event::ScanFilesForRemove, subnode()));
+		PScopedPointer<Event> event(new Event(Event::ScanFilesForRemove, subnode()));
 		Application::postEvent(receiver(), event.take());
 	}
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, IFileControl *destination, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<IFileControl> &destination, bool move) :
 	ScanFilesTask(receiver, info, entries),
-	m_destination(destination),
+	m_destination(destination.take()),
 	m_move(move)
 {}
 
@@ -50,7 +50,7 @@ void ScanFilesForCopyTask::run(const volatile bool &stopedFlag)
 
 	if (!stopedFlag && !isControllerDead())
 	{
-		QScopedPointer<Event> event(new Event(Event::ScanFilesForCopy, subnode(), m_destination, m_move));
+		PScopedPointer<Event> event(new Event(Event::ScanFilesForCopy, subnode(), m_destination, m_move));
 		Application::postEvent(receiver(), event.take());
 	}
 }

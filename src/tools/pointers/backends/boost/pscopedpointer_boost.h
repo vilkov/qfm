@@ -8,13 +8,16 @@ template <typename T>
 class PScopedPointer
 {
 public:
-    explicit PScopedPointer(T *p = 0) :
+    PScopedPointer(T *p = 0) :
     	m_data(p)
     {}
 
     T &operator*() const { return m_data.operator*(); }
     T *operator->() const { return m_data.operator->(); }
     T *data() const { return m_data.get(); }
+    operator bool() const { return !m_data.isNull(); }
+
+    class_type &operator=(T *p) { reset(p); return *this; }
 
     void reset(T *p = 0) { m_data.reset(p); }
     void swap(PScopedPointer &other) { m_data.swap(other.m_data); }

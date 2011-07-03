@@ -4,7 +4,6 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QScopedPointer>
 #include <QCoreApplication>
 #include "../../tools/settings/configoptions/configoptionvaluedefault.h"
 

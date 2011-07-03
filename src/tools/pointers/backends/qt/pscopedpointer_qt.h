@@ -8,24 +8,30 @@ template <typename T>
 class PScopedPointer
 {
 public:
+	typedef PScopedPointer<T> class_type;
+
+public:
     explicit PScopedPointer(T *p = 0) :
     	m_data(p)
     {}
 
     T &operator*() const { return *m_data; }
     T *operator->() const { return m_data.operator->(); }
-    T *data() const { return m_data.get(); }
+    T *data() const { return m_data.data(); }
+    operator bool() const { return !m_data.isNull(); }
 
-    void reset(T *p = 0) { m_data.reset(p); }
-    void swap(PScopedPointer &other) { m_data.swap(other.m_data); }
+    class_type &operator=(T *p) { reset(p); return *this; }
+
+    bool reset(T *p = 0) { m_data.reset(p);  return !m_data.isNull(); }
+    void swap(class_type &other) { m_data.swap(other.m_data); }
     T *take() { return m_data.take(); }
 
 private:
-    PScopedPointer(PScopedPointer const &);
-    PScopedPointer &operator=(PScopedPointer const &);
+    PScopedPointer(const class_type &);
+    class_type &operator=(const class_type &);
 
-    void operator==(PScopedPointer const &) const;
-    void operator!=(PScopedPointer const &) const;
+    void operator==(const class_type &) const;
+    void operator!=(const class_type &) const;
 
 private:
     QScopedPointer<T> m_data;

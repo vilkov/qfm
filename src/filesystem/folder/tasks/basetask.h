@@ -13,6 +13,7 @@
 #include "../containers/filesystemfoldernodevalues.h"
 #include "../../interfaces/filesysteminode.h"
 #include "../../../tools/taskspool/task.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN

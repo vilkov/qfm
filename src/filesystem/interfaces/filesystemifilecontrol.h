@@ -25,12 +25,10 @@ public:
 
 public:
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
-	virtual void close(IFile *file) const = 0;
 
 	virtual IFileControl *open(const QString &fileName, QString &error) const = 0;
 	virtual IFileControl *create(IFileInfo *info, QString &error) const = 0;
 	virtual IFileControl *create(const QString &fileName, FileType type, QString &error) const = 0;
-	virtual void close(IFileControl *info) const = 0;
 };
 
 FILE_SYSTEM_NS_END

@@ -7,7 +7,6 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QScopedPointer>
 #include <QCoreApplication>
 #include "../../tools/settings/configoptions/configoptionvalue.h"
 
@@ -34,7 +33,7 @@ public:
 	}
 	virtual QWidget *createEditor(QWidget *parent)
 	{
-		QScopedPointer<QWidget> widget(new QWidget(parent));
+		PScopedPointer<QWidget> widget(new QWidget(parent));
 		QHBoxLayout *layout = new QHBoxLayout(widget.data());
 
 	    layout->setSpacing(1);

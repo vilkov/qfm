@@ -31,14 +31,10 @@ endif ()
 find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml REQUIRED)
 include (${QT_USE_FILE})
 set (qfm_LIBS ${qfm_LIBS} "${QT_LIBRARIES}")
-set (qfm_DEFINITIONS ${qfm_DEFINITIONS} ${QT_DEFINITIONS})
-
-#find_package (QtSingleInstance REQUIRED)
-#set (qfm_INCLUDES ${qfm_INCLUDES} "${QTSINGLEINSTANCE_INCLUDE}")
-#set (qfm_LIBS ${qfm_LIBS} "${QTSINGLEINSTANCE_LIBRARY}")
+add_definitions (${QT_DEFINITIONS})
 
 find_package (Stlsoft REQUIRED)
-set (qfm_INCLUDES ${qfm_INCLUDES} "${STLSOFT_INCLUDE}")
+include_directories (${STLSOFT_INCLUDE})
 
 
 # Includes
@@ -49,14 +45,18 @@ set (qfm_INCLUDES ${qfm_INCLUDES} "${STLSOFT_INCLUDE}")
 if (USE_GPROF)
 	set (qfm_LIBS ${qfm_LIBS} gmon)
 endif (USE_GPROF)
-
  
 # Definitions
-set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -DUNICODE -DTOOLS_THREADS_BACKEND_QT -DTOOLS_TYPES_BACKEND_QT -DTOOLS_POINTERS_BACKEND_QT)
+add_definitions (
+    -DUNICODE
+    -DTOOLS_THREADS_BACKEND_QT
+    -DTOOLS_TYPES_BACKEND_QT
+    -DTOOLS_POINTERS_BACKEND_QT
+)
 
 # We're require at least Windows 2000 (http://msdn.microsoft.com/en-us/library/Aa383745)
 if (WIN32)
-    set (qfm_DEFINITIONS ${qfm_DEFINITIONS} -D_WIN32_WINNT=0x0500 -DWINVER=0x0500)
+    add_definitions (-D_WIN32_WINNT=0x0500 -DWINVER=0x0500)
 endif ()
 
 
@@ -72,11 +72,6 @@ add_subdirectory("resources")
 QT4_ADD_RESOURCES(qfm_RESOURCES_BIN ${qfm_RESOURCES})
 set (qfm_SOURCES ${qfm_SOURCES} ${qfm_RESOURCES_BIN})
 
-
-# Includes and Definitions
-include_directories (${qfm_INCLUDES})
-link_directories (${qfm_LIB_DIRS})
-add_definitions (${qfm_DEFINITIONS})
 
 # Set some OS specific settings
 if (WIN32)

@@ -12,13 +12,13 @@ public:
 	class Event : public ModelEvent
 	{
 	public:
-		Event(Type type, QScopedPointer<FileSystemList> &entries, bool canceled) :
+		Event(Type type, PScopedPointer<FileSystemList> &entries, bool canceled) :
 			ModelEvent(type),
 			entries(entries.take()),
 			canceled(canceled)
 		{}
 
-		QScopedPointer<FileSystemList> entries;
+		PScopedPointer<FileSystemList> entries;
 		bool canceled;
 	};
 

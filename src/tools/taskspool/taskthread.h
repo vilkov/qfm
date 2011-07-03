@@ -18,8 +18,8 @@ public:
     TaskThread(TaskPool *pool, Task *task);
     virtual ~TaskThread();
 
+	virtual void terminate();
     void handle(Task *task);
-    void terminate();
 
 protected:
     virtual void run();

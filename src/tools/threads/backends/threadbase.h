@@ -15,6 +15,9 @@ public:
 public:
 	virtual ~ThreadBase() {}
 
+	virtual void start() = 0;
+	virtual void terminate() = 0;
+
 protected:
 	virtual void run() = 0;
 };

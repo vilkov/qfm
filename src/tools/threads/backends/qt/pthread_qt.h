@@ -12,7 +12,10 @@ public:
 		m_holder(this)
 	{}
 
-    void wait() { m_holder.wait(); }
+	virtual void start() { m_holder.start(Holder::LowPriority); }
+	virtual void terminate() { m_holder.terminate(); }
+
+	void wait() { m_holder.wait(); }
 
 private:
     class Holder : public QThread
@@ -21,9 +24,7 @@ private:
     	Holder(PThread *thread) :
     		QThread(),
         	m_thread(thread)
-    	{
-    		start(LowPriority);
-    	}
+    	{}
 
     protected:
         virtual void run() { m_thread->run(); }

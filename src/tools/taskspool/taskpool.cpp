@@ -1,5 +1,5 @@
 #include "taskpool.h"
-#include <algorithm>
+#include "../pointers/pscopedpointer.h"
 
 
 template <typename T>
@@ -11,7 +11,8 @@ struct Destroy
 template <typename Container>
 void deleteAll(Container &container)
 {
-	std::for_each(container.begin(), container.end(), Destroy<typename Container::value_type>());
+	for (typename Container::iterator it = container.begin(), end = container.end(); it != end; ++it)
+		delete *it;
 }
 
 
@@ -34,9 +35,13 @@ void TaskPool::handle(Task *task)
 	if (!m_clearing)
 		if (m_freeThreads.empty())
 			if (m_threads.size() < m_maxThreads)
-				m_threads.push_back(new TaskThread(this, task));
+			{
+				PScopedPointer<TaskThread> thread(new TaskThread(this, task));
+				m_threads.push_back(thread.data());
+				thread.take()->start();
+			}
 			else
-				m_tasks.push_front(task);
+				m_tasks.push_back(task);
 		else
 		{
 			m_freeThreads.front()->handle(task);

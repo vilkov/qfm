@@ -10,6 +10,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QClipboard>
 
+#include <QDebug>
 
 FILE_SYSTEM_NS_BEGIN
 
@@ -647,7 +648,10 @@ void FolderNode::removeCompleteEvent(const ModelEvent *e)
 
 	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 		if ((entry = entries->at(i))->shouldRemove())
+		{
+			qDebug() << entry->fileName() << m_items.indexOf(entry->fileName());
 			removeEntry(m_items.indexOf(entry->fileName()));
+		}
 		else
 		{
 			index = m_items.indexOf(entry->fileName());

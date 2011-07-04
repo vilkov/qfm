@@ -38,7 +38,7 @@ public:
     void closeCurrentTab();
 	void setFocus();
 
-	void skipRefreshTabOnce();
+	void skipOneRefreshTab();
 
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }

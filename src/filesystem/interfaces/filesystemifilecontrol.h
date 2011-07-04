@@ -24,9 +24,11 @@ public:
 	};
 
 public:
-	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
+	virtual bool rename(const QString &newFileName, QString &error) const = 0;
 
+	virtual IFile *open(IFile::OpenMode mode, QString &error) const = 0;
 	virtual IFileControl *open(const QString &fileName, QString &error) const = 0;
+
 	virtual IFileControl *create(IFileInfo *info, QString &error) const = 0;
 	virtual IFileControl *create(const QString &fileName, FileType type, QString &error) const = 0;
 };

@@ -33,9 +33,11 @@ public:
 	virtual void refresh();
 
 	/* IFileControl */
-	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
+	virtual bool rename(const QString &newFileName, QString &error) const;
 
+	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
 	virtual IFileControl *open(const QString &fileName, QString &error) const;
+
 	virtual IFileControl *create(IFileInfo *info, QString &error) const;
 	virtual IFileControl *create(const QString &fileName, FileType type, QString &error) const;
 

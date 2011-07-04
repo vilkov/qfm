@@ -28,7 +28,7 @@ public:
 	virtual FileSystem::INode *root() const;
 	virtual int columnCount() const;
 	virtual FileSystem::IFileControl *createControl() const { return 0; }
-	virtual QString absolutePath(const QModelIndex &idx) const { return QString(); }
+	virtual FileSystem::IFileInfo *info(const QModelIndex &idx) const { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }

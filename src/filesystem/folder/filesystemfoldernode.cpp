@@ -172,14 +172,14 @@ IFileControl *FolderNode::createControl() const
 	return new Info(m_info);
 }
 
-QString FolderNode::absolutePath(const QModelIndex &idx) const
+IFileInfo *FolderNode::info(const QModelIndex &idx) const
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
-		return static_cast<Node*>(Node::parent())->absoluteFilePath();
+		return 0;
 	else
-		return m_items.at(index.row()).item->absoluteFilePath();
+		return m_items.at(index.row()).item;
 }
 
 bool FolderNode::isDir() const

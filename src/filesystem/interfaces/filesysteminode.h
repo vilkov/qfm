@@ -17,7 +17,7 @@ public:
 	virtual INode *root() const = 0;
 	virtual int columnCount() const = 0;
 	virtual IFileControl *createControl() const = 0;
-	virtual QString absolutePath(const QModelIndex &idx) const = 0;
+	virtual IFileInfo *info(const QModelIndex &idx) const = 0;
 };
 
 FILE_SYSTEM_NS_END

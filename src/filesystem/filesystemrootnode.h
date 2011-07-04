@@ -27,7 +27,7 @@ public:
 	virtual INode *root() const { return (INode*)this; }
 	virtual int columnCount() const { return 0; }
 	virtual IFileControl *createControl() const { return 0; }
-	virtual QString absolutePath(const QModelIndex &idx) const { return QString(); }
+	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }

@@ -83,6 +83,19 @@ void Info::refresh()
 	m_info.refresh();
 }
 
+bool Info::rename(const QString &newFileName, QString &error) const
+{
+	QFile file(absoluteFilePath());
+
+	if (file.rename(absoluteFilePath(newFileName)))
+		return true;
+	else
+	{
+		error = file.errorString();
+		return false;
+	}
+}
+
 IFile *Info::open(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;

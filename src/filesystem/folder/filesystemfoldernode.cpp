@@ -177,7 +177,7 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
-		return 0;
+		return static_cast<Node*>(Node::parent());
 	else
 		return m_items.at(index.row()).item;
 }

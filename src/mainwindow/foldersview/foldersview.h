@@ -38,6 +38,8 @@ public:
     void closeCurrentTab();
 	void setFocus();
 
+	void skipRefreshTabOnce();
+
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
 	void saveTabs(QXmlStreamWriter &stream) const;

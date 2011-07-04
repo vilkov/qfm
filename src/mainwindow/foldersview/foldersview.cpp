@@ -85,6 +85,11 @@ void FoldersView::setFocus()
 	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 }
 
+void FoldersView::skipRefreshTabOnce()
+{
+	m_doNotRefreshTab = true;
+}
+
 void FoldersView::saveTabs(QXmlStreamWriter &stream) const
 {
 	QString name = QString::fromLatin1("Tab");

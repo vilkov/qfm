@@ -100,6 +100,10 @@ public:
 		delete value.item;
 		delete value.node;
 		m_list.removeAt(index);
+
+		for (ValueMap::iterator it = m_map.begin(), end = m_map.end(); it != end; ++it)
+			if (*it >= index)
+				--*it;
 	}
 
 private:

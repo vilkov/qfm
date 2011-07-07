@@ -108,6 +108,20 @@ public:
 		quint64 progress;
 		quint64 timeElapsed;
 	};
+
+
+	class CompletedProgressEvent : public ModelEvent
+	{
+	public:
+		CompletedProgressEvent(const QString &fileName, quint64 timeElapsed) :
+			ModelEvent(CompletedProgress),
+			fileName(fileName),
+			timeElapsed(timeElapsed)
+		{}
+
+		QString fileName;
+		quint64 timeElapsed;
+	};
 };
 
 FILE_SYSTEM_NS_END

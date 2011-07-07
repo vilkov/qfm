@@ -80,6 +80,12 @@ bool FolderNode::event(QEvent *e)
 			updateProgressEvent(static_cast<ModelEvent*>(e));
 			return true;
 		}
+		case ModelEvent::CompletedProgress:
+		{
+			e->accept();
+			completedProgressEvent(static_cast<ModelEvent*>(e));
+			return true;
+		}
 		default:
 			break;
 	}
@@ -167,11 +173,6 @@ int FolderNode::columnCount() const
 	return columnCount(QModelIndex());
 }
 
-IFileControl *FolderNode::createControl() const
-{
-	return new Info(m_info);
-}
-
 IFileInfo *FolderNode::info(const QModelIndex &idx) const
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
@@ -180,6 +181,31 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return static_cast<Node*>(Node::parent());
 	else
 		return m_items.at(index.row()).item;
+}
+
+IFileControl *FolderNode::createControl() const
+{
+	return new Info(m_info);
+}
+
+IFileControl *FolderNode::createControl(const QModelIndex &idx, PluginsManager *plugins)
+{
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
+		return static_cast<Node*>(Node::parent())->createControl();
+	else
+	{
+		Values::Value &value = m_items[index.row()];
+
+		if (value.node)
+			return value.node->createControl();
+		else
+			if (value.node = createNode(*value.item, plugins))
+				return value.node->createControl();
+			else
+				return new Info(*value.item);
+	}
 }
 
 bool FolderNode::isDir() const
@@ -221,11 +247,6 @@ QString FolderNode::absoluteFilePath(const QString &fileName) const
 QDateTime FolderNode::lastModified() const
 {
 	return m_info.lastModified();
-}
-
-bool FolderNode::exists(IFileInfo *info) const
-{
-	return m_info.exists(info);
 }
 
 void FolderNode::refresh()
@@ -829,6 +850,20 @@ void FolderNode::updateProgressEvent(const ModelEvent *e)
 	FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(m_items[index].item);
 
 	entry->setDoneSize(event->progress);
+	entry->setTimeElapsed(event->timeElapsed);
+	updateSecondColumn(index, entry);
+}
+
+void FolderNode::completedProgressEvent(const ModelEvent *e)
+{
+	typedef PerformTask::CompletedProgressEvent * NotConstEvent;
+	typedef const PerformTask::CompletedProgressEvent * Event;
+	Event event = static_cast<Event>(e);
+
+	Values::size_type index = m_items.indexOf(event->fileName);
+	FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(m_items[index].item);
+
+	entry->setDoneSize(entry->totalSize().toULongLong());
 	entry->setTimeElapsed(event->timeElapsed);
 	updateSecondColumn(index, entry);
 }

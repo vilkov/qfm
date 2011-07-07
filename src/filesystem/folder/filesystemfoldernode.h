@@ -36,8 +36,9 @@ public:
 	/* INode */
 	virtual INode *root() const;
 	virtual int columnCount() const;
-	virtual IFileControl *createControl() const;
 	virtual IFileInfo *info(const QModelIndex &idx) const;
+	virtual IFileControl *createControl() const;
+	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const;
@@ -48,7 +49,6 @@ public:
 	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
-	virtual bool exists(IFileInfo *info) const;
 	virtual void refresh();
 
 	/* INode::IFileOperations */
@@ -113,6 +113,7 @@ protected:
 
 	void questionAnswerEvent(const ModelEvent *event);
 	void updateProgressEvent(const ModelEvent *event);
+	void completedProgressEvent(const ModelEvent *event);
 
 private:
 	QModelIndex index(int column, FolderNodeItem *item) const;

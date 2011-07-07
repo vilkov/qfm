@@ -21,7 +21,8 @@ public:
 		RemoveFiles = QEvent::User + 5,
 		CopyFiles = QEvent::User + 6,
 		QuestionAnswer = QEvent::User + 7,
-		UpdateProgress = QEvent::User + 8
+		UpdateProgress = QEvent::User + 8,
+		CompletedProgress = QEvent::User + 9
 	};
 
 protected:

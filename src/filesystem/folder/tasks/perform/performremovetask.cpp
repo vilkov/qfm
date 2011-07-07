@@ -27,11 +27,16 @@ void PerformRemoveTask::run(const volatile bool &stopedFlag)
 			++i)
 	{
 		if ((entry = m_entries->at(i))->isDir())
+		{
 			m_progress.init(entry->fileName());
+			removeEntry(entry, tryAgain = false, stopedFlag);
+			m_progress.completed();
+		}
 		else
+		{
 			m_progress.clear();
-
-		removeEntry(entry, tryAgain = false, stopedFlag);
+			removeEntry(entry, tryAgain = false, stopedFlag);
+		}
 	}
 
 	if (!stopedFlag && !isControllerDead())

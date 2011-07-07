@@ -34,6 +34,7 @@ public:
 	void setTimeElapsed(quint64 value) { m_timeElapsed = value; }
 
 	bool isInProgress() const { return !m_doneSize.isNull() && m_totalSize.toULongLong() > 0; }
+	bool isCompleted() const { return m_doneSize == m_totalSize; }
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
 
 	bool isLocked() const { return m_locked; }

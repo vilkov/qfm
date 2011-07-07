@@ -27,8 +27,9 @@ public:
 	/* INode */
 	virtual FileSystem::INode *root() const;
 	virtual int columnCount() const;
-	virtual FileSystem::IFileControl *createControl() const { return 0; }
 	virtual FileSystem::IFileInfo *info(const QModelIndex &idx) const { return 0; }
+	virtual FileSystem::IFileControl *createControl() const { return 0; }
+	virtual FileSystem::IFileControl *createControl(const QModelIndex &idx, FileSystem::PluginsManager *plugins) { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }
@@ -39,7 +40,6 @@ public:
 	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
-	virtual bool exists(IFileInfo *info) const;
 	virtual void refresh();
 
 	/* INode::IFileOperations */

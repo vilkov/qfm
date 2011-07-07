@@ -12,16 +12,16 @@ TaskProgress::TaskProgress(QObject *receiver) :
 
 void TaskProgress::init(const QString &fileName)
 {
-	m_doneSize = 0;
+	m_progress = 0;
 	m_fileName = fileName;
-	m_baseTime = m_currentTime = m_timeElapsed = QDateTime::currentDateTime();
+	m_baseTime = m_currentTime = m_startTime = QDateTime::currentDateTime();
 }
 
 void TaskProgress::update(quint64 progressIncrement)
 {
 	if (!m_fileName.isEmpty())
 	{
-		m_doneSize += progressIncrement;
+		m_progress += progressIncrement;
 
 		if (m_baseTime.secsTo(m_currentTime = QDateTime::currentDateTime()) > 1)
 		{
@@ -31,6 +31,14 @@ void TaskProgress::update(quint64 progressIncrement)
 	}
 }
 
+void TaskProgress::completed()
+{
+	typedef BaseTask::CompletedProgressEvent Event;
+
+	PScopedPointer<Event> event(new Event(m_fileName, m_startTime.msecsTo(QDateTime::currentDateTime())));
+	Application::postEvent(m_receiver, event.take());
+}
+
 void TaskProgress::clear()
 {
 	m_fileName.clear();
@@ -38,9 +46,9 @@ void TaskProgress::clear()
 
 void TaskProgress::postEvent()
 {
-	typedef BaseTask::UpdateProgressEvent UpdateProgressEvent;
+	typedef BaseTask::UpdateProgressEvent Event;
 
-	PScopedPointer<UpdateProgressEvent> event(new UpdateProgressEvent(m_fileName, m_doneSize, m_timeElapsed.msecsTo(m_currentTime)));
+	PScopedPointer<Event> event(new Event(m_fileName, m_progress, m_startTime.msecsTo(m_currentTime)));
 	Application::postEvent(m_receiver, event.take());
 }
 

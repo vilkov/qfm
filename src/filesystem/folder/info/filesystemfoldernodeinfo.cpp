@@ -71,16 +71,16 @@ QString Info::absoluteFilePath(const QString &fileName) const
 #endif
 }
 
-bool Info::exists(IFileInfo *info) const
-{
-	return QDir(m_info.absoluteFilePath()).exists(info->fileName());
-}
-
 void Info::refresh()
 {
 	m_displayType = QString();
 	m_icon = QIcon();
 	m_info.refresh();
+}
+
+bool Info::contains(IFileControl *info) const
+{
+	return QDir(m_info.absoluteFilePath()).exists(info->fileName());
 }
 
 bool Info::rename(const QString &newFileName, QString &error) const
@@ -119,17 +119,17 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 	return 0;
 }
 
-IFileControl *Info::open(const QString &fileName, QString &error) const
+IFileControl *Info::open(IFileControl *info, QString &error) const
 {
-	return new Info(absoluteFilePath(fileName));
+	return new Info(absoluteFilePath(info->fileName()));
 }
 
-IFileControl *Info::create(IFileInfo *info, QString &error) const
+IFileControl *Info::create(IFileControl *info, QString &error) const
 {
 	if (info->isFile())
 		return new Info(absoluteFilePath(info->fileName()));
 	else
-		if (m_info.absoluteDir().mkdir(info->fileName()))
+		if (QDir(m_info.absoluteFilePath()).mkdir(info->fileName()))
 			return new Info(absoluteFilePath(info->fileName()));
 		else
 			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(info->fileName()));
@@ -137,15 +137,15 @@ IFileControl *Info::create(IFileInfo *info, QString &error) const
 	return 0;
 }
 
-IFileControl *Info::create(const QString &fileName, FileType type, QString &error) const
+IFileControl *Info::create(const QString &name, FileType type, QString &error) const
 {
 	if (type == File)
-		return new Info(absoluteFilePath(fileName));
+		return new Info(absoluteFilePath(name));
 	else
-		if (QDir(m_info.absoluteFilePath()).mkdir(fileName))
-			return new Info(absoluteFilePath(fileName));
+		if (QDir(m_info.absoluteFilePath()).mkdir(name))
+			return new Info(absoluteFilePath(name));
 		else
-			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
+			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(name));
 
 	return 0;
 }

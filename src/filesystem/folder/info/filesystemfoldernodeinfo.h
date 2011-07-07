@@ -29,17 +29,17 @@ public:
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
-	virtual bool exists(IFileInfo *info) const;
 	virtual void refresh();
 
 	/* IFileControl */
+	virtual bool contains(IFileControl *info) const;
 	virtual bool rename(const QString &newFileName, QString &error) const;
 
 	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
-	virtual IFileControl *open(const QString &fileName, QString &error) const;
+	virtual IFileControl *open(IFileControl *info, QString &error) const;
 
-	virtual IFileControl *create(IFileInfo *info, QString &error) const;
-	virtual IFileControl *create(const QString &fileName, FileType type, QString &error) const;
+	virtual IFileControl *create(IFileControl *info, QString &error) const;
+	virtual IFileControl *create(const QString &name, FileType type, QString &error) const;
 
 
 public:

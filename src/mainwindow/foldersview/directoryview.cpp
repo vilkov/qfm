@@ -210,38 +210,33 @@ void DirectoryView::rename()
 
 	if (index.isValid())
 	{
-		FileSystem::IFileInfo *info = m_node->info(index);
-		StringDialog dialog(
-				info->isDir() ?
-						tr("Enter new name for directory \"%1\"").arg(info->fileName()) :
-						tr("Enter new name for file \"%1\"").arg(info->fileName()),
-				tr("Name"),
-				info->fileName(),
-				this);
+		PScopedPointer<FileSystem::IFileControl> control(m_node->createControl(index, Application::instance()->mainWindow().plugins()));
 
-		m_parent->skipOneRefreshTab();
-
-		if (dialog.exec() == QDialog::Accepted)
+		if (control)
 		{
-			QString error;
-			PScopedPointer<FileSystem::IFileControl> entry;
-			PScopedPointer<FileSystem::IFileControl> control(m_node->createControl());
+			StringDialog dialog(
+					control->isDir() ?
+							tr("Enter new name for directory \"%1\"").arg(control->fileName()) :
+							tr("Enter new name for file \"%1\"").arg(control->fileName()),
+					tr("Name"),
+					control->fileName(),
+					this);
 
-			if (entry = control->open(info->fileName(), error))
-				if (entry->rename(dialog.value(), error))
+			m_parent->skipOneRefreshTab();
+
+			if (dialog.exec() == QDialog::Accepted)
+			{
+				QString error;
+
+				if (control->rename(dialog.value(), error))
 					m_node->refresh();
 				else
 					QMessageBox::critical(this,
-							info->isDir() ?
-									tr("Failed to rename directory \"%1\"").arg(info->fileName()) :
-									tr("Failed to rename file \"%1\"").arg(info->fileName()),
+							control->isDir() ?
+									tr("Failed to rename directory \"%1\"").arg(control->fileName()) :
+									tr("Failed to rename file \"%1\"").arg(control->fileName()),
 									error);
-			else
-				QMessageBox::critical(this,
-						info->isDir() ?
-								tr("Failed to rename directory \"%1\"").arg(info->fileName()) :
-								tr("Failed to rename file \"%1\"").arg(info->fileName()),
-								error);
+			}
 		}
 	}
 }

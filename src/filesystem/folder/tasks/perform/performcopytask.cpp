@@ -34,6 +34,7 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 		{
 			m_progress.init((entry = m_entries->at(i))->fileName());
 			copyEntry(m_destination.data(), entry, tryAgain = false, stopedFlag);
+			m_progress.completed();
 		}
 	}
 	else
@@ -49,16 +50,19 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
 {
 	do
-		if (destination->exists(entry))
+		if (destination->contains(entry))
 			if (entry->isDir())
-				if (IFileControl *dest = destination->open(entry->fileName(), m_lastError))
+			{
+				PScopedPointer<IFileControl> dest;
+
+				if (dest = destination->open(entry, m_lastError))
 					for (FileSystemList::size_type i = 0;
 							i < static_cast<FileSystemList*>(entry)->size() &&
 							!isControllerDead() &&
 							!stopedFlag &&
 							!m_canceled;
 							++i)
-						copyEntry(dest, static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
 				else
 					if (m_skipAllIfNotCopy || tryAgain)
 						break;
@@ -69,8 +73,9 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 									arg(destination->absoluteFilePath(entry->fileName())),
 								tryAgain = false,
 								stopedFlag);
+			}
 			else
-				if (m_overwriteAll || tryAgain)
+				if (m_overwriteAll)
 					copyFile(destination, entry, tryAgain = false, stopedFlag);
 				else
 					askForOverwrite(
@@ -83,24 +88,28 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 							stopedFlag);
 		else
 			if (entry->isDir())
-				if (IFileControl *dest = destination->open(entry->fileName(), m_lastError))
+			{
+				PScopedPointer<IFileControl> dest;
+
+				if (dest = destination->create(entry, m_lastError))
 					for (FileSystemList::size_type i = 0;
 							i < static_cast<FileSystemList*>(entry)->size() &&
 							!isControllerDead() &&
 							!stopedFlag &&
 							!m_canceled;
 							++i)
-						copyEntry(dest, static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
 				else
-					if (m_skipAllIfNotCopy || tryAgain)
+					if (m_skipAllIfNotCopy)
 						break;
 					else
 						askForSkipIfNotCopy(
 								tr("Failed to copy..."),
-								tr("Failed to open directory \"%1\". Skip it?").
+								tr("Failed to create directory \"%1\". Skip it?").
 									arg(destination->absoluteFilePath(entry->fileName())),
 								tryAgain = false,
 								stopedFlag);
+			}
 			else
 				copyFile(destination, entry, tryAgain = false, stopedFlag);
 	while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);

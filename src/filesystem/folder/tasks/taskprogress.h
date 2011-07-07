@@ -14,18 +14,19 @@ public:
 
 	void init(const QString &fileName);
 	void update(quint64 progressIncrement);
+	void completed();
 	void clear();
 
 private:
 	void postEvent();
 
 private:
-	quint64 m_doneSize;
+	quint64 m_progress;
 	QString m_fileName;
 	QObject *m_receiver;
 	QDateTime m_baseTime;
 	QDateTime m_currentTime;
-	QDateTime m_timeElapsed;
+	QDateTime m_startTime;
 };
 
 FILE_SYSTEM_NS_END

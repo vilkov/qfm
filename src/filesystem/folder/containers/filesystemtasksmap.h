@@ -36,6 +36,9 @@ public:
 				list.removeAt(index);
 
 			m_names.remove(name);
+
+			if (list.isEmpty())
+				m_tasks.remove(task);
 		}
 	}
 	void removeAll(const QString &name)
@@ -61,6 +64,16 @@ public:
 		}
 
 		return 0;
+	}
+	void resetTask(TasksPool::Task *task, const QString &name)
+	{
+		if (TasksPool::Task *oldTask = m_names.value(name, 0))
+		{
+			const QStringList &list = (m_tasks[task] = m_tasks.take(oldTask));
+
+			for (QStringList::size_type i = 0, size = list.size(); i < size; ++i)
+				m_names[list.at(i)] = task;
+		}
 	}
 
 private:

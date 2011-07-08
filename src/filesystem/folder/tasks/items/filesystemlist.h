@@ -34,6 +34,7 @@ public:
 	value_type &operator[](size_type index) { return m_items[index]; }
 	const value_type &operator[](size_type index) const { return m_items[index]; }
 
+	bool isEmpty() const { return m_items.isEmpty(); }
 	const value_type &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(value_type item) const { return m_items.indexOf(item); }

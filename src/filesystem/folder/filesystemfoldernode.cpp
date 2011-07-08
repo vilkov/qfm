@@ -646,7 +646,9 @@ void FolderNode::scanForRemoveEvent(const ModelEvent *e)
 		}
 	}
 
-	if (QMessageBox::question(
+	if (!event->canceled &&
+		!entries->isEmpty() &&
+		QMessageBox::question(
 			&Application::instance()->mainWindow(),
 			tr("Remove..."),
 			tr("Would you like to remove").
@@ -670,20 +672,24 @@ void FolderNode::scanForRemoveEvent(const ModelEvent *e)
 				updateRange.add(index, index);
 			}
 
+		PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
+		m_tasks.resetTask(task.data(), entry->fileName());
 		updateSecondColumn(updateRange);
-		Application::instance()->taskPool().handle(new PerformRemoveTask(this, entries));
+		Application::instance()->taskPool().handle(task.take());
 	}
 	else
-	{
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		if (!entries->isEmpty())
 		{
-			index = m_items.indexOf(entries->at(i)->fileName());
-			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
-			updateRange.add(index, index);
-		}
+			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+			{
+				index = m_items.indexOf(entries->at(i)->fileName());
+				static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+				updateRange.add(index, index);
+			}
 
-		updateBothColumns(updateRange);
-	}
+			m_tasks.removeAll(entries->at(0)->fileName());
+			updateBothColumns(updateRange);
+		}
 }
 
 void FolderNode::removeCompleteEvent(const ModelEvent *e)
@@ -703,7 +709,7 @@ void FolderNode::removeCompleteEvent(const ModelEvent *e)
 		else
 		{
 			index = m_items.indexOf(entry->fileName());
-			static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(0);
+			static_cast<FolderNodeEntry*>(m_items[index].item)->clearTotalSize();
 			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
 			updateRange.add(index, index);
 		}
@@ -750,13 +756,22 @@ void FolderNode::scanForSizeEvent(const ModelEvent *e)
 	Values::size_type index;
 	FolderNodeEntry *entry;
 
-	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
-	{
-		entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
-		entry->setTotalSize(static_cast<FileSystemList*>(entries->at(i))->totalSize());
-		entry->unlock();
-		updateRange.add(index, index);
-	}
+	if (event->canceled)
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
+			entry->clearTotalSize();
+			entry->unlock();
+			updateRange.add(index, index);
+		}
+	else
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
+			entry->setTotalSize(static_cast<FileSystemList*>(entries->at(i))->totalSize());
+			entry->unlock();
+			updateRange.add(index, index);
+		}
 
 	m_tasks.removeAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
@@ -800,21 +815,38 @@ void FolderNode::scanForCopyEvent(const ModelEvent *e)
 	Event event = static_cast<Event>(e);
 
 	PScopedPointer<FileSystemList> entries(const_cast<NotConstEvent>(event)->entries.take());
-	QString lockReason = event->move ? tr("Moving...") : tr("Copying...");
 	RangeIntersection updateRange;
 	Values::size_type index;
-	FileSystemItem *entry;
 
-	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	if (event->canceled)
 	{
-		index = m_items.indexOf((entry = entries->at(i))->fileName());
-		static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
-		updateRange.add(index, index);
-	}
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			index = m_items.indexOf(entries->at(i)->fileName());
+			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+			updateRange.add(index, index);
+		}
 
-	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, const_cast<NotConstEvent>(event)->destination, event->move));
-	updateSecondColumn(updateRange);
-	Application::instance()->taskPool().handle(task.take());
+		m_tasks.removeAll(entries->at(0)->fileName());
+		updateBothColumns(updateRange);
+	}
+	else
+	{
+		QString lockReason = event->move ? tr("Moving...") : tr("Copying...");
+		FileSystemItem *entry;
+
+		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		{
+			index = m_items.indexOf((entry = entries->at(i))->fileName());
+			static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
+			updateRange.add(index, index);
+		}
+
+		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, const_cast<NotConstEvent>(event)->destination, event->move));
+		m_tasks.resetTask(task.data(), entry->fileName());
+		updateSecondColumn(updateRange);
+		Application::instance()->taskPool().handle(task.take());
+	}
 }
 
 void FolderNode::copyCompleteEvent(const ModelEvent *e)
@@ -844,8 +876,10 @@ void FolderNode::copyCompleteEvent(const ModelEvent *e)
 			updateRange.add(index, index);
 		}
 
+		PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
+		m_tasks.resetTask(task.data(), entry->fileName());
 		updateSecondColumn(updateRange);
-		Application::instance()->taskPool().handle(new PerformRemoveTask(this, entries));
+		Application::instance()->taskPool().handle(task.take());
 	}
 	else
 	{

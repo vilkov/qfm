@@ -15,12 +15,12 @@ class PerformRemoveTask : public PerformTask
 public:
 	PerformRemoveTask(QObject *receiver, PScopedPointer<FileSystemList> &entries);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 
 protected:
-	void removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
-	void removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
-	void removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
+	void removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
 	bool doRemoveFile(const QString &filePath, QString &error);
 
 protected:

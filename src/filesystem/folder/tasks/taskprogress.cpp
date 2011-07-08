@@ -31,7 +31,7 @@ void TaskProgress::update(quint64 progressIncrement)
 	}
 }
 
-void TaskProgress::completed()
+void TaskProgress::complete()
 {
 	typedef BaseTask::CompletedProgressEvent Event;
 

@@ -20,8 +20,8 @@ public:
 	class Event : public PerformTask::Event
 	{
 	public:
-		Event(PScopedPointer<FileSystemList> &entries, bool canceled, PScopedPointer<IFileControl> &destination, bool move) :
-			PerformTask::Event(CopyFiles, entries, canceled),
+		Event(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move) :
+			PerformTask::Event(CopyFiles, canceled, entries),
 			destination(destination.take()),
 			move(move)
 		{}
@@ -33,13 +33,13 @@ public:
 public:
 	PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 
 protected:
-	void copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
-	void copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag);
-	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag);
-	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag);
+	void copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
+	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
 
 private:
 	PScopedPointer<FileSystemList> m_entries;

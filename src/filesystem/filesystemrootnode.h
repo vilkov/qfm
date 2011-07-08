@@ -12,7 +12,7 @@ class RootNode : public Node
 	Q_DISABLE_COPY(RootNode)
 
 public:
-	RootNode(PluginsManager *plugins);
+	RootNode();
 
 	/* QAbstractItemModel */
 	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
@@ -43,6 +43,7 @@ public:
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list) {}
+	virtual void cancel(const QModelIndexList &list) {}
 	virtual void calculateSize(const QModelIndexList &list) {}
 	virtual void pathToClipboard(const QModelIndexList &list) {}
 	virtual void copy(const QModelIndexList &list, INode *destination) {}
@@ -60,15 +61,12 @@ public:
 	virtual void setParentEntryIndex(const QModelIndex &value) {}
 	virtual void switchTo(Node *node, const QModelIndex &selected) {}
 
-	PluginsManager *plugins() const { return m_plugins; }
-
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
 
 private:
 	Values m_items;
-	PluginsManager *m_plugins;
 };
 
 FILE_SYSTEM_NS_END

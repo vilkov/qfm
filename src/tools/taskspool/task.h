@@ -11,7 +11,7 @@ class Task
 public:
 	virtual ~Task() {}
 
-	virtual void run(const volatile bool &stopedFlag) = 0;
+	virtual void run(const volatile bool &aborted) = 0;
 };
 
 TASKSPOOL_NS_END

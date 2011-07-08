@@ -14,11 +14,11 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public DestControlableTask
 {
 public:
-	class Event : public ModelEvent
+	class Event : public DestControlableTask::Event
 	{
 	public:
-		Event(Type type, PScopedPointer<FileSystemList> &entries) :
-			ModelEvent(type),
+		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries) :
+			DestControlableTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
@@ -32,16 +32,16 @@ public:
 		m_entries(entries)
 	{}
 
-	virtual void run(const volatile bool &stopedFlag)
+	virtual void run(const volatile bool &aborted)
 	{
 		PScopedPointer<FileSystemList> root(new FileSystemList(m_info));
 
-		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !stopedFlag; ++i)
+		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !aborted; ++i)
 		{
 #ifndef Q_OS_WIN
 			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i).fileName)));
 #else
-			Info info(root->absoluteFilePath(m_entries.at(i).fileName));
+			Info info(root->absoluteFilePath(m_entries.at(i)));
 #endif
 
 			if (info.exists())
@@ -49,7 +49,7 @@ public:
 				{
 					PScopedPointer<FileSystemList> subnode(new FileSystemList(info));
 
-					scan(subnode.data(), stopedFlag);
+					scan(subnode.data(), aborted);
 					root->incTotalSize(subnode->totalSize());
 					root->add(subnode.take());
 				}
@@ -70,12 +70,12 @@ protected:
 	PScopedPointer<FileSystemList> &subnode() { return m_subnode; }
 
 private:
-	void scan(FileSystemList *node, const volatile bool &stopedFlag)
+	void scan(FileSystemList *node, const volatile bool &aborted)
 	{
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-		while (!stopedFlag && !isControllerDead() && dirIt.hasNext())
+		while (!isCanceled() && !aborted && !isControllerDead() && dirIt.hasNext())
 			if (!(info = dirIt.next()).isSymLink())
 				if (info.isDir())
 				{
@@ -84,7 +84,7 @@ private:
 #else
 					PScopedPointer<FileSystemList> subtree(new FileSystemList(info));
 #endif
-					scan(subtree.data(), stopedFlag);
+					scan(subtree.data(), aborted);
 					node->incTotalSize(subtree->totalSize());
 					node->add(subtree.take());
 				}

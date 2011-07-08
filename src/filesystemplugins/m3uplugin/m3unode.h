@@ -44,6 +44,7 @@ public:
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
+	virtual void cancel(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
 	virtual void pathToClipboard(const QModelIndexList &list);
 	virtual void copy(const QModelIndexList &list, INode *destination);

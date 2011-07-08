@@ -5,6 +5,7 @@
 #include "filesystemfolderproxymodel.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
+#include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
 #include "containers/filesystemfoldernodevalues.h"
 #include "functors/filesystemfoldernodefunctors.h"
@@ -53,6 +54,7 @@ public:
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
+	virtual void cancel(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
 	virtual void pathToClipboard(const QModelIndexList &list);
 	virtual void copy(const QModelIndexList &list, INode *destination);
@@ -90,7 +92,22 @@ protected:
 		}
 	};
 
+	class CancelFunctor : public Functors::Functor
+	{
+	public:
+		CancelFunctor(TasksMap &tasks) :
+			m_tasks(tasks)
+		{}
+
+	protected:
+		virtual void call(Values::size_type index, FolderNodeItem *entry);
+
+	private:
+		TasksMap &m_tasks;
+	};
+
 	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);
+	void processLockedIndexList(const QModelIndexList &list, Functors::Functor &functor);
 
 protected:
 	bool isUpdating() const { return m_updating; }
@@ -142,13 +159,14 @@ private:
 
 
 private:
-	typedef QSet<INodeView*> SetView;
+	typedef QSet<INodeView*> ViewSet;
 
 private:
 	bool m_updating;
 	Info m_info;
 	Values m_items;
-	SetView m_view;
+	ViewSet m_view;
+	TasksMap m_tasks;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;

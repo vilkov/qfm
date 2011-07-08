@@ -15,6 +15,7 @@ public:
 	virtual ~IFileOperations() {}
 
 	virtual void remove(const QModelIndexList &list) = 0;
+	virtual void cancel(const QModelIndexList &list) = 0;
 	virtual void calculateSize(const QModelIndexList &list) = 0;
 	virtual void pathToClipboard(const QModelIndexList &list) = 0;
 	virtual void copy(const QModelIndexList &list, INode *destination) = 0;

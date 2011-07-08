@@ -10,10 +10,10 @@ class EventHandlerBase : public EventHandler
 {
 public:
 	typedef ListenerType Listener;
-	typedef void (ListenerType::*Method)();
+	typedef void (Listener::*Method)();
 
 public:
-	EventHandlerBase(ListenerType *object) :
+	EventHandlerBase(Listener *object) :
 	    m_object(object)
 	{
 		Q_ASSERT(m_object != 0);
@@ -46,7 +46,7 @@ protected:
     }
 
 private:
-    ListenerType *m_object;
+    Listener *m_object;
 };
 
 #endif /* EVENTHANDLERBASE_H_ */

@@ -45,6 +45,7 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
+	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_1,         &DirectoryView::cancel);
 }
 
 DirectoryView::~DirectoryView()
@@ -282,6 +283,11 @@ void DirectoryView::copy()
 void DirectoryView::move()
 {
 	m_node->move(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node);
+}
+
+void DirectoryView::cancel()
+{
+	m_node->cancel(selectedIndexes());
 }
 
 void DirectoryView::openInNewTab()

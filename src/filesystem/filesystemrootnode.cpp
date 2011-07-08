@@ -6,12 +6,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-RootNode::RootNode(PluginsManager *plugins) :
-	Node(),
-	m_plugins(plugins)
-{
-	Q_ASSERT(m_plugins != 0);
-}
+RootNode::RootNode() :
+	Node()
+{}
 
 void RootNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {

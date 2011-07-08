@@ -14,39 +14,39 @@ PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<FileSyste
 	m_entries(entries.take())
 {}
 
-void PerformRemoveTask::run(const volatile bool &stopedFlag)
+void PerformRemoveTask::run(const volatile bool &aborted)
 {
 	bool tryAgain;
 	FileSystemItem *entry;
 
 	for (FileSystemList::size_type i = 0;
 			i < m_entries->size() &&
+			!isCanceled() &&
 			!isControllerDead() &&
-			!stopedFlag &&
-			!m_canceled;
+			!aborted;
 			++i)
 	{
 		if ((entry = m_entries->at(i))->isDir())
 		{
 			m_progress.init(entry->fileName());
-			removeEntry(entry, tryAgain = false, stopedFlag);
-			m_progress.completed();
+			removeEntry(entry, tryAgain = false, aborted);
+			m_progress.complete();
 		}
 		else
 		{
 			m_progress.clear();
-			removeEntry(entry, tryAgain = false, stopedFlag);
+			removeEntry(entry, tryAgain = false, aborted);
 		}
 	}
 
-	if (!stopedFlag && !isControllerDead())
+	if (!aborted && !isControllerDead())
 	{
-		PScopedPointer<Event> event(new Event(Event::RemoveFiles, m_entries, m_canceled));
+		PScopedPointer<Event> event(new Event(Event::RemoveFiles, isCanceled(), m_entries));
 		Application::postEvent(receiver(), event.take());
 	}
 }
 
-void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	entry->refresh();
 
@@ -57,7 +57,7 @@ void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAga
 
 			for (FileSystemList::size_type i = 0, size = static_cast<FileSystemList*>(entry)->size(); i < size; ++i)
 			{
-				removeEntry(localEntry = static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+				removeEntry(localEntry = static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
 
 				if (!localEntry->shouldRemove())
 					entry->setShouldRemove(false);
@@ -65,16 +65,16 @@ void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAga
 
 			if (entry->shouldRemove())
 				do
-					removeDir(entry, tryAgain = false, stopedFlag);
-				while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+					removeDir(entry, tryAgain = false, aborted);
+				while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 		}
 		else
 			do
-				removeFile(entry, tryAgain = false, stopedFlag);
-			while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+				removeFile(entry, tryAgain = false, aborted);
+			while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 }
 
-void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	QDir dir = entry->absolutePath();
 
@@ -98,7 +98,7 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 
 			Application::postEvent(receiver(), event.take());
 
-			if (result.waitFor(stopedFlag, isControllerDead()))
+			if (result.waitFor(aborted, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
 					m_skipAllIfNotRemove = true;
@@ -110,14 +110,14 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 					else
 					{
 						if (result.answer() == QMessageBox::Cancel)
-							m_canceled = true;
+							cancel();
 
 						entry->setShouldRemove(false);
 					}
 		}
 }
 
-void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	if (!doRemoveFile(entry->absoluteFilePath(), m_error))
 		if (m_skipAllIfNotRemove)
@@ -139,7 +139,7 @@ void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgai
 
 			Application::postEvent(receiver(), event.take());
 
-			if (result.waitFor(stopedFlag, isControllerDead()))
+			if (result.waitFor(aborted, isControllerDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
 					m_skipAllIfNotRemove = true;
@@ -151,7 +151,7 @@ void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgai
 					else
 					{
 						if (result.answer() == QMessageBox::Cancel)
-							m_canceled = true;
+							cancel();
 
 						entry->setShouldRemove(false);
 					}

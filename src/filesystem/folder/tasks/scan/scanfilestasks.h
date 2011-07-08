@@ -12,7 +12,7 @@ class ScanFilesForSizeTask : public ScanFilesTask
 public:
 	ScanFilesForSizeTask(QObject *receiver, const Info &info, const EntryList &entries);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 };
 
 
@@ -22,7 +22,7 @@ class ScanFilesForRemoveTask : public ScanFilesTask
 public:
 	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const EntryList &entries);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 };
 
 
@@ -33,8 +33,8 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(Type type, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move) :
-			ScanFilesTask::Event(type, entries),
+		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move) :
+			ScanFilesTask::Event(type, canceled, entries),
 			destination(destination.take()),
 			move(move)
 		{}
@@ -46,7 +46,7 @@ public:
 public:
 	ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<IFileControl> &destination, bool move);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 
 private:
 	PScopedPointer<IFileControl> m_destination;

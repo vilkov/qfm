@@ -16,7 +16,7 @@ PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemLis
 	m_progress(receiver)
 {}
 
-void PerformCopyTask::run(const volatile bool &stopedFlag)
+void PerformCopyTask::run(const volatile bool &aborted)
 {
 	m_destination->refresh();
 
@@ -27,27 +27,27 @@ void PerformCopyTask::run(const volatile bool &stopedFlag)
 
 		for (FileSystemList::size_type i = 0;
 				i < m_entries->size() &&
+				!isCanceled() &&
 				!isControllerDead() &&
-				!stopedFlag &&
-				!m_canceled;
+				!aborted;
 				++i)
 		{
 			m_progress.init((entry = m_entries->at(i))->fileName());
-			copyEntry(m_destination.data(), entry, tryAgain = false, stopedFlag);
-			m_progress.completed();
+			copyEntry(m_destination.data(), entry, tryAgain = false, aborted);
+			m_progress.complete();
 		}
 	}
 	else
-		m_canceled = true;
+		cancel();
 
-	if (!stopedFlag && !isControllerDead())
+	if (!aborted && !isControllerDead())
 	{
-		PScopedPointer<Event> event(new Event(m_entries, m_canceled, m_destination, m_move));
+		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_destination, m_move));
 		Application::postEvent(receiver(), event.take());
 	}
 }
 
-void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	do
 		if (destination->contains(entry))
@@ -58,11 +58,11 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 				if (dest = destination->open(entry, m_lastError))
 					for (FileSystemList::size_type i = 0;
 							i < static_cast<FileSystemList*>(entry)->size() &&
+							!isCanceled() &&
 							!isControllerDead() &&
-							!stopedFlag &&
-							!m_canceled;
+							!aborted;
 							++i)
-						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy || tryAgain)
 						break;
@@ -72,11 +72,11 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 								tr("Failed to open directory \"%1\". Skip it?").
 									arg(destination->absoluteFilePath(entry->fileName())),
 								tryAgain = false,
-								stopedFlag);
+								aborted);
 			}
 			else
 				if (m_overwriteAll)
-					copyFile(destination, entry, tryAgain = false, stopedFlag);
+					copyFile(destination, entry, tryAgain = false, aborted);
 				else
 					askForOverwrite(
 							tr("Failed to copy..."),
@@ -85,7 +85,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 								arg(entry->absolutePath()).
 								arg(destination->absoluteFilePath()),
 							tryAgain = false,
-							stopedFlag);
+							aborted);
 		else
 			if (entry->isDir())
 			{
@@ -94,11 +94,11 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 				if (dest = destination->create(entry, m_lastError))
 					for (FileSystemList::size_type i = 0;
 							i < static_cast<FileSystemList*>(entry)->size() &&
+							!isCanceled() &&
 							!isControllerDead() &&
-							!stopedFlag &&
-							!m_canceled;
+							!aborted;
 							++i)
-						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, stopedFlag);
+						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;
@@ -108,14 +108,14 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 								tr("Failed to create directory \"%1\". Skip it?").
 									arg(destination->absoluteFilePath(entry->fileName())),
 								tryAgain = false,
-								stopedFlag);
+								aborted);
 			}
 			else
-				copyFile(destination, entry, tryAgain = false, stopedFlag);
-	while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+				copyFile(destination, entry, tryAgain = false, aborted);
+	while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 }
 
-void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	do
 		if (m_sourceFile = entry->open(IFile::ReadOnly, m_lastError))
@@ -126,7 +126,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 					m_written = 0;
 
 					while ((m_readed = m_sourceFile->read(m_buffer, FileReadWriteGranularity)) &&
-							!isControllerDead() && !stopedFlag && !m_canceled)
+							!isCanceled() && !isControllerDead() && !aborted)
 						if (m_destFile->write(m_buffer, m_readed) == m_readed)
 						{
 							m_written += m_readed;
@@ -142,7 +142,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 										arg(m_destEntry->absoluteFilePath()).
 										arg(m_lastError),
 									tryAgain = false,
-									stopedFlag);
+									aborted);
 
 							break;
 						}
@@ -161,7 +161,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 								arg(destination->absoluteFilePath(entry->fileName())).
 								arg(m_lastError),
 							tryAgain = false,
-							stopedFlag);
+							aborted);
 		else
 			if (m_skipAllIfNotCopy || tryAgain)
 				break;
@@ -172,11 +172,11 @@ void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry,
 							arg(entry->absoluteFilePath()).
 							arg(m_lastError),
 						tryAgain = false,
-						stopedFlag);
-	while (tryAgain && !isControllerDead() && !stopedFlag && !m_canceled);
+						aborted);
+	while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 }
 
-void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	QuestionAnswerEvent::Result result;
 	PScopedPointer<QuestionAnswerEvent> event(
@@ -194,7 +194,7 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 
 	Application::postEvent(receiver(), event.take());
 
-	if (result.waitFor(stopedFlag, isControllerDead()))
+	if (result.waitFor(aborted, isControllerDead()))
 		switch (result.answer())
 		{
 			case QMessageBox::Yes:
@@ -214,12 +214,12 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 				break;
 
 			case QMessageBox::Cancel:
-				m_canceled = true;
+				cancel();
 				break;
 		}
 }
 
-void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &stopedFlag)
+void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	QuestionAnswerEvent::Result result;
 	PScopedPointer<QuestionAnswerEvent> event(
@@ -236,7 +236,7 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &t
 
 	Application::postEvent(receiver(), event.take());
 
-	if (result.waitFor(stopedFlag, isControllerDead()))
+	if (result.waitFor(aborted, isControllerDead()))
 		if (result.answer() == QMessageBox::YesToAll)
 			m_skipAllIfNotCopy = true;
 		else
@@ -244,7 +244,7 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &t
 				tryAgain = true;
 			else
 				if (result.answer() == QMessageBox::Cancel)
-					m_canceled = true;
+					cancel();
 }
 
 FILE_SYSTEM_NS_END

@@ -29,7 +29,7 @@ public:
 public:
 	UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates);
 
-	virtual void run(const volatile bool &stopedFlag);
+	virtual void run(const volatile bool &aborted);
 
 private:
 	Info m_info;

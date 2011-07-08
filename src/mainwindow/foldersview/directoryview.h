@@ -79,6 +79,7 @@ public Q_SLOTS:
 	void calculateSize();
 	void copy();
 	void move();
+	void cancel();
 
 private:
 	void openInNewTab();

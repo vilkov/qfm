@@ -9,27 +9,21 @@ FILE_SYSTEM_NS_BEGIN
 class PerformTask : public DestControlableTask
 {
 public:
-	class Event : public ModelEvent
+	class Event : public DestControlableTask::Event
 	{
 	public:
-		Event(Type type, PScopedPointer<FileSystemList> &entries, bool canceled) :
-			ModelEvent(type),
-			entries(entries.take()),
-			canceled(canceled)
+		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries) :
+			DestControlableTask::Event(type, canceled),
+			entries(entries.take())
 		{}
 
 		PScopedPointer<FileSystemList> entries;
-		bool canceled;
 	};
 
 public:
 	PerformTask(QObject *receiver) :
-		DestControlableTask(receiver),
-		m_canceled(false)
+		DestControlableTask(receiver)
 	{}
-
-protected:
-	volatile bool m_canceled;
 };
 
 FILE_SYSTEM_NS_END

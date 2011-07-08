@@ -21,20 +21,19 @@ FILE_SYSTEM_NS_BEGIN
 class BaseTask : public TasksPool::Task
 {
 public:
-	struct Entry
+	typedef QStringList EntryList;
+
+
+	class Event : public ModelEvent
 	{
-		Entry()
-		{}
-		Entry(Values::size_type index, const QString &fileName) :
-			index(index),
-			fileName(fileName)
+	public:
+		Event(Type type, bool canceled) :
+			ModelEvent(type),
+			canceled(canceled)
 		{}
 
-		Values::size_type index;
-		QString fileName;
+		bool canceled;
 	};
-	typedef QList<Entry> EntryList;
-
 
 	class QuestionAnswerEvent: public ModelEvent
 	{
@@ -122,6 +121,19 @@ public:
 		QString fileName;
 		quint64 timeElapsed;
 	};
+
+public:
+	BaseTask() :
+		m_canceled(false)
+	{}
+
+	void cancel() { m_canceled = true; }
+
+protected:
+	const volatile bool isCanceled() const { return m_canceled; }
+
+private:
+	volatile bool m_canceled;
 };
 
 FILE_SYSTEM_NS_END

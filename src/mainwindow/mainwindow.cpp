@@ -9,7 +9,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-    m_root(&m_plugins),
+    m_root(),
     m_centralWidget(this),
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),

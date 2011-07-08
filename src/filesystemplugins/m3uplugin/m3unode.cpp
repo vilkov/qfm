@@ -169,6 +169,11 @@ void M3uNode::remove(const QModelIndexList &list)
 
 }
 
+void M3uNode::cancel(const QModelIndexList &list)
+{
+
+}
+
 void M3uNode::calculateSize(const QModelIndexList &list)
 {
 

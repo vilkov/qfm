@@ -39,7 +39,7 @@ public:
 		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !aborted; ++i)
 		{
 #ifndef Q_OS_WIN
-			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i).fileName)));
+			Info info(m_permissions.getInfo(root->absoluteFilePath(m_entries.at(i))));
 #else
 			Info info(root->absoluteFilePath(m_entries.at(i)));
 #endif

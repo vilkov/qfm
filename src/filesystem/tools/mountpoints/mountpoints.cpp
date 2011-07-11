@@ -107,7 +107,7 @@ void MountPoints::refresh()
 											path = label.mid(index - 2, 2);
 
 #if defined(STLSOFT_COMPILER_IS_MSVC)
-											if (SHGetDiskFreeSpaceExW(
+											if (SHGetDiskFreeSpaceEx(
 													(const wchar_t *)path.unicode(),
 													&pulFreeBytesAvailableToCaller,
 													&pulTotalNumberOfBytes,

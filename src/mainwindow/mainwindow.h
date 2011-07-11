@@ -20,7 +20,7 @@ public:
     MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
-    PluginsManager *plugins() { return &m_plugins; }
+	PluginsManager *plugins() { return &m_plugins; }
 	bool switchToOtherPanel(QObject *receiver);
 
 protected:
@@ -56,11 +56,28 @@ private Q_SLOTS:
     void actToolsMenuPreferences();
 
 private:
+	typedef KeyboardEventSource<
+				EventSourceBase<
+					QWidget
+				>
+			> CentralWidget;
+	typedef KeyboardEventHandler<
+				EventHandlerBase<
+					MainWindow
+				>
+			> CentralWidgetEventHandler;
+
+private:
+	void showMountsForLeft();
+	void showMountsForRight();
+
+private:
     MountPoints m_mounts;
     PluginsManager m_plugins;
     FileSystem::RootNode m_root;
 
-    QWidget m_centralWidget;
+    CentralWidgetEventHandler m_eventHandler;
+    CentralWidget m_centralWidget;
     QVBoxLayout m_layout;
     QSplitter m_splitter;
     FoldersView m_leftFoldersView;

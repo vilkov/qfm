@@ -11,12 +11,13 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-    m_root(),
-    m_centralWidget(this),
+    m_eventHandler(this),
+    m_centralWidget(&m_eventHandler, this),
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),
     m_leftFoldersView(&m_root, loadLeftPanelTabs(), m_rightFoldersView, &m_splitter),
     m_rightFoldersView(&m_root, loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
+
     /* Actions */
     m_fileMenuActions(this),
     m_toolsMenuActions(this)
@@ -33,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	Application::instance()->config().loadState(this);
 	m_leftFoldersView.setFocus();
+
+	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F1, &MainWindow::showMountsForLeft);
+	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F2, &MainWindow::showMountsForRight);
 }
 
 MainWindow::~MainWindow()
@@ -149,14 +153,7 @@ MainWindow::FileMenuActions::FileMenuActions(QMainWindow *parent) :
 
 void MainWindow::actFileMenuOpen()
 {
-	QString res;
 
-	m_mounts.refresh();
-	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
-		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
-
-	res.chop(1);
-	QMessageBox::information(this, QString(), res);
 }
 
 void MainWindow::actFileMenuExit()
@@ -178,4 +175,28 @@ MainWindow::ToolsMenuActions::ToolsMenuActions(QMainWindow *parent) :
 void MainWindow::actToolsMenuPreferences()
 {
 
+}
+
+void MainWindow::showMountsForLeft()
+{
+	QString res;
+
+	m_mounts.refresh();
+	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
+		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
+
+	res.chop(1);
+	QMessageBox::information(this, QString(), res);
+}
+
+void MainWindow::showMountsForRight()
+{
+	QString res;
+
+	m_mounts.refresh();
+	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
+		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
+
+	res.chop(1);
+	QMessageBox::information(this, QString(), res);
 }

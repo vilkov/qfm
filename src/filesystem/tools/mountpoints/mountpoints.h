@@ -3,6 +3,8 @@
 
 #include <QtCore/QList>
 #include <QtCore/QString>
+#include <QtGui/QIcon>
+#include <QtGui/QPixmap>
 
 
 class MountPoints
@@ -11,21 +13,24 @@ public:
 	class MountPoint
 	{
 	public:
-		MountPoint(const QString &path, const QString &label, quint64 freeSize, quint64 totalSize) :
+		MountPoint(const QString &path, const QString &label, const QPixmap &pixmap, quint64 freeSize, quint64 totalSize) :
 			m_path(path),
 			m_label(label),
+			m_icon(pixmap),
 			m_freeSize(freeSize),
 			m_totalSize(totalSize)
 		{}
 
 		const QString &path() const { return m_path; }
 		const QString &label() const { return m_label; }
+		const QIcon &icon() const { return m_icon; }
 		quint64 freeSize() const { return m_freeSize; }
 		quint64 totalSize() const { return m_totalSize; }
 
 	private:
 		QString m_path;
 		QString m_label;
+		QIcon m_icon;
 		quint64 m_freeSize;
 		quint64 m_totalSize;
 	};

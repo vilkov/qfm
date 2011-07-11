@@ -37,6 +37,7 @@ public:
     void openInNewTab(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
+	void setCurrentDirectory(const QString &filePath);
 
 	void skipOneRefreshTab();
 

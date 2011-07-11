@@ -21,11 +21,11 @@
 		{
 			COMSTL_IID_TRAITS_DEFINE(IShellFolder)
 			COMSTL_IID_TRAITS_DEFINE(IEnumIDList)
+			COMSTL_IID_TRAITS_DEFINE(IExtractIcon)
 		}
 	}
 #endif
 
-#include <iostream>
 
 MountPoints::MountPoints()
 {}
@@ -59,10 +59,17 @@ void MountPoints::refresh()
 						if (pidlList[0])
 						{
 							ULONG fetched;
+							QPixmap pixmap;
 							QString label;
 							QString path;
 							STRRET strret;
 							qint32 index;
+							IExtractIcon *iIcon;
+							wchar_t iconFile[MAX_PATH];
+							int iconIndex;
+							UINT iconFlags;
+							HICON iconHandleLarge;
+							HICON iconHandleSmall;
 #if defined(STLSOFT_COMPILER_IS_MSVC)
 							ULARGE_INTEGER pulFreeBytesAvailableToCaller;
 							ULARGE_INTEGER pulTotalNumberOfBytes;
@@ -80,6 +87,21 @@ void MountPoints::refresh()
 										label = QString::fromUtf16((const ushort *)strret.pOleStr);
 										CoTaskMemFree(strret.pOleStr);
 
+										if (SUCCEEDED(computer->GetUIObjectOf(NULL, 1, (const ITEMIDLIST **)pidlList, IID_IExtractIcon, NULL, (void**)&iIcon)))
+										{
+											stlsoft::ref_ptr<IExtractIcon> icon(iIcon, false);
+
+											if (SUCCEEDED(icon->GetIconLocation(GIL_FORSHELL, iconFile, MAX_PATH, &iconIndex, &iconFlags)) &&
+												SUCCEEDED(icon->Extract(iconFile, iconIndex, &iconHandleLarge, &iconHandleSmall, 0x00100010)))
+											{
+												pixmap = QPixmap::fromWinHICON(iconHandleLarge);
+											}
+											else
+												pixmap = QPixmap();
+										}
+										else
+											pixmap = QPixmap();
+
 										if ((index = label.lastIndexOf(QChar(')'))) != -1)
 										{
 											path = label.mid(index - 2, 2);
@@ -90,11 +112,11 @@ void MountPoints::refresh()
 													&pulFreeBytesAvailableToCaller,
 													&pulTotalNumberOfBytes,
 													&pulTotalNumberOfFreeBytes))
-												m_items.push_back(MountPoint(path, label, pulTotalNumberOfFreeBytes.QuadPart, pulTotalNumberOfBytes.QuadPart));
+												m_items.push_back(MountPoint(path, label, pixmap, pulTotalNumberOfFreeBytes.QuadPart, pulTotalNumberOfBytes.QuadPart));
 											else
-												m_items.push_back(MountPoint(path, label, 0, 0));
+												m_items.push_back(MountPoint(path, label, pixmap, 0, 0));
 #else
-											m_items.push_back(MountPoint(path, label, 0, 0));
+											m_items.push_back(MountPoint(path, label, pixmap, 0, 0));
 #endif
 										}
 									}

@@ -6,6 +6,7 @@
 #include "tasks/perform/performcopytask.h"
 #include "tasks/perform/performremovetask.h"
 #include "../filesystempluginsmanager.h"
+#include "../tools/filesystemcommontools.h"
 #include "../../application.h"
 #include <QtGui/QMessageBox>
 #include <QtGui/QClipboard>
@@ -659,7 +660,7 @@ void FolderNode::scanForRemoveEvent(const ModelEvent *e)
 				append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
 				append(files.join(QString::fromLatin1("\n\t\t"))).
 				append(QString::fromLatin1("\n")).
-				append(tr("it will free ").append(FolderNodeEntry::humanReadableSize(entries->totalSize()))),
+				append(tr("it will free ").append(Tools::humanReadableSize(entries->totalSize()))),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
 		QString lockReason = tr("Removing...");

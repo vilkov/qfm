@@ -43,10 +43,6 @@ public:
 	void lock(const QString &reason);
 	void unlock();
 
-	static QString humanReadableTime(quint64 msecs);
-	static QString humanReadableSize(quint64 size);
-	static QString humanReadableShortSize(quint64 size);
-
 private:
 	bool m_locked;
 	QString m_lockReason;

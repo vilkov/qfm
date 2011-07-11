@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "../filesystem/tools/filesystemcommontools.h"
 #include "../application.h"
 #include <QtCore/QDir>
 #include <QtCore/QTextCodec>
@@ -7,6 +8,7 @@
 #include <QtXml/QXmlStreamWriter>
 
 #include <QtGui/QMessageBox>
+#include <QtGui/QCursor>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -179,24 +181,33 @@ void MainWindow::actToolsMenuPreferences()
 
 void MainWindow::showMountsForLeft()
 {
-	QString res;
-
-	m_mounts.refresh();
-	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
-		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
-
-	res.chop(1);
-	QMessageBox::information(this, QString(), res);
+	showMounts(m_leftFoldersView);
 }
 
 void MainWindow::showMountsForRight()
 {
-	QString res;
+	showMounts(m_rightFoldersView);
+}
+
+void MainWindow::showMounts(FoldersView &view)
+{
+	QMenu menu;
+	QString label = QString::fromLatin1("   [free %1 of %2]");
 
 	m_mounts.refresh();
 	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
-		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
+	{
+		const MountPoints::MountPoint &mount = m_mounts.at(i);
 
-	res.chop(1);
-	QMessageBox::information(this, QString(), res);
+		if (mount.totalSize() > 0)
+			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(FileSystem::Tools::humanReadableShortSize(mount.freeSize())).arg(FileSystem::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
+		else
+			menu.addAction(mount.icon(), mount.label())->setData(i);
+	}
+
+	if (QAction *res = menu.exec(QCursor::pos()))
+	{
+		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
+		view.setFocus();
+	}
 }

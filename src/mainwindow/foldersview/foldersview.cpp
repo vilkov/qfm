@@ -85,6 +85,11 @@ void FoldersView::setFocus()
 	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
 }
 
+void FoldersView::setCurrentDirectory(const QString &filePath)
+{
+	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setCurrentDirectory(filePath);
+}
+
 void FoldersView::skipOneRefreshTab()
 {
 	m_doNotRefreshTab = true;

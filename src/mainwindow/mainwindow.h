@@ -8,8 +8,8 @@
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
 #include "../filesystem/filesystemrootnode.h"
+#include "../filesystem/tools/mountpoints/mountpoints.h"
 #include "../filesystemplugins/pluginsmanager.h"
-#include "../filesystemtools/mountpoints/mountpoints.h"
 
 
 class MainWindow : public QMainWindow
@@ -70,6 +70,7 @@ private:
 private:
 	void showMountsForLeft();
 	void showMountsForRight();
+	void showMounts(FoldersView &view);
 
 private:
     MountPoints m_mounts;

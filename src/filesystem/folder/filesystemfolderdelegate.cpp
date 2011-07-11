@@ -1,5 +1,6 @@
 #include "filesystemfolderdelegate.h"
 #include "items/filesystemfoldernodeentry.h"
+#include "../tools/filesystemcommontools.h"
 #include <QtGui/QApplication>
 
 
@@ -30,7 +31,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 				progressBarOption.minimum = 0;
 				progressBarOption.maximum = 100;
 				progressBarOption.progress = 100;
-				progressBarOption.text = FolderNodeEntry::humanReadableTime(entry->timeElapsed().toULongLong());
+				progressBarOption.text = Tools::humanReadableTime(entry->timeElapsed().toULongLong());
 				progressBarOption.textAlignment = Qt::AlignCenter;
 				progressBarOption.textVisible = true;
 
@@ -51,11 +52,11 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 					progressBarOption.progress = progress;
 
 					progressBarOption.text =
-							FolderNodeEntry::humanReadableShortSize(entry->doneSize().toULongLong()).
+							Tools::humanReadableShortSize(entry->doneSize().toULongLong()).
 							append(QString::fromLatin1(" / ")).
-							append(FolderNodeEntry::humanReadableShortSize(entry->totalSize().toULongLong())).
+							append(Tools::humanReadableShortSize(entry->totalSize().toULongLong())).
 							append(QString::fromLatin1("  ")).
-							append(FolderNodeEntry::humanReadableTime((entry->totalSize().toULongLong() / entry->doneSize().toULongLong()) * entry->timeElapsed().toULongLong()));
+							append(Tools::humanReadableTime((entry->totalSize().toULongLong() / entry->doneSize().toULongLong()) * entry->timeElapsed().toULongLong()));
 					progressBarOption.textAlignment = Qt::AlignCenter;
 					progressBarOption.textVisible = true;
 

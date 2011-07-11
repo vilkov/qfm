@@ -9,6 +9,7 @@
 #include "foldersview/foldersview.h"
 #include "../filesystem/filesystemrootnode.h"
 #include "../filesystemplugins/pluginsmanager.h"
+#include "../filesystemtools/mountpoints/mountpoints.h"
 
 
 class MainWindow : public QMainWindow
@@ -55,6 +56,7 @@ private Q_SLOTS:
     void actToolsMenuPreferences();
 
 private:
+    MountPoints m_mounts;
     PluginsManager m_plugins;
     FileSystem::RootNode m_root;
 

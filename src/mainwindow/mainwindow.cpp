@@ -6,6 +6,8 @@
 #include <QtGui/QMenu>
 #include <QtXml/QXmlStreamWriter>
 
+#include <QtGui/QMessageBox>
+
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -147,7 +149,14 @@ MainWindow::FileMenuActions::FileMenuActions(QMainWindow *parent) :
 
 void MainWindow::actFileMenuOpen()
 {
+	QString res;
 
+	m_mounts.refresh();
+	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
+		res.append(m_mounts.at(i).label()).append(QString::fromLatin1(" - ")).append(m_mounts.at(i).path()).append(QChar('\n'));
+
+	res.chop(1);
+	QMessageBox::information(this, QString(), res);
 }
 
 void MainWindow::actFileMenuExit()

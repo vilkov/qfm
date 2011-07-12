@@ -7,9 +7,6 @@
 #include <QtGui/QMenu>
 #include <QtXml/QXmlStreamWriter>
 
-#include <QtGui/QMessageBox>
-#include <QtGui/QCursor>
-
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -205,7 +202,7 @@ void MainWindow::showMounts(FoldersView &view)
 			menu.addAction(mount.icon(), mount.label())->setData(i);
 	}
 
-	if (QAction *res = menu.exec(QCursor::pos()))
+	if (QAction *res = menu.exec(view.listPos()))
 	{
 		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
 		view.setFocus();

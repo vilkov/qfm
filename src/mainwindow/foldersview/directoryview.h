@@ -59,6 +59,7 @@ public:
 
 	static QString rootPath();
 
+	QPoint listPos() const;
 	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;
 	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);

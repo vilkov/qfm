@@ -43,6 +43,8 @@ public:
 
 	FoldersViewRef other() const { return m_other; }
 	QWidget *currentWidget() const { return m_tabWidget.currentWidget(); }
+	QPoint listPos() const { return static_cast<DirectoryView*>(m_tabWidget.currentWidget())->listPos(); }
+
 	void saveTabs(QXmlStreamWriter &stream) const;
 	static TabList loadTabs(QXmlStreamReader &stream);
 

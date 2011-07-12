@@ -106,6 +106,11 @@ QString DirectoryView::rootPath()
 #endif
 }
 
+QPoint DirectoryView::listPos() const
+{
+	return mapToGlobal(m_view.pos());
+}
+
 QString DirectoryView::currentDirectoryName() const
 {
 	return m_node->fileName();

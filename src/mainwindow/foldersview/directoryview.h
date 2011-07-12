@@ -59,6 +59,7 @@ public:
 
 	static QString defaultPath();
 
+    bool hasFocus() const;
 	QPoint listPos() const;
 	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;

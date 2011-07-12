@@ -21,7 +21,7 @@ public:
     virtual ~MainWindow();
 
 	PluginsManager *plugins() { return &m_plugins; }
-	bool switchToOtherPanel(QObject *receiver);
+	void switchToOtherPanel();
 
 protected:
     virtual void changeEvent(QEvent *event);
@@ -67,7 +67,6 @@ private:
 				>
 			> CentralWidgetEventHandler;
 
-private:
 	void showMountsForLeft();
 	void showMountsForRight();
 	void showMounts(FoldersView &view);

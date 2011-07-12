@@ -106,6 +106,11 @@ QString DirectoryView::defaultPath()
 #endif
 }
 
+bool DirectoryView::hasFocus() const
+{
+	return m_header.pathEdit.hasFocus() || m_view.hasFocus();
+}
+
 QPoint DirectoryView::listPos() const
 {
 	return mapToGlobal(m_view.pos());

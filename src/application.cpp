@@ -34,15 +34,15 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
 	TRY
 	{
-		if (event->type() == QEvent::KeyRelease &&
+		if (event->type() == QEvent::KeyPress && //QEvent::KeyRelease &&
 			(static_cast<QKeyEvent*>(event)->key() + static_cast<QKeyEvent*>(event)->modifiers()) == Qt::NoModifier + Qt::Key_Tab)
-			if (m_mainWindow.switchToOtherPanel(receiver))
-			{
-				event->accept();
-				return true;
-			}
+		{
+			m_mainWindow.switchToOtherPanel();
+			event->accept();
+			return true;
+		}
 
-			return QApplication::notify(receiver, event);
+		return QApplication::notify(receiver, event);
 	}
 	CATCH_ALL
 	(

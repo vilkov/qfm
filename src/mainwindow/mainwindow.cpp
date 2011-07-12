@@ -32,10 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_splitter.addWidget(&m_rightFoldersView);
 
 	Application::instance()->config().loadState(this);
-	m_leftFoldersView.setFocus();
 
 	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F1, &MainWindow::showMountsForLeft);
 	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F2, &MainWindow::showMountsForRight);
+
+	m_leftFoldersView.setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -44,25 +45,12 @@ MainWindow::~MainWindow()
 	saveTabs();
 }
 
-bool MainWindow::switchToOtherPanel(QObject *receiver)
+void MainWindow::switchToOtherPanel()
 {
-	do
-		if (receiver == &m_leftFoldersView)
-		{
-			m_leftFoldersView.setFocus();
-			return true;
-		}
-		else
-			if (receiver == &m_rightFoldersView)
-			{
-				m_rightFoldersView.setFocus();
-				return true;
-			}
-			else
-				receiver = receiver->parent();
-	while (receiver);
-
-	return false;
+	if (m_leftFoldersView.hasFocus())
+		m_rightFoldersView.setFocus();
+	else
+		m_leftFoldersView.setFocus();
 }
 
 void MainWindow::changeEvent(QEvent *event)

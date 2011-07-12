@@ -1,8 +1,8 @@
 #include "application.h"
 #include "version.h"
-//#if defined(Q_WS_WIN)
-//#	include <QtCore/qt_windows.h>
-//#endif
+#if defined(Q_WS_WIN)
+#	include <QtCore/qt_windows.h>
+#endif
 #include <QtCore/QThread>
 #include <QtCore/QLocale>
 #include <QtCore/QTranslator>
@@ -12,9 +12,6 @@
 Application::Application(const QString &name, const QString &label, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
 	m_taskPool(QThread::idealThreadCount())
-//#if defined(Q_WS_WIN)
-//	,m_filter(0)
-//#endif
 {
 	QApplication::setApplicationName(label);
 	QApplication::setApplicationVersion(version());
@@ -37,14 +34,13 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
 	TRY
 	{
-//		if (event->type() == QEvent::KeyRelease &&
-//			static_cast<QKeyEvent*>(event)->key() == Qt::Key_Tab &&
-//			static_cast<QKeyEvent*>(event)->modifiers() == Qt::NoModifier)
-//			if (m_mainWindow.switchToOtherPanel(receiver))
-//			{
-//				event->accept();
-//				return true;
-//			}
+		if (event->type() == QEvent::KeyRelease &&
+			(static_cast<QKeyEvent*>(event)->key() + static_cast<QKeyEvent*>(event)->modifiers()) == Qt::NoModifier + Qt::Key_Tab)
+			if (m_mainWindow.switchToOtherPanel(receiver))
+			{
+				event->accept();
+				return true;
+			}
 
 			return QApplication::notify(receiver, event);
 	}
@@ -73,16 +69,6 @@ qint32 Application::exec()
 		return QApplication::exec();
 	}
 }
-
-//#if defined(Q_WS_WIN)
-//bool Application::winEventFilter(MSG *message, long *result)
-//{
-//	if (m_filter && (*m_filter)(message, result))
-//		return true;
-//	else
-//		return QApplication::winEventFilter(message, result);
-//}
-//#endif
 
 void Application::handleException(const char *where)
 {

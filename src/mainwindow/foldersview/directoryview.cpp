@@ -97,7 +97,7 @@ void DirectoryView::setNode(FileSystem::INode *node, QAbstractItemModel *model, 
 	m_parent->updateTitle(this, m_node->fileName());
 }
 
-QString DirectoryView::rootPath()
+QString DirectoryView::defaultPath()
 {
 #ifdef Q_OS_WIN
 	return QString::fromLatin1("C:\\");

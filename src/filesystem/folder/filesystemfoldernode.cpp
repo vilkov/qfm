@@ -226,7 +226,10 @@ bool FolderNode::exists() const
 
 QString FolderNode::fileName() const
 {
-	return m_info.fileName();
+	if (m_info.isRoot())
+		return m_info.absoluteFilePath();
+	else
+		return m_info.fileName();
 }
 
 QString FolderNode::absolutePath() const

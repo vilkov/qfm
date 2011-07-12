@@ -21,7 +21,7 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 	{
 		DirectoryView *widget;
 		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-		widget->setupModel(root, DirectoryView::rootPath());
+		widget->setupModel(root, DirectoryView::defaultPath());
 	}
 	else
 	{
@@ -52,12 +52,7 @@ void FoldersView::refresh()
 
 void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 {
-	qint32 index = m_tabWidget.indexOf(widget);
-
-	if (fileName.isEmpty())
-		m_tabWidget.setTabText(index, DirectoryView::rootPath());
-	else
-		m_tabWidget.setTabText(index, fileName);
+	m_tabWidget.setTabText(m_tabWidget.indexOf(widget), fileName);
 }
 
 void FoldersView::openInNewTab(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry)

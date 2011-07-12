@@ -57,7 +57,7 @@ public:
 	virtual void select(const QModelIndex &index);
 	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
 
-	static QString rootPath();
+	static QString defaultPath();
 
 	QPoint listPos() const;
 	QString currentDirectoryName() const;

@@ -28,7 +28,7 @@ endif ()
 
 
 # 3rdparty
-find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml REQUIRED)
+find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml QtDbus REQUIRED)
 include (${QT_USE_FILE})
 set (qfm_LIBS ${qfm_LIBS} "${QT_LIBRARIES}")
 add_definitions (${QT_DEFINITIONS})
@@ -83,7 +83,7 @@ endif ()
 
 # Target - qfm
 add_executable (qfm ${GUI_TYPE} ${qfm_SOURCES})
-target_link_libraries (qfm ${qfm_LIBS})
+target_link_libraries (qfm ${qfm_LIBS} udev solid)
 
 
 # Target propertys - qfm

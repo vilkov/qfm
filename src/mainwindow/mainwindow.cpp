@@ -182,7 +182,7 @@ void MainWindow::showMounts(FoldersView &view)
 	m_mounts.refresh();
 	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
 	{
-		const MountPoints::MountPoint &mount = m_mounts.at(i);
+		const MountPoint &mount = m_mounts.at(i);
 
 		if (mount.totalSize() > 0 && mount.freeSize() <= mount.totalSize())
 			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(FileSystem::Tools::humanReadableShortSize(mount.freeSize())).arg(FileSystem::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);

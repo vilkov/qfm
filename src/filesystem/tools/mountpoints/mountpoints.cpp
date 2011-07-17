@@ -7,130 +7,49 @@
 #include <platformstl/platformstl.hpp>
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)
-#	include <stlsoft/smartptr/ref_ptr.hpp>
-#	include <comstl/util/initialisers.hpp>
-#	include <comstl/util/creation_functions.hpp>
-#	include <comstl/util/interface_traits.hpp>
-#	include <comstl/util/variant.hpp>
-#	include <comstl/string/bstr.hpp>
-#	include <shlobj.h>
-
-	namespace stlsoft
-	{
-		namespace comstl_project
-		{
-			COMSTL_IID_TRAITS_DEFINE(IShellFolder)
-			COMSTL_IID_TRAITS_DEFINE(IEnumIDList)
-			COMSTL_IID_TRAITS_DEFINE(IExtractIcon)
-		}
-	}
+#	include "win/mountpoints_p.h"
+#elif defined(PLATFORMSTL_OS_IS_UNIX)
+#	include "unix/mountpoints_p.h"
+#else
+#	error OS is unknown!
 #endif
 
 
-MountPoints::MountPoints()
+MountPoints::MountPoints() :
+	m_data(new MountPointsPrivate())
 {}
+
+MountPoints::~MountPoints()
+{
+	delete m_data;
+}
+
+MountPoint &MountPoints::operator[](size_type index)
+{
+	return m_data->items[index];
+}
+
+const MountPoint &MountPoints::operator[](size_type index) const
+{
+	return m_data->items[index];
+}
+
+const MountPoint &MountPoints::at(size_type index) const
+{
+	return m_data->items.at(index);
+}
+
+bool MountPoints::isEmpty() const
+{
+	return m_data->items.isEmpty();
+}
+
+MountPoints::size_type MountPoints::size() const
+{
+	return m_data->items.size();
+}
 
 void MountPoints::refresh()
 {
-#if defined(PLATFORMSTL_OS_IS_WINDOWS)
-	comstl::com_initialiser com;
-
-	if (com.is_initialised())
-	{
-		IShellFolder *iFolder;
-
-		if (SUCCEEDED(SHGetDesktopFolder(&iFolder)))
-		{
-			ITEMIDLIST *pidlList;
-			stlsoft::ref_ptr<IShellFolder> desktop(iFolder, false);
-
-			if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &pidlList)))
-			{
-				if (SUCCEEDED(desktop->BindToObject(pidlList, NULL, IID_IShellFolder, (void**)&iFolder)))
-				{
-					IEnumIDList *iList;
-					stlsoft::ref_ptr<IShellFolder> computer(iFolder, false);
-
-					if (SUCCEEDED(computer->EnumObjects(NULL, SHCONTF_NONFOLDERS | SHCONTF_INCLUDEHIDDEN | SHCONTF_STORAGE, &iList)))
-					{
-						stlsoft::ref_ptr<IEnumIDList> list(iList, false);
-						ITEMIDLIST *pidlList[1] = { static_cast<ITEMIDLIST *>(CoTaskMemAlloc(sizeof(ITEMIDLIST *))) };
-
-						if (pidlList[0])
-						{
-							ULONG fetched;
-							QPixmap pixmap;
-							QString label;
-							QString path;
-							STRRET strret;
-							qint32 index;
-							IExtractIcon *iIcon;
-							wchar_t iconFile[MAX_PATH];
-							int iconIndex;
-							UINT iconFlags;
-							HICON iconHandleLarge;
-							HICON iconHandleSmall;
-#if defined(STLSOFT_COMPILER_IS_MSVC)
-							ULARGE_INTEGER pulFreeBytesAvailableToCaller;
-							ULARGE_INTEGER pulTotalNumberOfBytes;
-							ULARGE_INTEGER pulTotalNumberOfFreeBytes;
-#endif
-
-							m_items.clear();
-
-							do
-								if (FAILED(list->Next(1, pidlList, &fetched)))
-									break;
-								else
-									if (SUCCEEDED(computer->GetDisplayNameOf(pidlList[0], SHGDN_NORMAL, &strret)) && strret.uType == STRRET_WSTR)
-									{
-										label = QString::fromUtf16((const ushort *)strret.pOleStr);
-										CoTaskMemFree(strret.pOleStr);
-
-										if (SUCCEEDED(computer->GetUIObjectOf(NULL, 1, (const ITEMIDLIST **)pidlList, IID_IExtractIcon, NULL, (void**)&iIcon)))
-										{
-											stlsoft::ref_ptr<IExtractIcon> icon(iIcon, false);
-
-											if (SUCCEEDED(icon->GetIconLocation(GIL_FORSHELL, iconFile, MAX_PATH, &iconIndex, &iconFlags)) &&
-												SUCCEEDED(icon->Extract(iconFile, iconIndex, &iconHandleLarge, &iconHandleSmall, 0x00100010)))
-											{
-												pixmap = QPixmap::fromWinHICON(iconHandleLarge);
-											}
-											else
-												pixmap = QPixmap();
-										}
-										else
-											pixmap = QPixmap();
-
-										if ((index = label.lastIndexOf(QChar(')'))) != -1)
-										{
-											path = label.mid(index - 2, 2);
-
-#if defined(STLSOFT_COMPILER_IS_MSVC)
-											if (SHGetDiskFreeSpaceEx(
-													(const wchar_t *)path.unicode(),
-													&pulFreeBytesAvailableToCaller,
-													&pulTotalNumberOfBytes,
-													&pulTotalNumberOfFreeBytes))
-												m_items.push_back(MountPoint(path, label, pixmap, pulTotalNumberOfFreeBytes.QuadPart, pulTotalNumberOfBytes.QuadPart));
-											else
-												m_items.push_back(MountPoint(path, label, pixmap, 0, 0));
-#else
-											m_items.push_back(MountPoint(path, label, pixmap, 0, 0));
-#endif
-										}
-									}
-							while (fetched > 0);
-
-							CoTaskMemFree(pidlList[0]);
-						}
-					}
-				}
-
-				CoTaskMemFree(pidlList);
-			}
-		}
-	}
-#elif defined(PLATFORMSTL_OS_IS_UNIX)
-#endif
+	m_data->refresh();
 }

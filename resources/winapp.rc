@@ -20,12 +20,12 @@ VS_VERSION_INFO VERSIONINFO
 		BEGIN
 			BLOCK "040904B0"
 			BEGIN
-				VALUE "CompanyName", "Kaspersky Lab\0"
+				VALUE "CompanyName", "\0"
 				VALUE "FileDescription", "\0"
 				VALUE "FileVersion", VERSION_STRING
-				VALUE "LegalCopyright", "Dmitriy Vilkov, Kaspersky Lab 2010 ©\0"
-				VALUE "OriginalFilename", "cfsd.exe\0"
-				VALUE "ProductName", "CF Stream Daemon\0"
+				VALUE "LegalCopyright", "Dmitriy Vilkov, 2011 ©\0"
+				VALUE "OriginalFilename", "qfm.exe\0"
+				VALUE "ProductName", "QFM - Qt File Manager\0"
 			END
 		END
 	END

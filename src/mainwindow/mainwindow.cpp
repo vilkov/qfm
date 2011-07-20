@@ -6,6 +6,7 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QMenu>
 #include <QtXml/QXmlStreamWriter>
+#include <QtGui/QMessageBox>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -19,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* Actions */
     m_fileMenuActions(this),
-    m_toolsMenuActions(this)
+    m_toolsMenuActions(this),
+	m_helpMenuActions(this)
 {
 	setCentralWidget(&m_centralWidget);
 	m_centralWidget.setLayout(&m_layout);
@@ -162,6 +164,38 @@ MainWindow::ToolsMenuActions::ToolsMenuActions(QMainWindow *parent) :
 void MainWindow::actToolsMenuPreferences()
 {
 
+}
+
+MainWindow::HelpMenuActions::HelpMenuActions(QMainWindow *parent) :
+	hotkeys(tr("Hotkeys"), parent)
+{
+	QMenu *menu = parent->menuBar()->addMenu(tr("Help"));
+
+	hotkeys.setShortcuts(QKeySequence::Preferences);
+	hotkeys.setStatusTip(tr("Show a preferences dialog"));
+	parent->connect(&hotkeys, SIGNAL(triggered()), SLOT(actHelpMenuHotkeys()));
+	menu->addAction(&hotkeys);
+}
+
+void MainWindow::actHelpMenuHotkeys()
+{
+	static const char *help = "ALT+F1 \t\t- show mount points for the left panel.\n"
+							  "ALT+F2 \t\t- show mount points for the right panel.\n"
+							  "Backspace \t\t- go to parent directory.\n"
+							  "ALT+Up \t\t- edit path of current tab.\n"
+							  "CTRL+F5 \t\t- refresh.\n"
+							  "ALT+CTRL+X \t\t- copy path of selected files to clipboard.\n"
+							  "CTRL+Return \t\t- open selected folder in new tab.\n"
+							  "CTRL+W/CTRL+Down \t- close current tab.\n"
+							  "F2 \t\t- rename.\n"
+							  "F7 \t\t- create directory.\n"
+							  "SHIFT+Delete \t\t- remove selected files/folders.\n"
+							  "Space \t\t- calculate folder size.\n"
+							  "F5 \t\t- copy selected files/folders.\n"
+							  "F6 \t\t- move selected files/folders.\n"
+							  "Esc \t\t- cancel current operation (copy, move, delete, calculate size etc).";
+
+	QMessageBox::information(this, tr("Hotkeys"), help);
 }
 
 void MainWindow::showMountsForLeft()

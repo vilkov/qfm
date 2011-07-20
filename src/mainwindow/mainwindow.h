@@ -33,6 +33,7 @@ private:
     FoldersView::TabList loadRightPanelTabs() const;
     FoldersView::TabList loadPanelTabs(const QString &fileName) const;
 
+
 private:
     struct FileMenuActions
     {
@@ -45,6 +46,7 @@ private Q_SLOTS:
     void actFileMenuOpen();
     void actFileMenuExit();
 
+
 private:
     struct ToolsMenuActions
     {
@@ -54,6 +56,18 @@ private:
     };
 private Q_SLOTS:
     void actToolsMenuPreferences();
+
+
+private:
+    struct HelpMenuActions
+    {
+    	HelpMenuActions(QMainWindow *parent);
+
+        QAction hotkeys;
+    };
+private Q_SLOTS:
+    void actHelpMenuHotkeys();
+
 
 private:
 	typedef KeyboardEventSource<
@@ -86,6 +100,7 @@ private:
     /* Actions */
     FileMenuActions m_fileMenuActions;
     ToolsMenuActions m_toolsMenuActions;
+    HelpMenuActions m_helpMenuActions;
 };
 
 #endif // MAINWINDOW_H

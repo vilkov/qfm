@@ -26,7 +26,7 @@ namespace stlsoft
 }
 
 
-class MountPointsPrivate
+class MountPoints::MountPointsPrivate
 {
 public:
 	typedef MountPoint::value_type value_type;
@@ -41,10 +41,10 @@ public:
 };
 
 
-MountPointsPrivate::MountPointsPrivate()
+MountPoints::MountPointsPrivate::MountPointsPrivate()
 {}
 
-void MountPointsPrivate::refresh()
+void MountPoints::MountPointsPrivate::refresh()
 {
 	comstl::com_initialiser com;
 

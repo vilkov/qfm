@@ -130,17 +130,18 @@ void M3uNode::refresh()
 	else
 		setUpdating(true);
 
-
 	QFile file(rootItem()->absoluteFilePath());
 
 	if (file.open(QFile::ReadOnly))
 	{
-		QStringList list;
-		QTextStream stream(&file);
 		QString line;
 		ItemsList items;
+		QStringList list;
+		QTextStream stream(&file);
 
 		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+		qDeleteAll(m_items);
+		m_items.clear();
 
 		while (!(line = stream.readLine()).isEmpty())
 			if (line.startsWith(m_tag))
@@ -162,6 +163,8 @@ void M3uNode::refresh()
 		m_items.append(items);
 		endInsertRows();
 	}
+
+	setUpdating(false);
 }
 
 void M3uNode::remove(const QModelIndexList &list)

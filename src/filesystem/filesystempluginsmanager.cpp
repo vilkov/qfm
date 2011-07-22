@@ -29,13 +29,19 @@ Node *PluginsManager::node(const IFileControl *control, Node *parent) const
 		if (file)
 		{
 			for (PluginsList::size_type i = 0, size = m_staticFilePlugins.size(); i < size; ++i)
-				if (res = m_staticFilePlugins.at(i)->node(control, file.data(), parent))
-					break;
+				if (!file->seek(0))
+					return 0;
+				else
+					if (res = m_staticFilePlugins.at(i)->node(control, file.data(), parent))
+						break;
 
 			if (res == 0)
 				for (PluginsList::size_type i = 0, size = m_dynamicFilePlugins.size(); i < size; ++i)
-					if (res = m_dynamicFilePlugins.at(i)->node(control, file.data(), parent))
-						break;
+					if (!file->seek(0))
+						return 0;
+					else
+						if (res = m_dynamicFilePlugins.at(i)->node(control, file.data(), parent))
+							break;
 		}
 	}
 	else

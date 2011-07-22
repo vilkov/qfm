@@ -195,7 +195,7 @@ void MainWindow::actHelpMenuHotkeys()
 							  "F6 \t\t- move selected files/folders.\n"
 							  "Esc \t\t- cancel current operation (copy, move, delete, calculate size etc).";
 
-	QMessageBox::information(this, tr("Hotkeys"), help);
+	QMessageBox::information(this, tr("Hotkeys"), QString::fromLatin1(help));
 }
 
 void MainWindow::showMountsForLeft()

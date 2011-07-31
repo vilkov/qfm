@@ -2,7 +2,7 @@
 #define IDMPROXYMODEL_H_
 
 #include <QtGui/QSortFilterProxyModel>
-#include "../../filesystem/filesystem_ns.h"
+#include "../../../filesystem/filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN

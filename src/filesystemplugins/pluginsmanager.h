@@ -2,6 +2,7 @@
 #define PLUGINSMANAGER_H_
 
 #include "m3uplugin/m3uplugin.h"
+#include "idmplugin/idmplugin.h"
 #include "../filesystem/filesystempluginsmanager.h"
 
 
@@ -14,6 +15,7 @@ public:
 
 private:
 	M3uPlugin m_m3uplugin;
+	IdmPlugin m_idmplugin;
 };
 
 FILE_SYSTEM_NS_END

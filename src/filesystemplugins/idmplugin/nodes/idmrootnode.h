@@ -1,18 +1,20 @@
 #ifndef IDMROOTNODE_H_
 #define IDMROOTNODE_H_
 
+#include <sqlite3.h>
+#include <QtCore/QFileInfo>
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
-#include "../../filesystem/filesystemnode.h"
-#include "../../filesystem/filesystempluginsmanager.h"
+#include "idmbasenode.h"
+#include "items/idmitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmRootNode : public Node
+class IdmRootNode : public IdmBaseNode
 {
 public:
-	IdmRootNode(Node *parent = 0);
+	IdmRootNode(const QFileInfo &storage, Node *parent = 0);
 	virtual ~IdmRootNode();
 
     /* QAbstractItemModel */
@@ -67,7 +69,22 @@ protected:
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
+	QModelIndex rootIndex() const;
+	void addView(INodeView *view);
+	void removeView(INodeView *view);
+
+private:
+	IdmItem *rootItem() const { return m_items.at(0); }
+
+private:
+	typedef QSet<INodeView*> ViewSet;
+	typedef QList<IdmItem*>  ItemsList;
+
+private:
+	sqlite3 *m_db;
+	ViewSet m_view;
 	bool m_updating;
+	ItemsList m_items;
 	IdmProxyModel m_proxy;
 	IdmDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;

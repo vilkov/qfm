@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMFOLDERPROXYMODEL_H_
 #define FILESYSTEMFOLDERPROXYMODEL_H_
 
-#include <QSortFilterProxyModel>
+#include <QtGui/QSortFilterProxyModel>
 #include "../filesystem_ns.h"
 
 

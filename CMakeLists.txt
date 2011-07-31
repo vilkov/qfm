@@ -40,6 +40,10 @@ add_definitions (${QT_DEFINITIONS})
 find_package (Stlsoft REQUIRED)
 include_directories (${STLSOFT_INCLUDE})
 
+find_package (Sqlite REQUIRED)
+include_directories (${SQLITE_INCLUDE})
+set (qfm_LIBS ${qfm_LIBS} "${SQLITE_LIBRARY}")
+
 
 # Includes
 

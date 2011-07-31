@@ -157,7 +157,6 @@ private:
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
 
-
 private:
 	typedef QSet<INodeView*> ViewSet;
 

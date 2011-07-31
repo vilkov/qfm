@@ -6,6 +6,8 @@
 #include "../../../application.h"
 
 
+FILE_SYSTEM_NS_BEGIN
+
 class M3uEntry : public M3uItem
 {
 	Q_DECLARE_TR_FUNCTIONS(M3uEntry)
@@ -103,5 +105,7 @@ private:
 	qint32 m_length;
 	QString m_title;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* M3UENTRY_H_ */

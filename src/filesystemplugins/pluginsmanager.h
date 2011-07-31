@@ -5,13 +5,17 @@
 #include "../filesystem/filesystempluginsmanager.h"
 
 
-class PluginsManager : public FileSystem::PluginsManager
+FILE_SYSTEM_NS_BEGIN
+
+class MyPluginsManager : public PluginsManager
 {
 public:
-	PluginsManager();
+	MyPluginsManager();
 
 private:
 	M3uPlugin m_m3uplugin;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* PLUGINSMANAGER_H_ */

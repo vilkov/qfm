@@ -13,8 +13,7 @@ PluginsManager::PluginsManager()
 
 PluginsManager::~PluginsManager()
 {
-	qDeleteAll(m_dynamicFilePlugins);
-	qDeleteAll(m_dynamicFoldersPlugins);
+	qDeleteAll(m_dynamicPlugins);
 }
 
 Node *PluginsManager::node(const IFileControl *control, Node *parent) const
@@ -28,26 +27,34 @@ Node *PluginsManager::node(const IFileControl *control, Node *parent) const
 
 		if (file)
 		{
-			for (PluginsList::size_type i = 0, size = m_staticFilePlugins.size(); i < size; ++i)
+			for (PluginsList::size_type i = 0, size = m_staticPlugins.size(); i < size; ++i)
 				if (!file->seek(0))
 					return 0;
 				else
-					if (res = m_staticFilePlugins.at(i)->node(control, file.data(), parent))
+					if (res = m_staticPlugins.at(i)->node(control, file.data(), parent))
 						break;
 
 			if (res == 0)
-				for (PluginsList::size_type i = 0, size = m_dynamicFilePlugins.size(); i < size; ++i)
+				for (PluginsList::size_type i = 0, size = m_dynamicPlugins.size(); i < size; ++i)
 					if (!file->seek(0))
 						return 0;
 					else
-						if (res = m_dynamicFilePlugins.at(i)->node(control, file.data(), parent))
+						if (res = m_dynamicPlugins.at(i)->node(control, file.data(), parent))
 							break;
 		}
 	}
 	else
 		if (control->isDir())
-			if (FolderPlugin *plugin = m_staticFoldersPlugins.value(control->absoluteFilePath(), 0))
-				res = plugin->node(control, parent);
+		{
+			for (PluginsList::size_type i = 0, size = m_staticPlugins.size(); i < size; ++i)
+				if (res = m_staticPlugins.at(i)->node(control, parent))
+					break;
+
+			if (res == 0)
+				for (PluginsList::size_type i = 0, size = m_dynamicPlugins.size(); i < size; ++i)
+					if (res = m_dynamicPlugins.at(i)->node(control, parent))
+						break;
+		}
 
 	return res;
 }

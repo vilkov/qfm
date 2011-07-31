@@ -1,8 +1,12 @@
 #include "pluginsmanager.h"
 
 
-PluginsManager::PluginsManager() :
-	FileSystem::PluginsManager()
+FILE_SYSTEM_NS_BEGIN
+
+MyPluginsManager::MyPluginsManager() :
+	PluginsManager()
 {
 	registerStatic(&m_m3uplugin);
 }
+
+FILE_SYSTEM_NS_END

@@ -4,7 +4,9 @@
 #include "../../filesystem/filesystemdelegate.h"
 
 
-class M3uDelegate : public FileSystem::Delegate
+FILE_SYSTEM_NS_BEGIN
+
+class M3uDelegate : public Delegate
 {
 	Q_DISABLE_COPY(M3uDelegate)
 
@@ -12,5 +14,7 @@ public:
 	M3uDelegate(QObject *parent = 0)
 	{}
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* M3UDELEGATE_H_ */

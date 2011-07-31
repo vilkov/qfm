@@ -1,8 +1,11 @@
 #ifndef M3UPROXYMODEL_H_
 #define M3UPROXYMODEL_H_
 
-#include <QSortFilterProxyModel>
+#include <QtGui/QSortFilterProxyModel>
+#include "items/m3uitem.h"
 
+
+FILE_SYSTEM_NS_BEGIN
 
 class M3uProxyModel : public QSortFilterProxyModel
 {
@@ -14,5 +17,7 @@ public:
 protected:
 	virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* M3UPROXYMODEL_H_ */

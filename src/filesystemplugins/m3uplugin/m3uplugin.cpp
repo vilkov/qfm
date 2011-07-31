@@ -1,23 +1,29 @@
 #include "m3uplugin.h"
 #include "m3unode.h"
 #include <QtCore/QTextCodec>
-#include <QDebug>
 
+
+FILE_SYSTEM_NS_BEGIN
 
 M3uPlugin::M3uPlugin() :
 	m_identity(QString::fromLatin1("#EXTM3U"))
 {}
 
-FileSystem::Node *M3uPlugin::node(const FileSystem::IFileInfo *info, FileSystem::IFile *file, FileSystem::Node *parent) const
+Node *M3uPlugin::node(const IFileInfo *info, Node *parent) const
+{
+	return 0;
+}
+
+Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
 {
 	if (QTextCodec *codec = QTextCodec::codecForName("UTF-8"))
 	{
 		uchar data[64] = {};
 
-		for (FileSystem::IFile::size_type i = 0, size = file->read(data, 64); size > m_identity.size(); ++i)
+		for (IFile::size_type i = 0, size = file->read(data, 64); size > m_identity.size(); ++i)
 			if (data[i] == '\n' || data[i] == '\r')
 			{
-				data[i] == 0;
+				data[i] = 0;
 
 				if (m_identity == codec->toUnicode((const char*)data, i))
 					return new M3uNode(info->absoluteFilePath(), parent);
@@ -28,3 +34,5 @@ FileSystem::Node *M3uPlugin::node(const FileSystem::IFileInfo *info, FileSystem:
 
 	return 0;
 }
+
+FILE_SYSTEM_NS_END

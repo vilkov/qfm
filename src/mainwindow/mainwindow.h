@@ -20,7 +20,7 @@ public:
     MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
-	PluginsManager *plugins() { return &m_plugins; }
+	FileSystem::MyPluginsManager *plugins() { return &m_plugins; }
 	void switchToOtherPanel();
 
 protected:
@@ -87,7 +87,7 @@ private:
 
 private:
     MountPoints m_mounts;
-    PluginsManager m_plugins;
+    FileSystem::MyPluginsManager m_plugins;
     FileSystem::RootNode m_root;
 
     CentralWidgetEventHandler m_eventHandler;

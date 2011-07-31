@@ -1,21 +1,19 @@
-#ifndef M3UNODE_H_
-#define M3UNODE_H_
+#ifndef IDMROOTNODE_H_
+#define IDMROOTNODE_H_
 
-#include <QtCore/QFileInfo>
-#include "m3udelegate.h"
-#include "m3uproxymodel.h"
-#include "items/m3uitem.h"
+#include "idmdelegate.h"
+#include "idmproxymodel.h"
 #include "../../filesystem/filesystemnode.h"
 #include "../../filesystem/filesystempluginsmanager.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class M3uNode : public Node
+class IdmRootNode : public Node
 {
 public:
-	M3uNode(const QFileInfo &info, Node *parent = 0);
-	virtual ~M3uNode();
+	IdmRootNode(Node *parent = 0);
+	virtual ~IdmRootNode();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -29,13 +27,13 @@ public:
 	/* INode */
 	virtual INode *root() const;
 	virtual int columnCount() const;
-	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
-	virtual IFileControl *createControl() const { return 0; }
-	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins) { return 0; }
+	virtual IFileInfo *info(const QModelIndex &idx) const;
+	virtual IFileControl *createControl() const;
+	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
 
 	/* INode::IFileInfo */
-	virtual bool isDir() const { return false; }
-	virtual bool isFile() const { return false; }
+	virtual bool isDir() const;
+	virtual bool isFile() const;
 	virtual bool exists() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
@@ -65,22 +63,16 @@ public:
 	virtual void switchTo(Node *node, const QModelIndex &selected);
 
 protected:
-	M3uItem *rootItem() const { return m_items.at(0); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
-	typedef QList<M3uItem*> ItemsList;
-
-private:
-	QString m_tag;
 	bool m_updating;
-	ItemsList m_items;
-	M3uProxyModel m_proxy;
-	M3uDelegate m_delegate;
+	IdmProxyModel m_proxy;
+	IdmDelegate m_delegate;
 	QModelIndex m_parentEntryIndex;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* M3UNODE_H_ */
+#endif /* IDMROOTNODE_H_ */

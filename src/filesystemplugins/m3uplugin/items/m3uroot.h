@@ -5,6 +5,8 @@
 #include "m3uitem.h"
 
 
+FILE_SYSTEM_NS_BEGIN
+
 class M3uRoot : public M3uItem
 {
 public:
@@ -38,5 +40,7 @@ private:
 	QFileInfo m_info;
 	QString m_label;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* M3UROOT_H_ */

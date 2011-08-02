@@ -1,24 +1,26 @@
 #include "idmrootnode.h"
 #include "items/idmroot.h"
+#include "items/idmmessage.h"
+#include "items/idmseparator.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 	IdmBaseNode(parent),
-	m_db(0),
+	m_storage(storage),
 	m_updating(false)
 {
-	sqlite3_open16(storage.absoluteFilePath().unicode(), &m_db);
-
 	m_items.push_back(new IdmRoot(storage.absolutePath()));
+
+	if (!m_storage.isValid())
+	{
+		m_items.push_back(new IdmSeparator());
+		m_items.push_back(new IdmMessage(m_storage.lastError()));
+	}
+
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
-}
-
-IdmRootNode::~IdmRootNode()
-{
-	sqlite3_close(m_db);
 }
 
 int IdmRootNode::rowCount(const QModelIndex &parent) const
@@ -96,8 +98,9 @@ bool IdmRootNode::isFile() const
 
 bool IdmRootNode::exists() const
 {
-	rootItem()->refresh();
-	return rootItem()->exists();
+//	rootItem()->refresh();
+//	return rootItem()->exists();
+	return true;
 }
 
 QString IdmRootNode::fileName() const

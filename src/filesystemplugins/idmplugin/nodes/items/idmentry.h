@@ -31,7 +31,7 @@ public:
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual void refresh() {}
 
-	/* M3uItem */
+	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const
 	{
 		switch (column)

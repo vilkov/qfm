@@ -2,8 +2,11 @@
 #define IDMSTORAGE_H_
 
 #include <sqlite3.h>
+#include <QtCore/QList>
 #include <QtCore/QFileInfo>
 #include <QtGui/QApplication>
+#include "entities/idmentity.h"
+#include "entities/idmentityroot.h"
 #include "../../../filesystem/filesystem_ns.h"
 
 
@@ -14,18 +17,6 @@ class IdmStorage
 	Q_DECLARE_TR_FUNCTIONS(IdmStorage)
 
 public:
-	enum Type
-	{
-		Int      = 1,
-		String   = 2,
-		Date     = 3,
-		Time     = 4,
-		DateTime = 5,
-		Memo     = 6,
-		Virtual  = 7
-	};
-
-public:
 	IdmStorage(const QFileInfo &storage);
 	~IdmStorage();
 
@@ -33,10 +24,14 @@ public:
 	const QString &lastError() const { return m_lastError; }
 
 private:
+	void loadEntities(sqlite3_stmt *statement, IdmEntityList *parent);
+
+private:
 	bool m_valid;
 	sqlite3 *m_db;
 	QFileInfo m_info;
 	QString m_lastError;
+	IdmEntityRoot m_entities;
 };
 
 FILE_SYSTEM_NS_END

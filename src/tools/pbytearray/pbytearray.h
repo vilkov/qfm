@@ -172,6 +172,24 @@ public:
 		else
 			return 0;
 	}
+//	PByteArray &arg(int value, int base = 10)
+//	{
+//		char buffer[1024];
+//		va_list args;
+//
+//		va_start(args, format);
+//		vsprintf(buffer, format.c_str(), args);
+//		m_file << buffer << std::endl;
+//		va_end(args);
+//
+//		if (checkLastOperation())
+//			m_file.flush();
+//		return PByteArray();
+//	}
+	static PByteArray number(int value, int base = 10)
+	{
+		return PByteArray();
+	}
 
 	/********** Iterators **********/
 	class iterator

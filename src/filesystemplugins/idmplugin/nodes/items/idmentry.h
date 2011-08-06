@@ -13,7 +13,8 @@ class IdmEntry : public IdmItem
 	Q_DECLARE_TR_FUNCTIONS(M3uEntry)
 
 public:
-	IdmEntry(const QFileInfo &info, qint32 length, const QString &title) :
+	IdmEntry(const QFileInfo &info, qint32 length, const QString &title, IdmItem *parent = 0) :
+		IdmItem(parent),
 		m_locked(false),
 		m_info(info),
 		m_length(length),
@@ -77,6 +78,8 @@ public:
 		return QVariant();
 	}
 	virtual bool isRoot() const { return false; }
+	virtual bool isMenu() const { return false; }
+	virtual bool isMenuItem() const { return false; }
 
 	qint32 length() const { return m_length; }
 	const QString &title() const { return m_title; }

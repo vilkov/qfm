@@ -79,6 +79,7 @@ private:
 	typedef QList<IdmItem*>  ItemsList;
 
 private:
+	mutable QFileInfo m_info;
 	IdmStorage m_storage;
 	ViewSet m_view;
 	bool m_updating;

@@ -10,7 +10,8 @@ FILE_SYSTEM_NS_BEGIN
 class IdmRoot : public IdmItem
 {
 public:
-	IdmRoot(const QFileInfo &info) :
+	IdmRoot(const QFileInfo &info, IdmItem *parent = 0) :
+		IdmItem(parent),
 		m_info(info),
 		m_label(QString::fromLatin1(".."))
 	{}
@@ -35,6 +36,8 @@ public:
 			return QVariant();
 	}
 	virtual bool isRoot() const { return true; }
+	virtual bool isMenu() const { return false; }
+	virtual bool isMenuItem() const { return false; }
 
 private:
 	QFileInfo m_info;

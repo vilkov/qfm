@@ -1,4 +1,5 @@
 #include "idmrootnode.h"
+#include "items/idmmenu.h"
 #include "items/idmroot.h"
 #include "items/idmmessage.h"
 #include "items/idmseparator.h"
@@ -8,12 +9,16 @@ FILE_SYSTEM_NS_BEGIN
 
 IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 	IdmBaseNode(parent),
+	m_info(storage.absolutePath()),
 	m_storage(storage),
 	m_updating(false)
 {
-	m_items.push_back(new IdmRoot(storage.absolutePath()));
-
-	if (!m_storage.isValid())
+	if (m_storage.isValid())
+	{
+		m_items.push_back(new IdmMenu(tr("Menu"), tr("Tooltip")));
+		m_items.push_back(new IdmRoot(storage.absolutePath()));
+	}
+	else
 	{
 		m_items.push_back(new IdmSeparator());
 		m_items.push_back(new IdmMessage(m_storage.lastError()));
@@ -25,7 +30,13 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 
 int IdmRootNode::rowCount(const QModelIndex &parent) const
 {
-	return 0;
+	if (parent.isValid())
+		if (static_cast<IdmItem*>(parent.internalPointer())->isMenu())
+			return static_cast<IdmMenu*>(parent.internalPointer())->size();
+		else
+			return 0;
+	else
+    	return m_items.size();
 }
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
@@ -35,7 +46,10 @@ int IdmRootNode::columnCount(const QModelIndex &parent) const
 
 QVariant IdmRootNode::data(const QModelIndex &index, int role) const
 {
-	return QVariant();
+    if (index.isValid())
+    	return static_cast<IdmItem*>(index.internalPointer())->data(index.column(), role);
+    else
+    	return m_items.at(index.row())->data(index.column(), role);
 }
 
 Qt::ItemFlags IdmRootNode::flags(const QModelIndex &index) const
@@ -50,7 +64,10 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 
 QModelIndex IdmRootNode::index(int row, int column, const QModelIndex &parent) const
 {
-	return QModelIndex();
+	if (hasIndex(row, column, parent))
+		return createIndex(row, column, m_items.at(row));
+    else
+        return QModelIndex();
 }
 
 QModelIndex IdmRootNode::parent(const QModelIndex &child) const
@@ -98,24 +115,23 @@ bool IdmRootNode::isFile() const
 
 bool IdmRootNode::exists() const
 {
-//	rootItem()->refresh();
-//	return rootItem()->exists();
-	return true;
+	m_info.refresh();
+	return m_info.exists();
 }
 
 QString IdmRootNode::fileName() const
 {
-	return QString();
+	return m_info.fileName();
 }
 
 QString IdmRootNode::absolutePath() const
 {
-	return QString();
+	return m_info.absolutePath();
 }
 
 QString IdmRootNode::absoluteFilePath() const
 {
-	return QString();
+	return m_info.absoluteFilePath();
 }
 
 QString IdmRootNode::absoluteFilePath(const QString &fileName) const
@@ -125,7 +141,7 @@ QString IdmRootNode::absoluteFilePath(const QString &fileName) const
 
 QDateTime IdmRootNode::lastModified() const
 {
-	return QDateTime::currentDateTime();
+	return m_info.lastModified();
 }
 
 void IdmRootNode::refresh()

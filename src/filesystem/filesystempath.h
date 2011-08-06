@@ -61,7 +61,7 @@ public:
 		if (isValid())
 			m_path[0].append(QChar('/')); /* TODO: This is Qt bug! */
 #else
-		if (path.startsWith(QChar('/')))
+		if (m_isAbsolute)
 			m_path.push_front(QString::fromLatin1("/"));
 #endif
 	}

@@ -126,13 +126,13 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 						if (sqlite3_finalize(statement2) != SQLITE_OK)
 						{
 							m_valid = false;
-							m_lastError = QString::fromUtf8("Failed to load entities");
+							m_lastError = QString::fromLatin1("Failed to load entities");
 						}
 					}
 					else
 					{
 						m_valid = false;
-						m_lastError = QString::fromUtf8("Failed to load entities");
+						m_lastError = QString::fromLatin1("Failed to load entities");
 					}
 				}
 

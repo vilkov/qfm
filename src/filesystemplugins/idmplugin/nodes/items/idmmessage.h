@@ -10,7 +10,8 @@ FILE_SYSTEM_NS_BEGIN
 class IdmMessage : public IdmItem
 {
 public:
-	IdmMessage(const QString &message) :
+	IdmMessage(const QString &message, IdmItem *parent = 0) :
+		IdmItem(parent),
 		m_message(message)
 	{}
 
@@ -23,6 +24,8 @@ public:
 			return QVariant();
 	}
 	virtual bool isRoot() const { return false; }
+	virtual bool isMenu() const { return false; }
+	virtual bool isMenuItem() const { return false; }
 
 private:
 	QVariant m_message;

@@ -147,7 +147,7 @@ bool IdmStorage::isThereCycles(IdmEntityList *entity, IdmEntity *property) const
 {
 	const IdmEntity::Parents &parents = entity->parents();
 
-	for (IdmEntity::Parents::size_type i = 0; i < parents.size(); ++i)
+	for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 		if (parents.at(i)->id() == property->id())
 			return true;
 		else

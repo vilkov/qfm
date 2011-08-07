@@ -77,6 +77,7 @@ public:
 	virtual bool isMenu() const { return true; }
 	virtual bool isMenuItem() const { return false; }
 
+	IdmMenuItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 
 	void add(IdmMenuItem::id_type id, const QString &label, const QString &toolTip)

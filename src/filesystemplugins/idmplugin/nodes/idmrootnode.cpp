@@ -15,7 +15,11 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 {
 	if (m_storage.isValid())
 	{
-		m_items.push_back(new IdmMenu(tr("Menu"), tr("Tooltip")));
+		QScopedPointer<IdmMenu> menu(new IdmMenu(tr("Menu"), tr("Main menu")));
+		menu->add(0, tr("Create"), tr("Create an entity"));
+		menu->add(1, tr("Remove"), tr("Remove an entity"));
+
+		m_items.push_back(menu.take());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
 	}
 	else
@@ -65,7 +69,10 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 QModelIndex IdmRootNode::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
-		return createIndex(row, column, m_items.at(row));
+		if (parent.isValid() && static_cast<IdmItem*>(parent.internalPointer())->isMenu())
+			return createIndex(row, column, static_cast<IdmMenu*>(parent.internalPointer())->at(row));
+		else
+			return createIndex(row, column, m_items.at(row));
     else
         return QModelIndex();
 }

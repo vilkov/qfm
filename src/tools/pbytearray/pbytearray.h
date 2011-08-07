@@ -83,6 +83,8 @@ public:
 		IMP_D; d->~PByteArrayImplementation();
 		createLiteral(static_cast<const value_type*>(data), S - 1);
 	}
+    operator const char *() const { IMP_C; return d->data(); }
+    operator const void *() const { IMP_C; return d->data(); }
 
 	/********** Operations.Data **********/
 	size_type size() const { IMP_C; return d->size(); }

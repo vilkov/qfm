@@ -23,15 +23,27 @@ public:
 	bool isValid() const { return m_valid; }
 	const QString &lastError() const { return m_lastError; }
 
+	IdmEntity *createEntity(const QString &name, const IdmEntity::Type type);
+	void addProperty(IdmEntity *entity, IdmEntity *property);
+
 private:
+	IdmEntity::id_type loadId(const QString &tableName) const;
+	bool isThereCycles(IdmEntityList *entity, IdmEntity *property) const;
 	void loadEntities(sqlite3_stmt *statement, IdmEntityList *parent);
+
+private:
+	void setLastError(const char *sqlQuery) const;
+	void setLastError(const char *sqlQuery, const char *errorMsg) const;
+	void setLastError(const QByteArray &sqlQuery) const;
+	void setLastError(const QByteArray &sqlQuery, const char *errorMsg) const;
+	void setLastError(const QString &error) const;
 
 private:
 	bool m_valid;
 	sqlite3 *m_db;
 	QFileInfo m_info;
-	QString m_lastError;
 	IdmEntityRoot m_entities;
+	mutable QString m_lastError;
 };
 
 FILE_SYSTEM_NS_END

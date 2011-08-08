@@ -7,6 +7,17 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+struct MainMenuItems
+{
+	enum
+	{
+		Create,
+		Remove,
+		List
+	};
+};
+
+
 IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 	IdmBaseNode(parent),
 	m_info(storage.absolutePath()),
@@ -16,8 +27,9 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 	if (m_storage.isValid())
 	{
 		QScopedPointer<IdmMenu> menu(new IdmMenu(tr("Menu"), tr("Main menu")));
-		menu->add(0, tr("Create"), tr("Create an entity"));
-		menu->add(1, tr("Remove"), tr("Remove an entity"));
+		menu->add(MainMenuItems::Create, tr("Create"), tr("Create an entity"));
+		menu->add(MainMenuItems::Remove, tr("Remove"), tr("Remove an entity"));
+		menu->add(MainMenuItems::List, tr("List"), tr("List all entities"));
 
 		m_items.push_back(menu.take());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
@@ -213,8 +225,31 @@ void IdmRootNode::viewThis(INodeView *nodeView, const QModelIndex &selected)
 
 void IdmRootNode::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
 {
-//	QModelIndex index = m_proxy.mapToSource(idx);
-//
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
+		switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
+		{
+			case MainMenuItems::Create:
+			{
+				IdmEntity *ratingValue = m_storage.createEntity(tr("Rating value"), IdmEntity::Int);
+				IdmEntity *tagNames = m_storage.createEntity(tr("Tag name"), IdmEntity::Int);
+				IdmEntity *tag = m_storage.createEntity(tr("Tag"), IdmEntity::Composite);
+
+				m_storage.addProperty(tag, tagNames);
+				m_storage.addProperty(tag, ratingValue);
+				break;
+			}
+			case MainMenuItems::Remove:
+			{
+				break;
+			}
+			case MainMenuItems::List:
+			{
+				break;
+			}
+		}
+
 //	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
 //	{
 //		removeView(nodeView);

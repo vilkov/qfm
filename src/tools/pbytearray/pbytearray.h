@@ -188,10 +188,45 @@ public:
 //			m_file.flush();
 //		return PByteArray();
 //	}
-	static PByteArray number(int value, int base = 10)
-	{
-		return PByteArray();
-	}
+//	static PByteArray number(int value, int base = 10)
+//	{
+//		return PByteArray();
+//	}
+//	QString qulltoa(qulonglong l, int base, const QChar _zero)
+//	{
+//	    ushort buff[65]; // length of MAX_ULLONG in base 2
+//	    ushort *p = buff + 65;
+//
+//	    if (base != 10 || _zero.unicode() == '0') {
+//	        while (l != 0) {
+//	            int c = l % base;
+//
+//	            --p;
+//
+//	            if (c < 10)
+//	                *p = '0' + c;
+//	            else
+//	                *p = c - 10 + 'a';
+//
+//	            l /= base;
+//	        }
+//	    }
+//	    else {
+//	        while (l != 0) {
+//	            int c = l % base;
+//
+//	            *(--p) = _zero.unicode() + c;
+//
+//	            l /= base;
+//	        }
+//	    }
+//
+//	    return QString(reinterpret_cast<QChar *>(p), 65 - (p - buff));
+//	}
+//	QString qlltoa(qlonglong l, int base, const QChar zero)
+//	{
+//	    return qulltoa(l < 0 ? -l : l, base, zero);
+//	}
 
 	/********** Iterators **********/
 	class iterator

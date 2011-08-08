@@ -23,10 +23,14 @@ public:
 	bool isValid() const { return m_valid; }
 	const QString &lastError() const { return m_lastError; }
 
-	IdmEntity *createEntity(const QString &name, const IdmEntity::Type type);
+	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
+	void removeEntity(IdmEntity *entity);
+
 	void addProperty(IdmEntity *entity, IdmEntity *property);
+	void removeProperty(IdmEntity *entity, IdmEntity *property);
 
 private:
+	QString typeToString(IdmEntity::Type type) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntityList *entity, IdmEntity *property) const;
 	void loadEntities(sqlite3_stmt *statement, IdmEntityList *parent);

@@ -65,7 +65,7 @@ IdmStorage::~IdmStorage()
 	sqlite3_close(m_db);
 }
 
-IdmEntity *IdmStorage::createEntity(const QString &name, const IdmEntity::Type type)
+IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 {
 	IdmEntity *res = 0;
 	IdmEntity::id_type id = loadId("ENTITY");
@@ -73,16 +73,18 @@ IdmEntity *IdmStorage::createEntity(const QString &name, const IdmEntity::Type t
 	if (id != IdmEntity::InvalidId)
 	{
 		char *errorMsg;
-		QByteArray sqlQuery = QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME) values (%1, %2, '%3')").
-				arg(QString::number(id)).
-				arg(QString::number(type)).
-				arg(name).toLatin1();
+		QByteArray sqlQuery = QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME) values (%1, %2, '%3');"
+												  "create table ENTITY_%1 (ID int primary key, VALUE %4)").
+												  arg(QString::number(id)).
+												  arg(QString::number(type)).
+												  arg(name).
+												  arg(typeToString(type)).toLatin1();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			if (type == IdmEntity::Composite)
-				m_entities.add(new IdmEntityList(id, name));
+				m_entities.add(res = new IdmEntityList(id, name));
 			else
-				m_entities.add(new IdmEntityValue(type, id, name));
+				m_entities.add(res = new IdmEntityValue(type, id, name));
 		else
 			setLastError(sqlQuery, errorMsg);
 
@@ -90,6 +92,11 @@ IdmEntity *IdmStorage::createEntity(const QString &name, const IdmEntity::Type t
 	}
 
 	return res;
+}
+
+void IdmStorage::removeEntity(IdmEntity *entity)
+{
+
 }
 
 void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
@@ -104,10 +111,11 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 		if (id != IdmEntity::InvalidId)
 		{
 			char *errorMsg;
-			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID) values (%1, %2, %3)").
-					arg(QString::number(id)).
-					arg(QString::number(entity->id())).
-					arg(QString::number(property->id())).toLatin1();
+			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID) values (%1, %2, %3);"
+													  "create table ENTITY_%2_PROPERTY_%3 (ID int primary key, ENTITY_ID int, PROPERTY_ID int)").
+													  arg(QString::number(id)).
+													  arg(QString::number(entity->id())).
+													  arg(QString::number(property->id())).toLatin1();
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			{
@@ -119,6 +127,26 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 
 			sqlite3_free(errorMsg);
 		}
+	}
+}
+
+void IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
+{
+
+}
+
+QString IdmStorage::typeToString(IdmEntity::Type type) const
+{
+	switch (type)
+	{
+		case IdmEntity::Composite:
+		case IdmEntity::Raiting:
+		case IdmEntity::Int:      return QString::fromLatin1("int");
+		case IdmEntity::String:   return QString::fromLatin1("char(1024)");
+		case IdmEntity::Date:     return QString::fromLatin1("date");
+		case IdmEntity::Time:     return QString::fromLatin1("time");
+		case IdmEntity::DateTime: return QString::fromLatin1("datetime");
+		case IdmEntity::Memo:     return QString::fromLatin1("text");
 	}
 }
 
@@ -172,6 +200,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 			case IdmEntity::Time:
 			case IdmEntity::DateTime:
 			case IdmEntity::Memo:
+			case IdmEntity::Raiting:
 			{
 				if ((index = m_entities.indexOf(id = sqlite3_column_int(statement, 0))) != IdmEntityList::InvalidIndex)
 				{
@@ -208,9 +237,8 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 				else
 				{
 					sqlite3_stmt *statement2;
-					PByteArray sqlQuery("select * from ENTITY where ID in (select ENTITY_PROPERTY_ID from PROPERTIES where ENTITY_ID = %1)");
 					IdmEntityList *entity = new IdmEntityList(id, QString::fromUtf8((const char *)sqlite3_column_text(statement, 2)));
-					QByteArray query = QString::fromLatin1(sqlQuery.data(), sqlQuery.size()).arg(QString::number(entity->id())).toLatin1();
+					QByteArray query = QString::fromLatin1("select * from ENTITY where ID in (select ENTITY_PROPERTY_ID from PROPERTIES where ENTITY_ID = %1)").arg(QString::number(entity->id())).toLatin1();
 
 					m_entities.add(entity);
 
@@ -237,10 +265,6 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 					}
 				}
 
-				break;
-			}
-			case IdmEntity::Raiting:
-			{
 				break;
 			}
 		}

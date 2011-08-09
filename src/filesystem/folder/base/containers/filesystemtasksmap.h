@@ -4,8 +4,11 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include "../../../tools/taskspool/task.h"
+#include "../../../filesystem_ns.h"
+#include "../../../../tools/taskspool/task.h"
 
+
+FILE_SYSTEM_NS_BEGIN
 
 class TasksMap
 {
@@ -84,5 +87,7 @@ private:
 	Tasks m_tasks;
 	Names m_names;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* FILESYSTEMTASKSMAP_H_ */

@@ -58,7 +58,7 @@ void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 {
 	root->viewChild(this, FileSystem::Path(tab.path).begin(), Application::instance()->mainWindow().plugins());
 
-	for (Geometry::size_type i = 0, size = qMin(m_node->columnCount(), tab.geometry.size()); i < size; ++i)
+	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
 
 	m_view.sortByColumn(tab.sort.column, tab.sort.order);
@@ -74,7 +74,7 @@ void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteF
 {
 	root->viewChild(this, FileSystem::Path(absoluteFilePath).begin(), Application::instance()->mainWindow().plugins());
 
-	for (Geometry::size_type i = 0, size = qMin(m_node->columnCount(), geometry.size()); i < size; ++i)
+	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
 
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
@@ -132,7 +132,7 @@ void DirectoryView::save(QXmlStreamWriter &stream) const
 
 	QString name = QString::fromLatin1("Column");
 	stream.writeStartElement(QString::fromLatin1("Geometry"));
-	for (qint32 i = 0, size = m_node->columnCount(); i < size; ++i)
+	for (qint32 i = 0, size = m_node->columnsCount(); i < size; ++i)
 		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
 	stream.writeEndElement();
 }
@@ -336,9 +336,9 @@ void DirectoryView::refreshOther()
 QList<qint32> DirectoryView::geometry() const
 {
 	QList<qint32> res;
-	res.reserve(m_node->columnCount());
+	res.reserve(m_node->columnsCount());
 
-	for (qint32 i = 0, size = m_node->columnCount(); i < size; ++i)
+	for (qint32 i = 0, size = m_node->columnsCount(); i < size; ++i)
 		res.push_back(m_view.columnWidth(i));
 
 	return res;

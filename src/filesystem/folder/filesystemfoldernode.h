@@ -5,18 +5,17 @@
 #include "filesystemfolderproxymodel.h"
 #include "events/filesystemmodelevent.h"
 #include "info/filesystemfoldernodeinfo.h"
-#include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
 #include "containers/filesystemfoldernodevalues.h"
 #include "functors/filesystemfoldernodefunctors.h"
-#include "../filesystemnode.h"
+#include "base/filesystemfoldernodebase.h"
 #include "../../tools/metatemplates.h"
 #include "../../tools/rangeintersection.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderNode : public Node
+class FolderNode : public FolderNodeBase
 {
 	Q_DISABLE_COPY(FolderNode)
 
@@ -35,8 +34,6 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* INode */
-	virtual INode *root() const;
-	virtual int columnCount() const;
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual IFileControl *createControl() const;
 	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
@@ -69,7 +66,6 @@ public:
 	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
 	/* Node */
-	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 	virtual void switchTo(Node *node, const QModelIndex &selected);
 
 protected:
@@ -153,9 +149,6 @@ private:
 
 	void removeThis();
 	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
-	bool isVisible() const;
-	void addView(INodeView *view);
-	void removeView(INodeView *view);
 
 private:
 	typedef QSet<INodeView*> ViewSet;
@@ -164,11 +157,8 @@ private:
 	bool m_updating;
 	Info m_info;
 	Values m_items;
-	ViewSet m_view;
-	TasksMap m_tasks;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
-	QModelIndex m_parentEntryIndex;
 };
 
 FILE_SYSTEM_NS_END

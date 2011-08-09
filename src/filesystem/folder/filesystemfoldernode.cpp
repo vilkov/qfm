@@ -15,7 +15,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
-	Node(parent),
+	FolderNodeBase(parent),
 	m_updating(false),
 	m_info(info),
 	m_proxy(this),
@@ -160,19 +160,6 @@ QModelIndex FolderNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-INode *FolderNode::root() const
-{
-	if (INode *res = static_cast<Node*>(Node::parent()))
-		return res->root();
-	else
-		return (INode*)this;
-}
-
-int FolderNode::columnCount() const
-{
-	return columnCount(QModelIndex());
-}
-
 IFileInfo *FolderNode::info(const QModelIndex &idx) const
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
@@ -277,7 +264,7 @@ void FolderNode::remove(const QModelIndexList &list)
 
 void FolderNode::cancel(const QModelIndexList &list)
 {
-	CancelFunctor cancelFunctor(m_tasks);
+	CancelFunctor cancelFunctor(tasks());
 	processLockedIndexList(list, cancelFunctor);
 }
 
@@ -324,7 +311,7 @@ void FolderNode::viewParent(INodeView *nodeView)
 {
 	if (!m_info.isRoot())
 		if (exists())
-			switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
+			switchTo(static_cast<Node*>(Node::parent()), nodeView, parentEntryIndex());
 		else
 			removeThis();
 }
@@ -347,7 +334,7 @@ void FolderNode::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsM
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
 	{
 		removeView(nodeView);
-		static_cast<Node*>(Node::parent())->viewThis(nodeView, m_parentEntryIndex);
+		static_cast<Node*>(Node::parent())->viewThis(nodeView, parentEntryIndex());
 		static_cast<Node*>(Node::parent())->refresh();
 	}
 	else
@@ -568,7 +555,7 @@ void FolderNode::updateFilesEvent(const ModelEvent *e)
 
 	for (RangeIntersection::RangeList::size_type i = 0, size = updateRange.size(); i < size; ++i)
 		emit dataChanged(createIndex(updateRange.at(i).top(), 0),
-						 createIndex(updateRange.at(i).bottom(), columnCount() - 1));
+						 createIndex(updateRange.at(i).bottom(), columnCount(QModelIndex()) - 1));
 
 	if (!updates.isEmpty())
 	{
@@ -1068,21 +1055,6 @@ void FolderNode::switchTo(Node *node, INodeView *nodeView, const QModelIndex &se
 	removeView(nodeView);
 	node->viewThis(nodeView, selected);
 	node->refresh();
-}
-
-bool FolderNode::isVisible() const
-{
-	return !m_view.isEmpty();
-}
-
-void FolderNode::addView(INodeView *view)
-{
-	m_view.insert(view);
-}
-
-void FolderNode::removeView(INodeView *view)
-{
-	m_view.remove(view);
 }
 
 FILE_SYSTEM_NS_END

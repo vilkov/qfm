@@ -36,6 +36,10 @@ private:
 	void loadEntities(sqlite3_stmt *statement, IdmEntityList *parent);
 
 private:
+	bool transaction();
+	bool commit();
+	void rollback();
+
 	void setLastError(const char *sqlQuery) const;
 	void setLastError(const char *sqlQuery, const char *errorMsg) const;
 	void setLastError(const QByteArray &sqlQuery) const;

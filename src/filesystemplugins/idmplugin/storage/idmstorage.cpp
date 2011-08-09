@@ -108,7 +108,7 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 	{
 		IdmEntity::id_type id = loadId("PROPERTIES");
 
-		if (id != IdmEntity::InvalidId)
+		if (id != IdmEntity::InvalidId && transaction())
 		{
 			char *errorMsg;
 			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID) values (%1, %2, %3);"
@@ -123,7 +123,10 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 				property->addParent(entity);
 			}
 			else
+			{
+				rollback();
 				setLastError(sqlQuery, errorMsg);
+			}
 
 			sqlite3_free(errorMsg);
 		}
@@ -268,6 +271,43 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 				break;
 			}
 		}
+}
+
+bool IdmStorage::transaction()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("begin transaction");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+bool IdmStorage::commit()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("commit");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+void IdmStorage::rollback()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("rollback");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+		setLastError(sqlQuery, errorMsg);
 }
 
 void IdmStorage::setLastError(const char *sqlQuery) const

@@ -19,7 +19,7 @@ struct MainMenuItems
 
 
 IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
-	IdmBaseNode(parent),
+	Node(parent),
 	m_info(storage.absolutePath()),
 	m_storage(storage),
 	m_updating(false)
@@ -29,7 +29,7 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 		QScopedPointer<IdmMenu> menu(new IdmMenu(tr("Menu"), tr("Main menu")));
 		menu->add(MainMenuItems::Create, tr("Create"), tr("Create an entity"));
 		menu->add(MainMenuItems::Remove, tr("Remove"), tr("Remove an entity"));
-		menu->add(MainMenuItems::List, tr("List"), tr("List all entities"));
+		menu->add(MainMenuItems::List, tr("List"), tr("List of the all entities"));
 
 		m_items.push_back(menu.take());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));

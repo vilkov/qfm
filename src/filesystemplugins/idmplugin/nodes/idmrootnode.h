@@ -3,14 +3,14 @@
 
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
-#include "idmbasenode.h"
 #include "items/idmitem.h"
 #include "../storage/idmstorage.h"
+#include "../../../filesystem/filesystemnode.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmRootNode : public IdmBaseNode
+class IdmRootNode : public Node
 {
 public:
 	IdmRootNode(const QFileInfo &storage, Node *parent = 0);

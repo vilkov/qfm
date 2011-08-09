@@ -78,7 +78,7 @@ public:
 		return QVariant();
 	}
 	virtual bool isRoot() const { return false; }
-	virtual bool isMenu() const { return false; }
+	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
 
 	qint32 length() const { return m_length; }

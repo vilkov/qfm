@@ -36,7 +36,7 @@ public:
 			return QVariant();
 	}
 	virtual bool isRoot() const { return true; }
-	virtual bool isMenu() const { return false; }
+	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
 
 private:

@@ -12,8 +12,7 @@ struct MainMenuItems
 	enum
 	{
 		Create,
-		Remove,
-		List
+		Remove
 	};
 };
 
@@ -26,10 +25,13 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 {
 	if (m_storage.isValid())
 	{
+		IdmMenu *submenu;
 		QScopedPointer<IdmMenu> menu(new IdmMenu(tr("Menu"), tr("Main menu")));
+
 		menu->add(MainMenuItems::Create, tr("Create"), tr("Create an entity"));
 		menu->add(MainMenuItems::Remove, tr("Remove"), tr("Remove an entity"));
-		menu->add(MainMenuItems::List, tr("List"), tr("List of the all entities"));
+		submenu = menu->add(tr("List"), tr("List of the all entities"));
+		submenu->add(0, tr("Some items"), tr("123"));
 
 		m_items.push_back(menu.take());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
@@ -47,8 +49,8 @@ IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
 int IdmRootNode::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
-		if (static_cast<IdmItem*>(parent.internalPointer())->isMenu())
-			return static_cast<IdmMenu*>(parent.internalPointer())->size();
+		if (static_cast<IdmItem*>(parent.internalPointer())->isList())
+			return static_cast<IdmItemsList*>(parent.internalPointer())->size();
 		else
 			return 0;
 	else
@@ -81,8 +83,8 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 QModelIndex IdmRootNode::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
-		if (parent.isValid() && static_cast<IdmItem*>(parent.internalPointer())->isMenu())
-			return createIndex(row, column, static_cast<IdmMenu*>(parent.internalPointer())->at(row));
+		if (parent.isValid() && static_cast<IdmItem*>(parent.internalPointer())->isList())
+			return createIndex(row, column, static_cast<IdmItemsList*>(parent.internalPointer())->at(row));
 		else
 			return createIndex(row, column, m_items.at(row));
     else
@@ -91,7 +93,14 @@ QModelIndex IdmRootNode::index(int row, int column, const QModelIndex &parent) c
 
 QModelIndex IdmRootNode::parent(const QModelIndex &child) const
 {
-	return QModelIndex();
+    if (child.isValid())
+		if (IdmItem *parent = static_cast<IdmItem*>(child.internalPointer())->parent())
+			if (parent->parent())
+				return createIndex(static_cast<IdmItemsList*>(parent->parent())->indexOf(parent), 0, parent);
+			else
+				return createIndex(m_items.indexOf(parent), 0, parent);
+
+    return QModelIndex();
 }
 
 INode *IdmRootNode::root() const
@@ -241,10 +250,6 @@ void IdmRootNode::viewChild(INodeView *nodeView, const QModelIndex &idx, Plugins
 				break;
 			}
 			case MainMenuItems::Remove:
-			{
-				break;
-			}
-			case MainMenuItems::List:
 			{
 				break;
 			}

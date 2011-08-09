@@ -16,7 +16,7 @@ public:
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const { return QVariant(); }
 	virtual bool isRoot() const { return false; }
-	virtual bool isMenu() const { return false; }
+	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
 };
 

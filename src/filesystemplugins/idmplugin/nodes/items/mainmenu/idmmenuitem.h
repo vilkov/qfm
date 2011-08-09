@@ -68,7 +68,7 @@ public:
 		return QVariant();
 	}
 	virtual bool isRoot() const { return false; }
-	virtual bool isMenu() const { return false; }
+	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return true; }
 
 	id_type id() const { return m_id; }

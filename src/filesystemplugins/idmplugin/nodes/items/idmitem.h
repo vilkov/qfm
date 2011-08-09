@@ -17,7 +17,7 @@ public:
 
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 	virtual bool isRoot() const = 0;
-	virtual bool isMenu() const = 0;
+	virtual bool isList() const = 0;
 	virtual bool isMenuItem() const = 0;
 
 private:

@@ -27,8 +27,6 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* INode */
-	virtual INode *root() const;
-	virtual int columnCount() const;
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
 	virtual IFileControl *createControl() const { return 0; }
 	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins) { return 0; }
@@ -52,17 +50,16 @@ public:
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
 
-	/* INode::IFileNavigation */
-	virtual void viewClosed(INodeView *nodeView);
-	virtual void viewParent(INodeView *nodeView);
-	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
-	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
 	/* Node */
-	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 	virtual void switchTo(Node *node, const QModelIndex &selected);
+
+protected:
+	virtual QModelIndex rootIndex() const { return QModelIndex(); }
+	virtual QAbstractItemModel *proxyModel() const { return &((M3uNode *)this)->m_proxy; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return &((M3uNode *)this)->m_delegate; }
+
+	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
 protected:
 	M3uItem *rootItem() const { return m_items.at(0); }
@@ -78,7 +75,6 @@ private:
 	ItemsList m_items;
 	M3uProxyModel m_proxy;
 	M3uDelegate m_delegate;
-	QModelIndex m_parentEntryIndex;
 };
 
 FILE_SYSTEM_NS_END

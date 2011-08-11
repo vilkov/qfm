@@ -85,16 +85,6 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-INode *M3uNode::root() const
-{
-	return 0;
-}
-
-int M3uNode::columnCount() const
-{
-	return columnCount(QModelIndex());
-}
-
 bool M3uNode::exists() const
 {
 	return rootItem()->exists();
@@ -199,39 +189,19 @@ void M3uNode::move(const QModelIndexList &list, INode *destination)
 
 }
 
-void M3uNode::viewClosed(INodeView *nodeView)
-{
-
-}
-
-void M3uNode::viewParent(INodeView *nodeView)
-{
-
-}
-
-void M3uNode::viewThis(INodeView *nodeView, const QModelIndex &selected)
-{
-	nodeView->setNode(this, &m_proxy, &m_delegate);
-}
-
-void M3uNode::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
-{
-
-}
-
-void M3uNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
-{
-
-}
-
-void M3uNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
-{
-
-}
-
 void M3uNode::switchTo(Node *node, const QModelIndex &selected)
 {
 
+}
+
+Node *M3uNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+{
+	return 0;
+}
+
+Node *M3uNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+{
+	return 0;
 }
 
 FILE_SYSTEM_NS_END

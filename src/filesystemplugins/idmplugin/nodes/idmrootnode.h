@@ -25,8 +25,6 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* INode */
-	virtual INode *root() const;
-	virtual int columnCount() const;
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual IFileControl *createControl() const;
 	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
@@ -50,43 +48,35 @@ public:
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
 
-	/* INode::IFileNavigation */
-	virtual void viewClosed(INodeView *nodeView);
-	virtual void viewParent(INodeView *nodeView);
-	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
-	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
 	/* Node */
-	virtual void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 	virtual void switchTo(Node *node, const QModelIndex &selected);
+
+protected:
+	/* Node */
+	virtual QModelIndex rootIndex() const;
+	virtual QAbstractItemModel *proxyModel() const { return &((IdmRootNode *)this)->m_proxy; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmRootNode *)this)->m_delegate; }
+
+	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
 protected:
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
-	QModelIndex rootIndex() const;
-	void addView(INodeView *view);
-	void removeView(INodeView *view);
-
-private:
 	IdmItem *rootItem() const { return m_items.at(0); }
 
 private:
-	typedef QSet<INodeView*> ViewSet;
-	typedef QList<IdmItem*>  ItemsList;
+	typedef QList<IdmItem*> ItemsList;
 
 private:
 	mutable QFileInfo m_info;
 	IdmStorage m_storage;
-	ViewSet m_view;
 	bool m_updating;
 	ItemsList m_items;
 	IdmProxyModel m_proxy;
 	IdmDelegate m_delegate;
-	QModelIndex m_parentEntryIndex;
 };
 
 FILE_SYSTEM_NS_END

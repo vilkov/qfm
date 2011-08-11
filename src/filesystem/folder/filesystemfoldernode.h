@@ -57,16 +57,17 @@ public:
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
 
-	/* INode::IFileNavigation */
-	virtual void viewClosed(INodeView *nodeView);
-	virtual void viewParent(INodeView *nodeView);
-	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
-	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
 	/* Node */
 	virtual void switchTo(Node *node, const QModelIndex &selected);
+
+protected:
+	/* Node */
+	virtual QModelIndex rootIndex() const;
+	virtual QAbstractItemModel *proxyModel() const { return &((FolderNode *)this)->m_proxy; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return &((FolderNode *)this)->m_delegate; }
+
+	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
 protected:
 	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
@@ -133,7 +134,6 @@ private:
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	QModelIndex indexForFile(FolderNodeItem *item) const;
 	QModelIndex indexForFile(FolderNodeItem *item, Values::size_type index) const;
-	QModelIndex rootIndex() const;
 
 	void updateFirstColumn(FolderNodeItem *entry);
 	void updateFirstColumn(const RangeIntersection &range);
@@ -146,9 +146,6 @@ private:
 	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
-
-	void removeThis();
-	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
 
 private:
 	typedef QSet<INodeView*> ViewSet;

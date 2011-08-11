@@ -57,9 +57,14 @@ public:
 	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
+protected:
 	/* Node */
-	virtual void setParentEntryIndex(const QModelIndex &value) {}
-	virtual void switchTo(Node *node, const QModelIndex &selected) {}
+	virtual QModelIndex rootIndex() const { return QModelIndex(); }
+	virtual QAbstractItemModel *proxyModel() const { return 0; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return 0; }
+
+	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) { return 0; }
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) { return 0; }
 
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins) const;

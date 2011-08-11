@@ -3,6 +3,7 @@
 
 #include <QtCore/QSet>
 #include <QtCore/QAbstractItemModel>
+#include <QtGui/QAbstractItemDelegate>
 #include "filesystem_ns.h"
 #include "interfaces/filesysteminode.h"
 
@@ -20,13 +21,32 @@ public:
 	virtual INode *root() const;
 	virtual int columnsCount() const;
 
-	const QModelIndex &parentEntryIndex() const { return m_parentEntryIndex; }
-	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
+	/* INode::IFileNavigation */
+	virtual void viewClosed(INodeView *nodeView);
+	virtual void viewParent(INodeView *nodeView);
+	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
+	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
+	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
+	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
-	virtual void switchTo(Node *node, const QModelIndex &selected) = 0;
+	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
+	virtual void switchTo(Node *node, const QModelIndex &selected);
+
+protected:
+	virtual QModelIndex rootIndex() const = 0;
+	virtual QAbstractItemModel *proxyModel() const = 0;
+	virtual QAbstractItemDelegate *itemDelegate() const = 0;
+
+	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 
 protected:
 	bool isVisible() const { return !m_view.isEmpty(); }
+	void removeThis();
+
+private:
+	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
+
 	void addView(INodeView *view) { m_view.insert(view); }
 	void removeView(INodeView *view) { m_view.remove(view); }
 

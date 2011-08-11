@@ -10,40 +10,24 @@ RootNode::RootNode() :
 	Node()
 {}
 
-void RootNode::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
+Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	Node *node;
-	Values::Value *value;
-	Values::size_type index = m_items.indexOf(*path);
+	Values::size_type index = m_items.indexOf(fileName);
 
 	if (index == Values::InvalidIndex)
 	{
-		m_items.add(createNode(*path, plugins, node));
-		value = &m_items.last();
+		m_items.add(createNode(fileName, plugins));
+		return m_items.last().node;
 	}
 	else
 	{
-		value = &m_items[index];
+		Values::Value &value = m_items[index];
 
-		if (value->node)
-			node = value->node;
-		else
-			value->node = node = createNode(*(value->item), plugins);
+		if (value.node || (value.node = createNode(*(value.item), plugins)))
+			return value.node;
 	}
 
-	if (node)
-		if ((++path).atEnd())
-			node->viewThis(nodeView, QModelIndex());
-		else
-			node->viewChild(nodeView, path, plugins);
-}
-
-void RootNode::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
-{
-	Path path(absoluteFilePath);
-
-	if (path.isAbsolute())
-		viewChild(nodeView, path.begin(), plugins);
+	return 0;
 }
 
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins) const
@@ -57,10 +41,10 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins) const
 			return 0;
 }
 
-Values::Value RootNode::createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const
+Values::Value RootNode::createNode(const QString &fileName, PluginsManager *plugins) const
 {
 	Info info(fileName);
-	return Values::Value(new FolderNodeEntry(info), node = createNode(info, plugins));
+	return Values::Value(new FolderNodeEntry(info), createNode(info, plugins));
 }
 
 FILE_SYSTEM_NS_END

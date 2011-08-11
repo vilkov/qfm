@@ -24,8 +24,6 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const { return QModelIndex(); }
 
 	/* INode */
-	virtual INode *root() const { return (INode*)this; }
-	virtual int columnCount() const { return 0; }
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
 	virtual IFileControl *createControl() const { return 0; }
 	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins) { return 0; }
@@ -49,14 +47,6 @@ public:
 	virtual void copy(const QModelIndexList &list, INode *destination) {}
 	virtual void move(const QModelIndexList &list, INode *destination) {}
 
-	/* INode::IFileNavigation */
-	virtual void viewClosed(INodeView *nodeView) {}
-	virtual void viewParent(INodeView *nodeView) {}
-	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected) {}
-	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) {}
-	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
-
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }
@@ -64,11 +54,11 @@ protected:
 	virtual QAbstractItemDelegate *itemDelegate() const { return 0; }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) { return 0; }
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) { return 0; }
+	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
-	Values::Value createNode(const QString &fileName, PluginsManager *plugins, Node *&node) const;
+	Values::Value createNode(const QString &fileName, PluginsManager *plugins) const;
 
 private:
 	Values m_items;

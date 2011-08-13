@@ -2,7 +2,7 @@
 #define FILESYSTEMITEM_H_
 
 #include <QtCore/QList>
-#include "../../info/filesystemfoldernodeinfo.h"
+#include "../../../info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

@@ -3,12 +3,9 @@
 
 #include "filesystemfolderdelegate.h"
 #include "filesystemfolderproxymodel.h"
-#include "events/filesystemmodelevent.h"
-#include "info/filesystemfoldernodeinfo.h"
-#include "containers/filesystemupdateslist.h"
-#include "containers/filesystemfoldernodevalues.h"
 #include "functors/filesystemfoldernodefunctors.h"
 #include "base/filesystemfoldernodebase.h"
+#include "items/filesystemfoldernodeitem.h"
 #include "../../tools/metatemplates.h"
 #include "../../tools/rangeintersection.h"
 
@@ -35,19 +32,7 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
-	virtual IFileControl *createControl() const;
 	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
-
-	/* INode::IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool exists() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual void refresh();
 
 	/* INode::IFileOperations */
 	virtual void remove(const QModelIndexList &list);
@@ -68,6 +53,19 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+
+protected:
+	/* FolderNodeBase */
+	virtual UpdatesList::Map updateFilesMap() const;
+	virtual void updateFilesEvent(const UpdatesList &updates);
+	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move);
+	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
+	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move);
+	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries);
+
+	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
 
 protected:
 	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
@@ -106,28 +104,10 @@ protected:
 	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);
 	void processLockedIndexList(const QModelIndexList &list, Functors::Functor &functor);
 
-protected:
-	bool isUpdating() const { return m_updating; }
-	void setUpdating(bool value) { m_updating = value; }
-
-protected:
-	void updateFiles();
-	void updateFilesEvent(const ModelEvent *event);
-
+private:
 	void scanForRemove(const ProcessedList &entries);
-	void scanForRemoveEvent(const ModelEvent *event);
-	void removeCompleteEvent(const ModelEvent *event);
-
 	void scanForSize(const ProcessedList &entries);
-	void scanForSizeEvent(const ModelEvent *event);
-
 	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
-	void scanForCopyEvent(const ModelEvent *event);
-	void copyCompleteEvent(const ModelEvent *event);
-
-	void questionAnswerEvent(const ModelEvent *event);
-	void updateProgressEvent(const ModelEvent *event);
-	void completedProgressEvent(const ModelEvent *event);
 
 private:
 	QModelIndex index(int column, FolderNodeItem *item) const;
@@ -148,11 +128,6 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
-	typedef QSet<INodeView*> ViewSet;
-
-private:
-	bool m_updating;
-	Info m_info;
 	Values m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;

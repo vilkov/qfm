@@ -2,7 +2,7 @@
 #define TASKPROGRESS_H_
 
 #include <QtCore/QDateTime>
-#include "../../filesystem_ns.h"
+#include "../../../filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN

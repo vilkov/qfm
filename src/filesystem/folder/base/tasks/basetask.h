@@ -7,13 +7,11 @@
 #include <QtGui/QMessageBox>
 #include "items/filesystemlist.h"
 #include "items/filesystementry.h"
-#include "../info/filesystemfoldernodeinfo.h"
-#include "../events/filesystemmodelevent.h"
 #include "../containers/filesystemupdateslist.h"
-#include "../containers/filesystemfoldernodevalues.h"
-#include "../../interfaces/filesysteminode.h"
-#include "../../../tools/taskspool/task.h"
-#include "../../../tools/pointers/pscopedpointer.h"
+#include "../../events/filesystemmodelevent.h"
+#include "../../../interfaces/filesysteminode.h"
+#include "../../../../tools/taskspool/task.h"
+#include "../../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN

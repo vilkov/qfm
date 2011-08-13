@@ -1,19 +1,19 @@
-#ifndef IDMNODE_H_
-#define IDMNODE_H_
+#ifndef IDMNODEBASE_H_
+#define IDMNODEBASE_H_
 
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
-#include "items/idmitem.h"
-#include "../storage/idmstorage.h"
+#include "../items/idmitem.h"
+#include "../containeres/idmcontainer.h"
 #include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmNode : public FolderNodeBase
+class IdmNodeBase : public FolderNodeBase
 {
 public:
-	IdmNode(const QFileInfo &storage, Node *parent = 0);
+	IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent = 0);
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -42,8 +42,8 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const { return &((IdmNode *)this)->m_proxy; }
-	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNode *)this)->m_delegate; }
+	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeBase *)this)->m_proxy; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeBase *)this)->m_delegate; }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
@@ -62,7 +62,7 @@ protected:
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
 
 protected:
-	IdmItem *rootItem() const { return m_items.at(0); }
+	IdmItem *rootItem() const { return m_items.at(1); }
 
 protected:
 	typedef QList<IdmItem*> ItemsList;
@@ -71,8 +71,9 @@ protected:
 	ItemsList m_items;
 	IdmProxyModel m_proxy;
 	IdmDelegate m_delegate;
+	IdmContainer *m_storage;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* IDMNODE_H_ */
+#endif /* IDMNODEBASE_H_ */

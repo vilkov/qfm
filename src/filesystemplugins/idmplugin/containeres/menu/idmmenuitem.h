@@ -1,17 +1,22 @@
-#ifndef IDMMENU_H_
-#define IDMMENU_H_
+#ifndef IDMMENUITEM_H_
+#define IDMMENUITEM_H_
 
-#include "idmitemslist.h"
-#include "mainmenu/idmmenuitem.h"
+#include <QtCore/QString>
+#include <QtCore/QVariant>
+#include "../../items/idmitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmMenu : public IdmItemsList
+class IdmMenuItem : public IdmItem
 {
 public:
-	IdmMenu(const QString &label, const QString &toolTip, IdmItem *parent = 0) :
-		IdmItemsList(parent),
+	typedef unsigned int id_type;
+
+public:
+	IdmMenuItem(id_type id, const QString &label, const QString &toolTip, IdmItem *parent = 0) :
+		IdmItem(parent),
+		m_id(id),
 		m_label(label),
 		m_toolTip(toolTip)
 	{}
@@ -34,7 +39,7 @@ public:
 //						else
 //							return m_info.icon();
 					case Qt::TextAlignmentRole:
-						return Qt::AlignCenter;
+						return Qt::AlignLeft;
 					case Qt::ToolTipRole:
 						return m_toolTip;
 				}
@@ -53,7 +58,7 @@ public:
 //						else
 //							return m_info.icon();
 					case Qt::TextAlignmentRole:
-						return Qt::AlignCenter;
+						return Qt::AlignLeft;
 					case Qt::ToolTipRole:
 						return m_toolTip;
 				}
@@ -63,23 +68,18 @@ public:
 
 		return QVariant();
 	}
+	virtual bool isRoot() const { return false; }
+	virtual bool isList() const { return false; }
+	virtual bool isMenuItem() const { return true; }
 
-	IdmMenu *add(const QString &label, const QString &toolTip)
-	{
-		IdmMenu *res;
-		m_items.push_back(res = new IdmMenu(label, toolTip, this));
-		return res;
-	}
-	void add(IdmMenuItem::id_type id, const QString &label, const QString &toolTip)
-	{
-		m_items.push_back(new IdmMenuItem(id, label, toolTip, this));
-	}
+	id_type id() const { return m_id; }
 
 private:
+	id_type m_id;
 	QVariant m_label;
 	QVariant m_toolTip;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* IDMMENU_H_ */
+#endif /* IDMMENUITEM_H_ */

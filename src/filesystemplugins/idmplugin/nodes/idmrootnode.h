@@ -1,18 +1,18 @@
 #ifndef IDMROOTNODE_H_
 #define IDMROOTNODE_H_
 
-#include "idmnode.h"
+#include "idmnodebase.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmRootNode : public IdmNode
+class IdmRootNode : public IdmNodeBase
 {
 public:
 	IdmRootNode(const QFileInfo &storage, Node *parent = 0);
 
 private:
-	IdmStorage m_storage;
+	IdmContainer m_storage;
 };
 
 FILE_SYSTEM_NS_END

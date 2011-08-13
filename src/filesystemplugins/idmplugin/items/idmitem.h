@@ -1,12 +1,12 @@
 #ifndef IDMITEM_H_
 #define IDMITEM_H_
 
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
+#include "../../../filesystem/filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmItem //: public IFileInfo
+class IdmItem
 {
 public:
 	IdmItem(IdmItem *parent) :

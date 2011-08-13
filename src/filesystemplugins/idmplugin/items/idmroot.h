@@ -1,31 +1,18 @@
 #ifndef IDMROOT_H_
 #define IDMROOT_H_
 
-#include <QtCore/QFileInfo>
-#include "idmitem.h"
+#include "idminfoitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmRoot : public IdmItem
+class IdmRoot : public IdmInfoItem
 {
 public:
 	IdmRoot(const QFileInfo &info, IdmItem *parent = 0) :
-		IdmItem(parent),
-		m_info(info),
+		IdmInfoItem(info, parent),
 		m_label(QString::fromLatin1(".."))
 	{}
-
-	/* IFileInfo */
-	virtual bool isDir() const { return m_info.isDir(); }
-	virtual bool isFile() const { return m_info.isFile(); }
-	virtual bool exists() const { return m_info.exists(); }
-	virtual QString fileName() const { return m_info.fileName(); }
-	virtual QString absolutePath() const { return m_info.absolutePath(); }
-	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
-	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
-	virtual QDateTime lastModified() const { return m_info.lastModified(); }
-	virtual void refresh() {}
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const
@@ -35,12 +22,8 @@ public:
 		else
 			return QVariant();
 	}
-	virtual bool isRoot() const { return true; }
-	virtual bool isList() const { return false; }
-	virtual bool isMenuItem() const { return false; }
 
 private:
-	QFileInfo m_info;
 	QString m_label;
 };
 

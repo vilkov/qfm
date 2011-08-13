@@ -3,6 +3,7 @@
 
 #include <QtCore/QFileInfo>
 #include "m3uitem.h"
+#include "../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../application.h"
 
 
@@ -64,7 +65,7 @@ public:
 				{
 					case Qt::EditRole:
 					case Qt::DisplayRole:
-						return humanReadableTime(m_length);
+						return Tools::humanReadableTime(m_length);
 					case Qt::TextAlignmentRole:
 						return Qt::AlignLeft;
 	//					case Qt::ToolTipRole:
@@ -80,23 +81,6 @@ public:
 
 	qint32 length() const { return m_length; }
 	const QString &title() const { return m_title; }
-
-	static QString humanReadableTime(quint64 secs)
-	{
-		if (quint64 hours = secs / (60 * 60))
-			if (quint64 min = (secs - hours * 60 * 60) / (60))
-				return QString::number(hours).append(QChar(':')).append(QString::number(min)).append(QString::fromLatin1(" h"));
-			else
-				return QString::number(hours).append(QString::fromLatin1(" h"));
-		else
-			if (hours = secs / (60))
-				if (quint64 s = (secs - hours * 60))
-					return QString::number(hours).append(QChar(':')).append(QString::number(s)).append(QString::fromLatin1(" m"));
-				else
-					return QString::number(hours).append(QString::fromLatin1(" m"));
-			else
-				return QString::number(secs).append(QString::fromLatin1(" s"));
-	}
 
 private:
 	bool m_locked;

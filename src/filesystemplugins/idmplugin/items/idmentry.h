@@ -1,36 +1,23 @@
 #ifndef IDMENTRY_H_
 #define IDMENTRY_H_
 
-#include <QtCore/QFileInfo>
-#include "idmitem.h"
+#include "idminfoitem.h"
 #include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmEntry : public IdmItem
+class IdmEntry : public IdmInfoItem
 {
-	Q_DECLARE_TR_FUNCTIONS(M3uEntry)
+	Q_DECLARE_TR_FUNCTIONS(IdmEntry)
 
 public:
 	IdmEntry(const QFileInfo &info, qint32 length, const QString &title, IdmItem *parent = 0) :
-		IdmItem(parent),
+		IdmInfoItem(info, parent),
 		m_locked(false),
-		m_info(info),
 		m_length(length),
 		m_title(title)
 	{}
-
-	/* IFileInfo */
-	virtual bool isDir() const { return m_info.isDir(); }
-	virtual bool isFile() const { return m_info.isFile(); }
-	virtual bool exists() const { return m_info.exists(); }
-	virtual QString fileName() const { return m_info.fileName(); }
-	virtual QString absolutePath() const { return m_info.absolutePath(); }
-	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
-	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
-	virtual QDateTime lastModified() const { return m_info.lastModified(); }
-	virtual void refresh() {}
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const
@@ -52,10 +39,10 @@ public:
 					case Qt::TextAlignmentRole:
 						return Qt::AlignLeft;
 					case Qt::ToolTipRole:
-						if (m_info.exists())
-							return m_info.absoluteFilePath();
+						if (exists())
+							return absoluteFilePath();
 						else
-							return tr("File does not exists - ").append(m_info.absoluteFilePath());
+							return tr("File does not exists - ").append(absoluteFilePath());
 				}
 				break;
 			}
@@ -65,7 +52,7 @@ public:
 				{
 					case Qt::EditRole:
 					case Qt::DisplayRole:
-						return humanReadableTime(m_length);
+						return Tools::humanReadableTime(m_length);
 					case Qt::TextAlignmentRole:
 						return Qt::AlignLeft;
 	//					case Qt::ToolTipRole:
@@ -77,34 +64,13 @@ public:
 
 		return QVariant();
 	}
-	virtual bool isRoot() const { return false; }
-	virtual bool isList() const { return false; }
-	virtual bool isMenuItem() const { return false; }
 
 	qint32 length() const { return m_length; }
 	const QString &title() const { return m_title; }
 
-	static QString humanReadableTime(quint64 secs)
-	{
-		if (quint64 hours = secs / (60 * 60))
-			if (quint64 min = (secs - hours * 60 * 60) / (60))
-				return QString::number(hours).append(QChar(':')).append(QString::number(min)).append(QString::fromLatin1(" h"));
-			else
-				return QString::number(hours).append(QString::fromLatin1(" h"));
-		else
-			if (hours = secs / (60))
-				if (quint64 s = (secs - hours * 60))
-					return QString::number(hours).append(QChar(':')).append(QString::number(s)).append(QString::fromLatin1(" m"));
-				else
-					return QString::number(hours).append(QString::fromLatin1(" m"));
-			else
-				return QString::number(secs).append(QString::fromLatin1(" s"));
-	}
-
 private:
 	bool m_locked;
 	QString m_lockReason;
-	QFileInfo m_info;
 	qint32 m_length;
 	QString m_title;
 };

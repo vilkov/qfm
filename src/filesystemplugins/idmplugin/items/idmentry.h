@@ -2,6 +2,7 @@
 #define IDMENTRY_H_
 
 #include "idminfoitem.h"
+#include "../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../application.h"
 
 

@@ -1,4 +1,5 @@
 #include "idmnodebase.h"
+#include "idmnode.h"
 #include "../items/idmroot.h"
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
@@ -14,6 +15,17 @@ IdmNodeBase::IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent) 
 {
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
+}
+
+IdmNodeBase::~IdmNodeBase()
+{
+	if (!m_items.isEmpty())
+	{
+		if (m_items.at(0)->isList())
+			m_items.removeAt(0);
+
+		qDeleteAll(m_items);
+	}
 }
 
 int IdmNodeBase::rowCount(const QModelIndex &parent) const

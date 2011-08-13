@@ -14,6 +14,7 @@ class IdmNodeBase : public FolderNodeBase
 {
 public:
 	IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent = 0);
+	virtual ~IdmNodeBase();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

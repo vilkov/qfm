@@ -19,8 +19,6 @@ class FolderNode : public FolderNodeBase
 public:
 	FolderNode(const Info &info, Node *parent = 0);
 
-    virtual bool event(QEvent *e);
-
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	virtual int columnCount(const QModelIndex &parent) const;

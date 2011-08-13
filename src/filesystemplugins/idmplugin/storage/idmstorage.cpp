@@ -143,7 +143,7 @@ QString IdmStorage::typeToString(IdmEntity::Type type) const
 	switch (type)
 	{
 		case IdmEntity::Composite:
-		case IdmEntity::Raiting:
+		case IdmEntity::Rating:
 		case IdmEntity::Int:      return QString::fromLatin1("int");
 		case IdmEntity::String:   return QString::fromLatin1("char(1024)");
 		case IdmEntity::Date:     return QString::fromLatin1("date");
@@ -203,7 +203,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntityList *parent)
 			case IdmEntity::Time:
 			case IdmEntity::DateTime:
 			case IdmEntity::Memo:
-			case IdmEntity::Raiting:
+			case IdmEntity::Rating:
 			{
 				if ((index = m_entities.indexOf(id = sqlite3_column_int(statement, 0))) != IdmEntityList::InvalidIndex)
 				{

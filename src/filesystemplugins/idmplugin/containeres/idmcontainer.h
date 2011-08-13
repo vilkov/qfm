@@ -2,6 +2,7 @@
 #define IDMCONTAINER_H_
 
 #include <QtCore/QCoreApplication>
+#include "idmentitytypes.h"
 #include "menu/idmmenu.h"
 #include "../storage/idmstorage.h"
 
@@ -28,6 +29,9 @@ public:
 	operator const IdmItem * () const { return &m_menu; }
 	operator IdmItem * () { return &m_menu; }
 
+	const IdmEntityTypes &entityTypes() const { return m_entityTypes; }
+	const IdmItemsList *entitiesList() const { return isValid() ? static_cast<const IdmItemsList *>(m_menu.at(2)) : 0; }
+
 	/* IdmMenu */
 	IdmItem *at(size_type index) const { return m_menu.at(index); }
 	size_type size() const { return m_menu.size(); }
@@ -46,6 +50,7 @@ public:
 private:
 	IdmMenu m_menu;
 	IdmStorage m_storage;
+	IdmEntityTypes m_entityTypes;
 };
 
 FILE_SYSTEM_NS_END

@@ -20,7 +20,7 @@ public:
 		DateTime   = 5,
 		Memo       = 6,
 		Composite  = 7,
-		Raiting    = 8
+		Rating     = 8
 	};
 
 	typedef unsigned int id_type;

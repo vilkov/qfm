@@ -3,6 +3,8 @@
 #include "../items/idmroot.h"
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
+#include "../gui/createentitydialog.h"
+#include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -152,12 +154,21 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 			{
 				case IdmContainer::Create:
 				{
-					IdmEntity *tagRating = m_storage->createEntity(tr("Tag rating"), IdmEntity::Raiting);
-					IdmEntity *tagName = m_storage->createEntity(tr("Tag name"), IdmEntity::Int);
+					CreateEntityDialog dialog(
+							m_storage->entitiesList(),
+							m_storage->entityTypes(),
+							QString(),
+							&Application::instance()->mainWindow());
 
-					IdmEntity *tag = m_storage->createEntity(tr("Tag"), IdmEntity::Composite);
-					m_storage->addProperty(tag, tagName);
-					m_storage->addProperty(tag, tagRating);
+					if (dialog.exec() == CreateEntityDialog::Accepted)
+					{
+						IdmEntity *tagRating = m_storage->createEntity(tr("Tag rating"), IdmEntity::Rating);
+						IdmEntity *tagName = m_storage->createEntity(tr("Tag name"), IdmEntity::Int);
+
+						IdmEntity *tag = m_storage->createEntity(tr("Tag"), IdmEntity::Composite);
+						m_storage->addProperty(tag, tagName);
+						m_storage->addProperty(tag, tagRating);
+					}
 
 					break;
 				}

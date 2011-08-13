@@ -142,29 +142,30 @@ QModelIndex IdmNodeBase::rootIndex() const
 
 Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-//	QModelIndex index = m_proxy.mapToSource(idx);
-//
-//	if (static_cast<IdmItem*>(index.internalPointer())->isRoot())
-//		return static_cast<Node*>(Node::parent());
-//	else
-//		if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
-//			switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
-//			{
-//				case MainMenuItems::Create:
-//				{
-//					IdmEntity *ratingValue = m_storage.createEntity(tr("Rating value"), IdmEntity::Int);
-//					IdmEntity *tagNames = m_storage.createEntity(tr("Tag name"), IdmEntity::Int);
-//					IdmEntity *tag = m_storage.createEntity(tr("Tag"), IdmEntity::Composite);
-//
-//					m_storage.addProperty(tag, tagNames);
-//					m_storage.addProperty(tag, ratingValue);
-//					break;
-//				}
-//				case MainMenuItems::Remove:
-//				{
-//					break;
-//				}
-//			}
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<IdmItem*>(index.internalPointer())->isRoot())
+		return static_cast<Node*>(Node::parent());
+	else
+		if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
+			switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
+			{
+				case IdmContainer::Create:
+				{
+					IdmEntity *tagRating = m_storage->createEntity(tr("Tag rating"), IdmEntity::Raiting);
+					IdmEntity *tagName = m_storage->createEntity(tr("Tag name"), IdmEntity::Int);
+
+					IdmEntity *tag = m_storage->createEntity(tr("Tag"), IdmEntity::Composite);
+					m_storage->addProperty(tag, tagName);
+					m_storage->addProperty(tag, tagRating);
+
+					break;
+				}
+				case IdmContainer::Remove:
+				{
+					break;
+				}
+			}
 
 	return 0;
 }

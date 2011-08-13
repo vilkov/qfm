@@ -22,6 +22,7 @@ public:
 		else
 			return QVariant();
 	}
+	virtual bool isRoot() const { return true; }
 
 private:
 	QString m_label;

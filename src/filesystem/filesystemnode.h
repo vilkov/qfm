@@ -45,10 +45,9 @@ protected:
 	void removeThis();
 
 private:
-	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
-
 	void addView(INodeView *view) { m_view.insert(view); }
 	void removeView(INodeView *view) { m_view.remove(view); }
+	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
 
 private:
 	typedef QSet<INodeView*> ViewSet;

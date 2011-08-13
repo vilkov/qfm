@@ -12,7 +12,7 @@ class IdmEntry : public IdmInfoItem
 	Q_DECLARE_TR_FUNCTIONS(IdmEntry)
 
 public:
-	IdmEntry(const QFileInfo &info, qint32 length, const QString &title, IdmItem *parent = 0) :
+	IdmEntry(const Info &info, qint32 length, const QString &title, IdmItem *parent = 0) :
 		IdmInfoItem(info, parent),
 		m_locked(false),
 		m_length(length),

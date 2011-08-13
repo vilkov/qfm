@@ -1,10 +1,8 @@
 #ifndef IDMINFOITEM_H_
 #define IDMINFOITEM_H_
 
-#include <QtCore/QFileInfo>
 #include "idmitem.h"
-#include "../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
+#include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,7 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class IdmInfoItem : public IdmItem, public IFileInfo
 {
 public:
-	IdmInfoItem(const QFileInfo &info, IdmItem *parent = 0) :
+	IdmInfoItem(const Info &info, IdmItem *parent = 0) :
 		IdmItem(parent),
 		m_info(info)
 	{}
@@ -24,7 +22,7 @@ public:
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
-	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
+	virtual QString absoluteFilePath(const QString &fileName) const { return m_info.absoluteFilePath(fileName); }
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual void refresh() { m_info.refresh(); }
 
@@ -33,7 +31,7 @@ public:
 	virtual bool isMenuItem() const { return false; }
 
 private:
-	QFileInfo m_info;
+	Info m_info;
 };
 
 FILE_SYSTEM_NS_END

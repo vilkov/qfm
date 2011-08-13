@@ -3,8 +3,7 @@
 
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
-#include "../../filesystem_ns.h"
-#include "../../interfaces/filesystemifilecontrol.h"
+#include "../interfaces/filesystemifilecontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

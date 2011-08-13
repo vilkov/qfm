@@ -9,7 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 class IdmRoot : public IdmInfoItem
 {
 public:
-	IdmRoot(const QFileInfo &info, IdmItem *parent = 0) :
+	IdmRoot(const Info &info, IdmItem *parent = 0) :
 		IdmInfoItem(info, parent),
 		m_label(QString::fromLatin1(".."))
 	{}

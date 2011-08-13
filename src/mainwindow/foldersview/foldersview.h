@@ -8,7 +8,7 @@
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "directoryview.h"
-#include "../../filesystem/folder/info/filesystemfoldernodeinfo.h"
+#include "../../filesystem/info/filesystemfoldernodeinfo.h"
 
 
 class FoldersView : public QWidget

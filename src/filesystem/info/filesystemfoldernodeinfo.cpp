@@ -1,6 +1,6 @@
 #include "filesystemfoldernodeinfo.h"
 #include "filesystemfoldernodefile.h"
-#include "../../../application.h"
+#include "../../application.h"
 #include <QtCore/QFSFileEngine>
 
 

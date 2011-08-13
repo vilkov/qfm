@@ -2,7 +2,7 @@
 #define FILESYSTEMFOLDERNODEENTRY_H_
 
 #include "filesystemfoldernodeitem.h"
-#include "../info/filesystemfoldernodeinfo.h"
+#include "../../info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

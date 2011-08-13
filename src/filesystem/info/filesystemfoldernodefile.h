@@ -2,7 +2,7 @@
 #define FILESYSTEMFOLDERNODEFILE_H_
 
 #include <QtCore/QFile>
-#include "../../interfaces/filesystemifile.h"
+#include "../interfaces/filesystemifile.h"
 
 
 FILE_SYSTEM_NS_BEGIN

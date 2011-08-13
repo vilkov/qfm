@@ -204,10 +204,7 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-	{
 		m_node->viewChild(this, index, Application::instance()->mainWindow().plugins());
-		refresh();
-	}
 }
 
 void DirectoryView::pathToClipboard()

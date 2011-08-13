@@ -7,7 +7,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 
-IdmRootNode::IdmRootNode(const QFileInfo &storage, Node *parent) :
+IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	IdmNodeBase(&m_storage, storage.absolutePath(), parent),
 	m_storage(storage)
 {

@@ -9,7 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 class IdmRootNode : public IdmNodeBase
 {
 public:
-	IdmRootNode(const QFileInfo &storage, Node *parent = 0);
+	IdmRootNode(const Info &storage, Node *parent = 0);
 
 private:
 	IdmContainer m_storage;

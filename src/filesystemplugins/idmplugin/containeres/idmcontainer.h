@@ -24,10 +24,10 @@ public:
 	};
 
 public:
-	IdmContainer(const QFileInfo &storage);
+	IdmContainer(const Info &storage);
 
-	operator const IdmItem * () const { return &m_menu; }
-	operator IdmItem * () { return &m_menu; }
+	const IdmMenu *menu() const { return &m_menu; }
+	IdmMenu *menu() { return &m_menu; }
 
 	const IdmEntityTypes &entityTypes() const { return m_entityTypes; }
 	const IdmItemsList *entitiesList() const { return isValid() ? static_cast<const IdmItemsList *>(m_menu.at(2)) : 0; }

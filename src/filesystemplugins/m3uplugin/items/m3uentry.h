@@ -2,9 +2,9 @@
 #define M3UENTRY_H_
 
 #include <QtCore/QFileInfo>
+#include <QtCore/QCoreApplication>
 #include "m3uitem.h"
 #include "../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN

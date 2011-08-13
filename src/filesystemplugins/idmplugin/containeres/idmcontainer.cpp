@@ -3,7 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-IdmContainer::IdmContainer(const QFileInfo &storage) :
+IdmContainer::IdmContainer(const Info &storage) :
 	m_menu(tr("Menu"), tr("Main menu")),
 	m_storage(storage)
 {

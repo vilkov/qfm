@@ -5,10 +5,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-IdmStorage::IdmStorage(const QFileInfo &storage) :
+IdmStorage::IdmStorage(const Info &storage) :
+	m_info(storage),
 	m_valid(true),
 	m_db(0),
-	m_info(storage),
 	m_entities(0, QString())
 {
 	if (m_info.exists())

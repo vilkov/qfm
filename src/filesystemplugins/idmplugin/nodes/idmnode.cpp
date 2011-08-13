@@ -11,7 +11,7 @@ IdmNode::IdmNode(IdmContainer *storage, const Info &info, Node *parent) :
 {
 	if (storage->isValid())
 	{
-		m_items.push_back(*storage);
+		m_items.push_back(storage->menu());
 		m_items.push_back(new IdmRoot(info));
 	}
 	else

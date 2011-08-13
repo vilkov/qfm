@@ -1,9 +1,9 @@
 #ifndef IDMENTRY_H_
 #define IDMENTRY_H_
 
+#include <QtCore/QCoreApplication>
 #include "idminfoitem.h"
 #include "../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN

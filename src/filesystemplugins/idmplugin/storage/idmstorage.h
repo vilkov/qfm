@@ -3,11 +3,11 @@
 
 #include <sqlite3.h>
 #include <QtCore/QList>
-#include <QtCore/QFileInfo>
-#include <QtGui/QApplication>
+#include <QtCore/QCoreApplication>
 #include "entities/idmentity.h"
 #include "entities/idmentityroot.h"
 #include "../../../filesystem/filesystem_ns.h"
+#include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,7 +17,7 @@ class IdmStorage
 	Q_DECLARE_TR_FUNCTIONS(IdmStorage)
 
 public:
-	IdmStorage(const QFileInfo &storage);
+	IdmStorage(const Info &storage);
 	~IdmStorage();
 
 	bool isValid() const { return m_valid; }
@@ -47,9 +47,9 @@ private:
 	void setLastError(const QString &error) const;
 
 private:
+	Info m_info;
 	bool m_valid;
 	sqlite3 *m_db;
-	QFileInfo m_info;
 	IdmEntityRoot m_entities;
 	mutable QString m_lastError;
 };

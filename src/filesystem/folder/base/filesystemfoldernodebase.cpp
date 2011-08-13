@@ -168,15 +168,17 @@ void FolderNodeBase::scanForRemove(const BaseTask::EntryList &entries)
 
 void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move)
 {
+	FileSystemItem *entry = entries->at(0);
 	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, destination, move));
-	m_tasks.resetTask(task.data(), entries->at(0)->fileName());
+	m_tasks.resetTask(task.data(), entry->fileName());
 	Application::instance()->taskPool().handle(task.take());
 }
 
 void FolderNodeBase::performRemove(PScopedPointer<FileSystemList> &entries)
 {
+	FileSystemItem *entry = entries->at(0);
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
-	m_tasks.resetTask(task.data(), entries->at(0)->fileName());
+	m_tasks.resetTask(task.data(), entry->fileName());
 	Application::instance()->taskPool().handle(task.take());
 }
 

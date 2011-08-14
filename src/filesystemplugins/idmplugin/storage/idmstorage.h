@@ -4,7 +4,6 @@
 #include <sqlite3.h>
 #include <QtCore/QList>
 #include <QtCore/QCoreApplication>
-#include "entities/idmentity.h"
 #include "entities/idmentityroot.h"
 #include "../../../filesystem/filesystem_ns.h"
 #include "../../../filesystem/info/filesystemfoldernodeinfo.h"
@@ -32,8 +31,8 @@ public:
 private:
 	QString typeToString(IdmEntity::Type type) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
-	bool isThereCycles(IdmEntityList *entity, IdmEntity *property) const;
-	void loadEntities(sqlite3_stmt *statement, IdmEntityList *parent);
+	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
+	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 
 private:
 	bool transaction();

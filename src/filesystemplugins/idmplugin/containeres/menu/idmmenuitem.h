@@ -71,6 +71,7 @@ public:
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return true; }
+	virtual bool isEntity() const { return false; }
 
 	id_type id() const { return m_id; }
 

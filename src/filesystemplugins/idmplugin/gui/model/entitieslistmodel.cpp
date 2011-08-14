@@ -1,10 +1,12 @@
 #include "entitieslistmodel.h"
+#include "../../containeres/menu/idmmenu.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-EntitiesListModel::EntitiesListModel(const IdmItemsList *items, QObject *parent) :
-	m_items(items)
+EntitiesListModel::EntitiesListModel(const IdmItemsList *exsisting, QObject *parent) :
+	m_exsisting(exsisting),
+	m_items()
 {}
 
 int EntitiesListModel::rowCount(const QModelIndex &parent) const

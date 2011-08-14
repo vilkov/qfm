@@ -3,6 +3,7 @@
 
 #include "idmmenuitem.h"
 #include "../../items/idmitemslist.h"
+#include "../../storage/entities/idmentity.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -73,6 +74,10 @@ public:
 	void add(IdmMenuItem::id_type id, const QString &label, const QString &toolTip)
 	{
 		m_items.push_back(new IdmMenuItem(id, label, toolTip, this));
+	}
+	void add(IdmEntity *entity)
+	{
+		m_items.push_back(entity);
 	}
 
 private:

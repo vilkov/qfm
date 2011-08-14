@@ -29,6 +29,7 @@ public:
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
+	virtual bool isEntity() const { return false; }
 
 private:
 	Info m_info;

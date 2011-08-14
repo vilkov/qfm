@@ -13,6 +13,7 @@ class IdmItemsList : public IdmItem
 public:
 	typedef QList<IdmItem*>       value_type;
 	typedef value_type::size_type size_type;
+	enum { InvalidIndex = (size_type)-1 };
 
 public:
 	IdmItemsList(IdmItem *parent = 0) :
@@ -20,12 +21,15 @@ public:
 	{}
 	virtual ~IdmItemsList()
 	{
-		qDeleteAll(m_items);
+		for (value_type::const_iterator it = m_items.constBegin(), end = m_items.constEnd(); it != end; ++it)
+			if (!(*it)->isEntity())
+				delete *it;
 	}
 
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return true; }
 	virtual bool isMenuItem() const { return false; }
+	virtual bool isEntity() const { return false; }
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }

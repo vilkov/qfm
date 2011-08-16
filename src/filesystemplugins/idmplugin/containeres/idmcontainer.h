@@ -14,8 +14,10 @@ class IdmContainer
 	Q_DECLARE_TR_FUNCTIONS(IdmContainer)
 
 public:
-	typedef IdmMenu::value_type   value_type;
-	typedef value_type::size_type size_type;
+	typedef IdmStorage::id_type   id_type;
+	typedef IdmStorage::size_type size_type;
+	enum { InvalidId = IdmStorage::InvalidId };
+	enum { InvalidIndex = IdmStorage::InvalidIndex };
 
 	enum MenuId
 	{
@@ -26,20 +28,18 @@ public:
 public:
 	IdmContainer(const Info &storage);
 
+	const IdmEntityTypes &entityTypes() const { return m_entityTypes; }
 	const IdmMenu *menu() const { return &m_menu; }
 	IdmMenu *menu() { return &m_menu; }
-
-	const IdmEntityTypes &entityTypes() const { return m_entityTypes; }
-	const IdmItemsList *entitiesList() const { return isValid() ? static_cast<const IdmItemsList *>(m_menu.at(2)) : 0; }
-
-	/* IdmMenu */
-	IdmItem *at(size_type index) const { return m_menu.at(index); }
-	size_type size() const { return m_menu.size(); }
-	size_type indexOf(IdmItem *item) const { return m_menu.indexOf(item); }
 
 	/* IdmStorage */
 	bool isValid() const { return m_storage.isValid(); }
 	const QString &lastError() const { return m_storage.lastError(); }
+
+	IdmEntity *at(size_type index) const { return m_storage.at(index); }
+	size_type size() const { return m_storage.size(); }
+	size_type indexOf(IdmEntity *item) const { return m_storage.indexOf(item); }
+	size_type indexOf(id_type id) const { return m_storage.indexOf(id); }
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
 	void removeEntity(IdmEntity *entity) { m_storage.removeEntity(entity); }

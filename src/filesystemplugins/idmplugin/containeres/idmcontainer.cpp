@@ -15,7 +15,6 @@ IdmContainer::IdmContainer(const Info &storage) :
 		m_menu.add(Remove, tr("Remove"), tr("Remove an entity"));
 
 		submenu = m_menu.add(tr("List"), tr("List of the all entities"));
-
 		for (IdmStorage::size_type i = 0, size = m_storage.size(); i < size; ++i)
 			submenu->add(m_storage.at(i));
 	}

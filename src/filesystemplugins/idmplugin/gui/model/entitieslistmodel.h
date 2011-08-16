@@ -2,8 +2,8 @@
 #define ENTITIESLISTMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "../../items/idmitemslist.h"
-#include "../../../../tools/pointers/pscopedpointer.h"
+#include "../../items/idmitem.h"
+#include "../../containeres/idmcontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -11,7 +11,12 @@ FILE_SYSTEM_NS_BEGIN
 class EntitiesListModel : public QAbstractItemModel
 {
 public:
-	EntitiesListModel(const IdmItemsList *exsisting, QObject *parent = 0);
+	typedef QList<IdmItem*>       value_type;
+	typedef value_type::size_type size_type;
+
+public:
+	EntitiesListModel(const IdmContainer *container, QObject *parent = 0);
+	virtual ~EntitiesListModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -23,8 +28,8 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 private:
-	const IdmItemsList *m_exsisting;
-	PScopedPointer<IdmItemsList> m_items;
+	const IdmContainer *m_container;
+	value_type m_items;
 };
 
 FILE_SYSTEM_NS_END

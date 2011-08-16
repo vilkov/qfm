@@ -13,7 +13,7 @@ IdmNodeBase::IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent) 
 	FolderNodeBase(info, parent),
 	m_proxy(this),
 	m_delegate(&m_proxy),
-	m_storage(storage)
+	m_container(storage)
 {
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
@@ -154,20 +154,16 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 			{
 				case IdmContainer::Create:
 				{
-					CreateEntityDialog dialog(
-							m_storage->entitiesList(),
-							m_storage->entityTypes(),
-							QString(),
-							&Application::instance()->mainWindow());
+					CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
 
 					if (dialog.exec() == CreateEntityDialog::Accepted)
 					{
-						IdmEntity *tagRating = m_storage->createEntity(tr("Tag rating"), IdmEntity::Rating);
-						IdmEntity *tagName = m_storage->createEntity(tr("Tag name"), IdmEntity::Int);
+						IdmEntity *tagRating = m_container->createEntity(tr("Tag rating"), IdmEntity::Rating);
+						IdmEntity *tagName = m_container->createEntity(tr("Tag name"), IdmEntity::Int);
 
-						IdmEntity *tag = m_storage->createEntity(tr("Tag"), IdmEntity::Composite);
-						m_storage->addProperty(tag, tagName);
-						m_storage->addProperty(tag, tagRating);
+						IdmEntity *tag = m_container->createEntity(tr("Tag"), IdmEntity::Composite);
+						m_container->addProperty(tag, tagName);
+						m_container->addProperty(tag, tagRating);
 					}
 
 					break;

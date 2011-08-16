@@ -2,7 +2,7 @@
 #include <QtGui/QMessageBox>
 
 
-CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmItemsList *entities, const FileSystem::IdmEntityTypes &entityTypes, const QString &name, QWidget *parent) :
+CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmContainer *container, const QString &name, QWidget *parent) :
 	QDialog(parent),
 	m_label(this),
 	m_lineEdit(name, this),
@@ -13,7 +13,7 @@ CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmItemsList *entities,
     m_removeEntity(tr("Remove"), this),
 	m_gridLayout(this),
 	m_buttonBox(this),
-	m_model(entities)
+	m_model(container)
 {
 	setWindowTitle(tr("Create a new entity"));
 	setListEnabled(false);
@@ -54,7 +54,7 @@ CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmItemsList *entities,
 
     m_lineEdit.selectAll();
 
-    for (FileSystem::IdmEntityTypes::const_iterator it = entityTypes.constBegin(), end = entityTypes.constEnd(); it != end; ++it)
+    for (FileSystem::IdmEntityTypes::const_iterator it = container->entityTypes().constBegin(), end = container->entityTypes().constEnd(); it != end; ++it)
     	m_comboBox.addItem(it->label, it.key());
 
     m_comboBox.setCurrentIndex(0);

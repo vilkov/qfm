@@ -18,8 +18,8 @@ class IdmStorage
 public:
 	typedef IdmEntity::id_type   id_type;
 	typedef IdmEntity::size_type size_type;
-	enum { InvalidId = IdmEntityRoot::InvalidId };
-	enum { InvalidIndex = IdmEntityRoot::InvalidIndex };
+	enum { InvalidId = IdmEntity::InvalidId };
+	enum { InvalidIndex = IdmEntity::InvalidIndex };
 
 public:
 	IdmStorage(const Info &storage);

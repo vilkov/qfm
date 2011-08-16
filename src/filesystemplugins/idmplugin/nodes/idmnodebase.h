@@ -72,7 +72,7 @@ protected:
 	ItemsList m_items;
 	IdmProxyModel m_proxy;
 	IdmDelegate m_delegate;
-	IdmContainer *m_storage;
+	IdmContainer *m_container;
 };
 
 FILE_SYSTEM_NS_END

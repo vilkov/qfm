@@ -11,8 +11,6 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/entitieslistmodel.h"
-#include "../items/idmitemslist.h"
-#include "../containeres/idmentitytypes.h"
 
 
 class CreateEntityDialog : public QDialog
@@ -20,7 +18,7 @@ class CreateEntityDialog : public QDialog
     Q_OBJECT
 
 public:
-    CreateEntityDialog(const FileSystem::IdmItemsList *entities, const FileSystem::IdmEntityTypes &entityTypes, const QString &name = QString(), QWidget *parent = 0);
+    CreateEntityDialog(const FileSystem::IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
 
     QString name() const { return m_lineEdit.text().simplified(); }
     virtual void accept();

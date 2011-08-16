@@ -4,12 +4,13 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
-#include "../../items/idmitemslist.h"
+#include "../../../../filesystem/filesystem_ns.h"
+#include "../../../../tools/containers/hashedlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmEntity : public IdmItemsList
+class IdmEntity
 {
 public:
 	enum Type
@@ -24,40 +25,25 @@ public:
 		Rating     = 8
 	};
 
-	typedef unsigned int id_type;
+	typedef unsigned int                    id_type;
+	typedef HashedList<id_type, IdmEntity*> value_type;
+	typedef value_type::size_type           size_type;
+	enum { InvalidIndex = value_type::InvalidIndex };
 	enum { InvalidId = (id_type)-1 };
 
 	typedef QList<IdmEntity*> Parents;
 
 public:
 	IdmEntity(Type type, id_type id, const QString &name) :
-		IdmItemsList(0),
 		m_type(type),
 		m_id(id),
 		m_name(name)
 	{}
 
-	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const
-	{
-		if (column == 0 && role == Qt::DisplayRole)
-			return name();
-		else
-			return QVariant();
-	}
-	virtual bool isEntity() const { return true; }
-
-	IdmEntity *at(size_type index) const { return static_cast<IdmEntity *>(m_items.at(index)); }
+	IdmEntity *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(IdmEntity *item) const { return m_items.indexOf(item); }
-	size_type indexOf(id_type id) const
-	{
-		for (size_type i = 0, sz = size(); i < sz; ++i)
-			if (at(i)->id() == id)
-				return i;
-
-		return InvalidIndex;
-	}
+	size_type indexOf(id_type id) const { return m_items.indexOf(id); }
 
 	Type type() const { return m_type; }
 	id_type id() const { return m_id; }
@@ -67,10 +53,13 @@ public:
 	void addParent(IdmEntity *parent) { m_parents.push_back(parent); }
 	void removeParent(Parents::size_type index) { m_parents.removeAt(index); }
 
-	void add(IdmEntity *item) { m_items.push_back(item); }
-	void remove(id_type id) { m_items.removeAt(indexOf(id)); }
-	void remove(size_type index) { m_items.removeAt(index); }
-	IdmEntity *take(size_type index) { return static_cast<IdmEntity *>(m_items.takeAt(index)); }
+	void add(IdmEntity *item) { m_items.add(item->id(), item); }
+	void remove(id_type id) { m_items.remove(id); }
+	void remove(size_type index) { m_items.remove(index); }
+	IdmEntity *take(size_type index) { return m_items.take(index); }
+
+protected:
+	value_type m_items;
 
 private:
 	Type m_type;

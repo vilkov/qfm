@@ -26,7 +26,7 @@ public:
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
-	virtual bool isEntity() const { return false; }
+	virtual bool isEntityItem() const { return false; }
 
 private:
 	QVariant m_message;

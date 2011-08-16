@@ -75,10 +75,6 @@ public:
 	{
 		m_items.push_back(new IdmMenuItem(id, label, toolTip, this));
 	}
-	void add(IdmEntity *entity)
-	{
-		m_items.push_back(entity);
-	}
 
 private:
 	QVariant m_label;

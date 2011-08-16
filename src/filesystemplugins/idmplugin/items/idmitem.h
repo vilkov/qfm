@@ -19,7 +19,7 @@ public:
 	virtual bool isRoot() const = 0;
 	virtual bool isList() const = 0;
 	virtual bool isMenuItem() const = 0;
-	virtual bool isEntity() const = 0;
+	virtual bool isEntityItem() const = 0;
 
 private:
 	IdmItem *m_parent;

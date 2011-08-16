@@ -22,14 +22,14 @@ public:
 	virtual ~IdmItemsList()
 	{
 		for (value_type::const_iterator it = m_items.constBegin(), end = m_items.constEnd(); it != end; ++it)
-			if (!(*it)->isEntity())
-				delete *it;
+			delete *it;
 	}
 
+	/* IdmItem */
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return true; }
 	virtual bool isMenuItem() const { return false; }
-	virtual bool isEntity() const { return false; }
+	virtual bool isEntityItem() const { return false; }
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }

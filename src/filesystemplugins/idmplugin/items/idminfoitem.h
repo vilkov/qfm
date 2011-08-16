@@ -26,10 +26,11 @@ public:
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual void refresh() { m_info.refresh(); }
 
+	/* IdmItem */
 	virtual bool isRoot() const { return false; }
 	virtual bool isList() const { return false; }
 	virtual bool isMenuItem() const { return false; }
-	virtual bool isEntity() const { return false; }
+	virtual bool isEntityItem() const { return false; }
 
 private:
 	Info m_info;

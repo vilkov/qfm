@@ -14,8 +14,8 @@ public:
 	{}
 	virtual ~IdmEntityRoot()
 	{
-		qDeleteAll(m_items);
-		m_items.clear();
+		for (size_type i = 0, sz = size(); i < sz; ++i)
+			delete m_items.at(i);
 	}
 };
 

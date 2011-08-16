@@ -13,7 +13,10 @@ public:
 	IdmEntityItem(IdmEntity *entity, IdmItem *parent = 0) :
 		IdmItemsList(parent),
 		m_entity(entity)
-	{}
+	{
+		for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+			m_items.push_back(new IdmEntityItem(entity->at(i), this));
+	}
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const

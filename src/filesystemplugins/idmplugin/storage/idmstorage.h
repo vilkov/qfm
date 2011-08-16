@@ -16,11 +16,22 @@ class IdmStorage
 	Q_DECLARE_TR_FUNCTIONS(IdmStorage)
 
 public:
+	typedef IdmEntity::id_type   id_type;
+	typedef IdmEntity::size_type size_type;
+	enum { InvalidId = IdmEntityRoot::InvalidId };
+	enum { InvalidIndex = IdmEntityRoot::InvalidIndex };
+
+public:
 	IdmStorage(const Info &storage);
 	~IdmStorage();
 
 	bool isValid() const { return m_valid; }
 	const QString &lastError() const { return m_lastError; }
+
+	IdmEntity *at(size_type index) const { return m_entities.at(index); }
+	size_type size() const { return m_entities.size(); }
+	size_type indexOf(IdmEntity *item) const { return m_entities.indexOf(item); }
+	size_type indexOf(id_type id) const { return m_entities.indexOf(id); }
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	void removeEntity(IdmEntity *entity);

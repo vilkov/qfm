@@ -11,6 +11,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/entitieslistmodel.h"
+#include "model/entitieslistdelegate.h"
 
 
 class CreateEntityDialog : public QDialog
@@ -20,11 +21,15 @@ class CreateEntityDialog : public QDialog
 public:
     CreateEntityDialog(const FileSystem::IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
 
+    FileSystem::IdmEntity::Type type() const { return static_cast<FileSystem::IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }
+
     virtual void accept();
 
 private Q_SLOTS:
 	void activated(int index);
+	void add();
+	void remove();
 
 private:
 	void setListEnabled(bool enabled);
@@ -42,6 +47,7 @@ private:
     QHBoxLayout m_horizontalLayout;
     QDialogButtonBox m_buttonBox;
     FileSystem::EntitiesListModel m_model;
+    FileSystem::EntitiesListDelegate m_delegate;
 };
 
 #endif /* CREATEENTITYDIALOG_H_ */

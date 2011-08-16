@@ -13,7 +13,8 @@ CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmContainer *container
     m_removeEntity(tr("Remove"), this),
 	m_gridLayout(this),
 	m_buttonBox(this),
-	m_model(container)
+	m_model(this),
+	m_delegate(container)
 {
 	setWindowTitle(tr("Create a new entity"));
 	setListEnabled(false);
@@ -47,7 +48,11 @@ CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmContainer *container
     m_gridLayout2.addLayout(&m_horizontalLayout, 0, 0, 1, 1);
     m_gridLayout2.addWidget(&m_view, 1, 0, 1, 1);
 
+    connect(&m_addEntity, SIGNAL(clicked()), this, SLOT(add()));
+    connect(&m_removeEntity, SIGNAL(clicked()), this, SLOT(remove()));
+
     m_view.setModel(&m_model);
+    m_view.setItemDelegate(&m_delegate);
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -64,7 +69,7 @@ CreateEntityDialog::CreateEntityDialog(const FileSystem::IdmContainer *container
 void CreateEntityDialog::accept()
 {
 	if (name().isEmpty())
-		QMessageBox::information(this, windowTitle(), tr("You must enter the name!"));
+		QMessageBox::warning(this, windowTitle(), tr("You must enter the name!"));
 	else
 		QDialog::accept();
 }
@@ -72,6 +77,19 @@ void CreateEntityDialog::accept()
 void CreateEntityDialog::activated(int index)
 {
 	setListEnabled(m_comboBox.itemData(index, Qt::UserRole).toInt() == FileSystem::IdmEntity::Composite);
+}
+
+void CreateEntityDialog::add()
+{
+	if (m_delegate.container()->size() == 0)
+		QMessageBox::warning(this, windowTitle(), tr("There is no entities!"));
+	else
+		m_model.add(m_delegate.container()->at(0));
+}
+
+void CreateEntityDialog::remove()
+{
+
 }
 
 void CreateEntityDialog::setListEnabled(bool enabled)

@@ -30,7 +30,7 @@ public:
 
 	void add(IdmEntity *entity) { m_items.push_back(new IdmEntityItem(entity, this)); }
 
-private:
+protected:
 	IdmEntity *m_entity;
 };
 

@@ -3,7 +3,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include "../../items/idmitem.h"
-#include "../../containeres/idmcontainer.h"
+#include "../../storage/entities/idmentity.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -15,7 +15,7 @@ public:
 	typedef value_type::size_type size_type;
 
 public:
-	EntitiesListModel(const IdmContainer *container, QObject *parent = 0);
+	EntitiesListModel(QObject *parent = 0);
 	virtual ~EntitiesListModel();
 
     /* QAbstractItemModel */
@@ -27,8 +27,10 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	void add(IdmEntity *entity);
+	void remove(const QModelIndex &index);
+
 private:
-	const IdmContainer *m_container;
 	value_type m_items;
 };
 

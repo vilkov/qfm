@@ -1,11 +1,12 @@
 #include "entitieslistmodel.h"
+#include "items/idmentitieslistmodelitem.h"
 #include "../../items/idmentityitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-EntitiesListModel::EntitiesListModel(const IdmContainer *container, QObject *parent) :
-	m_container(container)
+EntitiesListModel::EntitiesListModel(QObject *parent) :
+	QAbstractItemModel(parent)
 {}
 
 EntitiesListModel::~EntitiesListModel()
@@ -67,6 +68,18 @@ QModelIndex EntitiesListModel::parent(const QModelIndex &child) const
 				return createIndex(m_items.indexOf(parent), 0, parent);
 
     return QModelIndex();
+}
+
+void EntitiesListModel::add(IdmEntity *entity)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+	m_items.push_back(new IdmEntitiesListItem(entity));
+	endInsertRows();
+}
+
+void EntitiesListModel::remove(const QModelIndex &index)
+{
+
 }
 
 FILE_SYSTEM_NS_END

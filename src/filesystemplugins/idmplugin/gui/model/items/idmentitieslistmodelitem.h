@@ -13,7 +13,6 @@ public:
 		IdmEntityItem(entity, parent)
 	{}
 
-	IdmEntity *entity() const { return m_entity; }
 	void setEntity(IdmEntity *value) { m_entity = value; }
 };
 

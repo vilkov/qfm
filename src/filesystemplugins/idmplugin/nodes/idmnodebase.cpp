@@ -100,7 +100,60 @@ IFileControl *IdmNodeBase::createControl(const QModelIndex &idx, PluginsManager 
 
 void IdmNodeBase::remove(const QModelIndexList &list)
 {
+	if (m_container->transaction())
+	{
+		IdmItem *item;
+		QModelIndex index;
 
+		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+			if ((index = m_proxy.mapToSource(list.at(i))).isValid() &&
+			    (item = static_cast<IdmItem*>(index.internalPointer()))->isEntityItem())
+				if (item->parent()->isEntityItem())
+				{
+					if (QMessageBox::question(&Application::instance()->mainWindow(),
+										  tr("Remove entity"),
+										  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
+										  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
+										  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
+										  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+						if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
+														static_cast<IdmEntityItem*>(item)->entity()))
+						{
+							beginRemoveRows(parent(index), index.row(), index.row());
+							delete item;
+							endRemoveRows();
+						}
+						else
+						{
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+							m_container->rollback();
+							return;
+						}
+				}
+				else
+				{
+					if (QMessageBox::question(&Application::instance()->mainWindow(),
+										  tr("Remove entity"),
+										  tr("Do you really want to remove entity \"%1\"?").
+										  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
+										  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+						if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
+						{
+							beginRemoveRows(parent(index), index.row(), index.row());
+							delete item;
+							endRemoveRows();
+						}
+						else
+						{
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+							m_container->rollback();
+							return;
+						}
+				}
+
+		if (!m_container->commit())
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+	}
 }
 
 void IdmNodeBase::cancel(const QModelIndexList &list)
@@ -197,7 +250,7 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 
 					break;
 				}
-				case IdmContainer::Remove:
+				case IdmContainer::Query:
 				{
 					break;
 				}

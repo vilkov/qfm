@@ -22,7 +22,7 @@ public:
 	enum MenuId
 	{
 		Create,
-		Remove
+		Query
 	};
 
 public:

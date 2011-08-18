@@ -28,6 +28,7 @@ public:
 	}
 	virtual bool isEntityItem() const { return true; }
 
+	IdmEntity *entity() const { return m_entity; }
 	void add(IdmEntity *entity) { m_items.push_back(new IdmEntityItem(entity, this)); }
 
 protected:

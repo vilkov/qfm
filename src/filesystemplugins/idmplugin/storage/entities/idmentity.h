@@ -51,6 +51,7 @@ public:
 	const Parents &parents() const { return m_parents; }
 
 	void addParent(IdmEntity *parent) { m_parents.push_back(parent); }
+	void removeParent(IdmEntity *parent) { m_parents.removeAt(m_parents.indexOf(parent)); }
 	void removeParent(Parents::size_type index) { m_parents.removeAt(index); }
 
 	void add(IdmEntity *item) { m_items.add(item->id(), item); }

@@ -170,7 +170,29 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 
 bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 {
-	m_lastError = tr("Not implemented!");
+	if (entity->id() != property->id() &&
+		entity->type() == IdmEntity::Composite &&
+		entity->indexOf(property->id()) != IdmEntity::InvalidIndex)
+	{
+		char *errorMsg;
+		QByteArray sqlQuery = QString::fromLatin1("delete from PROPERTIES where ENTITY_ID = %1 and ENTITY_PROPERTY_ID = %2;"
+												  "drop table ENTITY_%1_PROPERTY_%2").
+												  arg(QString::number(entity->id())).
+												  arg(QString::number(property->id())).toLatin1();
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		{
+			entity->remove(property->id());
+			property->removeParent(entity);
+
+			return true;
+		}
+		else
+			setLastError(sqlQuery, errorMsg);
+
+		sqlite3_free(errorMsg);
+	}
+
 	return false;
 }
 

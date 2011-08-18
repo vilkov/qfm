@@ -89,7 +89,10 @@ void CreateEntityDialog::add()
 
 void CreateEntityDialog::remove()
 {
+	QModelIndex index = m_view.currentIndex();
 
+	if (index.isValid())
+		m_model.remove(index);
 }
 
 void CreateEntityDialog::setListEnabled(bool enabled)

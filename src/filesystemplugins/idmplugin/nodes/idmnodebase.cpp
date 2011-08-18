@@ -5,6 +5,7 @@
 #include "../items/idmseparator.h"
 #include "../gui/createentitydialog.h"
 #include "../../../application.h"
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -157,14 +158,27 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 					CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
 
 					if (dialog.exec() == CreateEntityDialog::Accepted)
-					{
-						IdmEntity *tagRating = m_container->createEntity(tr("Tag rating"), IdmEntity::Rating);
-						IdmEntity *tagName = m_container->createEntity(tr("Tag name"), IdmEntity::Int);
+						if (m_container->transaction())
+							if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
+								if (entity->type() == IdmEntity::Composite)
+								{
 
-						IdmEntity *tag = m_container->createEntity(tr("Tag"), IdmEntity::Composite);
-						m_container->addProperty(tag, tagName);
-						m_container->addProperty(tag, tagRating);
-					}
+								}
+								else
+								{
+									if (!m_container->commit())
+									{
+										m_container->rollback();
+										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+									}
+								}
+							else
+							{
+								m_container->rollback();
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+							}
+						else
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
 
 					break;
 				}

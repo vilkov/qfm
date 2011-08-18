@@ -64,6 +64,43 @@ IdmStorage::~IdmStorage()
 	sqlite3_close(m_db);
 }
 
+bool IdmStorage::transaction()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("begin transaction");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+bool IdmStorage::commit()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("commit");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+void IdmStorage::rollback()
+{
+	char *errorMsg;
+	const PByteArray sqlQuery("rollback");
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+		setLastError(sqlQuery, errorMsg);
+}
+
 IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 {
 	IdmEntity *res = 0;
@@ -80,10 +117,7 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 												  arg(typeToString(type)).toLatin1();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-			if (type == IdmEntity::Composite)
-				m_entities.add(res = new IdmEntity(type, id, name));
-			else
-				m_entities.add(res = new IdmEntity(type, id, name));
+			m_entities.add(res = new IdmEntity(type, id, name));
 		else
 			setLastError(sqlQuery, errorMsg);
 
@@ -270,43 +304,6 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				break;
 			}
 		}
-}
-
-bool IdmStorage::transaction()
-{
-	char *errorMsg;
-	const PByteArray sqlQuery("begin transaction");
-
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-		return true;
-	else
-	{
-		setLastError(sqlQuery, errorMsg);
-		return false;
-	}
-}
-
-bool IdmStorage::commit()
-{
-	char *errorMsg;
-	const PByteArray sqlQuery("commit");
-
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-		return true;
-	else
-	{
-		setLastError(sqlQuery, errorMsg);
-		return false;
-	}
-}
-
-void IdmStorage::rollback()
-{
-	char *errorMsg;
-	const PByteArray sqlQuery("rollback");
-
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
-		setLastError(sqlQuery, errorMsg);
 }
 
 void IdmStorage::setLastError(const char *sqlQuery) const

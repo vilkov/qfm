@@ -33,6 +33,10 @@ public:
 	size_type indexOf(IdmEntity *item) const { return m_entities.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_entities.indexOf(id); }
 
+	bool transaction();
+	bool commit();
+	void rollback();
+
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	void removeEntity(IdmEntity *entity);
 
@@ -46,10 +50,6 @@ private:
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 
 private:
-	bool transaction();
-	bool commit();
-	void rollback();
-
 	void setLastError(const char *sqlQuery) const;
 	void setLastError(const char *sqlQuery, const char *errorMsg) const;
 	void setLastError(const QByteArray &sqlQuery) const;

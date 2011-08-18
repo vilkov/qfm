@@ -41,6 +41,10 @@ public:
 	size_type indexOf(IdmEntity *item) const { return m_storage.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_storage.indexOf(id); }
 
+	bool transaction() { return m_storage.transaction(); }
+	bool commit() { return m_storage.commit(); }
+	void rollback() { m_storage.rollback(); }
+
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
 	void removeEntity(IdmEntity *entity) { m_storage.removeEntity(entity); }
 

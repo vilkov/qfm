@@ -40,7 +40,7 @@ QVariant EntitiesListModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags EntitiesListModel::flags(const QModelIndex &index) const
 {
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
 QVariant EntitiesListModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -79,7 +79,10 @@ void EntitiesListModel::add(IdmEntity *entity)
 
 void EntitiesListModel::remove(const QModelIndex &index)
 {
-
+	beginRemoveRows(QModelIndex(), index.row(), index.row());
+	delete m_items.at(index.row());
+	m_items.removeAt(index.row());
+	endRemoveRows();
 }
 
 FILE_SYSTEM_NS_END

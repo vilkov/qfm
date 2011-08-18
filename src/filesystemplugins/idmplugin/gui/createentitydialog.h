@@ -24,6 +24,8 @@ public:
     FileSystem::IdmEntity::Type type() const { return static_cast<FileSystem::IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }
 
+    const FileSystem::EntitiesListModel &entities() const { return m_model; }
+
     virtual void accept();
 
 private Q_SLOTS:

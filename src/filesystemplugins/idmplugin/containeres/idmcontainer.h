@@ -46,10 +46,10 @@ public:
 	void rollback() { m_storage.rollback(); }
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
-	void removeEntity(IdmEntity *entity) { m_storage.removeEntity(entity); }
+	bool removeEntity(IdmEntity *entity) { return m_storage.removeEntity(entity); }
 
-	void addProperty(IdmEntity *entity, IdmEntity *property) { m_storage.addProperty(entity, property); }
-	void removeProperty(IdmEntity *entity, IdmEntity *property) { m_storage.removeProperty(entity, property); }
+	bool addProperty(IdmEntity *entity, IdmEntity *property) { return m_storage.addProperty(entity, property); }
+	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_storage.removeProperty(entity, property); }
 
 private:
 	IdmMenu m_menu;

@@ -1,4 +1,5 @@
 #include "entitieslistdelegate.h"
+#include "items/idmentitieslistmodelitem.h"
 #include <QtGui/QComboBox>
 
 
@@ -24,12 +25,18 @@ QWidget *EntitiesListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 
 void EntitiesListDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
+	IdmContainer::size_type idx = m_container->indexOf(static_cast<IdmEntitiesListItem*>(index.internalPointer())->entity()->id());
 
+	if (idx != IdmContainer::InvalidIndex)
+		static_cast<QComboBox*>(editor)->setCurrentIndex(idx);
 }
 
 void EntitiesListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
+	IdmContainer::size_type idx = m_container->indexOf(static_cast<QComboBox*>(editor)->itemData(static_cast<QComboBox*>(editor)->currentIndex(), Qt::UserRole).toInt());
 
+	if (idx != IdmContainer::InvalidIndex)
+		static_cast<IdmEntitiesListItem*>(index.internalPointer())->setEntity(m_container->at(idx));
 }
 
 void EntitiesListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const

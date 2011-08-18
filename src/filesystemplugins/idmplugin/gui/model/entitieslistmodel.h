@@ -27,6 +27,9 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	IdmEntity *at(size_type index) const;
+	size_type size() const { return m_items.size(); }
+
 	void add(IdmEntity *entity);
 	void remove(const QModelIndex &index);
 

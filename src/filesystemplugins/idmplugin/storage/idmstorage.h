@@ -38,10 +38,10 @@ public:
 	void rollback();
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
-	void removeEntity(IdmEntity *entity);
+	bool removeEntity(IdmEntity *entity);
 
-	void addProperty(IdmEntity *entity, IdmEntity *property);
-	void removeProperty(IdmEntity *entity, IdmEntity *property);
+	bool addProperty(IdmEntity *entity, IdmEntity *property);
+	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
 private:
 	QString typeToString(IdmEntity::Type type) const;

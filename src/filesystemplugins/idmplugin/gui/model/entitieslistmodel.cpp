@@ -70,6 +70,11 @@ QModelIndex EntitiesListModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+IdmEntity *EntitiesListModel::at(size_type index) const
+{
+	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
+}
+
 void EntitiesListModel::add(IdmEntity *entity)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());

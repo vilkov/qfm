@@ -162,7 +162,22 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 							if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
 								if (entity->type() == IdmEntity::Composite)
 								{
+									bool ok = true;
 
+									for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
+										if (!m_container->addProperty(entity, dialog.entities().at(i)))
+										{
+											ok = false;
+											m_container->rollback();
+											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+											break;
+										}
+
+									if (ok && !m_container->commit())
+									{
+										m_container->rollback();
+										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+									}
 								}
 								else
 								{

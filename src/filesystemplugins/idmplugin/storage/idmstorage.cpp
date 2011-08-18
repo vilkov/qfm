@@ -127,12 +127,13 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 	return res;
 }
 
-void IdmStorage::removeEntity(IdmEntity *entity)
+bool IdmStorage::removeEntity(IdmEntity *entity)
 {
-
+	m_lastError = tr("Not implemented!");
+	return false;
 }
 
-void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
+bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 {
 	if (entity->id() != property->id() &&
 		entity->type() == IdmEntity::Composite &&
@@ -141,7 +142,7 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 	{
 		IdmEntity::id_type id = loadId("PROPERTIES");
 
-		if (id != IdmEntity::InvalidId && transaction())
+		if (id != IdmEntity::InvalidId)
 		{
 			char *errorMsg;
 			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID) values (%1, %2, %3);"
@@ -154,21 +155,23 @@ void IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 			{
 				entity->add(property);
 				property->addParent(entity);
+
+				return true;
 			}
 			else
-			{
-				rollback();
 				setLastError(sqlQuery, errorMsg);
-			}
 
 			sqlite3_free(errorMsg);
 		}
 	}
+
+	return false;
 }
 
-void IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
+bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 {
-
+	m_lastError = tr("Not implemented!");
+	return false;
 }
 
 QString IdmStorage::typeToString(IdmEntity::Type type) const

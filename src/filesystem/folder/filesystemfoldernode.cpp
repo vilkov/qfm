@@ -556,7 +556,6 @@ void FolderNode::CancelFunctor::call(Values::size_type index, FolderNodeItem *en
 void FolderNode::processIndexList(const QModelIndexList &list, Functors::Functor &functor)
 {
 	QModelIndex index;
-	ProcessedList res;
 	FolderNodeItem *entry;
 	QSet<FolderNodeItem*> done;
 

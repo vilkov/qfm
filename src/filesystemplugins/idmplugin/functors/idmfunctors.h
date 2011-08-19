@@ -1,27 +1,26 @@
-#ifndef FILESYSTEMFOLDERNODEFUNCTORS_H_
-#define FILESYSTEMFOLDERNODEFUNCTORS_H_
+#ifndef IDMFUNCTORS_H_
+#define IDMFUNCTORS_H_
 
-#include <QtCore/QList>
-#include "../items/filesystemfoldernodeitem.h"
-#include "../containers/filesystemfoldernodevalues.h"
+#include "../items/idmitem.h"
+#include "../../../filesystem/filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 /**
- *  Closed namespace "Functors"
+ *  Closed namespace "IdmFunctors"
  */
-struct Functors
+struct IdmFunctors
 {
 	class Functor
 	{
 	public:
 		virtual ~Functor() {}
 
-		inline void operator()(Values::size_type index, FolderNodeItem *entry) { call(index, entry); }
+		inline bool operator()(const QModelIndex &index, IdmItem *item) const { return call(index, item); }
 
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry) = 0;
+		virtual bool call(const QModelIndex &index, IdmItem *item) const = 0;
 	};
 
 
@@ -30,7 +29,7 @@ struct Functors
 	class Callable : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Values::size_type index, FolderNodeItem *entry);
+		typedef bool (T::*Method)(const QModelIndex &index, IdmItem *item);
 
 	public:
 		Callable(T *object, Method method) :
@@ -39,7 +38,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry) { (m_object->*m_method)(index, entry); }
+		virtual bool call(const QModelIndex &index, IdmItem *item) const { return (m_object->*m_method)(index, item); }
 
 	private:
 		T *m_object;
@@ -55,7 +54,7 @@ struct Functors
 	class Callable1 : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Values::size_type index, FolderNodeItem *entry, Arg1);
+		typedef bool (T::*Method)(const QModelIndex &index, IdmItem *item, Arg1);
 
 	public:
 		Callable1(T *object, Method method, Arg1 arg1) :
@@ -65,7 +64,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry) { (m_object->*m_method)(index, entry, m_arg1); }
+		virtual bool call(const QModelIndex &index, IdmItem *item) const { return (m_object->*m_method)(index, item, m_arg1); }
 
 	private:
 		T *m_object;
@@ -79,4 +78,4 @@ struct Functors
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFOLDERNODEFUNCTORS_H_ */
+#endif /* IDMFUNCTORS_H_ */

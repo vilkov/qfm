@@ -129,7 +129,39 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 
 bool IdmStorage::removeEntity(IdmEntity *entity)
 {
-	m_lastError = tr("Not implemented!");
+	char *errorMsg;
+	QByteArray sqlQuery = QString::fromLatin1("delete from PROPERTIES where ENTITY_ID in (select ENTITY_ID from PROPERTIES where ENTITY_PROPERTY_ID = %1);"
+											  "drop table ENTITY_%1").
+											  arg(QString::number(entity->id())).toLatin1();
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	{
+		bool ok = true;
+		const IdmEntity::Parents &parents = entity->parents();
+		QString query = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").append(QString::number(entity->id()));
+
+		for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
+		{
+			sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toLatin1();
+
+			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+				parents.at(i)->remove(entity->id());
+			else
+			{
+				ok = false;
+				setLastError(sqlQuery, errorMsg);
+				break;
+			}
+		}
+
+		if (ok)
+			return true;
+	}
+	else
+		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
+
 	return false;
 }
 

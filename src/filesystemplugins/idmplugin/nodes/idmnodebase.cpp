@@ -101,59 +101,14 @@ IFileControl *IdmNodeBase::createControl(const QModelIndex &idx, PluginsManager 
 void IdmNodeBase::remove(const QModelIndexList &list)
 {
 	if (m_container->transaction())
-	{
-		IdmItem *item;
-		QModelIndex index;
-
-		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if ((index = m_proxy.mapToSource(list.at(i))).isValid() &&
-			    (item = static_cast<IdmItem*>(index.internalPointer()))->isEntityItem())
-				if (item->parent()->isEntityItem())
-				{
-					if (QMessageBox::question(&Application::instance()->mainWindow(),
-										  tr("Remove entity"),
-										  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
-										  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
-										  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
-										  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-						if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
-														static_cast<IdmEntityItem*>(item)->entity()))
-						{
-							beginRemoveRows(parent(index), index.row(), index.row());
-							delete item;
-							endRemoveRows();
-						}
-						else
-						{
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-							m_container->rollback();
-							return;
-						}
-				}
-				else
-				{
-					if (QMessageBox::question(&Application::instance()->mainWindow(),
-										  tr("Remove entity"),
-										  tr("Do you really want to remove entity \"%1\"?").
-										  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
-										  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-						if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
-						{
-							beginRemoveRows(parent(index), index.row(), index.row());
-							delete item;
-							endRemoveRows();
-						}
-						else
-						{
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-							m_container->rollback();
-							return;
-						}
-				}
-
-		if (!m_container->commit())
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-	}
+		if (!processIndexList(list, IdmFunctors::callTo(this, &IdmNodeBase::processRemoveItem)))
+			m_container->rollback();
+		else
+			if (!m_container->commit())
+			{
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+				m_container->rollback();
+			}
 }
 
 void IdmNodeBase::cancel(const QModelIndexList &list)
@@ -307,6 +262,71 @@ void IdmNodeBase::updateProgressEvent(const QString &fileName, quint64 progress,
 void IdmNodeBase::completedProgressEvent(const QString &fileName, quint64 timeElapsed)
 {
 
+}
+
+bool IdmNodeBase::processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const
+{
+	IdmItem *item;
+	QModelIndex index;
+	QSet<IdmItem*> done;
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!done.contains(item = static_cast<IdmItem*>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
+		{
+			done.insert(item);
+
+			if (!functor(index, item))
+				return false;
+		}
+
+	return true;
+}
+
+bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
+{
+	if (item->isEntityItem())
+		if (item->parent()->isEntityItem())
+		{
+			if (QMessageBox::question(&Application::instance()->mainWindow(),
+								  tr("Remove entity"),
+								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
+								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
+								  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
+								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+				if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
+												static_cast<IdmEntityItem*>(item)->entity()))
+				{
+					beginRemoveRows(parent(idx), idx.row(), idx.row());
+					delete item;
+					endRemoveRows();
+				}
+				else
+				{
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+					return false;
+				}
+		}
+		else
+		{
+			if (QMessageBox::question(&Application::instance()->mainWindow(),
+								  tr("Remove entity"),
+								  tr("Do you really want to remove entity \"%1\"?").
+								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
+								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
+				{
+					beginRemoveRows(parent(idx), idx.row(), idx.row());
+					delete item;
+					endRemoveRows();
+				}
+				else
+				{
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+					return false;
+				}
+		}
+
+	return true;
 }
 
 FILE_SYSTEM_NS_END

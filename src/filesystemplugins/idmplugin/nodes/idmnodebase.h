@@ -4,6 +4,7 @@
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
 #include "../items/idmitem.h"
+#include "../functors/idmfunctors.h"
 #include "../containeres/idmcontainer.h"
 #include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
 
@@ -64,6 +65,9 @@ protected:
 
 protected:
 	IdmItem *rootItem() const { return m_items.at(1); }
+
+	bool processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const;
+	bool processRemoveItem(const QModelIndex &index, IdmItem *item);
 
 protected:
 	typedef QList<IdmItem*> ItemsList;

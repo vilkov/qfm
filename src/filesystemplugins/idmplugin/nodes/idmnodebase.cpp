@@ -315,6 +315,7 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
 				{
+					m_container->menu()->at(IdmContainer::List);
 					beginRemoveRows(parent(idx), idx.row(), idx.row());
 					delete item;
 					endRemoveRows();

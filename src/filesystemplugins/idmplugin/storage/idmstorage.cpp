@@ -154,8 +154,30 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 			}
 		}
 
+		if (ok && entity->type() == IdmEntity::Composite)
+		{
+			query = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").arg(QString::number(entity->id()));
+
+			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+			{
+				sqlQuery = QString(query).append(QString::number(entity->at(i)->id())).toLatin1();
+
+				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+					entity->at(i)->removeParent(entity);
+				else
+				{
+					ok = false;
+					setLastError(sqlQuery, errorMsg);
+					break;
+				}
+			}
+		}
+
 		if (ok)
+		{
+			delete entity;
 			return true;
+		}
 	}
 	else
 		setLastError(sqlQuery, errorMsg);

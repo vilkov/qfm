@@ -22,7 +22,8 @@ public:
 	enum MenuId
 	{
 		Create,
-		Query
+		Query,
+		List
 	};
 
 public:

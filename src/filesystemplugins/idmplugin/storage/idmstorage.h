@@ -46,12 +46,12 @@ public:
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	bool removeEntity(IdmEntity *entity);
 
-	bool addValue(IdmEntity *entity, const IdsMap &values);
-	bool addValue(IdmEntity *entity, const QVariant &value);
-	bool removeValue(IdmEntity *entity, const IdsList &ids);
-
 	bool addProperty(IdmEntity *entity, IdmEntity *property);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
+
+	bool addValue(IdmEntity *entity, const IdsMap &values) const;
+	bool addValue(IdmEntity *entity, const QVariant &value) const;
+	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
 
 private:
 	QString idsToString(const IdsSet &ids) const;
@@ -59,10 +59,15 @@ private:
 	QString typeToString(IdmEntity::Type type) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
-	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
+	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;
 	bool removeOverlappingIds(IdmEntity *entity, IdmEntity *property, IdsSet &ids) const;
-	bool cleanupParentsValues(IdmEntity *entity, const IdsList &ids);
-	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property);
+	bool cleanupParentsValues(IdmEntity *entity) const;
+	bool cleanupParentsValues(IdmEntity *entity, const IdsList &ids) const;
+	bool cleanupPropertyValues(IdmEntity *entity) const;
+	bool cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) const;
+	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) const;
+
+	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 
 private:
 	void setLastError(const char *sqlQuery) const;

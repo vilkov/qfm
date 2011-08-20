@@ -2,7 +2,10 @@
 #define IDMSTORAGE_H_
 
 #include <sqlite3.h>
+#include <QtCore/QSet>
+#include <QtCore/QMap>
 #include <QtCore/QList>
+#include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
 #include "entities/idmentityroot.h"
 #include "../../../filesystem/filesystem_ns.h"
@@ -16,8 +19,11 @@ class IdmStorage
 	Q_DECLARE_TR_FUNCTIONS(IdmStorage)
 
 public:
-	typedef IdmEntity::id_type   id_type;
-	typedef IdmEntity::size_type size_type;
+	typedef IdmEntity::id_type        id_type;
+	typedef IdmEntity::size_type      size_type;
+	typedef QSet<id_type>             IdsSet;
+	typedef QList<id_type>            IdsList;
+	typedef QMap<IdmEntity*, IdsList> IdsMap;
 	enum { InvalidId = IdmEntity::InvalidId };
 	enum { InvalidIndex = IdmEntity::InvalidIndex };
 
@@ -40,14 +46,23 @@ public:
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	bool removeEntity(IdmEntity *entity);
 
+	bool addValue(IdmEntity *entity, const IdsMap &values);
+	bool addValue(IdmEntity *entity, const QVariant &value);
+	bool removeValue(IdmEntity *entity, const IdsList &ids);
+
 	bool addProperty(IdmEntity *entity, IdmEntity *property);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
 private:
+	QString idsToString(const IdsSet &ids) const;
+	QString idsToString(const IdsList &ids) const;
 	QString typeToString(IdmEntity::Type type) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
+	bool removeOverlappingIds(IdmEntity *entity, IdmEntity *property, IdsSet &ids) const;
+	bool cleanupParentsValues(IdmEntity *entity, const IdsList &ids);
+	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property);
 
 private:
 	void setLastError(const char *sqlQuery) const;

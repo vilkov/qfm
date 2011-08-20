@@ -212,7 +212,7 @@ bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids)
 				QString query = QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_").
 												    append(QString::number(entity->id())).
 												    append(QString::fromLatin1("_PROPERTY_%1")).
-												    append(QString::fromLatin1(" where ENTITY_ID in (%1)").arg(idsToString(ids)));
+												    append(QString::fromLatin1(" where ENTITY_VALUE_ID in (%1)").arg(idsToString(ids)));
 
 				for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 				{

@@ -9,20 +9,11 @@ FILE_SYSTEM_NS_BEGIN
 class IdmRoot : public IdmInfoItem
 {
 public:
-	IdmRoot(const Info &info, IdmItem *parent = 0) :
-		IdmInfoItem(info, parent),
-		m_label(QString::fromLatin1(".."))
-	{}
+	IdmRoot(const Info &info, IdmItem *parent = 0);
 
 	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const
-	{
-		if (column == 0 && role == Qt::DisplayRole)
-			return m_label;
-		else
-			return QVariant();
-	}
-	virtual bool isRoot() const { return true; }
+	virtual QVariant data(qint32 column, qint32 role) const;
+	virtual bool isRoot() const;
 
 private:
 	QString m_label;

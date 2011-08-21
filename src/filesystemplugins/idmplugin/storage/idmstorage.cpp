@@ -286,11 +286,12 @@ QString IdmStorage::typeToString(IdmEntity::Type type) const
 		case IdmEntity::Composite:
 		case IdmEntity::Rating:
 		case IdmEntity::Int:      return QString::fromLatin1("int");
-		case IdmEntity::String:   return QString::fromLatin1("char(1024)");
+		case IdmEntity::String:   return QString::fromLatin1("char(256)");
 		case IdmEntity::Date:     return QString::fromLatin1("date");
 		case IdmEntity::Time:     return QString::fromLatin1("time");
 		case IdmEntity::DateTime: return QString::fromLatin1("datetime");
 		case IdmEntity::Memo:     return QString::fromLatin1("text");
+		case IdmEntity::Path:     return QString::fromLatin1("char(1024)");
 	}
 }
 
@@ -464,12 +465,12 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 		}
 
 	sqlite3_free(errorMsg);
+
 	return res;
 }
 
 bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) const
 {
-	bool res = true;
 	IdsSet propertyIds;
 	QByteArray sqlQuery;
 	sqlite3_stmt *statement;
@@ -492,20 +493,16 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 
 			if (!removeOverlappingIds(entity, entity->at(i), propertyIds) ||
 				!removeValue(entity->at(i), propertyIds.toList()))
-			{
-				res = false;
-				break;
-			}
+				return false;
 		}
 		else
 		{
 			setLastError(sqlQuery);
-			res = false;
-			break;
+			return false;
 		}
 	}
 
-	return res;
+	return true;
 }
 
 bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) const
@@ -548,6 +545,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 			case IdmEntity::DateTime:
 			case IdmEntity::Memo:
 			case IdmEntity::Rating:
+			case IdmEntity::Path:
 			{
 				if ((index = m_entities.indexOf(id = sqlite3_column_int(statement, 0))) != IdmEntity::InvalidIndex)
 				{

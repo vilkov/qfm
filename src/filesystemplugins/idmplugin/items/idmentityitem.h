@@ -1,6 +1,7 @@
 #ifndef IDMENTITYITEM_H_
 #define IDMENTITYITEM_H_
 
+#include <QtCore/QVariant>
 #include "idmitemslist.h"
 #include "../storage/entities/idmentity.h"
 
@@ -10,26 +11,16 @@ FILE_SYSTEM_NS_BEGIN
 class IdmEntityItem : public IdmItemsList
 {
 public:
-	IdmEntityItem(IdmEntity *entity, IdmItem *parent = 0) :
-		IdmItemsList(parent),
-		m_entity(entity)
-	{
-		for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-			m_items.push_back(new IdmEntityItem(entity->at(i), this));
-	}
+	IdmEntityItem(IdmEntity *entity, IdmItem *parent = 0);
 
 	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const
-	{
-		if (column == 0 && role == Qt::DisplayRole)
-			return m_entity->name();
-		else
-			return QVariant();
-	}
-	virtual bool isEntityItem() const { return true; }
+	virtual QVariant data(qint32 column, qint32 role) const;
+	virtual bool isEntityItem() const;
 
 	IdmEntity *entity() const { return m_entity; }
-	void add(IdmEntity *entity) { m_items.push_back(new IdmEntityItem(entity, this)); }
+	void add(IdmEntityItem *item) { m_items.push_back(item); }
+	void remove(size_type index) { m_items.removeAt(index); }
+	void remove(IdmEntityItem *item) { m_items.removeAt(m_items.indexOf(item)); }
 
 protected:
 	IdmEntity *m_entity;

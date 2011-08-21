@@ -2,7 +2,6 @@
 #define IDMITEMSLIST_H_
 
 #include <QtCore/QList>
-#include <QtCore/QString>
 #include "idmitem.h"
 
 
@@ -16,20 +15,14 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	IdmItemsList(IdmItem *parent = 0) :
-		IdmItem(parent)
-	{}
-	virtual ~IdmItemsList()
-	{
-		for (value_type::const_iterator it = m_items.constBegin(), end = m_items.constEnd(); it != end; ++it)
-			delete *it;
-	}
+	IdmItemsList(IdmItem *parent = 0);
+	virtual ~IdmItemsList();
 
 	/* IdmItem */
-	virtual bool isRoot() const { return false; }
-	virtual bool isList() const { return true; }
-	virtual bool isMenuItem() const { return false; }
-	virtual bool isEntityItem() const { return false; }
+	virtual bool isRoot() const;
+	virtual bool isList() const;
+	virtual bool isMenuItem() const;
+	virtual bool isEntityItem() const;
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }

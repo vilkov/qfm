@@ -1,6 +1,7 @@
 #ifndef IDMITEM_H_
 #define IDMITEM_H_
 
+#include <QtCore/QVariant>
 #include "../../../filesystem/filesystem_ns.h"
 
 
@@ -9,9 +10,8 @@ FILE_SYSTEM_NS_BEGIN
 class IdmItem
 {
 public:
-	IdmItem(IdmItem *parent) :
-		m_parent(parent)
-	{}
+	IdmItem(IdmItem *parent);
+	virtual ~IdmItem();
 
 	IdmItem *parent() const { return m_parent; }
 

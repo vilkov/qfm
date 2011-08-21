@@ -4,6 +4,7 @@
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
 #include "../gui/createentitydialog.h"
+#include "../containeres/menu/idmmenuentities.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -181,15 +182,32 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 											break;
 										}
 
-									if (ok && !m_container->commit())
-									{
-										m_container->rollback();
-										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-									}
+									if (ok)
+										if (m_container->commit())
+										{
+											IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+
+											beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
+											entities->add(entity);
+											endInsertRows();
+										}
+										else
+										{
+											m_container->rollback();
+											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+										}
 								}
 								else
 								{
-									if (!m_container->commit())
+									if (m_container->commit())
+									{
+										IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+
+										beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
+										entities->add(entity);
+										endInsertRows();
+									}
+									else
 									{
 										m_container->rollback();
 										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
@@ -288,7 +306,7 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 		if (item->parent()->isEntityItem())
 		{
 			if (QMessageBox::question(&Application::instance()->mainWindow(),
-								  tr("Remove entity"),
+								  tr("Remove property"),
 								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
 								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
 								  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
@@ -296,7 +314,10 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 				if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
 												static_cast<IdmEntityItem*>(item)->entity()))
 				{
+					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+
 					beginRemoveRows(parent(idx), idx.row(), idx.row());
+					entities->remove(static_cast<IdmEntityItem*>(item->parent()), static_cast<IdmEntityItem*>(item));
 					delete item;
 					endRemoveRows();
 				}

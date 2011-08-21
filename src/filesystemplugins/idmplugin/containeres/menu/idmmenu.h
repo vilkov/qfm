@@ -3,8 +3,6 @@
 
 #include "idmmenuitem.h"
 #include "../../items/idmitemslist.h"
-#include "../../items/idmentityitem.h"
-#include "../../storage/entities/idmentity.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,59 +10,10 @@ FILE_SYSTEM_NS_BEGIN
 class IdmMenu : public IdmItemsList
 {
 public:
-	IdmMenu(const QString &label, const QString &toolTip, IdmItem *parent = 0) :
-		IdmItemsList(parent),
-		m_label(label),
-		m_toolTip(toolTip)
-	{}
+	IdmMenu(const QString &label, const QString &toolTip, IdmItem *parent = 0);
 
 	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const
-	{
-		switch (column)
-		{
-			case 0:
-			{
-				switch (role)
-				{
-					case Qt::EditRole:
-					case Qt::DisplayRole:
-						return m_label;
-//					case Qt::DecorationRole:
-//						if (m_locked)
-//							return Application::style()->standardIcon(QStyle::SP_BrowserReload);
-//						else
-//							return m_info.icon();
-					case Qt::TextAlignmentRole:
-						return Qt::AlignCenter;
-					case Qt::ToolTipRole:
-						return m_toolTip;
-				}
-				break;
-			}
-			case 1:
-			{
-				switch (role)
-				{
-					case Qt::EditRole:
-					case Qt::DisplayRole:
-						return m_toolTip;
-//					case Qt::DecorationRole:
-//						if (m_locked)
-//							return Application::style()->standardIcon(QStyle::SP_BrowserReload);
-//						else
-//							return m_info.icon();
-					case Qt::TextAlignmentRole:
-						return Qt::AlignCenter;
-					case Qt::ToolTipRole:
-						return m_toolTip;
-				}
-				break;
-			}
-		}
-
-		return QVariant();
-	}
+	virtual QVariant data(qint32 column, qint32 role) const;
 
 	IdmMenu *add(const QString &label, const QString &toolTip)
 	{
@@ -76,9 +25,9 @@ public:
 	{
 		m_items.push_back(new IdmMenuItem(id, label, toolTip, this));
 	}
-	void add(IdmEntity *entity)
+	void add(IdmItem *item)
 	{
-		m_items.push_back(new IdmEntityItem(entity, this));
+		m_items.push_back(item);
 	}
 
 private:

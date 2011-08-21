@@ -22,7 +22,8 @@ public:
 		DateTime   = 5,
 		Memo       = 6,
 		Composite  = 7,
-		Rating     = 8
+		Rating     = 8,
+		Path       = 9
 	};
 
 	typedef unsigned int                    id_type;
@@ -38,6 +39,8 @@ public:
 		m_type(type),
 		m_id(id),
 		m_name(name)
+	{}
+	virtual ~IdmEntity()
 	{}
 
 	IdmEntity *at(size_type index) const { return m_items.at(index); }

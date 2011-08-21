@@ -10,23 +10,14 @@ FILE_SYSTEM_NS_BEGIN
 class IdmMessage : public IdmItem
 {
 public:
-	IdmMessage(const QString &message, IdmItem *parent = 0) :
-		IdmItem(parent),
-		m_message(message)
-	{}
+	IdmMessage(const QString &message, IdmItem *parent = 0);
 
 	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const
-	{
-		if (column == 0 && role == Qt::DisplayRole)
-			return m_message;
-		else
-			return QVariant();
-	}
-	virtual bool isRoot() const { return false; }
-	virtual bool isList() const { return false; }
-	virtual bool isMenuItem() const { return false; }
-	virtual bool isEntityItem() const { return false; }
+	virtual QVariant data(qint32 column, qint32 role) const;
+	virtual bool isRoot() const;
+	virtual bool isList() const;
+	virtual bool isMenuItem() const;
+	virtual bool isEntityItem() const;
 
 private:
 	QVariant m_message;

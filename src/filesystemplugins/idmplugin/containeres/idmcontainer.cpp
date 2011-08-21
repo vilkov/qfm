@@ -1,4 +1,6 @@
 #include "idmcontainer.h"
+#include "menu/idmmenuentities.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -9,14 +11,15 @@ IdmContainer::IdmContainer(const Info &storage) :
 {
 	if (m_storage.isValid())
 	{
-		IdmMenu *submenu;
+		PScopedPointer<IdmMenuEntities> entities(new IdmMenuEntities(tr("List"), tr("List of the all entities"), &m_menu));
 
 		m_menu.add(Create, tr("Create"), tr("Create an entity"));
 		m_menu.add(Query, tr("Query"), tr("Create a query"));
 
-		submenu = m_menu.add(tr("List"), tr("List of the all entities"));
 		for (IdmStorage::size_type i = 0, size = m_storage.size(); i < size; ++i)
-			submenu->add(m_storage.at(i));
+			entities->add(m_storage.at(i));
+
+		m_menu.add(entities.take());
 	}
 
 	m_entityTypes[IdmEntity::Int]       = IdmEntityTypeDescription(tr("Int"),       tr("Integer type"));
@@ -27,6 +30,7 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_entityTypes[IdmEntity::Memo]      = IdmEntityTypeDescription(tr("Memo"),      tr("Memo type"));
 	m_entityTypes[IdmEntity::Composite] = IdmEntityTypeDescription(tr("Composite"), tr("Entity of this type consists of other entities"));
 	m_entityTypes[IdmEntity::Rating]    = IdmEntityTypeDescription(tr("Rating"),    tr("Rating type (shown as stars)"));
+	m_entityTypes[IdmEntity::Path]      = IdmEntityTypeDescription(tr("Path"),      tr("Path to file or folder"));
 }
 
 FILE_SYSTEM_NS_END

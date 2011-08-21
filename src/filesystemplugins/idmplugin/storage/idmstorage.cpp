@@ -130,7 +130,8 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 bool IdmStorage::removeEntity(IdmEntity *entity)
 {
 	char *errorMsg = 0;
-	QByteArray sqlQuery = QString::fromLatin1("delete from PROPERTIES where ENTITY_PROPERTY_ID = %1;"
+	QByteArray sqlQuery = QString::fromLatin1("delete from ENTITY where ID = %1;"
+											  "delete from PROPERTIES where ENTITY_PROPERTY_ID = %1;"
 											  "drop table ENTITY_%1").
 											  arg(QString::number(entity->id())).toLatin1();
 
@@ -146,6 +147,8 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 				entity->at(i)->removeParent(entity);
+
+			m_entities.remove(entity->id());
 
 			return true;
 		}

@@ -333,9 +333,10 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
 				{
+					IdmEntity *entity = static_cast<IdmEntityItem*>(item)->entity();
 					IdmEntityItem *parent;
 					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-					IdmMenuEntities::List items = entities->items(static_cast<IdmEntityItem*>(item)->entity());
+					IdmMenuEntities::List items = entities->items(entity);
 					IdmItemsList::size_type index;
 
 					for (IdmMenuEntities::List::size_type i = 0, size = items.size(); i < size; ++i)
@@ -348,6 +349,8 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 						delete items.at(i);
 						endRemoveRows();
 					}
+
+					delete entity;
 				}
 				else
 				{

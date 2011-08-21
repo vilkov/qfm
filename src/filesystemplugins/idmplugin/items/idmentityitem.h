@@ -1,7 +1,6 @@
 #ifndef IDMENTITYITEM_H_
 #define IDMENTITYITEM_H_
 
-#include <QtCore/QVariant>
 #include "idmitemslist.h"
 #include "../storage/entities/idmentity.h"
 
@@ -18,9 +17,6 @@ public:
 	virtual bool isEntityItem() const;
 
 	IdmEntity *entity() const { return m_entity; }
-	void add(IdmEntityItem *item) { m_items.push_back(item); }
-	void remove(size_type index) { m_items.removeAt(index); }
-	void remove(IdmEntityItem *item) { m_items.removeAt(m_items.indexOf(item)); }
 
 protected:
 	IdmEntity *m_entity;

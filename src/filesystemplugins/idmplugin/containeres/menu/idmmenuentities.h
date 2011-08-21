@@ -4,13 +4,12 @@
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include <QtCore/QString>
-#include "../../items/idmitemslist.h"
-#include "../../items/idmentityitem.h"
+#include "idmmenuentitiesitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IdmMenuEntities : public IdmItemsList
+class IdmMenuEntities : public IdmMenuEntitiesItem
 {
 public:
 	typedef QList<IdmEntityItem*>  List;
@@ -21,43 +20,44 @@ public:
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
+	virtual bool isEntityItem() const;
 
 	List items(IdmEntity *entity) const { return m_entities.value(entity); }
 
 	void add(IdmEntity *entity)
 	{
-		IdmEntityItem *item;
+		IdmMenuEntitiesItem *item;
 
-		m_items.push_back(item = new IdmEntityItem(entity, this));
+		m_items.push_back(item = new IdmMenuEntitiesItem(entity, this));
 		m_entities[entity].push_back(item);
 		expand(item);
 	}
 
 	void add(IdmEntityItem *item, IdmEntity *property)
 	{
-		IdmEntityItem *child;
+		IdmMenuEntitiesItem *child;
 
-		item->add(child = new IdmEntityItem(property, item));
+		static_cast<IdmMenuEntitiesItem*>(item)->add(child = new IdmMenuEntitiesItem(property, item));
 		m_entities[property].push_back(child);
 		expand(child);
 	}
 
-	void remove(IdmEntityItem *item, IdmEntityItem *property)
+	void remove(IdmEntityItem *item, IdmItemsList::size_type index)
 	{
-		List &items = m_entities[property->entity()];
+		List &items = m_entities[item->entity()];
 		items.removeAt(items.indexOf(item));
-		item->remove(property);
+		static_cast<IdmMenuEntitiesItem*>(item->parent())->remove(index);
 	}
 
 private:
-	void expand(IdmEntityItem *parent)
+	void expand(IdmMenuEntitiesItem *parent)
 	{
 		IdmEntity *entity;
-		IdmEntityItem *item;
+		IdmMenuEntitiesItem *item;
 
 		for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 		{
-			parent->add(item = new IdmEntityItem(entity = parent->entity()->at(i), parent));
+			parent->add(item = new IdmMenuEntitiesItem(entity = parent->entity()->at(i), parent));
 			m_entities[entity].push_back(item);
 			expand(item);
 		}

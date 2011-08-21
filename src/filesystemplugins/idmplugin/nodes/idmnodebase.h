@@ -65,6 +65,7 @@ protected:
 
 protected:
 	IdmItem *rootItem() const { return m_items.at(1); }
+	QModelIndex index(IdmItem *item) const;
 
 	bool processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const;
 	bool processRemoveItem(const QModelIndex &index, IdmItem *item);

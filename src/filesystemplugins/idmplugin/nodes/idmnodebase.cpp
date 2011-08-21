@@ -23,13 +23,8 @@ IdmNodeBase::IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent) 
 
 IdmNodeBase::~IdmNodeBase()
 {
-	if (!m_items.isEmpty())
-	{
-		if (m_items.at(0)->isList())
-			m_items.removeAt(0);
-
-		qDeleteAll(m_items);
-	}
+	m_items.removeAt(0);
+	qDeleteAll(m_items);
 }
 
 int IdmNodeBase::rowCount(const QModelIndex &parent) const
@@ -282,20 +277,22 @@ void IdmNodeBase::completedProgressEvent(const QString &fileName, quint64 timeEl
 
 }
 
+QModelIndex IdmNodeBase::index(IdmItem *item) const
+{
+	if (item->parent())
+		return createIndex(static_cast<IdmItemsList*>(item->parent())->indexOf(item), 0, item);
+	else
+		return createIndex(m_items.indexOf(item), 0, item);
+}
+
 bool IdmNodeBase::processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const
 {
-	IdmItem *item;
 	QModelIndex index;
-	QSet<IdmItem*> done;
 
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!done.contains(item = static_cast<IdmItem*>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
-		{
-			done.insert(item);
-
-			if (!functor(index, item))
+		if (list.at(i).column() == 0 && (index = m_proxy.mapToSource(list.at(i))).isValid())
+			if (!functor(index, static_cast<IdmItem*>(index.internalPointer())))
 				return false;
-		}
 
 	return true;
 }
@@ -317,7 +314,7 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
 
 					beginRemoveRows(parent(idx), idx.row(), idx.row());
-					entities->remove(static_cast<IdmEntityItem*>(item->parent()), static_cast<IdmEntityItem*>(item));
+					entities->remove(static_cast<IdmEntityItem*>(item), idx.row());
 					delete item;
 					endRemoveRows();
 				}
@@ -336,10 +333,21 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
 				{
-					m_container->menu()->at(IdmContainer::List);
-					beginRemoveRows(parent(idx), idx.row(), idx.row());
-					delete item;
-					endRemoveRows();
+					IdmEntityItem *parent;
+					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+					IdmMenuEntities::List items = entities->items(static_cast<IdmEntityItem*>(item)->entity());
+					IdmItemsList::size_type index;
+
+					for (IdmMenuEntities::List::size_type i = 0, size = items.size(); i < size; ++i)
+					{
+						parent = static_cast<IdmEntityItem*>(items.at(i)->parent());
+						index = parent->indexOf(items.at(i));
+
+						beginRemoveRows(IdmNodeBase::index(parent), index, index);
+						entities->remove(items.at(i), index);
+						delete items.at(i);
+						endRemoveRows();
+					}
 				}
 				else
 				{

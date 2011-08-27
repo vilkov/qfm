@@ -43,6 +43,7 @@ public:
 	virtual void refresh();
 
 	/* INode::IFileOperations */
+	virtual void menuAction(QAction *action);
 	virtual void createFile(const QModelIndex &index);
 	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);
@@ -60,6 +61,7 @@ protected:
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }
 	virtual QAbstractItemModel *proxyModel() const { return &((M3uNode *)this)->m_proxy; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((M3uNode *)this)->m_delegate; }
+	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
@@ -78,6 +80,7 @@ private:
 	ItemsList m_items;
 	M3uProxyModel m_proxy;
 	M3uDelegate m_delegate;
+	INodeView::MenuActionList m_menuActions;
 };
 
 M3U_PLUGIN_NS_END

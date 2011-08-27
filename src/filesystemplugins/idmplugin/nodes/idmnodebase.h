@@ -32,6 +32,7 @@ public:
 	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const;
 
 	/* INode::IFileOperations */
+	virtual void menuAction(QAction *action);
 	virtual void createFile(const QModelIndex &index);
 	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);
@@ -50,6 +51,7 @@ protected:
 	virtual QModelIndex rootIndex() const;
 	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeBase *)this)->m_proxy; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeBase *)this)->m_delegate; }
+	virtual const INodeView::MenuActionList &menuActions() const { return m_container->menuActions(); }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);

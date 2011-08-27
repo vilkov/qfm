@@ -40,6 +40,7 @@ public:
 	virtual void refresh() {}
 
 	/* INode::IFileOperations */
+	virtual void menuAction(QAction *action) {}
 	virtual void createFile(const QModelIndex &index) {}
 	virtual void createDirectory(const QModelIndex &index) {}
 	virtual void rename(const QModelIndexList &list) {}
@@ -55,6 +56,7 @@ protected:
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }
 	virtual QAbstractItemModel *proxyModel() const { return 0; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return 0; }
+	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) { return 0; }
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
@@ -65,6 +67,7 @@ private:
 
 private:
 	Values m_items;
+	INodeView::MenuActionList m_menuActions;
 };
 
 FILE_SYSTEM_NS_END

@@ -32,6 +32,7 @@ public:
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 
 	/* INode::IFileOperations */
+	virtual void menuAction(QAction *action);
 	virtual void createFile(const QModelIndex &index);
 	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);
@@ -50,6 +51,7 @@ protected:
 	virtual QModelIndex rootIndex() const;
 	virtual QAbstractItemModel *proxyModel() const { return &((FolderNode *)this)->m_proxy; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((FolderNode *)this)->m_delegate; }
+	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
@@ -137,6 +139,7 @@ private:
 	Values m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
+	INodeView::MenuActionList m_menuActions;
 };
 
 FILE_SYSTEM_NS_END

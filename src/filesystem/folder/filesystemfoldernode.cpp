@@ -100,6 +100,11 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return m_items.at(index.row()).item;
 }
 
+void FolderNode::menuAction(QAction *action)
+{
+
+}
+
 void FolderNode::createFile(const QModelIndex &index)
 {
 

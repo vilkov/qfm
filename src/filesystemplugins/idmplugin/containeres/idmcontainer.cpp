@@ -6,21 +6,11 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmContainer::IdmContainer(const Info &storage) :
-	m_menu(tr("Menu"), tr("Main menu")),
 	m_storage(storage)
 {
-	if (m_storage.isValid())
-	{
-		PScopedPointer<IdmMenuEntities> entities(new IdmMenuEntities(tr("List"), tr("List of the all entities"), &m_menu));
-
-		m_menu.add(Create, tr("Create"), tr("Create an entity"));
-		m_menu.add(Query, tr("Query"), tr("Create a query"));
-
-		for (IdmStorage::size_type i = 0, size = m_storage.size(); i < size; ++i)
-			entities->add(m_storage.at(i));
-
-		m_menu.add(entities.take());
-	}
+	m_menuActions.push_back(new QAction(tr("Create"), 0));
+	m_menuActions.push_back(new QAction(tr("Query"), 0));
+	m_menuActions.push_back(new QAction(tr("List"), 0));
 
 	m_entityTypes[IdmEntity::Int]       = IdmEntityTypeDescription(tr("Int"),       tr("Integer type"));
 	m_entityTypes[IdmEntity::String]    = IdmEntityTypeDescription(tr("String"),    tr("String type (max length is 1024 characters)"));
@@ -31,6 +21,11 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_entityTypes[IdmEntity::Composite] = IdmEntityTypeDescription(tr("Composite"), tr("Entity of this type consists of other entities"));
 	m_entityTypes[IdmEntity::Rating]    = IdmEntityTypeDescription(tr("Rating"),    tr("Rating type (shown as stars)"));
 	m_entityTypes[IdmEntity::Path]      = IdmEntityTypeDescription(tr("Path"),      tr("Path to file or folder"));
+}
+
+IdmContainer::~IdmContainer()
+{
+	qDeleteAll(m_menuActions);
 }
 
 IDM_PLUGIN_NS_END

@@ -159,6 +159,11 @@ void M3uNode::refresh()
 	setUpdating(false);
 }
 
+void M3uNode::menuAction(QAction *action)
+{
+
+}
+
 void M3uNode::createFile(const QModelIndex &index)
 {
 

@@ -12,7 +12,7 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 {
 	if (m_storage.isValid())
 	{
-		m_items.push_back(m_storage.menu());
+//		m_items.push_back(m_storage.menu());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
 	}
 	else

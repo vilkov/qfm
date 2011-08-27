@@ -1,9 +1,10 @@
 #ifndef IDMCONTAINER_H_
 #define IDMCONTAINER_H_
 
+#include <QtCore/QList>
 #include <QtCore/QCoreApplication>
+#include <QtGui/QAction>
 #include "idmentitytypes.h"
-#include "menu/idmmenu.h"
 #include "../storage/idmstorage.h"
 
 
@@ -28,10 +29,10 @@ public:
 
 public:
 	IdmContainer(const Info &storage);
+	~IdmContainer();
 
+	const QList<QAction*> &menuActions() const { return m_menuActions; }
 	const IdmEntityTypes &entityTypes() const { return m_entityTypes; }
-	const IdmMenu *menu() const { return &m_menu; }
-	IdmMenu *menu() { return &m_menu; }
 
 	/* IdmStorage */
 	bool isValid() const { return m_storage.isValid(); }
@@ -53,9 +54,9 @@ public:
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_storage.removeProperty(entity, property); }
 
 private:
-	IdmMenu m_menu;
 	IdmStorage m_storage;
 	IdmEntityTypes m_entityTypes;
+	QList<QAction*> m_menuActions;
 };
 
 IDM_PLUGIN_NS_END

@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMIFILEOPERATIONS_H_
 #define FILESYSTEMIFILEOPERATIONS_H_
 
+#include <QtGui/QAction>
 #include <QtCore/QModelIndexList>
 #include "../filesystem_ns.h"
 
@@ -14,6 +15,7 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
+	virtual void menuAction(QAction *action) = 0;
 	virtual void createFile(const QModelIndex &index) = 0;
 	virtual void createDirectory(const QModelIndex &index) = 0;
 	virtual void rename(const QModelIndexList &list) = 0;

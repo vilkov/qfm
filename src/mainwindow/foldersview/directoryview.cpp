@@ -14,12 +14,15 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_layout(this),
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
+    m_toolBar(this),
 	m_view(&m_eventHandler, this),
 	m_eventHandler(this)
 {
 	setLayout(&m_layout);
 	m_layout.setMargin(1);
+	m_layout.setSpacing(1);
 	m_layout.addLayout(&m_header.layout);
+	m_layout.addWidget(&m_toolBar);
 	m_layout.addWidget(&m_view);
 
 	m_view.setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -46,6 +49,8 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Escape,    &DirectoryView::cancel);
+
+	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 }
 
 DirectoryView::~DirectoryView()
@@ -88,13 +93,24 @@ void DirectoryView::select(const QModelIndex &index)
 	m_view.setFocus();
 }
 
-void DirectoryView::setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate)
+void DirectoryView::setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate, const FileSystem::INodeView::MenuActionList &menuActions)
 {
     m_node = node;
 	m_view.setModel(model);
 	m_view.setItemDelegate(delegate);
 	m_header.pathEdit.setText(m_node->absoluteFilePath());
 	m_parent->updateTitle(this, m_node->fileName());
+
+	if (menuActions.isEmpty())
+	{
+		m_toolBar.setVisible(false);
+		m_toolBar.clear();
+	}
+	else
+	{
+		m_toolBar.addActions(menuActions);
+		m_toolBar.setVisible(true);
+	}
 }
 
 QString DirectoryView::defaultPath()
@@ -245,6 +261,11 @@ void DirectoryView::move()
 void DirectoryView::cancel()
 {
 	m_node->cancel(selectedIndexes());
+}
+
+void DirectoryView::actionTriggered(QAction *action)
+{
+	m_node->menuAction(action);
 }
 
 void DirectoryView::openInNewTab()

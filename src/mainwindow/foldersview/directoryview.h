@@ -3,6 +3,7 @@
 
 #include <QtCore/QList>
 #include <QtGui/QWidget>
+#include <QtGui/QToolBar>
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
@@ -55,7 +56,7 @@ public:
 public:
 	/* INodeView */
 	virtual void select(const QModelIndex &index);
-	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0);
+	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate, const FileSystem::INodeView::MenuActionList &menuActions);
 
 	static QString defaultPath();
 
@@ -82,6 +83,9 @@ public Q_SLOTS:
 	void copy();
 	void move();
 	void cancel();
+
+private Q_SLOTS:
+	void actionTriggered(QAction *action);
 
 private:
 	void openInNewTab();
@@ -153,6 +157,7 @@ private:
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;
     Header m_header;
+    QToolBar m_toolBar;
     DirectoryListView m_view;
     DirectoryListViewEventHandler m_eventHandler;
 };

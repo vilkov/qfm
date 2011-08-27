@@ -3,6 +3,7 @@
 #include "../items/idmroot.h"
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
+#include "../control/idmfilecontrol.h"
 #include "../gui/createentitydialog.h"
 #include "../containeres/menu/idmmenuentities.h"
 #include "../../../application.h"
@@ -91,7 +92,34 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 
 IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) const
 {
+	IdmEntity *entity = 0;
+
+	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
+		if (m_container->at(i)->type() == IdmEntity::Path)
+		{
+			entity = m_container->at(i);
+			break;
+		}
+
+	if (entity && !entity->parents().isEmpty())
+	{
+		entity = entity->parents().at(0);
+
+		IdmFileControl control(entity);
+	}
+	else
+		QMessageBox::information(
+				&Application::instance()->mainWindow(),
+				tr("Failed to add an entity value"),
+				tr("There is no entity with property of type \"%1\".").
+					arg(m_container->entityTypes().value(IdmEntity::Path).label));
+
 	return 0;
+}
+
+void IdmNodeBase::menuAction(QAction *action)
+{
+	QMessageBox::information(&Application::instance()->mainWindow(), QString(), action->text());
 }
 
 void IdmNodeBase::createFile(const QModelIndex &index)
@@ -168,76 +196,76 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 
 	if (static_cast<IdmItem*>(index.internalPointer())->isRoot())
 		return static_cast<Node*>(Node::parent());
-	else
-		if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
-			switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
-			{
-				case IdmContainer::Create:
-				{
-					CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
-
-					if (dialog.exec() == CreateEntityDialog::Accepted)
-						if (m_container->transaction())
-							if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
-								if (entity->type() == IdmEntity::Composite)
-								{
-									bool ok = true;
-
-									for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
-										if (!m_container->addProperty(entity, dialog.entities().at(i)))
-										{
-											ok = false;
-											m_container->rollback();
-											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-											break;
-										}
-
-									if (ok)
-										if (m_container->commit())
-										{
-											IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-
-											beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
-											entities->add(entity);
-											endInsertRows();
-										}
-										else
-										{
-											m_container->rollback();
-											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-										}
-								}
-								else
-								{
-									if (m_container->commit())
-									{
-										IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-
-										beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
-										entities->add(entity);
-										endInsertRows();
-									}
-									else
-									{
-										m_container->rollback();
-										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-									}
-								}
-							else
-							{
-								m_container->rollback();
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-							}
-						else
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-
-					break;
-				}
-				case IdmContainer::Query:
-				{
-					break;
-				}
-			}
+//	else
+//		if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
+//			switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
+//			{
+//				case IdmContainer::Create:
+//				{
+//					CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
+//
+//					if (dialog.exec() == CreateEntityDialog::Accepted)
+//						if (m_container->transaction())
+//							if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
+//								if (entity->type() == IdmEntity::Composite)
+//								{
+//									bool ok = true;
+//
+//									for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
+//										if (!m_container->addProperty(entity, dialog.entities().at(i)))
+//										{
+//											ok = false;
+//											m_container->rollback();
+//											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//											break;
+//										}
+//
+//									if (ok)
+//										if (m_container->commit())
+//										{
+//											IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+//
+//											beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
+//											entities->add(entity);
+//											endInsertRows();
+//										}
+//										else
+//										{
+//											m_container->rollback();
+//											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//										}
+//								}
+//								else
+//								{
+//									if (m_container->commit())
+//									{
+//										IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+//
+//										beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
+//										entities->add(entity);
+//										endInsertRows();
+//									}
+//									else
+//									{
+//										m_container->rollback();
+//										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//									}
+//								}
+//							else
+//							{
+//								m_container->rollback();
+//								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//							}
+//						else
+//							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//
+//					break;
+//				}
+//				case IdmContainer::Query:
+//				{
+//					break;
+//				}
+//			}
 
 	return 0;
 }
@@ -314,65 +342,65 @@ bool IdmNodeBase::processIndexList(const QModelIndexList &list, const IdmFunctor
 
 bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 {
-	if (item->isEntityItem())
-		if (item->parent()->isEntityItem())
-		{
-			if (QMessageBox::question(&Application::instance()->mainWindow(),
-								  tr("Remove property"),
-								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
-								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
-								  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
-								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-				if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
-												static_cast<IdmEntityItem*>(item)->entity()))
-				{
-					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-
-					beginRemoveRows(parent(idx), idx.row(), idx.row());
-					entities->remove(static_cast<IdmEntityItem*>(item), idx.row());
-					delete item;
-					endRemoveRows();
-				}
-				else
-				{
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-					return false;
-				}
-		}
-		else
-		{
-			if (QMessageBox::question(&Application::instance()->mainWindow(),
-								  tr("Remove entity"),
-								  tr("Do you really want to remove entity \"%1\"?").
-								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
-								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
-				{
-					IdmEntity *entity = static_cast<IdmEntityItem*>(item)->entity();
-					IdmEntityItem *parent;
-					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-					IdmMenuEntities::List items = entities->items(entity);
-					IdmItemsList::size_type index;
-
-					for (IdmMenuEntities::List::size_type i = 0, size = items.size(); i < size; ++i)
-					{
-						parent = static_cast<IdmEntityItem*>(items.at(i)->parent());
-						index = parent->indexOf(items.at(i));
-
-						beginRemoveRows(IdmNodeBase::index(parent), index, index);
-						entities->remove(items.at(i), index);
-						delete items.at(i);
-						endRemoveRows();
-					}
-
-					delete entity;
-				}
-				else
-				{
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-					return false;
-				}
-		}
+//	if (item->isEntityItem())
+//		if (item->parent()->isEntityItem())
+//		{
+//			if (QMessageBox::question(&Application::instance()->mainWindow(),
+//								  tr("Remove property"),
+//								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
+//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
+//								  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
+//								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+//				if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
+//												static_cast<IdmEntityItem*>(item)->entity()))
+//				{
+//					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+//
+//					beginRemoveRows(parent(idx), idx.row(), idx.row());
+//					entities->remove(static_cast<IdmEntityItem*>(item), idx.row());
+//					delete item;
+//					endRemoveRows();
+//				}
+//				else
+//				{
+//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//					return false;
+//				}
+//		}
+//		else
+//		{
+//			if (QMessageBox::question(&Application::instance()->mainWindow(),
+//								  tr("Remove entity"),
+//								  tr("Do you really want to remove entity \"%1\"?").
+//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
+//								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+//				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
+//				{
+//					IdmEntity *entity = static_cast<IdmEntityItem*>(item)->entity();
+//					IdmEntityItem *parent;
+//					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
+//					IdmMenuEntities::List items = entities->items(entity);
+//					IdmItemsList::size_type index;
+//
+//					for (IdmMenuEntities::List::size_type i = 0, size = items.size(); i < size; ++i)
+//					{
+//						parent = static_cast<IdmEntityItem*>(items.at(i)->parent());
+//						index = parent->indexOf(items.at(i));
+//
+//						beginRemoveRows(IdmNodeBase::index(parent), index, index);
+//						entities->remove(items.at(i), index);
+//						delete items.at(i);
+//						endRemoveRows();
+//					}
+//
+//					delete entity;
+//				}
+//				else
+//				{
+//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//					return false;
+//				}
+//		}
 
 	return true;
 }

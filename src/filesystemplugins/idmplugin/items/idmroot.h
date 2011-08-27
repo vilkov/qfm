@@ -4,7 +4,7 @@
 #include "idminfoitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmRoot : public IdmInfoItem
 {
@@ -19,6 +19,6 @@ private:
 	QString m_label;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMROOT_H_ */

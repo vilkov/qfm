@@ -4,7 +4,7 @@
 #include "idmitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmSeparator : public IdmItem
 {
@@ -19,6 +19,6 @@ public:
 	virtual bool isEntityItem() const;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMSEPARATOR_H_ */

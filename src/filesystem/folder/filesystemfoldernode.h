@@ -30,9 +30,9 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
-	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
 
 	/* INode::IFileOperations */
+	virtual void rename(const QModelIndexList &list);
 	virtual void remove(const QModelIndexList &list);
 	virtual void cancel(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
@@ -97,6 +97,12 @@ protected:
 
 	private:
 		TasksMap &m_tasks;
+	};
+
+	class RenameFunctor : public Functors::Functor
+	{
+	protected:
+		virtual void call(Values::size_type index, FolderNodeItem *entry);
 	};
 
 	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);

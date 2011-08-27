@@ -1,7 +1,7 @@
 #include "pluginsmanager.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+FILESYSTEM_PLUGINS_NS_BEGIN
 
 MyPluginsManager::MyPluginsManager() :
 	PluginsManager()
@@ -10,4 +10,4 @@ MyPluginsManager::MyPluginsManager() :
 	registerStatic(&m_idmplugin);
 }
 
-FILE_SYSTEM_NS_END
+FILESYSTEM_PLUGINS_NS_END

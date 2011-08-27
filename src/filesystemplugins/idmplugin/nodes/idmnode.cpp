@@ -4,7 +4,7 @@
 #include "../items/idmseparator.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmNode::IdmNode(IdmContainer *storage, const Info &info, Node *parent) :
 	IdmNodeBase(storage, info, parent)
@@ -21,4 +21,4 @@ IdmNode::IdmNode(IdmContainer *storage, const Info &info, Node *parent) :
 	}
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

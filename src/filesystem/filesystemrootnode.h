@@ -27,7 +27,6 @@ public:
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
 	virtual IFileControl *createControl() const { return 0; }
-	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins) { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }
@@ -41,6 +40,7 @@ public:
 	virtual void refresh() {}
 
 	/* INode::IFileOperations */
+	virtual void rename(const QModelIndexList &list) {}
 	virtual void remove(const QModelIndexList &list) {}
 	virtual void cancel(const QModelIndexList &list) {}
 	virtual void calculateSize(const QModelIndexList &list) {}

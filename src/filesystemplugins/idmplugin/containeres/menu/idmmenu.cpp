@@ -1,7 +1,7 @@
 #include "idmmenu.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmMenu::IdmMenu(const QString &label, const QString &toolTip, IdmItem *parent) :
 	IdmItemsList(parent),
@@ -56,4 +56,4 @@ QVariant IdmMenu::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

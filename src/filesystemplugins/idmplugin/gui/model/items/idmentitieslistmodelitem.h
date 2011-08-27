@@ -4,7 +4,7 @@
 #include "../../../items/idmentityitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmEntitiesListItem : public IdmEntityItem
 {
@@ -16,6 +16,6 @@ public:
 	void setEntity(IdmEntity *value) { m_entity = value; }
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMENTITIESLISTMODELITEM_H_ */

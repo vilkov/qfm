@@ -3,7 +3,7 @@
 #include "../../items/idmentityitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 EntitiesListModel::EntitiesListModel(QObject *parent) :
 	QAbstractItemModel(parent)
@@ -90,4 +90,4 @@ void EntitiesListModel::remove(const QModelIndex &index)
 	endRemoveRows();
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

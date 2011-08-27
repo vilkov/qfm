@@ -14,17 +14,19 @@
 #include "model/entitieslistdelegate.h"
 
 
+using namespace FileSystem::Plugins::Idm;
+
 class CreateEntityDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    CreateEntityDialog(const FileSystem::IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
+    CreateEntityDialog(const IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
 
-    FileSystem::IdmEntity::Type type() const { return static_cast<FileSystem::IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
+    IdmEntity::Type type() const { return static_cast<IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }
 
-    const FileSystem::EntitiesListModel &entities() const { return m_model; }
+    const EntitiesListModel &entities() const { return m_model; }
 
     virtual void accept();
 
@@ -48,8 +50,8 @@ private:
     QGridLayout m_gridLayout2;
     QHBoxLayout m_horizontalLayout;
     QDialogButtonBox m_buttonBox;
-    FileSystem::EntitiesListModel m_model;
-    FileSystem::EntitiesListDelegate m_delegate;
+    EntitiesListModel m_model;
+    EntitiesListDelegate m_delegate;
 };
 
 #endif /* CREATEENTITYDIALOG_H_ */

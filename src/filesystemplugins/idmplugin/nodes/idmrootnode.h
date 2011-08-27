@@ -4,7 +4,7 @@
 #include "idmnodebase.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmRootNode : public IdmNodeBase
 {
@@ -15,6 +15,6 @@ private:
 	IdmContainer m_storage;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMROOTNODE_H_ */

@@ -5,7 +5,7 @@
 #include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmInfoItem : public IdmItem, public IFileInfo
 {
@@ -33,6 +33,6 @@ private:
 	Info m_info;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMINFOITEM_H_ */

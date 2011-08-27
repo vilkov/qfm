@@ -2,7 +2,7 @@
 #include "nodes/idmrootnode.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmPlugin::IdmPlugin()
 {
@@ -22,4 +22,4 @@ Node *IdmPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
 	return 0;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

@@ -1,7 +1,7 @@
 #include "idmentry.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmEntry::IdmEntry(const Info &info, qint32 length, const QString &title, IdmItem *parent) :
 	IdmInfoItem(info, parent),
@@ -55,4 +55,4 @@ QVariant IdmEntry::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

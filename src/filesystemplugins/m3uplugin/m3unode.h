@@ -2,6 +2,7 @@
 #define M3UNODE_H_
 
 #include <QtCore/QFileInfo>
+#include "m3uplugin_ns.h"
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
 #include "items/m3uitem.h"
@@ -9,7 +10,7 @@
 #include "../../filesystem/filesystempluginsmanager.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 class M3uNode : public Node
 {
@@ -29,7 +30,6 @@ public:
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
 	virtual IFileControl *createControl() const { return 0; }
-	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins) { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }
@@ -43,6 +43,7 @@ public:
 	virtual void refresh();
 
 	/* INode::IFileOperations */
+	virtual void rename(const QModelIndexList &list);
 	virtual void remove(const QModelIndexList &list);
 	virtual void cancel(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
@@ -77,6 +78,6 @@ private:
 	M3uDelegate m_delegate;
 };
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END
 
 #endif /* M3UNODE_H_ */

@@ -14,6 +14,7 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
+	virtual void rename(const QModelIndexList &list) = 0;
 	virtual void remove(const QModelIndexList &list) = 0;
 	virtual void cancel(const QModelIndexList &list) = 0;
 	virtual void calculateSize(const QModelIndexList &list) = 0;

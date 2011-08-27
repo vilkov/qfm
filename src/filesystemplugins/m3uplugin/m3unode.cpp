@@ -6,7 +6,7 @@
 #include <QtCore/QTextStream>
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 M3uNode::M3uNode(const QFileInfo &info, Node *parent) :
 	Node(parent),
@@ -159,6 +159,11 @@ void M3uNode::refresh()
 	setUpdating(false);
 }
 
+void M3uNode::rename(const QModelIndexList &list)
+{
+
+}
+
 void M3uNode::remove(const QModelIndexList &list)
 {
 
@@ -204,4 +209,4 @@ Node *M3uNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END

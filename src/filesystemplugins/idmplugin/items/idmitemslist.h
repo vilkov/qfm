@@ -5,7 +5,7 @@
 #include "idmitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmItemsList : public IdmItem
 {
@@ -32,6 +32,6 @@ protected:
 	value_type m_items;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMITEMSLIST_H_ */

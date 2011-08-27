@@ -3,13 +3,14 @@
 
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
+#include "../idmplugin_ns.h"
 #include "../items/idmitem.h"
 #include "../functors/idmfunctors.h"
 #include "../containeres/idmcontainer.h"
 #include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmNodeBase : public FolderNodeBase
 {
@@ -28,9 +29,9 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
-	virtual IFileControl *createControl(const QModelIndex &idx, PluginsManager *plugins);
 
 	/* INode::IFileOperations */
+	virtual void rename(const QModelIndexList &list);
 	virtual void remove(const QModelIndexList &list);
 	virtual void cancel(const QModelIndexList &list);
 	virtual void calculateSize(const QModelIndexList &list);
@@ -80,6 +81,6 @@ protected:
 	IdmContainer *m_container;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMNODEBASE_H_ */

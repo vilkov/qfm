@@ -2,10 +2,10 @@
 #define IDMPROXYMODEL_H_
 
 #include <QtGui/QSortFilterProxyModel>
-#include "../../../filesystem/filesystem_ns.h"
+#include "../idmplugin_ns.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmProxyModel : public QSortFilterProxyModel
 {
@@ -18,6 +18,6 @@ protected:
 	virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMPROXYMODEL_H_ */

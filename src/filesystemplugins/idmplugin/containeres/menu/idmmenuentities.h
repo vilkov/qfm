@@ -7,7 +7,7 @@
 #include "idmmenuentitiesitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmMenuEntities : public IdmMenuEntitiesItem
 {
@@ -69,6 +69,6 @@ private:
 	Map m_entities;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMMENUENTITIES_H_ */

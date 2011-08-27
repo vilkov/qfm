@@ -7,7 +7,7 @@
 #include "../storage/idmstorage.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmContainer
 {
@@ -58,6 +58,6 @@ private:
 	IdmEntityTypes m_entityTypes;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMCONTAINER_H_ */

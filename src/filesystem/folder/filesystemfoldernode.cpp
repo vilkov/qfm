@@ -3,6 +3,7 @@
 #include "items/filesystemfoldernodeentry.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
+#include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 
 #include <QtGui/QClipboard>
@@ -99,24 +100,10 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return m_items.at(index.row()).item;
 }
 
-IFileControl *FolderNode::createControl(const QModelIndex &idx, PluginsManager *plugins)
+void FolderNode::rename(const QModelIndexList &list)
 {
-	QModelIndex index = m_proxy.mapToSource(idx);
-
-	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
-		return static_cast<Node*>(Node::parent())->createControl();
-	else
-	{
-		Values::Value &value = m_items[index.row()];
-
-		if (value.node)
-			return value.node->createControl();
-		else
-			if (value.node = createNode(*value.item, plugins))
-				return value.node->createControl();
-			else
-				return new Info(*value.item);
-	}
+	RenameFunctor functor;
+	processIndexList(list, functor);
 }
 
 void FolderNode::remove(const QModelIndexList &list)
@@ -551,6 +538,29 @@ void FolderNode::CancelFunctor::call(Values::size_type index, FolderNodeItem *en
 {
 	if (TasksPool::Task *task = m_tasks.take(entry->fileName()))
 		static_cast<BaseTask*>(task)->cancel();
+}
+
+void FolderNode::RenameFunctor::call(Values::size_type index, FolderNodeItem *entry)
+{
+	StringDialog dialog(
+			entry->isDir() ?
+					tr("Enter new name for directory \"%1\"").arg(entry->fileName()) :
+					tr("Enter new name for file \"%1\"").arg(entry->fileName()),
+			tr("Name"),
+			entry->fileName(),
+			&Application::instance()->mainWindow());
+
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		QString error;
+
+		if (!entry->rename(dialog.value(), error))
+			QMessageBox::critical(&Application::instance()->mainWindow(),
+						entry->isDir() ?
+							tr("Failed to rename directory \"%1\"").arg(entry->fileName()) :
+							tr("Failed to rename file \"%1\"").arg(entry->fileName()),
+						error);
+	}
 }
 
 void FolderNode::processIndexList(const QModelIndexList &list, Functors::Functor &functor)

@@ -214,39 +214,7 @@ void DirectoryView::pathToClipboard()
 
 void DirectoryView::rename()
 {
-	QModelIndex index = currentIndex();
-
-	if (index.isValid())
-	{
-		PScopedPointer<FileSystem::IFileControl> control(m_node->createControl(index, Application::instance()->mainWindow().plugins()));
-
-		if (control)
-		{
-			StringDialog dialog(
-					control->isDir() ?
-							tr("Enter new name for directory \"%1\"").arg(control->fileName()) :
-							tr("Enter new name for file \"%1\"").arg(control->fileName()),
-					tr("Name"),
-					control->fileName(),
-					this);
-
-			m_parent->skipOneRefreshTab();
-
-			if (dialog.exec() == QDialog::Accepted)
-			{
-				QString error;
-
-				if (control->rename(dialog.value(), error))
-					m_node->refresh();
-				else
-					QMessageBox::critical(this,
-							control->isDir() ?
-									tr("Failed to rename directory \"%1\"").arg(control->fileName()) :
-									tr("Failed to rename file \"%1\"").arg(control->fileName()),
-									error);
-			}
-		}
-	}
+	m_node->rename(selectedIndexes());
 }
 
 void DirectoryView::createDirectory()

@@ -1,7 +1,7 @@
 #include "idmseparator.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmSeparator::IdmSeparator(IdmItem *parent) :
 	IdmItem(parent)
@@ -32,4 +32,4 @@ bool IdmSeparator::isEntityItem() const
 	return false;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

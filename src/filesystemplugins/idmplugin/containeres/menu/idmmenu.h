@@ -5,7 +5,7 @@
 #include "../../items/idmitemslist.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmMenu : public IdmItemsList
 {
@@ -35,6 +35,6 @@ private:
 	QVariant m_toolTip;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMMENU_H_ */

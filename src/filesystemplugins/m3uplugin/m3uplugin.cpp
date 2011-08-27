@@ -3,7 +3,7 @@
 #include <QtCore/QTextCodec>
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 M3uPlugin::M3uPlugin() :
 	m_identity(QString::fromLatin1("#EXTM3U"))
@@ -35,4 +35,4 @@ Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
 	return 0;
 }
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END

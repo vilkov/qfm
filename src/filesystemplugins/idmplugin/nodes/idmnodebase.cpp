@@ -9,7 +9,7 @@
 #include <QtGui/QMessageBox>
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmNodeBase::IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent) :
 	FolderNodeBase(info, parent),
@@ -89,9 +89,9 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 	return 0;
 }
 
-IFileControl *IdmNodeBase::createControl(const QModelIndex &idx, PluginsManager *plugins)
+void IdmNodeBase::rename(const QModelIndexList &list)
 {
-	return 0;
+
 }
 
 void IdmNodeBase::remove(const QModelIndexList &list)
@@ -362,4 +362,4 @@ bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 	return true;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

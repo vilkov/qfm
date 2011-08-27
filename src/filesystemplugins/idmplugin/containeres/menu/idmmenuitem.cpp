@@ -1,7 +1,7 @@
 #include "idmmenuitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmMenuItem::IdmMenuItem(id_type id, const QString &label, const QString &toolTip, IdmItem *parent) :
 	IdmItem(parent),
@@ -77,4 +77,4 @@ bool IdmMenuItem::isEntityItem() const
 	return false;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

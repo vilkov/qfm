@@ -2,7 +2,7 @@
 #include "../../../tools/pbytearray/pbytearray.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmStorage::IdmStorage(const Info &storage) :
 	m_info(storage),
@@ -99,6 +99,11 @@ void IdmStorage::rollback()
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 		setLastError(sqlQuery, errorMsg);
+}
+
+QueryContext IdmStorage::prepare(const Query &query) const
+{
+	return QueryContext();
 }
 
 IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
@@ -643,4 +648,4 @@ void IdmStorage::setLastError(const QString &error) const
 	m_lastError = error;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

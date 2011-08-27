@@ -5,7 +5,7 @@
 #include "../../containeres/idmcontainer.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class EntitiesListDelegate : public QStyledItemDelegate
 {
@@ -26,6 +26,6 @@ private:
     const IdmContainer *m_container;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* ENTITIESLISTDELEGATE_H_ */

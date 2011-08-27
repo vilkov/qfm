@@ -4,7 +4,7 @@
 #include "idmentity.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmEntityRoot : public IdmEntity
 {
@@ -19,6 +19,6 @@ public:
 	}
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMENTITYROOT_H_ */

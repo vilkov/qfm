@@ -1,7 +1,7 @@
 #include "idmroot.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmRoot::IdmRoot(const Info &info, IdmItem *parent) :
 	IdmInfoItem(info, parent),
@@ -21,4 +21,4 @@ bool IdmRoot::isRoot() const
 	return true;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

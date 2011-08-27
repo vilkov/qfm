@@ -3,7 +3,7 @@
 #include <QtGui/QApplication>
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmDelegate::IdmDelegate(QObject *parent) :
 	QStyledItemDelegate(parent)
@@ -38,4 +38,4 @@ IdmDelegate::IdmDelegate(QObject *parent) :
 //	return res;
 //}
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

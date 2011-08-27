@@ -5,7 +5,7 @@
 #include "../storage/entities/idmentity.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmEntityItem : public IdmItemsList
 {
@@ -22,6 +22,6 @@ protected:
 	IdmEntity *m_entity;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMENTITYITEM_H_ */

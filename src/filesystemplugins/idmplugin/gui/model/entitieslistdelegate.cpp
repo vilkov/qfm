@@ -3,7 +3,7 @@
 #include <QtGui/QComboBox>
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 EntitiesListDelegate::EntitiesListDelegate(const IdmContainer *container, QObject *parent) :
 	QStyledItemDelegate(parent),
@@ -51,4 +51,4 @@ QSize EntitiesListDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 	return size;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

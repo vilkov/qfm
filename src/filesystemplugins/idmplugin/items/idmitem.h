@@ -2,10 +2,10 @@
 #define IDMITEM_H_
 
 #include <QtCore/QVariant>
-#include "../../../filesystem/filesystem_ns.h"
+#include "../idmplugin_ns.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmItem
 {
@@ -25,6 +25,6 @@ private:
 	IdmItem *m_parent;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMITEM_H_ */

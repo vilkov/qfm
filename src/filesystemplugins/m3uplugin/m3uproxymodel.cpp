@@ -2,7 +2,7 @@
 #include "items/m3uentry.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 M3uProxyModel::M3uProxyModel(QObject *parent) :
 	QSortFilterProxyModel(parent)
@@ -30,4 +30,4 @@ bool M3uProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) 
 	return true;
 }
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END

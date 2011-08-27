@@ -3,7 +3,7 @@
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmContainer::IdmContainer(const Info &storage) :
 	m_menu(tr("Menu"), tr("Main menu")),
@@ -33,4 +33,4 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_entityTypes[IdmEntity::Path]      = IdmEntityTypeDescription(tr("Path"),      tr("Path to file or folder"));
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

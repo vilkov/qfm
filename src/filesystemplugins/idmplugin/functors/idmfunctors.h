@@ -5,7 +5,7 @@
 #include "../../../filesystem/filesystem_ns.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 /**
  *  Closed namespace "IdmFunctors"
@@ -76,6 +76,6 @@ struct IdmFunctors
 	{ return Callable1<T, Arg1>(object, method, arg1); }
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMFUNCTORS_H_ */

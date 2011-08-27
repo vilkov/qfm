@@ -3,10 +3,10 @@
 
 #include <QtGui/QStyledItemDelegate>
 #include <QtGui/QStyleOptionViewItem>
-#include "../../../filesystem/filesystem_ns.h"
+#include "../idmplugin_ns.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmDelegate : public QStyledItemDelegate
 {
@@ -19,6 +19,6 @@ public:
 //    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMDELEGATE_H_ */

@@ -4,11 +4,11 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
-#include "../../../../filesystem/filesystem_ns.h"
+#include "../../idmplugin_ns.h"
 #include "../../../../tools/containers/hashedlist.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmEntity
 {
@@ -72,6 +72,6 @@ private:
 	Parents m_parents;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMENTITY_H_ */

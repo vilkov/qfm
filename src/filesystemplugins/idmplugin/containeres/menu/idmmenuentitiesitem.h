@@ -4,7 +4,7 @@
 #include "../../items/idmentityitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmMenuEntitiesItem : public IdmEntityItem
 {
@@ -17,6 +17,6 @@ protected:
 	void remove(size_type index) { m_items.removeAt(index); }
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMMENUENTITIESITEM_H_ */

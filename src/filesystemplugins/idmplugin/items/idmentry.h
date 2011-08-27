@@ -6,7 +6,7 @@
 #include "../../../filesystem/tools/filesystemcommontools.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmEntry : public IdmInfoItem
 {
@@ -28,6 +28,6 @@ private:
 	QString m_title;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMENTRY_H_ */

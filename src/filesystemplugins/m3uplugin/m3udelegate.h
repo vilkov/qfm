@@ -1,10 +1,11 @@
 #ifndef M3UDELEGATE_H_
 #define M3UDELEGATE_H_
 
+#include "m3uplugin_ns.h"
 #include "../../filesystem/filesystemdelegate.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 class M3uDelegate : public Delegate
 {
@@ -15,6 +16,6 @@ public:
 	{}
 };
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END
 
 #endif /* M3UDELEGATE_H_ */

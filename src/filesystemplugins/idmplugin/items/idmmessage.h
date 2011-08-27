@@ -5,7 +5,7 @@
 #include "idmitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmMessage : public IdmItem
 {
@@ -23,6 +23,6 @@ private:
 	QVariant m_message;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMMESSAGE_H_ */

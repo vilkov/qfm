@@ -1,12 +1,13 @@
 #ifndef PLUGINSMANAGER_H_
 #define PLUGINSMANAGER_H_
 
+#include "filesystemplugins_ns.h"
 #include "m3uplugin/m3uplugin.h"
 #include "idmplugin/idmplugin.h"
 #include "../filesystem/filesystempluginsmanager.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+FILESYSTEM_PLUGINS_NS_BEGIN
 
 class MyPluginsManager : public PluginsManager
 {
@@ -14,10 +15,10 @@ public:
 	MyPluginsManager();
 
 private:
-	M3uPlugin m_m3uplugin;
-	IdmPlugin m_idmplugin;
+	M3u::M3uPlugin m_m3uplugin;
+	Idm::IdmPlugin m_idmplugin;
 };
 
-FILE_SYSTEM_NS_END
+FILESYSTEM_PLUGINS_NS_END
 
 #endif /* PLUGINSMANAGER_H_ */

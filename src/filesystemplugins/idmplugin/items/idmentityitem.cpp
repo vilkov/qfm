@@ -1,7 +1,7 @@
 #include "idmentityitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 IdmEntityItem::IdmEntityItem(IdmEntity *entity, IdmItem *parent) :
 	IdmItemsList(parent),
@@ -21,4 +21,4 @@ bool IdmEntityItem::isEntityItem() const
 	return true;
 }
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END

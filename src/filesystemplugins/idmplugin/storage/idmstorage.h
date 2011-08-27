@@ -8,11 +8,13 @@
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
 #include "entities/idmentityroot.h"
-#include "../../../filesystem/filesystem_ns.h"
+#include "queries/idmquery.h"
+#include "queries/idmquerycontext.h"
+#include "../idmplugin_ns.h"
 #include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class IdmStorage
 {
@@ -42,6 +44,8 @@ public:
 	bool transaction();
 	bool commit();
 	void rollback();
+
+	QueryContext prepare(const Query &query) const;
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	bool removeEntity(IdmEntity *entity);
@@ -84,6 +88,6 @@ private:
 	mutable QString m_lastError;
 };
 
-FILE_SYSTEM_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* IDMSTORAGE_H_ */

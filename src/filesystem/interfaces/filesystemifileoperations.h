@@ -14,6 +14,8 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
+	virtual void createFile(const QModelIndex &index) = 0;
+	virtual void createDirectory(const QModelIndex &index) = 0;
 	virtual void rename(const QModelIndexList &list) = 0;
 	virtual void remove(const QModelIndexList &list) = 0;
 	virtual void cancel(const QModelIndexList &list) = 0;

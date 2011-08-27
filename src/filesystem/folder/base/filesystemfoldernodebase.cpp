@@ -81,8 +81,10 @@ bool FolderNodeBase::event(QEvent *e)
 	return QAbstractItemModel::event(e);
 }
 
-IFileControl *FolderNodeBase::createControl() const
+IFileControl *FolderNodeBase::acceptCopy(const FileInfoList &files, bool move) const
 {
+	Q_UNUSED(move);
+	Q_UNUSED(files);
 	return new Info(m_info);
 }
 
@@ -144,25 +146,33 @@ void FolderNodeBase::refresh()
 			removeThis();
 }
 
-void FolderNodeBase::scanForSize(const BaseTask::EntryList &entries)
+void FolderNodeBase::scanForSize(const FileInfoList &entries)
 {
-	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
-	m_tasks.add(task.data(), entries);
+	BaseTask::EntryList fileNameList = toFileNameList(entries);
+
+	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, fileNameList));
+	m_tasks.add(task.data(), fileNameList);
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::scanForCopy(const BaseTask::EntryList &entries, INode *destination, bool move)
+void FolderNodeBase::scanForCopy(const FileInfoList &entries, INode *destination, bool move)
 {
-	PScopedPointer<IFileControl> control(destination->createControl());
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, false));
-	m_tasks.add(task.data(), entries);
-	Application::instance()->taskPool().handle(task.take());
+	PScopedPointer<IFileControl> control(destination->acceptCopy(entries, move));
+
+	if (control)
+	{
+		BaseTask::EntryList fileNameList = toFileNameList(entries);
+		PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, fileNameList, control, move));
+		m_tasks.add(task.data(), fileNameList);
+		Application::instance()->taskPool().handle(task.take());
+	}
 }
 
-void FolderNodeBase::scanForRemove(const BaseTask::EntryList &entries)
+void FolderNodeBase::scanForRemove(const FileInfoList &entries)
 {
-	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
-	m_tasks.add(task.data(), entries);
+	BaseTask::EntryList fileNameList = toFileNameList(entries);
+	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, fileNameList));
+	m_tasks.add(task.data(), fileNameList);
 	Application::instance()->taskPool().handle(task.take());
 }
 

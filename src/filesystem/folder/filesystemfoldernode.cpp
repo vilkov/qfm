@@ -100,6 +100,31 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return m_items.at(index.row()).item;
 }
 
+void FolderNode::createFile(const QModelIndex &index)
+{
+
+}
+
+void FolderNode::createDirectory(const QModelIndex &index)
+{
+	QModelIndex idx = m_proxy.mapToSource(index);
+
+	StringDialog dialog(
+			tr("Enter name for the new directory"),
+			tr("Name"),
+			idx.isValid() ? m_items.at(idx.row()).item->fileName() : QString(),
+			&Application::instance()->mainWindow());
+
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		QString error;
+		PScopedPointer<IFileControl> folder(create(dialog.value(), IFileControl::Folder, error));
+
+		if (!folder)
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Failed to create directory..."), error);
+	}
+}
+
 void FolderNode::rename(const QModelIndexList &list)
 {
 	RenameFunctor functor;
@@ -605,9 +630,9 @@ void FolderNode::processLockedIndexList(const QModelIndexList &list, Functors::F
 
 void FolderNode::scanForRemove(const ProcessedList &entries)
 {
+	FileInfoList list;
 	FolderNodeEntry *entry;
 	Values::size_type index;
-	BaseTask::EntryList list;
 	RangeIntersection updateRange;
 
 	list.reserve(entries.size());
@@ -622,7 +647,7 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 			entry->lock(tr("Removing..."));
 
 		updateRange.add(index, index);
-		list.push_back(entry->fileName());
+		list.push_back(entry);
 	}
 
 	updateFirstColumn(updateRange);
@@ -631,9 +656,9 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 
 void FolderNode::scanForSize(const ProcessedList &entries)
 {
+	FileInfoList list;
 	FolderNodeEntry *entry;
 	Values::size_type index;
-	BaseTask::EntryList list;
 	RangeIntersection updateRange;
 
 	list.reserve(entries.size());
@@ -644,7 +669,7 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
 			updateRange.add(index, index);
-			list.push_back(entry->fileName());
+			list.push_back(entry);
 		}
 
 	if (!list.isEmpty())
@@ -656,9 +681,9 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
 {
+	FileInfoList list;
 	FolderNodeEntry *entry;
 	Values::size_type index;
-	BaseTask::EntryList list;
 	RangeIntersection updateRange;
 	QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 	QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
@@ -675,7 +700,7 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 			entry->lock(fileLockReason);
 
 		updateRange.add(index, index);
-		list.push_back(entry->fileName());
+		list.push_back(entry);
 	}
 
 	updateFirstColumn(updateRange);

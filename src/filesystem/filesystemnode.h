@@ -41,6 +41,7 @@ protected:
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 
 protected:
+	QStringList toFileNameList(const FileInfoList &files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
 	void removeThis();
 

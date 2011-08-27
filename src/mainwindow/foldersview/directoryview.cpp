@@ -219,25 +219,7 @@ void DirectoryView::rename()
 
 void DirectoryView::createDirectory()
 {
-	StringDialog dialog(
-			tr("Enter name for the new directory"),
-			tr("Name"),
-			QString(),
-			this);
-
-	m_parent->skipOneRefreshTab();
-
-	if (dialog.exec() == QDialog::Accepted)
-	{
-		QString error;
-		PScopedPointer<FileSystem::IFileControl> control(m_node->createControl());
-		PScopedPointer<FileSystem::IFileControl> folder(control->create(dialog.value(), FileSystem::IFileControl::Folder, error));
-
-		if (folder)
-			m_node->refresh();
-		else
-			QMessageBox::critical(this, tr("Failed to create directory..."), error);
-	}
+	m_node->createDirectory(currentIndex());
 }
 
 void DirectoryView::remove()

@@ -159,6 +159,16 @@ void M3uNode::refresh()
 	setUpdating(false);
 }
 
+void M3uNode::createFile(const QModelIndex &index)
+{
+
+}
+
+void M3uNode::createDirectory(const QModelIndex &index)
+{
+
+}
+
 void M3uNode::rename(const QModelIndexList &list)
 {
 

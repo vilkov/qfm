@@ -89,6 +89,21 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 	return 0;
 }
 
+IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) const
+{
+	return 0;
+}
+
+void IdmNodeBase::createFile(const QModelIndex &index)
+{
+
+}
+
+void IdmNodeBase::createDirectory(const QModelIndex &index)
+{
+
+}
+
 void IdmNodeBase::rename(const QModelIndexList &list)
 {
 

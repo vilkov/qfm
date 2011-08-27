@@ -32,6 +32,8 @@ public:
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 
 	/* INode::IFileOperations */
+	virtual void createFile(const QModelIndex &index);
+	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);
 	virtual void remove(const QModelIndexList &list);
 	virtual void cancel(const QModelIndexList &list);

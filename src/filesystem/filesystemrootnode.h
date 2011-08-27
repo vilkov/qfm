@@ -26,7 +26,7 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
-	virtual IFileControl *createControl() const { return 0; }
+	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }
@@ -40,6 +40,8 @@ public:
 	virtual void refresh() {}
 
 	/* INode::IFileOperations */
+	virtual void createFile(const QModelIndex &index) {}
+	virtual void createDirectory(const QModelIndex &index) {}
 	virtual void rename(const QModelIndexList &list) {}
 	virtual void remove(const QModelIndexList &list) {}
 	virtual void cancel(const QModelIndexList &list) {}

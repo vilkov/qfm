@@ -20,7 +20,7 @@ public:
     virtual bool event(QEvent *event);
 
     /* INode */
-	virtual IFileControl *createControl() const;
+	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const;
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const;
@@ -48,9 +48,9 @@ protected:
 
 protected:
 	/* Prepare tasks */
-	void scanForSize(const BaseTask::EntryList &entries);
-	void scanForCopy(const BaseTask::EntryList &entries, INode *destination, bool move);
-	void scanForRemove(const BaseTask::EntryList &entries);
+	void scanForSize(const FileInfoList &entries);
+	void scanForCopy(const FileInfoList &entries, INode *destination, bool move);
+	void scanForRemove(const FileInfoList &entries);
 	void performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move);
 	void performRemove(PScopedPointer<FileSystemList> &entries);
 
@@ -58,6 +58,8 @@ protected:
 	bool isRoot() const { return m_info.isRoot(); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
+
+	IFileControl *create(const QString &name, IFileControl::FileType type, QString &error) const { return m_info.create(name, type, error); }
 
 	const TasksMap &tasks() const { return m_tasks; }
 	TasksMap &tasks() { return m_tasks; }

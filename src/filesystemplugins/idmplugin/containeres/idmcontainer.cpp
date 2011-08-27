@@ -13,7 +13,7 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_menuActions.push_back(new QAction(tr("List"), 0));
 
 	m_entityTypes[IdmEntity::Int]       = IdmEntityTypeDescription(tr("Int"),       tr("Integer type"));
-	m_entityTypes[IdmEntity::String]    = IdmEntityTypeDescription(tr("String"),    tr("String type (max length is 1024 characters)"));
+	m_entityTypes[IdmEntity::String]    = IdmEntityTypeDescription(tr("String"),    tr("String type (max length is 256 characters)"));
 	m_entityTypes[IdmEntity::Date]      = IdmEntityTypeDescription(tr("Date"),      tr("Date type"));
 	m_entityTypes[IdmEntity::Time]      = IdmEntityTypeDescription(tr("Time"),      tr("Time type"));
 	m_entityTypes[IdmEntity::DateTime]  = IdmEntityTypeDescription(tr("DateTime"),  tr("DateTime type"));

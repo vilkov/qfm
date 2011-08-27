@@ -119,6 +119,62 @@ IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) cons
 
 void IdmNodeBase::menuAction(QAction *action)
 {
+	switch (static_cast<IdmContainer::MenuId>(action->data().toInt()))
+	{
+		case IdmContainer::Create:
+		{
+			CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
+
+			if (dialog.exec() == CreateEntityDialog::Accepted)
+				if (m_container->transaction())
+					if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
+						if (entity->type() == IdmEntity::Composite)
+						{
+							bool ok = true;
+
+							for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
+								if (!m_container->addProperty(entity, dialog.entities().at(i)))
+								{
+									ok = false;
+									m_container->rollback();
+									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+									break;
+								}
+
+							if (ok && !m_container->commit())
+							{
+								m_container->rollback();
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+							}
+						}
+						else
+						{
+							if (!m_container->commit())
+							{
+								m_container->rollback();
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+							}
+						}
+					else
+					{
+						m_container->rollback();
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+					}
+				else
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+
+			break;
+		}
+		case IdmContainer::Query:
+		{
+			break;
+		}
+		case IdmContainer::List:
+		{
+			break;
+		}
+	}
+
 	QMessageBox::information(&Application::instance()->mainWindow(), QString(), action->text());
 }
 
@@ -196,78 +252,8 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 
 	if (static_cast<IdmItem*>(index.internalPointer())->isRoot())
 		return static_cast<Node*>(Node::parent());
-//	else
-//		if (static_cast<IdmItem*>(index.internalPointer())->isMenuItem())
-//			switch (static_cast<IdmMenuItem*>(index.internalPointer())->id())
-//			{
-//				case IdmContainer::Create:
-//				{
-//					CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
-//
-//					if (dialog.exec() == CreateEntityDialog::Accepted)
-//						if (m_container->transaction())
-//							if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
-//								if (entity->type() == IdmEntity::Composite)
-//								{
-//									bool ok = true;
-//
-//									for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
-//										if (!m_container->addProperty(entity, dialog.entities().at(i)))
-//										{
-//											ok = false;
-//											m_container->rollback();
-//											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//											break;
-//										}
-//
-//									if (ok)
-//										if (m_container->commit())
-//										{
-//											IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-//
-//											beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
-//											entities->add(entity);
-//											endInsertRows();
-//										}
-//										else
-//										{
-//											m_container->rollback();
-//											QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//										}
-//								}
-//								else
-//								{
-//									if (m_container->commit())
-//									{
-//										IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-//
-//										beginInsertRows(createIndex(IdmContainer::List, 0, entities), entities->size(), entities->size());
-//										entities->add(entity);
-//										endInsertRows();
-//									}
-//									else
-//									{
-//										m_container->rollback();
-//										QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//									}
-//								}
-//							else
-//							{
-//								m_container->rollback();
-//								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//							}
-//						else
-//							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//
-//					break;
-//				}
-//				case IdmContainer::Query:
-//				{
-//					break;
-//				}
-//			}
-
-	return 0;
+	else
+		return 0;
 }
 
 Node *IdmNodeBase::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

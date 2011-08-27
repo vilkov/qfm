@@ -9,8 +9,13 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_storage(storage)
 {
 	m_menuActions.push_back(new QAction(tr("Create"), 0));
+	m_menuActions.last()->setData(Create);
+
 	m_menuActions.push_back(new QAction(tr("Query"), 0));
+	m_menuActions.last()->setData(Query);
+
 	m_menuActions.push_back(new QAction(tr("List"), 0));
+	m_menuActions.last()->setData(List);
 
 	m_entityTypes[IdmEntity::Int]       = IdmEntityTypeDescription(tr("Int"),       tr("Integer type"));
 	m_entityTypes[IdmEntity::String]    = IdmEntityTypeDescription(tr("String"),    tr("String type (max length is 256 characters)"));

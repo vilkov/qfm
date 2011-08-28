@@ -2,8 +2,7 @@
 #define ENTITIESTREEMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "../../../items/idmitem.h"
-#include "../../../storage/entities/idmentity.h"
+#include "items/idmentitiestreeitemroot.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,8 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class EntitiesTreeModel : public QAbstractItemModel
 {
 public:
-	typedef QList<IdmItem*>       value_type;
-	typedef value_type::size_type size_type;
+	typedef IdmEntitiesTreeItem::size_type size_type;
 
 public:
 	EntitiesTreeModel(QObject *parent = 0);
@@ -27,14 +25,11 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	IdmEntity *at(size_type index) const;
-	size_type size() const { return m_items.size(); }
-
 	void add(IdmEntity *entity);
 	void remove(const QModelIndex &index);
 
 private:
-	value_type m_items;
+	IdmEntitiesTreeItemRoot m_items;
 };
 
 IDM_PLUGIN_NS_END

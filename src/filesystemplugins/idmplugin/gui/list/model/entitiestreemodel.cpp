@@ -9,9 +9,7 @@ EntitiesTreeModel::EntitiesTreeModel(QObject *parent) :
 {}
 
 EntitiesTreeModel::~EntitiesTreeModel()
-{
-	qDeleteAll(m_items);
-}
+{}
 
 int EntitiesTreeModel::rowCount(const QModelIndex &parent) const
 {
@@ -69,23 +67,18 @@ QModelIndex EntitiesTreeModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-IdmEntity *EntitiesTreeModel::at(size_type index) const
-{
-//	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
-}
-
 void EntitiesTreeModel::add(IdmEntity *entity)
 {
-//	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-//	m_items.push_back(new IdmEntitiesListItem(entity));
-//	endInsertRows();
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+	m_items.add(entity);
+	endInsertRows();
 }
 
 void EntitiesTreeModel::remove(const QModelIndex &index)
 {
 //	beginRemoveRows(QModelIndex(), index.row(), index.row());
 //	delete m_items.at(index.row());
-//	m_items.removeAt(index.row());
+//	m_items.remove(index.row());
 //	endRemoveRows();
 }
 

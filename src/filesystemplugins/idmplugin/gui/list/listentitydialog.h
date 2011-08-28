@@ -8,16 +8,22 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/entitiestreemodel.h"
+#include "../../containeres/idmcontainer.h"
 
 
 using namespace FileSystem::Plugins::Idm;
 
 class ListEntityDialog : public QDialog
 {
+	Q_OBJECT
+
 public:
-	ListEntityDialog(QWidget *parent = 0);
+	ListEntityDialog(const IdmContainer *container, QWidget *parent = 0);
 
     virtual void accept();
+
+private Q_SLOTS:
+	void removeEntity();
 
 private:
 	QVBoxLayout m_verticatLayout;
@@ -28,6 +34,7 @@ private:
 	QPushButton m_removeProperty;
 	QTreeView m_view;
 	QDialogButtonBox m_buttonBox;
+	EntitiesTreeModel m_model;
 };
 
 #endif /* LISTENTITYDIALOG_H_ */

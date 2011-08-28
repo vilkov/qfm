@@ -1,43 +1,42 @@
-#ifndef IDMMENUENTITIES_H_
-#define IDMMENUENTITIES_H_
+#ifndef IDMENTITIESTREEITEMROOT_H_
+#define IDMENTITIESTREEITEMROOT_H_
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include <QtCore/QString>
-#include "idmmenuentitiesitem.h"
+#include "idmentitiestreeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmMenuEntities : public IdmMenuEntitiesItem
+class IdmEntitiesTreeItemRoot : public IdmEntitiesTreeItem
 {
 public:
 	typedef QList<IdmEntityItem*>  List;
 	typedef QMap<IdmEntity*, List> Map;
 
 public:
-	IdmMenuEntities(const QString &label, const QString &toolTip, IdmItem *parent = 0);
+	IdmEntitiesTreeItemRoot(IdmItem *parent = 0);
 
 	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isEntityItem() const;
 
 	List items(IdmEntity *entity) const { return m_entities.value(entity); }
 
 	void add(IdmEntity *entity)
 	{
-		IdmMenuEntitiesItem *item;
+		IdmEntitiesTreeItem *item;
 
-		m_items.push_back(item = new IdmMenuEntitiesItem(entity, this));
+		m_items.push_back(item = new IdmEntitiesTreeItem(entity, this));
 		m_entities[entity].push_back(item);
 		expand(item);
 	}
 
 	void add(IdmEntityItem *item, IdmEntity *property)
 	{
-		IdmMenuEntitiesItem *child;
+		IdmEntitiesTreeItem *child;
 
-		static_cast<IdmMenuEntitiesItem*>(item)->add(child = new IdmMenuEntitiesItem(property, item));
+		static_cast<IdmEntitiesTreeItem*>(item)->add(child = new IdmEntitiesTreeItem(property, item));
 		m_entities[property].push_back(child);
 		expand(child);
 	}
@@ -46,29 +45,27 @@ public:
 	{
 		List &items = m_entities[item->entity()];
 		items.removeAt(items.indexOf(item));
-		static_cast<IdmMenuEntitiesItem*>(item->parent())->remove(index);
+		static_cast<IdmEntitiesTreeItem*>(item->parent())->remove(index);
 	}
 
 private:
-	void expand(IdmMenuEntitiesItem *parent)
+	void expand(IdmEntitiesTreeItem *parent)
 	{
 		IdmEntity *entity;
-		IdmMenuEntitiesItem *item;
+		IdmEntitiesTreeItem *item;
 
 		for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 		{
-			parent->add(item = new IdmMenuEntitiesItem(entity = parent->entity()->at(i), parent));
+			parent->add(item = new IdmEntitiesTreeItem(entity = parent->entity()->at(i), parent));
 			m_entities[entity].push_back(item);
 			expand(item);
 		}
 	}
 
 private:
-	QVariant m_label;
-	QVariant m_toolTip;
 	Map m_entities;
 };
 
 IDM_PLUGIN_NS_END
 
-#endif /* IDMMENUENTITIES_H_ */
+#endif /* IDMENTITIESTREEITEMROOT_H_ */

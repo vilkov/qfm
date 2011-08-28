@@ -328,65 +328,6 @@ bool IdmNodeBase::processIndexList(const QModelIndexList &list, const IdmFunctor
 
 bool IdmNodeBase::processRemoveItem(const QModelIndex &idx, IdmItem *item)
 {
-//	if (item->isEntityItem())
-//		if (item->parent()->isEntityItem())
-//		{
-//			if (QMessageBox::question(&Application::instance()->mainWindow(),
-//								  tr("Remove property"),
-//								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
-//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
-//								  arg(static_cast<IdmEntityItem*>(item->parent())->entity()->name()),
-//								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-//				if (m_container->removeProperty(static_cast<IdmEntityItem*>(item->parent())->entity(),
-//												static_cast<IdmEntityItem*>(item)->entity()))
-//				{
-//					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-//
-//					beginRemoveRows(parent(idx), idx.row(), idx.row());
-//					entities->remove(static_cast<IdmEntityItem*>(item), idx.row());
-//					delete item;
-//					endRemoveRows();
-//				}
-//				else
-//				{
-//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//					return false;
-//				}
-//		}
-//		else
-//		{
-//			if (QMessageBox::question(&Application::instance()->mainWindow(),
-//								  tr("Remove entity"),
-//								  tr("Do you really want to remove entity \"%1\"?").
-//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
-//								  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-//				if (m_container->removeEntity(static_cast<IdmEntityItem*>(item)->entity()))
-//				{
-//					IdmEntity *entity = static_cast<IdmEntityItem*>(item)->entity();
-//					IdmEntityItem *parent;
-//					IdmMenuEntities *entities = static_cast<IdmMenuEntities*>(m_container->menu()->at(IdmContainer::List));
-//					IdmMenuEntities::List items = entities->items(entity);
-//					IdmItemsList::size_type index;
-//
-//					for (IdmMenuEntities::List::size_type i = 0, size = items.size(); i < size; ++i)
-//					{
-//						parent = static_cast<IdmEntityItem*>(items.at(i)->parent());
-//						index = parent->indexOf(items.at(i));
-//
-//						beginRemoveRows(IdmNodeBase::index(parent), index, index);
-//						entities->remove(items.at(i), index);
-//						delete items.at(i);
-//						endRemoveRows();
-//					}
-//
-//					delete entity;
-//				}
-//				else
-//				{
-//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//					return false;
-//				}
-//		}
 
 	return true;
 }

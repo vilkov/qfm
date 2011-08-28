@@ -3,27 +3,21 @@
 
 ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *parent) :
 	QDialog(parent),
-	m_verticatLayout(this),
-	m_addEntity(tr("Add entity"), this),
-	m_removeEntity(tr("Remove entity"), this),
-	m_addProperty(tr("Add property"), this),
-	m_removeProperty(tr("Remove property"), this),
+	m_toolBar(this),
 	m_view(this),
-	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
+	m_verticatLayout(this)
 {
 	setWindowTitle(tr("List of all entities"));
-    m_view.setModel(&m_model);
 
-	m_horizontalLayout.setMargin(3);
-	m_horizontalLayout.setSpacing(1);
-	m_horizontalLayout.addWidget(&m_addEntity);
-	m_horizontalLayout.addWidget(&m_removeEntity);
-	m_horizontalLayout.addWidget(&m_addProperty);
-	m_horizontalLayout.addWidget(&m_removeProperty);
+    m_toolBar.addAction(tr("Create entity"))->setData(Create);
+    m_toolBar.addAction(tr("Remove entity"))->setData(Remove);
+    m_toolBar.addAction(tr("Add property"))->setData(AddProperty);
+    m_toolBar.addAction(tr("Remove property"))->setData(RemoveProperty);
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
-	m_verticatLayout.addLayout(&m_horizontalLayout);
+	m_verticatLayout.addWidget(&m_toolBar);
 	m_verticatLayout.addWidget(&m_view);
 	m_verticatLayout.addWidget(&m_buttonBox);
 
@@ -32,6 +26,9 @@ ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *paren
 
     for (IdmContainer::size_type i = 0, size = container->size(); i < size; ++i)
     	m_model.add(container->at(i));
+
+    m_view.setHeaderHidden(true);
+    m_view.setModel(&m_model);
 }
 
 void ListEntityDialog::accept()
@@ -39,7 +36,12 @@ void ListEntityDialog::accept()
 	QDialog::accept();
 }
 
-void ListEntityDialog::removeEntity()
+void ListEntityDialog::actionTriggered(QAction *action)
+{
+
+}
+
+void removeEntity()
 {
 	//	if (item->isEntityItem())
 	//		if (item->parent()->isEntityItem())

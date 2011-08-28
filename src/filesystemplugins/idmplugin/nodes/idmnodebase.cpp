@@ -5,6 +5,7 @@
 #include "../items/idmseparator.h"
 #include "../items/idmitemslist.h"
 #include "../control/idmfilecontrol.h"
+#include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
@@ -171,11 +172,12 @@ void IdmNodeBase::menuAction(QAction *action)
 		}
 		case IdmContainer::List:
 		{
+			ListEntityDialog dialog(m_container, &Application::instance()->mainWindow());
+			dialog.exec();
+
 			break;
 		}
 	}
-
-	QMessageBox::information(&Application::instance()->mainWindow(), QString(), action->text());
 }
 
 void IdmNodeBase::createFile(const QModelIndex &index)

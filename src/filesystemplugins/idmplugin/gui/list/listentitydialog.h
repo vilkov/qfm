@@ -2,10 +2,9 @@
 #define LISTENTITYDIALOG_H_
 
 #include <QtGui/QDialog>
+#include <QtGui/QToolBar>
 #include <QtGui/QTreeView>
-#include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/entitiestreemodel.h"
 #include "../../containeres/idmcontainer.h"
@@ -22,19 +21,24 @@ public:
 
     virtual void accept();
 
+private:
+	enum Actions
+	{
+		Create,
+		Remove,
+		AddProperty,
+		RemoveProperty
+	};
+
 private Q_SLOTS:
-	void removeEntity();
+	void actionTriggered(QAction *action);
 
 private:
-	QVBoxLayout m_verticatLayout;
-	QHBoxLayout m_horizontalLayout;
-	QPushButton m_addEntity;
-	QPushButton m_removeEntity;
-	QPushButton m_addProperty;
-	QPushButton m_removeProperty;
+	QToolBar m_toolBar;
 	QTreeView m_view;
-	QDialogButtonBox m_buttonBox;
 	EntitiesTreeModel m_model;
+	QDialogButtonBox m_buttonBox;
+	QVBoxLayout m_verticatLayout;
 };
 
 #endif /* LISTENTITYDIALOG_H_ */

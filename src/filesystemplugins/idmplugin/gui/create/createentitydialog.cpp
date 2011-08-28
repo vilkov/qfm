@@ -49,6 +49,7 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
     connect(&m_addEntity, SIGNAL(clicked()), this, SLOT(add()));
     connect(&m_removeEntity, SIGNAL(clicked()), this, SLOT(remove()));
 
+    m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
     m_view.setItemDelegate(&m_delegate);
 

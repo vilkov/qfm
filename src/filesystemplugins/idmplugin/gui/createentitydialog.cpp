@@ -12,7 +12,7 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
     m_addEntity(tr("Add"), this),
     m_removeEntity(tr("Remove"), this),
 	m_gridLayout(this),
-	m_buttonBox(this),
+    m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_model(this),
 	m_delegate(container)
 {
@@ -27,14 +27,12 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
     m_label2.setFont(font);
     m_label2.setText(tr("Select type"));
 
-    m_buttonBox.setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
-
-    m_gridLayout.setSpacing(6);
-    m_gridLayout.setContentsMargins(6, 6, 6, 6);
-    m_gridLayout2.setSpacing(6);
-    m_gridLayout2.setContentsMargins(6, 6, 6, 6);
-    m_horizontalLayout.setSpacing(6);
-    m_horizontalLayout.setContentsMargins(6, 6, 6, 6);
+    m_gridLayout.setSpacing(1);
+    m_gridLayout.setMargin(3);
+    m_gridLayout2.setSpacing(1);
+    m_gridLayout2.setMargin(3);
+    m_horizontalLayout.setSpacing(1);
+    m_horizontalLayout.setMargin(3);
 
     m_gridLayout.addWidget(&m_label,       0, 0, 1, 1);
     m_gridLayout.addWidget(&m_lineEdit,    0, 1, 1, 1);

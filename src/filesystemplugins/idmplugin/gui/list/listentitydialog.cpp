@@ -1,9 +1,11 @@
 #include "listentitydialog.h"
+#include "../create/createentitydialog.h"
 #include <QtGui/QMessageBox>
 
 
-ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *parent) :
+ListEntityDialog::ListEntityDialog(IdmContainer *container, QWidget *parent) :
 	QDialog(parent),
+	m_container(container),
 	m_handler(this),
 	m_toolBar(this),
 	m_view(&m_handler, this),
@@ -28,8 +30,8 @@ ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *paren
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    for (IdmContainer::size_type i = 0, size = container->size(); i < size; ++i)
-    	m_model.add(container->at(i));
+    for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
+    	m_model.add(m_container->at(i));
 
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
@@ -49,6 +51,7 @@ void ListEntityDialog::actionTriggered(QAction *action)
 	{
 		case Create:
 		{
+			createEntity();
 			break;
 		}
 		case Remove:
@@ -76,12 +79,62 @@ void ListEntityDialog::insertProperty()
 	QMessageBox::information(this, QString(), tr("insertProperty"));
 }
 
+void ListEntityDialog::createEntity()
+{
+	CreateEntityDialog dialog(m_container, QString(), this);
+
+	if (dialog.exec() == CreateEntityDialog::Accepted)
+	{
+		QByteArray name("createEntity");
+
+		if (m_container->savepoint(name))
+			if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
+				if (entity->type() == IdmEntity::Composite)
+				{
+					bool ok = true;
+
+					for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
+						if (!m_container->addProperty(entity, dialog.entities().at(i)))
+						{
+							ok = false;
+							m_container->rollback(name);
+							QMessageBox::critical(this, tr("Error"), m_container->lastError());
+							break;
+						}
+
+					if (ok)
+						if (m_container->release(name))
+							m_model.add(entity);
+						else
+						{
+							m_container->rollback(name);
+							QMessageBox::critical(this, tr("Error"), m_container->lastError());
+						}
+				}
+				else
+					if (m_container->release(name))
+						m_model.add(entity);
+					else
+					{
+						m_container->rollback(name);
+						QMessageBox::critical(this, tr("Error"), m_container->lastError());
+					}
+			else
+			{
+				m_container->rollback(name);
+				QMessageBox::critical(this, tr("Error"), m_container->lastError());
+			}
+		else
+			QMessageBox::critical(this, tr("Error"), m_container->lastError());
+	}
+}
+
 void removeEntity()
 {
 	//	if (item->isEntityItem())
 	//		if (item->parent()->isEntityItem())
 	//		{
-	//			if (QMessageBox::question(&Application::instance()->mainWindow(),
+	//			if (QMessageBox::question(this,
 	//								  tr("Remove property"),
 	//								  tr("Do you really want to remove property \"%1\" of entity \"%2\"?").
 	//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()).
@@ -99,13 +152,13 @@ void removeEntity()
 	//				}
 	//				else
 	//				{
-	//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+	//					QMessageBox::critical(this, tr("Error"), m_container->lastError());
 	//					return false;
 	//				}
 	//		}
 	//		else
 	//		{
-	//			if (QMessageBox::question(&Application::instance()->mainWindow(),
+	//			if (QMessageBox::question(this,
 	//								  tr("Remove entity"),
 	//								  tr("Do you really want to remove entity \"%1\"?").
 	//								  arg(static_cast<IdmEntityItem*>(item)->entity()->name()),
@@ -133,7 +186,7 @@ void removeEntity()
 	//				}
 	//				else
 	//				{
-	//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+	//					QMessageBox::critical(this, tr("Error"), m_container->lastError());
 	//					return false;
 	//				}
 	//		}

@@ -172,8 +172,23 @@ void IdmNodeBase::menuAction(QAction *action)
 		}
 		case IdmContainer::List:
 		{
-			ListEntityDialog dialog(m_container, &Application::instance()->mainWindow());
-			dialog.exec();
+			if (m_container->transaction())
+			{
+				ListEntityDialog dialog(m_container, &Application::instance()->mainWindow());
+
+				if (dialog.exec() == ListEntityDialog::Accepted)
+				{
+					if (!m_container->commit())
+					{
+						m_container->rollback();
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+					}
+				}
+				else
+					m_container->rollback();
+			}
+			else
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
 
 			break;
 		}

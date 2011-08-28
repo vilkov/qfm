@@ -19,7 +19,7 @@ class ListEntityDialog : public QDialog
 	Q_OBJECT
 
 public:
-	ListEntityDialog(const IdmContainer *container, QWidget *parent = 0);
+	ListEntityDialog(IdmContainer *container, QWidget *parent = 0);
 
     virtual void accept();
 
@@ -51,6 +51,10 @@ private:
 	void insertProperty();
 
 private:
+	void createEntity();
+
+private:
+	IdmContainer *m_container;
 	EntitiesTreeViewHandler m_handler;
 	QToolBar m_toolBar;
 	EntitiesTreeView m_view;

@@ -101,6 +101,46 @@ void IdmStorage::rollback()
 		setLastError(sqlQuery, errorMsg);
 }
 
+bool IdmStorage::savepoint(const QByteArray &name)
+{
+	char *errorMsg = 0;
+	QByteArray sqlQuery("savepoint ");
+	sqlQuery.append(name);
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+bool IdmStorage::release(const QByteArray &name)
+{
+	char *errorMsg = 0;
+	QByteArray sqlQuery("release ");
+	sqlQuery.append(name);
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+	{
+		setLastError(sqlQuery, errorMsg);
+		return false;
+	}
+}
+
+void IdmStorage::rollback(const QByteArray &name)
+{
+	char *errorMsg = 0;
+	QByteArray sqlQuery("rollback to ");
+	sqlQuery.append(name);
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+		setLastError(sqlQuery, errorMsg);
+}
+
 QueryContext IdmStorage::prepare(const Query &query) const
 {
 	return QueryContext();

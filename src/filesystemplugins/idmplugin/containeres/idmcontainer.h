@@ -47,6 +47,10 @@ public:
 	bool commit() { return m_storage.commit(); }
 	void rollback() { m_storage.rollback(); }
 
+	bool savepoint(const QByteArray &name) { return m_storage.savepoint(name); }
+	bool release(const QByteArray &name) { return m_storage.release(name); }
+	void rollback(const QByteArray &name) { return m_storage.rollback(name); }
+
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
 	bool removeEntity(IdmEntity *entity) { return m_storage.removeEntity(entity); }
 

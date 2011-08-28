@@ -45,6 +45,10 @@ public:
 	bool commit();
 	void rollback();
 
+	bool savepoint(const QByteArray &name);
+	bool release(const QByteArray &name);
+	void rollback(const QByteArray &name);
+
 	QueryContext prepare(const Query &query) const;
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);

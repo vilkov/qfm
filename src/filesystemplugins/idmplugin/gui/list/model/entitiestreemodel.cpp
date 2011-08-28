@@ -1,6 +1,5 @@
 #include "entitiestreemodel.h"
-#include "items/idmentitieslistmodelitem.h"
-#include "../../items/idmentityitem.h"
+#include "../../../items/idmentityitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -72,22 +71,22 @@ QModelIndex EntitiesTreeModel::parent(const QModelIndex &child) const
 
 IdmEntity *EntitiesTreeModel::at(size_type index) const
 {
-	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
+//	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
 }
 
 void EntitiesTreeModel::add(IdmEntity *entity)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntitiesListItem(entity));
-	endInsertRows();
+//	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+//	m_items.push_back(new IdmEntitiesListItem(entity));
+//	endInsertRows();
 }
 
 void EntitiesTreeModel::remove(const QModelIndex &index)
 {
-	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	delete m_items.at(index.row());
-	m_items.removeAt(index.row());
-	endRemoveRows();
+//	beginRemoveRows(QModelIndex(), index.row(), index.row());
+//	delete m_items.at(index.row());
+//	m_items.removeAt(index.row());
+//	endRemoveRows();
 }
 
 IDM_PLUGIN_NS_END

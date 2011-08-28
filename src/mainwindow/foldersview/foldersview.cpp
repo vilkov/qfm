@@ -11,8 +11,7 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 {
 	Q_ASSERT(root != 0);
 
-	setLayout(&m_layout);
-	m_layout.setMargin(1);
+	m_layout.setMargin(3);
 	m_layout.setSpacing(1);
 	m_layout.addWidget(&m_tabWidget);
 	m_layout.setStretchFactor(&m_tabWidget, 1);

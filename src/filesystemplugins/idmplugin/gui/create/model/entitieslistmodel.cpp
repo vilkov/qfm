@@ -1,6 +1,6 @@
 #include "entitieslistmodel.h"
 #include "items/idmentitieslistmodelitem.h"
-#include "../../items/idmentityitem.h"
+#include "../../../items/idmentityitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

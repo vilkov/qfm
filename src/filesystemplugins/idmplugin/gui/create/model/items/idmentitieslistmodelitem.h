@@ -1,7 +1,7 @@
 #ifndef IDMENTITIESLISTMODELITEM_H_
 #define IDMENTITIESLISTMODELITEM_H_
 
-#include "../../../items/idmentityitem.h"
+#include "../../../../items/idmentityitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -18,7 +18,6 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_view(&m_eventHandler, this),
 	m_eventHandler(this)
 {
-	setLayout(&m_layout);
 	m_layout.setMargin(3);
 	m_layout.setSpacing(1);
 	m_layout.addLayout(&m_header.layout);

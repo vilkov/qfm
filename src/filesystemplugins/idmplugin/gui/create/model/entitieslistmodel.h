@@ -2,8 +2,8 @@
 #define ENTITIESLISTMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "../../items/idmitem.h"
-#include "../../storage/entities/idmentity.h"
+#include "../../../items/idmitem.h"
+#include "../../../storage/entities/idmentity.h"
 
 
 IDM_PLUGIN_NS_BEGIN

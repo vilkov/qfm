@@ -3,9 +3,9 @@
 #include "../items/idmroot.h"
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
+#include "../items/idmitemslist.h"
 #include "../control/idmfilecontrol.h"
-#include "../gui/createentitydialog.h"
-#include "../containeres/menu/idmmenuentities.h"
+#include "../gui/create/createentitydialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 

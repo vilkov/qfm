@@ -2,7 +2,7 @@
 #define ENTITIESLISTDELEGATE_H_
 
 #include <QtGui/QStyledItemDelegate>
-#include "../../containeres/idmcontainer.h"
+#include "../../../containeres/idmcontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN

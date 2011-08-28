@@ -8,6 +8,8 @@
 #include <QtGui/QDialogButtonBox>
 #include "model/entitiestreemodel.h"
 #include "../../containeres/idmcontainer.h"
+#include "../../../../tools/events/imp/keyboardeventhandler.h"
+#include "../../../../tools/events/imp/keyboardeventsource.h"
 
 
 using namespace FileSystem::Plugins::Idm;
@@ -22,7 +24,7 @@ public:
     virtual void accept();
 
 private:
-	enum Actions
+	enum ActionId
 	{
 		Create,
 		Remove,
@@ -34,8 +36,24 @@ private Q_SLOTS:
 	void actionTriggered(QAction *action);
 
 private:
+	typedef KeyboardEventSource<
+				EventSourceBase<
+					QTreeView
+				>
+			> EntitiesTreeView;
+	typedef KeyboardEventHandler<
+				EventHandlerBase<
+					ListEntityDialog
+				>
+			> EntitiesTreeViewHandler;
+
+	void removeEntity();
+	void insertProperty();
+
+private:
+	EntitiesTreeViewHandler m_handler;
 	QToolBar m_toolBar;
-	QTreeView m_view;
+	EntitiesTreeView m_view;
 	EntitiesTreeModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;

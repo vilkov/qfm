@@ -1,10 +1,12 @@
 #include "listentitydialog.h"
+#include <QtGui/QMessageBox>
 
 
 ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *parent) :
 	QDialog(parent),
+	m_handler(this),
 	m_toolBar(this),
-	m_view(this),
+	m_view(&m_handler, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -14,6 +16,8 @@ ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *paren
     m_toolBar.addAction(tr("Remove entity"))->setData(Remove);
     m_toolBar.addAction(tr("Add property"))->setData(AddProperty);
     m_toolBar.addAction(tr("Remove property"))->setData(RemoveProperty);
+
+	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -29,6 +33,9 @@ ListEntityDialog::ListEntityDialog(const IdmContainer *container, QWidget *paren
 
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
+
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &ListEntityDialog::removeEntity);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &ListEntityDialog::insertProperty);
 }
 
 void ListEntityDialog::accept()
@@ -38,7 +45,35 @@ void ListEntityDialog::accept()
 
 void ListEntityDialog::actionTriggered(QAction *action)
 {
+	switch (static_cast<ActionId>(action->data().toInt()))
+	{
+		case Create:
+		{
+			break;
+		}
+		case Remove:
+		{
+			break;
+		}
+		case AddProperty:
+		{
+			break;
+		}
+		case RemoveProperty:
+		{
+			break;
+		}
+	}
+}
 
+void ListEntityDialog::removeEntity()
+{
+	QMessageBox::information(this, QString(), tr("removeEntity"));
+}
+
+void ListEntityDialog::insertProperty()
+{
+	QMessageBox::information(this, QString(), tr("insertProperty"));
 }
 
 void removeEntity()

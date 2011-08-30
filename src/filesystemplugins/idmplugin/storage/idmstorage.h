@@ -10,6 +10,7 @@
 #include "entities/idmentityroot.h"
 #include "queries/idmquery.h"
 #include "queries/idmquerycontext.h"
+#include "undo/idmstorageundocommand.h"
 #include "../idmplugin_ns.h"
 #include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
@@ -85,9 +86,14 @@ private:
 	void setLastError(const QString &error) const;
 
 private:
+	typedef QList<IdmStorageUndoCommand*>    UndoList;
+	typedef HashedList<QByteArray, UndoList> UndoStack;
+
+private:
 	Info m_info;
 	bool m_valid;
 	sqlite3 *m_db;
+	UndoStack m_undo;
 	IdmEntityRoot m_entities;
 	mutable QString m_lastError;
 };

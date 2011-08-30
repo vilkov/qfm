@@ -27,6 +27,7 @@ public:
 	size_type lastIndex() const { return m_list.size() - 1; }
 	T &last() { return m_list.last(); }
 
+	bool isEmpty() const { return m_list.isEmpty(); }
 	size_type size() const { return m_list.size(); }
 	size_type indexOf(const T &item) const { return m_list.indexOf(item); }
 	size_type indexOf(const Hash &hash) const { return m_map.value(hash, InvalidIndex); }

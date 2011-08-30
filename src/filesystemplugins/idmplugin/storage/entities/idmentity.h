@@ -32,7 +32,7 @@ public:
 	enum { InvalidIndex = value_type::InvalidIndex };
 	enum { InvalidId = (id_type)-1 };
 
-	typedef QList<IdmEntity*> Parents;
+	typedef HashedList<id_type, IdmEntity*> Parents;
 
 public:
 	IdmEntity(Type type, id_type id, const QString &name) :
@@ -53,13 +53,13 @@ public:
 	const QString &name() const { return m_name; }
 	const Parents &parents() const { return m_parents; }
 
-	void addParent(IdmEntity *parent) { m_parents.push_back(parent); }
-	void removeParent(IdmEntity *parent) { m_parents.removeAt(m_parents.indexOf(parent)); }
-	void removeParent(Parents::size_type index) { m_parents.removeAt(index); }
+	void addParent(IdmEntity *parent) { m_parents.add(parent->id(), parent); }
+	void removeParent(IdmEntity *parent) { m_parents.remove(parent->id()); }
+//	void removeParent(Parents::size_type index) { m_parents.remove(index); }
 
 	void add(IdmEntity *item) { m_items.add(item->id(), item); }
-	void remove(id_type id) { m_items.remove(id); }
-	void remove(size_type index) { m_items.remove(index); }
+	void remove(IdmEntity *item) { m_items.remove(item->id()); }
+//	void remove(size_type index) { m_items.remove(index); }
 	IdmEntity *take(size_type index) { return m_items.take(index); }
 
 protected:

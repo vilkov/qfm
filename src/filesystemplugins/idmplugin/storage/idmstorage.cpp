@@ -188,12 +188,12 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 			const IdmEntity::Parents &parents = entity->parents();
 
 			for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
-				parents.at(i)->remove(entity->id());
+				parents.at(i)->remove(entity);
 
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 				entity->at(i)->removeParent(entity);
 
-			m_entities.remove(entity->id());
+			m_entities.remove(entity);
 
 			return true;
 		}
@@ -262,7 +262,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 
 				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
-					entity->remove(property->id());
+					entity->remove(property);
 					property->removeParent(entity);
 
 					return true;

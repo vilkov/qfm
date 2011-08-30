@@ -79,6 +79,12 @@ private:
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 
 private:
+	void performUndo();
+	void performUndo(const QByteArray &name);
+	void clearUndoStack();
+	void clearUndoStack(const QByteArray &name);
+
+private:
 	void setLastError(const char *sqlQuery) const;
 	void setLastError(const char *sqlQuery, const char *errorMsg) const;
 	void setLastError(const QByteArray &sqlQuery) const;

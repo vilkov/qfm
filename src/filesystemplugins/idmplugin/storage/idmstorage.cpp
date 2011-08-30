@@ -1,4 +1,8 @@
 #include "idmstorage.h"
+#include "undo/concrete/idmstorageundoaddentity.h"
+#include "undo/concrete/idmstorageundoaddproperty.h"
+#include "undo/concrete/idmstorageundoremoveentity.h"
+#include "undo/concrete/idmstorageundoremoveproperty.h"
 #include "../../../tools/pbytearray/pbytearray.h"
 
 
@@ -98,7 +102,10 @@ bool IdmStorage::commit()
 	const PByteArray sqlQuery("commit");
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	{
+		clearUndoStack();
 		return true;
+	}
 	else
 	{
 		setLastError(sqlQuery, errorMsg);
@@ -111,7 +118,9 @@ void IdmStorage::rollback()
 	char *errorMsg = 0;
 	const PByteArray sqlQuery("rollback");
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		performUndo();
+	else
 		setLastError(sqlQuery, errorMsg);
 }
 
@@ -144,7 +153,10 @@ bool IdmStorage::release(const QByteArray &name)
 	sqlQuery.append(name);
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	{
+		clearUndoStack(name);
 		return true;
+	}
 	else
 	{
 		setLastError(sqlQuery, errorMsg);
@@ -158,7 +170,9 @@ void IdmStorage::rollback(const QByteArray &name)
 	QByteArray sqlQuery("rollback to ");
 	sqlQuery.append(name);
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		performUndo(name);
+	else
 		setLastError(sqlQuery, errorMsg);
 }
 
@@ -183,7 +197,10 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 												  arg(typeToString(type)).toLatin1();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		{
 			m_entities.add(res = new IdmEntity(type, id, name));
+			m_undo.last().push_back(new IdmStorageUndoAddEntity(res));
+		}
 		else
 			setLastError(sqlQuery, errorMsg);
 
@@ -215,6 +232,7 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 				entity->at(i)->removeParent(entity);
 
 			m_entities.remove(entity);
+			m_undo.last().push_back(new IdmStorageUndoRemoveEntity(entity));
 
 			return true;
 		}
@@ -249,6 +267,7 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 			{
 				entity->add(property);
 				property->addParent(entity);
+				m_undo.last().push_back(new IdmStorageUndoAddProperty(entity, property));
 
 				return true;
 			}
@@ -285,6 +304,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 				{
 					entity->remove(property);
 					property->removeParent(entity);
+					m_undo.last().push_back(new IdmStorageUndoRemoveProperty(entity, property));
 
 					return true;
 				}
@@ -682,6 +702,55 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				break;
 			}
 		}
+}
+
+void IdmStorage::performUndo()
+{
+	for (UndoStack::size_type i = m_undo.size() - 1; i >= 0; --i)
+	{
+		UndoList &list = m_undo[i];
+
+		for (UndoList::size_type i = list.size() - 1; i >= 0; --i)
+		{
+			list.at(i)->undo(m_entities);
+			delete list.at(i);
+		}
+	}
+
+	m_undo.clear();
+}
+
+void IdmStorage::performUndo(const QByteArray &name)
+{
+	UndoList list;
+
+	for (UndoStack::size_type i = m_undo.size() - 1, index = m_undo.indexOf(name); i >= index; --i)
+	{
+		list = m_undo.take(m_undo.size() - 1);
+
+		for (UndoList::size_type i = list.size() - 1; i >= 0; --i)
+		{
+			list.at(i)->undo(m_entities);
+			delete list.at(i);
+		}
+	}
+}
+
+void IdmStorage::clearUndoStack()
+{
+	for (UndoStack::size_type i = 0, size = m_undo.size(); i < size; ++i)
+		qDeleteAll(m_undo.at(i));
+
+	m_undo.clear();
+}
+
+void IdmStorage::clearUndoStack(const QByteArray &name)
+{
+	UndoStack::size_type index;
+	UndoList &list = m_undo[(index = m_undo.indexOf(name)) - 1];
+
+	for (UndoStack::size_type i = index, size = m_undo.size(); i < size; ++i)
+		list.append(m_undo.take(index));
 }
 
 void IdmStorage::setLastError(const char *sqlQuery) const

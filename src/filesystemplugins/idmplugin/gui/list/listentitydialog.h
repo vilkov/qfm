@@ -47,11 +47,15 @@ private:
 				>
 			> EntitiesTreeViewHandler;
 
+	void removeEntity(const QModelIndex &index);
 	void removeEntity();
 	void insertProperty();
 
 private:
 	void createEntity();
+
+private:
+	QModelIndex currentIndex();
 
 private:
 	IdmContainer *m_container;

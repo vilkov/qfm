@@ -56,6 +56,7 @@ void ListEntityDialog::actionTriggered(QAction *action)
 		}
 		case Remove:
 		{
+			removeEntity(currentIndex());
 			break;
 		}
 		case AddProperty:
@@ -67,6 +68,35 @@ void ListEntityDialog::actionTriggered(QAction *action)
 			break;
 		}
 	}
+}
+
+void ListEntityDialog::removeEntity(const QModelIndex &index)
+{
+	QByteArray name("removeEntity");
+
+	if (m_container->savepoint(name))
+	{
+		if (QMessageBox::question(this,
+							  tr("Remove entity"),
+							  tr("Do you really want to remove entity \"%1\"?").
+							  arg(static_cast<IdmEntityItem*>(index.internalPointer())->entity()->name()),
+							  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+			if (m_container->removeEntity(static_cast<IdmEntityItem*>(index.internalPointer())->entity()))
+				if (m_container->release(name))
+					m_model.remove(index);
+				else
+				{
+					m_container->rollback(name);
+					QMessageBox::critical(this, tr("Error"), m_container->lastError());
+				}
+			else
+			{
+				m_container->rollback(name);
+				QMessageBox::critical(this, tr("Error"), m_container->lastError());
+			}
+	}
+	else
+		QMessageBox::critical(this, tr("Error"), m_container->lastError());
 }
 
 void ListEntityDialog::removeEntity()
@@ -97,7 +127,6 @@ void ListEntityDialog::createEntity()
 						if (!m_container->addProperty(entity, dialog.entities().at(i)))
 						{
 							ok = false;
-							m_container->rollback(name);
 							QMessageBox::critical(this, tr("Error"), m_container->lastError());
 							break;
 						}
@@ -127,6 +156,11 @@ void ListEntityDialog::createEntity()
 		else
 			QMessageBox::critical(this, tr("Error"), m_container->lastError());
 	}
+}
+
+QModelIndex ListEntityDialog::currentIndex()
+{
+	return m_view.selectionModel()->currentIndex();
 }
 
 void removeEntity()

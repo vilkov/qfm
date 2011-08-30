@@ -66,16 +66,30 @@ IdmStorage::~IdmStorage()
 
 bool IdmStorage::transaction()
 {
-	char *errorMsg = 0;
-	const PByteArray sqlQuery("begin transaction");
-
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-		return true;
+	if (!m_undo.isEmpty())
+		setLastError(tr("There is uncommitted transactions or savepoints!"));
 	else
 	{
-		setLastError(sqlQuery, errorMsg);
-		return false;
+		QByteArray name("transaction");
+
+		if (m_undo.contains(name))
+			setLastError(tr("Nested transactions is not supported! Use save points instead."));
+		else
+		{
+			char *errorMsg = 0;
+			const PByteArray sqlQuery("begin transaction");
+
+			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			{
+				m_undo.add(name, UndoList());
+				return true;
+			}
+			else
+				setLastError(sqlQuery, errorMsg);
+		}
 	}
+
+	return false;
 }
 
 bool IdmStorage::commit()
@@ -103,17 +117,24 @@ void IdmStorage::rollback()
 
 bool IdmStorage::savepoint(const QByteArray &name)
 {
-	char *errorMsg = 0;
-	QByteArray sqlQuery("savepoint ");
-	sqlQuery.append(name);
-
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-		return true;
+	if (m_undo.contains(name))
+		setLastError(tr("Savepoint \"%1\" already exists!").arg(QString::fromLatin1(name)));
 	else
 	{
-		setLastError(sqlQuery, errorMsg);
-		return false;
+		char *errorMsg = 0;
+		QByteArray sqlQuery("savepoint ");
+		sqlQuery.append(name);
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		{
+			m_undo.add(name, UndoList());
+			return true;
+		}
+		else
+			setLastError(sqlQuery, errorMsg);
 	}
+
+	return false;
 }
 
 bool IdmStorage::release(const QByteArray &name)

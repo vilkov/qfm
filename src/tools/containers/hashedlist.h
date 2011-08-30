@@ -31,6 +31,7 @@ public:
 	size_type size() const { return m_list.size(); }
 	size_type indexOf(const T &item) const { return m_list.indexOf(item); }
 	size_type indexOf(const Hash &hash) const { return m_map.value(hash, InvalidIndex); }
+	bool contains(const Hash &hash) const { return m_map.contains(hash); }
 
 	void add(const Hash &hash, const T &value)
 	{

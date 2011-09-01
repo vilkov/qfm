@@ -11,16 +11,18 @@ IDM_PLUGIN_NS_BEGIN
 IdmStorage::IdmStorage(const Info &storage) :
 	m_info(storage),
 	m_valid(true),
-	m_db(0),
 	m_entities(0, QString())
 {
+	sqlite3 *db;
+
 	if (m_info.exists())
-		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &m_db) == SQLITE_OK)
+		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &db) == SQLITE_OK)
 		{
+			m_db = new DbHandle(db);
 			sqlite3_stmt *statement;
 			const PByteArray sqlQuery("select * from ENTITY");
 
-			if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+			if (sqlite3_prepare_v2(*m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 			{
 				loadEntities(statement, &m_entities);
 
@@ -33,7 +35,7 @@ IdmStorage::IdmStorage(const Info &storage) :
 			else
 			{
 				m_valid = false;
-				setLastError(sqlQuery);
+				setLastError(sqlQuery.data());
 			}
 		}
 		else
@@ -42,16 +44,17 @@ IdmStorage::IdmStorage(const Info &storage) :
 			setLastError(QString::fromLatin1("Failed to open DB"));
 		}
 	else
-		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &m_db) == SQLITE_OK)
+		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &db) == SQLITE_OK)
 		{
+			m_db = new DbHandle(db);
 			char *error;
 			const PByteArray sqlQuery("create table ENTITY (ID int primary key, TYPE int, NAME char(1024));"
 									  "create table PROPERTIES (ID int primary key, ENTITY_ID int, ENTITY_PROPERTY_ID int)");
 
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
+			if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
 			{
 				m_valid = false;
-				setLastError(sqlQuery, error);
+				setLastError(sqlQuery.data(), error);
 			}
 
 			sqlite3_free(error);
@@ -61,11 +64,6 @@ IdmStorage::IdmStorage(const Info &storage) :
 			m_valid = false;
 			setLastError(QString::fromLatin1("Failed to open DB"));
 		}
-}
-
-IdmStorage::~IdmStorage()
-{
-	sqlite3_close(m_db);
 }
 
 bool IdmStorage::transaction()
@@ -83,13 +81,13 @@ bool IdmStorage::transaction()
 			char *errorMsg = 0;
 			const PByteArray sqlQuery("begin transaction");
 
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			{
 				m_undo.add(name, UndoList());
 				return true;
 			}
 			else
-				setLastError(sqlQuery, errorMsg);
+				setLastError(sqlQuery.data(), errorMsg);
 		}
 	}
 
@@ -101,14 +99,14 @@ bool IdmStorage::commit()
 	char *errorMsg = 0;
 	const PByteArray sqlQuery("commit");
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
 		clearUndoStack();
 		return true;
 	}
 	else
 	{
-		setLastError(sqlQuery, errorMsg);
+		setLastError(sqlQuery.data(), errorMsg);
 		return false;
 	}
 }
@@ -118,10 +116,10 @@ void IdmStorage::rollback()
 	char *errorMsg = 0;
 	const PByteArray sqlQuery("rollback");
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		performUndo();
 	else
-		setLastError(sqlQuery, errorMsg);
+		setLastError(sqlQuery.data(), errorMsg);
 }
 
 bool IdmStorage::savepoint(const QByteArray &name)
@@ -134,7 +132,7 @@ bool IdmStorage::savepoint(const QByteArray &name)
 		QByteArray sqlQuery("savepoint ");
 		sqlQuery.append(name);
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
 			m_undo.add(name, UndoList());
 			return true;
@@ -152,7 +150,7 @@ bool IdmStorage::release(const QByteArray &name)
 	QByteArray sqlQuery("release ");
 	sqlQuery.append(name);
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
 		clearUndoStack(name);
 		return true;
@@ -170,7 +168,7 @@ void IdmStorage::rollback(const QByteArray &name)
 	QByteArray sqlQuery("rollback to ");
 	sqlQuery.append(name);
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		performUndo(name);
 	else
 		setLastError(sqlQuery, errorMsg);
@@ -196,7 +194,7 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 												  arg(name).
 												  arg(typeToString(type)).toLatin1();
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
 			m_entities.add(res = new IdmEntity(type, id, name));
 			m_undo.last().push_back(new IdmStorageUndoAddEntity(res));
@@ -218,7 +216,7 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 											  "drop table ENTITY_%1").
 											  arg(QString::number(entity->id())).toLatin1();
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
 		if (cleanupParentsValues(entity) &&
 			(entity->type() != IdmEntity::Composite || cleanupPropertyValues(entity)))
@@ -263,7 +261,7 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 													  arg(QString::number(entity->id())).
 													  arg(QString::number(property->id())).toLatin1();
 
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			{
 				entity->add(property);
 				property->addParent(entity);
@@ -292,7 +290,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 												  arg(QString::number(entity->id())).
 												  arg(QString::number(property->id())).toLatin1();
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
 			if (cleanupPropertyValues(entity, property))
 			{
@@ -300,7 +298,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 											   arg(QString::number(entity->id())).
 											   arg(QString::number(property->id())).toLatin1();
 
-				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+				if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
 					entity->remove(property);
 					property->removeParent(entity);
@@ -390,7 +388,7 @@ IdmEntity::id_type IdmStorage::loadId(const QString &tableName) const
 	QByteArray sqlQuery = QString::fromLatin1("select ID from %1 order by ID desc").arg(tableName).toLatin1();
 	IdmEntity::id_type res = IdmEntity::InvalidId;
 
-	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+	if (sqlite3_prepare_v2(*m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 	{
 		if (sqlite3_step(statement) == SQLITE_ROW)
 			res = sqlite3_column_int(statement, 0) + 1;
@@ -426,7 +424,7 @@ bool IdmStorage::removeEntityValues(IdmEntity *entity, const IdsList &ids) const
 								   arg(QString::number(entity->id())).
 								   arg(idsToString(ids)).toLatin1();
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		return true;
 	else
 		setLastError(sqlQuery, errorMsg);
@@ -454,7 +452,7 @@ bool IdmStorage::removeOverlappingIds(IdmEntity *entity, IdmEntity *property, Id
 						   arg(QString::number(parents.at(i)->id())).
 						   arg(idsToString(ids)).toLatin1();
 
-				if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+				if (sqlite3_prepare_v2(*m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 				{
 					for (int res = sqlite3_step(statement); res == SQLITE_ROW && !ids.isEmpty(); res = sqlite3_step(statement))
 						ids.remove(sqlite3_column_int(statement, 0));
@@ -487,7 +485,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity) const
 	{
 		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toLatin1();
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+		if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 		{
 			setLastError(sqlQuery, errorMsg);
 			res = false;
@@ -514,7 +512,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity, const IdsList &ids) con
 	{
 		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toLatin1();
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+		if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 		{
 			setLastError(sqlQuery, errorMsg);
 			res = false;
@@ -540,7 +538,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 		{
 			sqlQuery = QString(query).append(QString::number(entity->at(i)->id())).toLatin1();
 
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+			if (sqlite3_exec(*m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 			{
 				setLastError(sqlQuery, errorMsg);
 				res = false;
@@ -573,7 +571,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 		propertyIds.clear();
 		sqlQuery = QString(query).arg(QString::number(entity->at(i)->id())).toLatin1();
 
-		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		if (sqlite3_prepare_v2(*m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 		{
 			for (int res = sqlite3_step(statement); res == SQLITE_ROW; res = sqlite3_step(statement))
 				propertyIds.insert(sqlite3_column_int(statement, 0));
@@ -602,7 +600,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) c
 											  arg(QString::number(entity->id())).
 											  arg(QString::number(property->id())).toLatin1();
 
-	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+	if (sqlite3_prepare_v2(*m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 	{
 		for (int res = sqlite3_step(statement); res == SQLITE_ROW; res = sqlite3_step(statement))
 			ids.insert(sqlite3_column_int(statement, 0));
@@ -682,7 +680,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 						entity->addParent(parent);
 					}
 
-					if (sqlite3_prepare_v2(m_db, query.data(), query.size(), &statement2, NULL) == SQLITE_OK)
+					if (sqlite3_prepare_v2(*m_db, query.data(), query.size(), &statement2, NULL) == SQLITE_OK)
 					{
 						loadEntities(statement2, entity);
 

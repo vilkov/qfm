@@ -12,6 +12,7 @@ public:
 	virtual ~PByteArrayImplementation() {}
 
 	virtual size_type size() const = 0;
+	virtual const value_type *c_str() const = 0;
 	virtual const value_type *data() const = 0;
 	virtual value_type *data() = 0;
 	virtual void copyTo(void *dest) const = 0;

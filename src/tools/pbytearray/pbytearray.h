@@ -2,6 +2,8 @@
 #define PBYTEARRAY_H_
 
 #include <iterator>
+#include <string.h>
+#include <string>
 #include "pbytearray_imp.h"
 
 #define IMP(Type, var1, var2) Type var1 = ((Type)var2)
@@ -29,6 +31,16 @@ public:
 	{
 		createDynamic(size);
 	}
+	PByteArray(const value_type *data, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
+	{
+		if (data)
+			if (policy == CopyPolicy::CopyOnWrite)
+				createConstReference(data, strlen(data));
+			else
+				createDynamic(data, strlen(data));
+		else
+			createEmpty();
+	}
 	PByteArray(const PByteArray &other)
 	{
 		IMP_O; o->copyTo(m_imp);
@@ -38,8 +50,22 @@ public:
 	{
 		createLiteral(static_cast<const value_type*>(data), S - 1);
 	}
-	template <typename T>
-	PByteArray(const T &string, CopyPolicy::Type policy = CopyPolicy::CreateCopy)
+	template <typename T, size_type S>
+	PByteArray(const T (&data)[S],
+			const value_type *string1 = NULL,
+			const value_type *string2 = NULL,
+			const value_type *string3 = NULL,
+			const value_type *string4 = NULL,
+			const value_type *string5 = NULL,
+			const value_type *string6 = NULL,
+			const value_type *string7 = NULL,
+			const value_type *string8 = NULL,
+			const value_type *string9 = NULL,
+			const value_type *string10 = NULL)
+	{
+		createDynamic(static_cast<const value_type*>(data), S - 1, string1, string2, string3, string4, string5, string6, string7, string8, string9, string10);
+	}
+	PByteArray(const std::string &string, CopyPolicy::Type policy = CopyPolicy::CreateCopy)
 	{
 		if (string.size() > 0)
 			if (policy == CopyPolicy::CreateCopy)
@@ -51,17 +77,23 @@ public:
 	}
 	PByteArray(value_type *data, size_type len, ReferencePolicy::Type policy = ReferencePolicy::Reference)
 	{
-		if (policy == ReferencePolicy::Reference)
-			createReference(data, len);
+		if (data)
+			if (policy == ReferencePolicy::Reference)
+				createReference(data, len);
+			else
+				createDynamic(data, len);
 		else
-			createDynamic(data, len);
+			createEmpty();
 	}
 	PByteArray(const value_type *data, size_type len, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
 	{
-		if (policy == CopyPolicy::CopyOnWrite)
-			createConstReference(data, len);
+		if (data)
+			if (policy == CopyPolicy::CopyOnWrite)
+				createConstReference(data, len);
+			else
+				createDynamic(data, len);
 		else
-			createDynamic(data, len);
+			createEmpty();
 	}
 	~PByteArray() { IMP_D; d->~PByteArrayImplementation(); }
 
@@ -72,6 +104,7 @@ public:
 	value_type &operator[](size_type index) { IMP_D; return d->data()[index]; }
 	bool operator==(const PByteArray &other) const { return isEqual(other); }
 	bool operator!=(const PByteArray &other) const { return !isEqual(other); }
+	bool operator<(const PByteArray &other) const { return !isLess(other); }
 	void operator=(const PByteArray &other)
 	{
 		IMP_D; d->~PByteArrayImplementation();
@@ -83,11 +116,10 @@ public:
 		IMP_D; d->~PByteArrayImplementation();
 		createLiteral(static_cast<const value_type*>(data), S - 1);
 	}
-    operator const char *() const { IMP_C; return d->data(); }
-    operator const void *() const { IMP_C; return d->data(); }
 
 	/********** Operations.Data **********/
 	size_type size() const { IMP_C; return d->size(); }
+	const value_type *c_str() const { IMP_D; return d->c_str(); }
 	const value_type *data() const { IMP_C; return d->data(); }
 	const value_type *constData() const { IMP_C; return d->data(); }
 	value_type *data() { IMP_D; return d->data(); }
@@ -132,9 +164,36 @@ public:
 			return true;
 		}
 	}
+	bool isLess(const PByteArray &other) const
+	{
+		IMP_C; IMP_O;
+		size_type q;
+		size_type e;
+
+		if ((q = d->size()) == 0)
+			return true;
+		else
+			if ((e = o->size()) == 0)
+				return false;
+			else
+			{
+				if (q > e)
+					q = e;
+
+				const value_type *data1 = d->data();
+				const value_type *data2 = o->data();
+
+				for (size_type i = 0; i < q; ++data1, ++data2, ++i)
+					if ((*data1) > (*data2))
+						return false;
+
+				return true;
+			}
+	}
 
 	/********** Operations.Modification **********/
 	PByteArray &truncate(size_type pos) { IMP_D; d->truncate(pos); return *this; }
+	PByteArray &append(const value_type *string) { IMP_D; d->append(string, strlen(string)); return *this; }
 	PByteArray &append(const PByteArray &string) { IMP_D; d->append(string.data(), string.size()); return *this; }
 	PByteArray &append(const value_type *string, size_type size) { IMP_D; d->append(string, size); return *this; }
 
@@ -174,59 +233,10 @@ public:
 		else
 			return 0;
 	}
-//	PByteArray &arg(int value, int base = 10)
-//	{
-//		char buffer[1024];
-//		va_list args;
-//
-//		va_start(args, format);
-//		vsprintf(buffer, format.c_str(), args);
-//		m_file << buffer << std::endl;
-//		va_end(args);
-//
-//		if (checkLastOperation())
-//			m_file.flush();
-//		return PByteArray();
-//	}
-//	static PByteArray number(int value, int base = 10)
-//	{
-//		return PByteArray();
-//	}
-//	QString qulltoa(qulonglong l, int base, const QChar _zero)
-//	{
-//	    ushort buff[65]; // length of MAX_ULLONG in base 2
-//	    ushort *p = buff + 65;
-//
-//	    if (base != 10 || _zero.unicode() == '0') {
-//	        while (l != 0) {
-//	            int c = l % base;
-//
-//	            --p;
-//
-//	            if (c < 10)
-//	                *p = '0' + c;
-//	            else
-//	                *p = c - 10 + 'a';
-//
-//	            l /= base;
-//	        }
-//	    }
-//	    else {
-//	        while (l != 0) {
-//	            int c = l % base;
-//
-//	            *(--p) = _zero.unicode() + c;
-//
-//	            l /= base;
-//	        }
-//	    }
-//
-//	    return QString(reinterpret_cast<QChar *>(p), 65 - (p - buff));
-//	}
-//	QString qlltoa(qlonglong l, int base, const QChar zero)
-//	{
-//	    return qulltoa(l < 0 ? -l : l, base, zero);
-//	}
+	static PByteArray fromInt(int value)
+	{
+		return PByteArray();
+	}
 
 	/********** Iterators **********/
 	class iterator
@@ -310,12 +320,22 @@ private:
 	void createEmpty();
 	void createDynamic(size_type size);
 	void createLiteral(const value_type *data, size_type size);
-	void createDynamic(const value_type *data, size_type size);
+	void createDynamic(const value_type *data, size_type size,
+			const value_type *string1 = NULL,
+			const value_type *string2 = NULL,
+			const value_type *string3 = NULL,
+			const value_type *string4 = NULL,
+			const value_type *string5 = NULL,
+			const value_type *string6 = NULL,
+			const value_type *string7 = NULL,
+			const value_type *string8 = NULL,
+			const value_type *string9 = NULL,
+			const value_type *string10 = NULL);
 	void createReference(value_type *data, size_type size);
 	void createConstReference(const value_type *data, size_type size);
 
 private:
-	enum { Size = 12 };
+	enum { Size = 16 };
 	unsigned char m_imp[Size];
 };
 

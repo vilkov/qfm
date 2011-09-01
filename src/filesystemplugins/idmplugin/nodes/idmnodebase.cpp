@@ -93,27 +93,29 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 
 IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) const
 {
-	IdmEntity *entity = 0;
+	QList<IdmEntity*> entities;
 
 	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-		if (m_container->at(i)->type() == IdmEntity::Path)
+		if (m_container->at(i)->type() == IdmEntity::Path && !m_container->at(i)->parents().isEmpty())
 		{
-			entity = m_container->at(i);
+			entities.push_back(m_container->at(i)->parents().at(0));
 			break;
 		}
 
-	if (entity && !entity->parents().isEmpty())
-	{
-		entity = entity->parents().at(0);
-
-		IdmFileControl control(entity);
-	}
+	if (entities.isEmpty())
+		QMessageBox::information(&Application::instance()->mainWindow(),
+								 tr("Failed to add an entity value"),
+								 tr("There is no entities with property of type \"%1\".").
+								 arg(m_container->entityTypes().value(IdmEntity::Path).label));
 	else
-		QMessageBox::information(
-				&Application::instance()->mainWindow(),
-				tr("Failed to add an entity value"),
-				tr("There is no entity with property of type \"%1\".").
-					arg(m_container->entityTypes().value(IdmEntity::Path).label));
+		if (entities.size() == 1)
+		{
+			IdmFileControl control(entities.at(0));
+		}
+		else
+		{
+
+		}
 
 	return 0;
 }

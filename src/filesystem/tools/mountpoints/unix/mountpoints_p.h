@@ -5,8 +5,8 @@
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusConnectionInterface>
-#include <sys/statvfs.h>
 #include "../mountpoint.h"
+#include "../../filesystemcommontools.h"
 
 
 /* UDisks */
@@ -74,7 +74,6 @@ void MountPoints::MountPointsPrivate::refresh()
 {
 	QString value;
 	QStringList list;
-	struct statvfs64 info;
 	QDBusReply<QList<QDBusObjectPath> > reply = manager.call("EnumerateDevices");
 
 	if (reply.isValid())
@@ -101,20 +100,12 @@ void MountPoints::MountPointsPrivate::refresh()
 											0,
 											0));
 			else
-				if (statvfs64(list.at(0).toUtf8(), &info) == -1)
-					items.push_back(MountPoint(list.at(0),
-												(value = device.property("IdLabel").toString()).isEmpty() ? path.path() : value,
-												path.path(),
-												QPixmap(),
-												0,
-												device.property("PartitionSize").toULongLong()));
-				else
-					items.push_back(MountPoint(list.at(0),
-												(value = device.property("IdLabel").toString()).isEmpty() ? path.path() : value,
-												path.path(),
-												QPixmap(),
-												info.f_bsize * info.f_bfree,
-												device.property("PartitionSize").toULongLong()));
+				items.push_back(MountPoint(list.at(0),
+											(value = device.property("IdLabel").toString()).isEmpty() ? path.path() : value,
+											path.path(),
+											QPixmap(),
+											FileSystem::Tools::freeSpace(list.at(0).toUtf8()),
+											device.property("PartitionSize").toULongLong()));
 
 
 //			qDebug() << device->property("DeviceMountPaths");

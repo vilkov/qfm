@@ -1,5 +1,6 @@
 #include "filesystemfoldernodeinfo.h"
 #include "filesystemfoldernodefile.h"
+#include "../tools/filesystemcommontools.h"
 #include "../../application.h"
 #include <QtCore/QFSFileEngine>
 
@@ -76,6 +77,11 @@ void Info::refresh()
 	m_displayType = QString();
 	m_icon = QIcon();
 	m_info.refresh();
+}
+
+IFile::size_type Info::freeSpace() const
+{
+	return Tools::freeSpace(m_info.isDir() ? m_info.absoluteFilePath().toUtf8() : m_info.absolutePath().toUtf8());
 }
 
 bool Info::contains(IFileControl *info) const

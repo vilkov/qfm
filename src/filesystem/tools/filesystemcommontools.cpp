@@ -1,4 +1,13 @@
 #include "filesystemcommontools.h"
+#include "../../tools/os/osdependent.h"
+
+#if defined(PLATFORMSTL_OS_IS_WINDOWS)
+#	include <windows.h>
+#elif defined(PLATFORMSTL_OS_IS_UNIX)
+#	include <sys/statvfs.h>
+#else
+#	error OS is unknown!
+#endif
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -67,6 +76,25 @@ QString Tools::humanReadableShortSize(quint64 size)
 					return QString::number(gigabytes).append(QString::fromLatin1(" Kb"));
 			else
 				return QString::number(size).append(QString::fromLatin1(" b"));
+}
+
+quint64 Tools::freeSpace(const QByteArray &utf8AbsoluteFolderPath)
+{
+	OS_DEPENDENT_CODE
+	(
+		/* UNIX */
+		{
+			struct statvfs64 info;
+
+			if (statvfs64(utf8AbsoluteFolderPath, &info) == -1)
+				return 0;
+			else
+				return info.f_bsize * info.f_bfree;
+		},
+
+		/* WIN */
+		{ return 0; }
+	)
 }
 
 FILE_SYSTEM_NS_END

@@ -24,6 +24,7 @@ public:
 	};
 
 public:
+	virtual IFile::size_type freeSpace() const = 0;
 	virtual bool contains(IFileControl *info) const = 0;
 	virtual bool rename(const QString &newFileName, QString &error) const = 0;
 

@@ -392,18 +392,43 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	}
 	else
 	{
+		IFile::size_type freeSpace;
 		QString lockReason = move ? tr("Moving...") : tr("Copying...");
-		FileSystemItem *entry;
 
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		if (entries->totalSize() <= (freeSpace = destination->freeSpace()) ||
+			QMessageBox::question(
+								&Application::instance()->mainWindow(),
+								lockReason,
+								tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
+									arg(destination->absoluteFilePath()).
+									arg(Tools::humanReadableShortSize(freeSpace)).
+									arg(Tools::humanReadableShortSize(entries->totalSize())),
+								QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 		{
-			index = m_items.indexOf((entry = entries->at(i))->fileName());
-			static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
-			updateRange.add(index, index);
-		}
+			FileSystemItem *entry;
 
-		updateSecondColumn(updateRange);
-		FolderNodeBase::performCopy(entries, destination, move);
+			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+			{
+				index = m_items.indexOf((entry = entries->at(i))->fileName());
+				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
+				updateRange.add(index, index);
+			}
+
+			updateSecondColumn(updateRange);
+			FolderNodeBase::performCopy(entries, destination, move);
+		}
+		else
+		{
+			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+			{
+				index = m_items.indexOf(entries->at(i)->fileName());
+				static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+				updateRange.add(index, index);
+			}
+
+			tasks().removeAll(entries->at(0)->fileName());
+			updateBothColumns(updateRange);
+		}
 	}
 }
 

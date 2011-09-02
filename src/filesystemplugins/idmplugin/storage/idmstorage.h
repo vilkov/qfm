@@ -4,6 +4,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QList>
+#include <QtCore/QMutex>
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
 #include "holders/dbhandleholder.h"
@@ -95,6 +96,7 @@ private:
 	typedef HashedList<QByteArray, UndoList> UndoStack;
 
 private:
+	QMutex m_mutex;
 	Info m_info;
 	bool m_valid;
 	DbHandleHolder m_db;

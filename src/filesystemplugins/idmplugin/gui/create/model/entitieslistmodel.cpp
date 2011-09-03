@@ -27,7 +27,7 @@ int EntitiesListModel::rowCount(const QModelIndex &parent) const
 
 int EntitiesListModel::columnCount(const QModelIndex &parent) const
 {
-	return 1;
+	return 2;
 }
 
 QVariant EntitiesListModel::data(const QModelIndex &index, int role) const

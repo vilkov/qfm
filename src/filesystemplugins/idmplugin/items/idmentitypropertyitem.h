@@ -16,7 +16,7 @@ public:
 
 	const QString &name() const { return m_name; }
 
-private:
+protected:
 	QString m_name;
 };
 

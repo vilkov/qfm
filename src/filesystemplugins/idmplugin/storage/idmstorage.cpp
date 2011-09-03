@@ -266,8 +266,8 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property, const QStri
 													  "create table ENTITY_%2_PROPERTY_%3 (ID int primary key, ENTITY_VALUE_ID int, PROPERTY_VALUE_ID int)").
 													  arg(QString::number(id)).
 													  arg(QString::number(entity->id())).
-													  arg(QString::number(property->id()).
-													  arg(name)).toUtf8();
+													  arg(QString::number(property->id())).
+													  arg(name).toUtf8();
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			{

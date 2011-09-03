@@ -14,6 +14,7 @@ public:
 	{}
 
 	void setEntity(IdmEntity *value) { m_entity = value; }
+	void setName(const QString &name) { m_name = name; }
 };
 
 IDM_PLUGIN_NS_END

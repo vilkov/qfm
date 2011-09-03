@@ -123,8 +123,8 @@ void ListEntityDialog::createEntity()
 				{
 					bool ok = true;
 
-					for (EntitiesListModel::size_type i = 0, size = dialog.entities().size(); i < size; ++i)
-						if (!m_container->addProperty(entity, dialog.entities().at(i)))
+					for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
+						if (!m_container->addProperty(entity, dialog.property(i), dialog.propertyName(i)))
 						{
 							ok = false;
 							QMessageBox::critical(this, tr("Error"), m_container->lastError());

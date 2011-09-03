@@ -56,7 +56,7 @@ public:
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
 	bool removeEntity(IdmEntity *entity);
 
-	bool addProperty(IdmEntity *entity, IdmEntity *property);
+	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
 	bool addValue(IdmEntity *entity, const IdsMap &values) const;

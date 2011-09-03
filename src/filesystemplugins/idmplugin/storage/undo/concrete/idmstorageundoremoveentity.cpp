@@ -14,10 +14,10 @@ IdmStorageUndoRemoveEntity::~IdmStorageUndoRemoveEntity()
 
 void IdmStorageUndoRemoveEntity::undo(IdmEntityRoot &root)
 {
-	root.add(m_entity);
+	root.add(m_entity, m_entity->name());
 
-	for (IdmEntity::Parents::size_type i = 0, size = m_entity->parents().size(); i < size; ++i)
-		m_entity->parents().at(i)->add(m_entity);
+	for (Parents::size_type i = 0, size = m_parents.size(); i < size; ++i)
+		m_parents.at(i).entity->add(m_entity, m_parents.at(i).name);
 
 	for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
 		m_entity->at(i)->addParent(m_entity);

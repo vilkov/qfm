@@ -4,6 +4,7 @@
 #include "undo/concrete/idmstorageundoremoveentity.h"
 #include "undo/concrete/idmstorageundoremoveproperty.h"
 #include "../../../tools/pbytearray/pbytearray.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -45,8 +46,8 @@ IdmStorage::IdmStorage(const Info &storage) :
 		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &m_db) == SQLITE_OK)
 		{
 			char *error;
-			const PByteArray sqlQuery("create table ENTITY (ID int primary key, TYPE int, NAME char(1024));"
-									  "create table PROPERTIES (ID int primary key, ENTITY_ID int, ENTITY_PROPERTY_ID int)");
+			const PByteArray sqlQuery("create table ENTITY (ID int primary key, TYPE int, NAME char(256));"
+									  "create table PROPERTIES (ID int primary key, ENTITY_ID int, ENTITY_PROPERTY_ID int, NAME char(256))");
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
 			{
@@ -194,11 +195,11 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type)
 												  arg(QString::number(id)).
 												  arg(QString::number(type)).
 												  arg(name).
-												  arg(typeToString(type)).toLatin1();
+												  arg(typeToString(type)).toUtf8();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
-			m_entities.add(res = new IdmEntity(type, id, name));
+			m_entities.add(res = new IdmEntity(type, id, name), name);
 			m_undo.last().push_back(new IdmStorageUndoAddEntity(res));
 		}
 		else
@@ -216,23 +217,27 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 	QByteArray sqlQuery = QString::fromLatin1("delete from ENTITY where ID = %1;"
 											  "delete from PROPERTIES where ENTITY_PROPERTY_ID = %1;"
 											  "drop table ENTITY_%1").
-											  arg(QString::number(entity->id())).toLatin1();
+											  arg(QString::number(entity->id())).toUtf8();
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
 		if (cleanupParentsValues(entity) &&
 			(entity->type() != IdmEntity::Composite || cleanupPropertyValues(entity)))
 		{
+			PScopedPointer<IdmStorageUndoRemoveEntity> command(new IdmStorageUndoRemoveEntity(entity));
 			const IdmEntity::Parents &parents = entity->parents();
 
 			for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
+			{
+				command->addParent(parents.at(i), parents.at(i)->property(entity).name);
 				parents.at(i)->remove(entity);
+			}
 
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 				entity->at(i)->removeParent(entity);
 
 			m_entities.remove(entity);
-			m_undo.last().push_back(new IdmStorageUndoRemoveEntity(entity));
+			m_undo.last().push_back(command.take());
 
 			return true;
 		}
@@ -245,7 +250,7 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 	return false;
 }
 
-bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
+bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property, const QString &name)
 {
 	if (entity->id() != property->id() &&
 		entity->type() == IdmEntity::Composite &&
@@ -257,15 +262,16 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property)
 		if (id != IdmEntity::InvalidId)
 		{
 			char *errorMsg = 0;
-			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID) values (%1, %2, %3);"
+			QByteArray sqlQuery = QString::fromLatin1("insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID, NAME) values (%1, %2, %3, '%4');"
 													  "create table ENTITY_%2_PROPERTY_%3 (ID int primary key, ENTITY_VALUE_ID int, PROPERTY_VALUE_ID int)").
 													  arg(QString::number(id)).
 													  arg(QString::number(entity->id())).
-													  arg(QString::number(property->id())).toLatin1();
+													  arg(QString::number(property->id()).
+													  arg(name)).toUtf8();
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			{
-				entity->add(property);
+				entity->add(property, name);
 				property->addParent(entity);
 				m_undo.last().push_back(new IdmStorageUndoAddProperty(entity, property));
 
@@ -290,7 +296,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 		char *errorMsg = 0;
 		QByteArray sqlQuery = QString::fromLatin1("delete from PROPERTIES where ENTITY_ID = %1 and ENTITY_PROPERTY_ID = %2").
 												  arg(QString::number(entity->id())).
-												  arg(QString::number(property->id())).toLatin1();
+												  arg(QString::number(property->id())).toUtf8();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
@@ -298,13 +304,14 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 			{
 				sqlQuery = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_%2").
 											   arg(QString::number(entity->id())).
-											   arg(QString::number(property->id())).toLatin1();
+											   arg(QString::number(property->id())).toUtf8();
 
 				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
+					PScopedPointer<IdmStorageUndoRemoveProperty> command(new IdmStorageUndoRemoveProperty(entity, property, entity->property(property).name));
 					entity->remove(property);
 					property->removeParent(entity);
-					m_undo.last().push_back(new IdmStorageUndoRemoveProperty(entity, property));
+					m_undo.last().push_back(command.take());
 
 					return true;
 				}
@@ -387,7 +394,7 @@ QString IdmStorage::typeToString(IdmEntity::Type type) const
 IdmEntity::id_type IdmStorage::loadId(const QString &tableName) const
 {
 	sqlite3_stmt *statement;
-	QByteArray sqlQuery = QString::fromLatin1("select ID from %1 order by ID desc").arg(tableName).toLatin1();
+	QByteArray sqlQuery = QString::fromLatin1("select ID from %1 order by ID desc").arg(tableName).toUtf8();
 	IdmEntity::id_type res = IdmEntity::InvalidId;
 
 	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
@@ -424,7 +431,7 @@ bool IdmStorage::removeEntityValues(IdmEntity *entity, const IdsList &ids) const
 	char *errorMsg = 0;
 	QByteArray sqlQuery = QString::fromLatin1("delete from ENTITY_%1 where ID in (%2)").
 								   arg(QString::number(entity->id())).
-								   arg(idsToString(ids)).toLatin1();
+								   arg(idsToString(ids)).toUtf8();
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		return true;
@@ -452,7 +459,7 @@ bool IdmStorage::removeOverlappingIds(IdmEntity *entity, IdmEntity *property, Id
 			{
 				sqlQuery = QString(query).
 						   arg(QString::number(parents.at(i)->id())).
-						   arg(idsToString(ids)).toLatin1();
+						   arg(idsToString(ids)).toUtf8();
 
 				if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 				{
@@ -485,7 +492,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity) const
 
 	for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 	{
-		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toLatin1();
+		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toUtf8();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 		{
@@ -512,7 +519,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity, const IdsList &ids) con
 
 	for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 	{
-		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toLatin1();
+		sqlQuery = QString(query).arg(QString::number(parents.at(i)->id())).toUtf8();
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 		{
@@ -538,7 +545,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 		if (cleanupPropertyValues(entity, entity->at(i)))
 		{
-			sqlQuery = QString(query).append(QString::number(entity->at(i)->id())).toLatin1();
+			sqlQuery = QString(query).append(QString::number(entity->at(i)->id())).toUtf8();
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 			{
@@ -571,7 +578,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 	{
 		propertyIds.clear();
-		sqlQuery = QString(query).arg(QString::number(entity->at(i)->id())).toLatin1();
+		sqlQuery = QString(query).arg(QString::number(entity->at(i)->id())).toUtf8();
 
 		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 		{
@@ -600,7 +607,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) c
 	sqlite3_stmt *statement;
 	QByteArray sqlQuery = QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_%2").
 											  arg(QString::number(entity->id())).
-											  arg(QString::number(property->id())).toLatin1();
+											  arg(QString::number(property->id())).toUtf8();
 
 	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 	{
@@ -640,7 +647,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					if (&m_entities != parent)
 					{
-						parent->add(m_entities.at(index));
+						parent->add(m_entities.at(index), QString::fromUtf8((const char *)sqlite3_column_text(statement, 3)));
 						m_entities.at(index)->addParent(parent);
 					}
 				}
@@ -648,11 +655,11 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					IdmEntity *entity = new IdmEntity(type, id, QString::fromUtf8((const char *)sqlite3_column_text(statement, 2)));
 
-					m_entities.add(entity);
+					m_entities.add(entity, entity->name());
 
 					if (&m_entities != parent)
 					{
-						parent->add(entity);
+						parent->add(entity, QString::fromUtf8((const char *)sqlite3_column_text(statement, 3)));
 						entity->addParent(parent);
 					}
 				}
@@ -664,7 +671,7 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					if (&m_entities != parent)
 					{
-						parent->add(m_entities.at(index));
+						parent->add(m_entities.at(index), QString::fromUtf8((const char *)sqlite3_column_text(statement, 3)));
 						m_entities.at(index)->addParent(parent);
 					}
 				}
@@ -672,13 +679,17 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					sqlite3_stmt *statement2;
 					IdmEntity *entity = new IdmEntity(IdmEntity::Composite, id, QString::fromUtf8((const char *)sqlite3_column_text(statement, 2)));
-					QByteArray query = QString::fromLatin1("select * from ENTITY where ID in (select ENTITY_PROPERTY_ID from PROPERTIES where ENTITY_ID = %1)").arg(QString::number(entity->id())).toLatin1();
+					QByteArray query = QString::fromLatin1(
+							"select ENTITY.*, PROPERTIES.NAME from PROPERTIES"
+							"	left join ENTITY on ENTITY.ID = PROPERTIES.ENTITY_PROPERTY_ID"
+							"	where PROPERTIES.ENTITY_ID = %1"
+							"").arg(QString::number(entity->id())).toUtf8();
 
-					m_entities.add(entity);
+					m_entities.add(entity, entity->name());
 
 					if (&m_entities != parent)
 					{
-						parent->add(entity);
+						parent->add(entity, QString::fromUtf8((const char *)sqlite3_column_text(statement, 3)));
 						entity->addParent(parent);
 					}
 

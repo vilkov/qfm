@@ -1,5 +1,5 @@
 #include "stringdialog.h"
-#include <QMessageBox>
+#include <QtGui/QMessageBox>
 
 
 StringDialog::StringDialog(const QString &title, const QString &label, const QString &value, QWidget *parent) :
@@ -33,8 +33,17 @@ StringDialog::StringDialog(const QString &title, const QString &label, const QSt
 
 void StringDialog::accept()
 {
-	if (value().isEmpty())
-		QMessageBox::information(this, windowTitle(), tr("You must enter the value!"));
-	else
+	if (check())
 		QDialog::accept();
+}
+
+bool StringDialog::check()
+{
+	if (value().isEmpty())
+	{
+		QMessageBox::information(this, windowTitle(), tr("You must enter the value!"));
+		return false;
+	}
+	else
+		return true;
 }

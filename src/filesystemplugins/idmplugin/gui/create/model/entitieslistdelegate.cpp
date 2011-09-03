@@ -8,8 +8,7 @@ IDM_PLUGIN_NS_BEGIN
 EntitiesListDelegate::EntitiesListDelegate(const IdmContainer *container, QObject *parent) :
 	QStyledItemDelegate(parent),
     m_container(container)
-{
-}
+{}
 
 QWidget *EntitiesListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

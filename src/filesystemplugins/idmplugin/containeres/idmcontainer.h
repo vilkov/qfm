@@ -54,7 +54,7 @@ public:
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
 	bool removeEntity(IdmEntity *entity) { return m_storage.removeEntity(entity); }
 
-	bool addProperty(IdmEntity *entity, IdmEntity *property) { return m_storage.addProperty(entity, property); }
+	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_storage.addProperty(entity, property, name); }
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_storage.removeProperty(entity, property); }
 
 private:

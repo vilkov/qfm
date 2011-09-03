@@ -70,15 +70,20 @@ QModelIndex EntitiesListModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-IdmEntity *EntitiesListModel::at(size_type index) const
+IdmEntity *EntitiesListModel::entityAt(size_type index) const
 {
 	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
 }
 
-void EntitiesListModel::add(IdmEntity *entity)
+const QString &EntitiesListModel::nameAt(size_type index) const
+{
+	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->name();
+}
+
+void EntitiesListModel::add(IdmEntity *entity, const QString &name)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntitiesListItem(entity));
+	m_items.push_back(new IdmEntitiesListItem(entity, name));
 	endInsertRows();
 }
 

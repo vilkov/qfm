@@ -26,9 +26,26 @@ public:
 		Path       = 9
 	};
 
-	typedef unsigned int                    id_type;
-	typedef HashedList<id_type, IdmEntity*> value_type;
-	typedef value_type::size_type           size_type;
+	struct Property
+	{
+		Property()
+		{}
+		Property(IdmEntity *entity) :
+			entity(entity)
+		{}
+		Property(IdmEntity *entity, const QString &name) :
+			entity(entity),
+			name(name)
+		{}
+
+		bool operator==(const Property &other) const { return entity == other.entity; }
+
+		IdmEntity *entity;
+		QString name;
+	};
+	typedef unsigned int                  id_type;
+	typedef HashedList<id_type, Property> value_type;
+	typedef value_type::size_type         size_type;
 	enum { InvalidIndex = value_type::InvalidIndex };
 	enum { InvalidId = (id_type)-1 };
 
@@ -43,10 +60,12 @@ public:
 	virtual ~IdmEntity()
 	{}
 
-	IdmEntity *at(size_type index) const { return m_items.at(index); }
+	IdmEntity *at(size_type index) const { return m_items.at(index).entity; }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(IdmEntity *item) const { return m_items.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_items.indexOf(id); }
+	const Property &property(size_type index) const { return m_items.at(index); }
+	const Property &property(IdmEntity *item) const { return m_items.at(item->id()); }
 
 	Type type() const { return m_type; }
 	id_type id() const { return m_id; }
@@ -55,12 +74,10 @@ public:
 
 	void addParent(IdmEntity *parent) { m_parents.add(parent->id(), parent); }
 	void removeParent(IdmEntity *parent) { m_parents.remove(parent->id()); }
-//	void removeParent(Parents::size_type index) { m_parents.remove(index); }
 
-	void add(IdmEntity *item) { m_items.add(item->id(), item); }
+	void add(IdmEntity *item, const QString &name) { m_items.add(item->id(), Property(item, name)); }
 	void remove(IdmEntity *item) { m_items.remove(item->id()); }
-//	void remove(size_type index) { m_items.remove(index); }
-	IdmEntity *take(size_type index) { return m_items.take(index); }
+	IdmEntity *take(size_type index) { return m_items.take(index).entity; }
 
 protected:
 	value_type m_items;

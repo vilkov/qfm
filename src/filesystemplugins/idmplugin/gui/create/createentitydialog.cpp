@@ -1,4 +1,5 @@
 #include "createentitydialog.h"
+#include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include <QtGui/QMessageBox>
 
 
@@ -83,7 +84,12 @@ void CreateEntityDialog::add()
 	if (m_delegate.container()->size() == 0)
 		QMessageBox::warning(this, windowTitle(), tr("There is no entities!"));
 	else
-		m_model.add(m_delegate.container()->at(0));
+	{
+		StringDialog dialog(tr("New property name"), tr("Name"), QString(), this);
+
+		if (dialog.exec() == StringDialog::Accepted)
+			m_model.add(m_delegate.container()->at(0), dialog.value());
+	}
 }
 
 void CreateEntityDialog::remove()

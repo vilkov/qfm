@@ -18,6 +18,9 @@ public:
     QString value() const { return m_lineEdit.text().simplified(); }
     virtual void accept();
 
+protected:
+    virtual bool check();
+
 private:
     QLabel m_label;
     QLineEdit m_lineEdit;

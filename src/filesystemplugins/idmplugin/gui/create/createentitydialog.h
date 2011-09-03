@@ -21,12 +21,17 @@ class CreateEntityDialog : public QDialog
     Q_OBJECT
 
 public:
+	typedef EntitiesListModel::size_type size_type;
+
+public:
     CreateEntityDialog(const IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
 
     IdmEntity::Type type() const { return static_cast<IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }
 
-    const EntitiesListModel &entities() const { return m_model; }
+	IdmEntity *property(size_type index) const { return m_model.entityAt(index); }
+	const QString &propertyName(size_type index) const { return m_model.nameAt(index); }
+	size_type size() const { return m_model.size(); }
 
     virtual void accept();
 

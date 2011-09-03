@@ -1,13 +1,13 @@
 #ifndef IDMSTORAGE_H_
 #define IDMSTORAGE_H_
 
+#include <sqlite3.h>
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include <QtCore/QMutex>
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
-#include "holders/dbhandleholder.h"
 #include "entities/idmentityroot.h"
 #include "queries/idmquery.h"
 #include "queries/idmquerycontext.h"
@@ -33,6 +33,7 @@ public:
 
 public:
 	IdmStorage(const Info &storage);
+	~IdmStorage();
 
 	bool isValid() const { return m_valid; }
 	const QString &lastError() const { return m_lastError; }
@@ -99,7 +100,7 @@ private:
 	QMutex m_mutex;
 	Info m_info;
 	bool m_valid;
-	DbHandleHolder m_db;
+	sqlite3 *m_db;
 	UndoStack m_undo;
 	IdmEntityRoot m_entities;
 	mutable QString m_lastError;

@@ -162,7 +162,7 @@ void FolderNodeBase::scanForCopy(const FileInfoList &entries, INode *destination
 	if (control)
 	{
 		BaseTask::EntryList fileNameList = toFileNameList(entries);
-		PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, fileNameList, control, move));
+		PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, fileNameList, destination, control, move));
 		m_tasks.add(task.data(), fileNameList);
 		Application::instance()->taskPool().handle(task.take());
 	}
@@ -176,10 +176,10 @@ void FolderNodeBase::scanForRemove(const FileInfoList &entries)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move)
+void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move)
 {
 	FileSystemItem *entry = entries->at(0);
-	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, destination, move));
+	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, destination, control, move));
 	m_tasks.resetTask(task.data(), entry->fileName());
 	Application::instance()->taskPool().handle(task.take());
 }
@@ -228,7 +228,7 @@ void FolderNodeBase::scanForCopy(const ModelEvent *e)
 	typedef const ScanFilesForCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	scanForCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, const_cast<NotConstEvent>(event)->destination, event->move);
+	scanForCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, event->destination, const_cast<NotConstEvent>(event)->control, event->move);
 }
 
 void FolderNodeBase::scanForRemove(const ModelEvent *e)

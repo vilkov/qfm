@@ -295,7 +295,7 @@ void IdmNodeBase::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList>
 
 }
 
-void IdmNodeBase::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move)
+void IdmNodeBase::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move)
 {
 
 }

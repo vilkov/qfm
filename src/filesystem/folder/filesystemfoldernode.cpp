@@ -373,7 +373,7 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &destination, bool move)
+void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -395,7 +395,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 		IFile::size_type freeSpace;
 		QString lockReason = move ? tr("Moving...") : tr("Copying...");
 
-		if (entries->totalSize() <= (freeSpace = destination->freeSpace()) ||
+		if (entries->totalSize() <= (freeSpace = control->freeSpace()) ||
 			QMessageBox::question(
 								&Application::instance()->mainWindow(),
 								lockReason,
@@ -415,7 +415,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 			}
 
 			updateSecondColumn(updateRange);
-			FolderNodeBase::performCopy(entries, destination, move);
+			FolderNodeBase::performCopy(entries, destination, control, move);
 		}
 		else
 		{

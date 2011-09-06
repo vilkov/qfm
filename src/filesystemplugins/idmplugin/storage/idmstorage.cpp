@@ -209,10 +209,7 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type, c
 bool IdmStorage::removeEntity(IdmEntity *entity)
 {
 	char *errorMsg = 0;
-	QByteArray sqlQuery = QString::fromLatin1("delete from ENTITY where ID = %1;"
-											  "delete from PROPERTIES where ENTITY_PROPERTY_ID = %1;"
-											  "drop table ENTITY_%1").
-											  arg(QString::number(entity->id())).toUtf8();
+	QByteArray sqlQuery = EntitiesTable::remove(entity->id());
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
@@ -252,7 +249,7 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property, const QStri
 		entity->indexOf(property->id()) == IdmEntity::InvalidIndex &&
 		!isThereCycles(entity, property))
 	{
-		IdmEntity::id_type id = loadId("PROPERTIES");
+		IdmEntity::id_type id = loadId(PropertiesTable::tableName());
 
 		if (id != IdmEntity::InvalidId)
 		{
@@ -290,9 +287,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 		{
 			if (cleanupPropertyValues(entity, property))
 			{
-				sqlQuery = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_%2").
-											   arg(QString::number(entity->id())).
-											   arg(QString::number(property->id())).toUtf8();
+				sqlQuery = EntitiesTable::removeProperty(entity->id(), property->id());
 
 				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
@@ -398,9 +393,7 @@ bool IdmStorage::removeOverlappingIds(IdmEntity *entity, IdmEntity *property, Id
 		QByteArray sqlQuery;
 		sqlite3_stmt *statement;
 		const IdmEntity::Parents &parents = property->parents();
-		QString query = QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_").
-											append(QString::number(property->id())).
-											append(QString::fromLatin1(" where PROPERTY_VALUE_ID in (%2)"));
+		QString query = PropertiesTable::Incomplete::selectValues(property->id());
 
 		for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 			if (parents.at(i) != entity)
@@ -436,7 +429,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity) const
 	char *errorMsg = 0;
 	QByteArray sqlQuery;
 	const IdmEntity::Parents &parents = entity->parents();
-	QString query = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").append(QString::number(entity->id()));
+	QString query = PropertiesTable::Incomplete::dropProperty(entity->id());
 
 	for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 	{
@@ -461,10 +454,7 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity, const IdsList &ids) con
 	char *errorMsg = 0;
 	QByteArray sqlQuery;
 	const IdmEntity::Parents &parents = entity->parents();
-	QString query = QString::fromLatin1("delete from ENTITY_%1_PROPERTY_").
-									    append(QString::number(entity->id())).
-									    append(QString::fromLatin1(" where PROPERTY_VALUE_ID in (%1)").
-									    		arg(Database::idsToString(ids)));
+	QString query = PropertiesTable::Incomplete::removeValues(entity->id(), ids);
 
 	for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 	{
@@ -489,7 +479,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 	char *errorMsg = 0;
 	QByteArray sqlQuery;
 	sqlite3_stmt *statement;
-	QString query = QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").arg(QString::number(entity->id()));
+	QString query = PropertiesTable::Incomplete::dropProperty2(entity->id());
 
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 		if (cleanupPropertyValues(entity, entity->at(i)))
@@ -519,11 +509,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 	IdsSet propertyIds;
 	QByteArray sqlQuery;
 	sqlite3_stmt *statement;
-	QString query = QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_").
-									    append(QString::number(entity->id())).
-									    append(QString::fromLatin1("_PROPERTY_%1")).
-									    append(QString::fromLatin1(" where ENTITY_VALUE_ID in (%1)").
-									    		arg(Database::idsToString(ids)));
+	QString query = PropertiesTable::Incomplete::selectValues(entity->id(), ids);
 
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 	{
@@ -555,9 +541,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) c
 {
 	IdsSet ids;
 	sqlite3_stmt *statement;
-	QByteArray sqlQuery = QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_%2").
-											  arg(QString::number(entity->id())).
-											  arg(QString::number(property->id())).toUtf8();
+	QByteArray sqlQuery = EntitiesTable::selectValues(entity->id(), property->id());
 
 	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 	{

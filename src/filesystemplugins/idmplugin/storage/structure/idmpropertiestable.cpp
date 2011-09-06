@@ -3,6 +3,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+QString PropertiesTable::tableName()
+{
+	return "PROPERTIES";
+}
+
 QByteArray PropertiesTable::create()
 {
 	return "create table PROPERTIES (ID int primary key, ENTITY_ID int, ENTITY_PROPERTY_ID int, NAME char(256))";
@@ -32,6 +37,38 @@ QByteArray PropertiesTable::remove(Database::id_type entity, Database::id_type p
 	return QString::fromLatin1("delete from PROPERTIES where ENTITY_ID = %1 and ENTITY_PROPERTY_ID = %2").
 			arg(QString::number(entity)).
 			arg(QString::number(property)).toUtf8();
+}
+
+QString PropertiesTable::Incomplete::selectValues(Database::id_type property)
+{
+	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_").
+			append(QString::number(property)).
+			append(QString::fromLatin1(" where PROPERTY_VALUE_ID in (%2)"));
+}
+
+QString PropertiesTable::Incomplete::selectValues(Database::id_type entity, const Database::IdsList &ids)
+{
+	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_").
+			append(QString::number(entity)).
+			append(QString::fromLatin1("_PROPERTY_%1")).
+			append(QString::fromLatin1(" where ENTITY_VALUE_ID in (%1)").arg(Database::idsToString(ids)));
+}
+
+QString PropertiesTable::Incomplete::dropProperty(Database::id_type property)
+{
+	return QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").append(QString::number(property));
+}
+
+QString PropertiesTable::Incomplete::dropProperty2(Database::id_type property)
+{
+	return QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").arg(QString::number(property));
+}
+
+QString PropertiesTable::Incomplete::removeValues(Database::id_type property, const Database::IdsList &ids)
+{
+	return QString::fromLatin1("delete from ENTITY_%1_PROPERTY_").
+			append(QString::number(property)).
+			append(QString::fromLatin1(" where PROPERTY_VALUE_ID in (%1)").arg(Database::idsToString(ids)));
 }
 
 IDM_PLUGIN_NS_END

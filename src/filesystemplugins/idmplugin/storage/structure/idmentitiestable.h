@@ -16,10 +16,15 @@ struct EntitiesTable
 		ShortFormat = 3
 	};
 
+	static QString tableName();
+
 	static QByteArray create();
 	static QByteArray select();
 	static QByteArray insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat);
+	static QByteArray remove(Database::id_type entity);
+	static QByteArray selectValues(Database::id_type entity, Database::id_type property);
 	static QByteArray removeValues(Database::id_type entity, const Database::IdsList &ids);
+	static QByteArray removeProperty(Database::id_type entity, Database::id_type property);
 };
 
 IDM_PLUGIN_NS_END

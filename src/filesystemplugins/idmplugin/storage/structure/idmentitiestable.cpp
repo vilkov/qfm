@@ -3,6 +3,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+QString EntitiesTable::tableName()
+{
+	return "ENTITY";
+}
+
 QByteArray EntitiesTable::create()
 {
 	return "create table ENTITY (ID int primary key, TYPE int, NAME char(256), SHORT_FORMAT char(256))";
@@ -24,11 +29,33 @@ QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id
 							   arg(Database::typeToString(type)).toUtf8();
 }
 
+QByteArray EntitiesTable::remove(Database::id_type entity)
+{
+	return QString::fromLatin1("delete from ENTITY where ID = %1;"
+							   "delete from PROPERTIES where ENTITY_PROPERTY_ID = %1;"
+							   "drop table ENTITY_%1").
+							   arg(QString::number(entity)).toUtf8();
+}
+
+QByteArray EntitiesTable::selectValues(Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_%2").
+			arg(QString::number(entity)).
+			arg(QString::number(property)).toUtf8();
+}
+
 QByteArray EntitiesTable::removeValues(Database::id_type entity, const Database::IdsList &ids)
 {
 	return QString::fromLatin1("delete from ENTITY_%1 where ID in (%2)").
 			arg(QString::number(entity)).
 			arg(Database::idsToString(ids)).toUtf8();
+}
+
+QByteArray EntitiesTable::removeProperty(Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("drop table ENTITY_%1_PROPERTY_%2").
+			arg(QString::number(entity)).
+			arg(QString::number(property)).toUtf8();
 }
 
 IDM_PLUGIN_NS_END

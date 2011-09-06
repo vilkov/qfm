@@ -28,6 +28,7 @@ public:
 
     IdmEntity::Type type() const { return static_cast<IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }
+    IdmShortFormat shortFormat() const { return m_lineEdit2.text().simplified(); }
 
 	IdmEntity *property(size_type index) const { return m_model.entityAt(index); }
 	const QString &propertyName(size_type index) const { return m_model.nameAt(index); }
@@ -47,6 +48,8 @@ private:
     QLabel m_label;
     QLineEdit m_lineEdit;
     QLabel m_label2;
+    QLineEdit m_lineEdit2;
+    QLabel m_label3;
     QComboBox m_comboBox;
     QTreeView m_view;
     QPushButton m_addEntity;

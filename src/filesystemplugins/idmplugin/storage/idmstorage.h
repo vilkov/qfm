@@ -12,6 +12,7 @@
 #include "queries/idmquery.h"
 #include "queries/idmquerycontext.h"
 #include "undo/idmstorageundocommand.h"
+#include "format/idmshortformat.h"
 #include "../idmplugin_ns.h"
 #include "../../../filesystem/info/filesystemfoldernodeinfo.h"
 
@@ -53,7 +54,7 @@ public:
 
 	QueryContext prepare(const Query &query) const;
 
-	IdmEntity *createEntity(const QString &name, IdmEntity::Type type);
+	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat);
 	bool removeEntity(IdmEntity *entity);
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
@@ -66,7 +67,6 @@ public:
 private:
 	QString idsToString(const IdsSet &ids) const;
 	QString idsToString(const IdsList &ids) const;
-	QString typeToString(IdmEntity::Type type) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
 	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;

@@ -96,7 +96,7 @@ IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) cons
 	QList<IdmEntity*> entities;
 
 	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-		if (m_container->at(i)->type() == IdmEntity::Path && !m_container->at(i)->parents().isEmpty())
+		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
 		{
 			entities.push_back(m_container->at(i)->parents().at(0));
 			break;
@@ -106,7 +106,7 @@ IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) cons
 		QMessageBox::information(&Application::instance()->mainWindow(),
 								 tr("Failed to add an entity value"),
 								 tr("There is no entities with property of type \"%1\".").
-								 arg(m_container->entityTypes().value(IdmEntity::Path).label));
+								 arg(m_container->entityTypes().value(Database::Path).label));
 	else
 		if (entities.size() == 1)
 		{
@@ -130,8 +130,8 @@ void IdmNodeBase::menuAction(QAction *action)
 
 			if (dialog.exec() == CreateEntityDialog::Accepted)
 				if (m_container->transaction())
-					if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
-						if (entity->type() == IdmEntity::Composite)
+					if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
+						if (entity->type() == Database::Composite)
 						{
 							bool ok = true;
 

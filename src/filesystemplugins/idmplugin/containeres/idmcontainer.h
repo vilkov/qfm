@@ -51,7 +51,7 @@ public:
 	bool release(const QByteArray &name) { return m_storage.release(name); }
 	void rollback(const QByteArray &name) { return m_storage.rollback(name); }
 
-	IdmEntity *createEntity(const QString &name, IdmEntity::Type type) { return m_storage.createEntity(name, type); }
+	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat) { return m_storage.createEntity(name, type, shortFormat); }
 	bool removeEntity(IdmEntity *entity) { return m_storage.removeEntity(entity); }
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_storage.addProperty(entity, property, name); }

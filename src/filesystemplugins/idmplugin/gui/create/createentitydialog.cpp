@@ -8,6 +8,8 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
 	m_label(this),
 	m_lineEdit(name, this),
     m_label2(this),
+    m_lineEdit2(this),
+    m_label3(this),
     m_comboBox(this),
     m_view(this),
     m_addEntity(tr("Add"), this),
@@ -26,16 +28,20 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
     m_label.setFont(font);
     m_label.setText(tr("Entity name"));
     m_label2.setFont(font);
-    m_label2.setText(tr("Select type"));
+    m_label2.setText(tr("Short format"));
+    m_label3.setFont(font);
+    m_label3.setText(tr("Select type"));
 
     m_gridLayout.setMargin(3);
     m_gridLayout.setSpacing(1);
     m_gridLayout.addWidget(&m_label,       0, 0, 1, 1);
     m_gridLayout.addWidget(&m_lineEdit,    0, 1, 1, 1);
     m_gridLayout.addWidget(&m_label2,      1, 0, 1, 1);
-    m_gridLayout.addWidget(&m_comboBox,    1, 1, 1, 1);
-    m_gridLayout.addLayout(&m_gridLayout2, 2, 0, 1, 2);
-    m_gridLayout.addWidget(&m_buttonBox,   3, 0, 1, 2);
+    m_gridLayout.addWidget(&m_lineEdit2,   1, 1, 1, 1);
+    m_gridLayout.addWidget(&m_label3,      2, 0, 1, 1);
+    m_gridLayout.addWidget(&m_comboBox,    2, 1, 1, 1);
+    m_gridLayout.addLayout(&m_gridLayout2, 3, 0, 1, 2);
+    m_gridLayout.addWidget(&m_buttonBox,   4, 0, 1, 2);
 
     m_horizontalLayout.setMargin(3);
     m_horizontalLayout.setSpacing(1);
@@ -71,12 +77,19 @@ void CreateEntityDialog::accept()
 	if (name().isEmpty())
 		QMessageBox::warning(this, windowTitle(), tr("You must enter the name!"));
 	else
-		QDialog::accept();
+	{
+		IdmShortFormat format = shortFormat();
+
+		if (!format.isValid())
+			QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
+		else
+			QDialog::accept();
+	}
 }
 
 void CreateEntityDialog::activated(int index)
 {
-	setListEnabled(m_comboBox.itemData(index, Qt::UserRole).toInt() == IdmEntity::Composite);
+	setListEnabled(m_comboBox.itemData(index, Qt::UserRole).toInt() == Database::Composite);
 }
 
 void CreateEntityDialog::add()

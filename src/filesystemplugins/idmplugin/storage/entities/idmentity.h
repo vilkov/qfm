@@ -4,7 +4,8 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
-#include "../../idmplugin_ns.h"
+#include "../format/idmshortformat.h"
+#include "../structure/idmdatabasetypes.h"
 #include "../../../../tools/containers/hashedlist.h"
 
 
@@ -13,19 +14,6 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntity
 {
 public:
-	enum Type
-	{
-		Int        = 1,
-		String     = 2,
-		Date       = 3,
-		Time       = 4,
-		DateTime   = 5,
-		Memo       = 6,
-		Composite  = 7,
-		Rating     = 8,
-		Path       = 9
-	};
-
 	struct Property
 	{
 		Property()
@@ -43,19 +31,21 @@ public:
 		IdmEntity *entity;
 		QString name;
 	};
-	typedef unsigned int                  id_type;
+	typedef Database::EntityType          Type;
+	typedef Database::id_type             id_type;
 	typedef HashedList<id_type, Property> value_type;
 	typedef value_type::size_type         size_type;
 	enum { InvalidIndex = value_type::InvalidIndex };
-	enum { InvalidId = (id_type)-1 };
+	enum { InvalidId = Database::InvalidId };
 
 	typedef HashedList<id_type, IdmEntity*> Parents;
 
 public:
-	IdmEntity(Type type, id_type id, const QString &name) :
+	IdmEntity(Type type, id_type id, const QString &name, const IdmShortFormat &shortFormat) :
 		m_type(type),
 		m_id(id),
-		m_name(name)
+		m_name(name),
+		m_shortFormat(shortFormat)
 	{}
 	virtual ~IdmEntity()
 	{}
@@ -87,6 +77,7 @@ private:
 	id_type m_id;
 	QString m_name;
 	Parents m_parents;
+	IdmShortFormat m_shortFormat;
 };
 
 IDM_PLUGIN_NS_END

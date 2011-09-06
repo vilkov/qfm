@@ -118,8 +118,8 @@ void ListEntityDialog::createEntity()
 		QByteArray name("createEntity");
 
 		if (m_container->savepoint(name))
-			if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type()))
-				if (entity->type() == IdmEntity::Composite)
+			if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
+				if (entity->type() == Database::Composite)
 				{
 					bool ok = true;
 

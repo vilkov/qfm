@@ -9,8 +9,8 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntityRoot : public IdmEntity
 {
 public:
-	IdmEntityRoot(id_type id, const QString &name) :
-		IdmEntity(Composite, id, name)
+	IdmEntityRoot() :
+		IdmEntity(Database::Composite, 0, QString(), QString())
 	{}
 	virtual ~IdmEntityRoot()
 	{

@@ -26,8 +26,8 @@ class IdmStorage
 public:
 	typedef IdmEntity::id_type        id_type;
 	typedef IdmEntity::size_type      size_type;
-	typedef QSet<id_type>             IdsSet;
-	typedef QList<id_type>            IdsList;
+	typedef Database::IdsSet          IdsSet;
+	typedef Database::IdsList         IdsList;
 	typedef QMap<IdmEntity*, IdsList> IdsMap;
 	enum { InvalidId = IdmEntity::InvalidId };
 	enum { InvalidIndex = IdmEntity::InvalidIndex };
@@ -65,8 +65,6 @@ public:
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
 
 private:
-	QString idsToString(const IdsSet &ids) const;
-	QString idsToString(const IdsList &ids) const;
 	IdmEntity::id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
 	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;

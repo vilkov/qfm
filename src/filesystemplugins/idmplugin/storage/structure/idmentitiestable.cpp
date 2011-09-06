@@ -24,4 +24,11 @@ QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id
 							   arg(Database::typeToString(type)).toUtf8();
 }
 
+QByteArray EntitiesTable::removeValues(Database::id_type entity, const Database::IdsList &ids)
+{
+	return QString::fromLatin1("delete from ENTITY_%1 where ID in (%2)").
+			arg(QString::number(entity)).
+			arg(Database::idsToString(ids)).toUtf8();
+}
+
 IDM_PLUGIN_NS_END

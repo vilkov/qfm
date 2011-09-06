@@ -19,6 +19,7 @@ struct EntitiesTable
 	static QByteArray create();
 	static QByteArray select();
 	static QByteArray insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat);
+	static QByteArray removeValues(Database::id_type entity, const Database::IdsList &ids);
 };
 
 IDM_PLUGIN_NS_END

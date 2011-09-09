@@ -68,10 +68,11 @@ DynamicByteArray::DynamicByteArray(const value_type *string, size_type size,
 		memcpy(m_data->string, string, size);
 
 		for (unsigned char i = 0; i < MaxNumberOfArgs; ++i)
-		{
-			memcpy(m_data->string + m_data->size, strings[i].string, strings[i].size);
-			m_data->size += strings[i].size;
-		}
+			if (strings[i].size)
+			{
+				memcpy(m_data->string + m_data->size, strings[i].string, strings[i].size);
+				m_data->size += strings[i].size;
+			}
 
 		m_data->string[m_data->size] = 0;
 	}

@@ -3,7 +3,6 @@
 
 #include <iterator>
 #include <string.h>
-#include <string>
 #include "pbytearray_imp.h"
 
 #define IMP(Type, var1, var2) Type var1 = ((Type)var2)
@@ -31,69 +30,9 @@ public:
 	{
 		createDynamic(size);
 	}
-	PByteArray(const value_type *data, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
-	{
-		if (data)
-			if (policy == CopyPolicy::CopyOnWrite)
-				createConstReference(data, strlen(data));
-			else
-				createDynamic(data, strlen(data));
-		else
-			createEmpty();
-	}
 	PByteArray(const PByteArray &other)
 	{
 		IMP_O; o->copyTo(m_imp);
-	}
-	template <typename T, size_type S>
-	PByteArray(const T (&data)[S])
-	{
-		createLiteral(static_cast<const value_type*>(data), S - 1);
-	}
-	template <typename T, size_type S>
-	PByteArray(const T (&data)[S],
-			const value_type *string1 = NULL,
-			const value_type *string2 = NULL,
-			const value_type *string3 = NULL,
-			const value_type *string4 = NULL,
-			const value_type *string5 = NULL,
-			const value_type *string6 = NULL,
-			const value_type *string7 = NULL,
-			const value_type *string8 = NULL,
-			const value_type *string9 = NULL,
-			const value_type *string10 = NULL)
-	{
-		createDynamic(static_cast<const value_type*>(data), S - 1, string1, string2, string3, string4, string5, string6, string7, string8, string9, string10);
-	}
-	PByteArray(const std::string &string, CopyPolicy::Type policy = CopyPolicy::CreateCopy)
-	{
-		if (string.size() > 0)
-			if (policy == CopyPolicy::CreateCopy)
-				createDynamic(static_cast<const value_type*>(string.data()), string.size());
-			else
-				createConstReference(static_cast<const value_type*>(string.data()), string.size());
-		else
-			createEmpty();
-	}
-	PByteArray(value_type *data, size_type len, ReferencePolicy::Type policy = ReferencePolicy::Reference)
-	{
-		if (data)
-			if (policy == ReferencePolicy::Reference)
-				createReference(data, len);
-			else
-				createDynamic(data, len);
-		else
-			createEmpty();
-	}
-	PByteArray(const value_type *data, size_type len, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
-	{
-		if (data)
-			if (policy == CopyPolicy::CopyOnWrite)
-				createConstReference(data, len);
-			else
-				createDynamic(data, len);
-		else
-			createEmpty();
 	}
 	~PByteArray() { IMP_D; d->~PByteArrayImplementation(); }
 
@@ -104,7 +43,7 @@ public:
 	value_type &operator[](size_type index) { IMP_D; return d->data()[index]; }
 	bool operator==(const PByteArray &other) const { return isEqual(other); }
 	bool operator!=(const PByteArray &other) const { return !isEqual(other); }
-	bool operator<(const PByteArray &other) const { return !isLess(other); }
+	bool operator<(const PByteArray &other) const { return isLess(other); }
 	void operator=(const PByteArray &other)
 	{
 		IMP_D; d->~PByteArrayImplementation();
@@ -153,9 +92,11 @@ public:
 
 	/********** Operations.Modification **********/
 	PByteArray &truncate(size_type pos) { IMP_D; d->truncate(pos); return *this; }
+	PByteArray &append(value_type *string) { IMP_D; d->append(string, strlen(string)); return *this; }
+	PByteArray &append(value_type *string, size_type size) { IMP_D; d->append(string, size); return *this; }
 	PByteArray &append(const value_type *string) { IMP_D; d->append(string, strlen(string)); return *this; }
-	PByteArray &append(const PByteArray &string) { IMP_D; d->append(string.data(), string.size()); return *this; }
 	PByteArray &append(const value_type *string, size_type size) { IMP_D; d->append(string, size); return *this; }
+	PByteArray &append(const PByteArray &string) { IMP_D; d->append(string.data(), string.size()); return *this; }
 
 	/********** Operations.Conversion **********/
 	int toInt(bool *ok = 0) const
@@ -197,6 +138,50 @@ public:
 	{
 		return PByteArray();
 	}
+
+	static PByteArray format(const value_type *data, size_type len,
+			const value_type *string1 = NULL,
+			const value_type *string2 = NULL,
+			const value_type *string3 = NULL,
+			const value_type *string4 = NULL,
+			const value_type *string5 = NULL,
+			const value_type *string6 = NULL,
+			const value_type *string7 = NULL,
+			const value_type *string8 = NULL,
+			const value_type *string9 = NULL,
+			const value_type *string10 = NULL)
+	{
+		return PByteArray(data, len, string1, string2, string3, string4, string5, string6, string7, string8, string9, string10);
+	}
+	static PByteArray reference(value_type *string, size_type len, ReferencePolicy::Type policy = ReferencePolicy::Reference)
+	{
+		return PByteArray(string, len, policy);
+	}
+	static PByteArray reference(const value_type *string, size_type len, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
+	{
+		return PByteArray(string, len, policy);
+	}
+	static PByteArray reference(const value_type *string, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite)
+	{
+		return PByteArray(string, policy);
+	}
+	static PByteArray copy(value_type *string, size_type len, ReferencePolicy::Type policy = ReferencePolicy::CreateCopy)
+	{
+		return PByteArray(string, len, policy);
+	}
+	static PByteArray copy(const value_type *string, size_type len, CopyPolicy::Type policy = CopyPolicy::CreateCopy)
+	{
+		return PByteArray(string, len, policy);
+	}
+	static PByteArray copy(const value_type *string, CopyPolicy::Type policy = CopyPolicy::CreateCopy)
+	{
+		return PByteArray(string, policy);
+	}
+	static PByteArray literal(const value_type *string, size_type len)
+	{
+		return PByteArray(string, len);
+	}
+
 
 	/********** Iterators **********/
 	class iterator
@@ -275,6 +260,56 @@ public:
 
 	const_iterator constBegin() const { IMP_C; return const_iterator(d->data()); }
 	const_iterator constEnd() const { IMP_C; return const_iterator(d->data() + d->size()); }
+
+protected:
+	explicit PByteArray(const value_type *string, size_type len,
+			const value_type *string1,
+			const value_type *string2,
+			const value_type *string3,
+			const value_type *string4,
+			const value_type *string5,
+			const value_type *string6,
+			const value_type *string7,
+			const value_type *string8,
+			const value_type *string9,
+			const value_type *string10)
+	{
+		createDynamic(string, len, string1, string2, string3, string4, string5, string6, string7, string8, string9, string10);
+	}
+	explicit PByteArray(value_type *data, size_type len, ReferencePolicy::Type policy)
+	{
+		if (data)
+			if (policy == ReferencePolicy::Reference)
+				createReference(data, len);
+			else
+				createDynamic(data, len);
+		else
+			createEmpty();
+	}
+	explicit PByteArray(const value_type *data, size_type len, CopyPolicy::Type policy)
+	{
+		if (data)
+			if (policy == CopyPolicy::CopyOnWrite)
+				createConstReference(data, len);
+			else
+				createDynamic(data, len);
+		else
+			createEmpty();
+	}
+	explicit PByteArray(const value_type *data, CopyPolicy::Type policy)
+	{
+		if (data)
+			if (policy == CopyPolicy::CopyOnWrite)
+				createConstReference(data, strlen(data));
+			else
+				createDynamic(data, strlen(data));
+		else
+			createEmpty();
+	}
+	explicit PByteArray(const value_type *data, size_type len)
+	{
+		createLiteral(static_cast<const value_type*>(data), len);
+	}
 
 private:
 	void createEmpty();

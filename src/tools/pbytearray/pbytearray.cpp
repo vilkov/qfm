@@ -41,6 +41,7 @@ void PByteArray::createDynamic(const value_type *data, size_type size,
 		const value_type *string9,
 		const value_type *string10)
 {
+	ASSERTS;
 	new (m_imp) DynamicByteArray(data, size, string1, string2, string3, string4, string5, string6, string7, string8, string9, string10);
 }
 

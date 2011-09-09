@@ -19,6 +19,9 @@ public:
 	PString() :
 		m_string()
 	{}
+	PString(const PString &other) :
+		m_string(other.m_string)
+	{}
 	PString(const value_type *data, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite) :
 		m_string(data, policy)
 	{}
@@ -49,7 +52,7 @@ public:
 	PString(value_type *string, size_type len, ReferencePolicy::Type policy = ReferencePolicy::Reference) :
 		m_string(string, len, policy)
 	{}
-	PString(const value_type *string, size_type len, CopyPolicy::Type policy = CopyPolicy::CreateCopy) :
+	PString(const value_type *string, size_type len, CopyPolicy::Type policy = CopyPolicy::CopyOnWrite) :
 		m_string(string, len, policy)
 	{}
 

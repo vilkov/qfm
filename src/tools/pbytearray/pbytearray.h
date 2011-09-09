@@ -134,61 +134,21 @@ public:
 		if ((i = d->size()) < (q = o->size()))
 			return false;
 		else
-		{
-			const value_type *data1 = d->data() + i - 1;
-			const value_type *data2 = o->data() + q - 1;
-
-			for (--q; q > 0; --data1, --data2, --q)
-				if ((*data1) != (*data2))
-					return false;
-
-			return (*data1) == (*data2);
-		}
+			return strcmp(d->data() + i - q, o->data()) == 0;
 	}
 	bool isEqual(const PByteArray &other) const
 	{
 		IMP_C; IMP_O;
-		size_type q;
 
-		if ((q = d->size()) != o->size())
+		if (d->size() != o->size())
 			return false;
 		else
-		{
-			const value_type *data1 = d->data();
-			const value_type *data2 = o->data();
-
-			for (size_type i = 0; i < q; ++data1, ++data2, ++i)
-				if ((*data1) != (*data2))
-					return false;
-
-			return true;
-		}
+			return strcmp(d->data(), o->data()) == 0;
 	}
 	bool isLess(const PByteArray &other) const
 	{
 		IMP_C; IMP_O;
-		size_type q;
-		size_type e;
-
-		if ((q = d->size()) == 0)
-			return true;
-		else
-			if ((e = o->size()) == 0)
-				return false;
-			else
-			{
-				if (q > e)
-					q = e;
-
-				const value_type *data1 = d->data();
-				const value_type *data2 = o->data();
-
-				for (size_type i = 0; i < q; ++data1, ++data2, ++i)
-					if ((*data1) > (*data2))
-						return false;
-
-				return true;
-			}
+		return strcmp(d->data(), o->data()) < 0;
 	}
 
 	/********** Operations.Modification **********/

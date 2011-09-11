@@ -5,7 +5,6 @@
 #include "undo/concrete/idmstorageundoaddproperty.h"
 #include "undo/concrete/idmstorageundoremoveentity.h"
 #include "undo/concrete/idmstorageundoremoveproperty.h"
-#include "../../../tools/pbytearray/pbytearray.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -82,15 +81,15 @@ bool IdmStorage::transaction()
 		else
 		{
 			char *errorMsg = 0;
-			const PByteArray sqlQuery("begin transaction");
+			static const char *sqlQuery = "begin transaction";
 
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			if (sqlite3_exec(m_db, sqlQuery, NULL, NULL, &errorMsg) == SQLITE_OK)
 			{
 				m_undo.add(name, UndoList());
 				return true;
 			}
 			else
-				setLastError(sqlQuery.data(), errorMsg);
+				setLastError(sqlQuery, errorMsg);
 		}
 	}
 
@@ -100,16 +99,16 @@ bool IdmStorage::transaction()
 bool IdmStorage::commit()
 {
 	char *errorMsg = 0;
-	const PByteArray sqlQuery("commit");
+	static const char *sqlQuery = "commit";
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(m_db, sqlQuery, NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
 		clearUndoStack();
 		return true;
 	}
 	else
 	{
-		setLastError(sqlQuery.data(), errorMsg);
+		setLastError(sqlQuery, errorMsg);
 		return false;
 	}
 }
@@ -117,12 +116,12 @@ bool IdmStorage::commit()
 void IdmStorage::rollback()
 {
 	char *errorMsg = 0;
-	const PByteArray sqlQuery("rollback");
+	static const char *sqlQuery = "rollback";
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_exec(m_db, sqlQuery, NULL, NULL, &errorMsg) == SQLITE_OK)
 		performUndo();
 	else
-		setLastError(sqlQuery.data(), errorMsg);
+		setLastError(sqlQuery, errorMsg);
 }
 
 bool IdmStorage::savepoint(const QByteArray &name)

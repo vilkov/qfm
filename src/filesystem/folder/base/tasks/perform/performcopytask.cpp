@@ -4,11 +4,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move) :
+PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) :
 	PerformTask(receiver),
 	m_entries(entries.take()),
 	m_control(control.take()),
-	m_destination(destination),
 	m_move(move),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
@@ -19,9 +18,9 @@ PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemLis
 
 void PerformCopyTask::run(const volatile bool &aborted)
 {
-	m_destination->refresh();
+	m_control->refresh();
 
-	if (m_destination->exists())
+	if (m_control->exists())
 	{
 		bool tryAgain;
 		FileSystemItem *entry;
@@ -43,7 +42,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 
 	if (!aborted && !isControllerDead())
 	{
-		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_destination, m_control, m_move));
+		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_control, m_move));
 		Application::postEvent(receiver(), event.take());
 	}
 }

@@ -5,6 +5,7 @@
 #include "../items/idmseparator.h"
 #include "../items/idmitemslist.h"
 #include "../control/idmfilecontrol.h"
+#include "../gui/value/newvaluedialog.h"
 #include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
 #include "../../../application.h"
@@ -91,31 +92,38 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 	return 0;
 }
 
-IFileControl *IdmNodeBase::acceptCopy(const FileInfoList &files, bool move) const
+ICopyControl *IdmNodeBase::createControl() const
 {
-	QList<IdmEntity*> entities;
-
-	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
-		{
-			entities.push_back(m_container->at(i)->parents().at(0));
-			break;
-		}
-
-	if (entities.isEmpty())
-		QMessageBox::information(&Application::instance()->mainWindow(),
-								 tr("Failed to add an entity value"),
-								 tr("There is no entities with property of type \"%1\".").
-								 arg(m_container->entityTypes().value(Database::Path).label));
-	else
-		if (entities.size() == 1)
-		{
-			IdmFileControl control(entities.at(0));
-		}
-		else
-		{
-
-		}
+//	QSet<IdmEntity*> entities;
+//
+//	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
+//		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
+//			entities.insert(m_container->at(i)->parents().at(0));
+//
+//	if (entities.isEmpty())
+//		QMessageBox::information(&Application::instance()->mainWindow(),
+//								 tr("Failed to add an entity value"),
+//								 tr("There is no entities with property of type \"%1\".").
+//								 arg(m_container->entityTypes().value(Database::Path).label));
+//	else
+//		if (entities.size() == 1)
+//			if (m_container->transaction())
+//			{
+//				NewValueDialog dialog(m_container, *entities.begin(), &Application::instance()->mainWindow());
+//
+//				if (dialog.exec() == NewValueDialog::Accepted)
+//				{
+//					IdmFileControl control(*entities.begin());
+//				}
+//				else
+//					m_container->rollback();
+//			}
+//			else
+//				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+//		else
+//		{
+//
+//		}
 
 	return 0;
 }

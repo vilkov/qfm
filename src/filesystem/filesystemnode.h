@@ -4,7 +4,6 @@
 #include <QtCore/QSet>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
-#include "filesystem_ns.h"
 #include "interfaces/filesysteminode.h"
 
 
@@ -40,6 +39,9 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
+
+protected:
+	typedef ICopyControl::FileInfoList FileInfoList;
 
 protected:
 	QStringList toFileNameList(const FileInfoList &files) const;

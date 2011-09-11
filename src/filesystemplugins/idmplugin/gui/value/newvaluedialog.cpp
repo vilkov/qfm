@@ -6,7 +6,7 @@ NewValueDialog::NewValueDialog(IdmContainer *container, IdmEntity *entity, QWidg
 	m_container(container),
 	m_entity(entity),
 	m_view(this),
-	m_buttonBox(this),
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
 	setWindowTitle(tr("New value for \"%1\"").arg(entity->name()));

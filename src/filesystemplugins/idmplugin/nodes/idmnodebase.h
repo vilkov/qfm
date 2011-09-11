@@ -29,7 +29,7 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
-	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const;
+	virtual ICopyControl *createControl() const;
 
 	/* INode::IFileOperations */
 	virtual void menuAction(QAction *action);

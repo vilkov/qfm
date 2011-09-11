@@ -20,7 +20,7 @@ public:
     virtual bool event(QEvent *event);
 
     /* INode */
-	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const;
+	virtual ICopyControl *createControl() const;
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const;
@@ -38,7 +38,7 @@ protected:
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
 	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move) = 0;
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) = 0;
 	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
 	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move) = 0;
 	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries) = 0;
@@ -49,9 +49,9 @@ protected:
 protected:
 	/* Prepare tasks */
 	void scanForSize(const FileInfoList &entries);
-	void scanForCopy(const FileInfoList &entries, INode *destination, bool move);
+	void scanForCopy(const FileInfoList &entries, PScopedPointer<IFileControl> &control, bool move);
 	void scanForRemove(const FileInfoList &entries);
-	void performCopy(PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move);
+	void performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move);
 	void performRemove(PScopedPointer<FileSystemList> &entries);
 
 protected:

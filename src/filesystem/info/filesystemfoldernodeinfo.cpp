@@ -156,6 +156,11 @@ IFileControl *Info::create(const QString &name, FileType type, QString &error) c
 	return 0;
 }
 
+bool Info::acceptCopy(const FileInfoList &files, bool move) const
+{
+	return true;
+}
+
 const QIcon &Info::icon() const
 {
 	if (m_icon.isNull())

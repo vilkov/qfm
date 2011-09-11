@@ -26,7 +26,7 @@ public:
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
-	virtual IFileControl *acceptCopy(const FileInfoList &files, bool move) const { return 0; }
+	virtual ICopyControl *createControl() const { return 0; }
 
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return true; }

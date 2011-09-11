@@ -373,7 +373,7 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move)
+void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -400,7 +400,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 								&Application::instance()->mainWindow(),
 								lockReason,
 								tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
-									arg(destination->absoluteFilePath()).
+									arg(control->absoluteFilePath()).
 									arg(Tools::humanReadableShortSize(freeSpace)).
 									arg(Tools::humanReadableShortSize(entries->totalSize())),
 								QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
@@ -415,7 +415,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 			}
 
 			updateSecondColumn(updateRange);
-			FolderNodeBase::performCopy(entries, destination, control, move);
+			FolderNodeBase::performCopy(entries, control, move);
 		}
 		else
 		{
@@ -717,6 +717,7 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 	RangeIntersection updateRange;
 	QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 	QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
+	PScopedPointer<IFileControl> control(destination->createControl());
 
 	list.reserve(entries.size());
 
@@ -734,7 +735,7 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, b
 	}
 
 	updateFirstColumn(updateRange);
-	FolderNodeBase::scanForCopy(list, destination, move);
+	FolderNodeBase::scanForCopy(list, move);
 }
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const

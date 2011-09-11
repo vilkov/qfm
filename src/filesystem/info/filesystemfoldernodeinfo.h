@@ -3,12 +3,12 @@
 
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
-#include "../interfaces/filesystemifilecontrol.h"
+#include "../interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class Info : public IFileControl
+class Info : public ICopyControl
 {
 public:
     Info();
@@ -41,6 +41,8 @@ public:
 	virtual IFileControl *create(IFileControl *info, QString &error) const;
 	virtual IFileControl *create(const QString &name, FileType type, QString &error) const;
 
+	/* ICopyControl */
+	virtual bool acceptCopy(const FileInfoList &files, bool move) const;
 
 public:
 	bool isRoot() const { return m_info.isRoot(); }

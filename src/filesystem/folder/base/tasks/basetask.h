@@ -5,10 +5,10 @@
 #include <QtCore/QStringList>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
-#include "items/filesystemlist.h"
-#include "items/filesystementry.h"
 #include "../containers/filesystemupdateslist.h"
-#include "../../events/filesystemmodelevent.h"
+#include "../events/filesystemmodelevent.h"
+#include "../../../list/filesystemlist.h"
+#include "../../../list/filesystementry.h"
 #include "../../../interfaces/filesysteminode.h"
 #include "../../../../tools/taskspool/task.h"
 #include "../../../../tools/pointers/pscopedpointer.h"

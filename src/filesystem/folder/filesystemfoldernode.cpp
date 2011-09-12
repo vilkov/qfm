@@ -1,12 +1,14 @@
 #include "filesystemfoldernode.h"
 #include "items/filesystemfoldernoderoot.h"
 #include "items/filesystemfoldernodeentry.h"
+#include "base/tasks/basetask.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 
 #include <QtGui/QClipboard>
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -373,7 +375,7 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move)
+void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -660,7 +662,7 @@ void FolderNode::processLockedIndexList(const QModelIndexList &list, Functors::F
 
 void FolderNode::scanForRemove(const ProcessedList &entries)
 {
-	FileInfoList list;
+	QStringList list;
 	FolderNodeEntry *entry;
 	Values::size_type index;
 	RangeIntersection updateRange;
@@ -677,7 +679,7 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 			entry->lock(tr("Removing..."));
 
 		updateRange.add(index, index);
-		list.push_back(entry);
+		list.push_back(entry->fileName());
 	}
 
 	updateFirstColumn(updateRange);
@@ -686,7 +688,7 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 
 void FolderNode::scanForSize(const ProcessedList &entries)
 {
-	FileInfoList list;
+	QStringList list;
 	FolderNodeEntry *entry;
 	Values::size_type index;
 	RangeIntersection updateRange;
@@ -699,7 +701,7 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
 			updateRange.add(index, index);
-			list.push_back(entry);
+			list.push_back(entry->fileName());
 		}
 
 	if (!list.isEmpty())
@@ -711,31 +713,35 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
 {
-	FileInfoList list;
-	FolderNodeEntry *entry;
-	Values::size_type index;
-	RangeIntersection updateRange;
-	QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
-	QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
-	PScopedPointer<IFileControl> control(destination->createControl());
+	PScopedPointer<ICopyControl> control(destination->createControl());
 
-	list.reserve(entries.size());
-
-	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
+	if (control)
 	{
-		index = entries.at(i).first;
+		QStringList list;
+		FolderNodeEntry *entry;
+		Values::size_type index;
+		RangeIntersection updateRange;
+		QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
+		QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
 
-		if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
-			entry->lock(folderLockReason);
-		else
-			entry->lock(fileLockReason);
+		list.reserve(entries.size());
 
-		updateRange.add(index, index);
-		list.push_back(entry);
+		for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
+		{
+			index = entries.at(i).first;
+
+			if ((entry = static_cast<FolderNodeEntry*>(entries.at(i).second))->isDir())
+				entry->lock(folderLockReason);
+			else
+				entry->lock(fileLockReason);
+
+			updateRange.add(index, index);
+			list.push_back(entry->fileName());
+		}
+
+		updateFirstColumn(updateRange);
+		FolderNodeBase::scanForCopy(list, control, move);
 	}
-
-	updateFirstColumn(updateRange);
-	FolderNodeBase::scanForCopy(list, move);
 }
 
 QModelIndex FolderNode::index(int column, FolderNodeItem *item) const

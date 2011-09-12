@@ -3,12 +3,12 @@
 
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
-#include "../interfaces/filesystemicopycontrol.h"
+#include "../interfaces/filesystemifilecontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class Info : public ICopyControl
+class Info : public IFileControl
 {
 public:
     Info();
@@ -20,14 +20,14 @@ public:
 #endif
 
 	/* IFileControl::IFileInfo */
-	virtual bool isDir() const { return m_info.isDir(); }
-	virtual bool isFile() const { return m_info.isFile(); }
-	virtual bool exists() const { return m_info.exists(); }
-	virtual QString fileName() const { return m_info.fileName(); }
-	virtual QString absolutePath() const { return m_info.absolutePath(); }
-	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
+	virtual bool isDir() const;
+	virtual bool isFile() const;
+	virtual bool exists() const;
+	virtual QString fileName() const;
+	virtual QString absolutePath() const;
+	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const { return m_info.lastModified(); }
+	virtual QDateTime lastModified() const;
 	virtual void refresh();
 
 	/* IFileControl */
@@ -40,9 +40,6 @@ public:
 
 	virtual IFileControl *create(IFileControl *info, QString &error) const;
 	virtual IFileControl *create(const QString &name, FileType type, QString &error) const;
-
-	/* ICopyControl */
-	virtual bool acceptCopy(const FileInfoList &files, bool move) const;
 
 public:
 	bool isRoot() const { return m_info.isRoot(); }

@@ -4,7 +4,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) :
+PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	PerformTask(receiver),
 	m_entries(entries.take()),
 	m_control(control.take()),

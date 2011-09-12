@@ -20,18 +20,18 @@ public:
 	class Event : public PerformTask::Event
 	{
 	public:
-		Event(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) :
+		Event(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			PerformTask::Event(CopyFiles, canceled, entries),
 			control(control.take()),
 			move(move)
 		{}
 
-		PScopedPointer<IFileControl> control;
+		PScopedPointer<ICopyControl> control;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move);
+	PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 
@@ -43,7 +43,7 @@ protected:
 
 private:
 	PScopedPointer<FileSystemList> m_entries;
-	PScopedPointer<IFileControl> m_control;
+	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;

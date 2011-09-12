@@ -41,10 +41,7 @@ protected:
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 
 protected:
-	typedef ICopyControl::FileInfoList FileInfoList;
-
-protected:
-	QStringList toFileNameList(const FileInfoList &files) const;
+	QStringList toFileNameList(const FileSystemList *files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
 	void removeThis();
 

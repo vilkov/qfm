@@ -3,6 +3,7 @@
 #include "tasks/scan/scanfilestasks.h"
 #include "tasks/perform/performcopytask.h"
 #include "tasks/perform/performremovetask.h"
+#include "../../info/filesystemcopyinfo.h"
 #include "../../../application.h"
 
 #include <QtGui/QMessageBox>
@@ -83,7 +84,7 @@ bool FolderNodeBase::event(QEvent *e)
 
 ICopyControl *FolderNodeBase::createControl() const
 {
-	return new Info(m_info);
+	return new CopyInfo(m_info);
 }
 
 bool FolderNodeBase::isDir() const
@@ -144,32 +145,28 @@ void FolderNodeBase::refresh()
 			removeThis();
 }
 
-void FolderNodeBase::scanForSize(const FileInfoList &entries)
+void FolderNodeBase::scanForSize(const QStringList &entries)
 {
-	BaseTask::EntryList fileNameList = toFileNameList(entries);
-
-	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, fileNameList));
-	m_tasks.add(task.data(), fileNameList);
+	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
+	m_tasks.add(task.data(), entries);
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::scanForCopy(const FileInfoList &entries, PScopedPointer<IFileControl> &control, bool move)
+void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	BaseTask::EntryList fileNameList = toFileNameList(entries);
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, fileNameList, control, move));
-	m_tasks.add(task.data(), fileNameList);
+	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
+	m_tasks.add(task.data(), entries);
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::scanForRemove(const FileInfoList &entries)
+void FolderNodeBase::scanForRemove(const QStringList &entries)
 {
-	BaseTask::EntryList fileNameList = toFileNameList(entries);
-	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, fileNameList));
-	m_tasks.add(task.data(), fileNameList);
+	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
+	m_tasks.add(task.data(), entries);
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move)
+void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 	FileSystemItem *entry = entries->at(0);
 	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));

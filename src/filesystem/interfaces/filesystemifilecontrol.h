@@ -4,7 +4,6 @@
 #include <QtCore/QString>
 #include "filesystemifile.h"
 #include "filesystemifileinfo.h"
-#include "../filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN

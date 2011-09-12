@@ -61,7 +61,7 @@ protected:
 	virtual UpdatesList::Map updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
 	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, INode *destination, PScopedPointer<IFileControl> &control, bool move);
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
 	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
 	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move);
 	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries);

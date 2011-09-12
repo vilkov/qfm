@@ -33,24 +33,24 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) :
+		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			ScanFilesTask::Event(type, canceled, entries),
 			control(control.take()),
 			move(move)
 		{}
 
-		PScopedPointer<IFileControl> control;
+		PScopedPointer<ICopyControl> control;
 		bool move;
 	};
 
 public:
-	ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<IFileControl> &control, bool move);
+	ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 
 private:
 	INode *m_destination;
-	PScopedPointer<IFileControl> m_control;
+	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 };
 

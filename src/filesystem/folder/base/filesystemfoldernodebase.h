@@ -1,10 +1,12 @@
 #ifndef FILESYSTEMFOLDERNODEBASE_H_
 #define FILESYSTEMFOLDERNODEBASE_H_
 
-#include "tasks/basetask.h"
+#include <QtCore/QStringList>
+#include "events/filesystemmodelevent.h"
 #include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
 #include "../../filesystemnode.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -38,7 +40,7 @@ protected:
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
 	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move) = 0;
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) = 0;
 	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
 	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move) = 0;
 	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries) = 0;
@@ -48,10 +50,10 @@ protected:
 
 protected:
 	/* Prepare tasks */
-	void scanForSize(const FileInfoList &entries);
-	void scanForCopy(const FileInfoList &entries, PScopedPointer<IFileControl> &control, bool move);
-	void scanForRemove(const FileInfoList &entries);
-	void performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<IFileControl> &control, bool move);
+	void scanForSize(const QStringList &entries);
+	void scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void scanForRemove(const QStringList &entries);
+	void performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
 	void performRemove(PScopedPointer<FileSystemList> &entries);
 
 protected:

@@ -1,6 +1,4 @@
 #include "scanfilestasks.h"
-#include "../items/filesystemlist.h"
-#include "../items/filesystementry.h"
 #include "../../../../../application.h"
 
 
@@ -38,7 +36,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<IFileControl> &control, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	ScanFilesTask(receiver, info, entries),
 	m_control(control.take()),
 	m_move(move)

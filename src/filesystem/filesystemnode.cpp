@@ -107,13 +107,13 @@ void Node::switchTo(Node *node, const QModelIndex &selected)
 		node->viewThis(*it, selected);
 }
 
-QStringList Node::toFileNameList(const FileInfoList &files) const
+QStringList Node::toFileNameList(const FileSystemList *files) const
 {
 	QStringList res;
-	res.reserve(files.size());
+	res.reserve(files->size());
 
-	for (FileInfoList::size_type i = 0, size = files.size(); i < size; ++i)
-		res.push_back(files.at(i)->fileName());
+	for (FileSystemList::size_type i = 0, size = files->size(); i < size; ++i)
+		res.push_back(files->at(i)->fileName());
 
 	return res;
 }

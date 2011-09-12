@@ -2,7 +2,7 @@
 #define FILESYSTEMMODELEVENT_H_
 
 #include <QtCore/QEvent>
-#include "../../filesystem_ns.h"
+#include "../../../filesystem_ns.h"
 
 
 FILE_SYSTEM_NS_BEGIN

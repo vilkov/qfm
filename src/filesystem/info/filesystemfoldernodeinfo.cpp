@@ -50,6 +50,36 @@ Info::Info(const QFileInfo &info, uint userId, uint groupId) :
 }
 #endif
 
+bool Info::isDir() const
+{
+	return m_info.isDir();
+}
+
+bool Info::isFile() const
+{
+	return m_info.isFile();
+}
+
+bool Info::exists() const
+{
+	return m_info.exists();
+}
+
+QString Info::fileName() const
+{
+	return m_info.fileName();
+}
+
+QString Info::absolutePath() const
+{
+	return m_info.absolutePath();
+}
+
+QString Info::absoluteFilePath() const
+{
+	return m_info.absoluteFilePath();
+}
+
 QString Info::absoluteFilePath(const QString &fileName) const
 {
 #ifdef Q_OS_WIN
@@ -70,6 +100,11 @@ QString Info::absoluteFilePath(const QString &fileName) const
 	else
 		return str.append(QChar('/')).append(fileName);
 #endif
+}
+
+QDateTime Info::lastModified() const
+{
+	return m_info.lastModified();
 }
 
 void Info::refresh()
@@ -154,11 +189,6 @@ IFileControl *Info::create(const QString &name, FileType type, QString &error) c
 			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(name));
 
 	return 0;
-}
-
-bool Info::acceptCopy(const FileInfoList &files, bool move) const
-{
-	return true;
 }
 
 const QIcon &Info::icon() const

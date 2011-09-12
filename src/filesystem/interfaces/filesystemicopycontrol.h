@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMICOPYCONTROL_H_
 #define FILESYSTEMICOPYCONTROL_H_
 
-#include <QtCore/QList>
 #include "filesystemifilecontrol.h"
+#include "../list/filesystemlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -10,10 +10,9 @@ FILE_SYSTEM_NS_BEGIN
 class ICopyControl : public IFileControl
 {
 public:
-	typedef QList<IFileInfo*> FileInfoList;
-
-public:
-	virtual bool acceptCopy(const FileInfoList &files, bool move) const = 0;
+	virtual bool physicalCopyIsNecessary() const = 0;
+	virtual bool start(const FileSystemList *files, bool move) const = 0;
+	virtual void done(bool error) const = 0;
 };
 
 FILE_SYSTEM_NS_END

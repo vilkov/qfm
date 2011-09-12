@@ -94,36 +94,36 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 
 ICopyControl *IdmNodeBase::createControl() const
 {
-//	QSet<IdmEntity*> entities;
-//
-//	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-//		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
-//			entities.insert(m_container->at(i)->parents().at(0));
-//
-//	if (entities.isEmpty())
-//		QMessageBox::information(&Application::instance()->mainWindow(),
-//								 tr("Failed to add an entity value"),
-//								 tr("There is no entities with property of type \"%1\".").
-//								 arg(m_container->entityTypes().value(Database::Path).label));
-//	else
-//		if (entities.size() == 1)
-//			if (m_container->transaction())
-//			{
-//				NewValueDialog dialog(m_container, *entities.begin(), &Application::instance()->mainWindow());
-//
-//				if (dialog.exec() == NewValueDialog::Accepted)
-//				{
-//					IdmFileControl control(*entities.begin());
-//				}
-//				else
-//					m_container->rollback();
-//			}
-//			else
-//				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-//		else
-//		{
-//
-//		}
+	QSet<IdmEntity*> entities;
+
+	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
+		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
+			entities.insert(m_container->at(i)->parents().at(0));
+
+	if (entities.isEmpty())
+		QMessageBox::information(&Application::instance()->mainWindow(),
+								 tr("Failed to add an entity value"),
+								 tr("There is no entities with property of type \"%1\".").
+								 arg(m_container->entityTypes().value(Database::Path).label));
+	else
+		if (entities.size() == 1)
+			if (m_container->transaction())
+			{
+				NewValueDialog dialog(m_container, *entities.begin(), &Application::instance()->mainWindow());
+
+				if (dialog.exec() == NewValueDialog::Accepted)
+				{
+					IdmFileControl control(*entities.begin());
+				}
+				else
+					m_container->rollback();
+			}
+			else
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+		else
+		{
+
+		}
 
 	return 0;
 }

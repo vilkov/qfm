@@ -2,7 +2,7 @@
 #define FILESYSTEMROOTNODE_H_
 
 #include "filesystemnode.h"
-#include "info/filesystemfoldernodeinfo.h"
+#include "info/filesysteminfo.h"
 #include "folder/containers/filesystemfoldernodevalues.h"
 
 

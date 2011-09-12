@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMFOLDERNODEFILE_H_
-#define FILESYSTEMFOLDERNODEFILE_H_
+#ifndef FILESYSTEMFILE_H_
+#define FILESYSTEMFILE_H_
 
 #include <QtCore/QFile>
 #include "../interfaces/filesystemifile.h"
@@ -29,4 +29,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFOLDERNODEFILE_H_ */
+#endif /* FILESYSTEMFILE_H_ */

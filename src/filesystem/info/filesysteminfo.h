@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMFOLDERNODEINFO_H_
-#define FILESYSTEMFOLDERNODEINFO_H_
+#ifndef FILESYSTEMINFO_H_
+#define FILESYSTEMINFO_H_
 
 #include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
@@ -67,4 +67,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFOLDERNODEINFO_H_ */
+#endif /* FILESYSTEMINFO_H_ */

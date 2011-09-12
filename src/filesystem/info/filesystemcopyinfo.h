@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMCOPYINFO_H_
 #define FILESYSTEMCOPYINFO_H_
 
-#include "filesystemfoldernodeinfo.h"
+#include "filesysteminfo.h"
 #include "../interfaces/filesystemicopycontrol.h"
 
 

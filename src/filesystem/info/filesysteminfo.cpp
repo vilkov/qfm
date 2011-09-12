@@ -1,5 +1,5 @@
-#include "filesystemfoldernodeinfo.h"
-#include "filesystemfoldernodefile.h"
+#include "filesysteminfo.h"
+#include "filesystemfile.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../application.h"
 #include <QtCore/QFSFileEngine>

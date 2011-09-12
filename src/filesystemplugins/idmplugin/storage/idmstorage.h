@@ -14,7 +14,7 @@
 #include "undo/idmstorageundocommand.h"
 #include "format/idmshortformat.h"
 #include "../idmplugin_ns.h"
-#include "../../../filesystem/info/filesystemfoldernodeinfo.h"
+#include "../../../filesystem/info/filesysteminfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN

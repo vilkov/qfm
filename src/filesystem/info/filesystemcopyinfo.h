@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMCOPYINFO_H_
 #define FILESYSTEMCOPYINFO_H_
 
+#include <QtCore/QCoreApplication>
 #include "filesysteminfo.h"
 #include "../interfaces/filesystemicopycontrol.h"
 
@@ -9,6 +10,8 @@ FILE_SYSTEM_NS_BEGIN
 
 class CopyInfo : public ICopyControl
 {
+	Q_DECLARE_TR_FUNCTIONS(CopyInfo)
+
 public:
 	CopyInfo(const Info &info);
 

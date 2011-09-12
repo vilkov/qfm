@@ -380,33 +380,10 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	RangeIntersection updateRange;
 	Values::size_type index;
 
-	if (canceled)
-	{
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	if (!canceled && control->start(entries.data(), move))
+		if (control->physicalCopyIsNecessary())
 		{
-			index = m_items.indexOf(entries->at(i)->fileName());
-			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
-			updateRange.add(index, index);
-		}
-
-		tasks().removeAll(entries->at(0)->fileName());
-		updateBothColumns(updateRange);
-	}
-	else
-	{
-		IFile::size_type freeSpace;
-		QString lockReason = move ? tr("Moving...") : tr("Copying...");
-
-		if (entries->totalSize() <= (freeSpace = control->freeSpace()) ||
-			QMessageBox::question(
-								&Application::instance()->mainWindow(),
-								lockReason,
-								tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
-									arg(control->absoluteFilePath()).
-									arg(Tools::humanReadableShortSize(freeSpace)).
-									arg(Tools::humanReadableShortSize(entries->totalSize())),
-								QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-		{
+			QString lockReason = move ? tr("Moving...") : tr("Copying...");
 			FileSystemItem *entry;
 
 			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
@@ -418,20 +395,20 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 
 			updateSecondColumn(updateRange);
 			FolderNodeBase::performCopy(entries, control, move);
+			return;
 		}
 		else
-		{
-			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
-			{
-				index = m_items.indexOf(entries->at(i)->fileName());
-				static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
-				updateRange.add(index, index);
-			}
+			control->done(false);
 
-			tasks().removeAll(entries->at(0)->fileName());
-			updateBothColumns(updateRange);
-		}
+	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	{
+		index = m_items.indexOf(entries->at(i)->fileName());
+		static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
+		updateRange.add(index, index);
 	}
+
+	tasks().removeAll(entries->at(0)->fileName());
+	updateBothColumns(updateRange);
 }
 
 void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries)

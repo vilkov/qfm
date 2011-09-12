@@ -1,4 +1,7 @@
 #include "filesystemcopyinfo.h"
+#include "../tools/filesystemcommontools.h"
+#include "../../application.h"
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -94,7 +97,17 @@ bool CopyInfo::physicalCopyIsNecessary() const
 
 bool CopyInfo::start(const FileSystemList *files, bool move) const
 {
-	return true;
+	IFile::size_type fs;
+
+	return (files->totalSize() <= (fs = freeSpace()) ||
+		QMessageBox::question(
+							&Application::instance()->mainWindow(),
+							tr("Insufficient space on device"),
+							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
+								arg(absoluteFilePath()).
+								arg(Tools::humanReadableShortSize(fs)).
+								arg(Tools::humanReadableShortSize(files->totalSize())),
+							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 }
 
 void CopyInfo::done(bool error) const

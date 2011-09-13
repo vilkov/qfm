@@ -36,6 +36,7 @@ private:
 			> TreeViewHandler;
 
 	void addValue();
+	void removeValue();
 
 private:
 	IdmContainer m_container;

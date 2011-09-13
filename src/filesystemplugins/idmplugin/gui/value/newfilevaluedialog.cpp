@@ -22,6 +22,7 @@ NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity 
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &NewFileValueDialog::addValue);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &NewFileValueDialog::removeValue);
 
     for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
     	if (entity->at(i).entity->type() == Database::Path)
@@ -44,6 +45,11 @@ void NewFileValueDialog::accept()
 }
 
 void NewFileValueDialog::addValue()
+{
+
+}
+
+void NewFileValueDialog::removeValue()
 {
 
 }

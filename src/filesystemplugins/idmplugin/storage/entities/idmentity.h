@@ -50,12 +50,10 @@ public:
 	virtual ~IdmEntity()
 	{}
 
-	IdmEntity *at(size_type index) const { return m_items.at(index).entity; }
+	const Property &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(IdmEntity *item) const { return m_items.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_items.indexOf(id); }
-	const Property &property(size_type index) const { return m_items.at(index); }
-	const Property &property(IdmEntity *item) const { return m_items.at(item->id()); }
 
 	Type type() const { return m_type; }
 	id_type id() const { return m_id; }

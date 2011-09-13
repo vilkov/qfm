@@ -215,17 +215,19 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 		if (cleanupParentsValues(entity) &&
 			(entity->type() != Database::Composite || cleanupPropertyValues(entity)))
 		{
+			IdmEntity *parent;
 			PScopedPointer<IdmStorageUndoRemoveEntity> command(new IdmStorageUndoRemoveEntity(entity));
 			const IdmEntity::Parents &parents = entity->parents();
 
 			for (IdmEntity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
 			{
-				command->addParent(parents.at(i), parents.at(i)->property(entity).name);
+				parent = parents.at(i);
+				command->addParent(parent, parent->at(parent->indexOf(entity)).name);
 				parents.at(i)->remove(entity);
 			}
 
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-				entity->at(i)->removeParent(entity);
+				entity->at(i).entity->removeParent(entity);
 
 			m_entities.remove(entity);
 			m_undo.last().push_back(command.take());
@@ -290,7 +292,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 
 				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
-					PScopedPointer<IdmStorageUndoRemoveProperty> command(new IdmStorageUndoRemoveProperty(entity, property, entity->property(property).name));
+					PScopedPointer<IdmStorageUndoRemoveProperty> command(new IdmStorageUndoRemoveProperty(entity, property, entity->at(entity->indexOf(property)).name));
 					entity->remove(property);
 					property->removeParent(entity);
 					m_undo.last().push_back(command.take());
@@ -481,9 +483,9 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 	QString query = PropertiesTable::Incomplete::dropProperty2(entity->id());
 
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-		if (cleanupPropertyValues(entity, entity->at(i)))
+		if (cleanupPropertyValues(entity, entity->at(i).entity))
 		{
-			sqlQuery = QString(query).append(QString::number(entity->at(i)->id())).toUtf8();
+			sqlQuery = QString(query).append(QString::number(entity->at(i).entity->id())).toUtf8();
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
 			{
@@ -513,7 +515,7 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 	{
 		propertyIds.clear();
-		sqlQuery = QString(query).arg(QString::number(entity->at(i)->id())).toUtf8();
+		sqlQuery = QString(query).arg(QString::number(entity->at(i).entity->id())).toUtf8();
 
 		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 		{
@@ -522,8 +524,8 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 
 			sqlite3_finalize(statement);
 
-			if (!removeOverlappingIds(entity, entity->at(i), propertyIds) ||
-				!removeValue(entity->at(i), propertyIds.toList()))
+			if (!removeOverlappingIds(entity, entity->at(i).entity, propertyIds) ||
+				!removeValue(entity->at(i).entity, propertyIds.toList()))
 				return false;
 		}
 		else
@@ -580,8 +582,8 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					if (&m_entities != parent)
 					{
-						parent->add(m_entities.at(index), QString::fromUtf8((const char *)sqlite3_column_text(statement, 4)));
-						m_entities.at(index)->addParent(parent);
+						parent->add(m_entities.at(index).entity, QString::fromUtf8((const char *)sqlite3_column_text(statement, 4)));
+						m_entities.at(index).entity->addParent(parent);
 					}
 				}
 				else
@@ -606,8 +608,8 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				{
 					if (&m_entities != parent)
 					{
-						parent->add(m_entities.at(index), QString::fromUtf8((const char *)sqlite3_column_text(statement, 4)));
-						m_entities.at(index)->addParent(parent);
+						parent->add(m_entities.at(index).entity, QString::fromUtf8((const char *)sqlite3_column_text(statement, 4)));
+						m_entities.at(index).entity->addParent(parent);
 					}
 				}
 				else

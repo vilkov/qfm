@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 ValuesRootTreeItem::ValuesRootTreeItem(IdmItem *parent) :
-	ValuesTreeItem(0, parent)
+	ValuesTreeItem(0, QString(), parent)
 {}
 
 bool ValuesRootTreeItem::isEntityItem() const

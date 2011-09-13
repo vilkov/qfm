@@ -7,7 +7,7 @@ ValuesTreeModel::ValuesTreeModel(IdmEntity *entity, QObject *parent) :
 	QAbstractItemModel(parent)
 {
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-		m_items.add(entity->at(i));
+		m_items.add(entity->at(i).entity, entity->at(i).name);
 }
 
 ValuesTreeModel::~ValuesTreeModel()
@@ -46,6 +46,7 @@ QVariant ValuesTreeModel::headerData(int section, Qt::Orientation orientation, i
 {
 	return QVariant();
 }
+
 QModelIndex ValuesTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))

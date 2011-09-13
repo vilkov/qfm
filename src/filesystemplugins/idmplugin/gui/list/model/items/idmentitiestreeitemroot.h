@@ -56,7 +56,7 @@ private:
 
 		for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 		{
-			parent->add(item = new IdmEntitiesTreeItem(entity = parent->entity()->at(i), parent));
+			parent->add(item = new IdmEntitiesTreeItem(entity = parent->entity()->at(i).entity, parent));
 			m_entities[entity].push_back(item);
 			expand(item);
 		}

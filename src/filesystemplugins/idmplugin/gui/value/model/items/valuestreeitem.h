@@ -1,15 +1,15 @@
 #ifndef VALUESTREEITEM_H_
 #define VALUESTREEITEM_H_
 
-#include "../../../../items/idmentityitem.h"
+#include "../../../../items/idmentitypropertyitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class ValuesTreeItem : public IdmEntityItem
+class ValuesTreeItem : public IdmEntityPropertyItem
 {
 public:
-	ValuesTreeItem(IdmEntity *entity, IdmItem *parent = 0);
+	ValuesTreeItem(IdmEntity *entity, const QString &name, IdmItem *parent = 0);
 
 protected:
 	friend class ValuesRootTreeItem;

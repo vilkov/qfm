@@ -20,7 +20,7 @@ void IdmStorageUndoRemoveEntity::undo(IdmEntityRoot &root)
 		m_parents.at(i).entity->add(m_entity, m_parents.at(i).name);
 
 	for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
-		m_entity->at(i)->addParent(m_entity);
+		m_entity->at(i).entity->addParent(m_entity);
 
 	m_entity = 0;
 }

@@ -10,9 +10,6 @@ class IdmRootNode : public IdmNodeBase
 {
 public:
 	IdmRootNode(const Info &storage, Node *parent = 0);
-
-private:
-	IdmContainer m_storage;
 };
 
 IDM_PLUGIN_NS_END

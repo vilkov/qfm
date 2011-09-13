@@ -406,6 +406,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 	{
 		index = m_items.indexOf(entries->at(i)->fileName());
+		static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(entries->at(i)->totalSize());
 		static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
 		updateRange.add(index, index);
 	}
@@ -482,6 +483,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList
 			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 			{
 				index = m_items.indexOf(entries->at(i)->fileName());
+				static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(entries->at(i)->totalSize());
 				static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
 				updateRange.add(index, index);
 			}

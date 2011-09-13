@@ -7,10 +7,9 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
-	IdmNodeBase(m_storage, storage.absolutePath(), parent),
-	m_storage(storage)
+	IdmNodeBase(IdmContainer(storage), storage.absolutePath(), parent)
 {
-	if (m_storage.isValid())
+	if (m_container.isValid())
 	{
 //		m_items.push_back(m_storage.menu());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
@@ -18,7 +17,7 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	else
 	{
 		m_items.push_back(new IdmSeparator());
-		m_items.push_back(new IdmMessage(m_storage.lastError()));
+		m_items.push_back(new IdmMessage(m_container.lastError()));
 	}
 }
 

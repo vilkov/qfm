@@ -95,7 +95,7 @@ bool CopyInfo::physicalCopyIsNecessary() const
 	return true;
 }
 
-bool CopyInfo::start(const FileSystemList *files, bool move) const
+bool CopyInfo::start(const FileSystemList *files, bool move)
 {
 	IFile::size_type fs;
 
@@ -110,7 +110,12 @@ bool CopyInfo::start(const FileSystemList *files, bool move) const
 							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 }
 
-void CopyInfo::done(bool error) const
+void CopyInfo::done(bool error)
+{
+
+}
+
+void CopyInfo::canceled()
 {
 
 }

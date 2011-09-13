@@ -5,6 +5,7 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
+#include "model/valuestreemodel.h"
 #include "../../containeres/idmcontainer.h"
 
 
@@ -15,14 +16,15 @@ class NewValueDialog : public QDialog
 	Q_OBJECT
 
 public:
-	NewValueDialog(IdmContainer *container, IdmEntity *entity, QWidget *parent = 0);
+	NewValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
 
     virtual void accept();
 
 private:
-	IdmContainer *m_container;
+	IdmContainer m_container;
 	IdmEntity *m_entity;
 	QTreeView m_view;
+	ValuesTreeModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 };

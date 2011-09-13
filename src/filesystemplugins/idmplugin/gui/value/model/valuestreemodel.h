@@ -13,7 +13,7 @@ public:
 	typedef ValuesTreeItem::size_type size_type;
 
 public:
-	ValuesTreeModel(QObject *parent = 0);
+	ValuesTreeModel(IdmEntity *entity, QObject *parent = 0);
 	virtual ~ValuesTreeModel();
 
     /* QAbstractItemModel */

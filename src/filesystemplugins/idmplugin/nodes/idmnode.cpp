@@ -6,10 +6,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmNode::IdmNode(IdmContainer *storage, const Info &info, Node *parent) :
-	IdmNodeBase(storage, info, parent)
+IdmNode::IdmNode(const IdmContainer &container, const Info &info, Node *parent) :
+	IdmNodeBase(container, info, parent)
 {
-	if (storage->isValid())
+	if (container.isValid())
 	{
 //		m_items.push_back(storage->menu());
 		m_items.push_back(new IdmRoot(info));
@@ -17,7 +17,7 @@ IdmNode::IdmNode(IdmContainer *storage, const Info &info, Node *parent) :
 	else
 	{
 		m_items.push_back(new IdmSeparator());
-		m_items.push_back(new IdmMessage(storage->lastError()));
+		m_items.push_back(new IdmMessage(container.lastError()));
 	}
 }
 

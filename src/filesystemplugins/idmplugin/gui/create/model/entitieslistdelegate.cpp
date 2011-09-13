@@ -6,7 +6,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-EntitiesListDelegate::EntitiesListDelegate(const IdmContainer *container, QObject *parent) :
+EntitiesListDelegate::EntitiesListDelegate(const IdmContainer &container, QObject *parent) :
 	QStyledItemDelegate(parent),
     m_container(container)
 {}
@@ -23,8 +23,8 @@ QWidget *EntitiesListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 		{
 			QComboBox *editor = new QComboBox(parent);
 
-			for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-		    	editor->addItem(m_container->at(i)->name(), m_container->at(i)->id());
+			for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
+		    	editor->addItem(m_container.at(i)->name(), m_container.at(i)->id());
 
 			editor->setCurrentIndex(0);
 			return editor;
@@ -45,7 +45,7 @@ void EntitiesListDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 		}
 		case 1:
 		{
-			IdmContainer::size_type idx = m_container->indexOf(static_cast<IdmEntitiesListItem*>(index.internalPointer())->entity()->id());
+			IdmContainer::size_type idx = m_container.indexOf(static_cast<IdmEntitiesListItem*>(index.internalPointer())->entity()->id());
 
 			if (idx != IdmContainer::InvalidIndex)
 				static_cast<QComboBox*>(editor)->setCurrentIndex(idx);
@@ -70,10 +70,10 @@ void EntitiesListDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 		}
 		case 1:
 		{
-			IdmContainer::size_type idx = m_container->indexOf(static_cast<QComboBox*>(editor)->itemData(static_cast<QComboBox*>(editor)->currentIndex(), Qt::UserRole).toInt());
+			IdmContainer::size_type idx = m_container.indexOf(static_cast<QComboBox*>(editor)->itemData(static_cast<QComboBox*>(editor)->currentIndex(), Qt::UserRole).toInt());
 
 			if (idx != IdmContainer::InvalidIndex)
-				static_cast<IdmEntitiesListItem*>(index.internalPointer())->setEntity(m_container->at(idx));
+				static_cast<IdmEntitiesListItem*>(index.internalPointer())->setEntity(m_container.at(idx));
 
 			break;
 		}

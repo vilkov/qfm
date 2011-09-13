@@ -3,7 +3,7 @@
 #include <QtGui/QMessageBox>
 
 
-CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QString &name, QWidget *parent) :
+CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QString &name, QWidget *parent) :
 	QDialog(parent),
 	m_label(this),
 	m_lineEdit(name, this),
@@ -65,7 +65,7 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer *container, const QStr
 
     m_lineEdit.selectAll();
 
-    for (IdmEntityTypes::const_iterator it = container->entityTypes().constBegin(), end = container->entityTypes().constEnd(); it != end; ++it)
+    for (IdmEntityTypes::const_iterator it = container.entityTypes().constBegin(), end = container.entityTypes().constEnd(); it != end; ++it)
     	m_comboBox.addItem(it->label, it.key());
 
     m_comboBox.setCurrentIndex(0);
@@ -83,7 +83,23 @@ void CreateEntityDialog::accept()
 		if (!format.isValid())
 			QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
 		else
+		{
+			for (size_type i = 0, q= 0, size = m_model.size(); i < size; ++i)
+				for (q = i + 1; q < size; ++q)
+					if (m_model.entityAt(q)->id() == m_model.entityAt(i)->id())
+					{
+						QMessageBox::warning(this, windowTitle(), tr("More than one property of type \"%1\"!").arg(m_model.entityAt(i)->name()));
+						return;
+					}
+					else
+						if (m_model.nameAt(q).compare(m_model.nameAt(i), Qt::CaseInsensitive) == 0)
+						{
+							QMessageBox::warning(this, windowTitle(), tr("There is a properties with the same names \"%1\"!").arg(m_model.nameAt(i)));
+							return;
+						}
+
 			QDialog::accept();
+		}
 	}
 }
 
@@ -94,14 +110,14 @@ void CreateEntityDialog::activated(int index)
 
 void CreateEntityDialog::add()
 {
-	if (m_delegate.container()->size() == 0)
+	if (m_delegate.container().size() == 0)
 		QMessageBox::warning(this, windowTitle(), tr("There is no entities!"));
 	else
 	{
 		StringDialog dialog(tr("New property name"), tr("Name"), QString(), this);
 
 		if (dialog.exec() == StringDialog::Accepted)
-			m_model.add(m_delegate.container()->at(0), dialog.value());
+			m_model.add(m_delegate.container().at(0), dialog.value());
 	}
 }
 

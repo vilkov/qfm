@@ -380,25 +380,28 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	RangeIntersection updateRange;
 	Values::size_type index;
 
-	if (!canceled && control->start(entries.data(), move))
-		if (control->physicalCopyIsNecessary())
-		{
-			QString lockReason = move ? tr("Moving...") : tr("Copying...");
-			FileSystemItem *entry;
-
-			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	if (canceled)
+		control->canceled();
+	else
+		if (control->start(entries.data(), move))
+			if (control->physicalCopyIsNecessary())
 			{
-				index = m_items.indexOf((entry = entries->at(i))->fileName());
-				static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
-				updateRange.add(index, index);
-			}
+				QString lockReason = move ? tr("Moving...") : tr("Copying...");
+				FileSystemItem *entry;
 
-			updateSecondColumn(updateRange);
-			FolderNodeBase::performCopy(entries, control, move);
-			return;
-		}
-		else
-			control->done(false);
+				for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+				{
+					index = m_items.indexOf((entry = entries->at(i))->fileName());
+					static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
+					updateRange.add(index, index);
+				}
+
+				updateSecondColumn(updateRange);
+				FolderNodeBase::performCopy(entries, control, move);
+				return;
+			}
+			else
+				control->done(false);
 
 	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
 	{

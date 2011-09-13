@@ -4,8 +4,7 @@
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
 #include "../items/idmitemslist.h"
-#include "../control/idmfilecontrol.h"
-#include "../gui/value/newvaluedialog.h"
+#include "../control/idmcopycontrol.h"
 #include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
 #include "../../../application.h"
@@ -14,11 +13,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmNodeBase::IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent) :
+IdmNodeBase::IdmNodeBase(const IdmContainer &container, const Info &info, Node *parent) :
 	FolderNodeBase(info, parent),
 	m_proxy(this),
 	m_delegate(&m_proxy),
-	m_container(storage)
+	m_container(container)
 {
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
@@ -96,30 +95,18 @@ ICopyControl *IdmNodeBase::createControl() const
 {
 	QSet<IdmEntity*> entities;
 
-	for (IdmContainer::size_type i = 0, size = m_container->size(); i < size; ++i)
-		if (m_container->at(i)->type() == Database::Path && !m_container->at(i)->parents().isEmpty())
-			entities.insert(m_container->at(i)->parents().at(0));
+	for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
+		if (m_container.at(i)->type() == Database::Path && !m_container.at(i)->parents().isEmpty())
+			entities.insert(m_container.at(i)->parents().at(0));
 
 	if (entities.isEmpty())
 		QMessageBox::information(&Application::instance()->mainWindow(),
 								 tr("Failed to add an entity value"),
 								 tr("There is no entities with property of type \"%1\".").
-								 arg(m_container->entityTypes().value(Database::Path).label));
+								 arg(m_container.entityTypes().value(Database::Path).label));
 	else
 		if (entities.size() == 1)
-			if (m_container->transaction())
-			{
-				NewValueDialog dialog(m_container, *entities.begin(), &Application::instance()->mainWindow());
-
-				if (dialog.exec() == NewValueDialog::Accepted)
-				{
-					IdmFileControl control(*entities.begin());
-				}
-				else
-					m_container->rollback();
-			}
-			else
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+			return new IdmCopyControl(m_container, *entities.begin(), absoluteFilePath());
 		else
 		{
 
@@ -137,42 +124,42 @@ void IdmNodeBase::menuAction(QAction *action)
 			CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
 
 			if (dialog.exec() == CreateEntityDialog::Accepted)
-				if (m_container->transaction())
-					if (IdmEntity *entity = m_container->createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
+				if (m_container.transaction())
+					if (IdmEntity *entity = m_container.createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
 						if (entity->type() == Database::Composite)
 						{
 							bool ok = true;
 
 							for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
-								if (!m_container->addProperty(entity, dialog.property(i), dialog.propertyName(i)))
+								if (!m_container.addProperty(entity, dialog.property(i), dialog.propertyName(i)))
 								{
 									ok = false;
-									m_container->rollback();
-									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+									m_container.rollback();
+									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 									break;
 								}
 
-							if (ok && !m_container->commit())
+							if (ok && !m_container.commit())
 							{
-								m_container->rollback();
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+								m_container.rollback();
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 							}
 						}
 						else
 						{
-							if (!m_container->commit())
+							if (!m_container.commit())
 							{
-								m_container->rollback();
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+								m_container.rollback();
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 							}
 						}
 					else
 					{
-						m_container->rollback();
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+						m_container.rollback();
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 					}
 				else
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 
 			break;
 		}
@@ -182,23 +169,23 @@ void IdmNodeBase::menuAction(QAction *action)
 		}
 		case IdmContainer::List:
 		{
-			if (m_container->transaction())
+			if (m_container.transaction())
 			{
 				ListEntityDialog dialog(m_container, &Application::instance()->mainWindow());
 
 				if (dialog.exec() == ListEntityDialog::Accepted)
 				{
-					if (!m_container->commit())
+					if (!m_container.commit())
 					{
-						m_container->rollback();
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+						m_container.rollback();
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 					}
 				}
 				else
-					m_container->rollback();
+					m_container.rollback();
 			}
 			else
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 
 			break;
 		}
@@ -222,14 +209,14 @@ void IdmNodeBase::rename(const QModelIndexList &list)
 
 void IdmNodeBase::remove(const QModelIndexList &list)
 {
-	if (m_container->transaction())
+	if (m_container.transaction())
 		if (!processIndexList(list, IdmFunctors::callTo(this, &IdmNodeBase::processRemoveItem)))
-			m_container->rollback();
+			m_container.rollback();
 		else
-			if (!m_container->commit())
+			if (!m_container.commit())
 			{
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container->lastError());
-				m_container->rollback();
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
 			}
 }
 

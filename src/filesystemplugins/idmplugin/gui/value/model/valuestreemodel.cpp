@@ -3,9 +3,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValuesTreeModel::ValuesTreeModel(QObject *parent) :
+ValuesTreeModel::ValuesTreeModel(IdmEntity *entity, QObject *parent) :
 	QAbstractItemModel(parent)
-{}
+{
+	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+		m_items.add(entity->at(i));
+}
 
 ValuesTreeModel::~ValuesTreeModel()
 {}

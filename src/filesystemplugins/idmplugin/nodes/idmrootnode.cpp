@@ -7,7 +7,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
-	IdmNodeBase(&m_storage, storage.absolutePath(), parent),
+	IdmNodeBase(m_storage, storage.absolutePath(), parent),
 	m_storage(storage)
 {
 	if (m_storage.isValid())

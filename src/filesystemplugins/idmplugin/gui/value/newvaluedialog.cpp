@@ -1,11 +1,12 @@
 #include "newvaluedialog.h"
 
 
-NewValueDialog::NewValueDialog(IdmContainer *container, IdmEntity *entity, QWidget *parent) :
+NewValueDialog::NewValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
 	m_entity(entity),
 	m_view(this),
+	m_model(entity, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -20,6 +21,7 @@ NewValueDialog::NewValueDialog(IdmContainer *container, IdmEntity *entity, QWidg
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 	m_view.setHeaderHidden(true);
+	m_view.setModel(&m_model);
 }
 
 void NewValueDialog::accept()

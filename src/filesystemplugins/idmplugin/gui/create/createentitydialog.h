@@ -24,7 +24,7 @@ public:
 	typedef EntitiesListModel::size_type size_type;
 
 public:
-    CreateEntityDialog(const IdmContainer *container, const QString &name = QString(), QWidget *parent = 0);
+    CreateEntityDialog(const IdmContainer &container, const QString &name = QString(), QWidget *parent = 0);
 
     IdmEntity::Type type() const { return static_cast<IdmEntity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
     QString name() const { return m_lineEdit.text().simplified(); }

@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmNode : public IdmNodeBase
 {
 public:
-	IdmNode(IdmContainer *storage, const Info &info, Node *parent = 0);
+	IdmNode(const IdmContainer &container, const Info &info, Node *parent = 0);
 };
 
 IDM_PLUGIN_NS_END

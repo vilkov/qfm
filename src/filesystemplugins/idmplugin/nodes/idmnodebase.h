@@ -15,7 +15,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmNodeBase : public FolderNodeBase
 {
 public:
-	IdmNodeBase(IdmContainer *storage, const Info &info, Node *parent = 0);
+	IdmNodeBase(const IdmContainer &container, const Info &info, Node *parent = 0);
 	virtual ~IdmNodeBase();
 
     /* QAbstractItemModel */
@@ -51,7 +51,7 @@ protected:
 	virtual QModelIndex rootIndex() const;
 	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeBase *)this)->m_proxy; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeBase *)this)->m_delegate; }
-	virtual const INodeView::MenuActionList &menuActions() const { return m_container->menuActions(); }
+	virtual const INodeView::MenuActionList &menuActions() const { return m_container.menuActions(); }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
@@ -83,7 +83,7 @@ protected:
 	ItemsList m_items;
 	IdmProxyModel m_proxy;
 	IdmDelegate m_delegate;
-	IdmContainer *m_container;
+	IdmContainer m_container;
 };
 
 IDM_PLUGIN_NS_END

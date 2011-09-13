@@ -1,6 +1,7 @@
 #ifndef IDMCOPYCONTROL_H_
 #define IDMCOPYCONTROL_H_
 
+#include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include "../idmplugin_ns.h"
 #include "../containeres/idmcontainer.h"
@@ -21,6 +22,9 @@ public:
 	virtual bool start(const FileSystemList *files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
+
+private:
+	QStringList toStringList(const FileSystemList *files) const;
 
 private:
 	IdmContainer m_container;

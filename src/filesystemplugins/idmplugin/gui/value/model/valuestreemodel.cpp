@@ -77,6 +77,15 @@ void ValuesTreeModel::add(IdmEntity *entity)
 //	endInsertRows();
 }
 
+void ValuesTreeModel::add(const QModelIndex &index, const QVariant &value)
+{
+	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());
+
+	beginInsertRows(index, item->size(), item->size());
+	m_items.add(item, value);
+	endInsertRows();
+}
+
 void ValuesTreeModel::remove(const QModelIndex &index)
 {
 //	beginRemoveRows(QModelIndex(), index.row(), index.row());

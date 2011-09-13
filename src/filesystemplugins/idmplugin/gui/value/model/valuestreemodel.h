@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class ValuesTreeModel : public QAbstractItemModel
 {
 public:
-	typedef ValuesTreeItem::size_type size_type;
+	typedef ValuesRootTreeItem::size_type size_type;
 
 public:
 	ValuesTreeModel(IdmEntity *entity, QObject *parent = 0);
@@ -25,7 +25,12 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	IdmItem *at(size_type index) const { return m_items.at(index); }
+	size_type size() const { return m_items.size(); }
+	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
+
 	void add(IdmEntity *entity);
+	void add(const QModelIndex &index, const QVariant &value);
 	void remove(const QModelIndex &index);
 
 private:

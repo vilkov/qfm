@@ -2,6 +2,7 @@
 #define VALUESROOTTREEITEM_H_
 
 #include "valuestreeitem.h"
+#include "valuestreevalueitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -26,6 +27,11 @@ public:
 
 		m_items.push_back(item = new ValuesTreeItem(entity, name, this));
 		m_entities[entity].push_back(item);
+	}
+
+	void add(IdmItem *item, const QVariant &value)
+	{
+		static_cast<ValuesTreeItem*>(item)->add(new ValuesTreeValueItem(static_cast<ValuesTreeItem*>(item)->entity(), value, item));
 	}
 
 	void remove(IdmEntityItem *item, IdmItemsList::size_type index)

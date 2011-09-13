@@ -62,7 +62,7 @@ private:
     EventHandler *m_eventHandler;
 };
 
-#include "../../arguments/undefine.h"
 #undef INITIALISERS
+#include "../../arguments/undefine.h"
 
 #endif /* EVENTSOURCEBASE_H_ */

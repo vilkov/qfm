@@ -1,5 +1,5 @@
 #include "idmcopycontrol.h"
-#include "../gui/value/newvaluedialog.h"
+#include "../gui/value/newfilevaluedialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -16,9 +16,9 @@ bool IdmCopyControl::start(const FileSystemList *files, bool move)
 {
 	if (m_container.transaction())
 	{
-		NewValueDialog dialog(m_container, m_entity, &Application::instance()->mainWindow());
+		NewFileValueDialog dialog(m_container, m_entity, toStringList(files), &Application::instance()->mainWindow());
 
-		if (dialog.exec() == NewValueDialog::Accepted)
+		if (dialog.exec() == NewFileValueDialog::Accepted)
 		{
 //					IdmFileControl control(*entities.begin());
 		}
@@ -39,6 +39,17 @@ void IdmCopyControl::done(bool error)
 void IdmCopyControl::canceled()
 {
 
+}
+
+QStringList IdmCopyControl::toStringList(const FileSystemList *files) const
+{
+	QStringList res;
+	res.reserve(files->size());
+
+	for (FileSystemList::size_type i = 0, size = files->size(); i < size; ++i)
+		res.push_back(absoluteFilePath(files->at(i)->fileName()));
+
+	return res;
 }
 
 IDM_PLUGIN_NS_END

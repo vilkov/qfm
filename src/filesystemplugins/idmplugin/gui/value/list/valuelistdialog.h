@@ -42,7 +42,7 @@ private:
 private:
 	QString m_lastError;
 	IdmContainer m_container;
-	QueryContext m_context;
+	Select m_query;
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	ValueListModel m_model;

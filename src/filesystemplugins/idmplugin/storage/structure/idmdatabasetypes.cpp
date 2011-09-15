@@ -1,6 +1,7 @@
 #include "idmdatabasetypes.h"
 #include "idmentitiestable.h"
 #include "idmpropertiestable.h"
+#include <QtCore/QDateTime>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -28,6 +29,22 @@ QString Database::typeToString(EntityType type)
 		case DateTime: return QString::fromLatin1("datetime");
 		case Memo:     return QString::fromLatin1("text");
 		case Path:     return QString::fromLatin1("char(1024)");
+	}
+}
+
+QString Database::valueToString(EntityType type, const QVariant &value)
+{
+	switch (type)
+	{
+		case Composite:
+		case Rating:
+		case Int:      return QString::number(value.toInt());
+		case Memo:
+		case Path:
+		case String:   return QString::fromLatin1("'%1'").arg(value.toString());
+		case Date:     return value.toDate().toString("'MM/dd/yyyy'");
+		case Time:     return value.toTime().toString("'hh:mm:ss'");
+		case DateTime: return value.toDateTime().toString("'hh:mm:ss MM/dd/yyyy'");
 	}
 }
 

@@ -4,6 +4,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QList>
 #include <QtCore/QString>
+#include <QtCore/QVariant>
 #include "../../idmplugin_ns.h"
 
 
@@ -33,6 +34,7 @@ struct Database
 	static QByteArray init();
 	static QByteArray loadId(const QString &tableName);
 	static QString typeToString(EntityType type);
+	static QString valueToString(EntityType type, const QVariant &value);
 	static QString idsToString(const IdsSet &ids);
 	static QString idsToString(const IdsList &ids);
 };

@@ -25,6 +25,7 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	bool isValid() const { return m_context.isValid(); }
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }

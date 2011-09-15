@@ -328,6 +328,21 @@ bool IdmStorage::addValue(IdmEntity *entity, const IdsMap &values) const
 
 bool IdmStorage::addValue(IdmEntity *entity, const QVariant &value) const
 {
+	IdmEntity::id_type id = loadId(QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
+
+	if (id != IdmEntity::InvalidId)
+	{
+		char *errorMsg = 0;
+		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), entity->type(), id, value);
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			return true;
+		else
+			setLastError(sqlQuery, errorMsg);
+
+		sqlite3_free(errorMsg);
+	}
+
 	return false;
 }
 

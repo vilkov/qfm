@@ -5,10 +5,10 @@
 ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_context(m_container.prepare(query, m_lastError)),
+	m_query(query),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(m_context, this),
+	m_model(m_container.prepare(query, m_lastError), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -28,7 +28,7 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 	m_view.setHeaderHidden(true);
 	m_view.setModel(&m_model);
 
-	if (!m_context.isValid())
+	if (!m_model.isValid())
 		QMessageBox::critical(this, windowTitle(), m_lastError);
 }
 

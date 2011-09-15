@@ -7,7 +7,10 @@ ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_context(context)
 {
+	while (m_context.next())
+	{
 
+	}
 }
 
 int ValueListModel::rowCount(const QModelIndex &parent) const

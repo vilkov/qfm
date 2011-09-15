@@ -10,7 +10,6 @@ IDM_PLUGIN_NS_BEGIN
 class Select : public Query
 {
 public:
-	typedef QMap<IdmEntity*, QVariant> Map;
 	enum Operators
 	{
 		Less,
@@ -18,6 +17,19 @@ public:
 		Equal,
 		Like
 	};
+	struct Condition
+	{
+		Condition()
+		{}
+		Condition(Operators op, const QVariant &value) :
+			op(op),
+			value(value)
+		{}
+
+		Operators op;
+		QVariant value;
+	};
+	typedef QMap<IdmEntity*, Condition> Map;
 
 public:
 	Select(IdmEntity *entity);

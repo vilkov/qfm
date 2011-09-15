@@ -1,5 +1,5 @@
 #include "idmcopycontrol.h"
-#include "../gui/value/newfilevaluedialog.h"
+#include "../gui/value/new/newfilevaluedialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -20,7 +20,7 @@ bool IdmCopyControl::start(const FileSystemList *files, bool move)
 
 		if (dialog.exec() == NewFileValueDialog::Accepted)
 		{
-//					IdmFileControl control(*entities.begin());
+
 		}
 		else
 			m_container.rollback();

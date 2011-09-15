@@ -9,7 +9,7 @@ Select::Select(IdmEntity *entity) :
 
 QByteArray Select::compile() const
 {
-	return QByteArray();
+	return QByteArray("select VALUE from ENTITY_").append(entity()->id());
 }
 
 IDM_PLUGIN_NS_END

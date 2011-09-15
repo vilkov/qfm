@@ -178,7 +178,16 @@ void IdmStorage::rollback(const QByteArray &name)
 
 QueryContext IdmStorage::prepare(const Query &query, QString &error) const
 {
-	return QueryContext();
+	sqlite3_stmt *statement;
+	QByteArray sqlQuery = query.compile();
+
+	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		return QueryContext(query.entity(), statement);
+	else
+	{
+		error = QString::fromLatin1("Failed to prepare \"%1\" query").arg(QString::fromLatin1(sqlQuery));
+		return QueryContext();
+	}
 }
 
 IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat)

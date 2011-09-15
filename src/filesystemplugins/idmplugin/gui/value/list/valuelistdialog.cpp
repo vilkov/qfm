@@ -1,16 +1,18 @@
 #include "valuelistdialog.h"
+#include <QtGui/QMessageBox>
 
 
 ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_query(query),
+	m_context(m_container.prepare(query, m_lastError)),
 	m_handler(this),
 	m_view(&m_handler, this),
+	m_model(m_context, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Values of \"%1\"").arg(m_query.entity()->name()));
+	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -24,10 +26,10 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &ValueListDialog::removeValue);
 
 	m_view.setHeaderHidden(true);
-//	m_view.setModel(&m_model);
+	m_view.setModel(&m_model);
 
-	QString error;
-	container.prepare(query, error);
+	if (!m_context.isValid())
+		QMessageBox::critical(this, windowTitle(), m_lastError);
 }
 
 void ValueListDialog::accept()

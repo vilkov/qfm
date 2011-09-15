@@ -5,8 +5,10 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
+#include "model/valuelistmodel.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/queries/idmselectquery.h"
+#include "../../../storage/queries/idmquerycontext.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
 
@@ -38,10 +40,12 @@ private:
 	void removeValue();
 
 private:
+	QString m_lastError;
 	IdmContainer m_container;
-	Select m_query;
+	QueryContext m_context;
 	TreeViewHandler m_handler;
 	TreeView m_view;
+	ValueListModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 };

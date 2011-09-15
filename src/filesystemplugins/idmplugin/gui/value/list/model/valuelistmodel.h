@@ -1,19 +1,20 @@
-#ifndef VALUESTREEMODEL_H_
-#define VALUESTREEMODEL_H_
+#ifndef VALUELISTMODEL_H_
+#define VALUELISTMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "items/valuesroottreeitem.h"
+#include "items/valuelistrootitem.h"
+#include "../../../../storage/queries/idmquerycontext.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class ValuesTreeModel : public QAbstractItemModel
+class ValueListModel : public QAbstractItemModel
 {
 public:
-	typedef ValuesRootTreeItem::size_type size_type;
+	typedef ValueListItem::size_type size_type;
 
 public:
-	ValuesTreeModel(IdmEntity *entity, QObject *parent = 0);
+	ValueListModel(const QueryContext &context, QObject *parent = 0);
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -33,9 +34,10 @@ public:
 	void remove(const QModelIndex &index);
 
 private:
-	ValuesRootTreeItem m_items;
+	QueryContext m_context;
+	ValueListRootItem m_items;
 };
 
 IDM_PLUGIN_NS_END
 
-#endif /* VALUESTREEMODEL_H_ */
+#endif /* VALUELISTMODEL_H_ */

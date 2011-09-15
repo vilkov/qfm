@@ -163,7 +163,7 @@ void IdmNodeBase::menuAction(QAction *action)
 
 			break;
 		}
-		case IdmContainer::Query:
+		case IdmContainer::QueryEntity:
 		{
 			break;
 		}

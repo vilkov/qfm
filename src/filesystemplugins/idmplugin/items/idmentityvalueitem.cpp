@@ -19,4 +19,9 @@ QVariant IdmEntityValueItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
+bool IdmEntityValueItem::isValueItem() const
+{
+	return true;
+}
+
 IDM_PLUGIN_NS_END

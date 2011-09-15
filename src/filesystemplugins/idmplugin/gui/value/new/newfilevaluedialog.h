@@ -24,6 +24,9 @@ public:
     virtual void accept();
 
 private:
+    QModelIndex currentIndex() const;
+
+private:
 	typedef KeyboardEventSource<
 				EventSourceBase<
 					QTreeView

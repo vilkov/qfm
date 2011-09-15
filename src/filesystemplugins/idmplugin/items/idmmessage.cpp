@@ -31,6 +31,11 @@ bool IdmMessage::isMenuItem() const
 	return false;
 }
 
+bool IdmMessage::isValueItem() const
+{
+	return false;
+}
+
 bool IdmMessage::isEntityItem() const
 {
 	return false;

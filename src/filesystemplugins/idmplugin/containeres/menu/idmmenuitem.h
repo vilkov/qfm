@@ -21,6 +21,7 @@ public:
 	virtual bool isRoot() const;
 	virtual bool isList() const;
 	virtual bool isMenuItem() const;
+	virtual bool isValueItem() const;
 	virtual bool isEntityItem() const;
 
 	id_type id() const { return m_id; }

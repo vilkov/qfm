@@ -27,6 +27,11 @@ bool IdmItemsList::isMenuItem() const
 	return false;
 }
 
+bool IdmItemsList::isValueItem() const
+{
+	return false;
+}
+
 bool IdmItemsList::isEntityItem() const
 {
 	return false;

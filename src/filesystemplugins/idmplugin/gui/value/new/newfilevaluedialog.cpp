@@ -1,4 +1,5 @@
 #include "newfilevaluedialog.h"
+#include "../list/valuelistdialog.h"
 
 
 NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity *entity, const QStringList &files, QWidget *parent) :
@@ -44,9 +45,29 @@ void NewFileValueDialog::accept()
 	QDialog::accept();
 }
 
+QModelIndex NewFileValueDialog::currentIndex() const
+{
+	return m_view.selectionModel()->currentIndex();
+}
+
 void NewFileValueDialog::addValue()
 {
+	QModelIndex index = currentIndex();
 
+	if (index.isValid())
+	{
+		IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
+
+		if (entity->type() != Database::Path)
+		{
+			ValueListDialog dialog(m_container, Select(entity), this);
+
+			if (dialog.exec() == ValueListDialog::Accepted)
+			{
+
+			}
+		}
+	}
 }
 
 void NewFileValueDialog::removeValue()

@@ -1,16 +1,16 @@
-#include "valuestreemodel.h"
+#include "valuelistmodel.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-ValuesTreeModel::ValuesTreeModel(IdmEntity *entity, QObject *parent) :
-	QAbstractItemModel(parent)
+ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
+	QAbstractItemModel(parent),
+	m_context(context)
 {
-	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-		m_items.add(entity->at(i).entity, entity->at(i).name);
+
 }
 
-int ValuesTreeModel::rowCount(const QModelIndex &parent) const
+int ValueListModel::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
 		if (static_cast<IdmItem*>(parent.internalPointer())->isList())
@@ -21,12 +21,12 @@ int ValuesTreeModel::rowCount(const QModelIndex &parent) const
     	return m_items.size();
 }
 
-int ValuesTreeModel::columnCount(const QModelIndex &parent) const
+int ValueListModel::columnCount(const QModelIndex &parent) const
 {
 	return 1;
 }
 
-QVariant ValuesTreeModel::data(const QModelIndex &index, int role) const
+QVariant ValueListModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid())
     	return static_cast<IdmItem*>(index.internalPointer())->data(index.column(), role);
@@ -34,17 +34,17 @@ QVariant ValuesTreeModel::data(const QModelIndex &index, int role) const
     	return m_items.at(index.row())->data(index.column(), role);
 }
 
-Qt::ItemFlags ValuesTreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ValueListModel::flags(const QModelIndex &index) const
 {
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
-QVariant ValuesTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	return QVariant();
 }
 
-QModelIndex ValuesTreeModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex ValueListModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
 		if (parent.isValid() && static_cast<IdmItem*>(parent.internalPointer())->isList())
@@ -55,7 +55,7 @@ QModelIndex ValuesTreeModel::index(int row, int column, const QModelIndex &paren
         return QModelIndex();
 }
 
-QModelIndex ValuesTreeModel::parent(const QModelIndex &child) const
+QModelIndex ValueListModel::parent(const QModelIndex &child) const
 {
     if (child.isValid())
 		if (IdmItem *parent = static_cast<IdmItem*>(child.internalPointer())->parent())
@@ -67,23 +67,23 @@ QModelIndex ValuesTreeModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-void ValuesTreeModel::add(IdmEntity *entity)
+void ValueListModel::add(IdmEntity *entity)
 {
 //	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 //	m_items.add(entity);
 //	endInsertRows();
 }
 
-void ValuesTreeModel::add(const QModelIndex &index, const QVariant &value)
+void ValueListModel::add(const QModelIndex &index, const QVariant &value)
 {
-	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());
+	ValueListItem *item = static_cast<ValueListItem*>(index.internalPointer());
 
 	beginInsertRows(index, item->size(), item->size());
 	m_items.add(item, value);
 	endInsertRows();
 }
 
-void ValuesTreeModel::remove(const QModelIndex &index)
+void ValueListModel::remove(const QModelIndex &index)
 {
 //	beginRemoveRows(QModelIndex(), index.row(), index.row());
 //	delete m_items.at(index.row());

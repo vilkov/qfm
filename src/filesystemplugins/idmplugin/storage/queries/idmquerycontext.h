@@ -4,27 +4,13 @@
 #include <sqlite3.h>
 #include <QtCore/QString>
 #include <QtCore/QSharedData>
-#include "../../idmplugin_ns.h"
+#include "../entities/idmentity.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 class QueryContext
 {
-private:
-	struct Data : public QSharedData
-	{
-		Data(sqlite3_stmt *statement) :
-			statement(statement)
-		{}
-		~Data()
-		{
-			sqlite3_finalize(statement);
-		}
-
-		sqlite3_stmt *statement;
-	};
-
 public:
 	enum ColumnType
 	{
@@ -42,6 +28,8 @@ public:
 	bool isValid() const { return m_data; }
 	bool next() { return sqlite3_step(m_data->statement) == SQLITE_ROW; }
 	ColumnType columnType(int column) const { return static_cast<ColumnType>(sqlite3_column_type(m_data->statement, column)); }
+	int columnCount() const { return sqlite3_column_count(m_data->statement); }
+	IdmEntity *entity() const { return m_data->entity; }
 
 	double asDouble(int column) const { return sqlite3_column_double(m_data->statement, column); }
 	qint32 asInt(int column) const { return sqlite3_column_int(m_data->statement, column); }
@@ -50,9 +38,25 @@ public:
 	QString asText(int column) const { return QString::fromUtf8((const char *)sqlite3_column_text(m_data->statement, column)); }
 
 private:
+	struct Data : public QSharedData
+	{
+		Data(IdmEntity *entity, sqlite3_stmt *statement) :
+			entity(entity),
+			statement(statement)
+		{}
+		~Data()
+		{
+			sqlite3_finalize(statement);
+		}
+
+		IdmEntity *entity;
+		sqlite3_stmt *statement;
+	};
+
+private:
 	friend class IdmStorage;
-	QueryContext(sqlite3_stmt *statement) :
-		m_data(new Data(statement))
+	QueryContext(IdmEntity *entity, sqlite3_stmt *statement) :
+		m_data(new Data(entity, statement))
 	{}
 
 private:

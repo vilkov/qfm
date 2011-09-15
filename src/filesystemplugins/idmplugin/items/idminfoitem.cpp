@@ -68,6 +68,11 @@ bool IdmInfoItem::isMenuItem() const
 	return false;
 }
 
+bool IdmInfoItem::isValueItem() const
+{
+	return false;
+}
+
 bool IdmInfoItem::isEntityItem() const
 {
 	return false;

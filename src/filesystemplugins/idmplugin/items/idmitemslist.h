@@ -22,6 +22,7 @@ public:
 	virtual bool isRoot() const;
 	virtual bool isList() const;
 	virtual bool isMenuItem() const;
+	virtual bool isValueItem() const;
 	virtual bool isEntityItem() const;
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }

@@ -1,16 +1,16 @@
 #include "valuelistdialog.h"
 
 
-ValueListDialog::ValueListDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
+ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_entity(entity),
+	m_query(query),
 	m_handler(this),
 	m_view(&m_handler, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Value of \"%1\"").arg(entity->name()));
+	setWindowTitle(tr("Values of \"%1\"").arg(m_query.entity()->name()));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -25,6 +25,9 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, IdmEntity *entit
 
 	m_view.setHeaderHidden(true);
 //	m_view.setModel(&m_model);
+
+	QString error;
+	container.prepare(query, error);
 }
 
 void ValueListDialog::accept()

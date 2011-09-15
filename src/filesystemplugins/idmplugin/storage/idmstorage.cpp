@@ -176,7 +176,7 @@ void IdmStorage::rollback(const QByteArray &name)
 		setLastError(sqlQuery, errorMsg);
 }
 
-QueryContext IdmStorage::prepare(const Query &query) const
+QueryContext IdmStorage::prepare(const Query &query, QString &error) const
 {
 	return QueryContext();
 }

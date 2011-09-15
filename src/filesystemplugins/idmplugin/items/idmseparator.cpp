@@ -27,6 +27,11 @@ bool IdmSeparator::isMenuItem() const
 	return false;
 }
 
+bool IdmSeparator::isValueItem() const
+{
+	return false;
+}
+
 bool IdmSeparator::isEntityItem() const
 {
 	return false;

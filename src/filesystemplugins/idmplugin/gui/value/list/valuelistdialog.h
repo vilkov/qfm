@@ -6,6 +6,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "../../../containeres/idmcontainer.h"
+#include "../../../storage/queries/idmselectquery.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
 
@@ -17,7 +18,7 @@ class ValueListDialog : public QDialog
 	Q_OBJECT
 
 public:
-	ValueListDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+	ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
     virtual void accept();
 
@@ -38,7 +39,7 @@ private:
 
 private:
 	IdmContainer m_container;
-	IdmEntity *m_entity;
+	Select m_query;
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	QDialogButtonBox m_buttonBox;

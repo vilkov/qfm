@@ -24,7 +24,7 @@ public:
 	enum MenuId
 	{
 		Create,
-		Query,
+		QueryEntity,
 		List
 	};
 
@@ -50,6 +50,8 @@ public:
 	bool savepoint(const QByteArray &name) { return m_data->storage.savepoint(name); }
 	bool release(const QByteArray &name) { return m_data->storage.release(name); }
 	void rollback(const QByteArray &name) { return m_data->storage.rollback(name); }
+
+	QueryContext prepare(const Query &query, QString &error) const { return m_data->storage.prepare(query, error); }
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat) { return m_data->storage.createEntity(name, type, shortFormat); }
 	bool removeEntity(IdmEntity *entity) { return m_data->storage.removeEntity(entity); }

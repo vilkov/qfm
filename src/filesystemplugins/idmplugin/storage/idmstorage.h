@@ -52,7 +52,7 @@ public:
 	bool release(const QByteArray &name);
 	void rollback(const QByteArray &name);
 
-	QueryContext prepare(const Query &query) const;
+	QueryContext prepare(const Query &query, QString &error) const;
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat);
 	bool removeEntity(IdmEntity *entity);

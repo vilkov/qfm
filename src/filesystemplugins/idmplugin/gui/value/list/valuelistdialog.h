@@ -25,6 +25,9 @@ public:
     virtual void accept();
 
 private:
+    void fillModel();
+
+private:
 	typedef KeyboardEventSource<
 				EventSourceBase<
 					QTreeView
@@ -40,7 +43,6 @@ private:
 	void removeValue();
 
 private:
-	QString m_lastError;
 	IdmContainer m_container;
 	Select m_query;
 	TreeViewHandler m_handler;

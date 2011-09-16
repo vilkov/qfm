@@ -90,8 +90,7 @@ void EntitiesListModel::add(IdmEntity *entity, const QString &name)
 void EntitiesListModel::remove(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	delete m_items.at(index.row());
-	m_items.removeAt(index.row());
+	delete m_items.takeAt(index.row());
 	endRemoveRows();
 }
 

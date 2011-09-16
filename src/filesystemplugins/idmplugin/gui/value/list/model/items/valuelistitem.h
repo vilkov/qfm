@@ -1,20 +1,26 @@
 #ifndef VALUELISTITEM_H_
 #define VALUELISTITEM_H_
 
-#include "../../../../../items/idmentitypropertyitem.h"
+#include <QtCore/QVariant>
+#include "../../../../../storage/structure/idmdatabasetypes.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class ValueListItem : public IdmEntityPropertyItem
+class ValueListItem
 {
 public:
-	ValueListItem(IdmEntity *entity, const QString &name, IdmItem *parent = 0);
+	ValueListItem(Database::id_type id, const QVariant &value) :
+		m_id(id),
+		m_value(value)
+	{}
 
-protected:
-	friend class ValueListRootItem;
-	void add(IdmEntityItem *item) { m_items.push_back(item); }
-	void remove(size_type index) { m_items.removeAt(index); }
+	Database::id_type id() const { return m_id; }
+	const QVariant &value() const { return m_value; }
+
+private:
+	Database::id_type m_id;
+	QVariant m_value;
 };
 
 IDM_PLUGIN_NS_END

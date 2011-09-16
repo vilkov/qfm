@@ -1,9 +1,9 @@
 #ifndef VALUELISTMODEL_H_
 #define VALUELISTMODEL_H_
 
+#include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
-#include "items/valuelistrootitem.h"
-#include "../../../../storage/queries/idmquerycontext.h"
+#include "items/valuelistitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,10 +11,12 @@ IDM_PLUGIN_NS_BEGIN
 class ValueListModel : public QAbstractItemModel
 {
 public:
-	typedef ValueListItem::size_type size_type;
+	typedef QList<ValueListItem*> List;
+	typedef List::size_type       size_type;
 
 public:
-	ValueListModel(const QueryContext &context, QObject *parent = 0);
+	ValueListModel(QObject *parent = 0);
+	virtual ~ValueListModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -25,18 +27,12 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	bool isValid() const { return m_context.isValid(); }
-	IdmItem *at(size_type index) const { return m_items.at(index); }
-	size_type size() const { return m_items.size(); }
-	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
-
-	void add(IdmEntity *entity);
-	void add(const QModelIndex &index, const QVariant &value);
+	void add(const List &list);
+	void add(Database::id_type id, const QVariant &value);
 	void remove(const QModelIndex &index);
 
 private:
-	QueryContext m_context;
-	ValueListRootItem m_items;
+	List m_items;
 };
 
 IDM_PLUGIN_NS_END

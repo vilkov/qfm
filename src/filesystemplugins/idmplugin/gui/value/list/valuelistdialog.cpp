@@ -3,6 +3,16 @@
 #include <QtGui/QMessageBox>
 
 
+template <typename T>
+class NewValueDialog : public ValueDialog<T>
+{
+public:
+	NewValueDialog(const QString &title, const QString &label, QWidget *parent = 0) :
+		ValueDialog<T>(title, label, T(), parent)
+	{}
+};
+
+
 ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
@@ -49,10 +59,10 @@ void ValueListDialog::addValue()
 		{
 			case Database::Int:
 			{
-				typedef ValueDialog<int> ValueDialog;
-				ValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), 0, this);
+				typedef NewValueDialog<int> NewValueDialog;
+				NewValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), this);
 
-				if (dialog.exec() == ValueDialog::Accepted)
+				if (dialog.exec() == NewValueDialog::Accepted)
 				{
 					m_container.addValue(m_query.entity(), dialog.value());
 				}
@@ -61,10 +71,10 @@ void ValueListDialog::addValue()
 			}
 			case Database::String:
 			{
-				typedef ValueDialog<QString> ValueDialog;
-				ValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), QString(), this);
+				typedef NewValueDialog<QString> NewValueDialog;
+				NewValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), this);
 
-				if (dialog.exec() == ValueDialog::Accepted)
+				if (dialog.exec() == NewValueDialog::Accepted)
 				{
 					m_container.addValue(m_query.entity(), dialog.value());
 				}

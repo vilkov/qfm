@@ -29,7 +29,7 @@ public:
 
 
 template <Database::EntityType EntityType>
-inline bool processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity)
+inline bool processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
 {
 	typedef NewValueDialog<EntityType> NewValueDialog;
 	NewValueDialog dialog(title, label, parent);
@@ -42,25 +42,11 @@ inline bool processAddValue(const QString &title, const QString &label, QWidget 
 		if (id == IdmEntity::InvalidId)
 			return false;
 		else
-		{
-
-		}
+			model.add(id, value);
 	}
 
 	return true;
 }
-
-
-template <Database::EntityType EntityType>
-inline QVariant contextValue(const QueryContext &context);
-template <> inline QVariant contextValue<Database::Int>(const QueryContext &context)      { return context.asInt(1); }
-template <> inline QVariant contextValue<Database::String>(const QueryContext &context)   { return context.asText(1); }
-template <> inline QVariant contextValue<Database::Date>(const QueryContext &context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Time>(const QueryContext &context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::DateTime>(const QueryContext &context) { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Memo>(const QueryContext &context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Rating>(const QueryContext &context)   { return context.asInt(1); }
-template <> inline QVariant contextValue<Database::Path>(const QueryContext &context)     { return context.asText(1); }
 
 
 ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
@@ -69,7 +55,7 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 	m_query(query),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(this),
+	m_model(m_container.prepare(m_query, m_lastError), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -86,93 +72,16 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &ValueListDialog::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &ValueListDialog::removeValue);
 
-    fillModel();
-
     m_view.setHeaderHidden(true);
 	m_view.setModel(&m_model);
+
+	if (!m_model.isValid())
+		QMessageBox::critical(this, windowTitle(), m_lastError);
 }
 
 void ValueListDialog::accept()
 {
 	QDialog::accept();
-}
-
-void ValueListDialog::fillModel()
-{
-	QString lastError;
-	QueryContext context = m_container.prepare(m_query, lastError);
-
-	if (context.isValid())
-	{
-		ValueListModel::List list;
-
-		switch (m_query.entity()->type())
-		{
-			case Database::Int:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Int>(context)));
-
-				break;
-			}
-			case Database::String:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::String>(context)));
-
-				break;
-			}
-			case Database::Date:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Date>(context)));
-
-				break;
-			}
-			case Database::Time:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Time>(context)));
-
-				break;
-			}
-			case Database::DateTime:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::DateTime>(context)));
-
-				break;
-			}
-			case Database::Memo:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Memo>(context)));
-
-				break;
-			}
-			case Database::Rating:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Rating>(context)));
-
-				break;
-			}
-			case Database::Path:
-			{
-				while (context.next())
-					list.push_back(new ValueListItem(context.asInt(0), contextValue<Database::Path>(context)));
-
-				break;
-			}
-			default:
-				break;
-		}
-
-		if (!list.isEmpty())
-			m_model.add(list);
-	}
-	else
-		QMessageBox::critical(this, windowTitle(), lastError);
 }
 
 void ValueListDialog::addValue()
@@ -190,14 +99,14 @@ void ValueListDialog::addValue()
 		{
 			case Database::Int:
 			{
-				if (!processAddValue<Database::Int>(title, label, this, m_container, m_query.entity()))
+				if (!processAddValue<Database::Int>(title, label, this, m_container, m_query.entity(), m_model))
 					QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 				break;
 			}
 			case Database::String:
 			{
-				if (!processAddValue<Database::String>(title, label, this, m_container, m_query.entity()))
+				if (!processAddValue<Database::String>(title, label, this, m_container, m_query.entity(), m_model))
 					QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 				break;

@@ -4,6 +4,7 @@
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
 #include "items/valuelistitem.h"
+#include "../../../../storage/queries/idmquerycontext.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -15,7 +16,7 @@ public:
 	typedef List::size_type       size_type;
 
 public:
-	ValueListModel(QObject *parent = 0);
+	ValueListModel(const QueryContext &context, QObject *parent = 0);
 	virtual ~ValueListModel();
 
     /* QAbstractItemModel */
@@ -27,11 +28,14 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+	bool isValid() const { return m_context.isValid(); }
+
 	void add(const List &list);
 	void add(Database::id_type id, const QVariant &value);
 	void remove(const QModelIndex &index);
 
 private:
+	QueryContext m_context;
 	List m_items;
 };
 

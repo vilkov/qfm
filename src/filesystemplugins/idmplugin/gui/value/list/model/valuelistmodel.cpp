@@ -3,9 +3,92 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValueListModel::ValueListModel(QObject *parent) :
-	QAbstractItemModel(parent)
-{}
+template <Database::EntityType EntityType>
+inline QVariant contextValue(const QueryContext &m_context);
+template <> inline QVariant contextValue<Database::Int>(const QueryContext &m_context)      { return m_context.asInt(1); }
+template <> inline QVariant contextValue<Database::String>(const QueryContext &m_context)   { return m_context.asText(1); }
+template <> inline QVariant contextValue<Database::Date>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Time>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::DateTime>(const QueryContext &m_context) { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Memo>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Rating>(const QueryContext &m_context)   { return m_context.asInt(1); }
+template <> inline QVariant contextValue<Database::Path>(const QueryContext &m_context)     { return m_context.asText(1); }
+
+
+ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
+	QAbstractItemModel(parent),
+	m_context(context)
+{
+	if (m_context.isValid())
+	{
+		List list;
+
+		switch (m_context.entity()->type())
+		{
+			case Database::Int:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Int>(m_context)));
+
+				break;
+			}
+			case Database::String:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::String>(m_context)));
+
+				break;
+			}
+			case Database::Date:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Date>(m_context)));
+
+				break;
+			}
+			case Database::Time:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Time>(m_context)));
+
+				break;
+			}
+			case Database::DateTime:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::DateTime>(m_context)));
+
+				break;
+			}
+			case Database::Memo:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Memo>(m_context)));
+
+				break;
+			}
+			case Database::Rating:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Rating>(m_context)));
+
+				break;
+			}
+			case Database::Path:
+			{
+				while (m_context.next())
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Path>(m_context)));
+
+				break;
+			}
+			default:
+				break;
+		}
+
+		if (!list.isEmpty())
+			add(list);
+	}
+}
 
 ValueListModel::~ValueListModel()
 {
@@ -14,7 +97,10 @@ ValueListModel::~ValueListModel()
 
 int ValueListModel::rowCount(const QModelIndex &parent) const
 {
-   	return m_items.size();
+	if (parent.isValid())
+		return 0;
+	else
+		return m_items.size();
 }
 
 int ValueListModel::columnCount(const QModelIndex &parent) const

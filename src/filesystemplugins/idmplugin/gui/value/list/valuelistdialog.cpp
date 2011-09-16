@@ -79,11 +79,6 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 		QMessageBox::critical(this, windowTitle(), m_lastError);
 }
 
-void ValueListDialog::accept()
-{
-	QDialog::accept();
-}
-
 void ValueListDialog::addValue()
 {
 	if (m_query.entity()->type() == Database::Composite)

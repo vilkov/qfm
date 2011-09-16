@@ -22,8 +22,6 @@ class ValueListDialog : public QDialog
 public:
 	ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
-    virtual void accept();
-
 private:
 	typedef KeyboardEventSource<
 				EventSourceBase<

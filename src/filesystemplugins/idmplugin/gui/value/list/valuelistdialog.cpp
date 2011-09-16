@@ -107,8 +107,26 @@ void ValueListDialog::addValue()
 				break;
 			}
 			case Database::Date:
+			{
+				if (!processAddValue<Database::Date>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+				break;
+			}
 			case Database::Time:
+			{
+				if (!processAddValue<Database::Time>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+				break;
+			}
 			case Database::DateTime:
+			{
+				if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+				break;
+			}
 			case Database::Memo:
 			case Database::Rating:
 			default:

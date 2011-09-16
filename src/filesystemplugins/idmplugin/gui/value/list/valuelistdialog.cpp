@@ -1,4 +1,5 @@
 #include "valuelistdialog.h"
+#include "../../../../../tools/widgets/valuedialog/valuedialog.h"
 #include <QtGui/QMessageBox>
 
 
@@ -39,7 +40,45 @@ void ValueListDialog::accept()
 
 void ValueListDialog::addValue()
 {
+	if (m_query.entity()->type() == Database::Composite)
+	{
 
+	}
+	else
+		switch (m_query.entity()->type())
+		{
+			case Database::Int:
+			{
+				typedef ValueDialog<int> ValueDialog;
+				ValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), 0, this);
+
+				if (dialog.exec() == ValueDialog::Accepted)
+				{
+					m_container.addValue(m_query.entity(), dialog.value());
+				}
+
+				break;
+			}
+			case Database::String:
+			{
+				typedef ValueDialog<QString> ValueDialog;
+				ValueDialog dialog(tr("New value for \"%1\"").arg(m_query.entity()->name()), tr("Value"), QString(), this);
+
+				if (dialog.exec() == ValueDialog::Accepted)
+				{
+					m_container.addValue(m_query.entity(), dialog.value());
+				}
+
+				break;
+			}
+			case Database::Date:
+			case Database::Time:
+			case Database::DateTime:
+			case Database::Memo:
+			case Database::Rating:
+			case Database::Path:
+				break;
+		}
 }
 
 void ValueListDialog::removeValue()

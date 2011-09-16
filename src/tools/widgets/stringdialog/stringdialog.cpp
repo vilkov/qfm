@@ -7,7 +7,7 @@ StringDialog::StringDialog(const QString &title, const QString &label, const QSt
 	m_label(this),
 	m_lineEdit(value, this),
 	m_gridLayout(this),
-	m_buttonBox(this)
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
 	setWindowTitle(title);
 
@@ -16,8 +16,6 @@ StringDialog::StringDialog(const QString &title, const QString &label, const QSt
     font.setWeight(75);
     m_label.setFont(font);
     m_label.setText(label);
-
-    m_buttonBox.setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 
     m_gridLayout.setSpacing(6);
     m_gridLayout.setContentsMargins(6, 6, 6, 6);

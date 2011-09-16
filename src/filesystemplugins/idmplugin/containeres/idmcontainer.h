@@ -18,6 +18,8 @@ class IdmContainer
 public:
 	typedef IdmStorage::id_type   id_type;
 	typedef IdmStorage::size_type size_type;
+	typedef IdmStorage::IdsList   IdsList;
+	typedef IdmStorage::IdsMap    IdsMap;
 	enum { InvalidId = IdmStorage::InvalidId };
 	enum { InvalidIndex = IdmStorage::InvalidIndex };
 
@@ -58,6 +60,10 @@ public:
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_data->storage.removeProperty(entity, property); }
+
+	IdmEntity::id_type addValue(IdmEntity *entity, const IdsMap &values) const { return m_data->storage.addValue(entity, values); }
+	IdmEntity::id_type addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
+	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
 
 private:
 	struct Data : public QSharedData

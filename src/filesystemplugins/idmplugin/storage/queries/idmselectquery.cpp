@@ -9,7 +9,8 @@ Select::Select(IdmEntity *entity) :
 
 QByteArray Select::compile() const
 {
-	return QByteArray("select VALUE from ENTITY_").append(entity()->id());
+	return QString::fromLatin1("select VALUE from ENTITY_").
+			append(QString::number(entity()->id())).toUtf8();
 }
 
 IDM_PLUGIN_NS_END

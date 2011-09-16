@@ -60,8 +60,8 @@ public:
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
-	bool addValue(IdmEntity *entity, const IdsMap &values) const;
-	bool addValue(IdmEntity *entity, const QVariant &value) const;
+	IdmEntity::id_type addValue(IdmEntity *entity, const IdsMap &values) const;
+	IdmEntity::id_type addValue(IdmEntity *entity, const QVariant &value) const;
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
 
 private:

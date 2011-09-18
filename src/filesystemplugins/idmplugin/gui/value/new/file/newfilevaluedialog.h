@@ -7,9 +7,9 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/valuestreemodel.h"
-#include "../../../containeres/idmcontainer.h"
-#include "../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../containeres/idmcontainer.h"
+#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
+#include "../../../../../../tools/events/imp/keyboardeventsource.h"
 
 
 using namespace FileSystem::Plugins::Idm;

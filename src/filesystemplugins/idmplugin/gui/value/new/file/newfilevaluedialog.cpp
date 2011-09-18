@@ -1,5 +1,5 @@
 #include "newfilevaluedialog.h"
-#include "../list/valuelistdialog.h"
+#include "../../list/valuelistdialog.h"
 
 
 NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity *entity, const QStringList &files, QWidget *parent) :

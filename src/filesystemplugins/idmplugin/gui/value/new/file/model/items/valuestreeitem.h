@@ -1,7 +1,7 @@
 #ifndef VALUESTREEITEM_H_
 #define VALUESTREEITEM_H_
 
-#include "../../../../../items/idmentitypropertyitem.h"
+#include "../../../../../../items/idmentitypropertyitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

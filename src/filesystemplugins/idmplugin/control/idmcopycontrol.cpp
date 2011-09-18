@@ -1,5 +1,5 @@
 #include "idmcopycontrol.h"
-#include "../gui/value/new/newfilevaluedialog.h"
+#include "../gui/value/new/file/newfilevaluedialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 

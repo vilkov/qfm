@@ -4,15 +4,16 @@
 IDM_PLUGIN_NS_BEGIN
 
 template <Database::EntityType EntityType>
-inline QVariant contextValue(const QueryContext &m_context);
-template <> inline QVariant contextValue<Database::Int>(const QueryContext &m_context)      { return m_context.asInt(1); }
-template <> inline QVariant contextValue<Database::String>(const QueryContext &m_context)   { return m_context.asText(1); }
-template <> inline QVariant contextValue<Database::Date>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Time>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::DateTime>(const QueryContext &m_context) { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Memo>(const QueryContext &m_context)     { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Rating>(const QueryContext &m_context)   { return m_context.asInt(1); }
-template <> inline QVariant contextValue<Database::Path>(const QueryContext &m_context)     { return m_context.asText(1); }
+inline QVariant contextValue(const QueryContext &context);
+template <> inline QVariant contextValue<Database::Int>(const QueryContext &context)       { return context.asInt(1); }
+template <> inline QVariant contextValue<Database::String>(const QueryContext &context)    { return context.asText(1); }
+template <> inline QVariant contextValue<Database::Date>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Time>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::DateTime>(const QueryContext &context)  { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Memo>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
+template <> inline QVariant contextValue<Database::Composite>(const QueryContext &context) { return context.asInt(1); }
+template <> inline QVariant contextValue<Database::Rating>(const QueryContext &context)    { return context.asInt(1); }
+template <> inline QVariant contextValue<Database::Path>(const QueryContext &context)      { return context.asText(1); }
 
 
 ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :

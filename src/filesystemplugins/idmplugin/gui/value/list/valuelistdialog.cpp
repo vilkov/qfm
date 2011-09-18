@@ -48,6 +48,24 @@ inline bool processAddValue(const QString &title, const QString &label, QWidget 
 	return true;
 }
 
+template <>
+inline bool processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+{
+	return false;
+}
+
+template <>
+inline bool processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+{
+	return false;
+}
+
+template <>
+inline bool processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+{
+	return false;
+}
+
 
 ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
@@ -81,15 +99,14 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 
 void ValueListDialog::addValue()
 {
+	QString label = tr("Value");
+	QString title = tr("New value for \"%1\"").arg(m_query.entity()->name());
+
 	if (m_query.entity()->type() == Database::Composite)
 	{
 
 	}
 	else
-	{
-		QString label = tr("Value");
-		QString title = tr("New value for \"%1\"").arg(m_query.entity()->name());
-
 		switch (m_query.entity()->type())
 		{
 			case Database::Int:
@@ -128,14 +145,36 @@ void ValueListDialog::addValue()
 				break;
 			}
 			case Database::Memo:
-			case Database::Rating:
-			default:
+			{
+				if (!processAddValue<Database::Memo>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
 				break;
+			}
+			case Database::Rating:
+			{
+				if (!processAddValue<Database::Rating>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+				break;
+			}
+			case Database::Path:
+			{
+				if (!processAddValue<Database::Path>(title, label, this, m_container, m_query.entity(), m_model))
+					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+				break;
+			}
 		}
-	}
 }
 
 void ValueListDialog::removeValue()
 {
+	QModelIndex index = m_view.selectionModel()->currentIndex();
 
+	if (index.isValid())
+		if (m_container.removeValue(m_query.entity(), IdmStorage::IdsList() << static_cast<ValueListItem*>(index.internalPointer())->id()))
+			m_model.remove(index);
+		else
+			QMessageBox::critical(this, windowTitle(), m_container.lastError());
 }

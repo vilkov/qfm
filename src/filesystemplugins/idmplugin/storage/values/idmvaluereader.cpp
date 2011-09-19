@@ -85,25 +85,30 @@ IdmEntityValue *IdmValueReader::value(IdmEntity *entity, int &column) const
 
 IdmEntityValue *IdmValueReader::property(IdmEntity *entity, int &column) const
 {
-	IdmEntityValue *tmp;
-
-	if (entity->type() == Database::Composite)
-	{
-		PScopedPointer<IdmEntityValue> value(new IdmEntityCompositeValueImp(entity, m_context.asInt(column)));
-
+	if (m_context.columnType(column) == QueryContext::Null)
 		column += 2;
-		for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-			if (tmp = property(entity->at(i).entity, column))
-				static_cast<IdmEntityCompositeValueImp*>(value.data())->add(tmp);
-
-		return value.take();
-	}
 	else
 	{
-		tmp = value(entity, column);
-		column += 2;
+		IdmEntityValue *tmp;
 
-		return tmp;
+		if (entity->type() == Database::Composite)
+		{
+			PScopedPointer<IdmEntityValue> value(new IdmEntityCompositeValueImp(entity, m_context.asInt(column)));
+
+			column += 2;
+			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+				if (tmp = property(entity->at(i).entity, column))
+					static_cast<IdmEntityCompositeValueImp*>(value.data())->add(tmp);
+
+			return value.take();
+		}
+		else
+		{
+			tmp = value(entity, column);
+			column += 2;
+
+			return tmp;
+		}
 	}
 
 	return 0;

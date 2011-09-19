@@ -26,7 +26,7 @@ public:
 	{}
 
 	bool isValid() const { return m_data; }
-	bool next() { return sqlite3_step(m_data->statement) == SQLITE_ROW; }
+	bool next() const { return sqlite3_step(m_data->statement) == SQLITE_ROW; }
 	ColumnType columnType(int column) const { return static_cast<ColumnType>(sqlite3_column_type(m_data->statement, column)); }
 	int columnCount() const { return sqlite3_column_count(m_data->statement); }
 	IdmEntity *entity() const { return m_data->entity; }

@@ -1,20 +1,8 @@
 #include "valuelistmodel.h"
+#include "../../../../storage/values/idmentityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
-
-template <Database::EntityType EntityType>
-inline QVariant contextValue(const QueryContext &context);
-template <> inline QVariant contextValue<Database::Int>(const QueryContext &context)       { return context.asInt(1); }
-template <> inline QVariant contextValue<Database::String>(const QueryContext &context)    { return context.asText(1); }
-template <> inline QVariant contextValue<Database::Date>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Time>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::DateTime>(const QueryContext &context)  { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Memo>(const QueryContext &context)      { return QString::fromLatin1("Not implemented yet"); }
-template <> inline QVariant contextValue<Database::Composite>(const QueryContext &context) { return context.asInt(1); }
-template <> inline QVariant contextValue<Database::Rating>(const QueryContext &context)    { return context.asInt(1); }
-template <> inline QVariant contextValue<Database::Path>(const QueryContext &context)      { return context.asText(1); }
-
 
 ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
 	QAbstractItemModel(parent),
@@ -29,56 +17,56 @@ ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
 			case Database::Int:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Int>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Int>(m_context, 1)));
 
 				break;
 			}
 			case Database::String:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::String>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::String>(m_context, 1)));
 
 				break;
 			}
 			case Database::Date:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Date>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Date>(m_context, 1)));
 
 				break;
 			}
 			case Database::Time:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Time>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Time>(m_context, 1)));
 
 				break;
 			}
 			case Database::DateTime:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::DateTime>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::DateTime>(m_context, 1)));
 
 				break;
 			}
 			case Database::Memo:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Memo>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Memo>(m_context, 1)));
 
 				break;
 			}
 			case Database::Rating:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Rating>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Rating>(m_context, 1)));
 
 				break;
 			}
 			case Database::Path:
 			{
 				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Path>(m_context)));
+					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Path>(m_context, 1)));
 
 				break;
 			}

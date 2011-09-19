@@ -1,24 +1,14 @@
 #include "valuelistdialog.h"
+#include "../../../storage/values/idmentityvalue.h"
 #include "../../../../../tools/widgets/valuedialog/valuedialog.h"
 #include <QtGui/QMessageBox>
 
 
-/* Meta-function "ValueDialogType" */
-template <Database::EntityType EntityType> struct ValueDialogType {};
-template <> struct ValueDialogType<Database::Int>      { typedef int       type; };
-template <> struct ValueDialogType<Database::String>   { typedef QString   type; };
-template <> struct ValueDialogType<Database::Date>     { typedef QDate     type; };
-template <> struct ValueDialogType<Database::Time>     { typedef QTime     type; };
-template <> struct ValueDialogType<Database::DateTime> { typedef QDateTime type; };
-template <> struct ValueDialogType<Database::Memo>     { typedef QString   type; };
-template <> struct ValueDialogType<Database::Rating>   { typedef int       type; };
-
-
 template <Database::EntityType EntityType>
-class NewValueDialog : public ValueDialog<typename ValueDialogType<EntityType>::type>
+class NewValueDialog : public ValueDialog<typename EntityValueType<EntityType>::type>
 {
 public:
-	typedef typename ValueDialogType<EntityType>::type value_type;
+	typedef typename EntityValueType<EntityType>::type value_type;
 	typedef ValueDialog<value_type>                    base_class;
 
 public:

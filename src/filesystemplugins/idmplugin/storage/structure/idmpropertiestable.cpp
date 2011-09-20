@@ -71,4 +71,12 @@ QString PropertiesTable::Incomplete::removeValues(Database::id_type property, co
 			append(QString::fromLatin1(" where PROPERTY_VALUE_ID in (%1)").arg(Database::idsToString(ids)));
 }
 
+QByteArray PropertiesTable::Parameters::addValue(Database::id_type entity, Database::id_type property, Database::id_type value)
+{
+	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (?1, %3, ?2)").
+			arg(QString::number(entity)).
+			arg(QString::number(id)).
+			arg(QString::number(value)).toUtf8();
+}
+
 IDM_PLUGIN_NS_END

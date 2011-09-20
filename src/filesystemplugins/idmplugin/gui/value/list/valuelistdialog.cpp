@@ -52,6 +52,7 @@ inline bool processAddValue<Database::Composite>(const QString &title, const QSt
 
 	if (dialog.exec() == NewCompositeValueDialog::Accepted)
 	{
+		container.addValue();
 //		QVariant value = dialog.value();
 //		IdmEntity::id_type id = container.addValue(entity, value);
 //

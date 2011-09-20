@@ -323,6 +323,83 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 
 IdmEntity::id_type IdmStorage::addValue(IdmEntity *entity, const IdsMap &values) const
 {
+	QString str;
+	IdmEntity::id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
+
+	if (id != IdmEntity::InvalidId)
+	{
+		char *errorMsg = 0;
+		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), id);
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		{
+			bool ok;
+			sqlite3_stmt *statement;
+			IdmEntity::id_type subId;
+			QString table = QString::fromLatin1("ENTITY_%1_PROPERTY_").arg(entity->id());
+
+			for (IdsMap::const_iterator it = values.constBegin(), end = values.constEnd(); it != end; ++it)
+				if ((subId = loadId(str = QString(table).append(QString::number(it.key()->id())))) == IdmEntity::InvalidId)
+				{
+					setLastError(failedToLoadId(str));
+					return IdmEntity::InvalidId;
+				}
+				else
+				{
+					sqlQuery = PropertiesTable::Parameters::addValue(entity->id(), it.key()->id(), id);
+
+					if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+					{
+						const IdsList &ids = it.value();
+						ok = true;
+
+						for (IdsList::size_type i = 0, size = ids.size(); i < size; ++i, ++subId)
+							if (sqlite3_bind_int(statement, 1, subId)     == SQLITE_OK &&
+								sqlite3_bind_int(statement, 1, ids.at(i)) == SQLITE_OK)
+								if (sqlite3_step(statement) == SQLITE_OK)
+								{
+									if (sqlite3_reset(statement) != SQLITE_OK)
+									{
+										ok = false;
+										setLastError(failedToReset(sqlQuery));
+										break;
+									}
+								}
+								else
+								{
+									ok = false;
+									setLastError(sqlQuery);
+									break;
+								}
+							else
+							{
+								ok = false;
+								setLastError(failedToBind(sqlQuery));
+								break;
+							}
+
+						sqlite3_finalize(statement);
+
+						if (!ok)
+							return IdmEntity::InvalidId;
+					}
+					else
+					{
+						setLastError(sqlQuery);
+						return IdmEntity::InvalidId;
+					}
+				}
+
+			return id;
+		}
+		else
+			setLastError(sqlQuery, errorMsg);
+
+		sqlite3_free(errorMsg);
+	}
+	else
+		setLastError(failedToLoadId(str));
+
 	return IdmEntity::InvalidId;
 }
 
@@ -721,6 +798,21 @@ void IdmStorage::clearUndoStack(const QByteArray &name)
 
 	for (UndoStack::size_type i = index, size = m_undo.size(); i < size; ++i)
 		list.append(m_undo.take(index));
+}
+
+QString IdmStorage::failedToLoadId(const QString &tableName) const
+{
+	return tr("Failed to load id for table \"%1\"").arg(tableName);
+}
+
+QString IdmStorage::failedToBind(const QByteArray &sqlQuery) const
+{
+	return tr("Failed to bind sql parameters: \"%1\"").arg(QString::fromLatin1(sqlQuery));
+}
+
+QString IdmStorage::failedToReset(const QByteArray &sqlQuery) const
+{
+	return tr("Failed to reset: \"%1\"").arg(QString::fromLatin1(sqlQuery));
 }
 
 void IdmStorage::setLastError(const char *sqlQuery) const

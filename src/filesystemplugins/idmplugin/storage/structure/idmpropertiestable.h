@@ -31,6 +31,11 @@ struct PropertiesTable
 		static QString dropProperty2(Database::id_type property);
 		static QString removeValues(Database::id_type property, const Database::IdsList &ids);
 	};
+
+	struct Parameters
+	{
+		static QByteArray addValue(Database::id_type entity, Database::id_type property, Database::id_type value);
+	};
 };
 
 IDM_PLUGIN_NS_END

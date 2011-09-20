@@ -14,7 +14,7 @@ public:
 protected:
 	friend class ValuesRootTreeItem;
 	void add(IdmEntityItem *item) { m_items.push_back(item); }
-	void remove(size_type index) { m_items.removeAt(index); }
+	void remove(size_type index) { delete m_items.takeAt(index); }
 };
 
 IDM_PLUGIN_NS_END

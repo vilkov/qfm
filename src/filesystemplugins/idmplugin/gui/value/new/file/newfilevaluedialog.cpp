@@ -37,24 +37,17 @@ void NewFileValueDialog::addValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid())
-	{
-		IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
-
-		if (entity->type() != Database::Path)
-			doAddValue(index);
-	}
+	if (index.isValid() &&
+		static_cast<IdmEntityItem*>(index.internalPointer())->entity()->type() != Database::Path)
+		doAddValue(index);
 }
 
 void NewFileValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid())
-	{
-		IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
-
-		if (entity->type() != Database::Path)
-			doRemoveValue(index);
-	}
+	if (index.isValid() &&
+		static_cast<IdmItem*>(index.internalPointer())->isValueItem() &&
+		static_cast<IdmEntityItem*>(index.internalPointer())->entity()->type() != Database::Path)
+		doRemoveValue(index);
 }

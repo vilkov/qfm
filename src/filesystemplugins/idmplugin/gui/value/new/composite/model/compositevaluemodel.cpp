@@ -87,10 +87,9 @@ void CompositeValueModel::add(const QModelIndex &index, const ValueList &values)
 
 void CompositeValueModel::remove(const QModelIndex &index)
 {
-//	beginRemoveRows(QModelIndex(), index.row(), index.row());
-//	delete m_items.at(index.row());
-//	m_items.remove(index.row());
-//	endRemoveRows();
+	beginRemoveRows(parent(index), index.row(), index.row());
+	m_items.remove(static_cast<IdmEntityItem*>(index.internalPointer()), index.row());
+	endRemoveRows();
 }
 
 IDM_PLUGIN_NS_END

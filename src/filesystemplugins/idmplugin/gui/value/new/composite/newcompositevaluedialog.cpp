@@ -53,7 +53,7 @@ void NewCompositeValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid())
+	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isValueItem())
 		doRemoveValue(index);
 }
 
@@ -69,10 +69,7 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 
 		if (dialog.exec() == ValueListDialog::Accepted)
 			if (m_container.release(name))
-			{
-				if (IdmEntityValue *value = dialog.takeSelectedValue())
-					m_model.add(index, value);
-			}
+				m_model.add(index, dialog.takeSelectedValue());
 			else
 			{
 				m_container.rollback(name);
@@ -87,5 +84,24 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 
 void NewCompositeValueDialog::doRemoveValue(const QModelIndex &index)
 {
+	IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
+	QByteArray name("NewCompositeValueDialog::doRemoveValue::");
+	name.append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss")).toUtf8());
 
+	if (m_container.savepoint(name))
+		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<ValuesTreeValueItem*>(index.internalPointer())->value()->id()))
+			if (m_container.release(name))
+				m_model.remove(index);
+			else
+			{
+				m_container.rollback(name);
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+			}
+		else
+		{
+			m_container.rollback(name);
+			QMessageBox::critical(this, windowTitle(), m_container.lastError());
+		}
+	else
+		QMessageBox::critical(this, windowTitle(), m_container.lastError());
 }

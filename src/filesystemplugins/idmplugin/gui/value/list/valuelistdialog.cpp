@@ -110,12 +110,15 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 
 IdmEntityValue *ValueListDialog::takeSelectedValue()
 {
-	QModelIndex index = currentIndex();
+	return m_model.take(currentIndex());
+}
 
-	if (index.isValid())
-		return m_model.take(index);
+void ValueListDialog::accept()
+{
+	if (currentIndex().isValid())
+		QDialog::accept();
 	else
-		return 0;
+		QMessageBox::warning(this, windowTitle(), "You must select a value.");
 }
 
 QModelIndex ValueListDialog::currentIndex() const

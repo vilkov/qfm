@@ -11,6 +11,8 @@ class ValuesTreeValueItem : public IdmEntityValueItem
 public:
 	ValuesTreeValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
 
+	const IdmEntityValue *value() const { return m_value; }
+
 protected:
 	friend class ValuesRootTreeItem;
 	void add(IdmEntityItem *item) { m_items.push_back(item); }

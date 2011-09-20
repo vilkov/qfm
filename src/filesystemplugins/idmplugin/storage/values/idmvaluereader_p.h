@@ -11,7 +11,8 @@ class IdmEntityValueImp : public IdmEntityValue
 {
 public:
 	IdmEntityValueImp(IdmEntity *entity, id_type id, const QVariant &value) :
-		IdmEntityValue(entity, id)
+		IdmEntityValue(entity, id),
+		m_value(value)
 	{}
 
 	virtual QVariant value() const { return m_value; }

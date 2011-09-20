@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmEntityValue::IdmEntityValue(IdmEntity *entity, id_type id) :
-	m_entity(),
+	m_entity(entity),
 	m_id(id)
 {}
 

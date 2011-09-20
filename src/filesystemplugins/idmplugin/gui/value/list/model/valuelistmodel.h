@@ -3,8 +3,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
-#include "items/valuelistitem.h"
-#include "../../../../storage/queries/idmquerycontext.h"
+#include "../../../../storage/values/idmvaluereader.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -12,11 +11,11 @@ IDM_PLUGIN_NS_BEGIN
 class ValueListModel : public QAbstractItemModel
 {
 public:
-	typedef QList<ValueListItem*> List;
-	typedef List::size_type       size_type;
+	typedef QList<IdmEntityValue*> List;
+	typedef List::size_type        size_type;
 
 public:
-	ValueListModel(const QueryContext &context, QObject *parent = 0);
+	ValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
 	virtual ~ValueListModel();
 
     /* QAbstractItemModel */
@@ -28,14 +27,15 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	bool isValid() const { return m_context.isValid(); }
+	bool isValid() const { return m_reader.isValid(); }
+	const QString &lastError() const { return m_reader.lastError(); }
 
 	void add(const List &list);
 	void add(Database::id_type id, const QVariant &value);
 	void remove(const QModelIndex &index);
 
 private:
-	QueryContext m_context;
+	IdmValueReader m_reader;
 	List m_items;
 };
 

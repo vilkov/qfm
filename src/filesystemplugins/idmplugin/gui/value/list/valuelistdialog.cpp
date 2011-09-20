@@ -63,7 +63,7 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 	m_query(query),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(m_container.prepare(m_query, m_lastError), this),
+	m_model(m_container, m_query, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -84,7 +84,7 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 	m_view.setModel(&m_model);
 
 	if (!m_model.isValid())
-		QMessageBox::critical(this, windowTitle(), m_lastError);
+		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
 void ValueListDialog::addValue()
@@ -163,7 +163,7 @@ void ValueListDialog::removeValue()
 	QModelIndex index = m_view.selectionModel()->currentIndex();
 
 	if (index.isValid())
-		if (m_container.removeValue(m_query.entity(), IdmStorage::IdsList() << static_cast<ValueListItem*>(index.internalPointer())->id()))
+		if (m_container.removeValue(m_query.entity(), IdmStorage::IdsList() << static_cast<IdmEntityValue*>(index.internalPointer())->id()))
 			m_model.remove(index);
 		else
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());

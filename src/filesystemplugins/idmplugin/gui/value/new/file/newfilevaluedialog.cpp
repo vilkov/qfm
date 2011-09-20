@@ -1,5 +1,6 @@
 #include "newfilevaluedialog.h"
 #include "../../list/valuelistdialog.h"
+#include <QtGui/QMessageBox>
 
 
 NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity *entity, const QStringList &files, QWidget *parent) :
@@ -60,12 +61,27 @@ void NewFileValueDialog::addValue()
 
 		if (entity->type() != Database::Path)
 		{
-			ValueListDialog dialog(m_container, Select(entity), this);
+			QByteArray name("NewFileValueDialog::addValue");
 
-			if (dialog.exec() == ValueListDialog::Accepted)
+			if (m_container.savepoint(name))
 			{
+				ValueListDialog dialog(m_container, Select(entity), this);
 
+				if (dialog.exec() == ValueListDialog::Accepted)
+					if (m_container.release(name))
+					{
+
+					}
+					else
+					{
+						m_container.rollback(name);
+						QMessageBox::critical(this, windowTitle(), m_container.lastError());
+					}
+				else
+					m_container.rollback(name);
 			}
+			else
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 		}
 	}
 }

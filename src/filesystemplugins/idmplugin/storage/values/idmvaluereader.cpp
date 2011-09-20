@@ -31,10 +31,10 @@ IdmEntityValue *IdmValueReader::next() const
 IdmEntityValue *IdmValueReader::doNext() const
 {
 	int column = 0;
+	IdmEntityValue *entity;
 
 	if (m_context.entity()->type() == Database::Composite)
 	{
-		IdmEntityValue *entity;
 		PScopedPointer<IdmEntityValue> value(new IdmEntityCompositeValueImp(m_context.entity(), m_context.asInt(0)));
 
 		for (IdmEntityValue::id_type id = value->id(), nextId = id; id == nextId; nextId = m_context.asInt(0))
@@ -55,9 +55,14 @@ IdmEntityValue *IdmValueReader::doNext() const
 		return value.take();
 	}
 	else
-		return value(m_context.entity(), column);
+	{
+		entity = value(m_context.entity(), column);
 
-	return 0;
+		if (!m_context.next())
+			m_afterLast = true;
+
+		return entity;
+	}
 }
 
 IdmEntityValue *IdmValueReader::value(IdmEntity *entity, int &column) const

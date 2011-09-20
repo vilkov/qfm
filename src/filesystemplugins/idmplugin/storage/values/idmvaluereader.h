@@ -14,6 +14,7 @@ public:
 	IdmValueReader(const IdmContainer &container, const Select &query);
 
 	bool isValid() const { return m_context.isValid(); }
+	IdmEntity *entity() const { return m_context.entity(); }
 	const QString &lastError() const { return m_lastError; }
 
 	IdmEntityValue *next() const;

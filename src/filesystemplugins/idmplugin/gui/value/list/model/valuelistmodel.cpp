@@ -1,78 +1,20 @@
 #include "valuelistmodel.h"
-#include "../../../../storage/values/idmentityvalue.h"
+#include "../../../../storage/values/idmvaluereader_p.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-ValueListModel::ValueListModel(const QueryContext &context, QObject *parent) :
+ValueListModel::ValueListModel(const IdmContainer &container, const Select &query, QObject *parent) :
 	QAbstractItemModel(parent),
-	m_context(context)
+	m_reader(container, query)
 {
-	if (m_context.isValid())
+	if (m_reader.isValid())
 	{
 		List list;
+		IdmEntityValue *item;
 
-		switch (m_context.entity()->type())
-		{
-			case Database::Int:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Int>(m_context, 1)));
-
-				break;
-			}
-			case Database::String:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::String>(m_context, 1)));
-
-				break;
-			}
-			case Database::Date:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Date>(m_context, 1)));
-
-				break;
-			}
-			case Database::Time:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Time>(m_context, 1)));
-
-				break;
-			}
-			case Database::DateTime:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::DateTime>(m_context, 1)));
-
-				break;
-			}
-			case Database::Memo:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Memo>(m_context, 1)));
-
-				break;
-			}
-			case Database::Rating:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Rating>(m_context, 1)));
-
-				break;
-			}
-			case Database::Path:
-			{
-				while (m_context.next())
-					list.push_back(new ValueListItem(m_context.asInt(0), contextValue<Database::Path>(m_context, 1)));
-
-				break;
-			}
-			default:
-				break;
-		}
+		while (item = m_reader.next())
+			list.push_back(item);
 
 		if (!list.isEmpty())
 			add(list);
@@ -141,7 +83,7 @@ void ValueListModel::add(const List &list)
 void ValueListModel::add(Database::id_type id, const QVariant &value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new ValueListItem(id, value));
+	m_items.push_back(new IdmEntityValueImp(m_reader.entity(), id, value));
 	endInsertRows();
 }
 

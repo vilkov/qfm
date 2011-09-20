@@ -49,13 +49,21 @@ QString Select::Format::join(Database::id_type entity, Database::id_type propert
 
 QString Select::Format::complete(Database::id_type entity, QString &selectedFields, QString &joinedFields) const
 {
-	joinedFields.chop(1);
 	selectedFields.chop(2);
 
-	return QString::fromLatin1("select ").
-			append(selectedFields).
-			append(QString::fromLatin1(" from ENTITY_%1 ").arg(QString::number(entity))).
-			append(joinedFields);
+	if (joinedFields.isEmpty())
+		return QString::fromLatin1("select ").
+				append(selectedFields).
+				append(QString::fromLatin1(" from ENTITY_%1").arg(QString::number(entity)));
+	else
+	{
+		joinedFields.chop(1);
+
+		return QString::fromLatin1("select ").
+				append(selectedFields).
+				append(QString::fromLatin1(" from ENTITY_%1 ").arg(QString::number(entity))).
+				append(joinedFields);
+	}
 }
 
 void Select::join(const Format &format, QString &selectedFields, QString &joinedFields, IdmEntity *entity, IdmEntity *property) const

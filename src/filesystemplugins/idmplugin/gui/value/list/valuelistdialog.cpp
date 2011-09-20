@@ -45,6 +45,12 @@ inline bool processAddValue<Database::Memo>(const QString &title, const QString 
 }
 
 template <>
+inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+{
+	return false;
+}
+
+template <>
 inline bool processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
 {
 	return false;
@@ -92,70 +98,72 @@ void ValueListDialog::addValue()
 	QString label = tr("Value");
 	QString title = tr("New value for \"%1\"").arg(m_query.entity()->name());
 
-	if (m_query.entity()->type() == Database::Composite)
+	switch (m_query.entity()->type())
 	{
-
-	}
-	else
-		switch (m_query.entity()->type())
+		case Database::Int:
 		{
-			case Database::Int:
-			{
-				if (!processAddValue<Database::Int>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
+			if (!processAddValue<Database::Int>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
-				break;
-			}
-			case Database::String:
-			{
-				if (!processAddValue<Database::String>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::Date:
-			{
-				if (!processAddValue<Database::Date>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::Time:
-			{
-				if (!processAddValue<Database::Time>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::DateTime:
-			{
-				if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::Memo:
-			{
-				if (!processAddValue<Database::Memo>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::Rating:
-			{
-				if (!processAddValue<Database::Rating>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
-			case Database::Path:
-			{
-				if (!processAddValue<Database::Path>(title, label, this, m_container, m_query.entity(), m_model))
-					QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-				break;
-			}
+			break;
 		}
+		case Database::String:
+		{
+			if (!processAddValue<Database::String>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Date:
+		{
+			if (!processAddValue<Database::Date>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Time:
+		{
+			if (!processAddValue<Database::Time>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::DateTime:
+		{
+			if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Memo:
+		{
+			if (!processAddValue<Database::Memo>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Composite:
+		{
+			if (!processAddValue<Database::Composite>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Rating:
+		{
+			if (!processAddValue<Database::Rating>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+		case Database::Path:
+		{
+			if (!processAddValue<Database::Path>(title, label, this, m_container, m_query.entity(), m_model))
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+
+			break;
+		}
+	}
 }
 
 void ValueListDialog::removeValue()

@@ -1,4 +1,5 @@
 #include "valuelistdialog.h"
+#include "../new/composite/newcompositevaluedialog.h"
 #include "../../../storage/values/idmentityvalue.h"
 #include "../../../../../tools/widgets/valuedialog/valuedialog.h"
 #include <QtGui/QMessageBox>
@@ -47,7 +48,20 @@ inline bool processAddValue<Database::Memo>(const QString &title, const QString 
 template <>
 inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
 {
-	return false;
+	NewCompositeValueDialog dialog(container, entity, parent);
+
+	if (dialog.exec() == NewCompositeValueDialog::Accepted)
+	{
+//		QVariant value = dialog.value();
+//		IdmEntity::id_type id = container.addValue(entity, value);
+//
+//		if (id == IdmEntity::InvalidId)
+//			return false;
+//		else
+//			model.add(id, value);
+	}
+
+	return true;
 }
 
 template <>

@@ -131,8 +131,8 @@ bool IdmStorage::savepoint(const QByteArray &name)
 	else
 	{
 		char *errorMsg = 0;
-		QByteArray sqlQuery("savepoint ");
-		sqlQuery.append(name);
+		QByteArray sqlQuery("savepoint '");
+		sqlQuery.append(name).append('\'');
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
@@ -149,8 +149,8 @@ bool IdmStorage::savepoint(const QByteArray &name)
 bool IdmStorage::release(const QByteArray &name)
 {
 	char *errorMsg = 0;
-	QByteArray sqlQuery("release ");
-	sqlQuery.append(name);
+	QByteArray sqlQuery("release '");
+	sqlQuery.append(name).append('\'');
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
@@ -167,8 +167,8 @@ bool IdmStorage::release(const QByteArray &name)
 void IdmStorage::rollback(const QByteArray &name)
 {
 	char *errorMsg = 0;
-	QByteArray sqlQuery("rollback to ");
-	sqlQuery.append(name);
+	QByteArray sqlQuery("rollback to '");
+	sqlQuery.append(name).append('\'');
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		performUndo(name);

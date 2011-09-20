@@ -12,6 +12,7 @@ class ValuesRootTreeItem : public ValuesTreeItem
 public:
 	typedef QList<IdmEntityItem*>  List;
 	typedef QMap<IdmEntity*, List> Map;
+	typedef QList<IdmEntityValue*> ValueList;
 
 public:
 	ValuesRootTreeItem(IdmItem *parent = 0);
@@ -29,6 +30,11 @@ public:
 		m_entities[entity].push_back(item);
 	}
 
+	void add(IdmItem *item, const ValueList &values)
+	{
+		for (ValueList::size_type i = 0, size = values.size(); i < size; ++i)
+			static_cast<ValuesTreeItem*>(item)->add(new ValuesTreeValueItem(static_cast<ValuesTreeItem*>(item)->entity(), values.at(i), item));
+	}
 	void add(IdmItem *item, IdmEntityValue *value)
 	{
 		static_cast<ValuesTreeItem*>(item)->add(new ValuesTreeValueItem(static_cast<ValuesTreeItem*>(item)->entity(), value, item));

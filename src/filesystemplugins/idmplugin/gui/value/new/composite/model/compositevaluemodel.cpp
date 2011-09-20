@@ -74,17 +74,21 @@ void CompositeValueModel::add(IdmEntity *entity)
 //	endInsertRows();
 }
 
-void CompositeValueModel::add(const QModelIndex &index, const List &values)
-{
-
-}
-
 void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)
 {
 	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());
 
 	beginInsertRows(index, item->size(), item->size());
 	m_items.add(item, value);
+	endInsertRows();
+}
+
+void CompositeValueModel::add(const QModelIndex &index, const ValueList &values)
+{
+	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());
+
+	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
+	m_items.add(item, values);
 	endInsertRows();
 }
 

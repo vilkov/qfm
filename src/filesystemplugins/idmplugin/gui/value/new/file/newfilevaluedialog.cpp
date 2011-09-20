@@ -11,7 +11,7 @@ NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity 
     	{
     		QVariant value;
     		IdmEntity::id_type id;
-    		CompositeValueModel::List list;
+    		CompositeValueModel::ValueList list;
     		QModelIndex index = model().index(i, 0);
 
 			for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)

@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValueModel : public QAbstractItemModel
 {
 public:
-	typedef QList<IdmEntityValue*> List;
+	typedef ValuesRootTreeItem::ValueList ValueList;
 	typedef ValuesRootTreeItem::size_type size_type;
 
 public:
@@ -30,8 +30,8 @@ public:
 	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
 
 	void add(IdmEntity *entity);
-	void add(const QModelIndex &index, const List &values);
 	void add(const QModelIndex &index, IdmEntityValue *value);
+	void add(const QModelIndex &index, const ValueList &values);
 	void remove(const QModelIndex &index);
 
 private:

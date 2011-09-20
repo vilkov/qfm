@@ -11,6 +11,7 @@ class IdmEntityValueItem : public IdmEntityItem
 {
 public:
 	IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
+	virtual ~IdmEntityValueItem();
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

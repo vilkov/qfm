@@ -8,6 +8,11 @@ IdmEntityValueItem::IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value,
 	m_value(value)
 {}
 
+IdmEntityValueItem::~IdmEntityValueItem()
+{
+	delete m_value;
+}
+
 QVariant IdmEntityValueItem::data(qint32 column, qint32 role) const
 {
 	if (role == Qt::DisplayRole)

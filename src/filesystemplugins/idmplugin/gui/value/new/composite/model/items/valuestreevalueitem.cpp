@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValuesTreeValueItem::ValuesTreeValueItem(IdmEntity *entity, const QVariant &value, IdmItem *parent) :
+ValuesTreeValueItem::ValuesTreeValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent) :
 	IdmEntityValueItem(entity, value, parent)
 {}
 

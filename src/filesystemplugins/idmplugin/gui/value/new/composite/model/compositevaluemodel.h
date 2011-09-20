@@ -1,5 +1,5 @@
-#ifndef VALUESTREEMODEL_H_
-#define VALUESTREEMODEL_H_
+#ifndef COMPOSITEVALUEMODEL_H_
+#define COMPOSITEVALUEMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
 #include "items/valuesroottreeitem.h"
@@ -7,13 +7,14 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class ValuesTreeModel : public QAbstractItemModel
+class CompositeValueModel : public QAbstractItemModel
 {
 public:
+	typedef QList<IdmEntityValue*> List;
 	typedef ValuesRootTreeItem::size_type size_type;
 
 public:
-	ValuesTreeModel(IdmEntity *entity, QObject *parent = 0);
+	CompositeValueModel(IdmEntity *entity, QObject *parent = 0);
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -29,7 +30,8 @@ public:
 	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
 
 	void add(IdmEntity *entity);
-	void add(const QModelIndex &index, const QVariant &value);
+	void add(const QModelIndex &index, const List &values);
+	void add(const QModelIndex &index, IdmEntityValue *value);
 	void remove(const QModelIndex &index);
 
 private:
@@ -38,4 +40,4 @@ private:
 
 IDM_PLUGIN_NS_END
 
-#endif /* VALUESTREEMODEL_H_ */
+#endif /* COMPOSITEVALUEMODEL_H_ */

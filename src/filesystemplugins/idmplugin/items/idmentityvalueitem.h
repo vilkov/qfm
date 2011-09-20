@@ -2,6 +2,7 @@
 #define IDMENTITYVALUEITEM_H_
 
 #include "idmentityitem.h"
+#include "../storage/values/idmentityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -9,14 +10,14 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntityValueItem : public IdmEntityItem
 {
 public:
-	IdmEntityValueItem(IdmEntity *entity, const QVariant &value, IdmItem *parent = 0);
+	IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isValueItem() const;
 
 protected:
-	QVariant m_value;
+	IdmEntityValue *m_value;
 };
 
 IDM_PLUGIN_NS_END

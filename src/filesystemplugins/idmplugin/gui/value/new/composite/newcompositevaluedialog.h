@@ -6,7 +6,7 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
-//#include "model/valuestreemodel.h"
+#include "model/compositevaluemodel.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../../tools/events/imp/keyboardeventsource.h"
@@ -23,10 +23,10 @@ public:
 
     virtual void accept();
 
-private:
+protected:
     QModelIndex currentIndex() const;
 
-private:
+protected:
 	typedef KeyboardEventSource<
 				EventSourceBase<
 					QTreeView
@@ -38,15 +38,22 @@ private:
 				>
 			> TreeViewHandler;
 
-	void addValue();
-	void removeValue();
+	virtual void addValue();
+	virtual void removeValue();
+
+protected:
+	void doAddValue(const QModelIndex &index);
+	void doRemoveValue(const QModelIndex &index);
+
+	const CompositeValueModel &model() const { return m_model; }
+	CompositeValueModel &model() { return m_model; }
 
 private:
 	IdmContainer m_container;
 	IdmEntity *m_entity;
 	TreeViewHandler m_handler;
 	TreeView m_view;
-//	ValuesTreeModel m_model;
+	CompositeValueModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 };

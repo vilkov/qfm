@@ -87,9 +87,10 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &ValueListDialog::removeValue);
 
     m_view.setHeaderHidden(true);
-	m_view.setModel(&m_model);
 
-	if (!m_model.isValid())
+	if (m_model.isValid())
+		m_view.setModel(&m_model);
+	else
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 

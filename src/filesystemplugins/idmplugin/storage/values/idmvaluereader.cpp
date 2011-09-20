@@ -28,6 +28,11 @@ IdmEntityValue *IdmValueReader::next() const
 			return doNext();
 }
 
+IdmEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value)
+{
+	return new IdmEntityValueImp(entity, id, value);
+}
+
 IdmEntityValue *IdmValueReader::doNext() const
 {
 	int column = 0;
@@ -70,21 +75,21 @@ IdmEntityValue *IdmValueReader::value(IdmEntity *entity, int &column) const
 	switch (entity->type())
 	{
 		case Database::Int:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Int>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Int>(m_context, column + 1));
 		case Database::String:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::String>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::String>(m_context, column + 1));
 		case Database::Date:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Date>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Date>(m_context, column + 1));
 		case Database::Time:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Time>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Time>(m_context, column + 1));
 		case Database::DateTime:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::DateTime>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::DateTime>(m_context, column + 1));
 		case Database::Memo:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Memo>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Memo>(m_context, column + 1));
 		case Database::Rating:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Rating>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Rating>(m_context, column + 1));
 		case Database::Path:
-			return new IdmEntityValueImp(entity, m_context.asInt(column), contextValue<Database::Path>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(column), contextValue<Database::Path>(m_context, column + 1));
 	}
 }
 

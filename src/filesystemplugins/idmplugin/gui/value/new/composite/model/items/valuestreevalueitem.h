@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class ValuesTreeValueItem : public IdmEntityValueItem
 {
 public:
-	ValuesTreeValueItem(IdmEntity *entity, const QVariant &value, IdmItem *parent = 0);
+	ValuesTreeValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
 
 protected:
 	friend class ValuesRootTreeItem;

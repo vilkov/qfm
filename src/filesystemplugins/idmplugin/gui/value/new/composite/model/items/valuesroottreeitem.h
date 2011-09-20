@@ -29,7 +29,7 @@ public:
 		m_entities[entity].push_back(item);
 	}
 
-	void add(IdmItem *item, const QVariant &value)
+	void add(IdmItem *item, IdmEntityValue *value)
 	{
 		static_cast<ValuesTreeItem*>(item)->add(new ValuesTreeValueItem(static_cast<ValuesTreeItem*>(item)->entity(), value, item));
 	}

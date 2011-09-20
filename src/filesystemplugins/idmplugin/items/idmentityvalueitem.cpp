@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntityValueItem::IdmEntityValueItem(IdmEntity *entity, const QVariant &value, IdmItem *parent) :
+IdmEntityValueItem::IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent) :
 	IdmEntityItem(entity, parent),
 	m_value(value)
 {}
@@ -13,7 +13,7 @@ QVariant IdmEntityValueItem::data(qint32 column, qint32 role) const
 	if (role == Qt::DisplayRole)
 		switch (column)
 		{
-			case 0: return m_value;
+			case 0: return m_value->value();
 		}
 
 	return QVariant();

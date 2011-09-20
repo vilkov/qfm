@@ -1,4 +1,6 @@
 #include "newcompositevaluedialog.h"
+#include "../../list/valuelistdialog.h"
+#include <QtGui/QMessageBox>
 
 
 NewCompositeValueDialog::NewCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
@@ -7,7 +9,7 @@ NewCompositeValueDialog::NewCompositeValueDialog(const IdmContainer &container, 
 	m_entity(entity),
 	m_handler(this),
 	m_view(&m_handler, this),
-//	m_model(entity, this),
+	m_model(entity, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -25,7 +27,7 @@ NewCompositeValueDialog::NewCompositeValueDialog(const IdmContainer &container, 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &NewCompositeValueDialog::removeValue);
 
 	m_view.setHeaderHidden(true);
-//	m_view.setModel(&m_model);
+	m_view.setModel(&m_model);
 }
 
 void NewCompositeValueDialog::accept()
@@ -33,12 +35,54 @@ void NewCompositeValueDialog::accept()
 	QDialog::accept();
 }
 
+QModelIndex NewCompositeValueDialog::currentIndex() const
+{
+	return m_view.selectionModel()->currentIndex();
+}
+
 void NewCompositeValueDialog::addValue()
 {
+	QModelIndex index = currentIndex();
 
+	if (index.isValid())
+		doAddValue(index);
 }
 
 void NewCompositeValueDialog::removeValue()
+{
+	QModelIndex index = currentIndex();
+
+	if (index.isValid())
+		doRemoveValue(index);
+}
+
+void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
+{
+	IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
+	QByteArray name("NewCompositeValueDialog::doAddValue");
+
+	if (m_container.savepoint(name))
+	{
+		ValueListDialog dialog(m_container, Select(entity), this);
+
+		if (dialog.exec() == ValueListDialog::Accepted)
+			if (m_container.release(name))
+			{
+
+			}
+			else
+			{
+				m_container.rollback(name);
+				QMessageBox::critical(this, windowTitle(), m_container.lastError());
+			}
+		else
+			m_container.rollback(name);
+	}
+	else
+		QMessageBox::critical(this, windowTitle(), m_container.lastError());
+}
+
+void NewCompositeValueDialog::doRemoveValue(const QModelIndex &index)
 {
 
 }

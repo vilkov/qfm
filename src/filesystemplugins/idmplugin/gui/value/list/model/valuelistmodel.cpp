@@ -1,5 +1,4 @@
 #include "valuelistmodel.h"
-#include "../../../../storage/values/idmvaluereader_p.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -83,7 +82,7 @@ void ValueListModel::add(const List &list)
 void ValueListModel::add(Database::id_type id, const QVariant &value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntityValueImp(m_reader.entity(), id, value));
+	m_items.push_back(IdmValueReader::createValue(m_reader.entity(), id, value));
 	endInsertRows();
 }
 

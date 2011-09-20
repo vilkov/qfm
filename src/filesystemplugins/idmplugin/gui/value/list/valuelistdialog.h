@@ -22,6 +22,11 @@ class ValueListDialog : public QDialog
 public:
 	ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
+	IdmEntityValue *takeSelectedValue();
+
+protected:
+    QModelIndex currentIndex() const;
+
 private:
 	typedef KeyboardEventSource<
 				EventSourceBase<

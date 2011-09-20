@@ -1,5 +1,6 @@
 #include "newcompositevaluedialog.h"
 #include "../../list/valuelistdialog.h"
+#include <QtCore/QDateTime>
 #include <QtGui/QMessageBox>
 
 
@@ -59,7 +60,8 @@ void NewCompositeValueDialog::removeValue()
 void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 {
 	IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
-	QByteArray name("NewCompositeValueDialog::doAddValue");
+	QByteArray name("NewCompositeValueDialog::doAddValue::");
+	name.append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss")).toUtf8());
 
 	if (m_container.savepoint(name))
 	{
@@ -68,7 +70,8 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 		if (dialog.exec() == ValueListDialog::Accepted)
 			if (m_container.release(name))
 			{
-
+				if (IdmEntityValue *value = dialog.takeSelectedValue())
+					m_model.add(index, value);
 			}
 			else
 			{

@@ -108,6 +108,21 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
+IdmEntityValue *ValueListDialog::takeSelectedValue()
+{
+	QModelIndex index = currentIndex();
+
+	if (index.isValid())
+		return m_model.take(index);
+	else
+		return 0;
+}
+
+QModelIndex ValueListDialog::currentIndex() const
+{
+	return m_view.selectionModel()->currentIndex();
+}
+
 void ValueListDialog::addValue()
 {
 	QString label = tr("Value");

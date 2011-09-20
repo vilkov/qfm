@@ -67,13 +67,6 @@ QModelIndex CompositeValueModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-void CompositeValueModel::add(IdmEntity *entity)
-{
-//	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-//	m_items.add(entity);
-//	endInsertRows();
-}
-
 void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)
 {
 	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());

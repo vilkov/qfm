@@ -29,7 +29,6 @@ public:
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
 
-	void add(IdmEntity *entity);
 	void add(const QModelIndex &index, IdmEntityValue *value);
 	void add(const QModelIndex &index, const ValueList &values);
 	void remove(const QModelIndex &index);

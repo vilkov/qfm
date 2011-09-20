@@ -33,6 +33,7 @@ public:
 	void add(const List &list);
 	void add(Database::id_type id, const QVariant &value);
 	void remove(const QModelIndex &index);
+	IdmEntityValue *take(const QModelIndex &index);
 
 private:
 	IdmValueReader m_reader;

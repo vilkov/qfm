@@ -93,4 +93,15 @@ void ValueListModel::remove(const QModelIndex &index)
 	endRemoveRows();
 }
 
+IdmEntityValue *ValueListModel::take(const QModelIndex &index)
+{
+	IdmEntityValue *res;
+
+	beginRemoveRows(QModelIndex(), index.row(), index.row());
+	res = m_items.takeAt(index.row());
+	endRemoveRows();
+
+	return res;
+}
+
 IDM_PLUGIN_NS_END

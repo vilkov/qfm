@@ -1,5 +1,6 @@
 #include "newcompositevaluedialog.h"
 #include "../../list/valuelistdialog.h"
+#include "../../../../storage/values/idmvaluereader.h"
 #include <QtCore/QDateTime>
 #include <QtGui/QMessageBox>
 
@@ -50,6 +51,8 @@ IdmEntityValue *NewCompositeValueDialog::value()
 		for (CompositeValueModel::List::size_type i = 0, size = source.size(); i < size; ++i)
 			list.push_back(static_cast<IdmEntityValueItem*>(source.at(i))->id());
 	}
+
+	IdmValueReader::createValue();
 
 	return 0;
 }

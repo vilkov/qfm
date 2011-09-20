@@ -28,6 +28,16 @@ IdmEntityValue *IdmValueReader::next() const
 			return doNext();
 }
 
+void IdmValueReader::addValue(IdmEntityValue *value, IdmEntityValue *property)
+{
+	static_cast<IdmEntityCompositeValueImp*>(value)->add(property);
+}
+
+IdmEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id)
+{
+	return new IdmEntityCompositeValueImp(entity, id);
+}
+
 IdmEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value)
 {
 	return new IdmEntityValueImp(entity, id, value);

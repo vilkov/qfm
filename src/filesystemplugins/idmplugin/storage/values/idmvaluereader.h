@@ -19,6 +19,8 @@ public:
 
 	IdmEntityValue *next() const;
 
+	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
+	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
 	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
 
 private:

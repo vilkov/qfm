@@ -17,6 +17,8 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isValueItem() const;
 
+	IdmEntityValue::id_type id() const { return m_value->id(); }
+
 protected:
 	IdmEntityValue *m_value;
 };

@@ -36,6 +36,24 @@ void NewCompositeValueDialog::accept()
 	QDialog::accept();
 }
 
+IdmEntityValue *NewCompositeValueDialog::value()
+{
+	CompositeValueModel::Map vals = m_model.entities();
+	IdmContainer::IdsMap res;
+
+	for (CompositeValueModel::Map::const_iterator it = vals.constBegin(), end = vals.constEnd(); it != end; ++it)
+	{
+		const CompositeValueModel::List &source = it.value();
+		IdmContainer::IdsList &list = res[it.key()];
+		list.reserve(source.size());
+
+		for (CompositeValueModel::List::size_type i = 0, size = source.size(); i < size; ++i)
+			list.push_back(static_cast<IdmEntityValueItem*>(source.at(i))->id());
+	}
+
+	return 0;
+}
+
 QModelIndex NewCompositeValueDialog::currentIndex() const
 {
 	return m_view.selectionModel()->currentIndex();
@@ -89,7 +107,7 @@ void NewCompositeValueDialog::doRemoveValue(const QModelIndex &index)
 	name.append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss")).toUtf8());
 
 	if (m_container.savepoint(name))
-		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<ValuesTreeValueItem*>(index.internalPointer())->value()->id()))
+		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<IdmEntityValueItem*>(index.internalPointer())->id()))
 			if (m_container.release(name))
 				m_model.remove(index);
 			else

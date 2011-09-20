@@ -22,6 +22,7 @@ public:
 	NewCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
 
     virtual void accept();
+    IdmEntityValue *value();
 
 protected:
     QModelIndex currentIndex() const;

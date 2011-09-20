@@ -20,7 +20,7 @@ public:
 	/* IdmItem */
 	virtual bool isEntityItem() const;
 
-	List items(IdmEntity *entity) const { return m_entities.value(entity); }
+	const Map &entities() const { return m_entities; }
 
 	void add(IdmEntity *entity, const QString &name)
 	{

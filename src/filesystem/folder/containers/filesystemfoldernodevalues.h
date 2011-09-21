@@ -33,11 +33,6 @@ public:
 			Q_ASSERT(item);
 		}
 
-		bool operator==(const Value &other)
-		{
-			return item == other.item;
-		}
-
 		Node *node;
 		FolderNodeItem *item;
 	};
@@ -74,7 +69,14 @@ public:
 
 		return InvalidIndex;
 	}
-	size_type indexOf(FolderNodeItem *item) const { return m_items.indexOf(item); }
+	size_type indexOf(FolderNodeItem *item) const
+	{
+		for (ValueList::size_type i = 0, size = m_items.size(); i < size; ++i)
+			if (m_items.at(i).item == item)
+				return i;
+
+		return InvalidIndex;
+	}
 	size_type indexOf(const QString &fileName) const { return m_items.indexOf(fileName); }
 
 	void add(const Value &value) { m_items.add(value.item->fileName(), value); }

@@ -33,9 +33,9 @@ public:
 	};
 	typedef Database::EntityType          Type;
 	typedef Database::id_type             id_type;
-	typedef HashedList<id_type, Property> value_type;
-	typedef value_type::size_type         size_type;
-	enum { InvalidIndex = value_type::InvalidIndex };
+	typedef HashedList<id_type, Property> Container;
+	typedef Container::size_type          size_type;
+	enum { InvalidIndex = Container::InvalidIndex };
 	enum { InvalidId = Database::InvalidId };
 
 	typedef HashedList<id_type, IdmEntity*> Parents;
@@ -52,8 +52,15 @@ public:
 
 	const Property &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
-	size_type indexOf(IdmEntity *item) const { return m_items.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_items.indexOf(id); }
+	size_type indexOf(IdmEntity *entity) const
+	{
+		for (size_type i = 0, size = m_items.size(); i < size; ++i)
+			if (m_items.at(i).entity == entity)
+				return i;
+
+		return InvalidIndex;
+	}
 
 	Type type() const { return m_type; }
 	id_type id() const { return m_id; }
@@ -68,7 +75,7 @@ public:
 	IdmEntity *take(size_type index) { return m_items.take(index).entity; }
 
 protected:
-	value_type m_items;
+	Container m_items;
 
 private:
 	Type m_type;

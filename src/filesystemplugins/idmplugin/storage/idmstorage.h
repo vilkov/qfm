@@ -41,7 +41,6 @@ public:
 
 	IdmEntity *at(size_type index) const { return m_entities.at(index).entity; }
 	size_type size() const { return m_entities.size(); }
-	size_type indexOf(IdmEntity *item) const { return m_entities.indexOf(item); }
 	size_type indexOf(id_type id) const { return m_entities.indexOf(id); }
 
 	bool transaction();

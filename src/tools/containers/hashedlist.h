@@ -3,6 +3,7 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
+#include "../metatemplates.h"
 
 
 template <typename Hash, typename T>
@@ -10,9 +11,15 @@ class HashedList
 {
 public:
 	typedef QList<T>                      ValueList;
+	typedef QList<Hash>                   KeyList;
 	typedef typename ValueList::size_type size_type;
 	typedef QMap<Hash, size_type>         ValueMap;
 	enum { InvalidIndex = (size_type)-1 };
+	enum IndexOfType
+	{
+		ByValue,
+		ByHash
+	};
 
 public:
 	HashedList()
@@ -29,10 +36,11 @@ public:
 
 	bool isEmpty() const { return m_list.isEmpty(); }
 	size_type size() const { return m_list.size(); }
-	size_type indexOf(const T &item) const { return m_list.indexOf(item); }
 	size_type indexOf(const Hash &hash) const { return m_map.value(hash, InvalidIndex); }
 	bool contains(const Hash &hash) const { return m_map.contains(hash); }
-	const ValueList &list() const { return m_list; }
+
+	KeyList keys() const { return m_map.keys(); }
+	const ValueList &values() const { return m_list; }
 
 	void add(const Hash &hash, const T &value)
 	{

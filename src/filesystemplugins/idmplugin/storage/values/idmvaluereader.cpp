@@ -50,7 +50,7 @@ IdmEntityValue *IdmValueReader::doNext() const
 
 	if (m_context.entity()->type() == Database::Composite)
 	{
-		PScopedPointer<IdmEntityValue> value(new IdmEntityCompositeValueImp(m_context.entity(), m_context.asInt(0)));
+		PScopedPointer<IdmEntityValue> value(createValue(m_context.entity(), m_context.asInt(0)));
 
 		for (IdmEntityValue::id_type id = value->id(), nextId = id; id == nextId; nextId = m_context.asInt(0))
 		{
@@ -113,7 +113,7 @@ IdmEntityValue *IdmValueReader::property(IdmEntity *entity, int &column) const
 
 		if (entity->type() == Database::Composite)
 		{
-			PScopedPointer<IdmEntityValue> value(new IdmEntityCompositeValueImp(entity, m_context.asInt(column)));
+			PScopedPointer<IdmEntityValue> value(createValue(entity, m_context.asInt(column)));
 
 			column += 2;
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)

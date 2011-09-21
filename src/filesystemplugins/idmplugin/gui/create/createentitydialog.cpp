@@ -82,14 +82,37 @@ void CreateEntityDialog::accept()
 		{
 			IdmShortFormat format = shortFormat();
 
-			if (!format.isValid())
+			if (format.isValid())
+			{
+				bool ok;
+				const IdmShortFormat::Properties properties = format.properties();
+
+				for (IdmShortFormat::Properties::size_type i = 0, size = properties.size(); i < size; ++i)
+				{
+					ok = false;
+
+					for (size_type q = 0, size = m_model.size(); q < size; ++q)
+						if (m_model.nameAt(q).compare(properties.at(i), Qt::CaseInsensitive) == 0)
+						{
+							ok = true;
+							break;
+						}
+
+					if (!ok)
+					{
+						QMessageBox::warning(this, windowTitle(), tr("Short format points to property \"%1\" which is not in properties of this entity!").arg(properties.at(i)));
+						return;
+					}
+				}
+			}
+			else
 			{
 				QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
 				return;
 			}
 		}
 
-		for (size_type i = 0, q= 0, size = m_model.size(); i < size; ++i)
+		for (size_type i = 0, q, size = m_model.size(); i < size; ++i)
 			for (q = i + 1; q < size; ++q)
 				if (m_model.entityAt(q)->id() == m_model.entityAt(i)->id())
 				{

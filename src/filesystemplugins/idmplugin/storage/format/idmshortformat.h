@@ -12,6 +12,7 @@ class IdmShortFormat
 {
 public:
 	typedef HashedList<QString, QString> Container;
+	typedef Container::KeyList           Properties;
 	typedef int                          size_type;
 
 public:
@@ -20,6 +21,7 @@ public:
 	bool isValid() const;
 	const QString &format() const { return m_format; }
 	const QString &lastError() const { return m_lastError; }
+	Properties properties() const { return m_items.keys(); }
 
 private:
 	void dollarToken(size_type &pos, const QString &source);

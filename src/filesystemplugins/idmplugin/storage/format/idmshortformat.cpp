@@ -16,7 +16,7 @@ IdmShortFormat::IdmShortFormat(const QString &format)
 
 bool IdmShortFormat::isValid() const
 {
-	return !m_format.isEmpty();
+	return !m_format.isEmpty() && !m_items.isEmpty();
 }
 
 void IdmShortFormat::dollarToken(size_type &pos, const QString &source)

@@ -79,6 +79,13 @@ void ValueListModel::add(const List &list)
 	endInsertRows();
 }
 
+void ValueListModel::add(IdmEntityValue *value)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+	m_items.push_back(value);
+	endInsertRows();
+}
+
 void ValueListModel::add(Database::id_type id, const QVariant &value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());

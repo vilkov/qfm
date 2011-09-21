@@ -26,6 +26,7 @@ class IdmEntityCompositeValueImp : public IdmEntityValue
 {
 public:
 	typedef QList<IdmEntityValue*> List;
+	typedef QMap<IdmEntity*, List> Map;
 
 public:
 	IdmEntityCompositeValueImp(IdmEntity *entity, id_type id) :
@@ -33,15 +34,16 @@ public:
 	{}
 	virtual ~IdmEntityCompositeValueImp()
 	{
-		qDeleteAll(m_items);
+		for (Map::iterator it = m_items.begin(), end = m_items.end(); it != end; ++it)
+			qDeleteAll(it.value());
 	}
 
 	virtual QVariant value() const { return QString::fromLatin1("Composite value"); }
 
-	void add(IdmEntityValue *value) { m_items.push_back(value); }
+	void add(IdmEntityValue *value) { m_items[value->entity()].push_back(value); }
 
 private:
-	List m_items;
+	Map m_items;
 };
 
 IDM_PLUGIN_NS_END

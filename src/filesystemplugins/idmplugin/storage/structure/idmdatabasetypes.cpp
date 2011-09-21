@@ -16,6 +16,12 @@ QByteArray Database::loadId(const QString &tableName)
 	return QString::fromLatin1("select ID from %1 order by ID desc").arg(tableName).toUtf8();
 }
 
+QByteArray Database::savepoint(const QByteArray &baseName)
+{
+	return QByteArray(baseName).
+			append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss.zzz")).toUtf8());
+}
+
 QString Database::typeToString(EntityType type)
 {
 	switch (type)

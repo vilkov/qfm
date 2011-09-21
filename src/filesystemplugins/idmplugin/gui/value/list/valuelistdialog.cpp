@@ -48,19 +48,31 @@ inline bool processAddValue<Database::Memo>(const QString &title, const QString 
 template <>
 inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
 {
-	NewCompositeValueDialog dialog(container, entity, parent);
+	QByteArray name = Database::savepoint("processAddValue<Database::Composite>::");
 
-	if (dialog.exec() == NewCompositeValueDialog::Accepted)
+	if (container.savepoint(name))
 	{
-		container.addValue(entity, dialog.values());
-//		QVariant value = dialog.value();
-//		IdmEntity::id_type id = container.addValue(entity, value);
-//
-//		if (id == IdmEntity::InvalidId)
-//			return false;
-//		else
-//			model.add(id, value);
+		NewCompositeValueDialog dialog(container, entity, parent);
+
+		if (dialog.exec() == NewCompositeValueDialog::Accepted)
+			if (IdmEntityValue *value = dialog.value())
+				if (container.release(name))
+					model.add(value);
+				else
+				{
+					container.rollback(name);
+					return false;
+				}
+			else
+			{
+				container.rollback(name);
+				return false;
+			}
+		else
+			container.rollback(name);
 	}
+	else
+		return false;
 
 	return true;
 }

@@ -58,7 +58,7 @@ IdmEntityValue *IdmValueReader::doNext() const
 
 			for (IdmEntity::size_type i = 0, size = m_context.entity()->size(); i < size; ++i)
 				if (entity = property(m_context.entity()->at(i).entity, column))
-					static_cast<IdmEntityCompositeValueImp*>(value.data())->add(entity);
+					addValue(value.data(), entity);
 
 			if (!m_context.next())
 			{
@@ -118,7 +118,7 @@ IdmEntityValue *IdmValueReader::property(IdmEntity *entity, int &column) const
 			column += 2;
 			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 				if (tmp = property(entity->at(i).entity, column))
-					static_cast<IdmEntityCompositeValueImp*>(value.data())->add(tmp);
+					addValue(value.data(), tmp);
 
 			return value.take();
 		}

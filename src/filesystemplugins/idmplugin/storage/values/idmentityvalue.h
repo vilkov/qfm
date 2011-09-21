@@ -20,8 +20,8 @@ public:
 	virtual ~IdmEntityValue();
 
 	IdmEntity *entity() const { return m_entity; }
-	id_type id() const { return m_id; }
 
+	id_type id() const { return m_id; }
 	virtual QVariant value() const = 0;
 
 private:

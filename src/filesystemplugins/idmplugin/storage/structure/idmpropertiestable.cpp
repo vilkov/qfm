@@ -75,7 +75,7 @@ QByteArray PropertiesTable::Parameters::addValue(Database::id_type entity, Datab
 {
 	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (?1, %3, ?2)").
 			arg(QString::number(entity)).
-			arg(QString::number(id)).
+			arg(QString::number(property)).
 			arg(QString::number(value)).toUtf8();
 }
 

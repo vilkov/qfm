@@ -1,7 +1,7 @@
 #include "newcompositevaluedialog.h"
 #include "../../list/valuelistdialog.h"
 #include "../../../../storage/values/idmvaluereader.h"
-#include <QtCore/QDateTime>
+#include "../../../../../../tools/pointers/pscopedpointer.h"
 #include <QtGui/QMessageBox>
 
 
@@ -11,11 +11,11 @@ NewCompositeValueDialog::NewCompositeValueDialog(const IdmContainer &container, 
 	m_entity(entity),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(entity, this),
+	m_model(m_entity, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("New value for \"%1\"").arg(entity->name()));
+	setWindowTitle(tr("New value for \"%1\"").arg(m_entity->name()));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -39,20 +39,30 @@ void NewCompositeValueDialog::accept()
 
 IdmEntityValue *NewCompositeValueDialog::value()
 {
-	CompositeValueModel::Map vals = m_model.entities();
-	IdmContainer::IdsMap res;
+	IdmContainer::id_type id = m_container.addValue(m_entity);
 
-	for (CompositeValueModel::Map::const_iterator it = vals.constBegin(), end = vals.constEnd(); it != end; ++it)
+	if (id != IdmContainer::InvalidId)
 	{
-		const CompositeValueModel::List &source = it.value();
-		IdmContainer::IdsList &list = res[it.key()];
-		list.reserve(source.size());
+		IdmEntityValue *tmp;
+		IdmContainer::IdsMap res;
+		IdmEntityPropertyItem *property;
+		PScopedPointer<IdmEntityValue> value(IdmValueReader::createValue(m_entity, id));
 
-		for (CompositeValueModel::List::size_type i = 0, size = source.size(); i < size; ++i)
-			list.push_back(static_cast<IdmEntityValueItem*>(source.at(i))->id());
+		for (CompositeValueModel::size_type i = 0, size = m_model.size(); i < size; ++i)
+		{
+			IdmContainer::IdsList &list = res[(property = static_cast<IdmEntityPropertyItem*>(m_model.at(i)))->entity()];
+			list.reserve(property->size());
+
+			for (CompositeValueModel::size_type q = 0, size = property->size(); q < size; ++q)
+			{
+				IdmValueReader::addValue(value.data(), tmp = static_cast<IdmEntityValueItem*>(property->at(q))->take());
+				list.push_back(tmp->id());
+			}
+		}
+
+		if (m_container.addValue(m_entity, id, res))
+			return value.take();
 	}
-
-	IdmValueReader::createValue();
 
 	return 0;
 }
@@ -81,8 +91,7 @@ void NewCompositeValueDialog::removeValue()
 void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 {
 	IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
-	QByteArray name("NewCompositeValueDialog::doAddValue::");
-	name.append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss")).toUtf8());
+	QByteArray name = Database::savepoint("NewCompositeValueDialog::doAddValue::");
 
 	if (m_container.savepoint(name))
 	{
@@ -106,11 +115,10 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 void NewCompositeValueDialog::doRemoveValue(const QModelIndex &index)
 {
 	IdmEntity *entity = static_cast<IdmEntityItem*>(index.internalPointer())->entity();
-	QByteArray name("NewCompositeValueDialog::doRemoveValue::");
-	name.append(QDateTime::currentDateTime().toString(QString::fromLatin1("hh:mm:ss")).toUtf8());
+	QByteArray name = Database::savepoint("NewCompositeValueDialog::doRemoveValue::");
 
 	if (m_container.savepoint(name))
-		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<IdmEntityValueItem*>(index.internalPointer())->id()))
+		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<IdmEntityValueItem*>(index.internalPointer())->value()->id()))
 			if (m_container.release(name))
 				m_model.remove(index);
 			else

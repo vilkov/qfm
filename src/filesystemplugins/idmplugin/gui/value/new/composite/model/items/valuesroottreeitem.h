@@ -20,8 +20,6 @@ public:
 	/* IdmItem */
 	virtual bool isEntityItem() const;
 
-	const Map &entities() const { return m_entities; }
-
 	void add(IdmEntity *entity, const QString &name)
 	{
 		ValuesTreeItem *item;

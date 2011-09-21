@@ -33,6 +33,7 @@ struct Database
 
 	static QByteArray init();
 	static QByteArray loadId(const QString &tableName);
+	static QByteArray savepoint(const QByteArray &baseName);
 	static QString typeToString(EntityType type);
 	static QString valueToString(EntityType type, const QVariant &value);
 	static QString idsToString(const IdsSet &ids);

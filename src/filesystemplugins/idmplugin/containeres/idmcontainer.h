@@ -61,8 +61,9 @@ public:
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_data->storage.removeProperty(entity, property); }
 
-	IdmEntity::id_type addValue(IdmEntity *entity, const IdsMap &values) const { return m_data->storage.addValue(entity, values); }
-	IdmEntity::id_type addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
+	id_type addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
+	bool addValue(IdmEntity *entity, id_type value, const IdsMap &values) const { return m_data->storage.addValue(entity, value, values); }
+	id_type addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
 
 private:

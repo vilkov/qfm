@@ -89,7 +89,7 @@ private:
 	QString failedToBind(const QByteArray &sqlQuery) const;
 	QString failedToReset(const QByteArray &sqlQuery) const;
 
-	void setLastError(sqlite3 *db) const;
+	void setLastError(const QByteArray &sqlQuery, sqlite3 *db) const;
 	void setLastError(const char *sqlQuery) const;
 	void setLastError(const char *sqlQuery, const char *errorMsg) const;
 	void setLastError(const QByteArray &sqlQuery) const;

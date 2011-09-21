@@ -349,6 +349,7 @@ bool IdmStorage::addValue(IdmEntity *entity, id_type value, const IdsMap &values
 	bool ok;
 	id_type id;
 	QString str;
+	char *errorMsg = 0;
 	sqlite3_stmt *statement;
 	QString table = QString::fromLatin1("ENTITY_%1_PROPERTY_").arg(entity->id());
 	QByteArray sqlQuery;
@@ -361,48 +362,27 @@ bool IdmStorage::addValue(IdmEntity *entity, id_type value, const IdsMap &values
 		}
 		else
 		{
-			sqlQuery = PropertiesTable::Parameters::addValue(entity->id(), it.key()->id(), value);
+			const IdsList &ids = it.value();
 
-			if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+			ok = true;
+			str = PropertiesTable::Incomplete::addValue(entity->id(), it.key()->id(), value);
+
+			for (IdsList::size_type i = 0, size = ids.size(); i < size; ++i, ++id)
 			{
-				const IdsList &ids = it.value();
-				ok = true;
+				sqlQuery = QString(str).arg(QString::number(id)).arg(QString::number(ids.at(i))).toUtf8();
 
-				for (IdsList::size_type i = 0, size = ids.size(); i < size; ++i, ++id)
-					if (sqlite3_bind_int(statement, 1, id) == SQLITE_OK &&
-						sqlite3_bind_int(statement, 2, ids.at(i)) == SQLITE_OK)
-						if (sqlite3_step(statement) == SQLITE_OK)
-						{
-							if (sqlite3_reset(statement) != SQLITE_OK)
-							{
-								ok = false;
-								setLastError(failedToReset(sqlQuery));
-								break;
-							}
-						}
-						else
-						{
-							ok = false;
-							setLastError(m_db);
-							break;
-						}
-					else
-					{
-						ok = false;
-						setLastError(failedToBind(sqlQuery));
-						break;
-					}
-
-				sqlite3_finalize(statement);
-
-				if (!ok)
-					return false;
+				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
+				{
+					setLastError(sqlQuery, errorMsg);
+					ok = false;
+					break;
+				}
 			}
-			else
-			{
-				setLastError(sqlQuery);
+
+			sqlite3_free(errorMsg);
+
+			if (!ok)
 				return false;
-			}
 		}
 
 	return true;
@@ -823,9 +803,11 @@ QString IdmStorage::failedToReset(const QByteArray &sqlQuery) const
 	return tr("Failed to reset: \"%1\"").arg(QString::fromLatin1(sqlQuery));
 }
 
-void IdmStorage::setLastError(sqlite3 *db) const
+void IdmStorage::setLastError(const QByteArray &sqlQuery, sqlite3 *db) const
 {
-	m_lastError = QString::fromUtf8(sqlite3_errmsg(db));
+	m_lastError = QString::fromLatin1("Failed to execute \"%1\" query: ").
+			arg(QString::fromLatin1(sqlQuery)).
+			append(QString::fromUtf8(sqlite3_errmsg(db)));
 }
 
 void IdmStorage::setLastError(const char *sqlQuery) const

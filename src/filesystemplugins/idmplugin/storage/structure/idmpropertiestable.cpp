@@ -39,6 +39,16 @@ QByteArray PropertiesTable::remove(Database::id_type entity, Database::id_type p
 			arg(QString::number(property)).toUtf8();
 }
 
+QString PropertiesTable::Incomplete::addValue(Database::id_type entity, Database::id_type property, Database::id_type value)
+{
+	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) ").
+			arg(QString::number(entity)).
+			arg(QString::number(property)).
+			append(QString::fromLatin1("values (%1, ")).
+			append(QString::number(value)).
+			append(QString::fromLatin1(", %2)"));
+}
+
 QString PropertiesTable::Incomplete::selectValues(Database::id_type property)
 {
 	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_").
@@ -73,7 +83,7 @@ QString PropertiesTable::Incomplete::removeValues(Database::id_type property, co
 
 QByteArray PropertiesTable::Parameters::addValue(Database::id_type entity, Database::id_type property, Database::id_type value)
 {
-	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (?1, %3, ?2)").
+	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (?, %3, ?)").
 			arg(QString::number(entity)).
 			arg(QString::number(property)).
 			arg(QString::number(value)).toUtf8();

@@ -25,6 +25,7 @@ struct PropertiesTable
 
 	struct Incomplete
 	{
+		static QString addValue(Database::id_type entity, Database::id_type property, Database::id_type value);
 		static QString selectValues(Database::id_type property);
 		static QString selectValues(Database::id_type entity, const Database::IdsList &ids);
 		static QString dropProperty(Database::id_type property);

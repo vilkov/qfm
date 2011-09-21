@@ -9,7 +9,7 @@ IdmShortFormat::IdmShortFormat(const QString &format) :
 
 bool IdmShortFormat::isValid() const
 {
-	return true;
+	return !m_format.isEmpty();
 }
 
 IDM_PLUGIN_NS_END

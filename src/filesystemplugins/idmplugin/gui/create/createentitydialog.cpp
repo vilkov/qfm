@@ -78,28 +78,32 @@ void CreateEntityDialog::accept()
 		QMessageBox::warning(this, windowTitle(), tr("You must enter the name!"));
 	else
 	{
-		IdmShortFormat format = shortFormat();
-
-		if (!format.isValid())
-			QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
-		else
+		if (m_lineEdit2.isEnabled())
 		{
-			for (size_type i = 0, q= 0, size = m_model.size(); i < size; ++i)
-				for (q = i + 1; q < size; ++q)
-					if (m_model.entityAt(q)->id() == m_model.entityAt(i)->id())
+			IdmShortFormat format = shortFormat();
+
+			if (!format.isValid())
+			{
+				QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
+				return;
+			}
+		}
+
+		for (size_type i = 0, q= 0, size = m_model.size(); i < size; ++i)
+			for (q = i + 1; q < size; ++q)
+				if (m_model.entityAt(q)->id() == m_model.entityAt(i)->id())
+				{
+					QMessageBox::warning(this, windowTitle(), tr("More than one property of type \"%1\"!").arg(m_model.entityAt(i)->name()));
+					return;
+				}
+				else
+					if (m_model.nameAt(q).compare(m_model.nameAt(i), Qt::CaseInsensitive) == 0)
 					{
-						QMessageBox::warning(this, windowTitle(), tr("More than one property of type \"%1\"!").arg(m_model.entityAt(i)->name()));
+						QMessageBox::warning(this, windowTitle(), tr("There is a properties with the same names \"%1\"!").arg(m_model.nameAt(i)));
 						return;
 					}
-					else
-						if (m_model.nameAt(q).compare(m_model.nameAt(i), Qt::CaseInsensitive) == 0)
-						{
-							QMessageBox::warning(this, windowTitle(), tr("There is a properties with the same names \"%1\"!").arg(m_model.nameAt(i)));
-							return;
-						}
 
-			QDialog::accept();
-		}
+		QDialog::accept();
 	}
 }
 
@@ -134,4 +138,6 @@ void CreateEntityDialog::setListEnabled(bool enabled)
     m_view.setEnabled(enabled);
     m_addEntity.setEnabled(enabled);
     m_removeEntity.setEnabled(enabled);
+    m_label2.setEnabled(enabled);
+    m_lineEdit2.setEnabled(enabled);
 }

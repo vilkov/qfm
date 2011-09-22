@@ -31,14 +31,13 @@ public:
 		IdmEntity *entity;
 		QString name;
 	};
-	typedef Database::EntityType          Type;
-	typedef Database::id_type             id_type;
-	typedef HashedList<id_type, Property> Container;
-	typedef Container::size_type          size_type;
+	typedef Database::EntityType            Type;
+	typedef Database::id_type               id_type;
+	typedef HashedList<id_type, Property>   Container;
+	typedef Container::size_type            size_type;
+	typedef HashedList<id_type, IdmEntity*> Parents;
 	enum { InvalidIndex = Container::InvalidIndex };
 	enum { InvalidId = Database::InvalidId };
-
-	typedef HashedList<id_type, IdmEntity*> Parents;
 
 public:
 	IdmEntity(Type type, id_type id, const QString &name, const IdmShortFormat &shortFormat) :
@@ -61,11 +60,20 @@ public:
 
 		return InvalidIndex;
 	}
+	size_type indexOf(const QString &name) const
+	{
+		for (size_type i = 0, size = m_items.size(); i < size; ++i)
+			if (m_items.at(i).name.compare(name, Qt::CaseSensitive) == 0)
+				return i;
+
+		return InvalidIndex;
+	}
 
 	Type type() const { return m_type; }
 	id_type id() const { return m_id; }
 	const QString &name() const { return m_name; }
 	const Parents &parents() const { return m_parents; }
+	const IdmShortFormat &shortFormat() const { return m_shortFormat; }
 
 	void addParent(IdmEntity *parent) { m_parents.add(parent->id(), parent); }
 	void removeParent(IdmEntity *parent) { m_parents.remove(parent->id()); }

@@ -1,9 +1,9 @@
 #ifndef IDMSHORTFORMAT_H_
 #define IDMSHORTFORMAT_H_
 
+#include <QtCore/QList>
 #include <QtCore/QString>
 #include "../../idmplugin_ns.h"
-#include "../../../../tools/containers/hashedlist.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,9 +11,31 @@ IDM_PLUGIN_NS_BEGIN
 class IdmShortFormat
 {
 public:
-	typedef HashedList<QString, QString> Container;
-	typedef Container::KeyList           Properties;
-	typedef int                          size_type;
+	class Token
+	{
+	public:
+		enum Type
+		{
+			Text,
+			Property
+		};
+
+	public:
+		Token(Type type, const QString &string) :
+			m_type(type),
+			m_string(string)
+		{}
+
+		Type type() const { return m_type; }
+		const QString &string() const { return m_string; }
+
+	private:
+		Type m_type;
+		QString m_string;
+	};
+
+	typedef QList<Token>         Container;
+	typedef Container::size_type size_type;
 
 public:
 	IdmShortFormat(const QString &format);
@@ -21,11 +43,13 @@ public:
 	bool isValid() const;
 	const QString &format() const { return m_format; }
 	const QString &lastError() const { return m_lastError; }
-	Properties properties() const { return m_items.keys(); }
+
+	size_type size() const { return m_items.size(); }
+	const Token &at(size_type index) const { return m_items.at(index); }
 
 private:
-	void dollarToken(size_type &pos, const QString &source);
-	void nameToken(size_type &pos, const QString &source);
+	void dollarToken(size_type &pos, QString &token, const QString &source);
+	void nameToken(size_type &pos, QString &token, const QString &source);
 
 private:
 	QString m_format;

@@ -85,25 +85,25 @@ void CreateEntityDialog::accept()
 			if (format.isValid())
 			{
 				bool ok;
-				const IdmShortFormat::Properties properties = format.properties();
 
-				for (IdmShortFormat::Properties::size_type i = 0, size = properties.size(); i < size; ++i)
-				{
-					ok = false;
-
-					for (size_type q = 0, size = m_model.size(); q < size; ++q)
-						if (m_model.nameAt(q).compare(properties.at(i), Qt::CaseInsensitive) == 0)
-						{
-							ok = true;
-							break;
-						}
-
-					if (!ok)
+				for (IdmShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
+					if (format.at(i).type() == IdmShortFormat::Token::Property)
 					{
-						QMessageBox::warning(this, windowTitle(), tr("Short format points to property \"%1\" which is not in properties of this entity!").arg(properties.at(i)));
-						return;
+						ok = false;
+
+						for (size_type q = 0, size = m_model.size(); q < size; ++q)
+							if (m_model.nameAt(q).compare(format.at(i).string(), Qt::CaseSensitive) == 0)
+							{
+								ok = true;
+								break;
+							}
+
+						if (!ok)
+						{
+							QMessageBox::warning(this, windowTitle(), tr("Short format points to property \"%1\" which is not in properties of this entity!").arg(format.at(i).string()));
+							return;
+						}
 					}
-				}
 			}
 			else
 			{

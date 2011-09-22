@@ -3,38 +3,45 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmShortFormat::IdmShortFormat(const QString &format)
+IdmShortFormat::IdmShortFormat(const QString &format) :
+	m_format(format)
 {
-	m_format.reserve(format.size());
+	QString token;
+	token.reserve(m_format.size());
 
-	for (size_type pos = 0; pos < format.size(); ++pos)
-		if (format.at(pos) == QChar('$'))
-			dollarToken(pos, format);
+	for (size_type pos = 0; pos < m_format.size(); ++pos)
+		if (m_format.at(pos) == QChar('$'))
+			dollarToken(pos, token, m_format);
 		else
-			m_format.append(format.at(pos));
+			token.append(m_format.at(pos));
+
+	if (!token.isEmpty())
+	{
+		token.truncate(token.size());
+		m_items.push_back(Token(Token::Text, token));
+	}
 }
 
 bool IdmShortFormat::isValid() const
 {
-	return !m_format.isEmpty() && !m_items.isEmpty();
+	return !m_items.isEmpty();
 }
 
-void IdmShortFormat::dollarToken(size_type &pos, const QString &source)
+void IdmShortFormat::dollarToken(size_type &pos, QString &token, const QString &source)
 {
 	if (pos + 1 < source.size())
 		if (source.at(pos + 1) == QChar('{'))
-			nameToken(++pos, source);
+			nameToken(++pos, token, source);
 		else
-			m_format.append(source.at(pos));
+			token.append(source.at(pos));
 	else
-		m_format.append(source.at(pos));
+		token.append(source.at(pos));
 }
 
-void IdmShortFormat::nameToken(size_type &pos, const QString &source)
+void IdmShortFormat::nameToken(size_type &pos, QString &token, const QString &source)
 {
 	if (pos + 2 < source.size())
 	{
-		QString str;
 		QString name;
 
 		for (++pos; pos < source.size(); ++pos)
@@ -42,14 +49,12 @@ void IdmShortFormat::nameToken(size_type &pos, const QString &source)
 			{
 				if (!name.isEmpty())
 				{
-					Container::size_type index = m_items.indexOf(name);
+					token.truncate(token.size());
+					m_items.push_back(Token(Token::Text, token));
+					m_items.push_back(Token(Token::Property, name));
 
-					if (index == Container::InvalidIndex)
-						m_items.add(name, str = QString::fromLatin1("%").append(QString::number(m_items.size() + 1)));
-					else
-						str = m_items.at(index);
-
-					m_format.append(str);
+					token.clear();
+					token.reserve(source.size());
 				}
 
 				break;
@@ -58,7 +63,7 @@ void IdmShortFormat::nameToken(size_type &pos, const QString &source)
 				name.append(source.at(pos));
 	}
 	else
-		m_format.append(source.at(pos));
+		token.append(source.at(pos));
 }
 
 IDM_PLUGIN_NS_END

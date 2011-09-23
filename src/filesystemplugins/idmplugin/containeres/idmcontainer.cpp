@@ -11,7 +11,7 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_data->menuActions.last()->setData(Create);
 
 	m_data->menuActions.push_back(new QAction(tr("Query"), 0));
-	m_data->menuActions.last()->setData(QueryEntity);
+	m_data->menuActions.last()->setData(Find);
 
 	m_data->menuActions.push_back(new QAction(tr("List"), 0));
 	m_data->menuActions.last()->setData(List);

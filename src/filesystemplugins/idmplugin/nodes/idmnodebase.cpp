@@ -7,6 +7,7 @@
 #include "../control/idmcopycontrol.h"
 #include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
+#include "../gui/choose/choosefileentitydialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -93,26 +94,10 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 
 ICopyControl *IdmNodeBase::createControl() const
 {
-	QSet<IdmEntity*> entities;
-
-	for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
-		if (m_container.at(i)->type() == Database::Path && !m_container.at(i)->parents().isEmpty())
-			entities.insert(m_container.at(i)->parents().at(0));
-
-	if (entities.isEmpty())
-		QMessageBox::information(&Application::instance()->mainWindow(),
-								 tr("Failed to add an entity value"),
-								 tr("There is no entities with property of type \"%1\".").
-								 arg(m_container.entityTypes().value(Database::Path).label));
+	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
+		return new IdmCopyControl(m_container, entity, absoluteFilePath());
 	else
-		if (entities.size() == 1)
-			return new IdmCopyControl(m_container, *entities.begin(), absoluteFilePath());
-		else
-		{
-
-		}
-
-	return 0;
+		return 0;
 }
 
 void IdmNodeBase::menuAction(QAction *action)
@@ -163,7 +148,7 @@ void IdmNodeBase::menuAction(QAction *action)
 
 			break;
 		}
-		case IdmContainer::QueryEntity:
+		case IdmContainer::Find:
 		{
 			break;
 		}

@@ -20,7 +20,11 @@ bool IdmCopyControl::start(const FileSystemList *files, bool move)
 
 		if (dialog.exec() == NewFileValueDialog::Accepted)
 		{
-
+			if (!m_container.commit())
+			{
+				m_container.rollback();
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			}
 		}
 		else
 			m_container.rollback();

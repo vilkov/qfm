@@ -26,7 +26,7 @@ public:
 	enum MenuId
 	{
 		Create,
-		QueryEntity,
+		Find,
 		List
 	};
 

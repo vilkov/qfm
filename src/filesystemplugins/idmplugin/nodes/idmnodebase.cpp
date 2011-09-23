@@ -8,6 +8,7 @@
 #include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
 #include "../gui/choose/choosefileentitydialog.h"
+#include "../gui/query/createquerydialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -150,6 +151,16 @@ void IdmNodeBase::menuAction(QAction *action)
 		}
 		case IdmContainer::Find:
 		{
+			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
+			{
+				CreateQueryDialog dialog(m_container, entity, &Application::instance()->mainWindow());
+
+				if (dialog.exec() == CreateQueryDialog::Accepted)
+				{
+
+				}
+			}
+
 			break;
 		}
 		case IdmContainer::List:

@@ -31,8 +31,8 @@ private:
 	QLabel m_label;
 	QComboBox m_comboBox;
 	QDialogButtonBox m_buttonBox;
-	QHBoxLayout m_horizontalLayout;
 	QVBoxLayout m_verticatLayout;
+	QHBoxLayout m_horizontalLayout;
 };
 
 #endif /* CHOOSEFILEENTITYDIALOG_H_ */

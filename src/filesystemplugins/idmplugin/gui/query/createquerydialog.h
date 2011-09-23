@@ -62,8 +62,8 @@ private:
 	QueryEntitiesModel m_model;
 	QTreeView m_view2;
 	QDialogButtonBox m_buttonBox;
-	QHBoxLayout m_horizontalLayout;
 	QVBoxLayout m_verticatLayout;
+	QHBoxLayout m_horizontalLayout;
 };
 
 #endif /* CREATEQUERYDIALOG_H_ */

@@ -1,20 +1,20 @@
-#ifndef ENTITIESTREEMODEL_H_
-#define ENTITIESTREEMODEL_H_
+#ifndef QUERYENTITIESMODEL_H_
+#define QUERYENTITIESMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "items/idmentitiestreeitemroot.h"
+#include "items/queryentitiesmodelitemroot.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class EntitiesTreeModel : public QAbstractItemModel
+class QueryEntitiesModel : public QAbstractItemModel
 {
 public:
-	typedef IdmEntitiesTreeItemRoot::size_type size_type;
+	typedef QueryEntitiesModelItemRoot::size_type size_type;
 
 public:
-	EntitiesTreeModel(QObject *parent = 0);
-	virtual ~EntitiesTreeModel();
+	QueryEntitiesModel(QObject *parent = 0);
+	virtual ~QueryEntitiesModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -25,13 +25,13 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	void add(IdmEntity *entity);
+	void add(const QString &name, IdmEntity *entity);
 	void remove(const QModelIndex &index);
 
 private:
-	IdmEntitiesTreeItemRoot m_items;
+	QueryEntitiesModelItemRoot m_items;
 };
 
 IDM_PLUGIN_NS_END
 
-#endif /* ENTITIESTREEMODEL_H_ */
+#endif /* QUERYENTITIESMODEL_H_ */

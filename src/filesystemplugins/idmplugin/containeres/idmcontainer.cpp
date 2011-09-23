@@ -10,7 +10,7 @@ IdmContainer::IdmContainer(const Info &storage) :
 	m_data->menuActions.push_back(new QAction(tr("Create"), 0));
 	m_data->menuActions.last()->setData(Create);
 
-	m_data->menuActions.push_back(new QAction(tr("Query"), 0));
+	m_data->menuActions.push_back(new QAction(tr("Find"), 0));
 	m_data->menuActions.last()->setData(Find);
 
 	m_data->menuActions.push_back(new QAction(tr("List"), 0));

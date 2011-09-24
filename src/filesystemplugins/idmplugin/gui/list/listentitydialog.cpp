@@ -1,5 +1,6 @@
 #include "listentitydialog.h"
 #include "../create/createentitydialog.h"
+#include "../../items/idmentityitem.h"
 #include <QtGui/QMessageBox>
 
 

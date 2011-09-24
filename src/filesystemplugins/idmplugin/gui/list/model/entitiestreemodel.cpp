@@ -1,76 +1,17 @@
 #include "entitiestreemodel.h"
-#include "../../../items/idmentityitem.h"
+#include "items/idmentitiestreeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesTreeModel::EntitiesTreeModel(QObject *parent) :
-	QAbstractItemModel(parent)
+	IdmModel(parent)
 {}
-
-EntitiesTreeModel::~EntitiesTreeModel()
-{}
-
-int EntitiesTreeModel::rowCount(const QModelIndex &parent) const
-{
-	if (parent.isValid())
-		if (static_cast<IdmItem*>(parent.internalPointer())->isList())
-			return static_cast<IdmItemsList*>(parent.internalPointer())->size();
-		else
-			return 0;
-	else
-    	return m_items.size();
-}
-
-int EntitiesTreeModel::columnCount(const QModelIndex &parent) const
-{
-	return 1;
-}
-
-QVariant EntitiesTreeModel::data(const QModelIndex &index, int role) const
-{
-    if (index.isValid())
-    	return static_cast<IdmItem*>(index.internalPointer())->data(index.column(), role);
-    else
-    	return m_items.at(index.row())->data(index.column(), role);
-}
-
-Qt::ItemFlags EntitiesTreeModel::flags(const QModelIndex &index) const
-{
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-}
-
-QVariant EntitiesTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	return QVariant();
-}
-QModelIndex EntitiesTreeModel::index(int row, int column, const QModelIndex &parent) const
-{
-	if (hasIndex(row, column, parent))
-		if (parent.isValid() && static_cast<IdmItem*>(parent.internalPointer())->isList())
-			return createIndex(row, column, static_cast<IdmItemsList*>(parent.internalPointer())->at(row));
-		else
-			return createIndex(row, column, m_items.at(row));
-    else
-        return QModelIndex();
-}
-
-QModelIndex EntitiesTreeModel::parent(const QModelIndex &child) const
-{
-    if (child.isValid())
-		if (IdmItem *parent = static_cast<IdmItem*>(child.internalPointer())->parent())
-			if (parent->parent())
-				return createIndex(static_cast<IdmItemsList*>(parent->parent())->indexOf(parent), 0, parent);
-			else
-				return createIndex(m_items.indexOf(parent), 0, parent);
-
-    return QModelIndex();
-}
 
 void EntitiesTreeModel::add(IdmEntity *entity)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.add(entity);
+	doAdd(entity);
 	endInsertRows();
 }
 
@@ -80,6 +21,45 @@ void EntitiesTreeModel::remove(const QModelIndex &index)
 //	delete m_items.at(index.row());
 //	m_items.remove(index.row());
 //	endRemoveRows();
+}
+
+void EntitiesTreeModel::doAdd(IdmEntity *entity)
+{
+	IdmEntitiesTreeItem *item;
+
+	m_items.push_back(item = new IdmEntitiesTreeItem(entity));
+	m_entities[entity].push_back(item);
+	expand(item);
+}
+
+void EntitiesTreeModel::doAdd(IdmItem *item, IdmEntity *property)
+{
+	IdmEntitiesTreeItem *child;
+
+	static_cast<IdmEntitiesTreeItem*>(item)->add(child = new IdmEntitiesTreeItem(property, item));
+	m_entities[property].push_back(child);
+	expand(child);
+}
+
+void EntitiesTreeModel::doRemove(IdmItem *item, Container::size_type index)
+{
+	Container &items = m_entities[static_cast<IdmEntityItem*>(item)->entity()];
+	items.removeAt(items.indexOf(item));
+	static_cast<IdmEntitiesTreeItem*>(item->parent())->remove(index);
+}
+
+void EntitiesTreeModel::expand(IdmItem *p)
+{
+	IdmEntity *entity;
+	IdmEntitiesTreeItem *item;
+	IdmEntitiesTreeItem *parent = static_cast<IdmEntitiesTreeItem*>(p);
+
+	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
+	{
+		parent->add(item = new IdmEntitiesTreeItem(entity = parent->entity()->at(i).entity, parent));
+		m_entities[entity].push_back(item);
+		expand(item);
+	}
 }
 
 IDM_PLUGIN_NS_END

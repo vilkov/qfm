@@ -15,7 +15,7 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 protected:
-	friend class QueryEntitiesModelItemRoot;
+	friend class QueryEntitiesModel;
 	void add(IdmEntityItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { m_items.removeAt(index); }
 

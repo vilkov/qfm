@@ -1,4 +1,5 @@
 #include "newfilevaluedialog.h"
+#include "../../../../items/idmentityitem.h"
 #include "../../../../storage/values/idmvaluereader.h"
 #include <QtGui/QMessageBox>
 
@@ -47,7 +48,7 @@ void NewFileValueDialog::removeValue()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid() &&
-		static_cast<IdmItem*>(index.internalPointer())->isValueItem() &&
+		static_cast<IBaseItem*>(index.internalPointer())->isValueItem() &&
 		static_cast<IdmEntityItem*>(index.internalPointer())->entity()->type() != Database::Path)
 		doRemoveValue(index);
 }

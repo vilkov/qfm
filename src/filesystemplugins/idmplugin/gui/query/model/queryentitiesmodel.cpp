@@ -44,6 +44,7 @@ QVariant QueryEntitiesModel::headerData(int section, Qt::Orientation orientation
 {
 	return QVariant();
 }
+
 QModelIndex QueryEntitiesModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))

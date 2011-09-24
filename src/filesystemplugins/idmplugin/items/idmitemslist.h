@@ -2,35 +2,22 @@
 #define IDMITEMSLIST_H_
 
 #include <QtCore/QList>
-#include "idmitem.h"
+#include "ibaseitem.h"
+#include "../model/items/idmlistitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmItemsList : public IdmItem
+class IdmItemsList : public IdmListItem, public IBaseItem
 {
 public:
-	typedef QList<IdmItem*>       value_type;
-	typedef value_type::size_type size_type;
-	enum { InvalidIndex = (size_type)-1 };
-
-public:
 	IdmItemsList(IdmItem *parent = 0);
-	virtual ~IdmItemsList();
 
-	/* IdmItem */
+	/* IBaseItem */
 	virtual bool isRoot() const;
-	virtual bool isList() const;
 	virtual bool isMenuItem() const;
 	virtual bool isValueItem() const;
 	virtual bool isEntityItem() const;
-
-	IdmItem *at(size_type index) const { return m_items.at(index); }
-	size_type size() const { return m_items.size(); }
-	size_type indexOf(IdmItem *item) const { return m_items.indexOf(item); }
-
-protected:
-	value_type m_items;
 };
 
 IDM_PLUGIN_NS_END

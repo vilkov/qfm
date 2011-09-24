@@ -13,7 +13,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Create query"));
+	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
 
     m_toolBar.addAction(tr("Create entity"))->setData(Create);
     m_toolBar.addAction(tr("Remove entity"))->setData(Remove);

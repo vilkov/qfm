@@ -12,7 +12,7 @@ public:
 	ValuesTreeItem(IdmEntity *entity, const QString &name, IdmItem *parent = 0);
 
 protected:
-	friend class ValuesRootTreeItem;
+	friend class CompositeValueModel;
 	void add(IdmEntityItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
 };

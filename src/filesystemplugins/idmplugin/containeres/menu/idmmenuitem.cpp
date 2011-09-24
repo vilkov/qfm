@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmMenuItem::IdmMenuItem(id_type id, const QString &label, const QString &toolTip, IdmItem *parent) :
-	IdmItem(parent),
+	IdmBaseItem(parent),
 	m_id(id),
 	m_label(label),
 	m_toolTip(toolTip)

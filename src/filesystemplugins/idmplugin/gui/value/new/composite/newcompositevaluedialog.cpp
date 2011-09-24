@@ -1,5 +1,7 @@
 #include "newcompositevaluedialog.h"
 #include "../../list/valuelistdialog.h"
+#include "../../../../items/idmentityvalueitem.h"
+#include "../../../../items/idmentitypropertyitem.h"
 #include "../../../../storage/values/idmvaluereader.h"
 #include "../../../../../../tools/pointers/pscopedpointer.h"
 #include <QtGui/QMessageBox>
@@ -84,7 +86,7 @@ void NewCompositeValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isValueItem())
+	if (index.isValid() && static_cast<IBaseItem*>(index.internalPointer())->isValueItem())
 		doRemoveValue(index);
 }
 

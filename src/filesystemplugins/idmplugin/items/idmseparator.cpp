@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmSeparator::IdmSeparator(IdmItem *parent) :
-	IdmItem(parent)
+	IdmBaseItem(parent)
 {}
 
 QVariant IdmSeparator::data(qint32 column, qint32 role) const

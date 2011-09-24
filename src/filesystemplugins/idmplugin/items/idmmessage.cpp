@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmMessage::IdmMessage(const QString &message, IdmItem *parent) :
-	IdmItem(parent),
+	IdmBaseItem(parent),
 	m_message(message)
 {}
 

@@ -14,7 +14,7 @@ public:
 	const IdmEntityValue *value() const { return m_value; }
 
 protected:
-	friend class ValuesRootTreeItem;
+	friend class CompositeValueModel;
 	void add(IdmEntityItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { m_items.removeAt(index); }
 };

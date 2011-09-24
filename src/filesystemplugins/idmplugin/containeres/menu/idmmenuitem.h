@@ -3,12 +3,12 @@
 
 #include <QtCore/QString>
 #include <QtCore/QVariant>
-#include "../../items/idmitem.h"
+#include "../../items/idmbaseitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmMenuItem : public IdmItem
+class IdmMenuItem : public IdmBaseItem
 {
 public:
 	typedef unsigned int id_type;

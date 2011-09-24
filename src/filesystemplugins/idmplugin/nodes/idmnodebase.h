@@ -4,7 +4,7 @@
 #include "idmdelegate.h"
 #include "idmproxymodel.h"
 #include "../idmplugin_ns.h"
-#include "../items/idmitem.h"
+#include "../items/idmbaseitem.h"
 #include "../functors/idmfunctors.h"
 #include "../containeres/idmcontainer.h"
 #include "../../../filesystem/folder/base/filesystemfoldernodebase.h"

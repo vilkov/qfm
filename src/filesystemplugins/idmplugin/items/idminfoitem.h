@@ -1,13 +1,13 @@
 #ifndef IDMINFOITEM_H_
 #define IDMINFOITEM_H_
 
-#include "idmitem.h"
+#include "idmbaseitem.h"
 #include "../../../filesystem/info/filesysteminfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmInfoItem : public IdmItem, public IFileInfo
+class IdmInfoItem : public IdmBaseItem, public IFileInfo
 {
 public:
 	IdmInfoItem(const Info &info, IdmItem *parent = 0);
@@ -23,7 +23,7 @@ public:
 	virtual QDateTime lastModified() const;
 	virtual void refresh();
 
-	/* IdmItem */
+	/* IBaseItem */
 	virtual bool isRoot() const;
 	virtual bool isList() const;
 	virtual bool isMenuItem() const;

@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmInfoItem::IdmInfoItem(const Info &info, IdmItem *parent) :
-	IdmItem(parent),
+	IdmBaseItem(parent),
 	m_info(info)
 {}
 

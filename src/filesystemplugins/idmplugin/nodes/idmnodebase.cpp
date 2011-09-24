@@ -260,7 +260,7 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (static_cast<IdmItem*>(index.internalPointer())->isRoot())
+	if (static_cast<IBaseItem*>(index.internalPointer())->isRoot())
 		return static_cast<Node*>(Node::parent());
 	else
 		return 0;

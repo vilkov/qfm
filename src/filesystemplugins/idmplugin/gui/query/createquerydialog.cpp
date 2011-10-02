@@ -15,10 +15,8 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 {
 	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
 
-    m_toolBar.addAction(tr("Create entity"))->setData(Create);
-    m_toolBar.addAction(tr("Remove entity"))->setData(Remove);
-    m_toolBar.addAction(tr("Add property"))->setData(AddProperty);
-    m_toolBar.addAction(tr("Remove property"))->setData(RemoveProperty);
+    m_toolBar.addAction(tr("Add group"))->setData(AddGroup);
+    m_toolBar.addAction(tr("Add condition"))->setData(AddCondition);
 
 	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
@@ -43,6 +41,9 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
 
+    m_view2.setHeaderHidden(true);
+    m_view2.setModel(&m_model2);
+
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CreateQueryDialog::removeEntity);
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::insertProperty);
 }
@@ -56,26 +57,24 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 {
 	switch (static_cast<ActionId>(action->data().toInt()))
 	{
-		case Create:
+		case AddGroup:
 		{
+			m_model2.add(currentIndex2());
 			break;
 		}
-		case Remove:
-		{
-			break;
-		}
-		case AddProperty:
-		{
-			break;
-		}
-		case RemoveProperty:
+		case AddCondition:
 		{
 			break;
 		}
 	}
 }
 
-QModelIndex CreateQueryDialog::currentIndex()
+QModelIndex CreateQueryDialog::currentIndex1()
 {
 	return m_view.selectionModel()->currentIndex();
+}
+
+QModelIndex CreateQueryDialog::currentIndex2()
+{
+	return m_view2.selectionModel()->currentIndex();
 }

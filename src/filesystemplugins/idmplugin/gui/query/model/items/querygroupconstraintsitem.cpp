@@ -4,7 +4,8 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryGroupConstraintsItem::QueryGroupConstraintsItem(IdmItem *parent) :
-	IdmListItem(parent)
+	IdmListItem(parent),
+	m_value(QString::fromLatin1("(...)"))
 {}
 
 QVariant QueryGroupConstraintsItem::data(qint32 column, qint32 role) const

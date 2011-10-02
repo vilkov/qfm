@@ -11,7 +11,7 @@ class QueryConstraintsModel : public IdmModel
 public:
 	QueryConstraintsModel(QObject *parent = 0);
 
-	void add();
+	void add(const QModelIndex &index);
 	void remove(const QModelIndex &index);
 };
 

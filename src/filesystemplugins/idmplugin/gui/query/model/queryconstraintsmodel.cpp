@@ -8,11 +8,25 @@ QueryConstraintsModel::QueryConstraintsModel(QObject *parent) :
 	IdmModel(parent)
 {}
 
-void QueryConstraintsModel::add()
+void QueryConstraintsModel::add(const QModelIndex &index)
 {
-//	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-//	m_items.add(name, entity);
-//	endInsertRows();
+	if (index.isValid())
+		if (static_cast<IdmItem*>(index.internalPointer())->isList())
+		{
+			beginInsertRows(index, static_cast<IdmListItem*>(index.internalPointer())->size(), static_cast<IdmListItem*>(index.internalPointer())->size());
+			m_items.push_back(new QueryGroupConstraintsItem());
+			endInsertRows();
+		}
+		else
+		{
+
+		}
+	else
+	{
+		beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+		m_items.push_back(new QueryGroupConstraintsItem());
+		endInsertRows();
+	}
 }
 
 void QueryConstraintsModel::remove(const QModelIndex &index)

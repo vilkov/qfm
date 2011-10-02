@@ -1,7 +1,7 @@
 #!/bin/bash
-export PATH="/media/VIDEO/workspace/3rdparty/stlsoft-1.9.108/include:${PATH}"
-export PATH="/media/WORKSPACE/SVN/3rdparty/boost_1_47_0-bin/include:${PATH}"
-export PATH="/media/WORKSPACE/SVN/3rdparty/boost_1_47_0-bin/lib:${PATH}"
+export PATH="/home/dav/WORK/workspace/3rdparty/stlsoft-1.9.108/include:${PATH}"
+#export PATH="/media/WORKSPACE/SVN/3rdparty/boost_1_47_0-bin/include:${PATH}"
+#export PATH="/media/WORKSPACE/SVN/3rdparty/boost_1_47_0-bin/lib:${PATH}"
 
 
 #export LDPATH="/media/VIDEO/workspace/modules/qtsingleinstance/dist/lib:${LDPATH}"

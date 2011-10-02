@@ -8,6 +8,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/queryentitiesmodel.h"
+#include "model/queryconstraintsmodel.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../tools/events/imp/keyboardeventsource.h"
@@ -27,10 +28,8 @@ public:
 private:
 	enum ActionId
 	{
-		Create,
-		Remove,
-		AddProperty,
-		RemoveProperty
+		AddGroup,
+		AddCondition
 	};
 
 private Q_SLOTS:
@@ -52,7 +51,8 @@ private:
 	void createEntity();
 
 private:
-	QModelIndex currentIndex();
+	QModelIndex currentIndex1();
+	QModelIndex currentIndex2();
 
 private:
 	IdmContainer m_container;
@@ -61,6 +61,7 @@ private:
 	EntitiesTreeView m_view;
 	QueryEntitiesModel m_model;
 	QTreeView m_view2;
+	QueryConstraintsModel m_model2;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 	QHBoxLayout m_horizontalLayout;

@@ -16,7 +16,6 @@ public:
 
 private:
 	QVariant m_value;
-	Container m_items;
 };
 
 IDM_PLUGIN_NS_END

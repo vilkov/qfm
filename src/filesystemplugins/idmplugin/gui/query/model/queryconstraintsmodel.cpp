@@ -10,20 +10,9 @@ QueryConstraintsModel::QueryConstraintsModel(QObject *parent) :
 
 void QueryConstraintsModel::add(const QModelIndex &index)
 {
-	if (index.isValid())
-		if (static_cast<IdmItem*>(index.internalPointer())->isList())
-		{
-			beginInsertRows(index, static_cast<IdmListItem*>(index.internalPointer())->size(), static_cast<IdmListItem*>(index.internalPointer())->size());
-			m_items.push_back(new QueryGroupConstraintsItem());
-			endInsertRows();
-		}
-		else
-		{
-
-		}
-	else
+	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList())
 	{
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+		beginInsertRows(index, static_cast<IdmListItem*>(index.internalPointer())->size(), static_cast<IdmListItem*>(index.internalPointer())->size());
 		m_items.push_back(new QueryGroupConstraintsItem());
 		endInsertRows();
 	}

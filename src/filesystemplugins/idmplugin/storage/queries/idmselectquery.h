@@ -10,26 +10,42 @@ IDM_PLUGIN_NS_BEGIN
 class Select : public Query
 {
 public:
-	enum Operators
+	struct Constraint
 	{
-		Less,
-		Greater,
-		Equal,
-		Like
-	};
-	struct Condition
-	{
-		Condition()
+		enum Operator
+		{
+			Less,
+			LessEqual,
+			Greater,
+			GreaterEqual,
+			Equal,
+			Like
+		};
+
+		Constraint() :
+			property(0),
+			op(Equal),
+			value(),
+			id(IdmEntity::InvalidId)
 		{}
-		Condition(Operators op, const QVariant &value) :
+		Constraint(IdmEntity *property, Operator op, const QVariant &value) :
+			property(property),
 			op(op),
-			value(value)
+			value(value),
+			id(IdmEntity::InvalidId)
+		{}
+		Constraint(IdmEntity *property, Operator op, IdmEntity::id_type id) :
+			property(property),
+			op(op),
+			id(id)
 		{}
 
-		Operators op;
+		IdmEntity *property;
+		Operator op;
 		QVariant value;
+		IdmEntity::id_type id;
 	};
-	typedef QMap<IdmEntity*, Condition> Map;
+	typedef QMap<IdmEntity*, Constraint> Map;
 
 public:
 	Select(IdmEntity *entity);

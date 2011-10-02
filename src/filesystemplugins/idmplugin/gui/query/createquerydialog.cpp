@@ -64,6 +64,13 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 		}
 		case AddCondition:
 		{
+			QModelIndex index = currentIndex1();
+
+			if (index.isValid())
+			{
+				static_cast<IdmEntityItem*>(index.internalPointer());
+			}
+
 			break;
 		}
 	}

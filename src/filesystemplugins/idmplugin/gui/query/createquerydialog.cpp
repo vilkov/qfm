@@ -68,7 +68,7 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 
 			if (index.isValid())
 			{
-				static_cast<IdmEntityItem*>(index.internalPointer());
+//				static_cast<IdmEntityItem*>(index.internalPointer());
 			}
 
 			break;

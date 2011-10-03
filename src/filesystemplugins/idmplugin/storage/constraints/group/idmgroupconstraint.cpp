@@ -7,6 +7,11 @@ GroupConstraint::GroupConstraint(Type type) :
 	m_type(type)
 {}
 
+GroupConstraint::~GroupConstraint()
+{
+	qDeleteAll(m_items);
+}
+
 bool GroupConstraint::isGroup() const
 {
 	return true;

@@ -20,6 +20,7 @@ public:
 
 public:
 	GroupConstraint(Type type);
+	virtual ~GroupConstraint();
 
 	/* BaseConstraint */
 	virtual bool isGroup() const;

@@ -8,6 +8,11 @@ QueryConstraintsModel::QueryConstraintsModel(QObject *parent) :
 	IdmModel(parent)
 {}
 
+int QueryConstraintsModel::columnCount(const QModelIndex &parent) const
+{
+	return 2;
+}
+
 void QueryConstraintsModel::add(const QModelIndex &index)
 {
 	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList())

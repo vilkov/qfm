@@ -11,6 +11,9 @@ class QueryConstraintsModel : public IdmModel
 public:
 	QueryConstraintsModel(QObject *parent = 0);
 
+    /* QAbstractItemModel */
+	virtual int columnCount(const QModelIndex &parent) const;
+
 	void add(const QModelIndex &index);
 	void remove(const QModelIndex &index);
 };

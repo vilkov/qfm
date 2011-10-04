@@ -6,10 +6,10 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/valuelistmodel.h"
-#include "../../../containeres/idmcontainer.h"
-#include "../../../storage/queries/idmselectquery.h"
-#include "../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../containeres/idmcontainer.h"
+#include "../../../../storage/queries/idmselectquery.h"
+#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
+#include "../../../../../../tools/events/imp/keyboardeventsource.h"
 
 
 using namespace FileSystem::Plugins::Idm;

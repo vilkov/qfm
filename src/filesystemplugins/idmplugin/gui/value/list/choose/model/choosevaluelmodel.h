@@ -3,7 +3,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
-#include "../../../../storage/values/idmvaluereader.h"
+#include "../../../../../storage/values/idmvaluereader.h"
 
 
 IDM_PLUGIN_NS_BEGIN

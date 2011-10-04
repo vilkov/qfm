@@ -1,7 +1,7 @@
 #include "valuelistdialog.h"
-#include "../new/composite/newcompositevaluedialog.h"
-#include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../tools/widgets/valuedialog/valuedialog.h"
+#include "../../new/composite/newcompositevaluedialog.h"
+#include "../../../../storage/values/idmentityvalue.h"
+#include "../../../../../../tools/widgets/valuedialog/valuedialog.h"
 #include <QtGui/QMessageBox>
 
 

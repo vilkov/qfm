@@ -7,8 +7,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/choosevaluelmodel.h"
-#include "../../../containeres/idmcontainer.h"
-#include "../../../storage/queries/idmselectquery.h"
+#include "../../../../containeres/idmcontainer.h"
+#include "../../../../storage/queries/idmselectquery.h"
 
 
 using namespace FileSystem::Plugins::Idm;

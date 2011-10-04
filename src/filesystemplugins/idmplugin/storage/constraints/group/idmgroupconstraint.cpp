@@ -52,7 +52,7 @@ void GroupConstraint::swap(size_type index1, size_type index2)
 
 void GroupConstraint::remove(size_type index)
 {
-	m_items.removeAt(index);
+	delete m_items.takeAt(index);
 }
 
 IDM_PLUGIN_NS_END

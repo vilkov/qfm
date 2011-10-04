@@ -20,7 +20,11 @@ IdmEntityValue *IdmValueReader::next() const
 			return doNext();
 		}
 		else
+		{
+			m_beforeFirst = false;
+			m_afterLast = true;
 			return 0;
+		}
 	else
 		if (m_afterLast)
 			return 0;

@@ -41,14 +41,38 @@ Qt::ItemFlags QueryConstraintsModel::flags(const QModelIndex &index) const
 
 QVariant QueryConstraintsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+	if (orientation == Qt::Horizontal)
+		switch (section)
+		{
+			case 0:
+				return tr("Constraint");
+
+			case 1:
+			{
+				switch (role)
+				{
+					case Qt::DisplayRole:
+						return tr("Type");
+
+					case Qt::TextAlignmentRole:
+						return Qt::AlignCenter;
+				}
+
+				break;
+			}
+		}
+
 	return QVariant();
 }
 
 QModelIndex QueryConstraintsModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
-		if (parent.isValid() && static_cast<BaseConstraint*>(parent.internalPointer())->isGroup())
-			return createIndex(row, column, static_cast<GroupConstraint*>(parent.internalPointer())->at(row));
+		if (parent.isValid())
+			if (static_cast<BaseConstraint*>(parent.internalPointer())->isGroup())
+				return createIndex(row, column, static_cast<GroupConstraint*>(parent.internalPointer())->at(row));
+		    else
+				return createIndex(row, column, m_root.at(row));
 		else
 			return createIndex(row, column, const_cast<QueryConstraintsRootItem*>(&m_root));
     else

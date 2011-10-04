@@ -47,7 +47,6 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
 
-    m_view2.setHeaderHidden(true);
     m_view2.setItemDelegate(&m_delegate2);
     m_view2.setModel(&m_model2);
 

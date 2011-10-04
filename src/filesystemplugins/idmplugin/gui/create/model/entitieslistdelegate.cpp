@@ -8,7 +8,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesListDelegate::EntitiesListDelegate(const IdmContainer &container, QObject *parent) :
-	QStyledItemDelegate(parent),
+	IdmDelegate(parent),
     m_container(container)
 {}
 
@@ -79,18 +79,6 @@ void EntitiesListDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 			break;
 		}
 	}
-}
-
-void EntitiesListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	editor->setGeometry(option.rect);
-}
-
-QSize EntitiesListDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	QSize size = QStyledItemDelegate::sizeHint(option, index);
-	size.setHeight(size.height() + 5);
-	return size;
 }
 
 IDM_PLUGIN_NS_END

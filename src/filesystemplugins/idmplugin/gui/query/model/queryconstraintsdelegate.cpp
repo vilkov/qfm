@@ -7,7 +7,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryConstraintsDelegate::QueryConstraintsDelegate(QObject *parent) :
-	QStyledItemDelegate(parent)
+	IdmDelegate(parent)
 {}
 
 QWidget *QueryConstraintsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -60,18 +60,6 @@ void QueryConstraintsDelegate::setModelData(QWidget *editor, QAbstractItemModel 
 			break;
 		}
 	}
-}
-
-void QueryConstraintsDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	editor->setGeometry(option.rect);
-}
-
-QSize QueryConstraintsDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	QSize size = QStyledItemDelegate::sizeHint(option, index);
-	size.setHeight(size.height() + 5);
-	return size;
 }
 
 IDM_PLUGIN_NS_END

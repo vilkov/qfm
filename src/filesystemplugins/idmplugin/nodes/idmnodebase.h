@@ -1,8 +1,8 @@
 #ifndef IDMNODEBASE_H_
 #define IDMNODEBASE_H_
 
-#include "idmdelegate.h"
-#include "idmproxymodel.h"
+#include "idmnodedelegate.h"
+#include "idmnodeproxymodel.h"
 #include "../idmplugin_ns.h"
 #include "../items/idmbaseitem.h"
 #include "../functors/idmfunctors.h"
@@ -81,8 +81,8 @@ protected:
 
 protected:
 	ItemsList m_items;
-	IdmProxyModel m_proxy;
-	IdmDelegate m_delegate;
+	IdmNodeProxyModel m_proxy;
+	IdmNodeDelegate m_delegate;
 	IdmContainer m_container;
 };
 

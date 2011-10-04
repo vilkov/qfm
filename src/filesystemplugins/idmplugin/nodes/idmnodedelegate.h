@@ -1,5 +1,5 @@
-#ifndef IDMDELEGATE_H_
-#define IDMDELEGATE_H_
+#ifndef IDMNODEDELEGATE_H_
+#define IDMNODEDELEGATE_H_
 
 #include <QtGui/QStyledItemDelegate>
 #include <QtGui/QStyleOptionViewItem>
@@ -8,12 +8,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmDelegate : public QStyledItemDelegate
+class IdmNodeDelegate : public QStyledItemDelegate
 {
-	Q_DISABLE_COPY(IdmDelegate)
+	Q_DISABLE_COPY(IdmNodeDelegate)
 
 public:
-	IdmDelegate(QObject *parent = 0);
+	IdmNodeDelegate(QObject *parent = 0);
 
 //    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 //    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -21,4 +21,4 @@ public:
 
 IDM_PLUGIN_NS_END
 
-#endif /* IDMDELEGATE_H_ */
+#endif /* IDMNODEDELEGATE_H_ */

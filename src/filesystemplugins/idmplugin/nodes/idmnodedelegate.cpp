@@ -1,11 +1,11 @@
-#include "idmdelegate.h"
+#include "idmnodedelegate.h"
 #include <QtGui/QPainter>
 #include <QtGui/QApplication>
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmDelegate::IdmDelegate(QObject *parent) :
+IdmNodeDelegate::IdmNodeDelegate(QObject *parent) :
 	QStyledItemDelegate(parent)
 {}
 

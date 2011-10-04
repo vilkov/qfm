@@ -1,4 +1,4 @@
-#include "valuelistdialog.h"
+#include "editablevaluelistdialog.h"
 #include "../../new/composite/newcompositevaluedialog.h"
 #include "../../../../storage/values/idmentityvalue.h"
 #include "../../../../../../tools/widgets/valuedialog/valuedialog.h"
@@ -20,7 +20,7 @@ public:
 
 
 template <Database::EntityType EntityType>
-inline bool processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+inline bool processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
 {
 	typedef NewValueDialog<EntityType> NewValueDialog;
 	NewValueDialog dialog(title, label, parent);
@@ -40,13 +40,13 @@ inline bool processAddValue(const QString &title, const QString &label, QWidget 
 }
 
 template <>
-inline bool processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+inline bool processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
 {
 	return false;
 }
 
 template <>
-inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
 {
 	QByteArray name = Database::savepoint("processAddValue<Database::Composite>::");
 
@@ -78,19 +78,19 @@ inline bool processAddValue<Database::Composite>(const QString &title, const QSt
 }
 
 template <>
-inline bool processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+inline bool processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
 {
 	return false;
 }
 
 template <>
-inline bool processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, ValueListModel &model)
+inline bool processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
 {
 	return false;
 }
 
 
-ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
+EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
 	m_query(query),
@@ -110,8 +110,8 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &ValueListDialog::addValue);
-    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &ValueListDialog::removeValue);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListDialog::removeValue);
 
     m_view.setHeaderHidden(true);
 
@@ -121,12 +121,12 @@ ValueListDialog::ValueListDialog(const IdmContainer &container, const Select &qu
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
-IdmEntityValue *ValueListDialog::takeSelectedValue()
+IdmEntityValue *EditableValueListDialog::takeSelectedValue()
 {
 	return m_model.take(currentIndex());
 }
 
-void ValueListDialog::accept()
+void EditableValueListDialog::accept()
 {
 	if (currentIndex().isValid())
 		QDialog::accept();
@@ -134,12 +134,12 @@ void ValueListDialog::accept()
 		QMessageBox::warning(this, windowTitle(), "You must select a value.");
 }
 
-QModelIndex ValueListDialog::currentIndex() const
+QModelIndex EditableValueListDialog::currentIndex() const
 {
 	return m_view.selectionModel()->currentIndex();
 }
 
-void ValueListDialog::addValue()
+void EditableValueListDialog::addValue()
 {
 	QString label = tr("Value");
 	QString title = tr("New value for \"%1\"").arg(m_query.entity()->name());
@@ -212,7 +212,7 @@ void ValueListDialog::addValue()
 	}
 }
 
-void ValueListDialog::removeValue()
+void EditableValueListDialog::removeValue()
 {
 	QModelIndex index = m_view.selectionModel()->currentIndex();
 

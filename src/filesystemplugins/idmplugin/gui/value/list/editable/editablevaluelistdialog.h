@@ -1,11 +1,11 @@
-#ifndef VALUELISTDIALOG_H_
-#define VALUELISTDIALOG_H_
+#ifndef EDITABLEVALUELISTDIALOG_H_
+#define EDITABLEVALUELISTDIALOG_H_
 
 #include <QtGui/QDialog>
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
-#include "model/valuelistmodel.h"
+#include "model/editablevaluelistmodel.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../storage/queries/idmselectquery.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"
@@ -14,12 +14,12 @@
 
 using namespace FileSystem::Plugins::Idm;
 
-class ValueListDialog : public QDialog
+class EditableValueListDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	ValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
+	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
 	IdmEntityValue *takeSelectedValue();
     virtual void accept();
@@ -35,7 +35,7 @@ private:
 			> TreeView;
 	typedef KeyboardEventHandler<
 				EventHandlerBase<
-					ValueListDialog
+					EditableValueListDialog
 				>
 			> TreeViewHandler;
 
@@ -47,9 +47,9 @@ private:
 	Select m_query;
 	TreeViewHandler m_handler;
 	TreeView m_view;
-	ValueListModel m_model;
+	EditableValueListModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 };
 
-#endif /* VALUELISTDIALOG_H_ */
+#endif /* EDITABLEVALUELISTDIALOG_H_ */

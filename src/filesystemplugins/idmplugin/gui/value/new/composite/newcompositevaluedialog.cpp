@@ -1,5 +1,5 @@
 #include "newcompositevaluedialog.h"
-#include "../../list/valuelistdialog.h"
+#include "../../list/editable/editablevaluelistdialog.h"
 #include "../../../../items/idmentityvalueitem.h"
 #include "../../../../items/idmentitypropertyitem.h"
 #include "../../../../storage/values/idmvaluereader.h"
@@ -97,9 +97,9 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 
 	if (m_container.savepoint(name))
 	{
-		ValueListDialog dialog(m_container, Select(entity), this);
+		EditableValueListDialog dialog(m_container, Select(entity), this);
 
-		if (dialog.exec() == ValueListDialog::Accepted)
+		if (dialog.exec() == EditableValueListDialog::Accepted)
 			if (m_container.release(name))
 				m_model.add(index, dialog.takeSelectedValue());
 			else

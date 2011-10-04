@@ -1,9 +1,9 @@
-#include "valuelistmodel.h"
+#include "editablevaluelistmodel.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-ValueListModel::ValueListModel(const IdmContainer &container, const Select &query, QObject *parent) :
+EditableValueListModel::EditableValueListModel(const IdmContainer &container, const Select &query, QObject *parent) :
 	QAbstractItemModel(parent),
 	m_reader(container, query)
 {
@@ -20,12 +20,12 @@ ValueListModel::ValueListModel(const IdmContainer &container, const Select &quer
 	}
 }
 
-ValueListModel::~ValueListModel()
+EditableValueListModel::~EditableValueListModel()
 {
 	qDeleteAll(m_items);
 }
 
-int ValueListModel::rowCount(const QModelIndex &parent) const
+int EditableValueListModel::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
 		return 0;
@@ -33,12 +33,12 @@ int ValueListModel::rowCount(const QModelIndex &parent) const
 		return m_items.size();
 }
 
-int ValueListModel::columnCount(const QModelIndex &parent) const
+int EditableValueListModel::columnCount(const QModelIndex &parent) const
 {
 	return 1;
 }
 
-QVariant ValueListModel::data(const QModelIndex &index, int role) const
+QVariant EditableValueListModel::data(const QModelIndex &index, int role) const
 {
 	if (role == Qt::DisplayRole)
 		switch (index.column())
@@ -49,17 +49,17 @@ QVariant ValueListModel::data(const QModelIndex &index, int role) const
 	return QVariant();
 }
 
-Qt::ItemFlags ValueListModel::flags(const QModelIndex &index) const
+Qt::ItemFlags EditableValueListModel::flags(const QModelIndex &index) const
 {
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
-QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant EditableValueListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	return QVariant();
 }
 
-QModelIndex ValueListModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex EditableValueListModel::index(int row, int column, const QModelIndex &parent) const
 {
 	if (hasIndex(row, column, parent))
 		return createIndex(row, column, m_items.at(row));
@@ -67,40 +67,40 @@ QModelIndex ValueListModel::index(int row, int column, const QModelIndex &parent
         return QModelIndex();
 }
 
-QModelIndex ValueListModel::parent(const QModelIndex &child) const
+QModelIndex EditableValueListModel::parent(const QModelIndex &child) const
 {
     return QModelIndex();
 }
 
-void ValueListModel::add(const List &list)
+void EditableValueListModel::add(const List &list)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
 	m_items.append(list);
 	endInsertRows();
 }
 
-void ValueListModel::add(IdmEntityValue *value)
+void EditableValueListModel::add(IdmEntityValue *value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 	m_items.push_back(value);
 	endInsertRows();
 }
 
-void ValueListModel::add(Database::id_type id, const QVariant &value)
+void EditableValueListModel::add(Database::id_type id, const QVariant &value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 	m_items.push_back(IdmValueReader::createValue(m_reader.entity(), id, value));
 	endInsertRows();
 }
 
-void ValueListModel::remove(const QModelIndex &index)
+void EditableValueListModel::remove(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 	delete m_items.takeAt(index.row());
 	endRemoveRows();
 }
 
-IdmEntityValue *ValueListModel::take(const QModelIndex &index)
+IdmEntityValue *EditableValueListModel::take(const QModelIndex &index)
 {
 	IdmEntityValue *res;
 

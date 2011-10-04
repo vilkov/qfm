@@ -82,34 +82,6 @@ QModelIndex ValueModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-void ValueModel::add(const List &list)
-{
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
-	m_items.append(list);
-	endInsertRows();
-}
-
-void ValueModel::add(IdmEntityValue *value)
-{
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(value);
-	endInsertRows();
-}
-
-void ValueModel::add(Database::id_type id, const QVariant &value)
-{
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(IdmValueReader::createValue(m_reader.entity(), id, value));
-	endInsertRows();
-}
-
-void ValueModel::remove(const QModelIndex &index)
-{
-	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	delete m_items.takeAt(index.row());
-	endRemoveRows();
-}
-
 IdmEntityValue *ValueModel::take(const QModelIndex &index)
 {
 	IdmEntityValue *res;
@@ -119,6 +91,20 @@ IdmEntityValue *ValueModel::take(const QModelIndex &index)
 	endRemoveRows();
 
 	return res;
+}
+
+void ValueModel::add(const List &list)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
+	m_items.append(list);
+	endInsertRows();
+}
+
+void ValueModel::remove(const QModelIndex &index)
+{
+	beginRemoveRows(QModelIndex(), index.row(), index.row());
+	delete m_items.takeAt(index.row());
+	endRemoveRows();
 }
 
 IDM_PLUGIN_NS_END

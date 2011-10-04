@@ -1,24 +1,24 @@
-#ifndef CHOOSEVALUEDIALOG_H_
-#define CHOOSEVALUEDIALOG_H_
+#ifndef STATICVALUELISTDIALOG_H_
+#define STATICVALUELISTDIALOG_H_
 
 #include <QtGui/QDialog>
 #include <QtGui/QTreeView>
 #include <QtGui/QLineEdit>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
-#include "model/choosevaluelmodel.h"
+#include "model/staticvaluelistmodel.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../storage/queries/idmselectquery.h"
 
 
 using namespace FileSystem::Plugins::Idm;
 
-class ChooseValueDialog : public QDialog
+class StaticValueListDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	ChooseValueDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
+	StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
     virtual void accept();
 
@@ -29,9 +29,9 @@ private:
 	Select m_query;
 	QLineEdit m_edit;
 	QTreeView m_view;
-	ChooseValueModel m_model;
+	StaticValueListModel m_model;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 };
 
-#endif /* CHOOSEVALUEDIALOG_H_ */
+#endif /* STATICVALUELISTDIALOG_H_ */

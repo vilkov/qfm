@@ -1,5 +1,5 @@
-#ifndef CHOOSEVALUEMODEL_H_
-#define CHOOSEVALUEMODEL_H_
+#ifndef VALUELISTMODEL_H_
+#define VALUELISTMODEL_H_
 
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
@@ -8,15 +8,15 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class ChooseValueModel : public QAbstractItemModel
+class EditableValueListModel : public QAbstractItemModel
 {
 public:
 	typedef QList<IdmEntityValue*> List;
 	typedef List::size_type        size_type;
 
 public:
-	ChooseValueModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
-	virtual ~ChooseValueModel();
+	EditableValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
+	virtual ~EditableValueListModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -24,8 +24,6 @@ public:
 	virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual void fetchMore(const QModelIndex &parent);
-    virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
@@ -39,13 +37,10 @@ public:
 	IdmEntityValue *take(const QModelIndex &index);
 
 private:
-    enum { PrefetchLimit = 256 };
-
-private:
 	IdmValueReader m_reader;
 	List m_items;
 };
 
 IDM_PLUGIN_NS_END
 
-#endif /* CHOOSEVALUEMODEL_H_ */
+#endif /* VALUELISTMODEL_H_ */

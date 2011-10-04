@@ -1,11 +1,9 @@
-#include "choosevaluedialog.h"
-#include "../new/composite/newcompositevaluedialog.h"
-#include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../tools/widgets/valuedialog/valuedialog.h"
+#include "staticvaluelistdialog.h"
+#include "../../../../storage/values/idmentityvalue.h"
 #include <QtGui/QMessageBox>
 
 
-ChooseValueDialog::ChooseValueDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
+StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_query(query),
 	m_edit(this),
@@ -32,7 +30,7 @@ ChooseValueDialog::ChooseValueDialog(const IdmContainer &container, const Select
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
-void ChooseValueDialog::accept()
+void StaticValueListDialog::accept()
 {
 	if (currentIndex().isValid())
 		QDialog::accept();
@@ -40,7 +38,7 @@ void ChooseValueDialog::accept()
 		QMessageBox::warning(this, windowTitle(), "You must select a value.");
 }
 
-QModelIndex ChooseValueDialog::currentIndex() const
+QModelIndex StaticValueListDialog::currentIndex() const
 {
 	return m_view.selectionModel()->currentIndex();
 }

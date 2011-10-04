@@ -1,6 +1,7 @@
 #ifndef IDMCONSTRAINT_H_
 #define IDMCONSTRAINT_H_
 
+#include <QtCore/QCoreApplication>
 #include "../idmbaseconstraint.h"
 
 
@@ -8,6 +9,8 @@ IDM_PLUGIN_NS_BEGIN
 
 class Constraint : public BaseConstraint
 {
+	Q_DECLARE_TR_FUNCTIONS(Constraint)
+
 public:
 	enum Operator
 	{

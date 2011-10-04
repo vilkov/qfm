@@ -1,6 +1,7 @@
 #ifndef IDMGROUPCONSTRAINT_H_
 #define IDMGROUPCONSTRAINT_H_
 
+#include <QtCore/QCoreApplication>
 #include "../idmbaseconstraint.h"
 
 
@@ -8,6 +9,8 @@ IDM_PLUGIN_NS_BEGIN
 
 class GroupConstraint : public BaseConstraint
 {
+	Q_DECLARE_TR_FUNCTIONS(GroupConstraint)
+
 public:
 	typedef QList<BaseConstraint*> Container;
 	typedef Container::size_type   size_type;
@@ -25,6 +28,8 @@ public:
 	/* BaseConstraint */
 	virtual bool isGroup() const;
 	virtual QString toString() const;
+
+	static QString typeToString(Type type);
 
 	Type type() const { return m_type; }
 	void setType(Type type) { m_type = type; }

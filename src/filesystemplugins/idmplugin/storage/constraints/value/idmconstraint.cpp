@@ -19,22 +19,22 @@ QString Constraint::operatorToString(Operator op)
 	switch (op)
 	{
 		case Less:
-			return QString::fromLatin1("<");
+			return tr("<");
 
 		case LessEqual:
-			return QString::fromLatin1("<=");
+			return tr("<=");
 
 		case Greater:
-			return QString::fromLatin1(">");
+			return tr(">");
 
 		case GreaterEqual:
-			return QString::fromLatin1(">=");
+			return tr(">=");
 
 		case Equal:
-			return QString::fromLatin1("=");
+			return tr("=");
 
 		case Like:
-			return QString::fromLatin1("like");
+			return tr("like");
 	}
 }
 

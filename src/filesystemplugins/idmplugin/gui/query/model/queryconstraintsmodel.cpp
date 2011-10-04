@@ -6,8 +6,6 @@ IDM_PLUGIN_NS_BEGIN
 
 QueryConstraintsModel::QueryConstraintsModel(QObject *parent) :
 	QAbstractItemModel(parent),
-	m_andType(tr("AND")),
-	m_orType(tr("OR")),
 	m_andTypeLabel(tr("(...AND...)")),
 	m_orTypeLabel(tr("(...OR...)"))
 {}
@@ -118,18 +116,7 @@ QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role)
 				switch (role)
 				{
 					case Qt::DisplayRole:
-					{
-						switch (static_cast<GroupConstraint*>(item)->type())
-						{
-							case GroupConstraint::And:
-								return m_andType;
-
-							case GroupConstraint::Or:
-								return m_orType;
-						}
-
-						break;
-					}
+						return GroupConstraint::typeToString(static_cast<GroupConstraint*>(item)->type());
 
 					case Qt::TextAlignmentRole:
 						return Qt::AlignCenter;

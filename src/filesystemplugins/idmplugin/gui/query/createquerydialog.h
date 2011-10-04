@@ -9,6 +9,7 @@
 #include <QtGui/QDialogButtonBox>
 #include "model/queryentitiesmodel.h"
 #include "model/queryconstraintsmodel.h"
+#include "model/queryconstraintsdelegate.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../tools/events/imp/keyboardeventsource.h"
@@ -63,6 +64,7 @@ private:
 	QueryEntitiesModel m_model;
 	QTreeView m_view2;
 	QueryConstraintsModel m_model2;
+	QueryConstraintsDelegate m_delegate2;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 	QHBoxLayout m_horizontalLayout;

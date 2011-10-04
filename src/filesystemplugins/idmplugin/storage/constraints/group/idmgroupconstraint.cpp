@@ -23,6 +23,18 @@ QString GroupConstraint::toString() const
 	return QString();
 }
 
+QString GroupConstraint::typeToString(Type type)
+{
+	switch (type)
+	{
+		case GroupConstraint::And:
+			return tr("AND");
+
+		case GroupConstraint::Or:
+			return tr("OR");
+	}
+}
+
 void GroupConstraint::add(BaseConstraint *constraint)
 {
 	m_items.push_back(constraint);

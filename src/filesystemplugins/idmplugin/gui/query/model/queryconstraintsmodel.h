@@ -29,8 +29,6 @@ private:
 
 private:
 	QueryConstraintsRootItem m_root;
-	QVariant m_andType;
-	QVariant m_orType;
 	QVariant m_andTypeLabel;
 	QVariant m_orTypeLabel;
 };

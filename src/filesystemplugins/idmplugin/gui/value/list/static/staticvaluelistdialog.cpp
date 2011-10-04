@@ -16,6 +16,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
+	m_verticatLayout.addWidget(&m_edit);
 	m_verticatLayout.addWidget(&m_view);
 	m_verticatLayout.addWidget(&m_buttonBox);
 

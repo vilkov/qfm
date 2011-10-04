@@ -1,5 +1,7 @@
 #include "createquerydialog.h"
 #include "../create/createentitydialog.h"
+#include "../value/list/static/staticvaluelistdialog.h"
+#include "../../items/idmentityitem.h"
 #include <QtGui/QMessageBox>
 
 
@@ -74,7 +76,12 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 
 			if (index.isValid())
 			{
-//				static_cast<IdmEntityItem*>(index.internalPointer());
+				StaticValueListDialog dialog(m_container, Select(static_cast<IdmEntityItem*>(index.internalPointer())->entity()), this);
+
+				if (dialog.exec() == StaticValueListDialog::Accepted)
+				{
+
+				}
 			}
 
 			break;

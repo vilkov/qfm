@@ -62,19 +62,19 @@ QModelIndex QueryConstraintsModel::parent(const QModelIndex &child) const
 			if (parent->parent())
 				return createIndex(static_cast<GroupConstraint*>(parent->parent())->indexOf(parent), 0, parent);
 			else
-				return createIndex(m_root.indexOf(parent), 0, parent);
+				return createIndex(0, 0, const_cast<QueryConstraintsRootItem*>(&m_root));
 
     return QModelIndex();
 }
 
 void QueryConstraintsModel::add(const QModelIndex &index)
 {
-//	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList())
-//	{
-//		beginInsertRows(index, static_cast<IdmListItem*>(index.internalPointer())->size(), static_cast<IdmListItem*>(index.internalPointer())->size());
-//		m_items.push_back(new QueryGroupConstraintsItem());
-//		endInsertRows();
-//	}
+	if (index.isValid() && static_cast<BaseConstraint*>(index.internalPointer())->isGroup())
+	{
+		beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
+		static_cast<GroupConstraint*>(index.internalPointer())->add(new GroupConstraint(GroupConstraint::And, static_cast<GroupConstraint*>(index.internalPointer())));
+		endInsertRows();
+	}
 }
 
 void QueryConstraintsModel::remove(const QModelIndex &index)

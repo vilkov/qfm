@@ -57,7 +57,8 @@ private:
 private:
 	IdmContainer m_container;
 	EntitiesTreeViewHandler m_handler;
-	QToolBar m_toolBar;
+	QToolBar m_toolBar1;
+	QToolBar m_toolBar2;
 	EntitiesTreeView m_view;
 	QueryEntitiesModel m_model;
 	QTreeView m_view2;
@@ -65,6 +66,7 @@ private:
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 	QHBoxLayout m_horizontalLayout;
+	QHBoxLayout m_horizontalLayout2;
 };
 
 #endif /* CREATEQUERYDIALOG_H_ */

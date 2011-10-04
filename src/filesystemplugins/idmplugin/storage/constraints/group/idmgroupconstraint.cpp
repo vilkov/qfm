@@ -3,7 +3,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-GroupConstraint::GroupConstraint(Type type) :
+GroupConstraint::GroupConstraint(Type type, BaseConstraint *parent) :
+	BaseConstraint(parent),
 	m_type(type)
 {}
 

@@ -9,10 +9,12 @@ IDM_PLUGIN_NS_BEGIN
 class ValueConstraint : public Constraint
 {
 public:
-	ValueConstraint(IdmEntity *property, Operator op, const QVariant &value);
+	ValueConstraint(const IdmEntity::Property &property, Operator op, const QVariant &value, BaseConstraint *parent = 0);
 
 	/* BaseConstraint */
 	virtual QString toString() const;
+
+	const QVariant &value() const { return m_value; }
 
 private:
 	QVariant m_value;

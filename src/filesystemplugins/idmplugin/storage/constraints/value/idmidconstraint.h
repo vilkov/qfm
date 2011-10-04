@@ -1,18 +1,20 @@
 #ifndef IDMIDCONSTRAINT_H_
 #define IDMIDCONSTRAINT_H_
 
-#include "idmconstraint.h"
+#include "idmvalueconstraint.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdConstraint : public Constraint
+class IdConstraint : public ValueConstraint
 {
 public:
-	IdConstraint(IdmEntity *property, Operator op, IdmEntity::id_type id);
+	IdConstraint(const IdmEntity::Property &property, Operator op, const QVariant &value, IdmEntity::id_type id, BaseConstraint *parent = 0);
 
 	/* BaseConstraint */
 	virtual QString toString() const;
+
+	IdmEntity::id_type id() const { return m_id; }
 
 private:
 	IdmEntity::id_type m_id;

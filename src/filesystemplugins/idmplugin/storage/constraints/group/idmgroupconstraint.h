@@ -19,7 +19,7 @@ public:
 	};
 
 public:
-	GroupConstraint(Type type);
+	GroupConstraint(Type type, BaseConstraint *parent = 0);
 	virtual ~GroupConstraint();
 
 	/* BaseConstraint */
@@ -29,8 +29,9 @@ public:
 	Type type() const { return m_type; }
 	void setType(Type type) { m_type = type; }
 
-	BaseConstraint *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
+	BaseConstraint *at(size_type index) const { return m_items.at(index); }
+	size_type indexOf(BaseConstraint *item) const { return m_items.indexOf(item); }
 
 	void add(BaseConstraint *constraint);
 	void insert(size_type index, BaseConstraint *constraint);

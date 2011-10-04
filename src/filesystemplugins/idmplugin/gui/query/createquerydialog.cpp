@@ -7,7 +7,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	QDialog(parent),
 	m_container(container),
 	m_handler(this),
-	m_toolBar(this),
+	m_toolBar1(this),
 	m_view(&m_handler, this),
 	m_view2(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
@@ -15,20 +15,26 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 {
 	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
 
-    m_toolBar.addAction(tr("Add group"))->setData(AddGroup);
-    m_toolBar.addAction(tr("Add condition"))->setData(AddCondition);
+    m_toolBar1.addAction(tr("Add condition"))->setData(AddCondition);
+    m_toolBar2.addAction(tr("Add group"))->setData(AddGroup);
 
-	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+	connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+	connect(&m_toolBar2, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
-	m_verticatLayout.addWidget(&m_toolBar);
 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
 	m_horizontalLayout.addWidget(&m_view);
 	m_horizontalLayout.addWidget(&m_view2);
 
+	m_horizontalLayout2.setMargin(3);
+	m_horizontalLayout2.setSpacing(1);
+	m_horizontalLayout2.addWidget(&m_toolBar1);
+	m_horizontalLayout2.addWidget(&m_toolBar2);
+
+	m_verticatLayout.addLayout(&m_horizontalLayout2);
 	m_verticatLayout.addLayout(&m_horizontalLayout);
 	m_verticatLayout.addWidget(&m_buttonBox);
 

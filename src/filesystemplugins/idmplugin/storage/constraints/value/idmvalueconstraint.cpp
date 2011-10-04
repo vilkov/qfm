@@ -3,8 +3,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValueConstraint::ValueConstraint(IdmEntity *property, Operator op, const QVariant &value) :
-	Constraint(property, op),
+ValueConstraint::ValueConstraint(const IdmEntity::Property &property, Operator op, const QVariant &value, BaseConstraint *parent) :
+	Constraint(property, op, parent),
 	m_value(value)
 {}
 

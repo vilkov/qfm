@@ -20,16 +20,18 @@ public:
 	};
 
 public:
-	Constraint(IdmEntity *property, Operator op);
+	Constraint(const IdmEntity::Property &property, Operator op, BaseConstraint *parent = 0);
 
 	/* BaseConstraint */
 	virtual bool isGroup() const;
 
-	IdmEntity *property() const { return m_property; }
+	const IdmEntity::Property &property() const { return m_property; }
 	Operator op() const { return m_op; }
 
+	static QString operatorToString(Operator op);
+
 private:
-	IdmEntity *m_property;
+	const IdmEntity::Property &m_property;
 	Operator m_op;
 };
 

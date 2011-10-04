@@ -15,7 +15,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 {
 	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
 
-    m_toolBar1.addAction(tr("Add condition"))->setData(AddCondition);
+    m_toolBar1.addAction(tr("Add constraint"))->setData(AddConstraint);
     m_toolBar2.addAction(tr("Add group"))->setData(AddGroup);
 
 	connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
@@ -68,7 +68,7 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 			m_model2.add(currentIndex2());
 			break;
 		}
-		case AddCondition:
+		case AddConstraint:
 		{
 			QModelIndex index = currentIndex1();
 

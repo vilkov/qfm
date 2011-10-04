@@ -30,7 +30,7 @@ private:
 	enum ActionId
 	{
 		AddGroup,
-		AddCondition
+		AddConstraint
 	};
 
 private Q_SLOTS:

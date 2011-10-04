@@ -7,8 +7,8 @@ IDM_PLUGIN_NS_BEGIN
 
 IdmValueReader::IdmValueReader(const IdmContainer &container, const Select &query) :
 	m_context(container.prepare(query, m_lastError)),
-	m_afterLast(false),
-	m_beforeFirst(true)
+	m_afterLast(!isValid()),
+	m_beforeFirst(isValid())
 {}
 
 IdmEntityValue *IdmValueReader::next() const

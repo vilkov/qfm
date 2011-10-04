@@ -8,7 +8,6 @@
 #include "model/valuelistmodel.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/queries/idmselectquery.h"
-#include "../../../storage/queries/idmquerycontext.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
 

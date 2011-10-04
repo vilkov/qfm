@@ -18,6 +18,8 @@ public:
 	const QString &lastError() const { return m_lastError; }
 
 	IdmEntityValue *next() const;
+	bool eof() const { return m_afterLast; }
+	bool bof() const { return m_beforeFirst; }
 
 	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
 	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);

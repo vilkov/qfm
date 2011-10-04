@@ -1,5 +1,5 @@
-#ifndef VALUEMODEL_H_
-#define VALUEMODEL_H_
+#ifndef VALUELISTMODEL_H_
+#define VALUELISTMODEL_H_
 
 #include <QtCore/QList>
 #include <QtCore/QAbstractItemModel>
@@ -8,15 +8,15 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class ValueModel : public QAbstractItemModel
+class ValueListModel : public QAbstractItemModel
 {
 public:
 	typedef QList<IdmEntityValue*> List;
 	typedef List::size_type        size_type;
 
 public:
-	ValueModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
-	virtual ~ValueModel();
+	ValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
+	virtual ~ValueListModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -48,4 +48,4 @@ protected:
 
 IDM_PLUGIN_NS_END
 
-#endif /* VALUEMODEL_H_ */
+#endif /* VALUELISTMODEL_H_ */

@@ -32,6 +32,8 @@ public:
 	bool isValid() const { return m_reader.isValid(); }
 	const QString &lastError() const { return m_reader.lastError(); }
 
+	size_type size() const { return m_items.size(); }
+	IdmEntityValue *at(size_type index) const { return m_items.at(index); }
 	IdmEntityValue *take(const QModelIndex &index);
 
 protected:

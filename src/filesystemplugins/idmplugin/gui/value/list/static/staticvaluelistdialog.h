@@ -4,11 +4,16 @@
 #include <QtGui/QDialog>
 #include <QtGui/QTreeView>
 #include <QtGui/QLineEdit>
+#include <QtGui/QToolButton>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/staticvaluelistmodel.h"
+#include "../model/valuelistproxymodel.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../storage/queries/idmselectquery.h"
+#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
+#include "../../../../../../tools/events/imp/keyboardeventsource.h"
 
 
 using namespace FileSystem::Plugins::Idm;
@@ -26,12 +31,32 @@ protected:
     QModelIndex currentIndex() const;
 
 private:
+	typedef KeyboardEventSource<
+				EventSourceBase<
+					QLineEdit
+				>
+			> LineEdit;
+	typedef KeyboardEventHandler<
+				EventHandlerBase<
+					StaticValueListDialog
+				>
+			> LineEditHandler;
+
+private Q_SLOTS:
+	void setFilter();
+	void clearFilter();
+
+private:
+	LineEditHandler m_handler;
 	Select m_query;
-	QLineEdit m_edit;
+	LineEdit m_edit;
 	QTreeView m_view;
+	QToolButton m_accept;
 	StaticValueListModel m_model;
+	ValueListProxyModel m_proxy;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
+	QVBoxLayout m_horizontalLayout;
 };
 
 #endif /* STATICVALUELISTDIALOG_H_ */

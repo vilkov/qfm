@@ -23,6 +23,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 	m_horizontalLayout.addWidget(&m_accept);
 
     connect(&m_accept, SIGNAL(clicked()), this, SLOT(setFilter()));
+
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter, &StaticValueListDialog::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &StaticValueListDialog::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Escape, &StaticValueListDialog::clearFilter);

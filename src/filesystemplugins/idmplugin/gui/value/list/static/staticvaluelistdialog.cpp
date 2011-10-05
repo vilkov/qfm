@@ -49,10 +49,19 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 void StaticValueListDialog::accept()
 {
-	if (currentIndex().isValid())
-		QDialog::accept();
+	QModelIndex index = currentIndex();
+
+	if (index.isValid())
+		if (m_model.at(index.row())->value().toString().compare(m_edit.text(), Qt::CaseSensitive) == 0)
+		{
+			QDialog::accept();
+			return;
+		}
+
+	if (m_edit.text().isEmpty())
+		QMessageBox::warning(this, windowTitle(), "You must enter or choose the value.");
 	else
-		QMessageBox::warning(this, windowTitle(), "You must select a value.");
+		QDialog::accept();
 }
 
 QModelIndex StaticValueListDialog::currentIndex() const

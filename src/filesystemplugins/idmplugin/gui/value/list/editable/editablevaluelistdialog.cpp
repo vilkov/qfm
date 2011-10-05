@@ -131,7 +131,7 @@ void EditableValueListDialog::accept()
 	if (currentIndex().isValid())
 		QDialog::accept();
 	else
-		QMessageBox::warning(this, windowTitle(), "You must select a value.");
+		QMessageBox::warning(this, windowTitle(), "You must choose the value.");
 }
 
 QModelIndex EditableValueListDialog::currentIndex() const

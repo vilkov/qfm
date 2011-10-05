@@ -101,7 +101,7 @@ void NewCompositeValueDialog::doAddValue(const QModelIndex &index)
 
 		if (dialog.exec() == EditableValueListDialog::Accepted)
 			if (m_container.release(name))
-				m_model.add(index, dialog.takeSelectedValue());
+				m_model.add(index, dialog.takeValue());
 			else
 			{
 				m_container.rollback(name);

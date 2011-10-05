@@ -121,7 +121,7 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
-IdmEntityValue *EditableValueListDialog::takeSelectedValue()
+IdmEntityValue *EditableValueListDialog::takeValue()
 {
 	return m_model.take(currentIndex());
 }

@@ -1,4 +1,5 @@
 #include "staticvaluelistdialog.h"
+#include "../../../../../../tools/pointers/pscopedpointer.h"
 #include <QtGui/QMessageBox>
 
 
@@ -34,6 +35,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(&m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(selectValue(QModelIndex)));
 
     m_view.setHeaderHidden(true);
 
@@ -45,6 +47,18 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 	}
 	else
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
+}
+
+IdmEntityValue *StaticValueListDialog::takeValue()
+{
+	QString text = m_edit.text();
+	QModelIndex index = currentIndex();
+
+	if (index.isValid() &&
+		m_model.at(index.row())->value().toString().compare(text, Qt::CaseSensitive) == 0)
+		return m_model.take(index);
+	else
+		return IdmValueReader::createValue(m_query.entity(), IdmEntityValue::InvalidId, text);
 }
 
 void StaticValueListDialog::accept()
@@ -78,4 +92,10 @@ void StaticValueListDialog::clearFilter()
 {
 	m_edit.clear();
 	m_proxy.setFilter(QString());
+}
+
+void StaticValueListDialog::selectValue(const QModelIndex &index)
+{
+	m_edit.setText(m_model.at(index.row())->value().toString());
+	m_edit.setFocus();
 }

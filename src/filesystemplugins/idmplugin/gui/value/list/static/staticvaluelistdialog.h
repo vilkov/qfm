@@ -25,6 +25,7 @@ class StaticValueListDialog : public QDialog
 public:
 	StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
+	IdmEntityValue *takeValue();
     virtual void accept();
 
 protected:
@@ -45,6 +46,7 @@ private:
 private Q_SLOTS:
 	void setFilter();
 	void clearFilter();
+	void selectValue(const QModelIndex &index);
 
 private:
 	LineEditHandler m_handler;

@@ -50,7 +50,7 @@ private Q_SLOTS:
 
 private:
 	LineEditHandler m_handler;
-	Select m_query;
+	IdmEntity *m_entity;
 	LineEdit m_edit;
 	QTreeView m_view;
 	QPushButton m_accept;

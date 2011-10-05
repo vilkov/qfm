@@ -93,14 +93,14 @@ inline bool processAddValue<Database::Path>(const QString &title, const QString 
 EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_query(query),
+	m_entity(query.entity()),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(m_container, m_query, this),
+	m_model(m_container, query, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
+	setWindowTitle(tr("Values of \"%1\"").arg(m_entity->name()));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -142,69 +142,69 @@ QModelIndex EditableValueListDialog::currentIndex() const
 void EditableValueListDialog::addValue()
 {
 	QString label = tr("Value");
-	QString title = tr("New value for \"%1\"").arg(m_query.entity()->name());
+	QString title = tr("New value for \"%1\"").arg(m_entity->name());
 
-	switch (m_query.entity()->type())
+	switch (m_entity->type())
 	{
 		case Database::Int:
 		{
-			if (!processAddValue<Database::Int>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Int>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::String:
 		{
-			if (!processAddValue<Database::String>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::String>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Date:
 		{
-			if (!processAddValue<Database::Date>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Date>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Time:
 		{
-			if (!processAddValue<Database::Time>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Time>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::DateTime:
 		{
-			if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Memo:
 		{
-			if (!processAddValue<Database::Memo>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Memo>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Composite:
 		{
-			if (!processAddValue<Database::Composite>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Composite>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Rating:
 		{
-			if (!processAddValue<Database::Rating>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Rating>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
 		}
 		case Database::Path:
 		{
-			if (!processAddValue<Database::Path>(title, label, this, m_container, m_query.entity(), m_model))
+			if (!processAddValue<Database::Path>(title, label, this, m_container, m_entity, m_model))
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 
 			break;
@@ -217,7 +217,7 @@ void EditableValueListDialog::removeValue()
 	QModelIndex index = m_view.selectionModel()->currentIndex();
 
 	if (index.isValid())
-		if (m_container.removeValue(m_query.entity(), IdmStorage::IdsList() << static_cast<IdmEntityValue*>(index.internalPointer())->id()))
+		if (m_container.removeValue(m_entity, IdmStorage::IdsList() << static_cast<IdmEntityValue*>(index.internalPointer())->id()))
 			m_model.remove(index);
 		else
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());

@@ -6,16 +6,16 @@
 StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
 	QDialog(parent),
 	m_handler(this),
-	m_query(query),
+	m_entity(query.entity()),
 	m_edit(&m_handler, this),
 	m_view(this),
 	m_accept(this),
-	m_model(container, m_query, this),
+	m_model(container, query, this),
 	m_proxy(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
+	setWindowTitle(tr("Values of \"%1\"").arg(m_entity->name()));
 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
@@ -58,7 +58,7 @@ IdmEntityValue *StaticValueListDialog::takeValue()
 		m_model.at(index.row())->value().toString().compare(text, Qt::CaseSensitive) == 0)
 		return m_model.take(index);
 	else
-		return IdmValueReader::createValue(m_query.entity(), IdmEntityValue::InvalidId, text);
+		return IdmValueReader::createValue(m_entity, IdmEntityValue::InvalidId, text);
 }
 
 void StaticValueListDialog::accept()

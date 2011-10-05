@@ -44,7 +44,7 @@ private:
 
 private:
 	IdmContainer m_container;
-	Select m_query;
+	IdmEntity *m_entity;
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	EditableValueListModel m_model;

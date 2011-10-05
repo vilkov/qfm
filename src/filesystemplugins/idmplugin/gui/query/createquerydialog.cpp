@@ -23,9 +23,6 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 	connect(&m_toolBar2, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
-	m_verticatLayout.setMargin(3);
-	m_verticatLayout.setSpacing(1);
-
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
 	m_horizontalLayout.addWidget(&m_view);
@@ -36,6 +33,8 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	m_horizontalLayout2.addWidget(&m_toolBar1);
 	m_horizontalLayout2.addWidget(&m_toolBar2);
 
+	m_verticatLayout.setMargin(3);
+	m_verticatLayout.setSpacing(1);
 	m_verticatLayout.addLayout(&m_horizontalLayout2);
 	m_verticatLayout.addLayout(&m_horizontalLayout);
 	m_verticatLayout.addWidget(&m_buttonBox);

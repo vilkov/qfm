@@ -4,7 +4,7 @@
 #include <QtGui/QDialog>
 #include <QtGui/QTreeView>
 #include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
+#include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
@@ -51,12 +51,12 @@ private:
 	Select m_query;
 	LineEdit m_edit;
 	QTreeView m_view;
-	QToolButton m_accept;
+	QPushButton m_accept;
 	StaticValueListModel m_model;
 	ValueListProxyModel m_proxy;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
-	QVBoxLayout m_horizontalLayout;
+	QHBoxLayout m_horizontalLayout;
 };
 
 #endif /* STATICVALUELISTDIALOG_H_ */

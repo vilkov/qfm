@@ -18,10 +18,10 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
-	m_horizontalLayout.addWidget(&m_edit);
+	m_horizontalLayout.addWidget(&m_edit, 1);
 	m_horizontalLayout.addWidget(&m_accept);
 
-    connect(&m_accept, SIGNAL(setFilter()), this, SLOT(setFilter()));
+    connect(&m_accept, SIGNAL(clicked()), this, SLOT(setFilter()));
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter, &StaticValueListDialog::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &StaticValueListDialog::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Escape, &StaticValueListDialog::clearFilter);

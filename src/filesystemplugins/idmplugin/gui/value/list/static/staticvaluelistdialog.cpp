@@ -67,6 +67,6 @@ void StaticValueListDialog::setFilter()
 
 void StaticValueListDialog::clearFilter()
 {
-	m_edit.setText(QString());
+	m_edit.clear();
 	m_proxy.setFilter(QString());
 }

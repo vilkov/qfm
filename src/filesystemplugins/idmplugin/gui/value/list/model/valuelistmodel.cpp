@@ -39,7 +39,7 @@ QVariant ValueListModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags ValueListModel::flags(const QModelIndex &index) const
 {
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, int role) const

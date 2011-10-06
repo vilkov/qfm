@@ -93,12 +93,19 @@ QModelIndex QueryConstraintsModel::parent(const QModelIndex &child) const
 
 void QueryConstraintsModel::add(const QModelIndex &index)
 {
-	if (index.isValid() && static_cast<BaseConstraint*>(index.internalPointer())->isGroup())
+	if (!index.isValid())
 	{
-		beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
-		static_cast<GroupConstraint*>(index.internalPointer())->add(new GroupConstraint(GroupConstraint::And, static_cast<GroupConstraint*>(index.internalPointer())));
+		beginInsertRows(QModelIndex(), m_root.size(), m_root.size());
+		m_root.add(new GroupConstraint(GroupConstraint::And, &m_root));
 		endInsertRows();
 	}
+	else
+		if (static_cast<BaseConstraint*>(index.internalPointer())->isGroup())
+		{
+			beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
+			static_cast<GroupConstraint*>(index.internalPointer())->add(new GroupConstraint(GroupConstraint::And, static_cast<GroupConstraint*>(index.internalPointer())));
+			endInsertRows();
+		}
 }
 
 void QueryConstraintsModel::add(Constraint *constraint, const QModelIndex &index)

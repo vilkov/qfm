@@ -31,7 +31,8 @@ QVariant ValueListModel::data(const QModelIndex &index, int role) const
 	if (role == Qt::DisplayRole)
 		switch (index.column())
 		{
-			case 0: return m_items.at(index.row())->value();
+			case 0:
+				return m_items.at(index.row())->value();
 		}
 
 	return QVariant();

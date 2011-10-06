@@ -53,6 +53,11 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::insertProperty);
 }
 
+Select CreateQueryDialog::value() const
+{
+
+}
+
 void CreateQueryDialog::accept()
 {
 	QDialog::accept();

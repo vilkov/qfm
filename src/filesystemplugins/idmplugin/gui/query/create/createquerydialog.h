@@ -12,6 +12,7 @@
 #include "model/queryconstraintsmodel.h"
 #include "model/queryconstraintsdelegate.h"
 #include "../../../containeres/idmcontainer.h"
+#include "../../../storage/queries/idmselectquery.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
 
@@ -25,6 +26,7 @@ class CreateQueryDialog : public QDialog
 public:
 	CreateQueryDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
 
+	Select value() const;
     virtual void accept();
 
 private:

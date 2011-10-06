@@ -9,8 +9,8 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntitiesListItem : public IdmEntityPropertyItem
 {
 public:
-	IdmEntitiesListItem(IdmEntity *entity, const QString &name, IdmItem *parent = 0) :
-		IdmEntityPropertyItem(entity, name, parent)
+	IdmEntitiesListItem(const QString &name, IdmEntity *entity, IdmItem *parent = 0) :
+		IdmEntityPropertyItem(name, entity, parent)
 	{}
 
 	void setEntity(IdmEntity *value) { m_entity = value; }

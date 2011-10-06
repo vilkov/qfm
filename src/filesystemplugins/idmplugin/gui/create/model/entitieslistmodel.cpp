@@ -19,15 +19,15 @@ IdmEntity *EntitiesListModel::entityAt(size_type index) const
 	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
 }
 
-const QString &EntitiesListModel::nameAt(size_type index) const
+QString EntitiesListModel::nameAt(size_type index) const
 {
-	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->name();
+	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->name().toString();
 }
 
 void EntitiesListModel::add(IdmEntity *entity, const QString &name)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntitiesListItem(entity, name));
+	m_items.push_back(new IdmEntitiesListItem(name, entity));
 	endInsertRows();
 }
 

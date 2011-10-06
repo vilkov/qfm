@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntityPropertyItem::IdmEntityPropertyItem(IdmEntity *entity, const QString &name, IdmItem *parent) :
+IdmEntityPropertyItem::IdmEntityPropertyItem(const QString &name, IdmEntity *entity, IdmItem *parent) :
 	IdmEntityItem(entity, parent),
 	m_name(name)
 {}

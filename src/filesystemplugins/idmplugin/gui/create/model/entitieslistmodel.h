@@ -19,7 +19,7 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
 
 	IdmEntity *entityAt(size_type index) const;
-	const QString &nameAt(size_type index) const;
+	QString nameAt(size_type index) const;
 	size_type size() const { return m_items.size(); }
 
 	void add(IdmEntity *entity, const QString &name);

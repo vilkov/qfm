@@ -31,7 +31,7 @@ public:
     IdmShortFormat shortFormat() const { return m_lineEdit2.text().simplified(); }
 
 	IdmEntity *property(size_type index) const { return m_model.entityAt(index); }
-	const QString &propertyName(size_type index) const { return m_model.nameAt(index); }
+	QString propertyName(size_type index) const { return m_model.nameAt(index); }
 	size_type size() const { return m_model.size(); }
 
     virtual void accept();

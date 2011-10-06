@@ -3,8 +3,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValuesTreeItem::ValuesTreeItem(IdmEntity *entity, const QString &name, IdmItem *parent) :
-	IdmEntityPropertyItem(entity, name, parent)
+ValuesTreeItem::ValuesTreeItem(const QString &name, IdmEntity *entity, IdmItem *parent) :
+	IdmEntityPropertyItem(name, entity, parent)
 {}
 
 IDM_PLUGIN_NS_END

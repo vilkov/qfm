@@ -41,7 +41,7 @@ void EntitiesListDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 	{
 		case 0:
 		{
-			static_cast<QLineEdit*>(editor)->setText(static_cast<IdmEntitiesListItem*>(index.internalPointer())->name());
+			static_cast<QLineEdit*>(editor)->setText(static_cast<IdmEntitiesListItem*>(index.internalPointer())->name().toString());
 			break;
 		}
 		case 1:

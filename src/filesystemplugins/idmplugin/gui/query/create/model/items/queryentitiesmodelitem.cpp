@@ -4,8 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryEntitiesModelItem::QueryEntitiesModelItem(const QString &name, IdmEntity *entity, IdmItem *parent) :
-	IdmEntityItem(entity, parent),
-	m_name(name)
+	IdmEntityPropertyItem(name, entity, parent)
 {}
 
 QVariant QueryEntitiesModelItem::data(qint32 column, qint32 role) const

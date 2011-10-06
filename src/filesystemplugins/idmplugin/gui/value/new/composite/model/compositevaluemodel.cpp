@@ -9,7 +9,7 @@ CompositeValueModel::CompositeValueModel(IdmEntity *entity, QObject *parent) :
 	IdmModel(parent)
 {
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-		m_items.push_back(new ValuesTreeItem(entity->at(i).entity, entity->at(i).name));
+		m_items.push_back(new ValuesTreeItem(entity->at(i).name, entity->at(i).entity));
 }
 
 void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)

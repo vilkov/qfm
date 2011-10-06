@@ -7,6 +7,11 @@ Select::Select(IdmEntity *entity) :
 	Query(entity)
 {}
 
+Select::Select(IdmEntity *entity, BaseConstraint *where) :
+	Query(entity),
+	m_where(where)
+{}
+
 QByteArray Select::compile() const
 {
 	Format format;

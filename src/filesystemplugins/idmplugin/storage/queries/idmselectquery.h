@@ -11,6 +11,7 @@ class Select : public Query
 {
 public:
 	Select(IdmEntity *entity);
+	Select(IdmEntity *entity, BaseConstraint *where);
 
 	virtual QByteArray compile() const;
 
@@ -32,8 +33,7 @@ private:
 	void join(const Format &format, QString &selectedFields, QString &joinedFields, IdmEntity *entity, IdmEntity *property) const;
 
 private:
-	typedef QList<BaseConstraint*> Container;
-	Container m_where;
+	BaseConstraint::Holder m_where;
 };
 
 IDM_PLUGIN_NS_END

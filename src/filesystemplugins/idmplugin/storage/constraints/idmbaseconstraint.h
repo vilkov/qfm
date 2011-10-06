@@ -1,13 +1,17 @@
 #ifndef IDMBASECONSTRAINT_H_
 #define IDMBASECONSTRAINT_H_
 
+#include <QtCore/QSharedData>
 #include "../entities/idmentity.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class BaseConstraint
+class BaseConstraint : public QSharedData
 {
+public:
+	typedef QExplicitlySharedDataPointer<BaseConstraint> Holder;
+
 public:
 	BaseConstraint(BaseConstraint *parent = 0);
 	virtual ~BaseConstraint();

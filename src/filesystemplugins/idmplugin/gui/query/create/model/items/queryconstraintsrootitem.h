@@ -10,6 +10,8 @@ class QueryConstraintsRootItem : public GroupConstraint
 {
 public:
 	QueryConstraintsRootItem();
+
+	void clear();
 };
 
 IDM_PLUGIN_NS_END

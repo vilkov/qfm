@@ -9,13 +9,14 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	m_verticatLayout(this),
 	m_splitter(this),
 	m_container(container),
+	m_entity(entity),
 	m_handler(this),
 	m_toolBar1(this),
 	m_view(&m_handler, this),
 	m_view2(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
-	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
+	setWindowTitle(tr("Find \"%1\"").arg(m_entity->name()));
 
     m_toolBar1.addAction(tr("Add constraint"))->setData(AddConstraint);
     m_toolBar2.addAction(tr("Add group"))->setData(AddGroup);
@@ -40,8 +41,8 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-    	m_model.add(entity->at(i));
+    for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
+    	m_model.add(m_entity->at(i));
 
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
@@ -53,9 +54,9 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::insertProperty);
 }
 
-Select CreateQueryDialog::value() const
+Select CreateQueryDialog::query()
 {
-
+	return Select(m_entity, m_model2.take());
 }
 
 void CreateQueryDialog::accept()

@@ -126,6 +126,13 @@ void QueryConstraintsModel::remove(const QModelIndex &index)
 //	endRemoveRows();
 }
 
+GroupConstraint *QueryConstraintsModel::take()
+{
+	GroupConstraint *res = new GroupConstraint(m_root);
+	m_root.clear();
+	return res;
+}
+
 QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role) const
 {
 	switch (column)

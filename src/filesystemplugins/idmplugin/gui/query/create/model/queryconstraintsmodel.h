@@ -26,6 +26,8 @@ public:
 	void add(Constraint *constraint, const QModelIndex &index);
 	void remove(const QModelIndex &index);
 
+	GroupConstraint *take();
+
 private:
 	QVariant data(BaseConstraint *item, int column, int role) const;
 

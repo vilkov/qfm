@@ -4,7 +4,8 @@
 FILE_SYSTEM_NS_BEGIN
 
 Node::Node(Node *parent) :
-	QAbstractItemModel(parent)
+	QAbstractItemModel(parent),
+	m_openedViews(0)
 {}
 
 INode *Node::root() const
@@ -126,6 +127,22 @@ void Node::removeThis()
 		parent = static_cast<Node*>(parent->Node::parent());
 
 	switchTo(parent, QModelIndex());
+}
+
+void Node::addLink()
+{
+	++m_openedViews;
+
+	if (parent())
+		static_cast<Node*>(parent())->addLink();
+}
+
+bool Node::removeLink()
+{
+	if (parent())
+		static_cast<Node*>(parent())->removeLink();
+
+	return (--m_openedViews) == 0;
 }
 
 void Node::switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected)

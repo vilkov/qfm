@@ -9,6 +9,11 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+/*
+ *  Implements default file system tree navigation.
+ *
+ */
+
 class Node : public QAbstractItemModel, public INode
 {
 	Q_DISABLE_COPY(Node)
@@ -45,9 +50,12 @@ protected:
 	bool isVisible() const { return !m_view.isEmpty(); }
 	void removeThis();
 
+	void addLink();
+	bool removeLink();
+
 private:
-	void addView(INodeView *view) { m_view.insert(view); }
-	void removeView(INodeView *view) { m_view.remove(view); }
+	void addView(INodeView *view) { m_view.insert(view); addLink(); }
+	bool removeView(INodeView *view) { m_view.remove(view); return removeLink(); }
 	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
 
 private:
@@ -55,6 +63,7 @@ private:
 
 private:
 	ViewSet m_view;
+	qint32 m_openedViews;
 	QModelIndex m_parentEntryIndex;
 };
 

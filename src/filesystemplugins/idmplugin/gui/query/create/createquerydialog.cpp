@@ -42,7 +42,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-    	m_model.add(entity->at(i).name, entity->at(i).entity);
+    	m_model.add(entity->at(i));
 
     m_view.setHeaderHidden(true);
     m_view.setModel(&m_model);
@@ -70,21 +70,24 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 		}
 		case AddConstraint:
 		{
-			QModelIndex index = currentIndex1();
+			QModelIndex index1 = currentIndex1();
 
-			if (index.isValid())
+			if (index1.isValid())
 			{
-				ConstraintQueryDialog dialog(
-						m_container,
-						static_cast<IdmEntityPropertyItem*>(index.internalPointer())->name().toString(),
-						static_cast<IdmEntityPropertyItem*>(index.internalPointer())->entity(),
-						this);
+				QModelIndex index2 = currentIndex2();
 
-				if (dialog.exec() == ConstraintQueryDialog::Accepted)
+				if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
 				{
+					ConstraintQueryDialog dialog(m_container, static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->property(), this);
 
+					if (dialog.exec() == ConstraintQueryDialog::Accepted)
+						m_model2.add(dialog.takeConstraint(), index2);
 				}
+				else
+					QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
 			}
+			else
+				QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
 
 			break;
 		}

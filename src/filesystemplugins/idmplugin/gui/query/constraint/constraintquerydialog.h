@@ -20,7 +20,8 @@ class ConstraintQueryDialog : public QDialog
 	Q_OBJECT
 
 public:
-	ConstraintQueryDialog(const IdmContainer &container, const QString &name, IdmEntity *entity, QWidget *parent = 0);
+	ConstraintQueryDialog(const IdmContainer &container, const IdmEntity::Property &property, QWidget *parent = 0);
+	virtual ~ConstraintQueryDialog();
 
 	Constraint *takeConstraint();
     virtual void accept();

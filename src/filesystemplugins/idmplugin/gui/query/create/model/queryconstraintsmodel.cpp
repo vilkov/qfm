@@ -101,6 +101,16 @@ void QueryConstraintsModel::add(const QModelIndex &index)
 	}
 }
 
+void QueryConstraintsModel::add(Constraint *constraint, const QModelIndex &index)
+{
+	if (index.isValid() && constraint)
+	{
+		beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
+		static_cast<GroupConstraint*>(index.internalPointer())->add(constraint);
+		endInsertRows();
+	}
+}
+
 void QueryConstraintsModel::remove(const QModelIndex &index)
 {
 //	beginRemoveRows(QModelIndex(), index.row(), index.row());

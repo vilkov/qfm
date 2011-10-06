@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryEntitiesModelItem : public IdmEntityPropertyItem
 {
 public:
-	QueryEntitiesModelItem(const QString &name, IdmEntity *entity, IdmItem *parent = 0);
+	QueryEntitiesModelItem(const IdmEntity::Property &property, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

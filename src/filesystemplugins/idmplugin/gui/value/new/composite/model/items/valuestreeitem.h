@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class ValuesTreeItem : public IdmEntityPropertyItem
 {
 public:
-	ValuesTreeItem(const QString &name, IdmEntity *entity, IdmItem *parent = 0);
+	ValuesTreeItem(const IdmEntity::Property &property, IdmItem *parent = 0);
 
 protected:
 	friend class CompositeValueModel;

@@ -4,19 +4,19 @@
 #include <QtGui/QMessageBox>
 
 
-ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const QString &name, IdmEntity *entity, QWidget *parent) :
+ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const IdmEntity::Property &property, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_entity(entity),
+	m_entity(property.entity),
 	m_value(0),
-	m_label(name, this),
+	m_label(property.name, this),
 	m_operator(this),
 	m_edit(this),
 	m_choose(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Constraint on \"%1\" property").arg(name));
+	setWindowTitle(tr("Constraint on \"%1\" property").arg(property.name));
 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
@@ -65,9 +65,23 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     m_operator.setCurrentIndex(0);
 }
 
+ConstraintQueryDialog::~ConstraintQueryDialog()
+{
+	delete m_value;
+}
+
 Constraint *ConstraintQueryDialog::takeConstraint()
 {
-	return 0;
+	if (m_value)
+		return new Constraint(
+				m_entity,
+				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
+				Templates::Utils::takeFrom(m_value));
+	else
+		return new Constraint(
+				m_entity,
+				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
+				IdmValueReader::createValue(m_entity, IdmEntityValue::InvalidId, m_edit.text()));
 }
 
 void ConstraintQueryDialog::accept()

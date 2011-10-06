@@ -3,6 +3,7 @@
 
 #include <QtCore/QAbstractItemModel>
 #include "items/queryconstraintsrootitem.h"
+#include "../../../../storage/constraints/value/idmconstraint.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -22,6 +23,7 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	void add(const QModelIndex &index);
+	void add(Constraint *constraint, const QModelIndex &index);
 	void remove(const QModelIndex &index);
 
 private:

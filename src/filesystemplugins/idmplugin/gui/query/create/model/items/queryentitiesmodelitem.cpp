@@ -3,14 +3,14 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryEntitiesModelItem::QueryEntitiesModelItem(const QString &name, IdmEntity *entity, IdmItem *parent) :
-	IdmEntityPropertyItem(name, entity, parent)
+QueryEntitiesModelItem::QueryEntitiesModelItem(const IdmEntity::Property &property, IdmItem *parent) :
+	IdmEntityPropertyItem(property, parent)
 {}
 
 QVariant QueryEntitiesModelItem::data(qint32 column, qint32 role) const
 {
 	if (column == 0 && role == Qt::DisplayRole)
-		return m_name;
+		return m_property.name;
 	else
 		return QVariant();
 }

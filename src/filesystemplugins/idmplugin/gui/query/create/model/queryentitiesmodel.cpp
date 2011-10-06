@@ -8,12 +8,12 @@ QueryEntitiesModel::QueryEntitiesModel(QObject *parent) :
 	IdmModel(parent)
 {}
 
-void QueryEntitiesModel::add(const QString &name, IdmEntity *entity)
+void QueryEntitiesModel::add(const IdmEntity::Property &property)
 {
 	QueryEntitiesModelItem *item;
 
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(item = new QueryEntitiesModelItem(name, entity));
+	m_items.push_back(item = new QueryEntitiesModelItem(property));
 	expand(item);
 	endInsertRows();
 }
@@ -34,7 +34,7 @@ void QueryEntitiesModel::expand(IdmItem *p)
 
 	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{
-		parent->add(item = new QueryEntitiesModelItem(parent->entity()->at(i).name, entity = parent->entity()->at(i).entity, parent));
+		parent->add(item = new QueryEntitiesModelItem(parent->entity()->at(i), parent));
 		expand(item);
 	}
 }

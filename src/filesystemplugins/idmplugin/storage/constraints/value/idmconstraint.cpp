@@ -20,6 +20,11 @@ bool Constraint::isGroup() const
 	return false;
 }
 
+QString Constraint::toString() const
+{
+	return QString();
+}
+
 QString Constraint::operatorToString(Operator op)
 {
 	switch (op)

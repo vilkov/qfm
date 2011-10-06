@@ -9,15 +9,15 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntityPropertyItem : public IdmEntityItem
 {
 public:
-	IdmEntityPropertyItem(const QString &name, IdmEntity *entity, IdmItem *parent = 0);
+	IdmEntityPropertyItem(const IdmEntity::Property &property, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	const QVariant &name() const { return m_name; }
+	const IdmEntity::Property &property() const { return m_property; }
 
 protected:
-	QVariant m_name;
+	IdmEntity::Property m_property;
 };
 
 IDM_PLUGIN_NS_END

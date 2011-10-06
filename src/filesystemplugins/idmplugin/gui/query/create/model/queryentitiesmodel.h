@@ -15,7 +15,7 @@ public:
 public:
 	QueryEntitiesModel(QObject *parent = 0);
 
-	void add(const QString &name, IdmEntity *entity);
+	void add(const IdmEntity::Property &property);
 	void remove(const QModelIndex &index);
 
 private:

@@ -29,6 +29,7 @@ public:
 
 	/* BaseConstraint */
 	virtual bool isGroup() const;
+	virtual QString toString() const;
 
 	const IdmEntity::Property &property() const { return m_property; }
 	Operator op() const { return m_op; }

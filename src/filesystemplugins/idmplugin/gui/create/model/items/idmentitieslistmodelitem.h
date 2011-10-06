@@ -9,12 +9,12 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntitiesListItem : public IdmEntityPropertyItem
 {
 public:
-	IdmEntitiesListItem(const QString &name, IdmEntity *entity, IdmItem *parent = 0) :
-		IdmEntityPropertyItem(name, entity, parent)
+	IdmEntitiesListItem(const IdmEntity::Property &property, IdmItem *parent = 0) :
+		IdmEntityPropertyItem(property, parent)
 	{}
 
-	void setEntity(IdmEntity *value) { m_entity = value; }
-	void setName(const QString &name) { m_name = name; }
+	void setEntity(IdmEntity *value) { m_property.entity = m_entity = value; }
+	void setName(const QString &name) { m_property.name = name; }
 };
 
 IDM_PLUGIN_NS_END

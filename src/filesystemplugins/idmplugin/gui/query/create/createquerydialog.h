@@ -3,6 +3,7 @@
 
 #include <QtGui/QDialog>
 #include <QtGui/QToolBar>
+#include <QtGui/QSplitter>
 #include <QtGui/QTreeView>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
@@ -56,6 +57,9 @@ private:
 	QModelIndex currentIndex2();
 
 private:
+	QVBoxLayout m_verticatLayout;
+	QHBoxLayout m_horizontalLayout;
+	QSplitter m_splitter;
 	IdmContainer m_container;
 	EntitiesTreeViewHandler m_handler;
 	QToolBar m_toolBar1;
@@ -66,9 +70,6 @@ private:
 	QueryConstraintsModel m_model2;
 	QueryConstraintsDelegate m_delegate2;
 	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
-	QHBoxLayout m_horizontalLayout;
-	QHBoxLayout m_horizontalLayout2;
 };
 
 #endif /* CREATEQUERYDIALOG_H_ */

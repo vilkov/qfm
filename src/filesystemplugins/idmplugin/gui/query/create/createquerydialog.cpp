@@ -6,13 +6,14 @@
 
 CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
 	QDialog(parent),
+	m_verticatLayout(this),
+	m_splitter(this),
 	m_container(container),
 	m_handler(this),
 	m_toolBar1(this),
 	m_view(&m_handler, this),
 	m_view2(this),
-	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
-	m_verticatLayout(this)
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
 	setWindowTitle(tr("Find \"%1\"").arg(entity->name()));
 
@@ -22,20 +23,18 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 	connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 	connect(&m_toolBar2, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
+	m_splitter.addWidget(&m_view);
+	m_splitter.addWidget(&m_view2);
+
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
-	m_horizontalLayout.addWidget(&m_view);
-	m_horizontalLayout.addWidget(&m_view2);
-
-	m_horizontalLayout2.setMargin(3);
-	m_horizontalLayout2.setSpacing(1);
-	m_horizontalLayout2.addWidget(&m_toolBar1);
-	m_horizontalLayout2.addWidget(&m_toolBar2);
+	m_horizontalLayout.addWidget(&m_toolBar1);
+	m_horizontalLayout.addWidget(&m_toolBar2);
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
-	m_verticatLayout.addLayout(&m_horizontalLayout2);
 	m_verticatLayout.addLayout(&m_horizontalLayout);
+	m_verticatLayout.addWidget(&m_splitter);
 	m_verticatLayout.addWidget(&m_buttonBox);
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -73,19 +72,22 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 			QModelIndex index1 = currentIndex1();
 
 			if (index1.isValid())
-			{
-				QModelIndex index2 = currentIndex2();
-
-				if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
+				if (static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->entity()->type() != Database::Composite)
 				{
-					ConstraintQueryDialog dialog(m_container, static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->property(), this);
+					QModelIndex index2 = currentIndex2();
 
-					if (dialog.exec() == ConstraintQueryDialog::Accepted)
-						m_model2.add(dialog.takeConstraint(), index2);
+					if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
+					{
+						ConstraintQueryDialog dialog(m_container, static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->property(), this);
+
+						if (dialog.exec() == ConstraintQueryDialog::Accepted)
+							m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint*>(index2.internalPointer())), index2);
+					}
+					else
+						QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
 				}
 				else
-					QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
-			}
+					QMessageBox::warning(this, windowTitle(), tr("You must select a not composite property!"));
 			else
 				QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
 

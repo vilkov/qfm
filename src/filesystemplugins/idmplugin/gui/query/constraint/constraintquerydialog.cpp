@@ -7,16 +7,16 @@
 ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const IdmEntity::Property &property, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_entity(property.entity),
+	m_property(property),
 	m_value(0),
-	m_label(property.name, this),
+	m_label(m_property.name, this),
 	m_operator(this),
 	m_edit(this),
 	m_choose(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Constraint on \"%1\" property").arg(property.name));
+	setWindowTitle(tr("Constraint on \"%1\" property").arg(m_property.name));
 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
@@ -27,6 +27,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 
     connect(&m_choose, SIGNAL(clicked()), this, SLOT(chooseValue()));
     connect(&m_edit, SIGNAL(textEdited(QString)), this, SLOT(updateValue(QString)));
+    connect(&m_operator, SIGNAL(currentIndexChanged(int)), this, SLOT(updateValue(int)));
 
     m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -36,7 +37,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    switch (m_entity->type())
+    switch (m_property.entity->type())
     {
     	case Database::Int:
     	case Database::Date:
@@ -70,18 +71,20 @@ ConstraintQueryDialog::~ConstraintQueryDialog()
 	delete m_value;
 }
 
-Constraint *ConstraintQueryDialog::takeConstraint()
+Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 {
 	if (m_value)
 		return new Constraint(
-				m_entity,
+				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
-				Templates::Utils::takeFrom(m_value));
+				Templates::Utils::takeFrom(m_value),
+				parent);
 	else
 		return new Constraint(
-				m_entity,
+				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
-				IdmValueReader::createValue(m_entity, IdmEntityValue::InvalidId, m_edit.text()));
+				IdmValueReader::createValue(m_property.entity, IdmEntityValue::InvalidId, m_edit.text()),
+				parent);
 }
 
 void ConstraintQueryDialog::accept()
@@ -94,7 +97,7 @@ void ConstraintQueryDialog::accept()
 
 void ConstraintQueryDialog::chooseValue()
 {
-	StaticValueListDialog dialog(m_container, Select(m_entity), this);
+	StaticValueListDialog dialog(m_container, Select(m_property.entity), this);
 
 	if (dialog.exec() == StaticValueListDialog::Accepted)
 		updateValue(dialog.takeValue());
@@ -108,9 +111,24 @@ void ConstraintQueryDialog::updateValue(const QString &text)
 
 void ConstraintQueryDialog::updateValue(IdmEntityValue *value)
 {
+	if (m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt() == Constraint::Equal)
+		Templates::Utils::nullify(m_value);
+	else
+		for (int i = 0, size = m_operator.count(); i < size; ++i)
+			if (m_operator.itemData(i, Qt::UserRole).toInt() == Constraint::Equal)
+			{
+				m_operator.setCurrentIndex(i);
+				break;
+			}
+
 	setEditFont(true);
-	Templates::Utils::nullify(m_value);
 	m_edit.setText((m_value = value)->value().toString());
+}
+
+void ConstraintQueryDialog::updateValue(int index)
+{
+	setEditFont(false);
+	Templates::Utils::nullify(m_value);
 }
 
 void ConstraintQueryDialog::setEditFont(bool italic)

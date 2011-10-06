@@ -136,7 +136,7 @@ QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role)
 							return m_orTypeLabel;
 					}
 				else
-					return QString::fromLatin1("%1 %2 %3").
+					return QString::fromLatin1("%1 %2 \"%3\"").
 							arg(static_cast<Constraint*>(item)->property().name).
 							arg(Constraint::operatorToString(static_cast<Constraint*>(item)->op())).
 							arg(static_cast<Constraint*>(item)->value()->value().toString());

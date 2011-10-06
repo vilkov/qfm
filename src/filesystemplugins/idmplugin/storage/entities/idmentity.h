@@ -18,9 +18,6 @@ public:
 	{
 		Property()
 		{}
-		Property(IdmEntity *entity) :
-			entity(entity)
-		{}
 		Property(IdmEntity *entity, const QString &name) :
 			entity(entity),
 			name(name)

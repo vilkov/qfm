@@ -469,6 +469,26 @@ namespace Templates
 			PointersContainer<T> &operator=(const PointersContainer<T> &other);
 		};
 	}
+
+
+	/***************************************************************************************************/
+	namespace Utils
+	{
+		template <typename T>
+		inline T takeFrom(T &value)
+		{
+			T res(value);
+			value = T();
+			return res;
+		}
+
+		template <typename T>
+		inline void nullify(T *&value)
+		{
+			delete value;
+			value = 0;
+		}
+	}
 }
 
 #define TYPELlST_1(T1) Templates::type_list<T1, Templates::null_type>

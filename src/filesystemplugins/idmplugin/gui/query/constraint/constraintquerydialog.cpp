@@ -1,11 +1,14 @@
 #include "constraintquerydialog.h"
 #include "../../value/list/static/staticvaluelistdialog.h"
+#include "../../../../../tools/metatemplates.h"
+#include <QtGui/QMessageBox>
 
 
 ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const QString &name, IdmEntity *entity, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
 	m_entity(entity),
+	m_value(0),
 	m_label(name, this),
 	m_operator(this),
 	m_edit(this),
@@ -23,6 +26,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	m_horizontalLayout.addWidget(&m_choose);
 
     connect(&m_choose, SIGNAL(clicked()), this, SLOT(chooseValue()));
+    connect(&m_edit, SIGNAL(textEdited(QString)), this, SLOT(updateValue(QString)));
 
     m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -68,7 +72,10 @@ Constraint *ConstraintQueryDialog::takeConstraint()
 
 void ConstraintQueryDialog::accept()
 {
-	QDialog::accept();
+	if (m_edit.text().isEmpty())
+		QMessageBox::warning(this, windowTitle(), "You must enter or choose the value.");
+	else
+		QDialog::accept();
 }
 
 void ConstraintQueryDialog::chooseValue()
@@ -76,7 +83,29 @@ void ConstraintQueryDialog::chooseValue()
 	StaticValueListDialog dialog(m_container, Select(m_entity), this);
 
 	if (dialog.exec() == StaticValueListDialog::Accepted)
-	{
+		updateValue(dialog.takeValue());
+}
 
+void ConstraintQueryDialog::updateValue(const QString &text)
+{
+	setEditFont(false);
+	Templates::Utils::nullify(m_value);
+}
+
+void ConstraintQueryDialog::updateValue(IdmEntityValue *value)
+{
+	setEditFont(true);
+	Templates::Utils::nullify(m_value);
+	m_edit.setText((m_value = value)->value().toString());
+}
+
+void ConstraintQueryDialog::setEditFont(bool italic)
+{
+	if (m_edit.font().italic() != italic)
+	{
+		QFont font(m_edit.font());
+
+		font.setItalic(italic);
+		m_edit.setFont(font);
 	}
 }

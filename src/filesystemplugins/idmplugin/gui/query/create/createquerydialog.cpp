@@ -1,7 +1,6 @@
 #include "createquerydialog.h"
-#include "../create/createentitydialog.h"
-#include "../value/list/static/staticvaluelistdialog.h"
-#include "../../items/idmentityitem.h"
+#include "../../value/list/static/staticvaluelistdialog.h"
+#include "../../../items/idmentityitem.h"
 #include <QtGui/QMessageBox>
 
 

@@ -8,7 +8,7 @@
 #include "../gui/list/listentitydialog.h"
 #include "../gui/create/createentitydialog.h"
 #include "../gui/choose/choosefileentitydialog.h"
-#include "../gui/query/createquerydialog.h"
+#include "../gui/query/create/createquerydialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 

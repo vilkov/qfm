@@ -3,6 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "../idmbaseconstraint.h"
+#include "../../values/idmentityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -23,19 +24,22 @@ public:
 	};
 
 public:
-	Constraint(const IdmEntity::Property &property, Operator op, BaseConstraint *parent = 0);
+	Constraint(const IdmEntity::Property &property, Operator op, IdmEntityValue *value, BaseConstraint *parent = 0);
+	virtual ~Constraint();
 
 	/* BaseConstraint */
 	virtual bool isGroup() const;
 
 	const IdmEntity::Property &property() const { return m_property; }
 	Operator op() const { return m_op; }
+	IdmEntityValue *value() const { return m_value; }
 
 	static QString operatorToString(Operator op);
 
 private:
 	const IdmEntity::Property &m_property;
 	Operator m_op;
+	IdmEntityValue *m_value;
 };
 
 IDM_PLUGIN_NS_END

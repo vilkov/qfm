@@ -3,11 +3,17 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Constraint::Constraint(const IdmEntity::Property &property, Operator op, BaseConstraint *parent) :
+Constraint::Constraint(const IdmEntity::Property &property, Operator op, IdmEntityValue *value, BaseConstraint *parent) :
 	BaseConstraint(parent),
 	m_property(property),
-	m_op(op)
+	m_op(op),
+	m_value(value)
 {}
+
+Constraint::~Constraint()
+{
+	delete m_value;
+}
 
 bool Constraint::isGroup() const
 {

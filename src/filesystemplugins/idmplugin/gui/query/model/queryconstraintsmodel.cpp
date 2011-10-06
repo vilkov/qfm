@@ -1,5 +1,5 @@
 #include "queryconstraintsmodel.h"
-#include "../../../storage/constraints/value/idmidconstraint.h"
+#include "../../../storage/constraints/value/idmconstraint.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -128,8 +128,8 @@ QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role)
 				else
 					return QString::fromLatin1("%1 %2 %3").
 							arg(static_cast<Constraint*>(item)->property().name).
-							arg(Constraint::operatorToString(static_cast<ValueConstraint*>(item)->op())).
-							arg(static_cast<ValueConstraint*>(item)->value().toString());
+							arg(Constraint::operatorToString(static_cast<Constraint*>(item)->op())).
+							arg(static_cast<Constraint*>(item)->value()->value().toString());
 
 			break;
 		}

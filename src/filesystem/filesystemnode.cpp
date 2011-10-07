@@ -108,6 +108,11 @@ void Node::switchTo(Node *node, const QModelIndex &selected)
 		node->viewThis(*it, selected);
 }
 
+bool Node::isLinked()
+{
+	return m_openedViews;
+}
+
 QStringList Node::toFileNameList(const FileSystemList *files) const
 {
 	QStringList res;

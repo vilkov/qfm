@@ -44,6 +44,8 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
+	virtual void removeChild(Node *node) = 0;
+	virtual bool isLinked();
 
 protected:
 	QStringList toFileNameList(const FileSystemList *files) const;

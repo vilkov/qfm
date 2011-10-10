@@ -9,6 +9,14 @@
 #include "../pstrings/pstring.h"
 
 
+/*
+ * TODO:
+ *     MSVC: __FUNCTION__, __FUNCDNAME__, __FUNCSIG__
+ *     GCC: __func__, __FUNCTION__, __PRETTY_FUNCTION__
+ *     __FILE__ __LINE__
+ *
+ */
+
 class ServiceFileLog
 {
 public:

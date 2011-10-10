@@ -1,16 +1,14 @@
 #ifndef OSDEPENDENT_H_
 #define OSDEPENDENT_H_
 
-#include <platformstl/platformstl.hpp>
+#include "osplatform.h"
 
 
 /* OS_DEPENDENT_CODE */
-#if defined(PLATFORMSTL_OS_IS_WINDOWS)
+#if defined(PLATFORM_OS_IS_WINDOWS)
 #	define OS_DEPENDENT_CODE(UNIX, WIN) WIN
-#elif defined(PLATFORMSTL_OS_IS_UNIX)
+#elif defined(PLATFORM_OS_IS_UNIX)
 #	define OS_DEPENDENT_CODE(UNIX, WIN) UNIX
-#else
-#	error OS is unknown!
 #endif
 
 #endif /* OSDEPENDENT_H_ */

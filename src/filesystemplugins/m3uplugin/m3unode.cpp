@@ -224,4 +224,9 @@ Node *M3uNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
+void M3uNode::removeChild(Node *node)
+{
+
+}
+
 M3U_PLUGIN_NS_END

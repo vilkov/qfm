@@ -43,9 +43,6 @@ public:
 	virtual void copy(const QModelIndexList &list, INode *destination);
 	virtual void move(const QModelIndexList &list, INode *destination);
 
-	/* Node */
-	virtual void switchViewsTo(Node *node, const QModelIndex &selected);
-
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
@@ -55,6 +52,7 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual void removeChild(Node *node);
 
 protected:
 	/* FolderNodeBase */

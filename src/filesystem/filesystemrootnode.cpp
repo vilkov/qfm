@@ -30,6 +30,11 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 	return 0;
 }
 
+void RootNode::removeChild(Node *node)
+{
+
+}
+
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins) const
 {
 	if (Node *res = plugins->node(&info, (RootNode*)this))

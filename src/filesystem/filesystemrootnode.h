@@ -60,6 +60,7 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) { return 0; }
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual void removeChild(Node *node);
 
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins) const;

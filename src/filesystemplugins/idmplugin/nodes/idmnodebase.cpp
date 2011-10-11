@@ -241,16 +241,6 @@ void IdmNodeBase::move(const QModelIndexList &list, INode *destination)
 
 }
 
-void IdmNodeBase::switchViewsTo(Node *node, const QModelIndex &selected)
-{
-	FolderNodeBase::switchViewsTo(node, selected);
-
-//	Node *child;
-//	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
-//		if (child = m_items.at(i).node)
-//			child->switchTo(node, selected);
-}
-
 QModelIndex IdmNodeBase::rootIndex() const
 {
 	return QModelIndex();
@@ -269,6 +259,11 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 Node *IdmNodeBase::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
 	return 0;
+}
+
+void IdmNodeBase::removeChild(Node *node)
+{
+
 }
 
 UpdatesList::Map IdmNodeBase::updateFilesMap() const

@@ -34,7 +34,6 @@ public:
 	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
 
 	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-	virtual void switchTo(Node *node, const QModelIndex &selected);
 
 protected:
 	virtual QModelIndex rootIndex() const = 0;
@@ -45,27 +44,28 @@ protected:
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual void removeChild(Node *node) = 0;
-	virtual bool isLinked();
 
 protected:
 	QStringList toFileNameList(const FileSystemList *files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
+
+	bool isLinked() const;
+	void addLink();
+	void removeLink();
+	void removeLinks(qint32 count);
+	void allChildLinksRemoved(Node *child);
 	void removeThis();
 
-	void addLink();
-	bool removeLink();
-
 private:
-	void addView(INodeView *view) { m_view.insert(view); addLink(); }
-	bool removeView(INodeView *view) { m_view.remove(view); return removeLink(); }
-	void switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected);
+	void addView(INodeView *view);
+	void removeView(INodeView *view);
 
 private:
 	typedef QSet<INodeView*> ViewSet;
 
 private:
 	ViewSet m_view;
-	qint32 m_openedViews;
+	qint32 m_links;
 	QModelIndex m_parentEntryIndex;
 };
 

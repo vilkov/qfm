@@ -5,7 +5,7 @@ FILE_SYSTEM_NS_BEGIN
 
 Node::Node(Node *parent) :
 	QAbstractItemModel(parent),
-	m_openedViews(0)
+	m_links(0)
 {}
 
 INode *Node::root() const
@@ -29,7 +29,14 @@ void Node::viewClosed(INodeView *nodeView)
 void Node::viewParent(INodeView *nodeView)
 {
 	if (exists())
-		switchTo(static_cast<Node*>(Node::parent()), nodeView, m_parentEntryIndex);
+	{
+		Node *parent = static_cast<Node*>(Node::parent());
+
+		parent->viewThis(nodeView, m_parentEntryIndex);
+		parent->refresh();
+
+		removeView(nodeView);
+	}
 	else
 		removeThis();
 }
@@ -102,17 +109,6 @@ void Node::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, Pl
 		viewChild(nodeView, path.begin(), plugins);
 }
 
-void Node::switchTo(Node *node, const QModelIndex &selected)
-{
-	for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
-		node->viewThis(*it, selected);
-}
-
-bool Node::isLinked()
-{
-	return m_openedViews;
-}
-
 QStringList Node::toFileNameList(const FileSystemList *files) const
 {
 	QStringList res;
@@ -124,37 +120,77 @@ QStringList Node::toFileNameList(const FileSystemList *files) const
 	return res;
 }
 
-void Node::removeThis()
+bool Node::isLinked() const
 {
-	Node *parent = static_cast<Node*>(Node::parent());
-
-	while (!parent->exists())
-		parent = static_cast<Node*>(parent->Node::parent());
-
-	switchTo(parent, QModelIndex());
+	return m_links;
 }
 
 void Node::addLink()
 {
-	++m_openedViews;
+	++m_links;
 
 	if (parent())
 		static_cast<Node*>(parent())->addLink();
 }
 
-bool Node::removeLink()
+void Node::removeLink()
 {
-	if (parent())
-		static_cast<Node*>(parent())->removeLink();
+	removeLinks(1);
 
-	return (--m_openedViews) == 0;
+	if (!isLinked())
+		static_cast<Node*>(parent())->allChildLinksRemoved(this);
 }
 
-void Node::switchTo(Node *node, INodeView *nodeView, const QModelIndex &selected)
+void Node::removeLinks(qint32 count)
 {
-	removeView(nodeView);
-	node->viewThis(nodeView, selected);
-	node->refresh();
+	m_links -= count;
+
+	if (parent())
+		static_cast<Node*>(parent())->removeLinks(count);
+}
+
+void Node::allChildLinksRemoved(Node *child)
+{
+	if (isLinked())
+		removeChild(child);
+	else
+		if (parent())
+			static_cast<Node*>(parent())->allChildLinksRemoved(this);
+		else
+			removeChild(child);
+}
+
+void Node::removeThis()
+{
+	if (!m_view.isEmpty())
+	{
+		QModelIndex index;
+		qint32 count = m_view.size();
+		Node *parent = static_cast<Node*>(Node::parent());
+
+		while (!parent->exists())
+			parent = static_cast<Node*>(parent->Node::parent());
+
+		for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
+			parent->viewThis(*it, index);
+
+		removeLinks(count);
+	}
+
+	if (!isLinked())
+		static_cast<Node*>(parent())->allChildLinksRemoved(this);
+}
+
+void Node::addView(INodeView *view)
+{
+	m_view.insert(view);
+	addLink();
+}
+
+void Node::removeView(INodeView *view)
+{
+	if (m_view.remove(view))
+		removeLink();
 }
 
 FILE_SYSTEM_NS_END

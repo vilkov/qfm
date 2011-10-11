@@ -209,7 +209,7 @@ void M3uNode::move(const QModelIndexList &list, INode *destination)
 
 }
 
-void M3uNode::switchTo(Node *node, const QModelIndex &selected)
+void M3uNode::switchViewsTo(Node *node, const QModelIndex &selected)
 {
 
 }

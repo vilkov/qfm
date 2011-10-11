@@ -241,9 +241,9 @@ void IdmNodeBase::move(const QModelIndexList &list, INode *destination)
 
 }
 
-void IdmNodeBase::switchTo(Node *node, const QModelIndex &selected)
+void IdmNodeBase::switchViewsTo(Node *node, const QModelIndex &selected)
 {
-	FolderNodeBase::switchTo(node, selected);
+	FolderNodeBase::switchViewsTo(node, selected);
 
 //	Node *child;
 //	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)

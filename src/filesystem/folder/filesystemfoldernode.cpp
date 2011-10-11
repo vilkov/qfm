@@ -187,14 +187,14 @@ void FolderNode::move(const QModelIndexList &list, INode *destination)
 		scanForCopy(entries, destination, true);
 }
 
-void FolderNode::switchTo(Node *node, const QModelIndex &selected)
+void FolderNode::switchViewsTo(Node *node, const QModelIndex &selected)
 {
-	FolderNodeBase::switchTo(node, selected);
+	FolderNodeBase::switchViewsTo(node, selected);
 
 	Node *child;
 	for (Values::size_type i = 0, size = m_items.size(); i < size; ++i)
 		if (child = m_items.at(i).node)
-			child->switchTo(node, selected);
+			child->switchViewsTo(node, selected);
 }
 
 QModelIndex FolderNode::rootIndex() const
@@ -814,7 +814,7 @@ void FolderNode::removeEntry(Values::size_type index)
 	beginRemoveRows(QModelIndex(), index, index);
 
 	if (Node *node = m_items.at(index).node)
-		node->switchTo(this, rootIndex());
+		node->switchViewsTo(this, rootIndex());
 
 	m_items.remove(index);
 
@@ -826,7 +826,7 @@ void FolderNode::removeEntry(const QModelIndex &index)
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 
 	if (Node *node = m_items.at(index.row()).node)
-		node->switchTo(this, rootIndex());
+		node->switchViewsTo(this, rootIndex());
 
 	m_items.remove(index.row());
 

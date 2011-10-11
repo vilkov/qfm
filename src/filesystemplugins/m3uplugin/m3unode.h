@@ -55,7 +55,7 @@ public:
 	virtual void move(const QModelIndexList &list, INode *destination);
 
 	/* Node */
-	virtual void switchTo(Node *node, const QModelIndex &selected);
+	virtual void switchViewsTo(Node *node, const QModelIndex &selected);
 
 protected:
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }

@@ -149,6 +149,7 @@ void FolderNodeBase::scanForSize(const QStringList &entries)
 {
 	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
 	m_tasks.add(task.data(), entries);
+	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -156,6 +157,7 @@ void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICop
 {
 	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
 	m_tasks.add(task.data(), entries);
+	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -163,6 +165,7 @@ void FolderNodeBase::scanForRemove(const QStringList &entries)
 {
 	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
 	m_tasks.add(task.data(), entries);
+	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -171,6 +174,7 @@ void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScope
 	FileSystemItem *entry = entries->at(0);
 	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
 	m_tasks.resetTask(task.data(), entry->fileName());
+	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -179,6 +183,7 @@ void FolderNodeBase::performRemove(PScopedPointer<FileSystemList> &entries)
 	FileSystemItem *entry = entries->at(0);
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
 	m_tasks.resetTask(task.data(), entry->fileName());
+	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
@@ -188,6 +193,7 @@ void FolderNodeBase::updateFiles()
 	{
 		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
 		setUpdating(true);
+		addLink();
 		Application::instance()->taskPool().handle(task.take());
 	}
 }
@@ -200,7 +206,10 @@ void FolderNodeBase::updateFiles(const ModelEvent *e)
 	updateFilesEvent(event->updates);
 
 	if (event->isLastEvent)
+	{
+		removeLink();
 		setUpdating(false);
+	}
 }
 
 void FolderNodeBase::scanForSize(const ModelEvent *e)
@@ -209,6 +218,7 @@ void FolderNodeBase::scanForSize(const ModelEvent *e)
 	typedef const ScanFilesForSizeTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	removeLink();
 	scanForSizeEvent(event->canceled, const_cast<NotConstEvent>(event)->entries);
 }
 
@@ -218,6 +228,7 @@ void FolderNodeBase::scanForCopy(const ModelEvent *e)
 	typedef const ScanFilesForCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	removeLink();
 	scanForCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, const_cast<NotConstEvent>(event)->control, event->move);
 }
 
@@ -227,6 +238,7 @@ void FolderNodeBase::scanForRemove(const ModelEvent *e)
 	typedef const ScanFilesForRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	removeLink();
 	scanForRemoveEvent(event->canceled, const_cast<NotConstEvent>(event)->entries);
 }
 
@@ -236,6 +248,7 @@ void FolderNodeBase::performCopy(const ModelEvent *e)
 	typedef const PerformCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	removeLink();
 	performCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, event->move);
 }
 
@@ -245,6 +258,7 @@ void FolderNodeBase::performRemove(const ModelEvent *e)
 	typedef const PerformRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	removeLink();
 	performRemoveEvent(const_cast<NotConstEvent>(event)->entries);
 }
 

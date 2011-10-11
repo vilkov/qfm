@@ -9,40 +9,21 @@
 class CheckConfigOption: public ConfigOptionValueDefault
 {
 public:
-	CheckConfigOption(const qint32 &id, const QString &title, ConfigOption *parent = 0) :
-		ConfigOptionValueDefault(id, title, QVariant(), parent),
-		m_editor(0),
-		m_listener(0)
-	{}
+	CheckConfigOption(qint32 id, const QString &title, ConfigOption *parent);
 
-	virtual bool isEnabled() const { return m_editor->isEnabled(); }
-	virtual void setEnabled(bool value) { m_editor->setEnabled(value); }
-	virtual QWidget *createEditor(QWidget *parent)
-	{
-		m_editor = new QCheckBox();
-		m_listener->connect(m_editor, SIGNAL(stateChanged(int)), m_listenerSlot);
-		return m_editor;
-	}
-	virtual QVariant editorValue() const { return m_editor->checkState() == Qt::Checked; }
-	virtual void setEditorValue(const QVariant &value) { setEditorValue(value.toBool()); }
-	virtual void setLoadedEditorValue(const QVariant &value)
-	{
-		bool val = value.toBool();
-		m_editor->setChecked(val);
-		setEditorValue(val);
-	}
+	virtual bool isEnabled() const;
+	virtual void setEnabled(bool value);
+	virtual QWidget *createEditor(QWidget *parent);
+	virtual QVariant editorValue() const;
+	virtual void setEditorValue(const QVariant &value);
+	virtual void setLoadedEditorValue(const QVariant &value);
 
-	void setListener(QObject *listener, const char *listenerSlot) { m_listener = listener; m_listenerSlot = listenerSlot; }
-	void addOption(ConfigOption *option) { m_options.push_back(option); }
-	void removeOption(ConfigOption *option) { m_options.removeAt(m_options.indexOf(option)); }
+	void setListener(QObject *listener, const char *listenerSlot);
+	void addOption(ConfigOption *option);
+	void removeOption(ConfigOption *option);
 
 private:
-	inline void setEditorValue(bool value)
-	{
-		for (QList<ConfigOption*>::size_type i = 0, size = m_options.size(); i < size; ++i)
-			m_options.at(i)->setEnabled(value);
-	}
-
+	inline void setEditorValue(bool value);
 
 private:
 	QCheckBox *m_editor;

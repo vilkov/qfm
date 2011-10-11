@@ -132,6 +132,7 @@ private:
 	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
+	void deleteEntry(Values::size_type index);
 
 private:
 	Values m_items;

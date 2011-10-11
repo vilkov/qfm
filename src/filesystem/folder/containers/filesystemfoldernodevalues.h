@@ -83,6 +83,7 @@ public:
 	void add(FolderNodeItem *item) { m_items.add(item->fileName(), item); }
 	void add(FolderNodeItem *item, Node *node) { m_items.add(item->fileName(), Value(item, node)); }
 	void remove(size_type index) { m_items.remove(index); }
+	Value take(size_type index) { return m_items.take(index); }
 
 private:
 	ValueList m_items;

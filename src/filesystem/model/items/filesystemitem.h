@@ -16,15 +16,8 @@ public:
 	void setNode(const Node::Holder &node) { m_node = node; };
 	void setNode(Node *node) { m_node = node; };
 
-	bool isLocked() const { return m_locked; }
-	const QString &lockReason() const { return m_lockReason; }
-	void lock(const QString &reason);
-	void unlock();
-
 private:
 	Node::Holder m_node;
-	bool m_locked;
-	QString m_lockReason;
 };
 
 FILE_SYSTEM_NS_END

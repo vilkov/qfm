@@ -12,6 +12,11 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+/*
+ * Implements general file system tasks (coping, moving, removing etc).
+ *
+ */
+
 class FolderNodeBase : public Node
 {
 	Q_DISABLE_COPY(FolderNodeBase)
@@ -19,7 +24,7 @@ class FolderNodeBase : public Node
 public:
 	FolderNodeBase(const Info &info, Node *parent = 0);
 
-	/* QAbstractItemModel */
+	/* FileSystemModel */
     virtual bool event(QEvent *event);
 
     /* INode */

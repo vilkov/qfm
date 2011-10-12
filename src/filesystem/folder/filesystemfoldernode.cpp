@@ -240,11 +240,6 @@ Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QM
 	return 0;
 }
 
-void FolderNode::removeChild(Node *node)
-{
-	deleteEntry(m_items.indexOf(node));
-}
-
 UpdatesList::Map FolderNode::updateFilesMap() const
 {
 	UpdatesList::Map changes;
@@ -779,18 +774,6 @@ void FolderNode::removeEntry(const QModelIndex &index)
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 	m_items.remove(index.row());
 	endRemoveRows();
-}
-
-void FolderNode::deleteEntry(Values::size_type index)
-{
-	Values::Value value;
-
-	beginRemoveRows(QModelIndex(), index, index);
-	value = m_items.take(index);
-	endRemoveRows();
-
-	delete value.item;
-	delete value.node;
 }
 
 FILE_SYSTEM_NS_END

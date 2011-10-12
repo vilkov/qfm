@@ -42,6 +42,10 @@ public:
 	virtual void refresh();
 
 protected:
+	/* Node */
+	virtual void removeChild(Node *node);
+
+protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;

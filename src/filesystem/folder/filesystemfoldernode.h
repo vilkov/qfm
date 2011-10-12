@@ -47,7 +47,6 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
-	virtual void removeChild(Node *node);
 
 protected:
 	/* FolderNodeBase */
@@ -127,7 +126,6 @@ private:
 	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
-	void deleteEntry(Values::size_type index);
 
 private:
 	Values m_items;

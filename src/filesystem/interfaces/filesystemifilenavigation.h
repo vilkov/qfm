@@ -17,6 +17,7 @@ class IFileNavigation
 public:
 	virtual ~IFileNavigation() {}
 
+	virtual void viewCloseAll() = 0;
 	virtual void viewClosed(INodeView *nodeView) = 0;
 	virtual void viewParent(INodeView *nodeView) = 0;
 	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected) = 0;

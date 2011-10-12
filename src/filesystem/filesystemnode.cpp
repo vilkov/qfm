@@ -22,6 +22,27 @@ int Node::columnsCount() const
 	return columnCount(QModelIndex());
 }
 
+void Node::viewCloseAll()
+{
+	if (!m_view.isEmpty())
+	{
+		QModelIndex index;
+		qint32 count = m_view.size();
+		Node *parent = Node::parent();
+
+		while (!parent->exists())
+			parent = static_cast<Node*>(parent->Node::parent());
+
+		for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
+			parent->viewThis(*it, index);
+
+		removeLinks(count);
+	}
+
+	if (!isLinked())
+		static_cast<Node*>(parent())->allChildLinksRemoved(this);
+}
+
 void Node::viewClosed(INodeView *nodeView)
 {
 	removeView(nodeView);
@@ -39,7 +60,7 @@ void Node::viewParent(INodeView *nodeView)
 		removeView(nodeView);
 	}
 	else
-		removeThis();
+		viewCloseAll();
 }
 
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
@@ -159,27 +180,6 @@ void Node::allChildLinksRemoved(Node *child)
 			static_cast<Node*>(parent())->allChildLinksRemoved(this);
 		else
 			removeChild(child);
-}
-
-void Node::removeThis()
-{
-	if (!m_view.isEmpty())
-	{
-		QModelIndex index;
-		qint32 count = m_view.size();
-		Node *parent = Node::parent();
-
-		while (!parent->exists())
-			parent = static_cast<Node*>(parent->Node::parent());
-
-		for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
-			parent->viewThis(*it, index);
-
-		removeLinks(count);
-	}
-
-	if (!isLinked())
-		static_cast<Node*>(parent())->allChildLinksRemoved(this);
 }
 
 void Node::addView(INodeView *view)

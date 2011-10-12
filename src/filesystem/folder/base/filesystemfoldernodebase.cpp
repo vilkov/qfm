@@ -142,7 +142,12 @@ void FolderNodeBase::refresh()
 		if (exists())
 			updateFiles();
 		else
-			removeThis();
+			viewCloseAll();
+}
+
+void FolderNodeBase::removeChild(Node *node)
+{
+
 }
 
 void FolderNodeBase::scanForSize(const QStringList &entries)

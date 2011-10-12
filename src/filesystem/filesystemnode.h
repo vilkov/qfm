@@ -31,6 +31,7 @@ public:
 	virtual int columnsCount() const;
 
 	/* INode::IFileNavigation */
+	virtual void viewCloseAll();
 	virtual void viewClosed(INodeView *nodeView);
 	virtual void viewParent(INodeView *nodeView);
 	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
@@ -60,7 +61,6 @@ protected:
 	void removeLink();
 	void removeLinks(qint32 count);
 	void allChildLinksRemoved(Node *child);
-	void removeThis();
 
 private:
 	void addView(INodeView *view);

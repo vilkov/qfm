@@ -7,7 +7,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-typedef ::Tools::Models::TreeModel FileSystemModel;
+typedef ::Tools::Models::Tree::Model FileSystemModel;
 
 FILE_SYSTEM_NS_END
 

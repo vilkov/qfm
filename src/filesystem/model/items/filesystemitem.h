@@ -2,12 +2,12 @@
 #define FILESYSTEMLISTITEM_ITEM_H_
 
 #include "../../filesystem_ns.h"
-#include "../../../tools/models/tree/items/treeitem.h"
+#include "../../../tools/models/tree/items/treemodelitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-typedef ::Tools::Models::TreeItem FileSystemItem;
+typedef ::Tools::Models::Tree::Item FileSystemItem;
 
 FILE_SYSTEM_NS_END
 

@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-typedef ::Tools::Models::TreeModel IdmModel;
+typedef ::Tools::Models::Tree::Model IdmModel;
 
 IDM_PLUGIN_NS_END
 

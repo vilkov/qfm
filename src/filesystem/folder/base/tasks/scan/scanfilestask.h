@@ -17,12 +17,12 @@ public:
 	class Event : public DestControlableTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries) :
+		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
 			DestControlableTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
-		PScopedPointer<FileSystemList> entries;
+		PScopedPointer<InfoListItem> entries;
 	};
 
 public:
@@ -34,7 +34,7 @@ public:
 
 	virtual void run(const volatile bool &aborted)
 	{
-		PScopedPointer<FileSystemList> root(new FileSystemList(m_info));
+		PScopedPointer<InfoListItem> root(new InfoListItem(m_info));
 
 		for (QStringList::size_type i = 0, size = m_entries.size(); i < size && !aborted; ++i)
 		{
@@ -47,7 +47,7 @@ public:
 			if (info.exists())
 				if (info.isDir())
 				{
-					PScopedPointer<FileSystemList> subnode(new FileSystemList(info));
+					PScopedPointer<InfoListItem> subnode(new InfoListItem(info));
 
 					scan(subnode.data(), aborted);
 					root->incTotalSize(subnode->totalSize());
@@ -55,22 +55,22 @@ public:
 				}
 				else
 				{
-					root->add(new FileSystemEntry(info));
+					root->add(new InfoEntryItem(info));
 					root->incTotalSize(info.size());
 				}
 			else
-				root->add(new FileSystemEntry(info));
+				root->add(new InfoEntryItem(info));
 		}
 
 		m_subnode.swap(root);
 	}
 
 protected:
-	const PScopedPointer<FileSystemList> &subnode() const { return m_subnode; }
-	PScopedPointer<FileSystemList> &subnode() { return m_subnode; }
+	const PScopedPointer<InfoListItem> &subnode() const { return m_subnode; }
+	PScopedPointer<InfoListItem> &subnode() { return m_subnode; }
 
 private:
-	void scan(FileSystemList *node, const volatile bool &aborted)
+	void scan(InfoListItem *node, const volatile bool &aborted)
 	{
 		QFileInfo info;
 		QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
@@ -80,9 +80,9 @@ private:
 				if (info.isDir())
 				{
 #ifndef Q_OS_WIN
-					PScopedPointer<FileSystemList> subtree(new FileSystemList(m_permissions.getInfo(info)));
+					PScopedPointer<InfoListItem> subtree(new InfoListItem(m_permissions.getInfo(info)));
 #else
-					PScopedPointer<FileSystemList> subtree(new FileSystemList(info));
+					PScopedPointer<InfoListItem> subtree(new InfoListItem(info));
 #endif
 					scan(subtree.data(), aborted);
 					node->incTotalSize(subtree->totalSize());
@@ -91,9 +91,9 @@ private:
 				else
 				{
 #ifndef Q_OS_WIN
-					node->add(new FileSystemEntry(m_permissions.getInfo(info)));
+					node->add(new InfoEntryItem(m_permissions.getInfo(info)));
 #else
-					node->add(new FileSystemEntry(info));
+					node->add(new InfoEntryItem(info));
 #endif
 					node->incTotalSize(info.size());
 				}
@@ -102,7 +102,7 @@ private:
 private:
 	Info m_info;
 	EntryList m_entries;
-	PScopedPointer<FileSystemList> m_subnode;
+	PScopedPointer<InfoListItem> m_subnode;
 
 #ifndef Q_OS_WIN
 private:

@@ -7,8 +7,8 @@
 #include <QtGui/QMessageBox>
 #include "../containers/filesystemupdateslist.h"
 #include "../events/filesystemmodelevent.h"
-#include "../../../list/filesystemlist.h"
-#include "../../../list/filesystementry.h"
+#include "../../../list/filesysteminfolistitem.h"
+#include "../../../list/filesysteminfoentryitem.h"
 #include "../../../interfaces/filesysteminode.h"
 #include "../../../../tools/taskspool/task.h"
 #include "../../../../tools/pointers/pscopedpointer.h"

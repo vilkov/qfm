@@ -4,7 +4,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	PerformTask(receiver),
 	m_entries(entries.take()),
 	m_control(control.take()),
@@ -23,9 +23,9 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	if (m_control->exists())
 	{
 		bool tryAgain;
-		FileSystemItem *entry;
+		InfoItem *entry;
 
-		for (FileSystemList::size_type i = 0;
+		for (InfoListItem::size_type i = 0;
 				i < m_entries->size() &&
 				!isCanceled() &&
 				!isControllerDead() &&
@@ -47,7 +47,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	}
 }
 
-void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	do
 		if (destination->contains(entry))
@@ -56,13 +56,13 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 				PScopedPointer<IFileControl> dest;
 
 				if (dest = destination->open(entry, m_lastError))
-					for (FileSystemList::size_type i = 0;
-							i < static_cast<FileSystemList*>(entry)->size() &&
+					for (InfoListItem::size_type i = 0;
+							i < static_cast<InfoListItem*>(entry)->size() &&
 							!isCanceled() &&
 							!isControllerDead() &&
 							!aborted;
 							++i)
-						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
+						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy || tryAgain)
 						break;
@@ -92,13 +92,13 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 				PScopedPointer<IFileControl> dest;
 
 				if (dest = destination->create(entry, m_lastError))
-					for (FileSystemList::size_type i = 0;
-							i < static_cast<FileSystemList*>(entry)->size() &&
+					for (InfoListItem::size_type i = 0;
+							i < static_cast<InfoListItem*>(entry)->size() &&
 							!isCanceled() &&
 							!isControllerDead() &&
 							!aborted;
 							++i)
-						copyEntry(dest.data(), static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
+						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;
@@ -115,7 +115,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, FileSystemItem *entry
 	while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 }
 
-void PerformCopyTask::copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	do
 		if (m_sourceFile = entry->open(IFile::ReadOnly, m_lastError))

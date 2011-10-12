@@ -19,12 +19,12 @@ public:
 	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info);
 
 	/* ICopyControl */
-	virtual bool start(const FileSystemList *files, bool move);
+	virtual bool start(const InfoListItem *files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 
 private:
-	QStringList toStringList(const FileSystemList *files) const;
+	QStringList toStringList(const InfoListItem *files) const;
 
 private:
 	IdmContainer m_container;

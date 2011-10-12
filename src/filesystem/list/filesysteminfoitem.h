@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMITEM_H_
-#define FILESYSTEMITEM_H_
+#ifndef FILESYSTEMINFOITEM_H_
+#define FILESYSTEMINFOITEM_H_
 
 #include <QtCore/QList>
 #include "../info/filesysteminfo.h"
@@ -7,19 +7,16 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileSystemItem : public Info
+class InfoItem : public Info
 {
 public:
-	typedef FileSystemItem    * value_type;
+	typedef InfoItem          * value_type;
 	typedef QList<value_type>   List;
 	typedef List::size_type     size_type;
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	FileSystemItem(const Info &info) :
-		Info(info),
-		m_shouldRemove(true)
-	{}
+	InfoItem(const Info &info);
 
 	virtual bool isList() const = 0;
 	virtual qint64 totalSize() const = 0;
@@ -33,4 +30,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMITEM_H_ */
+#endif /* FILESYSTEMINFOITEM_H_ */

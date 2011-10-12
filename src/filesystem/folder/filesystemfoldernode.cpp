@@ -25,33 +25,9 @@ FolderNode::FolderNode(const Info &info, Node *parent) :
 	m_proxy.setSourceModel(this);
 }
 
-int FolderNode::rowCount(const QModelIndex &parent) const
-{
-	if (parent.isValid())
-        return 0;
-	else
-    	return m_items.size();
-}
-
 int FolderNode::columnCount(const QModelIndex &parent) const
 {
 	return 3;
-}
-
-QVariant FolderNode::data(const QModelIndex &index, int role) const
-{
-    if (index.isValid())
-    	return static_cast<FolderNodeItem*>(index.internalPointer())->data(index.column(), role);
-    else
-    	return m_items.at(index.row()).item->data(index.column(), role);
-}
-
-Qt::ItemFlags FolderNode::flags(const QModelIndex &index) const
-{
-    if (index.isValid())
-    	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    else
-        return Qt::NoItemFlags;
 }
 
 QVariant FolderNode::headerData(int section, Qt::Orientation orientation, int role) const
@@ -79,25 +55,12 @@ QVariant FolderNode::headerData(int section, Qt::Orientation orientation, int ro
 	return QVariant();
 }
 
-QModelIndex FolderNode::index(int row, int column, const QModelIndex &parent) const
-{
-	if (hasIndex(row, column, parent))
-		return createIndex(row, column, m_items.at(row).item);
-    else
-        return QModelIndex();
-}
-
-QModelIndex FolderNode::parent(const QModelIndex &child) const
-{
-    return QModelIndex();
-}
-
 IFileInfo *FolderNode::info(const QModelIndex &idx) const
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
-		return static_cast<Node*>(Node::parent());
+		return Node::parent();
 	else
 		return m_items.at(index.row()).item;
 }
@@ -200,7 +163,7 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FolderNodeItem*>(index.internalPointer())->isRootItem())
-		return static_cast<Node*>(Node::parent());
+		return Node::parent();
 	else
 		if (!static_cast<FolderNodeEntry*>(index.internalPointer())->isLocked())
 		{
@@ -343,14 +306,14 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 	}
 }
 
-void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries)
+void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
 	FolderNodeEntry *entry;
 
 	if (canceled)
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		{
 			entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
 			entry->clearTotalSize();
@@ -358,10 +321,10 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> 
 			updateRange.add(index, index);
 		}
 	else
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		{
 			entry = static_cast<FolderNodeEntry*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())].item);
-			entry->setTotalSize(static_cast<FileSystemList*>(entries->at(i))->totalSize());
+			entry->setTotalSize(static_cast<InfoListItem*>(entries->at(i))->totalSize());
 			entry->unlock();
 			updateRange.add(index, index);
 		}
@@ -370,7 +333,7 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move)
+void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
@@ -382,9 +345,9 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 			if (control->physicalCopyIsNecessary())
 			{
 				QString lockReason = move ? tr("Moving...") : tr("Copying...");
-				FileSystemItem *entry;
+				InfoItem *entry;
 
-				for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+				for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 				{
 					index = m_items.indexOf((entry = entries->at(i))->fileName());
 					static_cast<FolderNodeEntry*>(m_items[index].item)->lock(lockReason, entry->totalSize());
@@ -398,7 +361,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 			else
 				control->done(false);
 
-	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 	{
 		index = m_items.indexOf(entries->at(i)->fileName());
 		static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(entries->at(i)->totalSize());
@@ -410,15 +373,15 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries)
+void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
-	FileSystemItem *entry;
 	QStringList folders;
 	QStringList files;
+	InfoItem *entry;
 
-	for (FileSystemList::size_type i = 0; i < entries->size();)
+	for (InfoListItem::size_type i = 0; i < entries->size();)
 	{
 		(entry = entries->at(i))->refresh();
 
@@ -437,7 +400,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList
 			removeEntry(m_items.indexOf(entry->fileName()));
 
 			if (entry->isDir())
-				entries->decTotalSize(static_cast<FileSystemList*>(entry)->totalSize());
+				entries->decTotalSize(static_cast<InfoListItem*>(entry)->totalSize());
 
 			entries->remove(i);
 		}
@@ -461,7 +424,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList
 	{
 		QString lockReason = tr("Removing...");
 
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 			if ((entry = entries->at(i))->isDir())
 			{
 				index = m_items.indexOf(entry->fileName());
@@ -475,7 +438,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList
 	else
 		if (!entries->isEmpty())
 		{
-			for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+			for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 			{
 				index = m_items.indexOf(entries->at(i)->fileName());
 				static_cast<FolderNodeEntry*>(m_items[index].item)->setTotalSize(entries->at(i)->totalSize());
@@ -488,17 +451,17 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList
 		}
 }
 
-void FolderNode::performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move)
+void FolderNode::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
-	FileSystemItem *entry;
+	InfoItem *entry;
 
 	if (!canceled && move)
 	{
 		QString lockReason = tr("Removing...");
 
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		{
 			index = m_items.indexOf((entry = entries->at(i))->fileName());
 
@@ -515,7 +478,7 @@ void FolderNode::performCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	}
 	else
 	{
-		for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		{
 			index = m_items.indexOf((entry = entries->at(i))->fileName());
 			static_cast<FolderNodeEntry*>(m_items[index].item)->unlock();
@@ -527,13 +490,13 @@ void FolderNode::performCopyEvent(bool canceled, PScopedPointer<FileSystemList> 
 	}
 }
 
-void FolderNode::performRemoveEvent(PScopedPointer<FileSystemList> &entries)
+void FolderNode::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
 {
 	RangeIntersection updateRange;
 	Values::size_type index;
-	FileSystemItem *entry;
+	InfoItem *entry;
 
-	for (FileSystemList::size_type i = 0, size = entries->size(); i < size; ++i)
+	for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		if ((entry = entries->at(i))->shouldRemove())
 			removeEntry(m_items.indexOf(entry->fileName()));
 		else

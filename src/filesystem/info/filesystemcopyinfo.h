@@ -39,7 +39,7 @@ public:
 
 	/* ICopyControl */
 	virtual bool physicalCopyIsNecessary() const;
-	virtual bool start(const FileSystemList *files, bool move);
+	virtual bool start(const InfoListItem *files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 

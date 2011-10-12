@@ -2,8 +2,10 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
+#include <QtCore/QSharedData>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
+#include "model/filesystemmodel.h"
 #include "interfaces/filesysteminode.h"
 
 
@@ -14,9 +16,12 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class Node : public QAbstractItemModel, public INode
+class Node : public QSharedData, public FileSystemModel, public INode
 {
 	Q_DISABLE_COPY(Node)
+
+public:
+	typedef QExplicitlySharedDataPointer<Node> Holder;
 
 public:
 	Node(Node *parent = 0);
@@ -46,7 +51,8 @@ protected:
 	virtual void removeChild(Node *node) = 0;
 
 protected:
-	QStringList toFileNameList(const FileSystemList *files) const;
+	Node *parent() const { return static_cast<Node*>(QObject::parent()); }
+	QStringList toFileNameList(const InfoListItem *files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
 
 	bool isLinked() const;

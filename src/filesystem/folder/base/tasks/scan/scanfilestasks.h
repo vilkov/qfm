@@ -33,7 +33,7 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			ScanFilesTask::Event(type, canceled, entries),
 			control(control.take()),
 			move(move)

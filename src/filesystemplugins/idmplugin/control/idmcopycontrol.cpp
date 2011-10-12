@@ -12,7 +12,7 @@ IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity,
 	m_entity(entity)
 {}
 
-bool IdmCopyControl::start(const FileSystemList *files, bool move)
+bool IdmCopyControl::start(const InfoListItem *files, bool move)
 {
 	if (m_container.transaction())
 	{
@@ -45,12 +45,12 @@ void IdmCopyControl::canceled()
 
 }
 
-QStringList IdmCopyControl::toStringList(const FileSystemList *files) const
+QStringList IdmCopyControl::toStringList(const InfoListItem *files) const
 {
 	QStringList res;
 	res.reserve(files->size());
 
-	for (FileSystemList::size_type i = 0, size = files->size(); i < size; ++i)
+	for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
 		res.push_back(absoluteFilePath(files->at(i)->fileName()));
 
 	return res;

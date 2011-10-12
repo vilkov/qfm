@@ -12,12 +12,12 @@ public:
 	class Event : public DestControlableTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<FileSystemList> &entries) :
+		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
 			DestControlableTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
-		PScopedPointer<FileSystemList> entries;
+		PScopedPointer<InfoListItem> entries;
 	};
 
 public:

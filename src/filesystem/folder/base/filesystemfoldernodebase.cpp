@@ -169,18 +169,18 @@ void FolderNodeBase::scanForRemove(const QStringList &entries)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move)
+void FolderNodeBase::performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	FileSystemItem *entry = entries->at(0);
+	InfoItem *entry = entries->at(0);
 	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
 	m_tasks.resetTask(task.data(), entry->fileName());
 	addLink();
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::performRemove(PScopedPointer<FileSystemList> &entries)
+void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 {
-	FileSystemItem *entry = entries->at(0);
+	InfoItem *entry = entries->at(0);
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
 	m_tasks.resetTask(task.data(), entry->fileName());
 	addLink();

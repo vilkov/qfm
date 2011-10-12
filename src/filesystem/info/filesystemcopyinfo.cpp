@@ -95,7 +95,7 @@ bool CopyInfo::physicalCopyIsNecessary() const
 	return true;
 }
 
-bool CopyInfo::start(const FileSystemList *files, bool move)
+bool CopyInfo::start(const InfoListItem *files, bool move)
 {
 	IFile::size_type fs;
 

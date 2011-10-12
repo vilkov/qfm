@@ -251,7 +251,7 @@ Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<IBaseItem*>(index.internalPointer())->isRoot())
-		return static_cast<Node*>(Node::parent());
+		return Node::parent();
 	else
 		return 0;
 }
@@ -276,27 +276,27 @@ void IdmNodeBase::updateFilesEvent(const UpdatesList &updates)
 
 }
 
-void IdmNodeBase::scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries)
+void IdmNodeBase::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
 {
 
 }
 
-void IdmNodeBase::scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move)
+void IdmNodeBase::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 
 }
 
-void IdmNodeBase::scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries)
+void IdmNodeBase::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
 {
 
 }
 
-void IdmNodeBase::performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move)
+void IdmNodeBase::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move)
 {
 
 }
 
-void IdmNodeBase::performRemoveEvent(PScopedPointer<FileSystemList> &entries)
+void IdmNodeBase::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
 {
 
 }

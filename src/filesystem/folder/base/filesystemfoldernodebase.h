@@ -6,6 +6,7 @@
 #include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
 #include "../../filesystemnode.h"
+#include "../../model/items/filesystemitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -39,11 +40,11 @@ protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
-	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) = 0;
-	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries) = 0;
-	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move) = 0;
-	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries) = 0;
+	virtual void scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries) = 0;
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) = 0;
+	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries) = 0;
+	virtual void performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move) = 0;
+	virtual void performRemoveEvent(PScopedPointer<InfoListItem> &entries) = 0;
 
 	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) = 0;
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed) = 0;
@@ -53,8 +54,11 @@ protected:
 	void scanForSize(const QStringList &entries);
 	void scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
 	void scanForRemove(const QStringList &entries);
-	void performCopy(PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
-	void performRemove(PScopedPointer<FileSystemList> &entries);
+	void performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void performRemove(PScopedPointer<InfoListItem> &entries);
+
+protected:
+	typedef QList<Node::Holder> Nodes;
 
 protected:
 	bool isRoot() const { return m_info.isRoot(); }
@@ -83,6 +87,7 @@ private:
 	bool m_updating;
 	Info m_info;
 	TasksMap m_tasks;
+	Nodes m_nodes;
 };
 
 FILE_SYSTEM_NS_END

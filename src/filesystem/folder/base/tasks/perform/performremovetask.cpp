@@ -8,7 +8,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<FileSystemList> &entries) :
+PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<InfoListItem> &entries) :
 	PerformTask(receiver),
 	m_progress(receiver),
 	m_entries(entries.take())
@@ -17,9 +17,9 @@ PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<FileSyste
 void PerformRemoveTask::run(const volatile bool &aborted)
 {
 	bool tryAgain;
-	FileSystemItem *entry;
+	InfoItem *entry;
 
-	for (FileSystemList::size_type i = 0;
+	for (InfoListItem::size_type i = 0;
 			i < m_entries->size() &&
 			!isCanceled() &&
 			!isControllerDead() &&
@@ -46,18 +46,18 @@ void PerformRemoveTask::run(const volatile bool &aborted)
 	}
 }
 
-void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveTask::removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	entry->refresh();
 
 	if (entry->exists())
 		if (entry->isDir())
 		{
-			FileSystemItem *localEntry;
+			InfoItem *localEntry;
 
-			for (FileSystemList::size_type i = 0, size = static_cast<FileSystemList*>(entry)->size(); i < size; ++i)
+			for (InfoListItem::size_type i = 0, size = static_cast<InfoListItem*>(entry)->size(); i < size; ++i)
 			{
-				removeEntry(localEntry = static_cast<FileSystemList*>(entry)->at(i), tryAgain = false, aborted);
+				removeEntry(localEntry = static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 
 				if (!localEntry->shouldRemove())
 					entry->setShouldRemove(false);
@@ -74,7 +74,7 @@ void PerformRemoveTask::removeEntry(FileSystemItem *entry, volatile bool &tryAga
 			while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
 }
 
-void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveTask::removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	QDir dir = entry->absolutePath();
 
@@ -117,7 +117,7 @@ void PerformRemoveTask::removeDir(FileSystemItem *entry, volatile bool &tryAgain
 		}
 }
 
-void PerformRemoveTask::removeFile(FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveTask::removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
 {
 	if (!doRemoveFile(entry->absoluteFilePath(), m_error))
 		if (m_skipAllIfNotRemove)

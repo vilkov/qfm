@@ -20,7 +20,7 @@ public:
 	class Event : public PerformTask::Event
 	{
 	public:
-		Event(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			PerformTask::Event(CopyFiles, canceled, entries),
 			control(control.take()),
 			move(move)
@@ -31,18 +31,18 @@ public:
 	};
 
 public:
-	PerformCopyTask(QObject *receiver, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformCopyTask(QObject *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 
 protected:
-	void copyEntry(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void copyFile(IFileControl *destination, FileSystemItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
 	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
 	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
 
 private:
-	PScopedPointer<FileSystemList> m_entries;
+	PScopedPointer<InfoListItem> m_entries;
 	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 	bool m_skipAllIfNotCreate;

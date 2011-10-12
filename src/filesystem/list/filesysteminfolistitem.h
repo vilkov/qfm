@@ -1,33 +1,24 @@
-#ifndef FILESYSTEMLIST_H_
-#define FILESYSTEMLIST_H_
+#ifndef FILESYSTEMINFOLISTITEM_H_
+#define FILESYSTEMINFOLISTITEM_H_
 
 #include <QtCore/QList>
 #include <QtCore/QSharedData>
-#include "filesystemitem.h"
+#include "filesysteminfoitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileSystemList : public FileSystemItem
+class InfoListItem : public InfoItem
 {
 public:
-	explicit FileSystemList(const Info &info) :
-		FileSystemItem(info),
-		m_totalSize(0)
-	{}
+	explicit InfoListItem(const Info &info);
 #ifndef Q_OS_WIN
-	explicit FileSystemList(const Info &info, uint userId, uint groupId) :
-		FileSystemItem(info),
-		m_totalSize(0)
-	{}
+	explicit InfoListItem(const Info &info, uint userId, uint groupId);
 #endif
-	virtual ~FileSystemList()
-	{
-		qDeleteAll(m_items);
-	}
+	virtual ~InfoListItem();
 
-	virtual bool isList() const { return true; }
-	virtual qint64 totalSize() const { return m_totalSize; }
+	virtual bool isList() const;
+	virtual qint64 totalSize() const;
 	void incTotalSize(qint64 count) { m_totalSize += count; }
 	void decTotalSize(qint64 count) { m_totalSize -= count; }
 
@@ -52,4 +43,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMLIST_H_ */
+#endif /* FILESYSTEMINFOLISTITEM_H_ */

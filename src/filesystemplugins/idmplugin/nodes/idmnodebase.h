@@ -58,11 +58,11 @@ protected:
 	/* FolderNodeBase */
 	virtual UpdatesList::Map updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
-	virtual void scanForSizeEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, PScopedPointer<ICopyControl> &control, bool move);
-	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<FileSystemList> &entries);
-	virtual void performCopyEvent(bool canceled, PScopedPointer<FileSystemList> &entries, bool move);
-	virtual void performRemoveEvent(PScopedPointer<FileSystemList> &entries);
+	virtual void scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries);
+	virtual void scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries);
+	virtual void performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move);
+	virtual void performRemoveEvent(PScopedPointer<InfoListItem> &entries);
 
 	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);

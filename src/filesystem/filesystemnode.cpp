@@ -4,13 +4,14 @@
 FILE_SYSTEM_NS_BEGIN
 
 Node::Node(Node *parent) :
-	QAbstractItemModel(parent),
+	QSharedData(),
+	FileSystemModel(parent),
 	m_links(0)
 {}
 
 INode *Node::root() const
 {
-	if (INode *res = static_cast<Node*>(Node::parent()))
+	if (INode *res = Node::parent())
 		return res->root();
 	else
 		return (INode*)this;
@@ -30,7 +31,7 @@ void Node::viewParent(INodeView *nodeView)
 {
 	if (exists())
 	{
-		Node *parent = static_cast<Node*>(Node::parent());
+		Node *parent = Node::parent();
 
 		parent->viewThis(nodeView, m_parentEntryIndex);
 		parent->refresh();
@@ -60,7 +61,7 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 	{
 		removeView(nodeView);
 
-		if (node == static_cast<Node*>(Node::parent()))
+		if (node == Node::parent())
 			node->viewThis(nodeView, m_parentEntryIndex);
 		else
 			node->viewThis(nodeView, selected);
@@ -79,7 +80,7 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 
 		if ((++path).atEnd())
 		{
-			if (node == static_cast<Node*>(Node::parent()))
+			if (node == Node::parent())
 				node->viewThis(nodeView, m_parentEntryIndex);
 			else
 				node->viewThis(nodeView, selected);
@@ -109,12 +110,12 @@ void Node::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, Pl
 		viewChild(nodeView, path.begin(), plugins);
 }
 
-QStringList Node::toFileNameList(const FileSystemList *files) const
+QStringList Node::toFileNameList(const InfoListItem *files) const
 {
 	QStringList res;
 	res.reserve(files->size());
 
-	for (FileSystemList::size_type i = 0, size = files->size(); i < size; ++i)
+	for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
 		res.push_back(files->at(i)->fileName());
 
 	return res;
@@ -166,7 +167,7 @@ void Node::removeThis()
 	{
 		QModelIndex index;
 		qint32 count = m_view.size();
-		Node *parent = static_cast<Node*>(Node::parent());
+		Node *parent = Node::parent();
 
 		while (!parent->exists())
 			parent = static_cast<Node*>(parent->Node::parent());

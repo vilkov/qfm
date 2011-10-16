@@ -1,18 +1,22 @@
 #ifndef M3UITEM_H_
 #define M3UITEM_H_
 
+#include "../m3uplugin_ns.h"
+#include "../../../tools/models/tree/items/treemodelitem.h"
 #include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
-class M3uItem : public IFileInfo
+class M3uItem : public ::Tools::Models::Tree::Item, public IFileInfo
 {
 public:
-	virtual QVariant data(qint32 column, qint32 role) const = 0;
+	M3uItem(M3uItem *parent = 0);
+
+	virtual bool isList() const;
 	virtual bool isRoot() const = 0;
 };
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END
 
 #endif /* M3UITEM_H_ */

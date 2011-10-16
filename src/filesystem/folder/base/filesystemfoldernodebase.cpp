@@ -194,7 +194,7 @@ void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 
 void FolderNodeBase::add(FileSystemBaseItem *item)
 {
-	m_items.m_items.add(item->fileName(), item);
+	m_items.m_container.add(item->fileName(), item);
 	m_nodes.push_back(item->node());
 }
 

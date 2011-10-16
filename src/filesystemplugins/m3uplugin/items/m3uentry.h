@@ -7,7 +7,7 @@
 #include "../../../filesystem/tools/filesystemcommontools.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 class M3uEntry : public M3uItem
 {
@@ -90,6 +90,6 @@ private:
 	QString m_title;
 };
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END
 
 #endif /* M3UENTRY_H_ */

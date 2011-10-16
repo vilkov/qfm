@@ -96,8 +96,8 @@ private:
 	void setLastError(const QString &error) const;
 
 private:
-	typedef QList<IdmStorageUndoCommand*>    UndoList;
-	typedef HashedList<QByteArray, UndoList> UndoStack;
+	typedef QList<IdmStorageUndoCommand*>                         UndoList;
+	typedef ::Tools::Containers::HashedList<QByteArray, UndoList> UndoStack;
 
 private:
 	QMutex m_mutex;

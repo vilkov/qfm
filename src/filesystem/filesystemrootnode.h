@@ -2,8 +2,7 @@
 #define FILESYSTEMROOTNODE_H_
 
 #include "filesystemnode.h"
-#include "info/filesysteminfo.h"
-#include "folder/containers/filesystemfoldernodevalues.h"
+#include "folder/base/containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -63,11 +62,11 @@ protected:
 	virtual void removeChild(Node *node);
 
 private:
-	Node *createNode(const Info &info, PluginsManager *plugins) const;
-	Values::Value createNode(const QString &fileName, PluginsManager *plugins) const;
+//	Node *createNode(const Info &info, PluginsManager *plugins) const;
+//	Values::Value createNode(const QString &fileName, PluginsManager *plugins) const;
 
 private:
-	Values m_items;
+	ItemsContainer m_items;
 	INodeView::MenuActionList m_menuActions;
 };
 

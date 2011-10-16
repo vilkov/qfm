@@ -1,5 +1,5 @@
 #include "filesystemfolderdelegate.h"
-#include "items/filesystemfoldernodeentry.h"
+#include "items/filesystementryitem.h"
 #include "../tools/filesystemcommontools.h"
 #include <QtGui/QApplication>
 
@@ -19,10 +19,10 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 	{
 		QModelIndex idx = m_proxy->mapToSource(index);
 
-		if (!static_cast<FolderNodeItem*>(idx.internalPointer())->isRootItem() &&
-			static_cast<FolderNodeEntry*>(idx.internalPointer())->isInProgress())
+		if (!static_cast<FileSystemBaseItem*>(idx.internalPointer())->isRootItem() &&
+			static_cast<FileSystemEntryItem*>(idx.internalPointer())->isInProgress())
 		{
-			FolderNodeEntry *entry = static_cast<FolderNodeEntry*>(idx.internalPointer());
+			FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(idx.internalPointer());
 
 			if (entry->isCompleted())
 			{

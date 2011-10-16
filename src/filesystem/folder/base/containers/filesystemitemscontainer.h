@@ -21,10 +21,11 @@ public:
 private:
 	/* Just to avoid access through virtual methods. */
 	friend class FolderNodeBase;
+	friend class RootNode;
 
 private:
 	typedef ::Tools::Containers::HashedList<QString, FileSystemBaseItem *> Container;
-	Container m_items;
+	Container m_container;
 };
 
 FILE_SYSTEM_NS_END

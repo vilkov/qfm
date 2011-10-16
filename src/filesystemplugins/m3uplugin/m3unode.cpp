@@ -9,18 +9,13 @@
 M3U_PLUGIN_NS_BEGIN
 
 M3uNode::M3uNode(const QFileInfo &info, Node *parent) :
-	Node(parent),
+	Node(m_items, parent),
 	m_tag(QString::fromLatin1("#EXTINF:")),
 	m_updating(false)
 {
-	m_items.push_back(new M3uRoot(info));
+	m_items.container().push_back(new M3uRoot(info));
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
-}
-
-M3uNode::~M3uNode()
-{
-	qDeleteAll(m_items);
 }
 
 int M3uNode::rowCount(const QModelIndex &parent) const
@@ -127,13 +122,13 @@ void M3uNode::refresh()
 	if (file.open(QFile::ReadOnly))
 	{
 		QString line;
-		ItemsList items;
 		QStringList list;
 		QTextStream stream(&file);
+		M3uContainer::Container items;
 
 		stream.setCodec(QTextCodec::codecForName("UTF-8"));
-		qDeleteAll(m_items);
-		m_items.clear();
+		qDeleteAll(m_items.container());
+		m_items.container().clear();
 
 		while (!(line = stream.readLine()).isEmpty())
 			if (line.startsWith(m_tag))
@@ -152,7 +147,7 @@ void M3uNode::refresh()
 			}
 
 		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + items.size() - 1);
-		m_items.append(items);
+		m_items.container().append(items);
 		endInsertRows();
 	}
 

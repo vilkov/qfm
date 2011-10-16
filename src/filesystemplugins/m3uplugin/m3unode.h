@@ -5,7 +5,7 @@
 #include "m3uplugin_ns.h"
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
-#include "items/m3uitem.h"
+#include "containers/m3ucontainer.h"
 #include "../../filesystem/filesystemnode.h"
 #include "../../filesystem/filesystempluginsmanager.h"
 
@@ -16,7 +16,6 @@ class M3uNode : public Node
 {
 public:
 	M3uNode(const QFileInfo &info, Node *parent = 0);
-	virtual ~M3uNode();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -68,17 +67,14 @@ protected:
 	virtual void removeChild(Node *node);
 
 protected:
-	M3uItem *rootItem() const { return m_items.at(0); }
+	M3uItem *rootItem() const { return m_items.container().at(0); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
-	typedef QList<M3uItem*> ItemsList;
-
-private:
 	QString m_tag;
 	bool m_updating;
-	ItemsList m_items;
+	M3uContainer m_items;
 	M3uProxyModel m_proxy;
 	M3uDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;

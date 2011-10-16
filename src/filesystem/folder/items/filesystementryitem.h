@@ -11,8 +11,6 @@ class FileSystemEntryItem : public FileSystemBaseItem
 public:
 	explicit FileSystemEntryItem(const Info &info, const Node::Holder &node, Item *parent = 0);
 
-	void operator=(const Info &info) { FileSystemBaseItem::operator=(info); }
-
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
 

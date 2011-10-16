@@ -5,7 +5,7 @@
 #include "m3uitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+M3U_PLUGIN_NS_BEGIN
 
 class M3uRoot : public M3uItem
 {
@@ -41,6 +41,6 @@ private:
 	QString m_label;
 };
 
-FILE_SYSTEM_NS_END
+M3U_PLUGIN_NS_END
 
 #endif /* M3UROOT_H_ */

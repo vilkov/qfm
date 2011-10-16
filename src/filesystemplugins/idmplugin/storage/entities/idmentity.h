@@ -28,11 +28,11 @@ public:
 		IdmEntity *entity;
 		QString name;
 	};
-	typedef Database::EntityType            Type;
-	typedef Database::id_type               id_type;
-	typedef HashedList<id_type, Property>   Container;
-	typedef Container::size_type            size_type;
-	typedef HashedList<id_type, IdmEntity*> Parents;
+	typedef Database::EntityType                                 Type;
+	typedef Database::id_type                                    id_type;
+	typedef ::Tools::Containers::HashedList<id_type, Property>   Container;
+	typedef Container::size_type                                 size_type;
+	typedef ::Tools::Containers::HashedList<id_type, IdmEntity*> Parents;
 	enum { InvalidIndex = Container::InvalidIndex };
 	enum { InvalidId = Database::InvalidId };
 

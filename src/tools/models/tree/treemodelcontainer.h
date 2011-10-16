@@ -10,7 +10,7 @@ class Container
 {
 public:
 	typedef int size_type;
-	typedef Item Item;
+	typedef ::Tools::Models::Tree::Item Item;
 	enum { InvalidIndex = (size_type)-1 };
 
 public:

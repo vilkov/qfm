@@ -4,7 +4,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 FilesystemRootItem::FilesystemRootItem() :
-	FileSystemBaseItem(Info(), Node::Holder(), 0),
+	FileSystemBaseItem(Info()),
 	m_label(QString::fromLatin1(".."))
 {}
 

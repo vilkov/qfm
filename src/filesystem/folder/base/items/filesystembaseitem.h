@@ -10,7 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class FileSystemBaseItem : public FileSystemItem, public Info
 {
 public:
-	FileSystemBaseItem(const Info &info, const Node::Holder &node, Item *parent = 0);
+	FileSystemBaseItem(const Info &info, Item *parent = 0);
 
 	void update(const Info &info) { Info::operator=(info); }
 

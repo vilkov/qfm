@@ -10,7 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class FileSystemItem : public ::Tools::Models::Tree::Item
 {
 public:
-	FileSystemItem(const Node::Holder &node, Item *parent = 0);
+	FileSystemItem(Item *parent = 0);
 
 	/* ::Tools::Models::Tree::Item */
 	virtual bool isList() const;

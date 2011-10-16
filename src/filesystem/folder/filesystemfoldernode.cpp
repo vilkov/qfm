@@ -292,15 +292,11 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 
 	if (!updatesLocal.isEmpty())
 	{
-		Node::Holder holder;
 		UpdatesList::Values added = updatesLocal.values();
 
 		beginInsertRows(QModelIndex(), size(), size() + added.size() - 1);
 		for (UpdatesList::Values::size_type i = 0, size = added.size(); i < size; ++i)
-		{
-			holder = new FolderNode(added.at(i).info(), this);
-			add(new FileSystemEntryItem(added.at(i).info(), holder));
-		}
+			add(new FileSystemEntryItem(added.at(i).info()));
 		endInsertRows();
 	}
 }

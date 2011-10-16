@@ -3,9 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FileSystemItem::FileSystemItem(const Node::Holder &node, Item *parent) :
-	Item(parent),
-	m_node(node)
+FileSystemItem::FileSystemItem(Item *parent) :
+	Item(parent)
 {}
 
 bool FileSystemItem::isList() const

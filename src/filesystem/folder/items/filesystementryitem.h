@@ -9,7 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 class FileSystemEntryItem : public FileSystemBaseItem
 {
 public:
-	explicit FileSystemEntryItem(const Info &info, const Node::Holder &node, Item *parent = 0);
+	explicit FileSystemEntryItem(const Info &info, Item *parent = 0);
 
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;

@@ -25,7 +25,7 @@ ItemsContainer::Item *ItemsContainer::at(size_type index) const
 ItemsContainer::size_type ItemsContainer::indexOf(Item *item) const
 {
 	for (Container::size_type i = 0, size = m_container.size(); i < size; ++i)
-		if (m_container.at(i) == item)
+		if (static_cast<Item*>(m_container.at(i)) == item)
 			return i;
 
 	return Container::InvalidIndex;

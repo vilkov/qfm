@@ -4,14 +4,10 @@
 
 MODELS_TREE_NS_BEGIN
 
-Model::Model(QObject *parent) :
-	QAbstractItemModel(parent)
+Model::Model(const Container &conteiner, QObject *parent) :
+	QAbstractItemModel(parent),
+	m_conteiner(conteiner)
 {}
-
-Model::~Model()
-{
-	qDeleteAll(m_items);
-}
 
 int Model::rowCount(const QModelIndex &parent) const
 {
@@ -21,7 +17,7 @@ int Model::rowCount(const QModelIndex &parent) const
 		else
 			return 0;
 	else
-    	return m_items.size();
+    	return m_conteiner.size();
 }
 
 int Model::columnCount(const QModelIndex &parent) const
@@ -34,7 +30,7 @@ QVariant Model::data(const QModelIndex &index, int role) const
     if (index.isValid())
     	return static_cast<Item*>(index.internalPointer())->data(index.column(), role);
     else
-    	return m_items.at(index.row())->data(index.column(), role);
+    	return m_conteiner.at(index.row())->data(index.column(), role);
 }
 
 Qt::ItemFlags Model::flags(const QModelIndex &index) const
@@ -53,7 +49,7 @@ QModelIndex Model::index(int row, int column, const QModelIndex &parent) const
 		if (parent.isValid() && static_cast<Item*>(parent.internalPointer())->isList())
 			return createIndex(row, column, static_cast<ListItem*>(parent.internalPointer())->at(row));
 		else
-			return createIndex(row, column, m_items.at(row));
+			return createIndex(row, column, m_conteiner.at(row));
     else
         return QModelIndex();
 }
@@ -65,7 +61,7 @@ QModelIndex Model::parent(const QModelIndex &child) const
 			if (parent->parent())
 				return createIndex(static_cast<ListItem*>(parent->parent())->indexOf(parent), 0, parent);
 			else
-				return createIndex(m_items.indexOf(parent), 0, parent);
+				return createIndex(m_conteiner.indexOf(parent), 0, parent);
 
     return QModelIndex();
 }

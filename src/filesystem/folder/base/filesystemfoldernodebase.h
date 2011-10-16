@@ -5,8 +5,8 @@
 #include "events/filesystemmodelevent.h"
 #include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
+#include "containers/filesystemitemscontainer.h"
 #include "../../filesystemnode.h"
-#include "../../model/items/filesystemitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -67,9 +67,6 @@ protected:
 	void performRemove(PScopedPointer<InfoListItem> &entries);
 
 protected:
-	typedef QList<Node::Holder> Nodes;
-
-protected:
 	bool isRoot() const { return m_info.isRoot(); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
@@ -78,6 +75,13 @@ protected:
 
 	const TasksMap &tasks() const { return m_tasks; }
 	TasksMap &tasks() { return m_tasks; }
+
+	ItemsContainer::size_type size() const { return m_items.m_items.size(); }
+	ItemsContainer::size_type indexOf(const QString &fileName) const { return m_items.m_items.indexOf(fileName); }
+	FileSystemBaseItem *at(ItemsContainer::size_type index) const { return static_cast<FileSystemBaseItem *>(m_items.m_items.at(index)); }
+	void add(FileSystemBaseItem *item);
+	void remove(FileSystemBaseItem *item);
+	void remove(ItemsContainer::size_type index);
 
 private:
 	void updateFiles();
@@ -93,10 +97,14 @@ private:
 	void completedProgress(const ModelEvent *event);
 
 private:
+	typedef QList<Node::Holder> Nodes;
+
+private:
 	bool m_updating;
 	Info m_info;
 	TasksMap m_tasks;
 	Nodes m_nodes;
+	ItemsContainer m_items;
 };
 
 FILE_SYSTEM_NS_END

@@ -5,7 +5,6 @@
 #include "filesystemfolderproxymodel.h"
 #include "functors/filesystemfoldernodefunctors.h"
 #include "base/filesystemfoldernodebase.h"
-#include "items/filesystemfoldernodeitem.h"
 #include "../../tools/metatemplates.h"
 #include "../../tools/rangeintersection.h"
 
@@ -62,11 +61,11 @@ protected:
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
 
 protected:
-	typedef QPair<Values::size_type, FolderNodeItem*> ProcessedValue;
+	typedef QPair<Values::size_type, FileSystemBaseItem*> ProcessedValue;
 	class ProcessedList : public Functors::Functor, public QList<ProcessedValue>
 	{
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry)
+		virtual void call(Values::size_type index, FileSystemBaseItem *entry)
 		{
 			push_back(ProcessedValue(index, entry));
 		}
@@ -75,7 +74,7 @@ protected:
 	class AbsoluteFilePathList : public Functors::Functor, public QStringList
 	{
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry)
+		virtual void call(Values::size_type index, FileSystemBaseItem *entry)
 		{
 			push_back(entry->absoluteFilePath());
 		}
@@ -89,7 +88,7 @@ protected:
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry);
+		virtual void call(Values::size_type index, FileSystemBaseItem *entry);
 
 	private:
 		TasksMap &m_tasks;
@@ -98,7 +97,7 @@ protected:
 	class RenameFunctor : public Functors::Functor
 	{
 	protected:
-		virtual void call(Values::size_type index, FolderNodeItem *entry);
+		virtual void call(Values::size_type index, FileSystemBaseItem *entry);
 	};
 
 	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);
@@ -110,25 +109,24 @@ private:
 	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
 
 private:
-	QModelIndex index(int column, FolderNodeItem *item) const;
+	QModelIndex index(int column, FileSystemBaseItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
-	QModelIndex indexForFile(FolderNodeItem *item) const;
-	QModelIndex indexForFile(FolderNodeItem *item, Values::size_type index) const;
+	QModelIndex indexForFile(FileSystemBaseItem *item) const;
+	QModelIndex indexForFile(FileSystemBaseItem *item, Values::size_type index) const;
 
-	void updateFirstColumn(FolderNodeItem *entry);
+	void updateFirstColumn(FileSystemBaseItem *entry);
 	void updateFirstColumn(const RangeIntersection &range);
-	void updateFirstColumn(Values::size_type index, FolderNodeItem *entry);
-	void updateSecondColumn(FolderNodeItem *entry);
+	void updateFirstColumn(Values::size_type index, FileSystemBaseItem *entry);
+	void updateSecondColumn(FileSystemBaseItem *entry);
 	void updateSecondColumn(const RangeIntersection &range);
-	void updateSecondColumn(Values::size_type index, FolderNodeItem *entry);
-	void updateBothColumns(FolderNodeItem *entry);
+	void updateSecondColumn(Values::size_type index, FileSystemBaseItem *entry);
+	void updateBothColumns(FileSystemBaseItem *entry);
 	void updateBothColumns(const RangeIntersection &range);
-	void updateBothColumns(Values::size_type index, FolderNodeItem *entry);
+	void updateBothColumns(Values::size_type index, FileSystemBaseItem *entry);
 	void removeEntry(Values::size_type index);
 	void removeEntry(const QModelIndex &index);
 
 private:
-	Values m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;

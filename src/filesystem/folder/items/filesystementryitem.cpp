@@ -1,11 +1,16 @@
-#include "filesystemfoldernodeentry.h"
+#include "filesystementryitem.h"
 #include "../../tools/filesystemcommontools.h"
 #include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
+FileSystemEntryItem::FileSystemEntryItem(const Info &info, const Node::Holder &node, Item *parent) :
+	FileSystemBaseItem(info, node, parent),
+	m_locked(false)
+{}
+
+QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 {
 	switch (column)
 	{
@@ -72,7 +77,17 @@ QVariant FolderNodeEntry::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-void FolderNodeEntry::lock(const QString &reason, quint64 totalSize)
+bool FileSystemEntryItem::isRootItem() const
+{
+	return false;
+}
+
+bool FileSystemEntryItem::isListItem() const
+{
+	return false;
+}
+
+void FileSystemEntryItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_locked = true;
 	m_lockReason = reason;
@@ -81,13 +96,13 @@ void FolderNodeEntry::lock(const QString &reason, quint64 totalSize)
 	m_timeElapsed = 0;
 }
 
-void FolderNodeEntry::lock(const QString &reason)
+void FileSystemEntryItem::lock(const QString &reason)
 {
 	m_locked = true;
 	m_lockReason = reason;
 }
 
-void FolderNodeEntry::unlock()
+void FileSystemEntryItem::unlock()
 {
 	m_locked = false;
 	m_lockReason.clear();

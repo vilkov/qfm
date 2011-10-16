@@ -3,9 +3,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-Node::Node(Node *parent) :
+Node::Node(const FileSystemModelContainer &conteiner, Node *parent) :
 	QSharedData(),
-	FileSystemModel(parent),
+	FileSystemModel(conteiner, parent),
 	m_links(0)
 {}
 

@@ -2,7 +2,7 @@
 #define TREEMODEL_H_
 
 #include <QtCore/QAbstractItemModel>
-#include "items/treemodelitem.h"
+#include "treemodelcontainer.h"
 
 
 MODELS_TREE_NS_BEGIN
@@ -10,8 +10,7 @@ MODELS_TREE_NS_BEGIN
 class Model : public QAbstractItemModel
 {
 public:
-	Model(QObject *parent = 0);
-	virtual ~Model();
+	Model(const Container &conteiner, QObject *parent = 0);
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -22,9 +21,8 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-protected:
-	typedef QList<Item*> Container;
-	Container m_items;
+private:
+	const Container &m_conteiner;
 };
 
 MODELS_TREE_NS_END

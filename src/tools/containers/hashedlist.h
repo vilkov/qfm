@@ -3,8 +3,11 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
+#include "containers_ns.h"
 #include "../metatemplates.h"
 
+
+CONTAINERS_NS_BEGIN
 
 template <typename Hash, typename T>
 class HashedList
@@ -104,5 +107,7 @@ private:
 	ValueList m_list;
 	ValueMap m_map;
 };
+
+CONTAINERS_NS_END
 
 #endif /* HASHEDLIST_H_ */

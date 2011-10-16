@@ -6,6 +6,7 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
 #include "model/filesystemmodel.h"
+#include "model/filesystemmodelcontainer.h"
 #include "interfaces/filesysteminode.h"
 
 
@@ -24,7 +25,7 @@ public:
 	typedef QExplicitlySharedDataPointer<Node> Holder;
 
 public:
-	Node(Node *parent = 0);
+	Node(const FileSystemModelContainer &conteiner, Node *parent = 0);
 
 	/* INode */
 	virtual INode *root() const;

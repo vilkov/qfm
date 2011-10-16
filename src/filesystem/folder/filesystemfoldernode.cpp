@@ -160,32 +160,35 @@ QModelIndex FolderNode::rootIndex() const
 
 Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-//	QModelIndex index = m_proxy.mapToSource(idx);
-//
-//	if (static_cast<FileSystemBaseItem*>(index.internalPointer())->isRootItem())
-//		return Node::parent();
-//	else
-//		if (!static_cast<FileSystemEntryItem*>(index.internalPointer())->isLocked())
-//		{
-//			FileSystemBaseItem *entry = static_cast<FileSystemBaseItem*>(index.internalPointer());
-//			entry->refresh();
-//
-//			if (entry->exists())
-//			{
-//				Q_ASSERT(indexOf(entry) != Values::InvalidIndex);
-//				Values::Value &value = m_items[indexOf(entry)];
-//
-//				if (value.node != 0)
-//					value.node->setParentEntryIndex(idx);
-//				else
-//					if (value.node = createNode(*value.item, plugins))
-//						value.node->setParentEntryIndex(idx);
-//
-//				return value.node;
-//			}
-//			else
-//				removeEntry(index);
-//		}
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<FileSystemBaseItem*>(index.internalPointer())->isRootItem())
+		return Node::parent();
+	else
+		if (!static_cast<FileSystemEntryItem*>(index.internalPointer())->isLocked())
+		{
+			FileSystemBaseItem *entry = static_cast<FileSystemBaseItem*>(index.internalPointer());
+			entry->refresh();
+
+			if (entry->exists())
+			{
+				Q_ASSERT(indexOf(entry) != Values::InvalidIndex);
+				FileSystemEntryItem *item = static_cast<FileSystemEntryItem*>(at(indexOf(entry)));
+
+				if (item->node())
+					item->node()->setParentEntryIndex(idx);
+				else
+					if (Node *node = createNode(*static_cast<Info*>(item), plugins))
+					{
+						item->setNode(node);
+						node->setParentEntryIndex(idx);
+					}
+
+				return item->node().data();
+			}
+			else
+				removeEntry(index);
+		}
 
 	return 0;
 }

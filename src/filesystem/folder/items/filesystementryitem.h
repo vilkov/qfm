@@ -11,6 +11,8 @@ class FileSystemEntryItem : public FileSystemBaseItem
 public:
 	explicit FileSystemEntryItem(const Info &info, Item *parent = 0);
 
+	void setNode(Node *node) { FileSystemBaseItem::setNode(node); }
+
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
 

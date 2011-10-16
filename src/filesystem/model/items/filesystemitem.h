@@ -17,6 +17,9 @@ public:
 
 	const Node::Holder &node() const { return m_node; }
 
+protected:
+	void setNode(Node *node) { m_node = node; }
+
 private:
 	Node::Holder m_node;
 };

@@ -14,7 +14,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
-	FolderNodeBase(info, parent),
+	FolderNodeBase(info, m_items, parent),
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {

@@ -5,7 +5,6 @@
 #include "events/filesystemmodelevent.h"
 #include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
-#include "containers/filesystemitemscontainer.h"
 #include "../../filesystemnode.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
@@ -22,7 +21,7 @@ class FolderNodeBase : public Node
 	Q_DISABLE_COPY(FolderNodeBase)
 
 public:
-	FolderNodeBase(const Info &info, Node *parent = 0);
+	FolderNodeBase(const Info &info, const FileSystemModelContainer &conteiner, Node *parent = 0);
 
 	/* FileSystemModel */
     virtual bool event(QEvent *event);
@@ -76,13 +75,13 @@ protected:
 	const TasksMap &tasks() const { return m_tasks; }
 	TasksMap &tasks() { return m_tasks; }
 
-	ItemsContainer::size_type size() const { return m_items.m_container.size(); }
-	ItemsContainer::size_type indexOf(const QString &fileName) const { return m_items.m_container.indexOf(fileName); }
-	ItemsContainer::size_type indexOf(FileSystemBaseItem *item) const { return m_items.indexOf(item); }
-	FileSystemBaseItem *at(ItemsContainer::size_type index) const { return static_cast<FileSystemBaseItem *>(m_items.m_container.at(index)); }
-	void add(FileSystemBaseItem *item);
-	void remove(FileSystemBaseItem *item);
-	void remove(ItemsContainer::size_type index);
+//	ItemsContainer::size_type size() const { return m_items.m_container.size(); }
+//	ItemsContainer::size_type indexOf(const QString &fileName) const { return m_items.m_container.indexOf(fileName); }
+//	ItemsContainer::size_type indexOf(FileSystemBaseItem *item) const { return m_items.indexOf(item); }
+//	FileSystemBaseItem *at(ItemsContainer::size_type index) const { return static_cast<FileSystemBaseItem *>(m_items.m_container.at(index)); }
+//	void add(FileSystemBaseItem *item);
+//	void remove(FileSystemBaseItem *item);
+//	void remove(ItemsContainer::size_type index);
 
 private:
 	void updateFiles();
@@ -98,14 +97,9 @@ private:
 	void completedProgress(const ModelEvent *event);
 
 private:
-	typedef QList<Node::Holder> Nodes;
-
-private:
 	bool m_updating;
 	Info m_info;
 	TasksMap m_tasks;
-	Nodes m_nodes;
-	ItemsContainer m_items;
 };
 
 FILE_SYSTEM_NS_END

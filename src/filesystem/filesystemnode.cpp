@@ -93,9 +93,20 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 
 void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
+	Nodes::size_type index;
 	QModelIndex selected;
+	QString fileName;
+	Holder node;
 
-	if (Node *node = viewChild(*path, plugins, selected))
+	if ((index = m_nodes.indexOf(fileName = *path)) == Nodes::InvalidIndex)
+	{
+		if (node = viewChild(fileName, plugins, selected))
+			m_nodes.add(fileName, node);
+	}
+	else
+		node = m_nodes.at(index);
+
+	if (node)
 	{
 		removeView(nodeView);
 

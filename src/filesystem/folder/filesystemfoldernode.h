@@ -5,6 +5,7 @@
 #include "filesystemfolderproxymodel.h"
 #include "functors/filesystemfoldernodefunctors.h"
 #include "base/filesystemfoldernodebase.h"
+#include "containers/filesystemitemscontainer.h"
 #include "../../tools/metatemplates.h"
 #include "../../tools/rangeintersection.h"
 
@@ -127,6 +128,7 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
+	ItemsContainer m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;

@@ -1,9 +1,9 @@
 #ifndef FILESYSTEMITEMSCONTAINER_H_
 #define FILESYSTEMITEMSCONTAINER_H_
 
-#include "../items/filesystembaseitem.h"
-#include "../../../model/filesystemmodelcontainer.h"
-#include "../../../../tools/containers/hashedlist.h"
+#include "../base/items/filesystembaseitem.h"
+#include "../../model/filesystemmodelcontainer.h"
+#include "../../../tools/containers/hashedlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -20,7 +20,7 @@ public:
 
 private:
 	/* Just to avoid access through virtual methods. */
-	friend class FolderNodeBase;
+	friend class FolderNode;
 	friend class RootNode;
 
 private:

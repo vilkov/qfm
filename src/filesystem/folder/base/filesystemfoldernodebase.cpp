@@ -11,8 +11,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FolderNodeBase::FolderNodeBase(const Info &info, Node *parent) :
-	Node(m_items, parent),
+FolderNodeBase::FolderNodeBase(const Info &info, const FileSystemModelContainer &conteiner, Node *parent) :
+	Node(conteiner, parent),
 	m_updating(false),
 	m_info(info)
 {}
@@ -192,21 +192,21 @@ void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 	Application::instance()->taskPool().handle(task.take());
 }
 
-void FolderNodeBase::add(FileSystemBaseItem *item)
-{
-	m_items.m_container.add(item->fileName(), item);
-	m_nodes.push_back(item->node());
-}
-
-void FolderNodeBase::remove(FileSystemBaseItem *item)
-{
-
-}
-
-void FolderNodeBase::remove(ItemsContainer::size_type index)
-{
-
-}
+//void FolderNodeBase::add(FileSystemBaseItem *item)
+//{
+//	m_items.m_container.add(item->fileName(), item);
+//	m_nodes.push_back(item->node());
+//}
+//
+//void FolderNodeBase::remove(FileSystemBaseItem *item)
+//{
+//
+//}
+//
+//void FolderNodeBase::remove(ItemsContainer::size_type index)
+//{
+//
+//}
 
 void FolderNodeBase::updateFiles()
 {

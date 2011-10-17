@@ -8,6 +8,7 @@
 #include "model/filesystemmodel.h"
 #include "model/filesystemmodelcontainer.h"
 #include "interfaces/filesysteminode.h"
+#include "../tools/containers/hashedlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -68,9 +69,11 @@ private:
 	void removeView(INodeView *view);
 
 private:
-	typedef QSet<INodeView*> ViewSet;
+	typedef ::Tools::Containers::HashedList<QString, Holder> Nodes;
+	typedef QSet<INodeView*>                                 ViewSet;
 
 private:
+	Nodes m_nodes;
 	ViewSet m_view;
 	qint32 m_links;
 	QModelIndex m_parentEntryIndex;

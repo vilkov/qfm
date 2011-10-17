@@ -195,50 +195,57 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 
 Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-//	Values::size_type index = indexOf(fileName);
-//
-//	if (index == Values::InvalidIndex)
-//	{
-//		Info info(absoluteFilePath(fileName));
-//
-//		if (Node *node = createNode(info, plugins))
-//		{
-//			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-//			m_items.add(Values::Value(new FileSystemEntryItem(info), node));
-//			endInsertRows();
-//
-//			return node;
-//		}
-//		else
-//		{
-//			if (info.isFile())
-//			{
-//				FileSystemBaseItem *item;
-//
-//				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-//				m_items.add(Values::Value(item = new FileSystemEntryItem(info)));
-//				endInsertRows();
-//
-//				selected = indexForFile(item, m_items.lastIndex());
-//			}
-//
-//			return this;
-//		}
-//	}
-//	else
-//	{
-//		Values::Value &value = m_items[index];
-//
-//		if (value.node || (value.node = createNode(*value.item, plugins)))
-//			return value.node;
-//		else
-//		{
-//			if (value.item->isFile())
-//				selected = indexForFile(value.item, index);
-//
-//			return this;
-//		}
-//	}
+	FileSystemEntryItem *item;
+	ItemsContainer::size_type index = indexOf(fileName);
+
+	if (index == Values::InvalidIndex)
+	{
+		Info info(absoluteFilePath(fileName));
+
+		if (Node *node = createNode(info, plugins))
+		{
+			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+			add(new FileSystemEntryItem(info));
+			endInsertRows();
+
+			return node;
+		}
+		else
+		{
+			if (info.isFile())
+			{
+				FileSystemBaseItem *item;
+
+				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+				m_items.add(Values::Value(item = new FileSystemEntryItem(info)));
+				endInsertRows();
+
+				selected = indexForFile(item, m_items.lastIndex());
+			}
+
+			return this;
+		}
+	}
+	else
+	{
+		item = static_cast<FileSystemEntryItem*>(at(index));
+
+		if (item->node())
+			return item->node().data();
+		else
+			if (Node *node = createNode(*static_cast<Info*>(item), plugins))
+			{
+				item->setNode(node);
+				return item->node().data();
+			}
+			else
+			{
+				if (item->isFile())
+					selected = indexForFile(item, index);
+
+				return this;
+			}
+	}
 
 	return 0;
 }

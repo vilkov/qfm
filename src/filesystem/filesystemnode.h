@@ -2,13 +2,11 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
-#include <QtCore/QSharedData>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
 #include "model/filesystemmodel.h"
 #include "model/filesystemmodelcontainer.h"
 #include "interfaces/filesysteminode.h"
-#include "../tools/containers/hashedlist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -18,15 +16,12 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class Node : public QSharedData, public FileSystemModel, public INode
+class Node : public FileSystemModel, public INode
 {
 	Q_DISABLE_COPY(Node)
 
 public:
-	typedef QExplicitlySharedDataPointer<Node> Holder;
-
-public:
-	Node(const FileSystemModelContainer &conteiner, Node *parent = 0);
+	Node(const ModelContainer &conteiner, Node *parent = 0);
 
 	/* INode */
 	virtual INode *root() const;
@@ -69,8 +64,13 @@ private:
 	void removeView(INodeView *view);
 
 private:
-	typedef ::Tools::Containers::HashedList<QString, Holder> Nodes;
-	typedef QSet<INodeView*>                                 ViewSet;
+	class Nodes : public QList<Node*>
+	{
+	public:
+		typedef int size_type;
+		enum { InvalidIndex = (size_type)-1 };
+	};
+	typedef QSet<INodeView*> ViewSet;
 
 private:
 	Nodes m_nodes;

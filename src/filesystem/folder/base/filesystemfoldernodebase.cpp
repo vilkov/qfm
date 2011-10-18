@@ -11,7 +11,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FolderNodeBase::FolderNodeBase(const Info &info, const FileSystemModelContainer &conteiner, Node *parent) :
+FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent) :
 	Node(conteiner, parent),
 	m_updating(false),
 	m_info(info)

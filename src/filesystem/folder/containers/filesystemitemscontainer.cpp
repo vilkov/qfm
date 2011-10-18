@@ -31,4 +31,9 @@ ItemsContainer::size_type ItemsContainer::indexOf(Item *item) const
 	return Container::InvalidIndex;
 }
 
+void ItemsContainer::add(const QString &hash, FileSystemBaseItem *value)
+{
+	m_container.add(hash, value);
+}
+
 FILE_SYSTEM_NS_END

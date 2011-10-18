@@ -128,6 +128,15 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
+	ItemsContainer::size_type size() const { return m_items.m_container.size(); }
+	ItemsContainer::size_type indexOf(const QString &fileName) const { return m_items.m_container.indexOf(fileName); }
+	ItemsContainer::size_type indexOf(FileSystemBaseItem *item) const { return m_items.indexOf(item); }
+	FileSystemBaseItem *at(ItemsContainer::size_type index) const { return static_cast<FileSystemBaseItem *>(m_items.m_container.at(index)); }
+	void add(FileSystemBaseItem *item);
+	void remove(FileSystemBaseItem *item);
+	void remove(ItemsContainer::size_type index);
+
+private:
 	ItemsContainer m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;

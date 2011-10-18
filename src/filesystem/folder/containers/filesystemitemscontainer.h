@@ -8,7 +8,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class ItemsContainer : public FileSystemModelContainer
+class ItemsContainer : public ModelContainer
 {
 public:
 	ItemsContainer();
@@ -17,6 +17,8 @@ public:
 	virtual size_type size() const;
 	virtual Item *at(size_type index) const;
 	virtual size_type indexOf(Item *item) const;
+
+	void add(const QString &hash, FileSystemBaseItem *value);
 
 private:
 	/* Just to avoid access through virtual methods. */

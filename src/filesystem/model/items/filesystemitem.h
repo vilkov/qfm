@@ -15,13 +15,13 @@ public:
 	/* ::Tools::Models::Tree::Item */
 	virtual bool isList() const;
 
-	const Node::Holder &node() const { return m_node; }
+	Node *node() const { return m_node; }
 
 protected:
 	void setNode(Node *node) { m_node = node; }
 
 private:
-	Node::Holder m_node;
+	Node *m_node;
 };
 
 FILE_SYSTEM_NS_END

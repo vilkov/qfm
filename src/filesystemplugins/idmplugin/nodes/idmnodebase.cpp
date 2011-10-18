@@ -16,7 +16,8 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmNodeBase::IdmNodeBase(const IdmContainer &container, const Info &info, Node *parent) :
-	FolderNodeBase(info, parent),
+	FolderNodeBase(info, m_itemsContainer, parent),
+	m_items(m_itemsContainer.m_container),
 	m_proxy(this),
 	m_delegate(&m_proxy),
 	m_container(container)

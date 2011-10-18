@@ -21,7 +21,7 @@ class FolderNodeBase : public Node
 	Q_DISABLE_COPY(FolderNodeBase)
 
 public:
-	FolderNodeBase(const Info &info, const FileSystemModelContainer &conteiner, Node *parent = 0);
+	FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent = 0);
 
 	/* FileSystemModel */
     virtual bool event(QEvent *event);
@@ -74,14 +74,6 @@ protected:
 
 	const TasksMap &tasks() const { return m_tasks; }
 	TasksMap &tasks() { return m_tasks; }
-
-//	ItemsContainer::size_type size() const { return m_items.m_container.size(); }
-//	ItemsContainer::size_type indexOf(const QString &fileName) const { return m_items.m_container.indexOf(fileName); }
-//	ItemsContainer::size_type indexOf(FileSystemBaseItem *item) const { return m_items.indexOf(item); }
-//	FileSystemBaseItem *at(ItemsContainer::size_type index) const { return static_cast<FileSystemBaseItem *>(m_items.m_container.at(index)); }
-//	void add(FileSystemBaseItem *item);
-//	void remove(FileSystemBaseItem *item);
-//	void remove(ItemsContainer::size_type index);
 
 private:
 	void updateFiles();

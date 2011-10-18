@@ -3,8 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-Node::Node(const FileSystemModelContainer &conteiner, Node *parent) :
-	QSharedData(),
+Node::Node(const ModelContainer &conteiner, Node *parent) :
 	FileSystemModel(conteiner, parent),
 	m_links(0)
 {}
@@ -93,20 +92,9 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 
 void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
 {
-	Nodes::size_type index;
 	QModelIndex selected;
-	QString fileName;
-	Holder node;
 
-	if ((index = m_nodes.indexOf(fileName = *path)) == Nodes::InvalidIndex)
-	{
-		if (node = viewChild(fileName, plugins, selected))
-			m_nodes.add(fileName, node);
-	}
-	else
-		node = m_nodes.at(index);
-
-	if (node)
+	if (Node *node = viewChild(*path, plugins, selected))
 	{
 		removeView(nodeView);
 
@@ -121,25 +109,25 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 		}
 		else
 			node->viewChild(nodeView, path, plugins);
+
+		if (m_nodes.indexOf(node) == Nodes::InvalidIndex)
+			m_nodes.push_back(node);
 	}
 }
 
 void Node::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
 {
 	Path path(absoluteFilePath);
+	Path::Iterator it = path.begin();
 
-	if (path.isAbsolute())
-	{
-		Node *node = this;
-		removeView(nodeView);
-
-		while (node->parent())
-			node = static_cast<Node*>(node->parent());
-
-		node->viewChild(nodeView, path.begin(), plugins);
-	}
-	else
-		viewChild(nodeView, path.begin(), plugins);
+	if (!it.atEnd())
+		if (path.isAbsolute())
+		{
+			removeView(nodeView);
+			root()->viewChild(nodeView, it, plugins);
+		}
+		else
+			viewChild(nodeView, it, plugins);
 }
 
 QStringList Node::toFileNameList(const InfoListItem *files) const

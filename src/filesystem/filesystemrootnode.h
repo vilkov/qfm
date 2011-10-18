@@ -2,7 +2,7 @@
 #define FILESYSTEMROOTNODE_H_
 
 #include "filesystemnode.h"
-#include "folder/base/containers/filesystemitemscontainer.h"
+#include "folder/containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN

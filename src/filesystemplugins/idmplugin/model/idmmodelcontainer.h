@@ -3,12 +3,12 @@
 
 #include <QtCore/QList>
 #include "items/idmitem.h"
-#include "../../../tools/models/tree/treemodelcontainer.h"
+#include "../../../filesystem/model/filesystemmodelcontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmModelContainer : public ::Tools::Models::Tree::Container
+class IdmModelContainer : public ModelContainer
 {
 public:
 	typedef QList<IdmItem*> Container;
@@ -26,6 +26,7 @@ public:
 
 private:
 	friend class IdmModel;
+	friend class IdmNodeBase;
 	Container m_container;
 };
 

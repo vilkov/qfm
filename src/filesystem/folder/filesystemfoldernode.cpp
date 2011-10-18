@@ -184,7 +184,7 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 						node->setParentEntryIndex(idx);
 					}
 
-				return item->node().data();
+				return item->node();
 			}
 			else
 				removeEntry(index);

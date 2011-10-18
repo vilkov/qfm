@@ -6,6 +6,7 @@
 #include "../idmplugin_ns.h"
 #include "../items/idmbaseitem.h"
 #include "../functors/idmfunctors.h"
+#include "../model/idmmodelcontainer.h"
 #include "../containeres/idmcontainer.h"
 #include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
 
@@ -75,10 +76,8 @@ protected:
 	bool processRemoveItem(const QModelIndex &index, IdmItem *item);
 
 protected:
-	typedef QList<IdmItem*> ItemsList;
-
-protected:
-	ItemsList m_items;
+	IdmModelContainer m_itemsContainer;
+	IdmModelContainer::Container &m_items;
 	IdmNodeProxyModel m_proxy;
 	IdmNodeDelegate m_delegate;
 	IdmContainer m_container;

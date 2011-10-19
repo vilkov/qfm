@@ -67,7 +67,6 @@ private:
 	class Nodes : public QList<Node*>
 	{
 	public:
-		typedef int size_type;
 		enum { InvalidIndex = (size_type)-1 };
 	};
 	typedef QSet<INodeView*> ViewSet;

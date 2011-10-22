@@ -4,7 +4,8 @@
 FILE_SYSTEM_NS_BEGIN
 
 FileSystemBaseItem::FileSystemBaseItem(const Info &info, Item *parent) :
-	FileSystemItem(parent)
+	FileSystemItem(parent),
+	m_info(info)
 {}
 
 bool FileSystemBaseItem::isDir() const

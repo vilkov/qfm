@@ -721,11 +721,11 @@ QModelIndex FolderNode::index(int column, FileSystemBaseItem *item) const
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(&info, (FolderNode*)this))
+	if (Node *res = plugins->node(&info, const_cast<FolderNode*>(this)))
 		return res;
 	else
 		if (info.isDir())
-			return new FolderNode(info, (FolderNode*)this);
+			return new FolderNode(info, const_cast<FolderNode*>(this));
 		else
 			return 0;
 }

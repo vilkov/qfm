@@ -9,7 +9,8 @@ FILE_SYSTEM_NS_BEGIN
 class FileSystemEntryItem : public FileSystemBaseItem
 {
 public:
-	explicit FileSystemEntryItem(const Info &info, Node *node = 0, Item *parent = 0);
+	explicit FileSystemEntryItem(const Info &info, Item *parent = 0);
+	explicit FileSystemEntryItem(const Info &info, Node *node, Item *parent = 0);
 
 	void setNode(Node *node) { FileSystemBaseItem::setNode(node); }
 

@@ -4,9 +4,14 @@
 FILE_SYSTEM_NS_BEGIN
 
 Node::Node(const ModelContainer &conteiner, Node *parent) :
+	QSharedData(),
 	FileSystemModel(conteiner, parent),
+	m_self(this),
 	m_links(0)
-{}
+{
+	if (parent)
+		addLink();
+}
 
 INode *Node::root() const
 {
@@ -109,9 +114,6 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 		}
 		else
 			node->viewChild(nodeView, path, plugins);
-
-		if (m_nodes.indexOf(node) == Nodes::InvalidIndex)
-			m_nodes.push_back(node);
 	}
 }
 

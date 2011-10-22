@@ -2,6 +2,7 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
+#include <QtCore/QSharedData>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
 #include "model/filesystemmodel.h"
@@ -16,9 +17,12 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class Node : public FileSystemModel, public INode
+class Node : public QSharedData, public FileSystemModel, public INode
 {
 	Q_DISABLE_COPY(Node)
+
+public:
+	typedef QExplicitlySharedDataPointer<Node> Holder;
 
 public:
 	Node(const ModelContainer &conteiner, Node *parent = 0);
@@ -72,7 +76,7 @@ private:
 	typedef QSet<INodeView*> ViewSet;
 
 private:
-	Nodes m_nodes;
+	Holder m_self;
 	ViewSet m_view;
 	qint32 m_links;
 	QModelIndex m_parentEntryIndex;

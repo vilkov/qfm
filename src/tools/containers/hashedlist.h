@@ -91,6 +91,21 @@ public:
 
 		return T();
 	}
+	void replace(size_type index, const Hash &oldHash, const Hash &newHash, const T &value)
+	{
+		m_list[index] = value;
+		m_map[newHash] = index;
+		m_map.remove(oldHash);
+	}
+	void replace(size_type index, const Hash &oldHash, const Hash &newHash)
+	{
+		m_map[newHash] = index;
+		m_map.remove(oldHash);
+	}
+	void replace(const Hash &oldHash, const Hash &newHash)
+	{
+		m_map[newHash] = m_map.take(oldHash);
+	}
 	T take(size_type index)
 	{
 		T res = m_list.at(index);

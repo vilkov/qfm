@@ -27,7 +27,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 					if (m_locked)
 						return Application::style()->standardIcon(QStyle::SP_BrowserReload);
 					else
-						return icon();
+						return info().icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 				case Qt::ToolTipRole:
@@ -45,7 +45,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 				case Qt::EditRole:
 				case Qt::DisplayRole:
 					if (isFile())
-						return Tools::humanReadableSize(size());
+						return Tools::humanReadableSize(info().size());
 					else
 						if (m_totalSize.isNull())
 							return QString::fromLatin1("<DIR>");

@@ -47,6 +47,7 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual void nodeRemoved(Node *node);
 
 protected:
 	/* FolderNodeBase */
@@ -62,11 +63,11 @@ protected:
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
 
 protected:
-	typedef QPair<Values::size_type, FileSystemBaseItem*> ProcessedValue;
+	typedef QPair<ItemsContainer::size_type, FileSystemBaseItem*> ProcessedValue;
 	class ProcessedList : public Functors::Functor, public QList<ProcessedValue>
 	{
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry)
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 		{
 			push_back(ProcessedValue(index, entry));
 		}
@@ -75,7 +76,7 @@ protected:
 	class AbsoluteFilePathList : public Functors::Functor, public QStringList
 	{
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry)
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 		{
 			push_back(entry->absoluteFilePath());
 		}
@@ -89,7 +90,7 @@ protected:
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry);
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 
 	private:
 		TasksMap &m_tasks;
@@ -97,8 +98,18 @@ protected:
 
 	class RenameFunctor : public Functors::Functor
 	{
+	public:
+		RenameFunctor(IFileInfo *info, ItemsContainer &items) :
+			m_info(info),
+			m_items(items)
+		{}
+
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry);
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry);
+
+	private:
+		IFileInfo *m_info;
+		ItemsContainer &m_items;
 	};
 
 	void processIndexList(const QModelIndexList &list, Functors::Functor &functor);
@@ -113,18 +124,18 @@ private:
 	QModelIndex index(int column, FileSystemBaseItem *item) const;
 	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	QModelIndex indexForFile(FileSystemBaseItem *item) const;
-	QModelIndex indexForFile(FileSystemBaseItem *item, Values::size_type index) const;
+	QModelIndex indexForFile(FileSystemBaseItem *item, ItemsContainer::size_type index) const;
 
 	void updateFirstColumn(FileSystemBaseItem *entry);
 	void updateFirstColumn(const RangeIntersection &range);
-	void updateFirstColumn(Values::size_type index, FileSystemBaseItem *entry);
+	void updateFirstColumn(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 	void updateSecondColumn(FileSystemBaseItem *entry);
 	void updateSecondColumn(const RangeIntersection &range);
-	void updateSecondColumn(Values::size_type index, FileSystemBaseItem *entry);
+	void updateSecondColumn(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 	void updateBothColumns(FileSystemBaseItem *entry);
 	void updateBothColumns(const RangeIntersection &range);
-	void updateBothColumns(Values::size_type index, FileSystemBaseItem *entry);
-	void removeEntry(Values::size_type index);
+	void updateBothColumns(ItemsContainer::size_type index, FileSystemBaseItem *entry);
+	void removeEntry(ItemsContainer::size_type index);
 	void removeEntry(const QModelIndex &index);
 
 private:

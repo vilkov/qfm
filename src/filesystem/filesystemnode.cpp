@@ -4,9 +4,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 Node::Node(const ModelContainer &conteiner, Node *parent) :
-	QSharedData(),
 	FileSystemModel(conteiner, parent),
-	m_self(this),
 	m_links(0)
 {}
 
@@ -81,14 +79,13 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 
 	if (Node *node = viewChild(idx, plugins, selected))
 	{
-		removeView(nodeView);
-
 		if (node == Node::parent())
 			node->viewThis(nodeView, m_parentEntryIndex);
 		else
 			node->viewThis(nodeView, selected);
 
 		node->refresh();
+		removeView(nodeView);
 	}
 }
 
@@ -98,8 +95,6 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 
 	if (Node *node = viewChild(*path, plugins, selected))
 	{
-		removeView(nodeView);
-
 		if ((++path).atEnd())
 		{
 			if (node == Node::parent())
@@ -111,6 +106,8 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 		}
 		else
 			node->viewChild(nodeView, path, plugins);
+
+		removeView(nodeView);
 	}
 }
 
@@ -141,9 +138,7 @@ QStringList Node::toFileNameList(const InfoListItem *files) const
 }
 
 void Node::nodeRemoved(Node *node)
-{
-
-}
+{}
 
 void Node::addLink()
 {
@@ -179,7 +174,7 @@ void Node::allChildLinksRemoved(Node *child)
 	if (isLinked())
 	{
 		nodeRemoved(child);
-		child->m_self.reset();
+		delete child;
 	}
 	else
 		if (parent())
@@ -187,7 +182,7 @@ void Node::allChildLinksRemoved(Node *child)
 		else
 		{
 			nodeRemoved(child);
-			child->m_self.reset();
+			delete child;
 		}
 }
 

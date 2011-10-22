@@ -26,7 +26,7 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 		if (item->node())
 			return item->node();
 		else
-			if (Node *node = createNode(*item, plugins))
+			if (Node *node = createNode(item->info(), plugins))
 			{
 				item->setNode(node);
 				return node;

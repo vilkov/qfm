@@ -21,8 +21,7 @@ public:
 	virtual Item *at(size_type index) const;
 	virtual size_type indexOf(Item *item) const;
 
-	value_type &operator[](size_type index) { return m_container[index]; }
-	const value_type &operator[](size_type index) const { return m_container[index]; }
+	const value_type &operator[](size_type index) const { return m_container.at(index); }
 
 	const value_type &last() const { return m_container.last(); }
 	value_type &last() { return m_container.last(); }
@@ -41,6 +40,7 @@ public:
 	void add(FileSystemBaseItem *item) { m_container.add(item->fileName(), item); }
 	void remove(size_type index) { m_container.remove(index); }
 	value_type take(size_type index) { return m_container.take(index); }
+	void replace(size_type index, const QString &oldHash, const QString &newHash) { m_container.replace(index, oldHash, newHash); }
 
 private:
 	typedef ::Tools::Containers::HashedList<QString, value_type> List;

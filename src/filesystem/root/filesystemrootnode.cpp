@@ -7,25 +7,30 @@
 FILE_SYSTEM_NS_BEGIN
 
 RootNode::RootNode() :
-	Node(m_container),
-	m_items(m_container.m_container)
+	Node(m_items)
 {}
 
 Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	Values::size_type index = m_items.indexOf(fileName);
+	ItemsContainer::size_type index = m_items.indexOf(fileName);
 
-	if (index == Values::InvalidIndex)
+	if (index == ItemsContainer::InvalidIndex)
 	{
-		m_items.add(createNode(fileName, plugins));
-		return m_items.last().node;
+		m_items.add(createItem(fileName, plugins));
+		return m_items.last()->node();
 	}
 	else
 	{
-		Values::Value &value = m_items[index];
+		FileSystemEntryItem *item = static_cast<FileSystemEntryItem*>(m_items[index]);
 
-		if (value.node || (value.node = createNode(*(value.item), plugins)))
-			return value.node;
+		if (item->node())
+			return item->node();
+		else
+			if (Node *node = createNode(*item, plugins))
+			{
+				item->setNode(node);
+				return node;
+			}
 	}
 
 	return 0;
@@ -33,7 +38,7 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 
 void RootNode::nodeRemoved(Node *node)
 {
-	delete m_items.take(m_items.indexOf(node)).item;
+	delete m_items.take(m_items.indexOf(node));
 }
 
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
@@ -47,10 +52,10 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 			return 0;
 }
 
-Values::Value RootNode::createNode(const QString &fileName, PluginsManager *plugins)
+FileSystemBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)
 {
 	Info info(fileName);
-	return Values::Value(new FileSystemEntryItem(info), createNode(info, plugins));
+	return new FileSystemEntryItem(info, createNode(info, plugins));
 }
 
 FILE_SYSTEM_NS_END

@@ -54,11 +54,10 @@ protected:
 
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins);
-	Values::Value createNode(const QString &fileName, PluginsManager *plugins);
+	FileSystemBaseItem *createItem(const QString &fileName, PluginsManager *plugins);
 
 private:
-	ItemsContainer m_container;
-	Values &m_items;
+	ItemsContainer m_items;
 	INodeView::MenuActionList m_menuActions;
 };
 

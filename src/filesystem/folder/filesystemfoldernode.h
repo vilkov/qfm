@@ -128,8 +128,7 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
-	ItemsContainer m_container;
-	Values &m_items;
+	ItemsContainer m_items;
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;

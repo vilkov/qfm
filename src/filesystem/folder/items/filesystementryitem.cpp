@@ -5,10 +5,12 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FileSystemEntryItem::FileSystemEntryItem(const Info &info, Item *parent) :
+FileSystemEntryItem::FileSystemEntryItem(const Info &info, Node *node, Item *parent) :
 	FileSystemBaseItem(info, parent),
 	m_locked(false)
-{}
+{
+	setNode(node);
+}
 
 QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 {

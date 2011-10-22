@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
-#include "filesystemnode.h"
-#include "folder/containers/filesystemitemscontainer.h"
+#include "../filesystemnode.h"
+#include "../folder/containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -13,15 +13,6 @@ class RootNode : public Node
 
 public:
 	RootNode();
-
-	/* QAbstractItemModel */
-	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
-	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const { return 0; }
-	virtual QVariant data(const QModelIndex &index, int role) const { return QVariant(); }
-	virtual Qt::ItemFlags flags(const QModelIndex &index) const { return Qt::NoItemFlags; }
-	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const { return QVariant(); }
-	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const { return QModelIndex(); }
-	virtual QModelIndex parent(const QModelIndex &child) const { return QModelIndex(); }
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
@@ -59,14 +50,15 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) { return 0; }
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
-	virtual void removeChild(Node *node);
+	virtual void nodeRemoved(Node *node);
 
 private:
-//	Node *createNode(const Info &info, PluginsManager *plugins) const;
-//	Values::Value createNode(const QString &fileName, PluginsManager *plugins) const;
+	Node *createNode(const Info &info, PluginsManager *plugins);
+	Values::Value createNode(const QString &fileName, PluginsManager *plugins);
 
 private:
-	ItemsContainer m_items;
+	ItemsContainer m_container;
+	Values &m_items;
 	INodeView::MenuActionList m_menuActions;
 };
 

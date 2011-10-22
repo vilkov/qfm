@@ -53,7 +53,6 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
-	virtual void removeChild(Node *node);
 
 protected:
 	/* FolderNodeBase */

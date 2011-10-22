@@ -8,10 +8,7 @@ Node::Node(const ModelContainer &conteiner, Node *parent) :
 	FileSystemModel(conteiner, parent),
 	m_self(this),
 	m_links(0)
-{
-	if (parent)
-		addLink();
-}
+{}
 
 INode *Node::root() const
 {
@@ -143,9 +140,9 @@ QStringList Node::toFileNameList(const InfoListItem *files) const
 	return res;
 }
 
-bool Node::isLinked() const
+void Node::nodeRemoved(Node *node)
 {
-	return m_links;
+
 }
 
 void Node::addLink()
@@ -164,6 +161,11 @@ void Node::removeLink()
 		static_cast<Node*>(parent())->allChildLinksRemoved(this);
 }
 
+bool Node::isLinked() const
+{
+	return m_links;
+}
+
 void Node::removeLinks(qint32 count)
 {
 	m_links -= count;
@@ -175,12 +177,18 @@ void Node::removeLinks(qint32 count)
 void Node::allChildLinksRemoved(Node *child)
 {
 	if (isLinked())
-		removeChild(child);
+	{
+		nodeRemoved(child);
+		child->m_self.reset();
+	}
 	else
 		if (parent())
 			static_cast<Node*>(parent())->allChildLinksRemoved(this);
 		else
-			removeChild(child);
+		{
+			nodeRemoved(child);
+			child->m_self.reset();
+		}
 }
 
 void Node::addView(INodeView *view)

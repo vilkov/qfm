@@ -50,20 +50,22 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
-	virtual void removeChild(Node *node) = 0;
+	virtual void nodeRemoved(Node *node);
 
 protected:
 	Node *parent() const { return static_cast<Node*>(QObject::parent()); }
 	QStringList toFileNameList(const InfoListItem *files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
 
-	bool isLinked() const;
+protected:
 	void addLink();
 	void removeLink();
+
+private:
+	bool isLinked() const;
 	void removeLinks(qint32 count);
 	void allChildLinksRemoved(Node *child);
 
-private:
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
 

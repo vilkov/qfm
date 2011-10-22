@@ -262,11 +262,6 @@ Node *IdmNodeBase::viewChild(const QString &fileName, PluginsManager *plugins, Q
 	return 0;
 }
 
-void IdmNodeBase::removeChild(Node *node)
-{
-
-}
-
 UpdatesList::Map IdmNodeBase::updateFilesMap() const
 {
 	return UpdatesList::Map();

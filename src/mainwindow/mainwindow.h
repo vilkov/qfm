@@ -7,7 +7,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
-#include "../filesystem/filesystemrootnode.h"
+#include "../filesystem/root/filesystemrootnode.h"
 #include "../filesystem/tools/mountpoints/mountpoints.h"
 #include "../filesystemplugins/pluginsmanager.h"
 

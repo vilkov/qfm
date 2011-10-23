@@ -78,7 +78,7 @@ protected:
 	protected:
 		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 		{
-			push_back(entry->absoluteFilePath());
+			push_back(entry->info().absoluteFilePath());
 		}
 	};
 
@@ -135,6 +135,7 @@ private:
 	void updateBothColumns(FileSystemBaseItem *entry);
 	void updateBothColumns(const RangeIntersection &range);
 	void updateBothColumns(ItemsContainer::size_type index, FileSystemBaseItem *entry);
+	void updateColumns(const RangeIntersection &range, int lastColumn);
 	void removeEntry(ItemsContainer::size_type index);
 	void removeEntry(const QModelIndex &index);
 

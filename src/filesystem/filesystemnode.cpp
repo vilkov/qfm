@@ -49,10 +49,10 @@ void Node::viewClosed(INodeView *nodeView)
 
 void Node::viewParent(INodeView *nodeView)
 {
-	if (exists())
-	{
-		Node *parent = Node::parent();
+	Node *parent = Node::parent();
 
+	if (parent->exists())
+	{
 		parent->viewThis(nodeView, m_parentEntryIndex);
 		parent->refresh();
 

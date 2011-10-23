@@ -27,7 +27,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return fileName();
+					return info().fileName();
 				case Qt::DecorationRole:
 					if (m_locked)
 						return Application::style()->standardIcon(QStyle::SP_BrowserReload);
@@ -49,7 +49,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					if (isFile())
+					if (info().isFile())
 						return Tools::humanReadableSize(info().size());
 					else
 						if (m_totalSize.isNull())
@@ -69,7 +69,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return lastModified();
+					return info().lastModified();
 //					case Qt::DecorationRole:
 //						return m_info.icon();
 				case Qt::TextAlignmentRole:

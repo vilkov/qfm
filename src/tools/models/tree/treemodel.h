@@ -7,6 +7,12 @@
 
 MODELS_TREE_NS_BEGIN
 
+/*
+ * Notice:
+ * 	Any QModelIndex instance must have internalPointer() == some Item instance!
+ *
+ */
+
 class Model : public QAbstractItemModel
 {
 public:

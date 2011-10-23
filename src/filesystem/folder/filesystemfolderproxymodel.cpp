@@ -24,38 +24,38 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 			switch (left.column())
 			{
 				case 0:
-					if (leftItem->isDir())
-						if (rightItem->isDir())
-							return leftItem->fileName() < rightItem->fileName();
+					if (leftItem->info().isDir())
+						if (rightItem->info().isDir())
+							return leftItem->info().fileName() < rightItem->info().fileName();
 						else
 							return true;
 					else
-						if (rightItem->isDir())
+						if (rightItem->info().isDir())
 							return false;
 						else
-							return leftItem->fileName() < rightItem->fileName();
+							return leftItem->info().fileName() < rightItem->info().fileName();
 				case 1:
-					if (leftItem->isDir())
-						if (rightItem->isDir())
+					if (leftItem->info().isDir())
+						if (rightItem->info().isDir())
 							return leftItem->totalSize().toULongLong() < rightItem->totalSize().toULongLong();
 						else
 							return true;
 					else
-						if (rightItem->isDir())
+						if (rightItem->info().isDir())
 							return false;
 						else
-							return leftItem->totalSize().toInt() < rightItem->totalSize().toInt();
+							return leftItem->info().size() < rightItem->info().size();
 				case 2:
-					if (leftItem->isDir())
-						if (rightItem->isDir())
-							return leftItem->lastModified() < rightItem->lastModified();
+					if (leftItem->info().isDir())
+						if (rightItem->info().isDir())
+							return leftItem->info().lastModified() < rightItem->info().lastModified();
 						else
 							return true;
 					else
-						if (rightItem->isDir())
+						if (rightItem->info().isDir())
 							return false;
 						else
-							return leftItem->lastModified() < rightItem->lastModified();
+							return leftItem->info().lastModified() < rightItem->info().lastModified();
 			}
 		}
 

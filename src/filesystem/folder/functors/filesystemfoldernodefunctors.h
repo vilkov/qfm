@@ -3,7 +3,7 @@
 
 #include <QtCore/QList>
 #include "../base/items/filesystembaseitem.h"
-#include "../containers/filesystemfoldernodevalues.h"
+#include "../containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -18,10 +18,10 @@ struct Functors
 	public:
 		virtual ~Functor() {}
 
-		inline void operator()(Values::size_type index, FileSystemBaseItem *entry) { call(index, entry); }
+		inline void operator()(ItemsContainer::size_type index, FileSystemBaseItem *entry) { call(index, entry); }
 
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry) = 0;
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry) = 0;
 	};
 
 
@@ -30,7 +30,7 @@ struct Functors
 	class Callable : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Values::size_type index, FileSystemBaseItem *entry);
+		typedef void (T::*Method)(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 
 	public:
 		Callable(T *object, Method method) :
@@ -39,7 +39,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry) { (m_object->*m_method)(index, entry); }
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry) { (m_object->*m_method)(index, entry); }
 
 	private:
 		T *m_object;
@@ -55,7 +55,7 @@ struct Functors
 	class Callable1 : public Functor
 	{
 	public:
-		typedef void (T::*Method)(Values::size_type index, FileSystemBaseItem *entry, Arg1);
+		typedef void (T::*Method)(ItemsContainer::size_type index, FileSystemBaseItem *entry, Arg1);
 
 	public:
 		Callable1(T *object, Method method, Arg1 arg1) :
@@ -65,7 +65,7 @@ struct Functors
 		{}
 
 	protected:
-		virtual void call(Values::size_type index, FileSystemBaseItem *entry) { (m_object->*m_method)(index, entry, m_arg1); }
+		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry) { (m_object->*m_method)(index, entry, m_arg1); }
 
 	private:
 		T *m_object;

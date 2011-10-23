@@ -8,7 +8,9 @@ FILE_SYSTEM_NS_BEGIN
 
 RootNode::RootNode() :
 	Node(m_items)
-{}
+{
+	addLink();
+}
 
 Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {

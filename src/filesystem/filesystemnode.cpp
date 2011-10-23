@@ -51,15 +51,16 @@ void Node::viewParent(INodeView *nodeView)
 {
 	Node *parent = Node::parent();
 
-	if (parent->exists())
-	{
-		parent->viewThis(nodeView, m_parentEntryIndex);
-		parent->refresh();
+	if (static_cast<INode*>(parent) != root())
+		if (parent->exists())
+		{
+			parent->viewThis(nodeView, m_parentEntryIndex);
+			parent->refresh();
 
-		removeView(nodeView);
-	}
-	else
-		viewCloseAll();
+			removeView(nodeView);
+		}
+		else
+			viewCloseAll();
 }
 
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
@@ -178,7 +179,10 @@ void Node::allChildLinksRemoved(Node *child)
 	}
 	else
 		if (parent())
+		{
+			delete child;
 			static_cast<Node*>(parent())->allChildLinksRemoved(this);
+		}
 		else
 		{
 			nodeRemoved(child);

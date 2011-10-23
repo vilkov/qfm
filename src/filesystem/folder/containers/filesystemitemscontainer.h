@@ -38,7 +38,7 @@ public:
 	size_type indexOf(const QString &fileName) const { return m_container.indexOf(fileName); }
 
 	void add(FileSystemBaseItem *item) { m_container.add(item->info().fileName(), item); }
-	void remove(size_type index) { m_container.remove(index); }
+	void remove(size_type index) { delete m_container.take(index); }
 	value_type take(size_type index) { return m_container.take(index); }
 	void replace(size_type index, const QString &oldHash, const QString &newHash) { m_container.replace(index, oldHash, newHash); }
 

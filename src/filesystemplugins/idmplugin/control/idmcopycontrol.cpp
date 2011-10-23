@@ -20,6 +20,8 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 
 		if (dialog.exec() == NewFileValueDialog::Accepted)
 		{
+			PScopedPointer<IdmEntityValue> value(dialog.value());
+
 			if (!m_container.commit())
 			{
 				m_container.rollback();

@@ -9,6 +9,7 @@
 #include "../gui/create/createentitydialog.h"
 #include "../gui/choose/choosefileentitydialog.h"
 #include "../gui/query/create/createquerydialog.h"
+#include "../gui/value/list/static/staticvaluelistdialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -158,7 +159,8 @@ void IdmNodeBase::menuAction(QAction *action)
 
 				if (dialog.exec() == CreateQueryDialog::Accepted)
 				{
-
+					StaticValueListDialog listDialog(m_container, dialog.query(), &Application::instance()->mainWindow());
+					listDialog.exec();
 				}
 			}
 

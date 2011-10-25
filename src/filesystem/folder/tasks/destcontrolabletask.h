@@ -3,7 +3,7 @@
 
 #include <QtCore/QObject>
 #include "basetask.h"
-#include "../../../../tools/threads/pmutex.h"
+#include "../../../tools/threads/pmutex.h"
 
 
 FILE_SYSTEM_NS_BEGIN

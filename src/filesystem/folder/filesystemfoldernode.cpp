@@ -1,7 +1,7 @@
 #include "filesystemfoldernode.h"
 #include "items/filesystemrootitem.h"
 #include "items/filesystementryitem.h"
-#include "base/tasks/basetask.h"
+#include "tasks/basetask.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"

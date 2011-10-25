@@ -2,6 +2,8 @@
 #define SCANFILESTASKS_H_
 
 #include "scanfilestask.h"
+#include "../../../../interfaces/filesysteminode.h"
+#include "../../../../interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -10,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	ScanFilesForSizeTask(QObject *receiver, const Info &info, const EntryList &entries);
+	ScanFilesForSizeTask(QObject *receiver, const Info &info, const QStringList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -20,7 +22,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const EntryList &entries);
+	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const QStringList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -44,7 +46,7 @@ public:
 	};
 
 public:
-	ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	ScanFilesForCopyTask(QObject *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 

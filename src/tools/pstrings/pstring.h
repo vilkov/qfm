@@ -36,9 +36,9 @@ public:
 	bool operator==(const PString &other) const { return m_string == other.m_string; }
 	bool operator!=(const PString &other) const { return m_string != other.m_string; }
 	bool operator<(const PString &other) const { return m_string < other.m_string; }
-	void operator=(const PString &other) { m_string = other.m_string; }
+	PString & operator=(const PString &other) { m_string = other.m_string; return *this; }
 	template <typename T, size_type S>
-	void operator=(const T (&data)[S]) { m_string = data; }
+	PString &operator=(const T (&data)[S]) { m_string = data; return *this; }
 
 	/********** Operations.Data **********/
 	size_type size() const { return m_string.size(); }
@@ -56,6 +56,11 @@ public:
 	PString &append(const value_type *string) { m_string.append(string); return *this; }
 	PString &append(const value_type *string, size_type size) { m_string.append(string, size); return *this; }
 	PString &append(const PString &string) { m_string.append(string.m_string); return *this; }
+	PString &prepend(value_type *string) { m_string.prepend(string); return *this; }
+	PString &prepend(value_type *string, size_type size) { m_string.prepend(string, size); return *this; }
+	PString &prepend(const value_type *string) { m_string.prepend(string); return *this; }
+	PString &prepend(const value_type *string, size_type size) { m_string.prepend(string, size); return *this; }
+	PString &prepend(const PString &string) { m_string.prepend(string.m_string); return *this; }
 
 	/********** Operations.Conversion **********/
 	int toInt(bool *ok = 0) const { return m_string.toInt(ok); }

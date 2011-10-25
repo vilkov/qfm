@@ -1,5 +1,5 @@
-#ifndef IDMNODEBASE_H_
-#define IDMNODEBASE_H_
+#ifndef IDMNODEQUERYRESULTS_H_
+#define IDMNODEQUERYRESULTS_H_
 
 #include "idmnodedelegate.h"
 #include "idmnodeproxymodel.h"
@@ -13,11 +13,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmNodeBase : public FolderNodeBase
+class IdmNodeQueryResults : public FolderNodeBase
 {
 public:
-	IdmNodeBase(const IdmContainer &container, const Info &info, Node *parent = 0);
-	virtual ~IdmNodeBase();
+	IdmNodeQueryResults(const IdmContainer &container, const Info &info, Node *parent = 0);
+	virtual ~IdmNodeQueryResults();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -41,8 +41,8 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeBase *)this)->m_proxy; }
-	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeBase *)this)->m_delegate; }
+	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeQueryResults *)this)->m_proxy; }
+	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeQueryResults *)this)->m_delegate; }
 	virtual const INodeView::MenuActionList &menuActions() const { return m_container.menuActions(); }
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
@@ -78,4 +78,4 @@ protected:
 
 IDM_PLUGIN_NS_END
 
-#endif /* IDMNODEBASE_H_ */
+#endif /* IDMNODEQUERYRESULTS_H_ */

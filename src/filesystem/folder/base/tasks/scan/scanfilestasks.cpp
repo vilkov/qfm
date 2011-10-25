@@ -4,7 +4,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *receiver, const Info &info, const EntryList &entries) :
+ScanFilesForSizeTask::ScanFilesForSizeTask(QObject *receiver, const Info &info, const QStringList &entries) :
 	ScanFilesTask(receiver, info, entries)
 {}
 
@@ -20,7 +20,7 @@ void ScanFilesForSizeTask::run(const volatile bool &aborted)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *receiver, const Info &info, const EntryList &entries) :
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(QObject *receiver, const Info &info, const QStringList &entries) :
 	ScanFilesTask(receiver, info, entries)
 {}
 
@@ -36,7 +36,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const EntryList &entries, PScopedPointer<ICopyControl> &control, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(QObject *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	ScanFilesTask(receiver, info, entries),
 	m_control(control.take()),
 	m_move(move)

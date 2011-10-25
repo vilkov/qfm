@@ -10,10 +10,7 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	IdmNodeBase(IdmContainer(storage), storage.absolutePath(), parent)
 {
 	if (m_container.isValid())
-	{
-//		m_items.push_back(m_storage.menu());
 		m_items.push_back(new IdmRoot(storage.absolutePath()));
-	}
 	else
 	{
 		m_items.push_back(new IdmSeparator());

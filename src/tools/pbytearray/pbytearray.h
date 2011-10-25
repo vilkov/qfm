@@ -97,6 +97,11 @@ public:
 	PByteArray &append(const value_type *string) { IMP_D; d->append(string, strlen(string)); return *this; }
 	PByteArray &append(const value_type *string, size_type size) { IMP_D; d->append(string, size); return *this; }
 	PByteArray &append(const PByteArray &string) { IMP_D; d->append(string.data(), string.size()); return *this; }
+	PByteArray &prepend(value_type *string) { IMP_D; d->prepend(string, strlen(string)); return *this; }
+	PByteArray &prepend(value_type *string, size_type size) { IMP_D; d->prepend(string, size); return *this; }
+	PByteArray &prepend(const value_type *string) { IMP_D; d->prepend(string, strlen(string)); return *this; }
+	PByteArray &prepend(const value_type *string, size_type size) { IMP_D; d->prepend(string, size); return *this; }
+	PByteArray &prepend(const PByteArray &string) { IMP_D; d->prepend(string.data(), string.size()); return *this; }
 
 	/********** Operations.Conversion **********/
 	int toInt(bool *ok = 0) const

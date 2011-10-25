@@ -19,6 +19,7 @@ public:
 
 	virtual void truncate(size_type pos) = 0;
 	virtual void append(const value_type *string, size_type size) = 0;
+	virtual void prepend(const value_type *string, size_type size) = 0;
 };
 
 #endif /* PBYTEARRAY_IMP_H_ */

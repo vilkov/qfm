@@ -1,9 +1,9 @@
 #ifndef UPDATEFILESTASK_H_
 #define UPDATEFILESTASK_H_
 
-#include "../destcontrolabletask.h"
+#include "../../../tasks/destcontrolabletask.h"
 #ifndef Q_OS_WIN
-#	include "../taskpermissionscache.h"
+#	include "../../../tasks/taskpermissionscache.h"
 #endif
 #include "../../containers/filesystemupdateslist.h"
 

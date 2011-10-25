@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
-#include "../taskprogress.h"
+#include "taskprogress.h"
 
 
 FILE_SYSTEM_NS_BEGIN

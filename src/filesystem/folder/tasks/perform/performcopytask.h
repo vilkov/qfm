@@ -5,7 +5,8 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
-#include "../taskprogress.h"
+#include "taskprogress.h"
+#include "../../../interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

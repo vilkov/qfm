@@ -2,16 +2,13 @@
 #define BASETASK_H_
 
 #include <QtCore/QMutex>
-#include <QtCore/QStringList>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
-#include "../containers/filesystemupdateslist.h"
-#include "../events/filesystemmodelevent.h"
-#include "../../../list/filesysteminfolistitem.h"
-#include "../../../list/filesysteminfoentryitem.h"
-#include "../../../interfaces/filesysteminode.h"
-#include "../../../../tools/taskspool/task.h"
-#include "../../../../tools/pointers/pscopedpointer.h"
+#include "../base/events/filesystemmodelevent.h"
+#include "../../list/filesysteminfolistitem.h"
+#include "../../list/filesysteminfoentryitem.h"
+#include "../../../tools/taskspool/task.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -19,9 +16,6 @@ FILE_SYSTEM_NS_BEGIN
 class BaseTask : public TasksPool::Task
 {
 public:
-	typedef QStringList EntryList;
-
-
 	class Event : public ModelEvent
 	{
 	public:

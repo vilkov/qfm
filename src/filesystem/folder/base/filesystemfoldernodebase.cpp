@@ -1,8 +1,8 @@
 #include "filesystemfoldernodebase.h"
 #include "tasks/scan/updatefilestask.h"
 #include "tasks/scan/scanfilestasks.h"
-#include "tasks/perform/performcopytask.h"
-#include "tasks/perform/performremovetask.h"
+#include "../tasks/perform/performcopytask.h"
+#include "../tasks/perform/performremovetask.h"
 #include "../../info/filesystemcopyinfo.h"
 #include "../../../application.h"
 

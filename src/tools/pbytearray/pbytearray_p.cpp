@@ -156,6 +156,36 @@ void DynamicByteArray::append(const value_type *string, size_type size)
 		}
 }
 
+void DynamicByteArray::prepend(const value_type *string, size_type size)
+{
+	if (m_data->ref > 1)
+	{
+		this->~DynamicByteArray();
+		new (this) DynamicByteArray(string, size, m_data->string, m_data->size);
+	}
+	else
+		if (m_data->capacity > size)
+		{
+			m_data->capacity -= size;
+			memmove(m_data->string + size, m_data->string, m_data->size);
+			memcpy(m_data->string, string, size);
+			m_data->string[m_data->size += size] = 0;
+		}
+		else
+		{
+			Data *newData = static_cast<Data*>(realloc(m_data, sizeof(Data) + m_data->size + size));
+
+			if (newData != NULL)
+			{
+				m_data = newData;
+				m_data->capacity = 0;
+				memmove(m_data->string + size, m_data->string, m_data->size);
+				memcpy(m_data->string, string, size);
+				m_data->string[m_data->size += size] = 0;
+			}
+		}
+}
+
 DynamicByteArray::DynamicByteArray(const DynamicByteArray &other) :
 	m_data(other.m_data)
 {
@@ -175,6 +205,12 @@ EmptyByteArray::value_type *EmptyByteArray::data()
 }
 
 void EmptyByteArray::append(const value_type *string, size_type size)
+{
+	this->~EmptyByteArray();
+	new (this) DynamicByteArray(string, size);
+}
+
+void EmptyByteArray::prepend(const value_type *string, size_type size)
 {
 	this->~EmptyByteArray();
 	new (this) DynamicByteArray(string, size);

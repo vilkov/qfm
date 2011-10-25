@@ -1,5 +1,5 @@
 #include "performremovetask.h"
-#include "../../../../../application.h"
+#include "../../../../application.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
 #endif

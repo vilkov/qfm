@@ -1,5 +1,5 @@
 #include "taskprogress.h"
-#include "basetask.h"
+#include "../basetask.h"
 #include "../../../../application.h"
 
 

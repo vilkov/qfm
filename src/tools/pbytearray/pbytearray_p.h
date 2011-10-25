@@ -46,6 +46,7 @@ public:
 
 	virtual void truncate(size_type pos);
 	virtual void append(const value_type *string, size_type size);
+	virtual void prepend(const value_type *string, size_type size);
 
 private:
 	DynamicByteArray(const DynamicByteArray &other);
@@ -81,6 +82,11 @@ public:
 	{
 		this->~ReferenceByteArray();
 		new (this) DynamicByteArray(m_string, m_size, string, size);
+	}
+	virtual void prepend(const value_type *string, size_type size)
+	{
+		this->~ReferenceByteArray();
+		new (this) DynamicByteArray(string, size, m_string, m_size);
 	}
 
 private:
@@ -124,6 +130,11 @@ public:
 		this->~ConstReferenceByteArray();
 		new (this) DynamicByteArray(m_string, m_size, string, size);
 	}
+	virtual void prepend(const value_type *string, size_type size)
+	{
+		this->~ConstReferenceByteArray();
+		new (this) DynamicByteArray(string, size, m_string, m_size);
+	}
 
 private:
 	const value_type *m_string;
@@ -162,6 +173,11 @@ public:
 		this->~LiteralByteArray();
 		new (this) DynamicByteArray(m_string, m_size, string, size);
 	}
+	virtual void prepend(const value_type *string, size_type size)
+	{
+		this->~LiteralByteArray();
+		new (this) DynamicByteArray(string, size, m_string, m_size);
+	}
 
 private:
 	const value_type *m_string;
@@ -182,6 +198,7 @@ public:
 
 	virtual void truncate(size_type count) {}
 	virtual void append(const value_type *string, size_type size);
+	virtual void prepend(const value_type *string, size_type size);
 
 private:
 	value_type m_string[1];

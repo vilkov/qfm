@@ -2,7 +2,7 @@
 #define SCANFILESBASETASK_H_
 
 #include <QtCore/QStringList>
-#include "../destcontrolabletask.h"
+#include "../filesystemfolderbasetask.h"
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
@@ -10,7 +10,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class ScanFilesBaseTask : public DestControlableTask
+class ScanFilesBaseTask : public FolderBaseTask
 {
 public:
 	ScanFilesBaseTask(QObject *receiver);

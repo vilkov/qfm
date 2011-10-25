@@ -1,5 +1,5 @@
 #include "taskprogress.h"
-#include "../basetask.h"
+#include "../filesystemfolderbasetask.h"
 #include "../../../../application.h"
 
 
@@ -33,7 +33,7 @@ void TaskProgress::update(quint64 progressIncrement)
 
 void TaskProgress::complete()
 {
-	typedef BaseTask::CompletedProgressEvent Event;
+	typedef FolderBaseTask::CompletedProgressEvent Event;
 
 	PScopedPointer<Event> event(new Event(m_fileName, m_startTime.msecsTo(QDateTime::currentDateTime())));
 	Application::postEvent(m_receiver, event.take());
@@ -46,7 +46,7 @@ void TaskProgress::clear()
 
 void TaskProgress::postEvent()
 {
-	typedef BaseTask::UpdateProgressEvent Event;
+	typedef FolderBaseTask::UpdateProgressEvent Event;
 
 	PScopedPointer<Event> event(new Event(m_fileName, m_progress, m_startTime.msecsTo(m_currentTime)));
 	Application::postEvent(m_receiver, event.take());

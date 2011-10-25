@@ -85,16 +85,17 @@ protected:
 	class CancelFunctor : public Functors::Functor
 	{
 	public:
-		CancelFunctor(TasksMap &tasks) :
-			m_tasks(tasks)
+		CancelFunctor(FolderNode *node) :
+			m_node(node)
 		{}
 
 	protected:
 		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 
 	private:
-		TasksMap &m_tasks;
+		FolderNode *m_node;
 	};
+	friend class CancelFunctor;
 
 	class RenameFunctor : public Functors::Functor
 	{

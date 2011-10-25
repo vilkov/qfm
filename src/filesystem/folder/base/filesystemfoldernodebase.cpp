@@ -12,7 +12,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent) :
-	Node(conteiner, parent),
+	TasksNode(conteiner, parent),
 	m_updating(false),
 	m_info(info)
 {}
@@ -153,60 +153,32 @@ void FolderNodeBase::removeChild(Node *node)
 void FolderNodeBase::scanForSize(const QStringList &entries)
 {
 	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
-	m_tasks.add(task.data(), entries);
-	addLink();
-	Application::instance()->taskPool().handle(task.take());
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
-	m_tasks.add(task.data(), entries);
-	addLink();
-	Application::instance()->taskPool().handle(task.take());
+	addTask(task.data(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const QStringList &entries)
 {
 	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
-	m_tasks.add(task.data(), entries);
-	addLink();
-	Application::instance()->taskPool().handle(task.take());
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	InfoItem *entry = entries->at(0);
 	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
-	m_tasks.resetTask(task.data(), entry->fileName());
-	addLink();
-	Application::instance()->taskPool().handle(task.take());
+	resetTask(task.take(), entries->at(0)->fileName());
 }
 
 void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 {
-	InfoItem *entry = entries->at(0);
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
-	m_tasks.resetTask(task.data(), entry->fileName());
-	addLink();
-	Application::instance()->taskPool().handle(task.take());
+	resetTask(task.take(), entries->at(0)->fileName());
 }
-
-//void FolderNodeBase::add(FileSystemBaseItem *item)
-//{
-//	m_items.m_container.add(item->fileName(), item);
-//	m_nodes.push_back(item->node());
-//}
-//
-//void FolderNodeBase::remove(FileSystemBaseItem *item)
-//{
-//
-//}
-//
-//void FolderNodeBase::remove(ItemsContainer::size_type index)
-//{
-//
-//}
 
 void FolderNodeBase::updateFiles()
 {
@@ -214,8 +186,7 @@ void FolderNodeBase::updateFiles()
 	{
 		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
 		setUpdating(true);
-		addLink();
-		Application::instance()->taskPool().handle(task.take());
+		handleTask(task.take());
 	}
 }
 
@@ -285,8 +256,8 @@ void FolderNodeBase::performRemove(const ModelEvent *e)
 
 void FolderNodeBase::questionAnswer(const ModelEvent *e)
 {
-	typedef BaseTask::QuestionAnswerEvent * NotConstEvent;
-	typedef const BaseTask::QuestionAnswerEvent * Event;
+	typedef FolderBaseTask::QuestionAnswerEvent * NotConstEvent;
+	typedef const FolderBaseTask::QuestionAnswerEvent * Event;
 	Event event = static_cast<Event>(e);
 
 	event->result()->lock();

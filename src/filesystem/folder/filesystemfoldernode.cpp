@@ -1,7 +1,6 @@
 #include "filesystemfoldernode.h"
 #include "items/filesystemrootitem.h"
 #include "items/filesystementryitem.h"
-#include "tasks/basetask.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
@@ -112,7 +111,7 @@ void FolderNode::remove(const QModelIndexList &list)
 
 void FolderNode::cancel(const QModelIndexList &list)
 {
-	CancelFunctor cancelFunctor(tasks());
+	CancelFunctor cancelFunctor(this);
 	processLockedIndexList(list, cancelFunctor);
 }
 
@@ -339,7 +338,7 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &e
 			updateRange.add(index, index);
 		}
 
-	tasks().removeAll(entries->at(0)->fileName());
+	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
 }
 
@@ -379,7 +378,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 		updateRange.add(index, index);
 	}
 
-	tasks().removeAll(entries->at(0)->fileName());
+	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
 }
 
@@ -406,7 +405,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> 
 		}
 		else
 		{
-			tasks().remove(entry->fileName());
+			removeTask(entry->fileName());
 			removeEntry(m_items.indexOf(entry->fileName()));
 
 			if (entry->isDir())
@@ -456,7 +455,7 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> 
 				updateRange.add(index, index);
 			}
 
-			tasks().removeAll(entries->at(0)->fileName());
+			removeTaskAll(entries->at(0)->fileName());
 			updateBothColumns(updateRange);
 		}
 }
@@ -495,7 +494,7 @@ void FolderNode::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 			updateRange.add(index, index);
 		}
 
-		tasks().removeAll(entries->at(0)->fileName());
+		removeTaskAll(entries->at(0)->fileName());
 		updateBothColumns(updateRange);
 	}
 }
@@ -517,7 +516,7 @@ void FolderNode::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
 			updateRange.add(index, index);
 		}
 
-	tasks().removeAll(entries->at(0)->fileName());
+	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
 }
 
@@ -543,8 +542,7 @@ void FolderNode::completedProgressEvent(const QString &fileName, quint64 timeEla
 
 void FolderNode::CancelFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 {
-	if (TasksPool::Task *task = m_tasks.take(entry->info().fileName()))
-		static_cast<BaseTask*>(task)->cancel();
+	m_node->cancelTask(entry->info().fileName());
 }
 
 void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)

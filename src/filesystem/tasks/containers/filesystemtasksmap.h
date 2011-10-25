@@ -4,8 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include "../../../filesystem_ns.h"
-#include "../../../../tools/taskspool/task.h"
+#include "../filesystembasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -16,12 +15,12 @@ public:
 	TasksMap()
 	{}
 
-	void add(TasksPool::Task *task, const QString &fileName)
+	void add(BaseTask *task, const QString &fileName)
 	{
 		m_tasks[task].push_back(fileName);
 		m_names[fileName] = task;
 	}
-	void add(TasksPool::Task *task, const QStringList &names)
+	void add(BaseTask *task, const QStringList &names)
 	{
 		m_tasks[task] = names;
 
@@ -30,7 +29,7 @@ public:
 	}
 	void remove(const QString &name)
 	{
-		if (TasksPool::Task *task = m_names.value(name, 0))
+		if (BaseTask *task = m_names.value(name, 0))
 		{
 			QStringList &list = m_tasks[task];
 			QStringList::size_type index;
@@ -46,7 +45,7 @@ public:
 	}
 	void removeAll(const QString &name)
 	{
-		if (TasksPool::Task *task = m_names.value(name, 0))
+		if (BaseTask *task = m_names.value(name, 0))
 		{
 			QStringList list = m_tasks.take(task);
 
@@ -54,9 +53,9 @@ public:
 				m_names.remove(list.at(i));
 		}
 	}
-	TasksPool::Task *take(const QString &name)
+	BaseTask *take(const QString &name)
 	{
-		if (TasksPool::Task *task = m_names.value(name, 0))
+		if (BaseTask *task = m_names.value(name, 0))
 		{
 			QStringList list = m_tasks.take(task);
 
@@ -68,9 +67,9 @@ public:
 
 		return 0;
 	}
-	void resetTask(TasksPool::Task *task, const QString &name)
+	void resetTask(BaseTask *task, const QString &name)
 	{
-		if (TasksPool::Task *oldTask = m_names.value(name, 0))
+		if (BaseTask *oldTask = m_names.value(name, 0))
 		{
 			const QStringList &list = (m_tasks[task] = m_tasks.take(oldTask));
 
@@ -80,8 +79,8 @@ public:
 	}
 
 private:
-	typedef QMap<TasksPool::Task*, QStringList> Tasks;
-	typedef QMap<QString, TasksPool::Task*>     Names;
+	typedef QMap<BaseTask*, QStringList> Tasks;
+	typedef QMap<QString, BaseTask*>     Names;
 
 private:
 	Tasks m_tasks;

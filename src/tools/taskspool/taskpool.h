@@ -2,7 +2,7 @@
 #define TASKPOOL_H_
 
 #include <list>
-#include "ns_taskspool.h"
+#include "taskspool_ns.h"
 #include "taskthread.h"
 #include "task.h"
 #include "../types/ptypes.h"

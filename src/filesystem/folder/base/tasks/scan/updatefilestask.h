@@ -1,16 +1,16 @@
 #ifndef UPDATEFILESTASK_H_
 #define UPDATEFILESTASK_H_
 
-#include "../../../tasks/destcontrolabletask.h"
+#include "../../containers/filesystemupdateslist.h"
+#include "../../../tasks/filesystemfolderbasetask.h"
 #ifndef Q_OS_WIN
 #	include "../../../tasks/taskpermissionscache.h"
 #endif
-#include "../../containers/filesystemupdateslist.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class UpdateFilesTask : public DestControlableTask
+class UpdateFilesTask : public FolderBaseTask
 {
 public:
 	class Event : public ModelEvent

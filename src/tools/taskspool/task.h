@@ -1,7 +1,7 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "ns_taskspool.h"
+#include "taskspool_ns.h"
 
 
 TASKSPOOL_NS_BEGIN

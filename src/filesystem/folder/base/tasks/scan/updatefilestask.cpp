@@ -9,7 +9,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 UpdateFilesTask::UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates) :
-	DestControlableTask(receiver),
+	FolderBaseTask(receiver),
 	m_info(info),
 	m_updates(updates)
 {}

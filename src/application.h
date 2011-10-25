@@ -23,7 +23,7 @@ public:
 	virtual bool notify(QObject *receiver, QEvent *event);
 
 	QFileIconProvider &iconProvider() { return m_iconProvider; }
-	TasksPool::TaskPool &taskPool() { return m_taskPool; }
+	Tools::TasksPool::TaskPool &taskPool() { return m_taskPool; }
 	ApplicationSettings &config() { return m_settings; }
 	MainWindow &mainWindow() { return m_mainWindow; }
 
@@ -40,7 +40,7 @@ protected: /* ExceptionHandler */
 private:
 	QFileIconProvider m_iconProvider;
 	ApplicationSettings m_settings;
-	TasksPool::TaskPool m_taskPool;
+	Tools::TasksPool::TaskPool m_taskPool;
 	MainWindow m_mainWindow;
 };
 

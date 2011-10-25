@@ -1,7 +1,6 @@
 #ifndef TASKTHREAD_H_
 #define TASKTHREAD_H_
 
-#include "ns_taskspool.h"
 #include "task.h"
 #include "../threads/pmutex.h"
 #include "../threads/pthread.h"

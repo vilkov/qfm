@@ -3,9 +3,8 @@
 
 #include <QtCore/QStringList>
 #include "events/filesystemmodelevent.h"
-#include "containers/filesystemtasksmap.h"
 #include "containers/filesystemupdateslist.h"
-#include "../../filesystemnode.h"
+#include "../../tasks/filesystemtasksnode.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -16,7 +15,7 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class FolderNodeBase : public Node
+class FolderNodeBase : public TasksNode
 {
 	Q_DISABLE_COPY(FolderNodeBase)
 
@@ -73,9 +72,6 @@ protected:
 
 	IFileControl *create(const QString &name, IFileControl::FileType type, QString &error) const { return m_info.create(name, type, error); }
 
-	const TasksMap &tasks() const { return m_tasks; }
-	TasksMap &tasks() { return m_tasks; }
-
 private:
 	void updateFiles();
 	void updateFiles(const ModelEvent *event);
@@ -92,7 +88,6 @@ private:
 private:
 	bool m_updating;
 	Info m_info;
-	TasksMap m_tasks;
 };
 
 FILE_SYSTEM_NS_END

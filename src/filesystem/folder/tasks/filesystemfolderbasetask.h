@@ -1,19 +1,19 @@
-#ifndef BASETASK_H_
-#define BASETASK_H_
+#ifndef FILESYSTEMFOLDERBASETASK_H_
+#define FILESYSTEMFOLDERBASETASK_H_
 
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
 #include "../base/events/filesystemmodelevent.h"
-#include "../../list/filesysteminfolistitem.h"
-#include "../../list/filesysteminfoentryitem.h"
-#include "../../../tools/taskspool/task.h"
+#include "../../tasks/filesystembasetask.h"
+#include "../../containers/filesysteminfolistitem.h"
+#include "../../containers/filesysteminfoentryitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class BaseTask : public TasksPool::Task
+class FolderBaseTask : public BaseTask
 {
 public:
 	class Event : public ModelEvent
@@ -115,19 +115,11 @@ public:
 	};
 
 public:
-	BaseTask() :
-		m_canceled(false)
+	FolderBaseTask(QObject *receiver) :
+		BaseTask(receiver)
 	{}
-
-	void cancel() { m_canceled = true; }
-
-protected:
-	const volatile bool isCanceled() const { return m_canceled; }
-
-private:
-	volatile bool m_canceled;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* BASETASK_H_ */
+#endif /* FILESYSTEMFOLDERBASETASK_H_ */

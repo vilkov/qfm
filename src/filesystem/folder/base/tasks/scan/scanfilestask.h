@@ -9,11 +9,11 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public ScanFilesBaseTask
 {
 public:
-	class Event : public DestControlableTask::Event
+	class Event : public FolderBaseTask::Event
 	{
 	public:
 		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
-			DestControlableTask::Event(type, canceled),
+			FolderBaseTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 

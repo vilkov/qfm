@@ -1,19 +1,19 @@
 #ifndef PERFORMTASK_H_
 #define PERFORMTASK_H_
 
-#include "../destcontrolabletask.h"
+#include "../filesystemfolderbasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformTask : public DestControlableTask
+class PerformTask : public FolderBaseTask
 {
 public:
-	class Event : public DestControlableTask::Event
+	class Event : public FolderBaseTask::Event
 	{
 	public:
 		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
-			DestControlableTask::Event(type, canceled),
+			FolderBaseTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
@@ -22,7 +22,7 @@ public:
 
 public:
 	PerformTask(QObject *receiver) :
-		DestControlableTask(receiver)
+		FolderBaseTask(receiver)
 	{}
 };
 

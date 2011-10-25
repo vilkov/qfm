@@ -47,11 +47,11 @@ protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
-	virtual void scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries) = 0;
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) = 0;
-	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries) = 0;
-	virtual void performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move) = 0;
-	virtual void performRemoveEvent(PScopedPointer<InfoListItem> &entries) = 0;
+	virtual void scanForSizeEvent(bool canceled, const InfoListItem *entries) = 0;
+	virtual bool scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move) = 0;
+	virtual bool scanForRemoveEvent(bool canceled, const InfoListItem *entries) = 0;
+	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move) = 0;
+	virtual void performRemoveEvent(const InfoListItem *entries) = 0;
 
 	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) = 0;
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed) = 0;

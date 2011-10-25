@@ -23,9 +23,9 @@ protected:
 	void addTask(BaseTask *task, const QStringList &files);
 	void resetTask(BaseTask *task, const QString &fileName);
 	void handleTask(BaseTask *task);
+	void taskHandled();
 	void cancelTask(const QString &fileName);
-	void removeTask(const QString &fileName);
-	void removeTaskAll(const QString &fileName);
+	void removeAllTaskLinks(const QString &fileName);
 
 private:
 	TasksMap m_tasks;

@@ -315,7 +315,7 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 	}
 }
 
-void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
+void FolderNode::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 {
 	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
@@ -338,11 +338,10 @@ void FolderNode::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &e
 			updateRange.add(index, index);
 		}
 
-	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
+bool FolderNode::scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move)
 {
 	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
@@ -350,7 +349,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 	if (canceled)
 		control->canceled();
 	else
-		if (control->start(entries.data(), move))
+		if (control->start(entries, move))
 			if (control->physicalCopyIsNecessary())
 			{
 				QString lockReason = move ? tr("Moving...") : tr("Copying...");
@@ -364,8 +363,7 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 				}
 
 				updateSecondColumn(updateRange);
-				FolderNodeBase::performCopy(entries, control, move);
-				return;
+				return true;
 			}
 			else
 				control->done(false);
@@ -378,11 +376,12 @@ void FolderNode::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 		updateRange.add(index, index);
 	}
 
-	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
+
+	return false;
 }
 
-void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
+bool FolderNode::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 {
 	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
@@ -391,32 +390,12 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> 
 	InfoItem *entry;
 
 	for (InfoListItem::size_type i = 0; i < entries->size();)
-	{
-		(entry = entries->at(i))->refresh();
-
-		if (entry->exists())
-		{
-			if (entry->isDir())
-				folders.push_back(entry->fileName());
-			else
-				files.push_back(entry->fileName());
-
-			++i;
-		}
+		if ((entry = entries->at(i))->isDir())
+			folders.push_back(entry->fileName());
 		else
-		{
-			removeTask(entry->fileName());
-			removeEntry(m_items.indexOf(entry->fileName()));
-
-			if (entry->isDir())
-				entries->decTotalSize(static_cast<InfoListItem*>(entry)->totalSize());
-
-			entries->remove(i);
-		}
-	}
+			files.push_back(entry->fileName());
 
 	if (!canceled &&
-		!entries->isEmpty() &&
 		QMessageBox::question(
 			&Application::instance()->mainWindow(),
 			tr("Remove..."),
@@ -442,25 +421,26 @@ void FolderNode::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> 
 			}
 
 		updateSecondColumn(updateRange);
-		FolderNodeBase::performRemove(entries);
+
+		return true;
 	}
 	else
-		if (!entries->isEmpty())
+	{
+		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
 		{
-			for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
-			{
-				index = m_items.indexOf(entries->at(i)->fileName());
-				static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(entries->at(i)->totalSize());
-				static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
-				updateRange.add(index, index);
-			}
-
-			removeTaskAll(entries->at(0)->fileName());
-			updateBothColumns(updateRange);
+			index = m_items.indexOf(entries->at(i)->fileName());
+			static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(entries->at(i)->totalSize());
+			static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
+			updateRange.add(index, index);
 		}
+
+		updateBothColumns(updateRange);
+	}
+
+	return false;
 }
 
-void FolderNode::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move)
+bool FolderNode::performCopyEvent(bool canceled, const InfoListItem *entries, bool move)
 {
 	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
@@ -483,7 +463,8 @@ void FolderNode::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 		}
 
 		updateSecondColumn(updateRange);
-		FolderNodeBase::performRemove(entries);
+
+		return true;
 	}
 	else
 	{
@@ -494,12 +475,13 @@ void FolderNode::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &e
 			updateRange.add(index, index);
 		}
 
-		removeTaskAll(entries->at(0)->fileName());
 		updateBothColumns(updateRange);
 	}
+
+	return false;
 }
 
-void FolderNode::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
+void FolderNode::performRemoveEvent(const InfoListItem *entries)
 {
 	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
@@ -516,7 +498,6 @@ void FolderNode::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
 			updateRange.add(index, index);
 		}
 
-	removeTaskAll(entries->at(0)->fileName());
 	updateBothColumns(updateRange);
 }
 

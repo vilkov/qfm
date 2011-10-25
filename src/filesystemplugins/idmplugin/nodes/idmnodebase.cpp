@@ -222,27 +222,27 @@ void IdmNodeBase::updateFilesEvent(const UpdatesList &updates)
 
 }
 
-void IdmNodeBase::scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
+void IdmNodeBase::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 {
 
 }
 
-void IdmNodeBase::scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
+bool IdmNodeBase::scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move)
 {
-
+	return false;
 }
 
-void IdmNodeBase::scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries)
+bool IdmNodeBase::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 {
-
+	return false;
 }
 
-void IdmNodeBase::performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move)
+bool IdmNodeBase::performCopyEvent(bool canceled, const InfoListItem *entries, bool move)
 {
-
+	return false;
 }
 
-void IdmNodeBase::performRemoveEvent(PScopedPointer<InfoListItem> &entries)
+void IdmNodeBase::performRemoveEvent(const InfoListItem *entries)
 {
 
 }

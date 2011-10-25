@@ -199,8 +199,8 @@ void FolderNodeBase::updateFiles(const ModelEvent *e)
 
 	if (event->isLastEvent)
 	{
-		removeLink();
 		setUpdating(false);
+		taskHandled();
 	}
 }
 
@@ -210,8 +210,8 @@ void FolderNodeBase::scanForSize(const ModelEvent *e)
 	typedef const ScanFilesForSizeTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	removeLink();
-	scanForSizeEvent(event->canceled, const_cast<NotConstEvent>(event)->entries);
+	scanForSizeEvent(event->canceled, event->entries.data());
+	removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
 void FolderNodeBase::scanForCopy(const ModelEvent *e)
@@ -220,8 +220,10 @@ void FolderNodeBase::scanForCopy(const ModelEvent *e)
 	typedef const ScanFilesForCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	removeLink();
-	scanForCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, const_cast<NotConstEvent>(event)->control, event->move);
+	if (scanForCopyEvent(event->canceled, event->entries.data(), event->control.data(), event->move))
+		performCopy(const_cast<NotConstEvent>(event)->entries, const_cast<NotConstEvent>(event)->control, event->move);
+	else
+		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
 void FolderNodeBase::scanForRemove(const ModelEvent *e)
@@ -230,8 +232,10 @@ void FolderNodeBase::scanForRemove(const ModelEvent *e)
 	typedef const ScanFilesForRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	removeLink();
-	scanForRemoveEvent(event->canceled, const_cast<NotConstEvent>(event)->entries);
+	if (scanForRemoveEvent(event->canceled, event->entries.data()))
+		performRemove(const_cast<NotConstEvent>(event)->entries);
+	else
+		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
 void FolderNodeBase::performCopy(const ModelEvent *e)
@@ -241,7 +245,11 @@ void FolderNodeBase::performCopy(const ModelEvent *e)
 	Event event = static_cast<Event>(e);
 
 	removeLink();
-	performCopyEvent(event->canceled, const_cast<NotConstEvent>(event)->entries, event->move);
+
+	if (performCopyEvent(event->canceled, event->entries.data(), event->move))
+		performRemove(const_cast<NotConstEvent>(event)->entries);
+	else
+		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
 void FolderNodeBase::performRemove(const ModelEvent *e)
@@ -250,8 +258,8 @@ void FolderNodeBase::performRemove(const ModelEvent *e)
 	typedef const PerformRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	removeLink();
-	performRemoveEvent(const_cast<NotConstEvent>(event)->entries);
+	performRemoveEvent(event->entries.data());
+	removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
 void FolderNodeBase::questionAnswer(const ModelEvent *e)

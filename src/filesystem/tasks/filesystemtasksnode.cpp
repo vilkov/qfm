@@ -18,7 +18,6 @@ void TasksNode::addTask(BaseTask *task, const QStringList &files)
 void TasksNode::resetTask(BaseTask *task, const QString &fileName)
 {
 	m_tasks.resetTask(task, fileName);
-	addLink();
 	Application::instance()->taskPool().handle(task);
 }
 
@@ -28,20 +27,21 @@ void TasksNode::handleTask(BaseTask *task)
 	Application::instance()->taskPool().handle(task);
 }
 
+void TasksNode::taskHandled()
+{
+	removeLink();
+}
+
 void TasksNode::cancelTask(const QString &fileName)
 {
 	if (BaseTask *task = m_tasks.take(fileName))
 		task->cancel();
 }
 
-void TasksNode::removeTask(const QString &fileName)
-{
-	m_tasks.remove(fileName);
-}
-
-void TasksNode::removeTaskAll(const QString &fileName)
+void TasksNode::removeAllTaskLinks(const QString &fileName)
 {
 	m_tasks.removeAll(fileName);
+	removeLink();
 }
 
 FILE_SYSTEM_NS_END

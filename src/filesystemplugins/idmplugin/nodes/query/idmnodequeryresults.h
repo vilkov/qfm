@@ -1,19 +1,18 @@
 #ifndef IDMNODEQUERYRESULTS_H_
 #define IDMNODEQUERYRESULTS_H_
 
-#include "idmnodedelegate.h"
-#include "idmnodeproxymodel.h"
-#include "../idmplugin_ns.h"
-#include "../items/idmbaseitem.h"
-#include "../functors/idmfunctors.h"
-#include "../model/idmmodelcontainer.h"
-#include "../containeres/idmcontainer.h"
-#include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
+#include "../idmnodedelegate.h"
+#include "../idmnodeproxymodel.h"
+#include "../../items/idmbaseitem.h"
+#include "../../functors/idmfunctors.h"
+#include "../../model/idmmodelcontainer.h"
+#include "../../containeres/idmcontainer.h"
+#include "../../../../filesystem/tasks/filesystemtasksnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmNodeQueryResults : public FolderNodeBase
+class IdmNodeQueryResults : public TasksNode
 {
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Info &info, Node *parent = 0);

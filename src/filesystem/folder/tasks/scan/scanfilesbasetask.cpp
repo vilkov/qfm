@@ -55,7 +55,7 @@ void ScanFilesBaseTask::scan(InfoListItem *node, const volatile bool &aborted) c
 	QFileInfo info;
 	QDirIterator dirIt(node->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!isCanceled() && !aborted && !isControllerDead() && dirIt.hasNext())
+	while (!isCanceled() && !aborted && !isReceiverDead() && dirIt.hasNext())
 		if (!(info = dirIt.next()).isSymLink())
 			if (info.isDir())
 			{

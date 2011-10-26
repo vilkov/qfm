@@ -22,7 +22,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 	UpdatesList localUpdates;
 	QDirIterator dirIt(m_info.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while(!aborted && !isControllerDead() && dirIt.hasNext())
+	while(!aborted && !isReceiverDead() && dirIt.hasNext())
 	{
 		current = QTime::currentTime();
 
@@ -42,7 +42,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 		}
 	}
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 		Application::postEvent(receiver(), new Event(true, m_updates.takeUpdates()));
 }
 

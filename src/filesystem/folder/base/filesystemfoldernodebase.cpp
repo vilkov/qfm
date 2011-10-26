@@ -145,11 +145,6 @@ void FolderNodeBase::refresh()
 			viewCloseAll();
 }
 
-void FolderNodeBase::removeChild(Node *node)
-{
-
-}
-
 void FolderNodeBase::scanForSize(const QStringList &entries)
 {
 	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));

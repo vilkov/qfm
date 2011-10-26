@@ -11,7 +11,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 /*
- * Implements general file system tasks (coping, moving, removing etc).
+ * Implements interaction with file system tasks (coping, moving, removing etc).
  *
  */
 
@@ -38,10 +38,6 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 	virtual void refresh();
-
-protected:
-	/* Node */
-	virtual void removeChild(Node *node);
 
 protected:
 	/* Tasks events */

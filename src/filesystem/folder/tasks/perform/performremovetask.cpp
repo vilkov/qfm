@@ -22,7 +22,7 @@ void PerformRemoveTask::run(const volatile bool &aborted)
 	for (InfoListItem::size_type i = 0;
 			i < m_entries->size() &&
 			!isCanceled() &&
-			!isControllerDead() &&
+			!isReceiverDead() &&
 			!aborted;
 			++i)
 	{
@@ -39,7 +39,7 @@ void PerformRemoveTask::run(const volatile bool &aborted)
 		}
 	}
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::RemoveFiles, isCanceled(), m_entries));
 		Application::postEvent(receiver(), event.take());
@@ -66,12 +66,12 @@ void PerformRemoveTask::removeEntry(InfoItem *entry, volatile bool &tryAgain, co
 			if (entry->shouldRemove())
 				do
 					removeDir(entry, tryAgain = false, aborted);
-				while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
+				while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
 		}
 		else
 			do
 				removeFile(entry, tryAgain = false, aborted);
-			while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
+			while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
 }
 
 void PerformRemoveTask::removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
@@ -98,7 +98,7 @@ void PerformRemoveTask::removeDir(InfoItem *entry, volatile bool &tryAgain, cons
 
 			Application::postEvent(receiver(), event.take());
 
-			if (result.waitFor(aborted, isControllerDead()))
+			if (result.waitFor(aborted, isReceiverDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
 					m_skipAllIfNotRemove = true;
@@ -139,7 +139,7 @@ void PerformRemoveTask::removeFile(InfoItem *entry, volatile bool &tryAgain, con
 
 			Application::postEvent(receiver(), event.take());
 
-			if (result.waitFor(aborted, isControllerDead()))
+			if (result.waitFor(aborted, isReceiverDead()))
 				if (result.answer() == QMessageBox::YesToAll)
 				{
 					m_skipAllIfNotRemove = true;

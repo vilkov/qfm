@@ -12,7 +12,7 @@ void ScanFilesForSizeTask::run(const volatile bool &aborted)
 {
 	ScanFilesTask::run(aborted);
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForSize, isCanceled(), subnode()));
 		Application::postEvent(receiver(), event.take());
@@ -28,7 +28,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 {
 	ScanFilesTask::run(aborted);
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForRemove, isCanceled(), subnode()));
 		Application::postEvent(receiver(), event.take());
@@ -46,7 +46,7 @@ void ScanFilesForCopyTask::run(const volatile bool &aborted)
 {
 	ScanFilesTask::run(aborted);
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForCopy, isCanceled(), subnode(), m_control, m_move));
 		Application::postEvent(receiver(), event.take());

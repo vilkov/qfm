@@ -27,7 +27,7 @@ public:
 protected:
 	QObject *receiver() const { return m_receiver; }
 	const volatile bool isCanceled() const { return m_canceled; }
-	const volatile bool &isControllerDead() const { return m_controllerDead; }
+	const volatile bool &isReceiverDead() const { return m_controllerDead; }
 
 private:
 	struct MutexHolder : public QSharedData

@@ -28,7 +28,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 		for (InfoListItem::size_type i = 0;
 				i < m_entries->size() &&
 				!isCanceled() &&
-				!isControllerDead() &&
+				!isReceiverDead() &&
 				!aborted;
 				++i)
 		{
@@ -40,7 +40,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	else
 		cancel();
 
-	if (!aborted && !isControllerDead())
+	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_control, m_move));
 		Application::postEvent(receiver(), event.take());
@@ -59,7 +59,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() &&
 							!isCanceled() &&
-							!isControllerDead() &&
+							!isReceiverDead() &&
 							!aborted;
 							++i)
 						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
@@ -95,7 +95,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() &&
 							!isCanceled() &&
-							!isControllerDead() &&
+							!isReceiverDead() &&
 							!aborted;
 							++i)
 						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
@@ -112,7 +112,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 			}
 			else
 				copyFile(destination, entry, tryAgain = false, aborted);
-	while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
+	while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
 }
 
 void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
@@ -126,7 +126,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volat
 					m_written = 0;
 
 					while ((m_readed = m_sourceFile->read(m_buffer, FileReadWriteGranularity)) &&
-							!isCanceled() && !isControllerDead() && !aborted)
+							!isCanceled() && !isReceiverDead() && !aborted)
 						if (m_destFile->write(m_buffer, m_readed) == m_readed)
 						{
 							m_written += m_readed;
@@ -173,7 +173,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volat
 							arg(m_lastError),
 						tryAgain = false,
 						aborted);
-	while (tryAgain && !isCanceled() && !isControllerDead() && !aborted);
+	while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
 }
 
 void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted)
@@ -194,7 +194,7 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 
 	Application::postEvent(receiver(), event.take());
 
-	if (result.waitFor(aborted, isControllerDead()))
+	if (result.waitFor(aborted, isReceiverDead()))
 		switch (result.answer())
 		{
 			case QMessageBox::Yes:
@@ -236,7 +236,7 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &t
 
 	Application::postEvent(receiver(), event.take());
 
-	if (result.waitFor(aborted, isControllerDead()))
+	if (result.waitFor(aborted, isReceiverDead()))
 		if (result.answer() == QMessageBox::YesToAll)
 			m_skipAllIfNotCopy = true;
 		else

@@ -138,6 +138,13 @@ QStringList Node::toFileNameList(const InfoListItem *files) const
 	return res;
 }
 
+void Node::switchTo(Node *node, INodeView *view)
+{
+	node->viewThis(view, QModelIndex());
+	node->refresh();
+	removeView(view);
+}
+
 void Node::nodeRemoved(Node *node)
 {}
 

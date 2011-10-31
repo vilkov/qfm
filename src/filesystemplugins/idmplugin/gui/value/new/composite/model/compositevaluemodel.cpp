@@ -17,7 +17,7 @@ void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)
 	ValuesTreeItem *item = static_cast<ValuesTreeItem*>(index.internalPointer());
 
 	beginInsertRows(index, item->size(), item->size());
-	item->add(new ValuesTreeValueItem(item->entity(), value, item));
+	item->add(new ValuesTreeValueItem(value, item));
 	endInsertRows();
 }
 
@@ -28,7 +28,7 @@ void CompositeValueModel::add(const QModelIndex &index, const ValueList &values)
 	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
 
 	for (ValueList::size_type i = 0, size = values.size(); i < size; ++i)
-		item->add(new ValuesTreeValueItem(item->entity(), values.at(i), item));
+		item->add(new ValuesTreeValueItem(values.at(i), item));
 
 	endInsertRows();
 }

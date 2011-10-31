@@ -3,8 +3,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntityValueItem::IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent) :
-	IdmEntityItem(entity, parent),
+IdmEntityValueItem::IdmEntityValueItem(IdmEntityValue *value, IdmItem *parent) :
+	IdmEntityItem(value->entity(), parent),
 	m_value(value)
 {}
 

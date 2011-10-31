@@ -23,23 +23,14 @@ private:
 };
 
 
-class IdmEntityCompositeValueImp : public IdmEntityValue
+class IdmEntityCompositeValueImp : public IdmCompositeEntityValue
 {
 	Q_DECLARE_TR_FUNCTIONS(IdmEntityCompositeValueImp)
 
 public:
-	typedef QList<IdmEntityValue*> List;
-	typedef QMap<IdmEntity*, List> Map;
-
-public:
 	IdmEntityCompositeValueImp(IdmEntity *entity, id_type id) :
-		IdmEntityValue(entity, id)
+		IdmCompositeEntityValue(entity, id)
 	{}
-	virtual ~IdmEntityCompositeValueImp()
-	{
-		for (Map::iterator it = m_items.begin(), end = m_items.end(); it != end; ++it)
-			qDeleteAll(it.value());
-	}
 
 	virtual QVariant value() const
 	{
@@ -85,7 +76,6 @@ public:
 	void add(IdmEntityValue *value) { m_items[value->entity()].push_back(value); }
 
 private:
-	Map m_items;
 	mutable QVariant m_value;
 };
 

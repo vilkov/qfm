@@ -1,5 +1,6 @@
 #include "idmnodebase.h"
 #include "idmnode.h"
+#include "query/idmnodequeryresults.h"
 #include "../items/idmroot.h"
 #include "../items/idmmessage.h"
 #include "../items/idmseparator.h"
@@ -9,7 +10,6 @@
 #include "../gui/create/createentitydialog.h"
 #include "../gui/choose/choosefileentitydialog.h"
 #include "../gui/query/create/createquerydialog.h"
-#include "../gui/value/list/static/staticvaluelistdialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -51,7 +51,7 @@ ICopyControl *IdmNodeBase::createControl() const
 		return 0;
 }
 
-void IdmNodeBase::menuAction(QAction *action)
+void IdmNodeBase::menuAction(QAction *action, INodeView *view)
 {
 	switch (static_cast<IdmContainer::MenuId>(action->data().toInt()))
 	{
@@ -106,10 +106,7 @@ void IdmNodeBase::menuAction(QAction *action)
 				CreateQueryDialog dialog(m_container, entity, &Application::instance()->mainWindow());
 
 				if (dialog.exec() == CreateQueryDialog::Accepted)
-				{
-					StaticValueListDialog listDialog(m_container, dialog.query(), &Application::instance()->mainWindow());
-					listDialog.exec();
-				}
+					switchTo(new IdmNodeQueryResults(m_container, dialog.query(), absoluteFilePath(), this), view);
 			}
 
 			break;

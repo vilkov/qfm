@@ -21,12 +21,10 @@ public:
 	virtual Item *at(size_type index) const;
 	virtual size_type indexOf(Item *item) const;
 
-	const Container &container() const { return m_container; }
-	Container &container() { return m_container; }
-
 private:
 	friend class IdmModel;
 	friend class IdmNodeBase;
+	friend class IdmNodeQueryResults;
 	Container m_container;
 };
 

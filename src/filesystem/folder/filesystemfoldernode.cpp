@@ -64,7 +64,7 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return &m_items[index.row()]->info();
 }
 
-void FolderNode::menuAction(QAction *action)
+void FolderNode::menuAction(QAction *action, INodeView *view)
 {
 
 }

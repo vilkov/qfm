@@ -52,6 +52,7 @@ protected:
 	Node *parent() const { return static_cast<Node*>(QObject::parent()); }
 	QStringList toFileNameList(const InfoListItem *files) const;
 	bool isVisible() const { return !m_view.isEmpty(); }
+	void switchTo(Node *node, INodeView *view);
 
 protected:
 	void addLink();

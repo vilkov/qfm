@@ -264,7 +264,7 @@ void DirectoryView::cancel()
 
 void DirectoryView::actionTriggered(QAction *action)
 {
-	m_node->menuAction(action);
+	m_node->menuAction(action, this);
 }
 
 void DirectoryView::openInNewTab()

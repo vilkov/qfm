@@ -154,7 +154,7 @@ void FolderNodeBase::scanForSize(const QStringList &entries)
 void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
 	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
-	addTask(task.data(), entries);
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const QStringList &entries)

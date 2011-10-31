@@ -1,12 +1,10 @@
 #ifndef IDMNODEQUERYRESULTS_H_
 #define IDMNODEQUERYRESULTS_H_
 
-#include "../idmnodedelegate.h"
-#include "../idmnodeproxymodel.h"
 #include "../../items/idmbaseitem.h"
-#include "../../functors/idmfunctors.h"
 #include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
+#include "../../storage/values/idmvaluereader.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
 
 
@@ -15,18 +13,31 @@ IDM_PLUGIN_NS_BEGIN
 class IdmNodeQueryResults : public TasksNode
 {
 public:
-	IdmNodeQueryResults(const IdmContainer &container, const Info &info, Node *parent = 0);
+	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
 	virtual ~IdmNodeQueryResults();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
+    virtual void fetchMore(const QModelIndex &parent);
+    virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
+
+	/* IFileInfo */
+	virtual bool isDir() const;
+	virtual bool isFile() const;
+	virtual bool exists() const;
+	virtual QString fileName() const;
+	virtual QString absolutePath() const;
+	virtual QString absoluteFilePath() const;
+	virtual QString absoluteFilePath(const QString &fileName) const;
+	virtual QDateTime lastModified() const;
+	virtual void refresh();
 
 	/* INode */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl() const;
 
-	/* INode::IFileOperations */
-	virtual void menuAction(QAction *action);
+	/* IFileOperations */
+	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index);
 	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);
@@ -40,39 +51,23 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const { return &((IdmNodeQueryResults *)this)->m_proxy; }
-	virtual QAbstractItemDelegate *itemDelegate() const { return &((IdmNodeQueryResults *)this)->m_delegate; }
-	virtual const INodeView::MenuActionList &menuActions() const { return m_container.menuActions(); }
+	virtual QAbstractItemModel *proxyModel() const;
+	virtual QAbstractItemDelegate *itemDelegate() const;
+	virtual const INodeView::MenuActionList &menuActions() const;
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
-protected:
-	/* FolderNodeBase */
-	virtual UpdatesList::Map updateFilesMap() const;
-	virtual void updateFilesEvent(const UpdatesList &updates);
-	virtual void scanForSizeEvent(bool canceled, PScopedPointer<InfoListItem> &entries);
-	virtual void scanForCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
-	virtual void scanForRemoveEvent(bool canceled, PScopedPointer<InfoListItem> &entries);
-	virtual void performCopyEvent(bool canceled, PScopedPointer<InfoListItem> &entries, bool move);
-	virtual void performRemoveEvent(PScopedPointer<InfoListItem> &entries);
+private:
+    enum { PrefetchLimit = 256 };
 
-	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
-
-protected:
-	IdmItem *rootItem() const { return m_items.at(1); }
-	QModelIndex index(IdmItem *item) const;
-
-	bool processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const;
-	bool processRemoveItem(const QModelIndex &index, IdmItem *item);
-
-protected:
+private:
+    INodeView::MenuActionList m_actions;
 	IdmModelContainer m_itemsContainer;
 	IdmModelContainer::Container &m_items;
-	IdmNodeProxyModel m_proxy;
-	IdmNodeDelegate m_delegate;
 	IdmContainer m_container;
+	IdmValueReader m_reader;
+	Info m_info;
 };
 
 IDM_PLUGIN_NS_END

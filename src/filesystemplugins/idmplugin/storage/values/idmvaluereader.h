@@ -22,7 +22,7 @@ public:
 	bool bof() const { return m_beforeFirst; }
 
 	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
-	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
+	static IdmCompositeEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
 	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
 
 private:

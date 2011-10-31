@@ -42,7 +42,7 @@ public:
 	virtual void refresh();
 
 	/* INode::IFileOperations */
-	virtual void menuAction(QAction *action);
+	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index);
 	virtual void createDirectory(const QModelIndex &index);
 	virtual void rename(const QModelIndexList &list);

@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntityValueItem : public IdmEntityItem
 {
 public:
-	IdmEntityValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
+	IdmEntityValueItem(IdmEntityValue *value, IdmItem *parent = 0);
 	virtual ~IdmEntityValueItem();
 
 	/* IdmItem */

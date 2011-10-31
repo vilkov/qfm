@@ -30,6 +30,23 @@ private:
 };
 
 
+class IdmCompositeEntityValue : public IdmEntityValue
+{
+public:
+	typedef QList<IdmEntityValue*> List;
+	typedef QMap<IdmEntity*, List> Map;
+
+public:
+	IdmCompositeEntityValue(IdmEntity *entity, id_type id);
+	virtual ~IdmCompositeEntityValue();
+
+	List values(IdmEntity *property) const { return m_items.value(property); }
+
+protected:
+	Map m_items;
+};
+
+
 /* Meta-function "EntityValueType" */
 template <Database::EntityType EntityType> struct EntityValueType {};
 template <> struct EntityValueType<Database::Int>       { typedef int       type; };

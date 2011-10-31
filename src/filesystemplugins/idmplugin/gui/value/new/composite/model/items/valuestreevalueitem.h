@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class ValuesTreeValueItem : public IdmEntityValueItem
 {
 public:
-	ValuesTreeValueItem(IdmEntity *entity, IdmEntityValue *value, IdmItem *parent = 0);
+	ValuesTreeValueItem(IdmEntityValue *value, IdmItem *parent = 0);
 
 	const IdmEntityValue *value() const { return m_value; }
 

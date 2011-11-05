@@ -10,4 +10,9 @@ Item::Item(Item *parent) :
 Item::~Item()
 {}
 
+bool Item::isList() const
+{
+	return false;
+}
+
 MODELS_TREE_NS_END

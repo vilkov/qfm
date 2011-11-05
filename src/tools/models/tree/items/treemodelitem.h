@@ -15,7 +15,7 @@ public:
 
 	Item *parent() const { return m_parent; }
 
-	virtual bool isList() const = 0;
+	virtual bool isList() const;
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 
 private:

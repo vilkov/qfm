@@ -41,9 +41,9 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const { return &((FolderNode *)this)->m_proxy; }
-	virtual QAbstractItemDelegate *itemDelegate() const { return &((FolderNode *)this)->m_delegate; }
-	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
+	virtual QAbstractItemModel *proxyModel() const;
+	virtual QAbstractItemDelegate *itemDelegate() const;
+	virtual const INodeView::MenuActionList &menuActions() const;
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);

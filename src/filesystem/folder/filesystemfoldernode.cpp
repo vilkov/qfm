@@ -157,6 +157,21 @@ QModelIndex FolderNode::rootIndex() const
 		return m_proxy.mapFromSource(createIndex(0, 0, m_items[0]));
 }
 
+QAbstractItemModel *FolderNode::proxyModel() const
+{
+	return const_cast<FolderProxyModel*>(&m_proxy);
+}
+
+QAbstractItemDelegate *FolderNode::itemDelegate() const
+{
+	return const_cast<FolderDelegate*>(&m_delegate);
+}
+
+const INodeView::MenuActionList &FolderNode::menuActions() const
+{
+	return m_menuActions;
+}
+
 Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);

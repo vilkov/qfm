@@ -9,7 +9,8 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_items(m_itemsContainer.m_container),
 	m_container(container),
 	m_reader(m_container, query),
-	m_info(info)
+	m_info(info),
+	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
 {}
 
 IdmNodeQueryResults::~IdmNodeQueryResults()
@@ -19,23 +20,51 @@ IdmNodeQueryResults::~IdmNodeQueryResults()
 
 int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
 {
-	return m_reader.entity()->type() == Database::Composite ? 2 : 1;
+	return 1;
 }
 
 void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue *item;
+	IdmModelContainer::Container list;
+
+	list.reserve(PrefetchLimit);
 
 	for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 		if (item = m_reader.next())
-			m_items.push_back(new QueryResultRootItem(item));
+			list.push_back(new QueryResultRootItem(item));
 		else
 			break;
+
+	if (!list.isEmpty())
+	{
+		beginInsertRows(parent, m_items.size(), m_items.size() + list.size() - 1);
+		m_items.append(list);
+		endInsertRows();
+	}
 }
 
 bool IdmNodeQueryResults::canFetchMore(const QModelIndex &parent) const
 {
     return !parent.isValid() && !m_reader.eof();
+}
+
+QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (section == 0 && orientation == Qt::Horizontal)
+		switch (role)
+		{
+			case Qt::DisplayRole:
+				return m_label;
+
+			case Qt::TextAlignmentRole:
+				return Qt::AlignCenter;
+
+			default:
+				break;
+		}
+
+	return QVariant();
 }
 
 bool IdmNodeQueryResults::isDir() const
@@ -155,7 +184,7 @@ QAbstractItemModel *IdmNodeQueryResults::proxyModel() const
 
 QAbstractItemDelegate *IdmNodeQueryResults::itemDelegate() const
 {
-	return 0;
+	return const_cast<IdmDelegate*>(&m_delegate);
 }
 
 const INodeView::MenuActionList &IdmNodeQueryResults::menuActions() const

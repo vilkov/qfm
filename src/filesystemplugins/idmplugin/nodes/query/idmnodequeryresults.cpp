@@ -1,5 +1,5 @@
 #include "idmnodequeryresults.h"
-#include "items/idmqueryresultitem.h"
+#include "items/idmqueryresultrootitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -28,7 +28,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 
 	for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 		if (item = m_reader.next())
-			m_items.push_back(new QueryResultItem(item));
+			m_items.push_back(new QueryResultRootItem(item));
 		else
 			break;
 }

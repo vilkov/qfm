@@ -14,6 +14,11 @@ int EntitiesListModel::columnCount(const QModelIndex &parent) const
 	return 2;
 }
 
+Qt::ItemFlags EntitiesListModel::flags(const QModelIndex &index) const
+{
+	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
 IdmEntity *EntitiesListModel::entityAt(size_type index) const
 {
 	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();

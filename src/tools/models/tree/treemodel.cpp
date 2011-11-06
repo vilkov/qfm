@@ -35,7 +35,7 @@ QVariant Model::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags Model::flags(const QModelIndex &index) const
 {
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant Model::headerData(int section, Qt::Orientation orientation, int role) const

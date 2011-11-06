@@ -1,8 +1,8 @@
 #ifndef IDMNODEQUERYRESULTS_H_
 #define IDMNODEQUERYRESULTS_H_
 
+#include "idmqueryresultsdelegate.h"
 #include "../../items/idmbaseitem.h"
-#include "../../model/idmdelegate.h"
 #include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
@@ -23,6 +23,7 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
     virtual void fetchMore(const QModelIndex &parent);
     virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
+	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 	/* IFileInfo */
@@ -73,7 +74,7 @@ private:
     INodeView::MenuActionList m_actions;
 	IdmModelContainer m_itemsContainer;
 	IdmModelContainer::Container &m_items;
-	IdmDelegate m_delegate;
+	IdmQueryResultsDelegate m_delegate;
 	IdmContainer m_container;
 	IdmValueReader m_reader;
 	Info m_info;

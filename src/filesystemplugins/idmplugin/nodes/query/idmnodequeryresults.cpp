@@ -9,9 +9,39 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+template <typename T> inline T *value_cast(void *item, T *to)
+{
+	return 0;
+}
+
+template <> inline QueryResultValueItem *value_cast(void *item, QueryResultValueItem *to)
+{
+	Q_UNUSED(to);
+
+	if (static_cast<IdmItem*>(item)->isList())
+		return 0;
+	else
+		return static_cast<QueryResultValueItem*>(item);
+}
+
+template <> inline QueryResultPathValueItem *value_cast(void *item, QueryResultPathValueItem *to)
+{
+	Q_UNUSED(to);
+
+	if (static_cast<IdmItem*>(item)->isList())
+		return 0;
+	else
+		if (static_cast<QueryResultValueItem*>(item)->value()->entity()->type() == Database::Path)
+			return static_cast<QueryResultPathValueItem*>(item);
+		else
+			return 0;
+}
+
+
 IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
+	m_delegate(container),
 	m_container(container),
 	m_reader(m_container, query),
 	m_info(info),
@@ -47,6 +77,16 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 bool IdmNodeQueryResults::canFetchMore(const QModelIndex &parent) const
 {
     return !parent.isValid() && !m_reader.eof();
+}
+
+Qt::ItemFlags IdmNodeQueryResults::flags(const QModelIndex &index) const
+{
+	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
+		if (item->value()->entity()->type() != Database::Composite &&
+			item->value()->entity()->type() != Database::Path)
+			return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+
+	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientation, int role) const
@@ -114,13 +154,10 @@ void IdmNodeQueryResults::refresh()
 
 IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 {
-	if (static_cast<IdmItem*>(idx.internalPointer())->isList())
-		return 0;
+	if (QueryResultPathValueItem *item = value_cast(idx.internalPointer(), item))
+		return &item->info();
 	else
-		if (static_cast<QueryResultValueItem*>(idx.internalPointer())->isPath())
-			return &static_cast<QueryResultPathValueItem*>(idx.internalPointer())->info();
-		else
-			return 0;
+		return 0;
 }
 
 ICopyControl *IdmNodeQueryResults::createControl() const
@@ -190,7 +227,7 @@ QAbstractItemModel *IdmNodeQueryResults::proxyModel() const
 
 QAbstractItemDelegate *IdmNodeQueryResults::itemDelegate() const
 {
-	return const_cast<IdmDelegate*>(&m_delegate);
+	return const_cast<IdmQueryResultsDelegate*>(&m_delegate);
 }
 
 const INodeView::MenuActionList &IdmNodeQueryResults::menuActions() const
@@ -217,7 +254,7 @@ void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &fu
 
 void IdmNodeQueryResults::doRename(const QModelIndex &index, QueryResultValueItem *value)
 {
-	if (value->isPath())
+	if (value->value()->entity()->type() == Database::Path)
 	{
 		if (m_container.transaction())
 		{

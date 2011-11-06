@@ -15,8 +15,9 @@ public:
 public:
 	EntitiesListModel(QObject *parent = 0);
 
-    /* QAbstractItemModel */
+    /* IdmModel */
 	virtual int columnCount(const QModelIndex &parent) const;
+	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
 	IdmEntity *entityAt(size_type index) const;
 	const QString &nameAt(size_type index) const;

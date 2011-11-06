@@ -54,14 +54,14 @@ ValueDialog<T>::ValueDialog(const QString &title, const QString &label, const T 
 	connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-	EditorValue<Editor>::setValue(m_edit, value);
+	EditorValue<T>::setValue(&m_edit, value);
 	m_edit.selectAll();
 }
 
 template <typename T>
 T ValueDialog<T>::value() const
 {
-	return EditorValue<Editor>::value(m_edit);
+	return EditorValue<T>::value(&m_edit);
 }
 
 template <typename T>

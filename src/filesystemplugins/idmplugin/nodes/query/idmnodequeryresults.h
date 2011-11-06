@@ -43,15 +43,15 @@ public:
 
 	/* IFileOperations */
 	virtual void menuAction(QAction *action, INodeView *view);
-	virtual void createFile(const QModelIndex &index);
-	virtual void createDirectory(const QModelIndex &index);
-	virtual void rename(const QModelIndexList &list);
-	virtual void remove(const QModelIndexList &list);
-	virtual void cancel(const QModelIndexList &list);
-	virtual void calculateSize(const QModelIndexList &list);
-	virtual void pathToClipboard(const QModelIndexList &list);
-	virtual void copy(const QModelIndexList &list, INode *destination);
-	virtual void move(const QModelIndexList &list, INode *destination);
+	virtual void createFile(const QModelIndex &index, INodeView *view);
+	virtual void createDirectory(const QModelIndex &index, INodeView *view);
+	virtual void rename(const QModelIndexList &list, INodeView *view);
+	virtual void remove(const QModelIndexList &list, INodeView *view);
+	virtual void cancel(const QModelIndexList &list, INodeView *view);
+	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
+	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
+	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view);
+	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view);
 
 protected:
 	/* Node */
@@ -65,7 +65,7 @@ protected:
 
 private:
 	void process(const QModelIndexList &list, const Functor &functor);
-	void doRename(const QModelIndex &index, QueryResultValueItem *value);
+	void doRename(INodeView *view, const QModelIndex &index, QueryResultValueItem *value);
 
 private:
     enum { PrefetchLimit = 256 };

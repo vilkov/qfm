@@ -159,47 +159,47 @@ void M3uNode::menuAction(QAction *action, INodeView *view)
 
 }
 
-void M3uNode::createFile(const QModelIndex &index)
+void M3uNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void M3uNode::createDirectory(const QModelIndex &index)
+void M3uNode::createDirectory(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void M3uNode::rename(const QModelIndexList &list)
+void M3uNode::rename(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::remove(const QModelIndexList &list)
+void M3uNode::remove(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::cancel(const QModelIndexList &list)
+void M3uNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::calculateSize(const QModelIndexList &list)
+void M3uNode::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::pathToClipboard(const QModelIndexList &list)
+void M3uNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::copy(const QModelIndexList &list, INode *destination)
+void M3uNode::copy(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 
 }
 
-void M3uNode::move(const QModelIndexList &list, INode *destination)
+void M3uNode::move(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 
 }

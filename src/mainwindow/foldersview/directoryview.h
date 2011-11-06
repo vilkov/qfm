@@ -55,6 +55,7 @@ public:
 
 public:
 	/* INodeView */
+	virtual void edit(const QModelIndex &index);
 	virtual void select(const QModelIndex &index);
 	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate, const FileSystem::INodeView::MenuActionList &menuActions);
 

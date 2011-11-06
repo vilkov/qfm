@@ -81,12 +81,12 @@ bool IdmNodeQueryResults::canFetchMore(const QModelIndex &parent) const
 
 Qt::ItemFlags IdmNodeQueryResults::flags(const QModelIndex &index) const
 {
-	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
-		if (item->value()->entity()->type() != Database::Composite &&
-			item->value()->entity()->type() != Database::Path)
+//	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
+//		if (item->value()->entity()->type() != Database::Composite &&
+//			item->value()->entity()->type() != Database::Path)
 			return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 
-	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+//	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientation, int role) const
@@ -170,47 +170,47 @@ void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
 
 }
 
-void IdmNodeQueryResults::createFile(const QModelIndex &index)
+void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::createDirectory(const QModelIndex &index)
+void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::rename(const QModelIndexList &list)
+void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 {
-	process(list, callTo(this, &IdmNodeQueryResults::doRename));
+	process(list, callTo(this, view, &IdmNodeQueryResults::doRename));
 }
 
-void IdmNodeQueryResults::remove(const QModelIndexList &list)
-{
-
-}
-
-void IdmNodeQueryResults::cancel(const QModelIndexList &list)
+void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::calculateSize(const QModelIndexList &list)
+void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list)
+void IdmNodeQueryResults::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::copy(const QModelIndexList &list, INode *destination)
+void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::move(const QModelIndexList &list, INode *destination)
+void IdmNodeQueryResults::copy(const QModelIndexList &list, INode *destination, INodeView *view)
+{
+
+}
+
+void IdmNodeQueryResults::move(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 
 }
@@ -248,11 +248,11 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *pl
 void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)
 {
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!static_cast<IdmItem*>(list.at(i).internalPointer())->isList())
-			functor(list.at(i), static_cast<QueryResultValueItem*>(list.at(i).internalPointer()));
+		if (QueryResultValueItem *item = value_cast(list.at(i).internalPointer(), item))
+			functor(list.at(i), item);
 }
 
-void IdmNodeQueryResults::doRename(const QModelIndex &index, QueryResultValueItem *value)
+void IdmNodeQueryResults::doRename(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)
 {
 	if (value->value()->entity()->type() == Database::Path)
 	{
@@ -307,6 +307,13 @@ void IdmNodeQueryResults::doRename(const QModelIndex &index, QueryResultValueIte
 		else
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 	}
+	else
+		if (value->value()->entity()->type() == Database::Composite)
+		{
+
+		}
+		else
+			view->edit(index);
 }
 
 IDM_PLUGIN_NS_END

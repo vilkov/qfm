@@ -17,15 +17,15 @@ public:
 	virtual ~IFileOperations() {}
 
 	virtual void menuAction(QAction *action, INodeView *view) = 0;
-	virtual void createFile(const QModelIndex &index) = 0;
-	virtual void createDirectory(const QModelIndex &index) = 0;
-	virtual void rename(const QModelIndexList &list) = 0;
-	virtual void remove(const QModelIndexList &list) = 0;
-	virtual void cancel(const QModelIndexList &list) = 0;
-	virtual void calculateSize(const QModelIndexList &list) = 0;
-	virtual void pathToClipboard(const QModelIndexList &list) = 0;
-	virtual void copy(const QModelIndexList &list, INode *destination) = 0;
-	virtual void move(const QModelIndexList &list, INode *destination) = 0;
+	virtual void createFile(const QModelIndex &index, INodeView *view) = 0;
+	virtual void createDirectory(const QModelIndex &index, INodeView *view) = 0;
+	virtual void rename(const QModelIndexList &list, INodeView *view) = 0;
+	virtual void remove(const QModelIndexList &list, INodeView *view) = 0;
+	virtual void cancel(const QModelIndexList &list, INodeView *view) = 0;
+	virtual void calculateSize(const QModelIndexList &list, INodeView *view) = 0;
+	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view) = 0;
+	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view) = 0;
+	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view) = 0;
 };
 
 FILE_SYSTEM_NS_END

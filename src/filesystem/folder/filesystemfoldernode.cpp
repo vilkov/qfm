@@ -69,12 +69,12 @@ void FolderNode::menuAction(QAction *action, INodeView *view)
 
 }
 
-void FolderNode::createFile(const QModelIndex &index)
+void FolderNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void FolderNode::createDirectory(const QModelIndex &index)
+void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 {
 	QModelIndex idx = m_proxy.mapToSource(index);
 
@@ -94,13 +94,13 @@ void FolderNode::createDirectory(const QModelIndex &index)
 	}
 }
 
-void FolderNode::rename(const QModelIndexList &list)
+void FolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
 	RenameFunctor functor(this, m_items);
 	processIndexList(list, functor);
 }
 
-void FolderNode::remove(const QModelIndexList &list)
+void FolderNode::remove(const QModelIndexList &list, INodeView *view)
 {
 	ProcessedList entries;
 	processIndexList(list, entries);
@@ -109,13 +109,13 @@ void FolderNode::remove(const QModelIndexList &list)
 		scanForRemove(entries);
 }
 
-void FolderNode::cancel(const QModelIndexList &list)
+void FolderNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 	CancelFunctor cancelFunctor(this);
 	processLockedIndexList(list, cancelFunctor);
 }
 
-void FolderNode::calculateSize(const QModelIndexList &list)
+void FolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 	ProcessedList entries;
 	processIndexList(list, entries);
@@ -124,14 +124,14 @@ void FolderNode::calculateSize(const QModelIndexList &list)
 		scanForSize(entries);
 }
 
-void FolderNode::pathToClipboard(const QModelIndexList &list)
+void FolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 	AbsoluteFilePathList pathList;
 	processIndexList(list, pathList);
 	Application::instance()->clipboard()->setText(pathList.join(QChar('\r')));
 }
 
-void FolderNode::copy(const QModelIndexList &list, INode *destination)
+void FolderNode::copy(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 	ProcessedList entries;
 	processIndexList(list, entries);
@@ -140,7 +140,7 @@ void FolderNode::copy(const QModelIndexList &list, INode *destination)
 		scanForCopy(entries, destination, false);
 }
 
-void FolderNode::move(const QModelIndexList &list, INode *destination)
+void FolderNode::move(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 	ProcessedList entries;
 	processIndexList(list, entries);

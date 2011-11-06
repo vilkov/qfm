@@ -84,6 +84,11 @@ void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteF
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
+void DirectoryView::edit(const QModelIndex &index)
+{
+	m_view.edit(index);
+}
+
 void DirectoryView::select(const QModelIndex &index)
 {
 	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
@@ -224,42 +229,42 @@ void DirectoryView::activated()
 
 void DirectoryView::pathToClipboard()
 {
-	m_node->pathToClipboard(selectedIndexes());
+	m_node->pathToClipboard(selectedIndexes(), this);
 }
 
 void DirectoryView::rename()
 {
-	m_node->rename(selectedIndexes());
+	m_node->rename(selectedIndexes(), this);
 }
 
 void DirectoryView::createDirectory()
 {
-	m_node->createDirectory(currentIndex());
+	m_node->createDirectory(currentIndex(), this);
 }
 
 void DirectoryView::remove()
 {
-	m_node->remove(selectedIndexes());
+	m_node->remove(selectedIndexes(), this);
 }
 
 void DirectoryView::calculateSize()
 {
-	m_node->calculateSize(selectedIndexes());
+	m_node->calculateSize(selectedIndexes(), this);
 }
 
 void DirectoryView::copy()
 {
-	m_node->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node);
+	m_node->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node, this);
 }
 
 void DirectoryView::move()
 {
-	m_node->move(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node);
+	m_node->move(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node, this);
 }
 
 void DirectoryView::cancel()
 {
-	m_node->cancel(selectedIndexes());
+	m_node->cancel(selectedIndexes(), this);
 }
 
 void DirectoryView::actionTriggered(QAction *action)

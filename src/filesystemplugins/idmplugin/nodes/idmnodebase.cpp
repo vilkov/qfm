@@ -136,22 +136,22 @@ void IdmNodeBase::menuAction(QAction *action, INodeView *view)
 	}
 }
 
-void IdmNodeBase::createFile(const QModelIndex &index)
+void IdmNodeBase::createFile(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::createDirectory(const QModelIndex &index)
+void IdmNodeBase::createDirectory(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::rename(const QModelIndexList &list)
+void IdmNodeBase::rename(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::remove(const QModelIndexList &list)
+void IdmNodeBase::remove(const QModelIndexList &list, INodeView *view)
 {
 	if (m_container.transaction())
 		if (!processIndexList(list, IdmFunctors::callTo(this, &IdmNodeBase::processRemoveItem)))
@@ -164,27 +164,27 @@ void IdmNodeBase::remove(const QModelIndexList &list)
 			}
 }
 
-void IdmNodeBase::cancel(const QModelIndexList &list)
+void IdmNodeBase::cancel(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::calculateSize(const QModelIndexList &list)
+void IdmNodeBase::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::pathToClipboard(const QModelIndexList &list)
+void IdmNodeBase::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::copy(const QModelIndexList &list, INode *destination)
+void IdmNodeBase::copy(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 
 }
 
-void IdmNodeBase::move(const QModelIndexList &list, INode *destination)
+void IdmNodeBase::move(const QModelIndexList &list, INode *destination, INodeView *view)
 {
 
 }

@@ -1,5 +1,6 @@
 #include "idmnodequeryresults.h"
 #include "items/idmqueryresultrootitem.h"
+#include "items/idmqueryresultpathvalueitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -12,11 +13,6 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_info(info),
 	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
 {}
-
-IdmNodeQueryResults::~IdmNodeQueryResults()
-{
-
-}
 
 int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
 {
@@ -114,7 +110,13 @@ void IdmNodeQueryResults::refresh()
 
 IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 {
-	return 0;
+	if (static_cast<IdmItem*>(idx.internalPointer())->isList())
+		return 0;
+	else
+		if (static_cast<QueryResultValueItem*>(idx.internalPointer())->isPath())
+			return &static_cast<QueryResultPathValueItem*>(idx.internalPointer())->info();
+		else
+			return 0;
 }
 
 ICopyControl *IdmNodeQueryResults::createControl() const

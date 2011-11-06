@@ -15,7 +15,6 @@ class IdmNodeQueryResults : public TasksNode
 {
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
-	virtual ~IdmNodeQueryResults();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;

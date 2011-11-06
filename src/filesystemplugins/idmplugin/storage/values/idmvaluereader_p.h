@@ -17,6 +17,7 @@ public:
 	{}
 
 	virtual QVariant value() const { return m_value; }
+	void setValue(const QVariant &value) { m_value = value; }
 
 private:
 	QVariant m_value;

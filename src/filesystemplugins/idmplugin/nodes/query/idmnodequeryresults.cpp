@@ -1,6 +1,10 @@
 #include "idmnodequeryresults.h"
 #include "items/idmqueryresultrootitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
+#include "functors/idmqueryresultsfunctor.h"
+#include "../../../../tools/widgets/stringdialog/stringdialog.h"
+#include "../../../../application.h"
+#include <QtGui/QMessageBox>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -141,7 +145,7 @@ void IdmNodeQueryResults::createDirectory(const QModelIndex &index)
 
 void IdmNodeQueryResults::rename(const QModelIndexList &list)
 {
-
+	process(list, callTo(this, &IdmNodeQueryResults::doRename));
 }
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list)
@@ -202,6 +206,70 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
 	return 0;
+}
+
+void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)
+{
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!static_cast<IdmItem*>(list.at(i).internalPointer())->isList())
+			functor(list.at(i), static_cast<QueryResultValueItem*>(list.at(i).internalPointer()));
+}
+
+void IdmNodeQueryResults::doRename(const QModelIndex &index, QueryResultValueItem *value)
+{
+	if (value->isPath())
+	{
+		if (m_container.transaction())
+		{
+			QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(value);
+			StringDialog dialog(
+					tr("Enter new name for file \"%1\"").arg(file->info().fileName()),
+					tr("Name"),
+					file->info().fileName(),
+					&Application::instance()->mainWindow());
+
+			if (dialog.exec() == QDialog::Accepted)
+			{
+				QString error;
+				QString fileName = file->info().fileName();
+
+				if (file->info().rename(dialog.value(), error))
+					if (m_container.updateValue(file->value(), file->info().absoluteFilePath(dialog.value())))
+						if (m_container.commit())
+						{
+							file->update();
+							emit dataChanged(index, index);
+						}
+						else
+						{
+							m_container.rollback();
+							file->info().rename(fileName, error);
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						}
+					else
+					{
+						m_container.rollback();
+						file->info().rename(fileName, error);
+						QMessageBox::critical(
+									&Application::instance()->mainWindow(),
+									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+									m_container.lastError());
+					}
+				else
+				{
+					m_container.rollback();
+					QMessageBox::critical(
+								&Application::instance()->mainWindow(),
+								tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+								error);
+				}
+			}
+			else
+				m_container.rollback();
+		}
+		else
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+	}
 }
 
 IDM_PLUGIN_NS_END

@@ -63,6 +63,7 @@ public:
 	id_type addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
 	bool addValue(IdmEntity *entity, id_type value, const IdsMap &values) const { return m_data->storage.addValue(entity, value, values); }
 	id_type addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
+	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
 
 private:

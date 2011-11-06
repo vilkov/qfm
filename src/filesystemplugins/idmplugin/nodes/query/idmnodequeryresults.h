@@ -10,6 +10,9 @@
 
 
 IDM_PLUGIN_NS_BEGIN
+class Functor;
+class QueryResultValueItem;
+
 
 class IdmNodeQueryResults : public TasksNode
 {
@@ -58,6 +61,10 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+
+private:
+	void process(const QModelIndexList &list, const Functor &functor);
+	void doRename(const QModelIndex &index, QueryResultValueItem *value);
 
 private:
     enum { PrefetchLimit = 256 };

@@ -1,10 +1,12 @@
 #include "idmstorage.h"
+#include "values/idmvaluereader.h"
 #include "structure/idmentitiestable.h"
 #include "structure/idmpropertiestable.h"
 #include "undo/concrete/idmstorageundoaddentity.h"
 #include "undo/concrete/idmstorageundoaddproperty.h"
 #include "undo/concrete/idmstorageundoremoveentity.h"
 #include "undo/concrete/idmstorageundoremoveproperty.h"
+#include "undo/concrete/idmstorageundoupdatevalue.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -409,6 +411,27 @@ IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity, const QVariant &valu
 		setLastError(failedToLoadId(str));
 
 	return InvalidId;
+}
+
+bool IdmStorage::updateValue(IdmEntityValue *value, const QVariant &newValue) const
+{
+	char *errorMsg = 0;
+	QByteArray sqlQuery = EntitiesTable::updateValue(value->entity()->id(), value->entity()->type(), value->id(), newValue);
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	{
+		PScopedPointer<IdmStorageUndoUpdateValue> command(new IdmStorageUndoUpdateValue(value));
+		m_undo.last().push_back(command.take());
+		IdmValueReader::updateValue(value, newValue);
+
+		return true;
+	}
+	else
+		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
+
+	return false;
 }
 
 bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const

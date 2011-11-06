@@ -59,6 +59,14 @@ QByteArray EntitiesTable::addValue(Database::id_type entity, Database::EntityTyp
 			arg(Database::valueToString(type, value)).toUtf8();
 }
 
+QByteArray EntitiesTable::updateValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value)
+{
+	return QString::fromLatin1("update ENTITY_%1 set VALUE = %2 where ID = %3").
+			arg(QString::number(entity)).
+			arg(Database::valueToString(type, value)).
+			arg(QString::number(id)).toUtf8();
+}
+
 QByteArray EntitiesTable::removeValues(Database::id_type entity, const Database::IdsList &ids)
 {
 	return QString::fromLatin1("delete from ENTITY_%1 where ID in (%2)").

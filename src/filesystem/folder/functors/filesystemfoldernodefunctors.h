@@ -8,8 +8,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-/**
- *  Closed namespace "Functors"
+/*
+ *  Closed namespace "Functors".
+ *
  */
 struct Functors
 {

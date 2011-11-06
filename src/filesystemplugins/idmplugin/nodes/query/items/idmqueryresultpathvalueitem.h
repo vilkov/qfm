@@ -15,6 +15,8 @@ public:
 	const Info &info() const { return m_info; }
 	Info &info() { return m_info; }
 
+	void update() { m_info = value()->value().toString(); }
+
 private:
 	Info m_info;
 };

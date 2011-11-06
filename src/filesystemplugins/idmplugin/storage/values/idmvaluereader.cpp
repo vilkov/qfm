@@ -37,6 +37,11 @@ void IdmValueReader::addValue(IdmEntityValue *value, IdmEntityValue *property)
 	static_cast<IdmEntityCompositeValueImp*>(value)->add(property);
 }
 
+void IdmValueReader::updateValue(IdmEntityValue *value, const QVariant &newValue)
+{
+	static_cast<IdmEntityValueImp*>(value)->setValue(newValue);
+}
+
 IdmCompositeEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id)
 {
 	return new IdmEntityCompositeValueImp(entity, id);

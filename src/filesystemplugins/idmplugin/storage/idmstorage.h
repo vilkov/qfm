@@ -13,6 +13,7 @@
 #include "queries/idmquerycontext.h"
 #include "undo/idmstorageundocommand.h"
 #include "format/idmshortformat.h"
+#include "values/idmentityvalue.h"
 #include "../idmplugin_ns.h"
 #include "../../../filesystem/info/filesysteminfo.h"
 
@@ -62,6 +63,7 @@ public:
 	id_type addValue(IdmEntity *entity) const;
 	bool addValue(IdmEntity *entity, id_type value, const IdsMap &values) const;
 	id_type addValue(IdmEntity *entity, const QVariant &value) const;
+	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const;
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
 
 private:
@@ -104,7 +106,7 @@ private:
 	Info m_info;
 	bool m_valid;
 	sqlite3 *m_db;
-	UndoStack m_undo;
+	mutable UndoStack m_undo;
 	IdmEntityRoot m_entities;
 	mutable QString m_lastError;
 };

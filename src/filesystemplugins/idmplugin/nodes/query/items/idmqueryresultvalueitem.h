@@ -15,6 +15,7 @@ public:
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
+	IdmEntityValue *value() const { return m_value; }
 	bool isPath() const { return m_value->entity()->type() == Database::Path; }
 
 private:

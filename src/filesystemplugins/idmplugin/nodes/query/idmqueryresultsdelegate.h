@@ -19,7 +19,7 @@ public:
     virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 private:
-    IdmContainer m_container;
+    mutable IdmContainer m_container;
 };
 
 IDM_PLUGIN_NS_END

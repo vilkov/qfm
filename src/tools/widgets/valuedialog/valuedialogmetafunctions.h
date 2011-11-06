@@ -34,11 +34,11 @@ template <> struct EditorValue<QString>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static QString value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->text().simplified();
 	}
-	static void setValue(QWidget *editor, const QString &value)
+	static void setValue(QWidget *editor, const Value &value)
 	{
 		static_cast<EditorType*>(editor)->setText(value);
 	}
@@ -55,11 +55,11 @@ template <> struct EditorValue<char>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static char value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->value();
 	}
-	static void setValue(QWidget *editor, int value)
+	static void setValue(QWidget *editor, Value value)
 	{
 		static_cast<EditorType*>(editor)->setValue(value);
 	}
@@ -76,11 +76,11 @@ template <> struct EditorValue<int>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static char value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->value();
 	}
-	static void setValue(QWidget *editor, int value)
+	static void setValue(QWidget *editor, Value value)
 	{
 		static_cast<EditorType*>(editor)->setValue(value);
 	}
@@ -97,11 +97,11 @@ template <> struct EditorValue<QDate>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static QDate value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->date();
 	}
-	static void setValue(QWidget *editor, const QDate &value)
+	static void setValue(QWidget *editor, const Value &value)
 	{
 		static_cast<EditorType*>(editor)->setDate(value);
 	}
@@ -118,11 +118,11 @@ template <> struct EditorValue<QTime>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static QTime value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->time();
 	}
-	static void setValue(QWidget *editor, const QTime &value)
+	static void setValue(QWidget *editor, const Value &value)
 	{
 		static_cast<EditorType*>(editor)->setTime(value);
 	}
@@ -139,11 +139,11 @@ template <> struct EditorValue<QDateTime>
 	typedef typename EditorBaseType::type       EditorType;
 	typedef typename EditorBaseType::value_type Value;
 
-	static QDateTime value(const QWidget *editor)
+	static Value value(const QWidget *editor)
 	{
 		return static_cast<ConstEditorType*>(editor)->dateTime();
 	}
-	static void setValue(QWidget *editor, const QDateTime &value)
+	static void setValue(QWidget *editor, const Value &value)
 	{
 		static_cast<EditorType*>(editor)->setDateTime(value);
 	}

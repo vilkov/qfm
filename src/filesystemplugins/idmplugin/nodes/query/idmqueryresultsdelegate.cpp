@@ -1,6 +1,7 @@
 #include "idmqueryresultsdelegate.h"
 #include "items/idmqueryresultvalueitem.h"
 #include "../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
+#include <QtGui/QMessageBox>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -81,7 +82,58 @@ void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &
 
 void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
+	QVariant value;
 
+	switch (static_cast<QueryResultValueItem*>(index.internalPointer())->value()->entity()->type())
+	{
+		case Database::Int:
+			value = EditorValue<typename EntityValueType<Database::Int>::type>::value(editor);
+			break;
+
+		case Database::String:
+			value = EditorValue<typename EntityValueType<Database::String>::type>::value(editor);
+			break;
+
+		case Database::Date:
+			value = EditorValue<typename EntityValueType<Database::Date>::type>::value(editor);
+			break;
+
+		case Database::Time:
+			value = EditorValue<typename EntityValueType<Database::Time>::type>::value(editor);
+			break;
+
+		case Database::DateTime:
+			value = EditorValue<typename EntityValueType<Database::DateTime>::type>::value(editor);
+			break;
+
+		case Database::Memo:
+			value = EditorValue<typename EntityValueType<Database::Memo>::type>::value(editor);
+			break;
+
+		case Database::Rating:
+			value = EditorValue<typename EntityValueType<Database::Rating>::type>::value(editor);
+			break;
+
+		default:
+			break;
+	}
+
+	if (m_container.transaction())
+		if (m_container.updateValue(static_cast<QueryResultValueItem*>(index.internalPointer())->value(), value))
+		{
+			if (!m_container.commit())
+			{
+				m_container.rollback();
+				QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+			}
+		}
+		else
+		{
+			m_container.rollback();
+			QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+		}
+	else
+		QMessageBox::critical(editor, tr("Error"), m_container.lastError());
 }
 
 IDM_PLUGIN_NS_END

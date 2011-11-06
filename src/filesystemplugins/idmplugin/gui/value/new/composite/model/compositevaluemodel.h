@@ -10,8 +10,8 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValueModel : public IdmModel
 {
 public:
-	typedef QList<IdmEntityValue*> ValueList;
-	typedef Container::size_type   size_type;
+	typedef IdmCompositeEntityValue::List ValueList;
+	typedef Container::size_type          size_type;
 
 public:
 	CompositeValueModel(IdmEntity *entity, QObject *parent = 0);

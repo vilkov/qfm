@@ -14,6 +14,7 @@ NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity 
     		IdmEntity::id_type id;
     		CompositeValueModel::ValueList list;
     		QModelIndex index = model().index(i, 0);
+    		entity = entity->at(i).entity;
 
 			for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)
 				if ((id = container.addValue(entity, value = files.at(i))) == IdmEntity::InvalidId)

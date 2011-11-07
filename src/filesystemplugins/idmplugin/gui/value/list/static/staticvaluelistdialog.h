@@ -9,7 +9,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "model/staticvaluelistmodel.h"
-#include "../model/valuelistproxymodel.h"
+#include "../../model/valuelistproxymodel.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../storage/queries/idmselectquery.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"

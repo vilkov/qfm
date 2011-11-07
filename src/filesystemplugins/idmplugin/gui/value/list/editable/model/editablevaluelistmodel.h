@@ -1,7 +1,7 @@
 #ifndef EDITABLEVALUELISTMODEL_H_
 #define EDITABLEVALUELISTMODEL_H_
 
-#include "../../model/valuelistmodel.h"
+#include "../../../model/valuelistmodel.h"
 
 
 IDM_PLUGIN_NS_BEGIN

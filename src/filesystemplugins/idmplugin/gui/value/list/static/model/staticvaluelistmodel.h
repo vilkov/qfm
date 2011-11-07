@@ -1,7 +1,7 @@
 #ifndef STATICVALUELISTMODEL_H_
 #define STATICVALUELISTMODEL_H_
 
-#include "../../model/valuelistmodel.h"
+#include "../../../model/valuelistmodel.h"
 
 
 IDM_PLUGIN_NS_BEGIN

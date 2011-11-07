@@ -1,25 +1,25 @@
-#ifndef NEWCOMPOSITEVALUEDIALOG_H_
-#define NEWCOMPOSITEVALUEDIALOG_H_
+#ifndef EDITCOMPOSITEVALUEDIALOG_H_
+#define EDITCOMPOSITEVALUEDIALOG_H_
 
 #include <QtCore/QStringList>
 #include <QtGui/QDialog>
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
-#include "../../model/compositevaluemodel.h"
-#include "../../../../containeres/idmcontainer.h"
-#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../model/compositevaluemodel.h"
+#include "../../../containeres/idmcontainer.h"
+#include "../../../../../tools/events/imp/keyboardeventhandler.h"
+#include "../../../../../tools/events/imp/keyboardeventsource.h"
 
 
 using namespace FileSystem::Plugins::Idm;
 
-class NewCompositeValueDialog : public QDialog
+class EditCompositeValueDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	NewCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+	EditCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
 
     virtual void accept();
     IdmEntityValue *value();
@@ -35,7 +35,7 @@ protected:
 			> TreeView;
 	typedef KeyboardEventHandler<
 				EventHandlerBase<
-					NewCompositeValueDialog
+					EditCompositeValueDialog
 				>
 			> TreeViewHandler;
 
@@ -59,4 +59,4 @@ private:
 	QVBoxLayout m_verticatLayout;
 };
 
-#endif /* NEWCOMPOSITEVALUEDIALOG_H_ */
+#endif /* EDITCOMPOSITEVALUEDIALOG_H_ */

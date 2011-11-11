@@ -7,17 +7,17 @@
 #include <QtGui/QMessageBox>
 
 
-EditCompositeValueDialog::EditCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
+EditCompositeValueDialog::EditCompositeValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
-	m_entity(entity),
+	m_value(value),
 	m_handler(this),
 	m_view(&m_handler, this),
-	m_model(m_entity, this),
+	m_model(m_value, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
-	setWindowTitle(tr("Edit value of \"%1\"").arg(m_entity->name()));
+	setWindowTitle(tr("Editing \"%1\"").arg(m_value->value().toString()));
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);
@@ -41,30 +41,30 @@ void EditCompositeValueDialog::accept()
 
 IdmEntityValue *EditCompositeValueDialog::value()
 {
-	IdmContainer::id_type id = m_container.addValue(m_entity);
-
-	if (id != IdmContainer::InvalidId)
-	{
-		IdmEntityValue *tmp;
-		IdmContainer::IdsMap res;
-		IdmEntityPropertyItem *property;
-		PScopedPointer<IdmEntityValue> value(IdmValueReader::createValue(m_entity, id));
-
-		for (CompositeValueModel::size_type i = 0, size = m_model.size(); i < size; ++i)
-		{
-			IdmContainer::IdsList &list = res[(property = static_cast<IdmEntityPropertyItem*>(m_model.at(i)))->entity()];
-			list.reserve(property->size());
-
-			for (CompositeValueModel::size_type q = 0, size = property->size(); q < size; ++q)
-			{
-				IdmValueReader::addValue(value.data(), tmp = static_cast<IdmEntityValueItem*>(property->at(q))->take());
-				list.push_back(tmp->id());
-			}
-		}
-
-		if (m_container.addValue(m_entity, id, res))
-			return value.take();
-	}
+//	IdmContainer::id_type id = m_container.addValue(m_entity);
+//
+//	if (id != IdmContainer::InvalidId)
+//	{
+//		IdmEntityValue *tmp;
+//		IdmContainer::IdsMap res;
+//		IdmEntityPropertyItem *property;
+//		PScopedPointer<IdmEntityValue> value(IdmValueReader::createValue(m_entity, id));
+//
+//		for (CompositeValueModel::size_type i = 0, size = m_model.size(); i < size; ++i)
+//		{
+//			IdmContainer::IdsList &list = res[(property = static_cast<IdmEntityPropertyItem*>(m_model.at(i)))->entity()];
+//			list.reserve(property->size());
+//
+//			for (CompositeValueModel::size_type q = 0, size = property->size(); q < size; ++q)
+//			{
+//				IdmValueReader::addValue(value.data(), tmp = static_cast<IdmEntityValueItem*>(property->at(q))->take());
+//				list.push_back(tmp->id());
+//			}
+//		}
+//
+//		if (m_container.addValue(m_entity, id, res))
+//			return value.take();
+//	}
 
 	return 0;
 }

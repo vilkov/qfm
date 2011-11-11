@@ -1,6 +1,7 @@
 #ifndef COMPOSITEVALUEMODEL_H_
 #define COMPOSITEVALUEMODEL_H_
 
+#include "items/compositevalueitem.h"
 #include "../../../model/idmmodel.h"
 #include "../../../storage/values/idmentityvalue.h"
 
@@ -15,6 +16,7 @@ public:
 
 public:
 	CompositeValueModel(IdmEntity *entity, QObject *parent = 0);
+	CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent = 0);
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }

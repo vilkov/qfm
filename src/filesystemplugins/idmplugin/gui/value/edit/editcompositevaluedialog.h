@@ -19,7 +19,7 @@ class EditCompositeValueDialog : public QDialog
 	Q_OBJECT
 
 public:
-	EditCompositeValueDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+	EditCompositeValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent = 0);
 
     virtual void accept();
     IdmEntityValue *value();
@@ -51,7 +51,7 @@ protected:
 
 private:
 	IdmContainer m_container;
-	IdmEntity *m_entity;
+	IdmCompositeEntityValue *m_value;
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	CompositeValueModel m_model;

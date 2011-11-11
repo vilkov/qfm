@@ -1,5 +1,6 @@
 #include "idmqueryresultsdelegate.h"
 #include "items/idmqueryresultvalueitem.h"
+#include "../../gui/value/edit/editcompositevaluedialog.h"
 #include "../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
 #include <QtGui/QMessageBox>
 
@@ -32,6 +33,13 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 
 		case Database::Memo:
 			return new Editor<typename EntityValueType<Database::Memo>::type>::type(parent);
+
+		case Database::Composite:
+		{
+//			EditCompositeValueDialog dialog(m_container, static_cast<QueryResultValueItem*>(index.internalPointer())->value(), parent);
+
+			return 0;
+		}
 
 		case Database::Rating:
 			return new Editor<typename EntityValueType<Database::Rating>::type>::type(parent);

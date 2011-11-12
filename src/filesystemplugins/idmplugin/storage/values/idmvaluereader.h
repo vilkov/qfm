@@ -23,6 +23,7 @@ public:
 
 	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
 	static void updateValue(IdmEntityValue *value, const QVariant &newValue);
+	static void removeValue(IdmEntityValue *value, IdmEntityValue *property);
 	static IdmCompositeEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
 	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
 

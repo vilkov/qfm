@@ -25,7 +25,7 @@ public:
 	void remove(const QModelIndex &index);
 
 private:
-	bool m_valueOwner;
+	IdmCompositeEntityValue *m_value;
 };
 
 IDM_PLUGIN_NS_END

@@ -74,7 +74,18 @@ public:
 		}
 	}
 
-	void add(IdmEntityValue *value) { m_items[value->entity()].push_back(value); }
+	void add(IdmEntityValue *value)
+	{
+		m_items[value->entity()].push_back(value);
+		m_value.clear();
+	}
+
+	void remove(IdmEntityValue *value)
+	{
+		List &list = m_items[value->entity()];
+		delete list.takeAt(list.indexOf(value));
+		m_value.clear();
+	}
 
 private:
 	mutable QVariant m_value;

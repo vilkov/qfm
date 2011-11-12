@@ -1,5 +1,5 @@
 #include "newfilevaluedialog.h"
-#include "../../../../items/idmentityitem.h"
+#include "../../model/items/compositevaluepropertyitem.h"
 #include "../../../../storage/values/idmvaluereader.h"
 #include <QtGui/QMessageBox>
 
@@ -39,8 +39,8 @@ void NewFileValueDialog::addValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() &&
-		static_cast<IdmEntityItem*>(index.internalPointer())->entity()->type() != Database::Path)
+	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList() &&
+		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
 		doAddValue(index);
 }
 
@@ -48,8 +48,7 @@ void NewFileValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() &&
-		static_cast<IBaseItem*>(index.internalPointer())->isValueItem() &&
-		static_cast<IdmEntityItem*>(index.internalPointer())->entity()->type() != Database::Path)
+	if (index.isValid() && !static_cast<IdmItem*>(index.internalPointer())->isList() &&
+		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
 		doRemoveValue(index);
 }

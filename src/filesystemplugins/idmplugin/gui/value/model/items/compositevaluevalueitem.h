@@ -10,8 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValueValueItem : public IdmItem
 {
 public:
-	CompositeValueValueItem(IdmEntityValue *value, bool owner, IdmItem *parent = 0);
-	virtual ~CompositeValueValueItem();
+	CompositeValueValueItem(IdmEntityValue *value, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -19,9 +18,16 @@ public:
 	IdmEntityValue *value() const { return m_value; }
 	IdmEntityValue *take() { IdmEntityValue *res = m_value; m_value = 0; return res; }
 
-private:
+protected:
 	IdmEntityValue *m_value;
-	bool m_owner;
+};
+
+
+class CompositeValueValueOwnerItem : public CompositeValueValueItem
+{
+public:
+	CompositeValueValueOwnerItem(IdmEntityValue *value, IdmItem *parent = 0);
+	virtual ~CompositeValueValueOwnerItem();
 };
 
 IDM_PLUGIN_NS_END

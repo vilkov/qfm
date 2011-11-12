@@ -36,7 +36,15 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 
 		case Database::Composite:
 		{
-//			EditCompositeValueDialog dialog(m_container, static_cast<QueryResultValueItem*>(index.internalPointer())->value(), parent);
+			EditCompositeValueDialog dialog(
+					m_container,
+					static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultValueItem*>(index.internalPointer())->value()),
+					parent);
+
+			if (dialog.exec() == EditCompositeValueDialog::Accepted)
+			{
+
+			}
 
 			return 0;
 		}

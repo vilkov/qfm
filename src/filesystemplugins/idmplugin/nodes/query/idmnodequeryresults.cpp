@@ -309,9 +309,7 @@ void IdmNodeQueryResults::doRename(INodeView *view, const QModelIndex &index, Qu
 	}
 	else
 		if (value->value()->entity()->type() == Database::Composite)
-		{
-
-		}
+			view->edit(index);
 		else
 			view->edit(index);
 }

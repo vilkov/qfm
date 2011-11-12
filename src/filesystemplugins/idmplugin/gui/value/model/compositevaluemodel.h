@@ -1,7 +1,6 @@
 #ifndef COMPOSITEVALUEMODEL_H_
 #define COMPOSITEVALUEMODEL_H_
 
-#include "items/compositevalueitem.h"
 #include "../../../model/idmmodel.h"
 #include "../../../storage/values/idmentityvalue.h"
 
@@ -24,6 +23,9 @@ public:
 	void add(const QModelIndex &index, IdmEntityValue *value);
 	void add(const QModelIndex &index, const ValueList &values);
 	void remove(const QModelIndex &index);
+
+private:
+	bool m_valueOwner;
 };
 
 IDM_PLUGIN_NS_END

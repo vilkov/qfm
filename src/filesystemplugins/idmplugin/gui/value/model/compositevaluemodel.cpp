@@ -6,14 +6,16 @@
 IDM_PLUGIN_NS_BEGIN
 
 CompositeValueModel::CompositeValueModel(IdmEntity *entity, QObject *parent) :
-	IdmModel(parent)
+	IdmModel(parent),
+	m_valueOwner(true)
 {
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
 		m_items.push_back(new CompositeValuePropertyItem(entity->at(i)));
 }
 
 CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent) :
-	IdmModel(parent)
+	IdmModel(parent),
+	m_valueOwner(false)
 {
 	ValueList list;
 	CompositeValuePropertyItem *item;
@@ -25,7 +27,7 @@ CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject
 
 		if (!list.isEmpty())
 			for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
-				item->add(new CompositeValueValueItem(list.at(i), item));
+				item->add(new CompositeValueValueItem(list.at(i), m_valueOwner, item));
 	}
 }
 
@@ -34,7 +36,7 @@ void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)
 	CompositeValuePropertyItem *item = static_cast<CompositeValuePropertyItem*>(index.internalPointer());
 
 	beginInsertRows(index, item->size(), item->size());
-	item->add(new CompositeValueValueItem(value, item));
+	item->add(new CompositeValueValueItem(value, m_valueOwner, item));
 	endInsertRows();
 }
 
@@ -45,7 +47,7 @@ void CompositeValueModel::add(const QModelIndex &index, const ValueList &values)
 	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
 
 	for (ValueList::size_type i = 0, size = values.size(); i < size; ++i)
-		item->add(new CompositeValueValueItem(values.at(i), item));
+		item->add(new CompositeValueValueItem(values.at(i), m_valueOwner, item));
 
 	endInsertRows();
 }

@@ -1,28 +1,27 @@
 #ifndef COMPOSITEVALUEVALUEITEM_H_
 #define COMPOSITEVALUEVALUEITEM_H_
 
-#include "compositevalueitem.h"
+#include "../../../../model/items/idmitem.h"
 #include "../../../../storage/values/idmentityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class CompositeValueValueItem : public CompositeValueItem
+class CompositeValueValueItem : public IdmItem
 {
 public:
-	CompositeValueValueItem(IdmEntityValue *value, IdmItem *parent = 0);
+	CompositeValueValueItem(IdmEntityValue *value, bool owner, IdmItem *parent = 0);
 	virtual ~CompositeValueValueItem();
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-protected:
-	friend class CompositeValueModel;
-	void add(CompositeValueItem *item) { m_items.push_back(item); }
-	void remove(size_type index) { m_items.removeAt(index); }
+	IdmEntityValue *value() const { return m_value; }
+	IdmEntityValue *take() { IdmEntityValue *res = m_value; m_value = 0; return res; }
 
 private:
 	IdmEntityValue *m_value;
+	bool m_owner;
 };
 
 IDM_PLUGIN_NS_END

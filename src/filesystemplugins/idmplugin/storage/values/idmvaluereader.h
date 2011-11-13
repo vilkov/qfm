@@ -22,6 +22,7 @@ public:
 	bool bof() const { return m_beforeFirst; }
 
 	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
+	static void takeValue(IdmEntityValue *value, IdmEntityValue *property);
 	static void updateValue(IdmEntityValue *value, const QVariant &newValue);
 	static void removeValue(IdmEntityValue *value, IdmEntityValue *property);
 	static IdmCompositeEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);

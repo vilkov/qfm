@@ -52,6 +52,16 @@ QByteArray PropertiesTable::addValue(const QString &tableName, Database::id_type
 			append(QChar(')')).toUtf8();
 }
 
+QByteArray PropertiesTable::removeValue(const QString &tableName, Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("delete from ").
+			append(tableName).
+			append(QString::fromLatin1(" where ENTITY_VALUE_ID = ")).
+			append(QString::number(entity)).
+			append(QString::fromLatin1(" and PROPERTY_VALUE_ID = ")).
+			append(QString::number(property)).toUtf8();
+}
+
 QString PropertiesTable::Incomplete::selectValues(Database::id_type property)
 {
 	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_").

@@ -22,14 +22,6 @@ protected:
 	IdmEntityValue *m_value;
 };
 
-
-class CompositeValueValueOwnerItem : public CompositeValueValueItem
-{
-public:
-	CompositeValueValueOwnerItem(IdmEntityValue *value, IdmItem *parent = 0);
-	virtual ~CompositeValueValueOwnerItem();
-};
-
 IDM_PLUGIN_NS_END
 
 #endif /* COMPOSITEVALUEVALUEITEM_H_ */

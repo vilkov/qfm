@@ -94,11 +94,11 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 
 void CompositeValueDialog::doRemoveValue(const QModelIndex &index)
 {
-	IdmEntity *entity = static_cast<CompositeValueValueItem*>(index.internalPointer())->value()->entity();
+	IdmEntityValue *value = static_cast<CompositeValueValueItem*>(index.internalPointer())->value();
 	QByteArray name = Database::savepoint("CompositeValueDialog::doRemoveValue::");
 
 	if (m_container.savepoint(name))
-		if (m_container.removeValue(entity, IdmStorage::IdsList() << static_cast<CompositeValueValueItem*>(index.internalPointer())->value()->id()))
+		if (m_container.removeValue(m_value, value))
 			if (m_container.release(name))
 				m_model.remove(index);
 			else

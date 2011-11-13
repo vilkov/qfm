@@ -10,12 +10,13 @@ IDM_PLUGIN_NS_BEGIN
 class IdmStorageUndoAddValue : public IdmStorageUndoCommand
 {
 public:
-	IdmStorageUndoAddValue(IdmEntityValue *value);
+	IdmStorageUndoAddValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue);
 
 	virtual void undo(IdmEntityRoot &root);
 
 private:
-	IdmEntityValue *m_value;
+	IdmCompositeEntityValue *m_entityValue;
+	IdmEntityValue *m_propertyValue;
 };
 
 IDM_PLUGIN_NS_END

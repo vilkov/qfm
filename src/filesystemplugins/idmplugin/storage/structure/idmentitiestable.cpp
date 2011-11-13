@@ -67,6 +67,13 @@ QByteArray EntitiesTable::updateValue(Database::id_type entity, Database::Entity
 			arg(QString::number(id)).toUtf8();
 }
 
+QByteArray EntitiesTable::removeValue(Database::id_type entity, Database::id_type value)
+{
+	return QString::fromLatin1("delete from ENTITY_%1 where ID = %2").
+			arg(QString::number(entity)).
+			arg(QString::number(value)).toUtf8();
+}
+
 QByteArray EntitiesTable::removeValues(Database::id_type entity, const Database::IdsList &ids)
 {
 	return QString::fromLatin1("delete from ENTITY_%1 where ID in (%2)").

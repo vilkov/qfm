@@ -7,8 +7,8 @@
 #include "undo/concrete/idmstorageundoremoveentity.h"
 #include "undo/concrete/idmstorageundoremoveproperty.h"
 #include "undo/concrete/idmstorageundoupdatevalue.h"
-#include "undo/concrete/idmstorageundoaddvalueproperty.h"
 #include "undo/concrete/idmstorageundoaddvalue.h"
+#include "undo/concrete/idmstorageundoremovevalue.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -363,7 +363,7 @@ bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
-			m_undo.last().push_back(new IdmStorageUndoAddValueProperty(entityValue, propertyValue));
+			m_undo.last().push_back(new IdmStorageUndoAddValue(entityValue, propertyValue));
 			IdmValueReader::addValue(entityValue, propertyValue);
 
 			return true;
@@ -437,6 +437,30 @@ bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const
 	return false;
 }
 
+bool IdmStorage::removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
+{
+	char *errorMsg = 0;
+	sqlite3_stmt *statement;
+	QString table =
+			QString::fromLatin1("ENTITY_").append(QString::number(entityValue->entity()->id())).
+			QString::fromLatin1("_PROPERTY_").append(QString::number(propertyValue->entity()->id()));
+	QByteArray sqlQuery = PropertiesTable::removeValue(table, entityValue->id(), propertyValue->id());
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	{
+		m_undo.last().push_back(new IdmStorageUndoRemoveValue(entityValue, propertyValue));
+		IdmValueReader::takeValue(entityValue, propertyValue);
+
+		return true;
+	}
+	else
+		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
+
+	return false;
+}
+
 IdmStorage::id_type IdmStorage::loadId(const QString &tableName) const
 {
 	sqlite3_stmt *statement;
@@ -468,6 +492,21 @@ bool IdmStorage::isThereCycles(IdmEntity *entity, IdmEntity *property) const
 		else
 			if (isThereCycles(parents.at(i), property))
 				return true;
+
+	return false;
+}
+
+bool IdmStorage::removeEntityValue(IdmEntity *entity, id_type id) const
+{
+	char *errorMsg = 0;
+	QByteArray sqlQuery = EntitiesTable::removeValue(entity->id(), id);
+
+	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		return true;
+	else
+		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
 
 	return false;
 }

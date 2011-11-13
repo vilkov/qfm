@@ -80,6 +80,13 @@ public:
 		m_value.clear();
 	}
 
+	void take(IdmEntityValue *value)
+	{
+		List &list = m_items[value->entity()];
+		list.removeAt(list.indexOf(value));
+		m_value.clear();
+	}
+
 	void remove(IdmEntityValue *value)
 	{
 		List &list = m_items[value->entity()];

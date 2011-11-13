@@ -4,13 +4,14 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorageUndoAddValue::IdmStorageUndoAddValue(IdmEntityValue *value) :
-	m_value(value)
+IdmStorageUndoAddValue::IdmStorageUndoAddValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) :
+	m_entityValue(entityValue),
+	m_propertyValue(propertyValue)
 {}
 
 void IdmStorageUndoAddValue::undo(IdmEntityRoot &root)
 {
-	delete m_value;
+	IdmValueReader::removeValue(m_entityValue, m_propertyValue);
 }
 
 IDM_PLUGIN_NS_END

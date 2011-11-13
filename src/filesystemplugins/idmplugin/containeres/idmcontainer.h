@@ -65,6 +65,7 @@ public:
 	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
 	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
+	bool removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const { return m_data->storage.removeValue(entityValue, propertyValue); }
 
 private:
 	struct Data : public QSharedData

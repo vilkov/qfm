@@ -16,14 +16,4 @@ QVariant CompositeValueValueItem::data(qint32 column, qint32 role) const
 		return QVariant();
 }
 
-
-CompositeValueValueOwnerItem::CompositeValueValueOwnerItem(IdmEntityValue *value, IdmItem *parent) :
-	CompositeValueValueItem(value, parent)
-{}
-
-CompositeValueValueOwnerItem::~CompositeValueValueOwnerItem()
-{
-	delete m_value;
-}
-
 IDM_PLUGIN_NS_END

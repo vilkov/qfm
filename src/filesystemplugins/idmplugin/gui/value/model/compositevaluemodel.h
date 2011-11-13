@@ -22,9 +22,6 @@ public:
 	void add(const QModelIndex &index, IdmEntityValue *value);
 	void add(const QModelIndex &index, const ValueList &values);
 	void remove(const QModelIndex &index);
-
-private:
-	IdmCompositeEntityValue *m_value;
 };
 
 IDM_PLUGIN_NS_END

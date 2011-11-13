@@ -65,10 +65,12 @@ public:
 	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const;
 	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const;
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
+	bool removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const;
 
 private:
 	id_type loadId(const QString &tableName) const;
 	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
+	bool removeEntityValue(IdmEntity *entity, id_type id) const;
 	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;
 	bool removeOverlappingIds(IdmEntity *entity, IdmEntity *property, IdsSet &ids) const;
 	bool cleanupParentsValues(IdmEntity *entity) const;

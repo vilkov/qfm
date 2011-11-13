@@ -36,15 +36,24 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 
 		case Database::Composite:
 		{
-			EditCompositeValueDialog dialog(
-					m_container,
-					static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultValueItem*>(index.internalPointer())->value()),
-					parent);
-
-			if (dialog.exec() == EditCompositeValueDialog::Accepted)
+			if (m_container.transaction())
 			{
+				EditCompositeValueDialog dialog(
+						m_container,
+						static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultValueItem*>(index.internalPointer())->value()),
+						parent);
 
+				if (dialog.exec() != EditCompositeValueDialog::Accepted)
+					m_container.rollback();
+				else
+					if (!m_container.commit())
+					{
+						m_container.rollback();
+						QMessageBox::critical(parent, tr("Error"), m_container.lastError());
+					}
 			}
+			else
+				QMessageBox::critical(parent, tr("Error"), m_container.lastError());
 
 			return 0;
 		}

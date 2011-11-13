@@ -9,9 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmStorageUndoCommand
 {
 public:
-	virtual ~IdmStorageUndoCommand()
-	{}
-
+	virtual ~IdmStorageUndoCommand();
 	virtual void undo(IdmEntityRoot &root) = 0;
 };
 

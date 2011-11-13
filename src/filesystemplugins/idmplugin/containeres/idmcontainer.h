@@ -60,9 +60,9 @@ public:
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_data->storage.removeProperty(entity, property); }
 
-	id_type addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
-	bool addValue(IdmEntity *entity, id_type value, const IdsMap &values) const { return m_data->storage.addValue(entity, value, values); }
-	id_type addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
+	IdmCompositeEntityValue *addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
+	bool addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const { return m_data->storage.addValue(entityValue, propertyValue); }
+	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
 	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
 

@@ -1,6 +1,7 @@
 #include "editablevaluelistdialog.h"
 #include "../../new/composite/newcompositevaluedialog.h"
 #include "../../../../storage/values/idmentityvalue.h"
+#include "../../../../../../tools/pointers/pscopedpointer.h"
 #include "../../../../../../tools/widgets/valuedialog/valuedialog.h"
 #include <QtGui/QMessageBox>
 
@@ -27,13 +28,12 @@ inline bool processAddValue(const QString &title, const QString &label, QWidget 
 
 	if (dialog.exec() == NewValueDialog::Accepted)
 	{
-		QVariant value = dialog.value();
-		IdmEntity::id_type id = container.addValue(entity, value);
+		PScopedPointer<IdmEntityValue> value(container.addValue(entity, dialog.value()));
 
-		if (id == IdmEntity::InvalidId)
-			return false;
+		if (value)
+			model.add(value.take());
 		else
-			model.add(id, value);
+			return false;
 	}
 
 	return true;
@@ -52,24 +52,25 @@ inline bool processAddValue<Database::Composite>(const QString &title, const QSt
 
 	if (container.savepoint(name))
 	{
-		NewCompositeValueDialog dialog(container, entity, parent);
+		PScopedPointer<IdmCompositeEntityValue> value(container.addValue(entity));
 
-		if (dialog.exec() == NewCompositeValueDialog::Accepted)
-			if (IdmEntityValue *value = dialog.value())
+		if (value)
+		{
+			NewCompositeValueDialog dialog(container, value.data(), parent);
+
+			if (dialog.exec() == NewCompositeValueDialog::Accepted)
 				if (container.release(name))
-					model.add(value);
+					model.add(value.take());
 				else
 				{
 					container.rollback(name);
 					return false;
 				}
 			else
-			{
 				container.rollback(name);
-				return false;
-			}
+		}
 		else
-			container.rollback(name);
+			return false;
 	}
 	else
 		return false;

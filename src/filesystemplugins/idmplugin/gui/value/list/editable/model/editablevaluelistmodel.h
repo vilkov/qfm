@@ -13,7 +13,6 @@ public:
 
 	void add(const List &list);
 	void add(IdmEntityValue *value);
-	void add(Database::id_type id, const QVariant &value);
 	void remove(const QModelIndex &index);
 };
 

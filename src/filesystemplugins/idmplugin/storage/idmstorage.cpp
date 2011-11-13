@@ -7,6 +7,8 @@
 #include "undo/concrete/idmstorageundoremoveentity.h"
 #include "undo/concrete/idmstorageundoremoveproperty.h"
 #include "undo/concrete/idmstorageundoupdatevalue.h"
+#include "undo/concrete/idmstorageundoaddvalueproperty.h"
+#include "undo/concrete/idmstorageundoaddvalue.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -323,7 +325,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 	return false;
 }
 
-IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity) const
+IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
 {
 	QString str;
 	id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
@@ -334,7 +336,7 @@ IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity) const
 		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), id);
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-			return id;
+			return IdmValueReader::createValue(entity, id);
 		else
 			setLastError(sqlQuery, errorMsg);
 
@@ -343,54 +345,41 @@ IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity) const
 	else
 		setLastError(failedToLoadId(str));
 
-	return InvalidId;
+	return 0;
 }
 
-bool IdmStorage::addValue(IdmEntity *entity, id_type value, const IdsMap &values) const
+bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
 {
-	bool ok;
-	id_type id;
-	QString str;
-	char *errorMsg = 0;
-	sqlite3_stmt *statement;
-	QString table = QString::fromLatin1("ENTITY_%1_PROPERTY_").arg(entity->id());
-	QByteArray sqlQuery;
+	QString table =
+			QString::fromLatin1("ENTITY_").append(QString::number(entityValue->entity()->id())).
+			QString::fromLatin1("_PROPERTY_").append(QString::number(propertyValue->entity()->id()));
+	id_type id = loadId(table);
 
-	for (IdsMap::const_iterator it = values.constBegin(), end = values.constEnd(); it != end; ++it)
-		if ((id = loadId(str = QString(table).append(QString::number(it.key()->id())))) == InvalidId)
+	if (id != IdmEntity::InvalidId)
+	{
+		char *errorMsg = 0;
+		sqlite3_stmt *statement;
+		QByteArray sqlQuery = PropertiesTable::addValue(table, id, entityValue->id(), propertyValue->id());
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 		{
-			setLastError(failedToLoadId(str));
-			return false;
+			m_undo.last().push_back(new IdmStorageUndoAddValueProperty(entityValue, propertyValue));
+			IdmValueReader::addValue(entityValue, propertyValue);
+
+			return true;
 		}
 		else
-		{
-			const IdsList &ids = it.value();
+			setLastError(sqlQuery, errorMsg);
 
-			ok = true;
-			str = PropertiesTable::Incomplete::addValue(entity->id(), it.key()->id(), value);
+		sqlite3_free(errorMsg);
+	}
+	else
+		setLastError(failedToLoadId(table));
 
-			for (IdsList::size_type i = 0, size = ids.size(); i < size; ++i, ++id)
-			{
-				sqlQuery = QString(str).arg(QString::number(id)).arg(QString::number(ids.at(i))).toUtf8();
-
-				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) != SQLITE_OK)
-				{
-					setLastError(sqlQuery, errorMsg);
-					ok = false;
-					break;
-				}
-			}
-
-			sqlite3_free(errorMsg);
-
-			if (!ok)
-				return false;
-		}
-
-	return true;
+	return false;
 }
 
-IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity, const QVariant &value) const
+IdmEntityValue *IdmStorage::addValue(IdmEntity *entity, const QVariant &value) const
 {
 	QString str;
 	id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
@@ -401,7 +390,7 @@ IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity, const QVariant &valu
 		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), entity->type(), id, value);
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-			return id;
+			return IdmValueReader::createValue(entity, id, value);
 		else
 			setLastError(sqlQuery, errorMsg);
 
@@ -410,7 +399,7 @@ IdmStorage::id_type IdmStorage::addValue(IdmEntity *entity, const QVariant &valu
 	else
 		setLastError(failedToLoadId(str));
 
-	return InvalidId;
+	return 0;
 }
 
 bool IdmStorage::updateValue(IdmEntityValue *value, const QVariant &newValue) const
@@ -420,8 +409,7 @@ bool IdmStorage::updateValue(IdmEntityValue *value, const QVariant &newValue) co
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{
-		PScopedPointer<IdmStorageUndoUpdateValue> command(new IdmStorageUndoUpdateValue(value));
-		m_undo.last().push_back(command.take());
+		m_undo.last().push_back(new IdmStorageUndoUpdateValue(value));
 		IdmValueReader::updateValue(value, newValue);
 
 		return true;

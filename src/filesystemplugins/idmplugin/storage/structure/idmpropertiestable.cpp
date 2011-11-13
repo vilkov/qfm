@@ -39,14 +39,17 @@ QByteArray PropertiesTable::remove(Database::id_type entity, Database::id_type p
 			arg(QString::number(property)).toUtf8();
 }
 
-QString PropertiesTable::Incomplete::addValue(Database::id_type entity, Database::id_type property, Database::id_type value)
+QByteArray PropertiesTable::addValue(const QString &tableName, Database::id_type id, Database::id_type entity, Database::id_type property)
 {
-	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2 (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) ").
-			arg(QString::number(entity)).
-			arg(QString::number(property)).
-			append(QString::fromLatin1("values (%1, ")).
-			append(QString::number(value)).
-			append(QString::fromLatin1(", %2)"));
+	return QString::fromLatin1("insert into ").
+			append(tableName).
+			append(QString::fromLatin1(" (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (")).
+			append(QString::number(id)).
+			append(QChar(',')).
+			append(QString::number(entity)).
+			append(QChar(',')).
+			append(QString::number(property)).
+			append(QChar(')')).toUtf8();
 }
 
 QString PropertiesTable::Incomplete::selectValues(Database::id_type property)

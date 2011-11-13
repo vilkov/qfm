@@ -14,7 +14,6 @@ public:
 	typedef Container::size_type          size_type;
 
 public:
-	CompositeValueModel(IdmEntity *entity, QObject *parent = 0);
 	CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent = 0);
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }

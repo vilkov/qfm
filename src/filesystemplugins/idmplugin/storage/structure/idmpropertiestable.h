@@ -22,10 +22,10 @@ struct PropertiesTable
 	static QByteArray select(Database::id_type entity);
 	static QByteArray insert(Database::id_type id, Database::id_type entity, Database::id_type property, const QString &name);
 	static QByteArray remove(Database::id_type entity, Database::id_type property);
+	static QByteArray addValue(const QString &tableName, Database::id_type id, Database::id_type entity, Database::id_type property);
 
 	struct Incomplete
 	{
-		static QString addValue(Database::id_type entity, Database::id_type property, Database::id_type value);
 		static QString selectValues(Database::id_type property);
 		static QString selectValues(Database::id_type entity, const Database::IdsList &ids);
 		static QString dropProperty(Database::id_type property);

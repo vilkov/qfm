@@ -6,14 +6,6 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueModel::CompositeValueModel(IdmEntity *entity, QObject *parent) :
-	IdmModel(parent),
-	m_value(0)
-{
-	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-		m_items.push_back(new CompositeValuePropertyItem(entity->at(i)));
-}
-
 CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent) :
 	IdmModel(parent),
 	m_value(value)

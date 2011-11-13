@@ -1,30 +1,30 @@
 #include "newfilevaluedialog.h"
 #include "../../model/items/compositevaluepropertyitem.h"
-#include "../../../../storage/values/idmvaluereader.h"
 #include <QtGui/QMessageBox>
 
 
-NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmEntity *entity, const QStringList &files, QWidget *parent) :
-	NewCompositeValueDialog(container, entity, parent)
+NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, const QStringList &files, QWidget *parent) :
+	NewCompositeValueDialog(container, value, parent)
 {
-    for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+	IdmEntity *entity = value->entity();
+
+	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
     	if (entity->at(i).entity->type() == Database::Path)
     	{
-    		QVariant value;
-    		IdmEntity::id_type id;
+    		IdmEntityValue *value;
     		CompositeValueModel::ValueList list;
     		QModelIndex index = model().index(i, 0);
     		entity = entity->at(i).entity;
 
 			for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)
-				if ((id = container.addValue(entity, value = files.at(i))) == IdmEntity::InvalidId)
+				if (value = container.addValue(entity, files.at(i)))
+					list.push_back(value);
+				else
 				{
 					qDeleteAll(list);
 					list.clear();
 					break;
 				}
-				else
-					list.push_back(IdmValueReader::createValue(entity, id, value));
 
 			if (list.isEmpty())
 				QMessageBox::critical(this, windowTitle(), container.lastError());

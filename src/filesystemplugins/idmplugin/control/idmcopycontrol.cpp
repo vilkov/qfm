@@ -16,20 +16,23 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 {
 	if (m_container.transaction())
 	{
-		NewFileValueDialog dialog(m_container, m_entity, toStringList(files), &Application::instance()->mainWindow());
+		PScopedPointer<IdmCompositeEntityValue> value(m_container.addValue(m_entity));
 
-		if (dialog.exec() == NewFileValueDialog::Accepted)
+		if (value)
 		{
-			PScopedPointer<IdmEntityValue> value(dialog.value());
+			NewFileValueDialog dialog(m_container, value.data(), toStringList(files), &Application::instance()->mainWindow());
 
-			if (!m_container.commit())
-			{
+			if (dialog.exec() != NewFileValueDialog::Accepted)
 				m_container.rollback();
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-			}
+			else
+				if (!m_container.commit())
+				{
+					m_container.rollback();
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				}
 		}
 		else
-			m_container.rollback();
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 	}
 	else
 		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

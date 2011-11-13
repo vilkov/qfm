@@ -351,8 +351,10 @@ IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
 bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
 {
 	QString table =
-			QString::fromLatin1("ENTITY_").append(QString::number(entityValue->entity()->id())).
-			QString::fromLatin1("_PROPERTY_").append(QString::number(propertyValue->entity()->id()));
+			QString::fromLatin1("ENTITY_").
+			append(QString::number(entityValue->entity()->id())).
+			append(QString::fromLatin1("_PROPERTY_")).
+			append(QString::number(propertyValue->entity()->id()));
 	id_type id = loadId(table);
 
 	if (id != IdmEntity::InvalidId)
@@ -442,8 +444,10 @@ bool IdmStorage::removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValu
 	char *errorMsg = 0;
 	sqlite3_stmt *statement;
 	QString table =
-			QString::fromLatin1("ENTITY_").append(QString::number(entityValue->entity()->id())).
-			QString::fromLatin1("_PROPERTY_").append(QString::number(propertyValue->entity()->id()));
+			QString::fromLatin1("ENTITY_").
+			append(QString::number(entityValue->entity()->id())).
+			append(QString::fromLatin1("_PROPERTY_")).
+			append(QString::number(propertyValue->entity()->id()));
 	QByteArray sqlQuery = PropertiesTable::removeValue(table, entityValue->id(), propertyValue->id());
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
@@ -476,8 +480,6 @@ IdmStorage::id_type IdmStorage::loadId(const QString &tableName) const
 
 		sqlite3_finalize(statement);
 	}
-	else
-		setLastError(sqlQuery);
 
 	return res;
 }

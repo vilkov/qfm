@@ -42,6 +42,7 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_W,         &DirectoryView::closeTab);
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_Down,      &DirectoryView::closeTab);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F2,        &DirectoryView::rename);
+	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F8,        &DirectoryView::createFile);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F7,        &DirectoryView::createDirectory);
 	m_eventHandler.registerShortcut(Qt::SHIFT,          Qt::Key_Delete,    &DirectoryView::remove);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
@@ -235,6 +236,11 @@ void DirectoryView::pathToClipboard()
 void DirectoryView::rename()
 {
 	m_node->rename(selectedIndexes(), this);
+}
+
+void DirectoryView::createFile()
+{
+	m_node->createFile(currentIndex(), this);
 }
 
 void DirectoryView::createDirectory()

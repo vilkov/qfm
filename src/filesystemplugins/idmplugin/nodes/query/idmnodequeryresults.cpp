@@ -172,7 +172,7 @@ void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
 
 void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
-
+	QMessageBox::information(&Application::instance()->mainWindow(), tr("New file"), tr("New file"));
 }
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)

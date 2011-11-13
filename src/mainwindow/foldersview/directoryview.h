@@ -78,6 +78,7 @@ public Q_SLOTS:
     void activated();
 	void pathToClipboard();
 	void rename();
+	void createFile();
 	void createDirectory();
 	void remove();
 	void calculateSize();

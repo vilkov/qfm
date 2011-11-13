@@ -1,94 +1,6 @@
 #include "editablevaluelistdialog.h"
-#include "../../new/composite/newcompositevaluedialog.h"
-#include "../../../../storage/values/idmentityvalue.h"
-#include "../../../../../../tools/pointers/pscopedpointer.h"
-#include "../../../../../../tools/widgets/valuedialog/valuedialog.h"
+#include "../../../tools/idmentityvaluecreationtools.h"
 #include <QtGui/QMessageBox>
-
-
-template <Database::EntityType EntityType>
-class NewValueDialog : public ValueDialog<typename EntityValueType<EntityType>::type>
-{
-public:
-	typedef typename EntityValueType<EntityType>::type value_type;
-	typedef ValueDialog<value_type>                    base_class;
-
-public:
-	NewValueDialog(const QString &title, const QString &label, QWidget *parent = 0) :
-		base_class(title, label, value_type(), parent)
-	{}
-};
-
-
-template <Database::EntityType EntityType>
-inline bool processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
-{
-	typedef NewValueDialog<EntityType> NewValueDialog;
-	NewValueDialog dialog(title, label, parent);
-
-	if (dialog.exec() == NewValueDialog::Accepted)
-	{
-		PScopedPointer<IdmEntityValue> value(container.addValue(entity, dialog.value()));
-
-		if (value)
-			model.add(value.take());
-		else
-			return false;
-	}
-
-	return true;
-}
-
-template <>
-inline bool processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
-{
-	return false;
-}
-
-template <>
-inline bool processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
-{
-	QByteArray name = Database::savepoint("processAddValue<Database::Composite>::");
-
-	if (container.savepoint(name))
-	{
-		PScopedPointer<IdmCompositeEntityValue> value(container.addValue(entity));
-
-		if (value)
-		{
-			NewCompositeValueDialog dialog(container, value.data(), parent);
-
-			if (dialog.exec() == NewCompositeValueDialog::Accepted)
-				if (container.release(name))
-					model.add(value.take());
-				else
-				{
-					container.rollback(name);
-					return false;
-				}
-			else
-				container.rollback(name);
-		}
-		else
-			return false;
-	}
-	else
-		return false;
-
-	return true;
-}
-
-template <>
-inline bool processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
-{
-	return false;
-}
-
-template <>
-inline bool processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, EditableValueListModel &model)
-{
-	return false;
-}
 
 
 EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
@@ -142,75 +54,19 @@ QModelIndex EditableValueListDialog::currentIndex() const
 
 void EditableValueListDialog::addValue()
 {
-	QString label = tr("Value");
-	QString title = tr("New value for \"%1\"").arg(m_entity->name());
+	bool declined = false;
 
-	switch (m_entity->type())
-	{
-		case Database::Int:
-		{
-			if (!processAddValue<Database::Int>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::String:
-		{
-			if (!processAddValue<Database::String>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Date:
-		{
-			if (!processAddValue<Database::Date>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Time:
-		{
-			if (!processAddValue<Database::Time>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::DateTime:
-		{
-			if (!processAddValue<Database::DateTime>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Memo:
-		{
-			if (!processAddValue<Database::Memo>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Composite:
-		{
-			if (!processAddValue<Database::Composite>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Rating:
-		{
-			if (!processAddValue<Database::Rating>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-		case Database::Path:
-		{
-			if (!processAddValue<Database::Path>(title, label, this, m_container, m_entity, m_model))
-				QMessageBox::critical(this, windowTitle(), m_container.lastError());
-
-			break;
-		}
-	}
+	if (IdmEntityValue *value = CreationTools::createValue(
+			tr("New value for \"%1\"").arg(m_entity->name()),
+			tr("Value"),
+			this,
+			m_container,
+			m_entity,
+			declined))
+		m_model.add(value);
+	else
+		if (!declined)
+			QMessageBox::critical(this, windowTitle(), m_container.lastError());
 }
 
 void EditableValueListDialog::removeValue()

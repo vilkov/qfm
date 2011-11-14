@@ -24,6 +24,16 @@ template <> inline QueryResultValueItem *value_cast(void *item, QueryResultValue
 		return static_cast<QueryResultValueItem*>(item);
 }
 
+template <> inline QueryResultListItem *value_cast(void *item, QueryResultListItem *to)
+{
+	Q_UNUSED(to);
+
+	if (static_cast<IdmItem*>(item)->isList())
+		return static_cast<QueryResultListItem*>(item);
+	else
+		return 0;
+}
+
 template <> inline QueryResultPathValueItem *value_cast(void *item, QueryResultPathValueItem *to)
 {
 	Q_UNUSED(to);
@@ -172,7 +182,11 @@ void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
 
 void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
-	QMessageBox::information(&Application::instance()->mainWindow(), tr("New file"), tr("New file"));
+	if (QueryResultListItem *item = value_cast(index.internalPointer(), item))
+		if (item->isProperty())
+		{
+			QMessageBox::information(&Application::instance()->mainWindow(), tr("New file"), tr("New file"));
+		}
 }
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)

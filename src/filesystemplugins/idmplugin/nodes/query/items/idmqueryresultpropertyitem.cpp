@@ -6,7 +6,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, IdmItem *parent) :
-	IdmListItem(parent),
+	QueryResultListItem(parent),
 	m_property(property)
 {
 	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
@@ -22,6 +22,21 @@ QVariant QueryResultPropertyItem::data(qint32 column, qint32 role) const
 		return m_property.name;
 	else
 		return QVariant();
+}
+
+bool QueryResultPropertyItem::isRoot()
+{
+	return false;
+}
+
+bool QueryResultPropertyItem::isProperty()
+{
+	return true;
+}
+
+bool QueryResultPropertyItem::isValue()
+{
+	return false;
 }
 
 IDM_PLUGIN_NS_END

@@ -5,7 +5,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryResultRootItem::QueryResultRootItem(IdmEntityValue *value, IdmItem *parent) :
-	IdmListItem(parent),
+	QueryResultListItem(parent),
 	m_value(value)
 {
 	if (m_value->entity()->type() == Database::Composite)
@@ -22,6 +22,21 @@ QVariant QueryResultRootItem::data(qint32 column, qint32 role) const
 		return m_value->value();
 	else
 		return QVariant();
+}
+
+bool QueryResultRootItem::isRoot()
+{
+	return true;
+}
+
+bool QueryResultRootItem::isProperty()
+{
+	return false;
+}
+
+bool QueryResultRootItem::isValue()
+{
+	return false;
 }
 
 IDM_PLUGIN_NS_END

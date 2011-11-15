@@ -18,6 +18,8 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 
+	const IdmEntity::Property &property() const { return m_property; }
+
 private:
 	const IdmEntity::Property &m_property;
 };

@@ -1,7 +1,9 @@
 #include "idmnodequeryresults.h"
 #include "items/idmqueryresultrootitem.h"
+#include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
 #include "functors/idmqueryresultsfunctor.h"
+#include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
@@ -30,6 +32,17 @@ template <> inline QueryResultListItem *value_cast(void *item, QueryResultListIt
 
 	if (static_cast<IdmItem*>(item)->isList())
 		return static_cast<QueryResultListItem*>(item);
+	else
+		return 0;
+}
+
+template <> inline QueryResultPropertyItem *value_cast(void *item, QueryResultPropertyItem *to)
+{
+	Q_UNUSED(to);
+
+	if (static_cast<IdmItem*>(item)->isList() &&
+		static_cast<QueryResultListItem*>(item)->isProperty())
+		return static_cast<QueryResultPropertyItem*>(item);
 	else
 		return 0;
 }
@@ -182,11 +195,31 @@ void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
 
 void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
-	if (QueryResultListItem *item = value_cast(index.internalPointer(), item))
-		if (item->isProperty())
+	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+		if (m_container.transaction())
 		{
-			QMessageBox::information(&Application::instance()->mainWindow(), tr("New file"), tr("New file"));
+			bool declined = false;
+
+			if (IdmEntityValue *value = CreationTools::createValue(
+					tr("New value for \"%1\"").arg(item->property().name),
+					tr("Value"),
+					&Application::instance()->mainWindow(),
+					m_container,
+					item->property().entity,
+					declined))
+			{
+
+			}
+			else
+			{
+				m_container.rollback();
+
+				if (!declined)
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			}
 		}
+		else
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)

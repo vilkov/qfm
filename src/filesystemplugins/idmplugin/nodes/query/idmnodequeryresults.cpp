@@ -200,16 +200,28 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		{
 			bool declined = false;
 
-			if (IdmEntityValue *value = CreationTools::createValue(
-					tr("New value for \"%1\"").arg(item->property().name),
-					tr("Value"),
+			if (IdmEntityValue *value = CreationTools::chooseOrCreateValue(
 					&Application::instance()->mainWindow(),
 					m_container,
 					item->property().entity,
 					declined))
-			{
-
-			}
+				if (m_container.addValue(item->rootValue(), value))
+					if (m_container.commit())
+					{
+						beginInsertRows(index, item->size(), item->size());
+						item->add(value);
+						endInsertRows();
+					}
+					else
+					{
+						m_container.rollback();
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+					}
+				else
+				{
+					m_container.rollback();
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				}
 			else
 			{
 				m_container.rollback();

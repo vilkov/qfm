@@ -19,6 +19,8 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 
+	IdmEntityValue *value() const { return m_value.data(); }
+
 private:
 	PScopedPointer<IdmEntityValue> m_value;
 };

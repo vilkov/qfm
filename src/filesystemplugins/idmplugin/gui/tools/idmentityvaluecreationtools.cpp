@@ -1,5 +1,6 @@
 #include "idmentityvaluecreationtools.h"
 #include "../value/new/composite/newcompositevaluedialog.h"
+#include "../value/list/editable/editablevaluelistdialog.h"
 #include "../../../../tools/pointers/pscopedpointer.h"
 #include "../../../../tools/widgets/valuedialog/valuedialog.h"
 
@@ -117,6 +118,18 @@ IdmEntityValue *CreationTools::createValue(const QString &title, const QString &
 			return processAddValue<Database::Path>(title, label, parent, container, entity, declined);
 
 	}
+}
+
+IdmEntityValue *CreationTools::chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+{
+	EditableValueListDialog dialog(container, Select(entity), parent);
+
+	if (dialog.exec() == EditableValueListDialog::Accepted)
+		return dialog.takeValue();
+	else
+		declined = true;
+
+	return 0;
 }
 
 IDM_PLUGIN_NS_END

@@ -39,4 +39,12 @@ bool QueryResultPropertyItem::isValue()
 	return false;
 }
 
+void QueryResultPropertyItem::add(IdmEntityValue *value)
+{
+	if (value->entity()->type() == Database::Path)
+		m_items.push_back(new QueryResultPathValueItem(value, this));
+	else
+		m_items.push_back(new QueryResultValueItem(value, this));
+}
+
 IDM_PLUGIN_NS_END

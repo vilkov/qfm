@@ -2,6 +2,7 @@
 #define IDMQUERYRESULTPROPERTYITEM_H_
 
 #include "idmqueryresultitem.h"
+#include "idmqueryresultrootitem.h"
 #include "../../../storage/values/idmentityvalue.h"
 
 
@@ -19,6 +20,9 @@ public:
 	virtual bool isValue();
 
 	const IdmEntity::Property &property() const { return m_property; }
+	IdmCompositeEntityValue *rootValue() const { return static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultRootItem*>(parent())->value()); }
+
+	void add(IdmEntityValue *value);
 
 private:
 	const IdmEntity::Property &m_property;

@@ -94,6 +94,16 @@ public:
 		m_value.clear();
 	}
 
+	IdmEntityValue *lastValue(IdmEntity *property)
+	{
+		List &list = m_items[property];
+
+		if (list.isEmpty())
+			return 0;
+		else
+			return list.last();
+	}
+
 private:
 	mutable QVariant m_value;
 };

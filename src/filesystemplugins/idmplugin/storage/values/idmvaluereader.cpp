@@ -65,7 +65,6 @@ IdmEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::i
 IdmEntityValue *IdmValueReader::doNext() const
 {
 	int column = 0;
-	IdmEntityValue *entity;
 
 	if (m_context.entity()->type() == Database::Composite)
 	{
@@ -76,8 +75,7 @@ IdmEntityValue *IdmValueReader::doNext() const
 			column = 2;
 
 			for (IdmEntity::size_type i = 0, size = m_context.entity()->size(); i < size; ++i)
-				if (entity = property(m_context.entity()->at(i).entity, column))
-					addValue(value.data(), entity);
+				property(value.data(), m_context.entity()->at(i).entity, column);
 
 			if (!m_context.next())
 			{
@@ -90,67 +88,74 @@ IdmEntityValue *IdmValueReader::doNext() const
 	}
 	else
 	{
-		entity = value(m_context.entity(), column);
+		IdmEntityValue *property = value(m_context.entity(), m_context.asInt(0), column);
 
 		if (!m_context.next())
 			m_afterLast = true;
 
-		return entity;
+		return property;
 	}
 }
 
-IdmEntityValue *IdmValueReader::value(IdmEntity *entity, int &column) const
+IdmEntityValue *IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, int column) const
 {
 	switch (entity->type())
 	{
 		case Database::Int:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Int>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Int>(m_context, column + 1));
 		case Database::String:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::String>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::String>(m_context, column + 1));
 		case Database::Date:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Date>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Date>(m_context, column + 1));
 		case Database::Time:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Time>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Time>(m_context, column + 1));
 		case Database::DateTime:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::DateTime>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::DateTime>(m_context, column + 1));
 		case Database::Memo:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Memo>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Memo>(m_context, column + 1));
 		case Database::Rating:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Rating>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Rating>(m_context, column + 1));
 		case Database::Path:
-			return createValue(entity, m_context.asInt(column), contextValue<Database::Path>(m_context, column + 1));
+			return createValue(entity, m_context.asInt(id), contextValue<Database::Path>(m_context, column + 1));
 	}
 }
 
-IdmEntityValue *IdmValueReader::property(IdmEntity *entity, int &column) const
+void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &column) const
 {
 	if (m_context.columnType(column) == QueryContext::Null)
 		column += 2;
 	else
 	{
-		IdmEntityValue *tmp;
+		IdmEntity::id_type id = m_context.asInt(column);
 
-		if (entity->type() == Database::Composite)
+		if (IdmEntityValue *lastValue = static_cast<IdmEntityCompositeValueImp*>(value)->lastValue(property))
+			if (lastValue->id() == id)
+			{
+				column += 2;
+
+				if (property->type() == Database::Composite)
+					for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
+						IdmValueReader::property(lastValue, property->at(i).entity, column);
+
+				return;
+			}
+
+		if (property->type() == Database::Composite)
 		{
-			PScopedPointer<IdmEntityValue> value(createValue(entity, m_context.asInt(column)));
-
+			PScopedPointer<IdmEntityValue> localValue(createValue(property, id));
 			column += 2;
-			for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-				if (tmp = property(entity->at(i).entity, column))
-					addValue(value.data(), tmp);
 
-			return value.take();
+			for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
+				IdmValueReader::property(localValue.data(), property->at(i).entity, column);
+
+			addValue(value, localValue.take());
 		}
 		else
 		{
-			tmp = value(entity, column);
+			addValue(value, IdmValueReader::value(property, id, column));
 			column += 2;
-
-			return tmp;
 		}
 	}
-
-	return 0;
 }
 
 IDM_PLUGIN_NS_END

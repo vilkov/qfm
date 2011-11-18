@@ -30,8 +30,8 @@ public:
 
 private:
 	IdmEntityValue *doNext() const;
-	IdmEntityValue *value(IdmEntity *entity, int &column) const;
-	IdmEntityValue *property(IdmEntity *entity, int &column) const;
+	IdmEntityValue *value(IdmEntity *entity, IdmEntity::id_type id, int column) const;
+	void property(IdmEntityValue *value, IdmEntity *property, int &column) const;
 
 private:
 	QString m_lastError;

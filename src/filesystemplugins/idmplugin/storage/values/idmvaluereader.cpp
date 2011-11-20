@@ -72,7 +72,7 @@ IdmEntityValue *IdmValueReader::doNext() const
 
 		for (IdmEntityValue::id_type id = value->id(), nextId = id; id == nextId; nextId = m_context.asInt(0))
 		{
-			column = 2;
+			column = 1;
 
 			for (IdmEntity::size_type i = 0, size = m_context.entity()->size(); i < size; ++i)
 				property(value.data(), m_context.entity()->at(i).entity, column);
@@ -123,7 +123,7 @@ IdmEntityValue *IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, 
 void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &column) const
 {
 	if (m_context.columnType(column) == QueryContext::Null)
-		column += 2;
+		skip(property, column);
 	else
 	{
 		IdmEntity::id_type id = m_context.asInt(column);
@@ -131,11 +131,15 @@ void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &c
 		if (IdmEntityValue *lastValue = static_cast<IdmEntityCompositeValueImp*>(value)->lastValue(property))
 			if (lastValue->id() == id)
 			{
-				column += 2;
-
 				if (property->type() == Database::Composite)
+				{
+					column += 1;
+
 					for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
 						IdmValueReader::property(lastValue, property->at(i).entity, column);
+				}
+				else
+					column += 2;
 
 				return;
 			}
@@ -143,7 +147,7 @@ void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &c
 		if (property->type() == Database::Composite)
 		{
 			PScopedPointer<IdmEntityValue> localValue(createValue(property, id));
-			column += 2;
+			column += 1;
 
 			for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
 				IdmValueReader::property(localValue.data(), property->at(i).entity, column);
@@ -156,6 +160,19 @@ void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &c
 			column += 2;
 		}
 	}
+}
+
+void IdmValueReader::skip(IdmEntity *property, int &column) const
+{
+	if (property->type() == Database::Composite)
+	{
+		column += 1;
+
+		for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
+			skip(property->at(i).entity, column);
+	}
+	else
+		column += 2;
 }
 
 IDM_PLUGIN_NS_END

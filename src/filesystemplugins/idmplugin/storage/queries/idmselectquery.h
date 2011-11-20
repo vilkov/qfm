@@ -20,12 +20,12 @@ private:
 	{
 		Format();
 
-		QString select(Database::id_type entity) const;
-		QString select(Database::id_type entity, QString &indexField) const;
+		QString select(IdmEntity *entity) const;
 		QString join(Database::id_type entity, Database::id_type property) const;
 		QString complete(Database::id_type entity, QString &selectedFields, QString &joinedFields) const;
 
 		QString format;
+		QString format2;
 		QString idField;
 		QString valueField;
 	};

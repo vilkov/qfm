@@ -20,13 +20,21 @@ QByteArray EntitiesTable::select()
 
 QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat)
 {
-	return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
-							   "create table ENTITY_%1 (ID int primary key, VALUE %5)").
-							   arg(QString::number(id)).
-							   arg(QString::number(type)).
-							   arg(name).
-							   arg(shortFormat).
-							   arg(Database::typeToString(type)).toUtf8();
+	if (type == Database::Composite)
+		return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
+								   "create table ENTITY_%1 (ID int primary key)").
+								   arg(QString::number(id)).
+								   arg(QString::number(type)).
+								   arg(name).
+								   arg(shortFormat).toUtf8();
+	else
+		return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
+								   "create table ENTITY_%1 (ID int primary key, VALUE %5)").
+								   arg(QString::number(id)).
+								   arg(QString::number(type)).
+								   arg(name).
+								   arg(shortFormat).
+								   arg(Database::typeToString(type)).toUtf8();
 }
 
 QByteArray EntitiesTable::remove(Database::id_type entity)
@@ -46,7 +54,7 @@ QByteArray EntitiesTable::selectValues(Database::id_type entity, Database::id_ty
 
 QByteArray EntitiesTable::addValue(Database::id_type entity, Database::id_type id)
 {
-	return QString::fromLatin1("insert into ENTITY_%1 (ID, VALUE) values (%2, %2)").
+	return QString::fromLatin1("insert into ENTITY_%1 (ID) values (%2)").
 			arg(QString::number(entity)).
 			arg(QString::number(id)).toUtf8();
 }

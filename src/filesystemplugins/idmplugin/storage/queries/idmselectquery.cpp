@@ -16,7 +16,7 @@ QByteArray Select::compile() const
 {
 	Format format;
 	QString joinedFields;
-	QString selectedFields = format.select(entity()->id());
+	QString selectedFields = format.select(entity());
 
 	for (IdmEntity::size_type i = 0, size = entity()->size(); i < size; ++i)
 		join(format, selectedFields, joinedFields, entity(), entity()->at(i).entity);
@@ -26,22 +26,20 @@ QByteArray Select::compile() const
 
 Select::Format::Format() :
 	format(QString::fromLatin1("%1, %2, ")),
+	format2(QString::fromLatin1("%1, ")),
 	idField(QString::fromLatin1("ENTITY_%1.ID")),
 	valueField(QString::fromLatin1("ENTITY_%1.VALUE"))
 {}
 
-QString Select::Format::select(Database::id_type entity) const
+QString Select::Format::select(IdmEntity *entity) const
 {
-	return QString(format).
-			arg(QString(idField).arg(entity)).
-			arg(QString(valueField).arg(entity));
-}
-
-QString Select::Format::select(Database::id_type entity, QString &indexField) const
-{
-	return QString(format).
-			arg(QString(idField).arg(entity)).
-			arg(indexField = QString(valueField).arg(entity));
+	if (entity->type() == Database::Composite)
+		return QString(format2).
+				arg(QString(idField).arg(entity->id()));
+	else
+		return QString(format).
+				arg(QString(idField).arg(entity->id())).
+				arg(QString(valueField).arg(entity->id()));
 }
 
 QString Select::Format::join(Database::id_type entity, Database::id_type property) const
@@ -73,7 +71,7 @@ QString Select::Format::complete(Database::id_type entity, QString &selectedFiel
 
 void Select::join(const Format &format, QString &selectedFields, QString &joinedFields, IdmEntity *entity, IdmEntity *property) const
 {
-	selectedFields += format.select(property->id());
+	selectedFields += format.select(property);
 	joinedFields += format.join(entity->id(), property->id());
 
 	for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)

@@ -23,6 +23,7 @@ public:
 	IdmCompositeEntityValue *rootValue() const { return static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultRootItem*>(parent())->value()); }
 
 	void add(IdmEntityValue *value);
+	void remove(size_type index);
 
 private:
 	const IdmEntity::Property &m_property;

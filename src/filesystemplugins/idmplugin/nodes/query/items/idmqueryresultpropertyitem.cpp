@@ -47,4 +47,9 @@ void QueryResultPropertyItem::add(IdmEntityValue *value)
 		m_items.push_back(new QueryResultValueItem(value, this));
 }
 
+void QueryResultPropertyItem::remove(size_type index)
+{
+	delete m_items.takeAt(index);
+}
+
 IDM_PLUGIN_NS_END

@@ -7,6 +7,7 @@
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
+#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -199,17 +200,19 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		if (m_container.transaction())
 		{
 			bool declined = false;
-
-			if (IdmEntityValue *value = CreationTools::chooseOrCreateValue(
+			PScopedPointer<IdmEntityValue> value(
+					CreationTools::chooseOrCreateValue(
 					&Application::instance()->mainWindow(),
 					m_container,
 					item->property().entity,
-					declined))
-				if (m_container.addValue(item->rootValue(), value))
+					declined));
+
+			if (value)
+				if (m_container.addValue(item->rootValue(), value.data()))
 					if (m_container.commit())
 					{
 						beginInsertRows(index, item->size(), item->size());
-						item->add(value);
+						item->add(value.take());
 						endInsertRows();
 					}
 					else
@@ -246,7 +249,38 @@ void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 {
+	QModelIndex index = list.at(0);
 
+	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
+		if (m_container.transaction())
+		{
+			QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(item->parent());
+
+			if (m_container.removeValue(property->rootValue(), item->value()))
+			{
+				beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
+
+				if (m_container.commit())
+					property->remove(index.row());
+				else
+				{
+					m_container.rollback();
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				}
+
+				endRemoveRows();
+			}
+			else
+			{
+				m_container.rollback();
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			}
+		}
+		else
+		{
+			m_container.rollback();
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		}
 }
 
 void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)

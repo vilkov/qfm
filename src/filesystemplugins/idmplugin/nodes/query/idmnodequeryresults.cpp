@@ -401,10 +401,7 @@ void IdmNodeQueryResults::doRename(INodeView *view, const QModelIndex &index, Qu
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 	}
 	else
-		if (value->value()->entity()->type() == Database::Composite)
-			view->edit(index);
-		else
-			view->edit(index);
+		view->edit(index);
 }
 
 IDM_PLUGIN_NS_END

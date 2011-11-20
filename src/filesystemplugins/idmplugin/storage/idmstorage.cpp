@@ -350,33 +350,41 @@ IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
 
 bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
 {
-	QString table =
-			QString::fromLatin1("ENTITY_").
-			append(QString::number(entityValue->entity()->id())).
-			append(QString::fromLatin1("_PROPERTY_")).
-			append(QString::number(propertyValue->entity()->id()));
-	id_type id = loadId(table);
-
-	if (id != IdmEntity::InvalidId)
+	if (entityValue->contains(propertyValue))
+		setLastError(tr("Entity \"%1\" [\"%2\"] already contains this (\"%3\") value.").
+				arg(entityValue->entity()->name()).
+				arg(entityValue->value().toString()).
+				arg(propertyValue->value().toString()));
+	else
 	{
-		char *errorMsg = 0;
-		sqlite3_stmt *statement;
-		QByteArray sqlQuery = PropertiesTable::addValue(table, id, entityValue->id(), propertyValue->id());
+		QString table =
+				QString::fromLatin1("ENTITY_").
+				append(QString::number(entityValue->entity()->id())).
+				append(QString::fromLatin1("_PROPERTY_")).
+				append(QString::number(propertyValue->entity()->id()));
+		id_type id = loadId(table);
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		if (id != IdmEntity::InvalidId)
 		{
-			m_undo.last().push_back(new IdmStorageUndoAddValue(entityValue, propertyValue));
-			IdmValueReader::addValue(entityValue, propertyValue);
+			char *errorMsg = 0;
+			sqlite3_stmt *statement;
+			QByteArray sqlQuery = PropertiesTable::addValue(table, id, entityValue->id(), propertyValue->id());
 
-			return true;
+			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+			{
+				m_undo.last().push_back(new IdmStorageUndoAddValue(entityValue, propertyValue));
+				IdmValueReader::addValue(entityValue, propertyValue);
+
+				return true;
+			}
+			else
+				setLastError(sqlQuery, errorMsg);
+
+			sqlite3_free(errorMsg);
 		}
 		else
-			setLastError(sqlQuery, errorMsg);
-
-		sqlite3_free(errorMsg);
+			setLastError(failedToLoadId(table));
 	}
-	else
-		setLastError(failedToLoadId(table));
 
 	return false;
 }

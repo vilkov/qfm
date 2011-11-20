@@ -41,6 +41,7 @@ public:
 	virtual ~IdmCompositeEntityValue();
 
 	List values(IdmEntity *property) const { return m_items.value(property); }
+	bool contains(IdmEntityValue *value) const;
 
 protected:
 	Map m_items;

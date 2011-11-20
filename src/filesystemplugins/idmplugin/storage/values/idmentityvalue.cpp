@@ -21,4 +21,15 @@ IdmCompositeEntityValue::~IdmCompositeEntityValue()
 		qDeleteAll(it.value());
 }
 
+bool IdmCompositeEntityValue::contains(IdmEntityValue *value) const
+{
+	const List list = values(value->entity());
+
+	for (List::size_type i = 0, size = list.size(); i < size; ++i)
+		if (list.at(i)->id() == value->id())
+			return true;
+
+	return false;
+}
+
 IDM_PLUGIN_NS_END

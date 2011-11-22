@@ -14,10 +14,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-template <typename T> inline T *value_cast(void *item, T *to)
-{
-	return 0;
-}
+template <typename T> inline T *value_cast(void *item, T *to);
 
 template <> inline QueryResultValueItem *value_cast(void *item, QueryResultValueItem *to)
 {

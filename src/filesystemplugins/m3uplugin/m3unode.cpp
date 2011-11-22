@@ -154,6 +154,16 @@ void M3uNode::refresh()
 	setUpdating(false);
 }
 
+IFileInfo *M3uNode::info(const QModelIndex &idx) const
+{
+	return 0;
+}
+
+ICopyControl *M3uNode::createControl(INodeView *view) const
+{
+	return 0;
+}
+
 void M3uNode::menuAction(QAction *action, INodeView *view)
 {
 
@@ -194,12 +204,12 @@ void M3uNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 
 }
 
-void M3uNode::copy(const QModelIndexList &list, INode *destination, INodeView *view)
+void M3uNode::copy(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void M3uNode::move(const QModelIndexList &list, INode *destination, INodeView *view)
+void M3uNode::move(const INodeView *source, INodeView *destination)
 {
 
 }

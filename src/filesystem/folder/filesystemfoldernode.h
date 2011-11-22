@@ -23,10 +23,8 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-	/* INode */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
-
 	/* INode::IFileOperations */
+	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);
@@ -35,8 +33,8 @@ public:
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
 	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view);
-	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view);
+	virtual void copy(const INodeView *source, INodeView *destination);
+	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:
 	/* Node */
@@ -119,7 +117,7 @@ protected:
 private:
 	void scanForRemove(const ProcessedList &entries);
 	void scanForSize(const ProcessedList &entries);
-	void scanForCopy(const ProcessedList &entries, INode *destination, bool move);
+	void scanForCopy(const ProcessedList &entries, INodeView *destination, bool move);
 
 private:
 	QModelIndex index(int column, FileSystemBaseItem *item) const;

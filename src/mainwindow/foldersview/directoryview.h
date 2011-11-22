@@ -55,6 +55,9 @@ public:
 
 public:
 	/* INodeView */
+	virtual FileSystem::INode *node() const;
+	virtual QModelIndex currentIndex() const;
+	virtual QModelIndexList selectedIndexes() const;
 	virtual void edit(const QModelIndex &index);
 	virtual void select(const QModelIndex &index);
 	virtual void setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate, const FileSystem::INodeView::MenuActionList &menuActions);
@@ -99,10 +102,6 @@ private:
     friend class FileSystemModelBase;
     void refreshOther();
     QList<qint32> geometry() const;
-
-private:
-	QModelIndex currentIndex() const;
-	QModelIndexList selectedIndexes() const;
 
 private:
 	typedef MouseReleaseEventHandler<

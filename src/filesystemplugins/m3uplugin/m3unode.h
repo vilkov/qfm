@@ -26,10 +26,6 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	/* INode */
-	virtual IFileInfo *info(const QModelIndex &idx) const { return 0; }
-	virtual ICopyControl *createControl() const { return 0; }
-
 	/* INode::IFileInfo */
 	virtual bool isDir() const { return false; }
 	virtual bool isFile() const { return false; }
@@ -42,6 +38,8 @@ public:
 	virtual void refresh();
 
 	/* INode::IFileOperations */
+	virtual IFileInfo *info(const QModelIndex &idx) const;
+	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);
@@ -50,8 +48,8 @@ public:
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
 	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view);
-	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view);
+	virtual void copy(const INodeView *source, INodeView *destination);
+	virtual void move(const INodeView *source, INodeView *destination);
 
 	/* Node */
 	virtual void switchViewsTo(Node *node, const QModelIndex &selected);

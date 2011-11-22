@@ -25,9 +25,6 @@ public:
 	/* FileSystemModel */
     virtual bool event(QEvent *event);
 
-    /* INode */
-	virtual ICopyControl *createControl() const;
-
 	/* INode::IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
@@ -38,6 +35,9 @@ public:
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 	virtual void refresh();
+
+    /* INode::IFileOperations */
+	virtual ICopyControl *createControl(INodeView *view) const;
 
 protected:
 	/* Tasks events */

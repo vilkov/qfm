@@ -21,6 +21,10 @@ public:
 public:
 	virtual ~INodeView() {}
 
+	virtual INode *node() const = 0;
+	virtual QModelIndex currentIndex() const = 0;
+	virtual QModelIndexList selectedIndexes() const = 0;
+
 	virtual void edit(const QModelIndex &index) = 0;
 	virtual void select(const QModelIndex &index) = 0;
 	virtual void setNode(INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0, const MenuActionList &menuActions = MenuActionList()) = 0;

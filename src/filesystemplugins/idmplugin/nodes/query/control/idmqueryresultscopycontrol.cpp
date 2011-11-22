@@ -1,15 +1,16 @@
 #include "idmqueryresultscopycontrol.h"
-#include "../gui/value/new/file/newfilevaluedialog.h"
-#include "../../../application.h"
+#include "../../../gui/value/new/file/newfilevaluedialog.h"
+#include "../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info) :
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmEntity *entity, const IdmEntity::Property &property, const Info &info) :
 	CopyInfo(info),
 	m_container(container),
-	m_entity(entity)
+	m_entity(entity),
+	m_property(property)
 {}
 
 bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)

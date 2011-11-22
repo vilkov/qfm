@@ -43,7 +43,7 @@ IFileInfo *IdmNodeBase::info(const QModelIndex &idx) const
 	return 0;
 }
 
-ICopyControl *IdmNodeBase::createControl() const
+ICopyControl *IdmNodeBase::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
 		return new IdmCopyControl(m_container, entity, absoluteFilePath());
@@ -179,12 +179,12 @@ void IdmNodeBase::pathToClipboard(const QModelIndexList &list, INodeView *view)
 
 }
 
-void IdmNodeBase::copy(const QModelIndexList &list, INode *destination, INodeView *view)
+void IdmNodeBase::copy(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void IdmNodeBase::move(const QModelIndexList &list, INode *destination, INodeView *view)
+void IdmNodeBase::move(const INodeView *source, INodeView *destination)
 {
 
 }
@@ -192,6 +192,21 @@ void IdmNodeBase::move(const QModelIndexList &list, INode *destination, INodeVie
 QModelIndex IdmNodeBase::rootIndex() const
 {
 	return QModelIndex();
+}
+
+QAbstractItemModel *IdmNodeBase::proxyModel() const
+{
+	return &((IdmNodeBase *)this)->m_proxy;
+}
+
+QAbstractItemDelegate *IdmNodeBase::itemDelegate() const
+{
+	return &((IdmNodeBase *)this)->m_delegate;
+}
+
+const INodeView::MenuActionList &IdmNodeBase::menuActions() const
+{
+	return m_container.menuActions();
 }
 
 Node *IdmNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

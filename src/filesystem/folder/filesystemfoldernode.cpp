@@ -131,19 +131,19 @@ void FolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 	Application::instance()->clipboard()->setText(pathList.join(QChar('\r')));
 }
 
-void FolderNode::copy(const QModelIndexList &list, INode *destination, INodeView *view)
+void FolderNode::copy(const INodeView *source, INodeView *destination)
 {
 	ProcessedList entries;
-	processIndexList(list, entries);
+	processIndexList(source->selectedIndexes(), entries);
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, false);
 }
 
-void FolderNode::move(const QModelIndexList &list, INode *destination, INodeView *view)
+void FolderNode::move(const INodeView *source, INodeView *destination)
 {
 	ProcessedList entries;
-	processIndexList(list, entries);
+	processIndexList(source->selectedIndexes(), entries);
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, true);
@@ -668,9 +668,9 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 	}
 }
 
-void FolderNode::scanForCopy(const ProcessedList &entries, INode *destination, bool move)
+void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destination, bool move)
 {
-	PScopedPointer<ICopyControl> control(destination->createControl());
+	PScopedPointer<ICopyControl> control(destination->node()->createControl(destination));
 
 	if (control)
 	{

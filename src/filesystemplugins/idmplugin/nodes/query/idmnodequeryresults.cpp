@@ -3,8 +3,10 @@
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
 #include "functors/idmqueryresultsfunctor.h"
+#include "control/idmqueryresultscopycontrol.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
+#include "../../../../tools/strings/hierarchy/stringshierarchytree.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
 #include <QtCore/QDebug>
@@ -184,8 +186,16 @@ IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 		return 0;
 }
 
-ICopyControl *IdmNodeQueryResults::createControl() const
+ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 {
+	if (QueryResultPropertyItem *item = value_cast(view->currentIndex().internalPointer(), item))
+		if (item->property().entity->type() == Database::Path)
+		{
+			Tools::Strings::Hierarchy::Tree tree('/');
+
+//			return new IdmQueryResultsCopyControl(m_container, item->rootValue()->entity(), item->property());
+		}
+
 	return 0;
 }
 
@@ -298,12 +308,12 @@ void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list, INodeView
 
 }
 
-void IdmNodeQueryResults::copy(const QModelIndexList &list, INode *destination, INodeView *view)
+void IdmNodeQueryResults::copy(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void IdmNodeQueryResults::move(const QModelIndexList &list, INode *destination, INodeView *view)
+void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
 {
 
 }

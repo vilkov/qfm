@@ -85,6 +85,21 @@ void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteF
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
+FileSystem::INode *DirectoryView::node() const
+{
+	return m_node;
+}
+
+QModelIndex DirectoryView::currentIndex() const
+{
+	return m_view.selectionModel()->currentIndex();
+}
+
+QModelIndexList DirectoryView::selectedIndexes() const
+{
+	return m_view.selectionModel()->selectedIndexes();
+}
+
 void DirectoryView::edit(const QModelIndex &index)
 {
 	m_view.edit(index);
@@ -260,12 +275,12 @@ void DirectoryView::calculateSize()
 
 void DirectoryView::copy()
 {
-	m_node->copy(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node, this);
+	m_node->copy(this, static_cast<DirectoryView*>(m_parent->other().currentWidget()));
 }
 
 void DirectoryView::move()
 {
-	m_node->move(selectedIndexes(), static_cast<DirectoryView*>(m_parent->other().currentWidget())->m_node, this);
+	m_node->move(this, static_cast<DirectoryView*>(m_parent->other().currentWidget()));
 }
 
 void DirectoryView::cancel()
@@ -320,16 +335,6 @@ QList<qint32> DirectoryView::geometry() const
 		res.push_back(m_view.columnWidth(i));
 
 	return res;
-}
-
-QModelIndex DirectoryView::currentIndex() const
-{
-	return m_view.selectionModel()->currentIndex();
-}
-
-QModelIndexList DirectoryView::selectedIndexes() const
-{
-	return m_view.selectionModel()->selectedIndexes();
 }
 
 DirectoryView::Header::Header(PathEventHandler *eventHandler, QWidget *parent) :

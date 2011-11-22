@@ -1,0 +1,10 @@
+#ifndef STRINGSHIERARCHY_NS_H_
+#define STRINGSHIERARCHY_NS_H_
+
+#include "../strings_ns.h"
+
+
+#define STRINGS_HIERARCHY_NS_BEGIN STRINGS_NS_BEGIN namespace Hierarchy {
+#define STRINGS_HIERARCHY_NS_END } STRINGS_NS_END
+
+#endif /* STRINGSHIERARCHY_NS_H_ */

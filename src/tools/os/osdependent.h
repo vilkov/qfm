@@ -11,4 +11,22 @@
 #	define OS_DEPENDENT_CODE(UNIX, WIN) UNIX
 #endif
 
+
+/* Usage:
+ *
+ *	OS_DEPENDENT_CODE
+ *	(
+ *		UNIX
+ *		{
+ *
+ *		},
+ *
+ *		WIN
+ *		{
+ *
+ *		}
+ *	)
+ *
+ * */
+
 #endif /* OSDEPENDENT_H_ */

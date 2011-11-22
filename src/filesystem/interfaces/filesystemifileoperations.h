@@ -4,6 +4,7 @@
 #include <QtGui/QAction>
 #include <QtCore/QModelIndexList>
 #include "filesysteminodeview.h"
+#include "filesystemicopycontrol.h"
 #include "../filesystem_ns.h"
 
 
@@ -16,6 +17,9 @@ class IFileOperations
 public:
 	virtual ~IFileOperations() {}
 
+	virtual IFileInfo *info(const QModelIndex &idx) const = 0;
+	virtual ICopyControl *createControl(INodeView *view) const = 0;
+
 	virtual void menuAction(QAction *action, INodeView *view) = 0;
 	virtual void createFile(const QModelIndex &index, INodeView *view) = 0;
 	virtual void createDirectory(const QModelIndex &index, INodeView *view) = 0;
@@ -24,8 +28,8 @@ public:
 	virtual void cancel(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void calculateSize(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view) = 0;
-	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view) = 0;
-	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view) = 0;
+	virtual void copy(const INodeView *source, INodeView *destination) = 0;
+	virtual void move(const INodeView *source, INodeView *destination) = 0;
 };
 
 FILE_SYSTEM_NS_END

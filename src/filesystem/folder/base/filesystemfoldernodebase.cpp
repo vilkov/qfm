@@ -82,11 +82,6 @@ bool FolderNodeBase::event(QEvent *e)
 	return QAbstractItemModel::event(e);
 }
 
-ICopyControl *FolderNodeBase::createControl() const
-{
-	return new CopyInfo(m_info);
-}
-
 bool FolderNodeBase::isDir() const
 {
 	return true;
@@ -143,6 +138,11 @@ void FolderNodeBase::refresh()
 			updateFiles();
 		else
 			viewCloseAll();
+}
+
+ICopyControl *FolderNodeBase::createControl(INodeView *view) const
+{
+	return new CopyInfo(m_info);
 }
 
 void FolderNodeBase::scanForSize(const QStringList &entries)

@@ -37,11 +37,9 @@ public:
 	virtual QDateTime lastModified() const;
 	virtual void refresh();
 
-	/* INode */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
-	virtual ICopyControl *createControl() const;
-
 	/* IFileOperations */
+	virtual IFileInfo *info(const QModelIndex &idx) const;
+	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);
@@ -50,8 +48,8 @@ public:
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
 	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const QModelIndexList &list, INode *destination, INodeView *view);
-	virtual void move(const QModelIndexList &list, INode *destination, INodeView *view);
+	virtual void copy(const INodeView *source, INodeView *destination);
+	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:
 	/* Node */

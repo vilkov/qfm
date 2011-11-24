@@ -62,6 +62,7 @@ public:
 
 	IdmCompositeEntityValue *addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
 	bool addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const { return m_data->storage.addValue(entityValue, propertyValue); }
+	bool addValue(IdmCompositeEntityValue *entityValue, const IdmCompositeEntityValue::List &propertyValues) const { return m_data->storage.addValue(entityValue, propertyValues); }
 	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
 	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }

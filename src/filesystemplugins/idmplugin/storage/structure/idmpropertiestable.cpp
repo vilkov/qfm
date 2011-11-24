@@ -87,6 +87,15 @@ QString PropertiesTable::Incomplete::dropProperty2(Database::id_type property)
 	return QString::fromLatin1("drop table ENTITY_%1_PROPERTY_").arg(QString::number(property));
 }
 
+QByteArray PropertiesTable::Incomplete::addValue(const QString &tableName, Database::id_type entity)
+{
+	return QString::fromLatin1("insert into ").
+			append(tableName).
+			append(QString::fromLatin1(" (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (?1, ")).
+			append(QString::number(entity)).
+			append(QString::fromLatin1(", ?2)")).toUtf8();
+}
+
 QString PropertiesTable::Incomplete::removeValues(Database::id_type property, const Database::IdsList &ids)
 {
 	return QString::fromLatin1("delete from ENTITY_%1_PROPERTY_").

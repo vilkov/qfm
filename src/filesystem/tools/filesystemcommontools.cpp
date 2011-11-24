@@ -1,5 +1,6 @@
 #include "filesystemcommontools.h"
 #include "../../tools/os/osdependent.h"
+#include <QtCore/QStringList>
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)
 #	include <windows.h>
@@ -8,6 +9,7 @@
 #else
 #	error OS is unknown!
 #endif
+#include <QtCore/QDebug>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -95,6 +97,45 @@ quint64 Tools::freeSpace(const QByteArray &utf8AbsoluteFolderPath)
 		/* WIN */
 		{ return 0; }
 	)
+}
+
+Tools::DestinationFromPathList::DestinationFromPathList() :
+	Tree('/')
+{}
+
+QString Tools::DestinationFromPathList::choose(QWidget *parent) const
+{
+	typedef ::Tools::Strings::Hierarchy::Item Item;
+	QStringList list;
+	Item *item = const_cast<Tools::DestinationFromPathList*>(this);
+
+	while (item->size() == 1)
+		item = item->begin().value();
+
+	list.push_back(make(item));
+
+	for (Item::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+	{
+		qDebug() << make(i.value());
+		list.push_back(make(i.value()));
+	}
+
+	return QString();
+}
+
+void Tools::DestinationFromPathList::add(const QString &file)
+{
+	QString str;
+	int index1 = 0;
+	int index2 = file.size();
+
+	while (index1 < index2 && file.at(index1) == delimeter())
+		++index1;
+
+	while ((--index2) >= index1 && file.at(index2) == delimeter());
+
+	if (!(str = file.mid(index1, index2 - index1 + 1)).isEmpty())
+		Tree::add(str);
 }
 
 FILE_SYSTEM_NS_END

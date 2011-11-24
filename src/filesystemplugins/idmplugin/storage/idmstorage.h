@@ -62,6 +62,7 @@ public:
 
 	IdmCompositeEntityValue *addValue(IdmEntity *entity) const;
 	bool addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const;
+	bool addValue(IdmCompositeEntityValue *entityValue, const IdmCompositeEntityValue::List &propertyValues) const;
 	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const;
 	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const;
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;

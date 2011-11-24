@@ -6,7 +6,7 @@
 #include "control/idmqueryresultscopycontrol.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
-#include "../../../../tools/strings/hierarchy/stringshierarchytree.h"
+#include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
 #include <QtCore/QDebug>
@@ -188,7 +188,10 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 	if (QueryResultPropertyItem *item = value_cast(view->currentIndex().internalPointer(), item))
 		if (item->property().entity->type() == Database::Path)
 		{
-			Tools::Strings::Hierarchy::Tree tree('/');
+			Tools::DestinationFromPathList tree;
+
+			for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
+				tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
 
 //			return new IdmQueryResultsCopyControl(m_container, item->rootValue()->entity(), item->property());
 		}

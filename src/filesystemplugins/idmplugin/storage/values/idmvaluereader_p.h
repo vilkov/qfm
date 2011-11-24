@@ -80,6 +80,12 @@ public:
 		m_value.clear();
 	}
 
+	void add(const List &values)
+	{
+		m_items[values.at(0)->entity()].append(values);
+		m_value.clear();
+	}
+
 	void take(IdmEntityValue *value)
 	{
 		List &list = m_items[value->entity()];
@@ -91,6 +97,18 @@ public:
 	{
 		List &list = m_items[value->entity()];
 		delete list.takeAt(list.indexOf(value));
+		m_value.clear();
+	}
+
+	void remove(const List &values)
+	{
+		List::size_type index;
+		List &list = m_items[values.at(0)->entity()];
+
+		for (List::size_type i = 0, size = values.size(); i < size; ++i)
+			if ((index = list.indexOf(values.at(i))) != -1)
+				delete list.takeAt(index);
+
 		m_value.clear();
 	}
 

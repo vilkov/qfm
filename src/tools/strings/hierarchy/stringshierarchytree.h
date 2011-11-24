@@ -14,6 +14,8 @@ public:
 		m_delimeter(delimeter)
 	{}
 
+	QChar delimeter() const { return m_delimeter; }
+
 	void add(const QString &string)
 	{
 		int index1 = 0;
@@ -25,6 +27,16 @@ public:
 
 		if (!(last = string.mid(index1, string.size() - index1)).isEmpty())
 			parent->add(last);
+	}
+
+	QString make(Item *item) const
+	{
+		QString res = item->string();
+
+		for (item = item->parent(); item; item = item->parent())
+			res.prepend(m_delimeter).prepend(item->string());
+
+		return res;
 	}
 
 private:

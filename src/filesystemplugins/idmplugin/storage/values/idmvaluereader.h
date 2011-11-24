@@ -22,9 +22,11 @@ public:
 	bool bof() const { return m_beforeFirst; }
 
 	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
+	static void addValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values);
 	static void takeValue(IdmEntityValue *value, IdmEntityValue *property);
 	static void updateValue(IdmEntityValue *value, const QVariant &newValue);
 	static void removeValue(IdmEntityValue *value, IdmEntityValue *property);
+	static void removeValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values);
 	static IdmCompositeEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
 	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
 

@@ -32,4 +32,22 @@ bool IdmCompositeEntityValue::contains(IdmEntityValue *value) const
 	return false;
 }
 
+bool IdmCompositeEntityValue::contains(const List &values, IdmEntityValue *&propertyValue) const
+{
+	if (!values.isEmpty())
+	{
+		const List list = IdmCompositeEntityValue::values(values.at(0)->entity());
+
+		for (List::size_type i = 0, size = list.size(); i < size; ++i)
+			for (List::size_type q = 0, size = values.size(); q < size; ++q)
+				if (list.at(i)->id() == values.at(q)->id())
+				{
+					propertyValue = values.at(q);
+					return true;
+				}
+	}
+
+	return false;
+}
+
 IDM_PLUGIN_NS_END

@@ -1,6 +1,7 @@
 #ifndef STRINGSHIERARCHYITEM_H_
 #define STRINGSHIERARCHYITEM_H_
 
+#include <QtCore/QMap>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include "stringshierarchy_ns.h"

@@ -42,6 +42,7 @@ public:
 
 	List values(IdmEntity *property) const { return m_items.value(property); }
 	bool contains(IdmEntityValue *value) const;
+	bool contains(const List &values, IdmEntityValue *&propertyValue) const;
 
 protected:
 	Map m_items;

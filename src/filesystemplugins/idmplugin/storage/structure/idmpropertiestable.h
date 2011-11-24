@@ -31,6 +31,7 @@ struct PropertiesTable
 		static QString selectValues(Database::id_type entity, const Database::IdsList &ids);
 		static QString dropProperty(Database::id_type property);
 		static QString dropProperty2(Database::id_type property);
+		static QByteArray addValue(const QString &tableName, Database::id_type entity);
 		static QString removeValues(Database::id_type property, const Database::IdsList &ids);
 	};
 

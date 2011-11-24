@@ -37,6 +37,11 @@ void IdmValueReader::addValue(IdmEntityValue *value, IdmEntityValue *property)
 	static_cast<IdmEntityCompositeValueImp*>(value)->add(property);
 }
 
+void IdmValueReader::addValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values)
+{
+	static_cast<IdmEntityCompositeValueImp*>(value)->add(values);
+}
+
 void IdmValueReader::takeValue(IdmEntityValue *value, IdmEntityValue *property)
 {
 	static_cast<IdmEntityCompositeValueImp*>(value)->take(property);
@@ -50,6 +55,11 @@ void IdmValueReader::updateValue(IdmEntityValue *value, const QVariant &newValue
 void IdmValueReader::removeValue(IdmEntityValue *value, IdmEntityValue *property)
 {
 	static_cast<IdmEntityCompositeValueImp*>(value)->remove(property);
+}
+
+void IdmValueReader::removeValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values)
+{
+	static_cast<IdmEntityCompositeValueImp*>(value)->remove(values);
 }
 
 IdmCompositeEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id)

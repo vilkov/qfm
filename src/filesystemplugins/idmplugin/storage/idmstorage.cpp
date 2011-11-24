@@ -10,6 +10,7 @@
 #include "undo/concrete/idmstorageundoaddvalue.h"
 #include "undo/concrete/idmstorageundoremovevalue.h"
 #include "../../../tools/pointers/pscopedpointer.h"
+#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -351,7 +352,7 @@ IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
 bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
 {
 	if (entityValue->contains(propertyValue))
-		setLastError(tr("Entity \"%1\" [\"%2\"] already contains this (\"%3\") value.").
+		setLastError(tr("Entity \"%1\" [\"%2\"] already contains (\"%3\") value.").
 				arg(entityValue->entity()->name()).
 				arg(entityValue->value().toString()).
 				arg(propertyValue->value().toString()));
@@ -385,6 +386,86 @@ bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *
 		else
 			setLastError(failedToLoadId(table));
 	}
+
+	return false;
+}
+
+bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, const IdmCompositeEntityValue::List &propertyValues) const
+{
+	IdmEntityValue *propertyValue;
+
+	if (entityValue->contains(propertyValues, propertyValue))
+		setLastError(tr("Entity \"%1\" [\"%2\"] already contains (\"%3\") value.").
+				arg(entityValue->entity()->name()).
+				arg(entityValue->value().toString()).
+				arg(propertyValue->value().toString()));
+	else
+		if (propertyValues.isEmpty())
+			setLastError("Values list is empty!");
+		else
+		{
+			QString table =
+					QString::fromLatin1("ENTITY_").
+					append(QString::number(entityValue->entity()->id())).
+					append(QString::fromLatin1("_PROPERTY_")).
+					append(QString::number(propertyValues.at(0)->entity()->id()));
+			id_type id = loadId(table);
+
+			if (id != IdmEntity::InvalidId)
+			{
+				bool ok = true;
+				sqlite3_stmt *statement;
+				QByteArray sqlQuery = PropertiesTable::Incomplete::addValue(table, entityValue->id());
+
+				if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+					for (IdmCompositeEntityValue::List::size_type i = 0, size = propertyValues.size(); i < size; ++i)
+					{
+						if (sqlite3_bind_int(statement, 1, id) != SQLITE_OK)
+						{
+							setLastError(tr("Some error!"));
+							ok = false;
+							break;
+						}
+
+						if (sqlite3_bind_int(statement, 2, propertyValues.at(i)->id()) != SQLITE_OK)
+						{
+							setLastError(tr("Some error!"));
+							ok = false;
+							break;
+						}
+
+						if (sqlite3_step(statement) == SQLITE_DONE)
+							if (sqlite3_reset(statement) == SQLITE_OK)
+								++id;
+							else
+							{
+								setLastError(tr("Some error!"));
+								ok = false;
+								break;
+							}
+						else
+						{
+							setLastError(tr("Some error!"));
+							ok = false;
+							break;
+						}
+					}
+				else
+					setLastError(sqlQuery.data());
+
+				if (ok)
+				{
+					m_undo.last().push_back(new IdmStorageUndoAddValue(entityValue, propertyValues));
+					IdmValueReader::addValue(entityValue, propertyValues);
+
+					return true;
+				}
+				else
+					return false;
+			}
+			else
+				setLastError(failedToLoadId(table));
+		}
 
 	return false;
 }

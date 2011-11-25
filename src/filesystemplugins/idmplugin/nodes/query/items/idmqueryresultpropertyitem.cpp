@@ -9,11 +9,7 @@ QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &prop
 	QueryResultListItem(parent),
 	m_property(property)
 {
-	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
-		if (values.at(i)->entity()->type() == Database::Path)
-			m_items.push_back(new QueryResultPathValueItem(values.at(i), this));
-		else
-			m_items.push_back(new QueryResultValueItem(values.at(i), this));
+	add(values);
 }
 
 QVariant QueryResultPropertyItem::data(qint32 column, qint32 role) const
@@ -45,6 +41,15 @@ void QueryResultPropertyItem::add(IdmEntityValue *value)
 		m_items.push_back(new QueryResultPathValueItem(value, this));
 	else
 		m_items.push_back(new QueryResultValueItem(value, this));
+}
+
+void QueryResultPropertyItem::add(const IdmCompositeEntityValue::List &values)
+{
+	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
+		if (values.at(i)->entity()->type() == Database::Path)
+			m_items.push_back(new QueryResultPathValueItem(values.at(i), this));
+		else
+			m_items.push_back(new QueryResultValueItem(values.at(i), this));
 }
 
 void QueryResultPropertyItem::remove(size_type index)

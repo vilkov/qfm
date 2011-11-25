@@ -5,11 +5,13 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, const Info &info) :
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info) :
 	CopyInfo(info),
 	m_container(container),
 	m_value(value),
-	m_property(property)
+	m_property(property),
+	m_model(model),
+	m_index(index)
 {}
 
 bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
@@ -31,13 +33,13 @@ bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
 			}
 
 		if (m_container.addValue(m_value, list))
-		{
-			if (!m_container.commit())
+			if (m_container.commit())
+				m_model->add(m_index, list);
+			else
 			{
 				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
 			}
-		}
 		else
 		{
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

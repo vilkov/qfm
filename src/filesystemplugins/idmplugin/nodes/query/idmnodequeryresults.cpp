@@ -185,10 +185,18 @@ IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 
 ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 {
-	if (QueryResultPropertyItem *item = value_cast(view->currentIndex().internalPointer(), item))
+	QModelIndex index = view->currentIndex();
+
+	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
 		if (item->property().entity->type() == Database::Path)
 			if (item->size() == 0)
-				return new IdmQueryResultsCopyControl(m_container, item->rootValue(), item->property(), m_info);
+				return new IdmQueryResultsCopyControl(
+						m_container,
+						item->rootValue(),
+						item->property(),
+						const_cast<IdmNodeQueryResults*>(this),
+						index,
+						m_info);
 			else
 			{
 				QString destination;
@@ -198,7 +206,13 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
 
 				if (!(destination = tree.choose(&Application::instance()->mainWindow())).isEmpty())
-					return new IdmQueryResultsCopyControl(m_container, item->rootValue(), item->property(), destination);
+					return new IdmQueryResultsCopyControl(
+							m_container,
+							item->rootValue(),
+							item->property(),
+							const_cast<IdmNodeQueryResults*>(this),
+							index,
+							destination);
 			}
 
 	return 0;
@@ -351,6 +365,21 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
 	return 0;
+}
+
+void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+{
+	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+	{
+		beginInsertRows(index, item->size(), item->size() + values.size() - 1);
+		item->add(values);
+		endInsertRows();
+	}
+}
+
+void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+{
+
 }
 
 void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)

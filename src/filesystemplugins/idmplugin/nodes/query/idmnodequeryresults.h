@@ -2,6 +2,7 @@
 #define IDMNODEQUERYRESULTS_H_
 
 #include "idmqueryresultsdelegate.h"
+#include "interface/idminodequeryresults.h"
 #include "../../items/idmbaseitem.h"
 #include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
@@ -14,7 +15,7 @@ class Functor;
 class QueryResultValueItem;
 
 
-class IdmNodeQueryResults : public TasksNode
+class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
 {
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
@@ -60,6 +61,10 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+
+	/* IQueryResultsUpdater */
+	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
+	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
 
 private:
 	void process(const QModelIndexList &list, const Functor &functor);

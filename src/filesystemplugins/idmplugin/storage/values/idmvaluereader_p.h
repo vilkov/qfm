@@ -58,7 +58,7 @@ public:
 							val.append(tr("Property \"%1\" not exists").arg(format.at(i).string()));
 						else
 						{
-							const List values = m_items.value(entity()->at(index).entity);
+							const InternalList values = m_items.value(entity()->at(index).entity);
 
 							if (values.isEmpty())
 								val.append(tr("Property \"%1\" is empty").arg(format.at(i).string()));
@@ -76,50 +76,53 @@ public:
 
 	void add(IdmEntityValue *value)
 	{
-		m_items[value->entity()].push_back(value);
+		m_items[value->entity()].add(value->id(), value);
 		m_value.clear();
 	}
 
 	void add(const List &values)
 	{
-		m_items[values.at(0)->entity()].append(values);
+		InternalList &list = m_items[values.at(0)->entity()];
+
+		for (List::size_type i = 0, size = values.size(); i < size; ++i)
+			list.add(values.at(i)->id(), values.at(i));
+
 		m_value.clear();
 	}
 
 	void take(IdmEntityValue *value)
 	{
-		List &list = m_items[value->entity()];
-		list.removeAt(list.indexOf(value));
+		InternalList &list = m_items[value->entity()];
+		list.remove(value->id());
 		m_value.clear();
 	}
 
 	void remove(IdmEntityValue *value)
 	{
-		List &list = m_items[value->entity()];
-		delete list.takeAt(list.indexOf(value));
+		InternalList &list = m_items[value->entity()];
+		delete list.take(value->id());
 		m_value.clear();
 	}
 
 	void remove(const List &values)
 	{
-		List::size_type index;
-		List &list = m_items[values.at(0)->entity()];
+		InternalList &list = m_items[values.at(0)->entity()];
 
 		for (List::size_type i = 0, size = values.size(); i < size; ++i)
-			if ((index = list.indexOf(values.at(i))) != -1)
-				delete list.takeAt(index);
+			delete list.take(values.at(i)->id());
 
 		m_value.clear();
 	}
 
-	IdmEntityValue *lastValue(IdmEntity *property)
+	IdmEntityValue *value(IdmEntity *property, id_type id)
 	{
-		List &list = m_items[property];
+		InternalList &list = m_items[property];
+		InternalList::size_type index = list.indexOf(id);
 
-		if (list.isEmpty())
+		if (index == InternalList::InvalidIndex)
 			return 0;
 		else
-			return list.last();
+			return list.at(index);
 	}
 
 private:

@@ -84,10 +84,7 @@ public:
 		size_type index = indexOf(hash);
 
 		if (index != InvalidIndex)
-		{
-			m_map.remove(hash);
-			return m_list.takeAt(index);
-		}
+			return take(index);
 
 		return T();
 	}
@@ -116,6 +113,10 @@ public:
 	{
 		m_list.clear();
 		m_map.clear();
+	}
+	void deleteAll()
+	{
+		qDeleteAll(m_list);
 	}
 
 private:

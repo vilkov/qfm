@@ -138,21 +138,20 @@ void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &c
 	{
 		IdmEntity::id_type id = m_context.asInt(column);
 
-		if (IdmEntityValue *lastValue = static_cast<IdmEntityCompositeValueImp*>(value)->lastValue(property))
-			if (lastValue->id() == id)
+		if (IdmEntityValue *lastValue = static_cast<IdmEntityCompositeValueImp*>(value)->value(property, id))
+		{
+			if (property->type() == Database::Composite)
 			{
-				if (property->type() == Database::Composite)
-				{
-					column += 1;
+				column += 1;
 
-					for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
-						IdmValueReader::property(lastValue, property->at(i).entity, column);
-				}
-				else
-					column += 2;
-
-				return;
+				for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
+					IdmValueReader::property(lastValue, property->at(i).entity, column);
 			}
+			else
+				column += 2;
+
+			return;
+		}
 
 		if (property->type() == Database::Composite)
 		{

@@ -5,6 +5,7 @@
 #include <QtCore/QDateTime>
 #include "../entities/idmentity.h"
 #include "../queries/idmquerycontext.h"
+#include "../../../../tools/containers/hashedlist.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -34,17 +35,18 @@ class IdmCompositeEntityValue : public IdmEntityValue
 {
 public:
 	typedef QList<IdmEntityValue*> List;
-	typedef QMap<IdmEntity*, List> Map;
 
 public:
 	IdmCompositeEntityValue(IdmEntity *entity, id_type id);
 	virtual ~IdmCompositeEntityValue();
 
-	List values(IdmEntity *property) const { return m_items.value(property); }
+	List values(IdmEntity *property) const { return m_items.value(property).values(); }
 	bool contains(IdmEntityValue *value) const;
 	bool contains(const List &values, IdmEntityValue *&propertyValue) const;
 
 protected:
+	typedef ::Tools::Containers::HashedList<id_type, IdmEntityValue*> InternalList;
+	typedef QMap<IdmEntity*, InternalList> Map;
 	Map m_items;
 };
 

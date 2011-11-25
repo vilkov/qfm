@@ -18,7 +18,7 @@ IdmCompositeEntityValue::IdmCompositeEntityValue(IdmEntity *entity, id_type id) 
 IdmCompositeEntityValue::~IdmCompositeEntityValue()
 {
 	for (Map::iterator it = m_items.begin(), end = m_items.end(); it != end; ++it)
-		qDeleteAll(it.value());
+		it.value().deleteAll();
 }
 
 bool IdmCompositeEntityValue::contains(IdmEntityValue *value) const

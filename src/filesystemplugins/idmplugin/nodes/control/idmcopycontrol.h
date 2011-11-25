@@ -3,10 +3,10 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
-#include "../idmplugin_ns.h"
-#include "../containeres/idmcontainer.h"
-#include "../storage/entities/idmentity.h"
-#include "../../../filesystem/info/filesystemcopyinfo.h"
+#include "../../idmplugin_ns.h"
+#include "../../containeres/idmcontainer.h"
+#include "../../storage/entities/idmentity.h"
+#include "../../../../filesystem/info/filesystemcopyinfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN

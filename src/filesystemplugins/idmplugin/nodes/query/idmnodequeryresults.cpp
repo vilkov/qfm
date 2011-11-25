@@ -187,14 +187,19 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 {
 	if (QueryResultPropertyItem *item = value_cast(view->currentIndex().internalPointer(), item))
 		if (item->property().entity->type() == Database::Path)
-		{
-			Tools::DestinationFromPathList tree;
+			if (item->size() == 0)
+				return new IdmQueryResultsCopyControl(m_container, item->rootValue(), item->property(), m_info);
+			else
+			{
+				QString destination;
+				Tools::DestinationFromPathList tree;
 
-			for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
-				tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
+				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
+					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
 
-//			return new IdmQueryResultsCopyControl(m_container, item->rootValue()->entity(), item->property());
-		}
+				if (!(destination = tree.choose(&Application::instance()->mainWindow())).isEmpty())
+					return new IdmQueryResultsCopyControl(m_container, item->rootValue(), item->property(), destination);
+			}
 
 	return 0;
 }

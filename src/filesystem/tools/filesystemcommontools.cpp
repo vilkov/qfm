@@ -1,6 +1,7 @@
 #include "filesystemcommontools.h"
 #include "../../tools/os/osdependent.h"
 #include <QtCore/QStringList>
+#include <QtCore/QFileInfo>
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)
 #	include <windows.h>
@@ -105,22 +106,52 @@ Tools::DestinationFromPathList::DestinationFromPathList() :
 
 QString Tools::DestinationFromPathList::choose(QWidget *parent) const
 {
-	typedef ::Tools::Strings::Hierarchy::Item Item;
+	QString str;
 	QStringList list;
+	QSet<Item*> items;
 	Item *item = const_cast<Tools::DestinationFromPathList*>(this);
 
 	while (item->size() == 1)
 		item = item->begin().value();
 
-	list.push_back(make(item));
-
-	for (Item::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+	if (isDir(str = make(item)))
 	{
-		qDebug() << make(i.value());
-		list.push_back(make(i.value()));
+		items.insert(item);
+		list.push_back(str);
+	}
+	else
+	{
+		items.insert(item->parent());
+		list.push_back(make(item->parent()));
 	}
 
-	return QString();
+	for (Item::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+		if (isDir(str = make(*i)))
+		{
+			if (!items.contains(*i))
+			{
+				items.insert(item);
+				list.push_back(str);
+			}
+		}
+		else
+		{
+			if (!items.contains((*i)->parent()))
+			{
+				items.insert((*i)->parent());
+				list.push_back(make((*i)->parent()));
+			}
+		}
+
+	if (list.isEmpty())
+		return QString();
+	else
+		if (list.size() == 1)
+			return list.at(0);
+		else
+		{
+			qDebug() << list;
+		}
 }
 
 void Tools::DestinationFromPathList::add(const QString &file)
@@ -136,6 +167,11 @@ void Tools::DestinationFromPathList::add(const QString &file)
 
 	if (!(str = file.mid(index1, index2 - index1 + 1)).isEmpty())
 		Tree::add(str);
+}
+
+bool Tools::DestinationFromPathList::isDir(const QString &file) const
+{
+	return QFileInfo(file).isDir();
 }
 
 FILE_SYSTEM_NS_END

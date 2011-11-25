@@ -4,7 +4,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include "../../../containeres/idmcontainer.h"
-#include "../../../storage/entities/idmentity.h"
+#include "../../../storage/values/idmentityvalue.h"
 #include "../../../../../filesystem/info/filesystemcopyinfo.h"
 
 
@@ -15,7 +15,7 @@ class IdmQueryResultsCopyControl : public CopyInfo
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 
 public:
-	IdmQueryResultsCopyControl(const IdmContainer &container, IdmEntity *entity, const IdmEntity::Property &property, const Info &info);
+	IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, const Info &info);
 
 	/* ICopyControl */
 	virtual bool start(const InfoListItem *files, bool move);
@@ -27,7 +27,7 @@ private:
 
 private:
 	IdmContainer m_container;
-	IdmEntity *m_entity;
+	IdmCompositeEntityValue *m_value;
 	const IdmEntity::Property &m_property;
 };
 

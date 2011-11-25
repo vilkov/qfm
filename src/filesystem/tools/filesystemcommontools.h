@@ -23,6 +23,9 @@ struct Tools
 
 		QString choose(QWidget *parent) const;
 		void add(const QString &file);
+
+	private:
+		bool isDir(const QString &file) const;
 	};
 };
 

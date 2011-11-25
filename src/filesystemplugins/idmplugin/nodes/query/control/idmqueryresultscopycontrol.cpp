@@ -1,15 +1,14 @@
 #include "idmqueryresultscopycontrol.h"
-#include "../../../gui/value/new/file/newfilevaluedialog.h"
 #include "../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmEntity *entity, const IdmEntity::Property &property, const Info &info) :
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, const Info &info) :
 	CopyInfo(info),
 	m_container(container),
-	m_entity(entity),
+	m_value(value),
 	m_property(property)
 {}
 
@@ -17,23 +16,34 @@ bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
 {
 	if (m_container.transaction())
 	{
-		PScopedPointer<IdmCompositeEntityValue> value(m_container.addValue(m_entity));
+		IdmEntityValue *localValue;
+		IdmCompositeEntityValue::List list;
+		list.reserve(files->size());
 
-		if (value)
+		for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
+			if (localValue = m_container.addValue(m_property.entity, absoluteFilePath(files->at(i)->fileName())))
+				list.push_back(localValue);
+			else
+			{
+				m_container.rollback();
+				qDeleteAll(list);
+				return false;
+			}
+
+		if (m_container.addValue(m_value, list))
 		{
-//			NewFileValueDialog dialog(m_container, value.data(), toStringList(files), &Application::instance()->mainWindow());
-//
-//			if (dialog.exec() != NewFileValueDialog::Accepted)
-//				m_container.rollback();
-//			else
-//				if (!m_container.commit())
-//				{
-//					m_container.rollback();
-//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-//				}
+			if (!m_container.commit())
+			{
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
+			}
 		}
 		else
+		{
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			m_container.rollback();
+			qDeleteAll(list);
+		}
 	}
 	else
 		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

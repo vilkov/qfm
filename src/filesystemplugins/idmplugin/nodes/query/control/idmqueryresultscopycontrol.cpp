@@ -21,16 +21,16 @@ bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
 
 		if (value)
 		{
-			NewFileValueDialog dialog(m_container, value.data(), toStringList(files), &Application::instance()->mainWindow());
-
-			if (dialog.exec() != NewFileValueDialog::Accepted)
-				m_container.rollback();
-			else
-				if (!m_container.commit())
-				{
-					m_container.rollback();
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-				}
+//			NewFileValueDialog dialog(m_container, value.data(), toStringList(files), &Application::instance()->mainWindow());
+//
+//			if (dialog.exec() != NewFileValueDialog::Accepted)
+//				m_container.rollback();
+//			else
+//				if (!m_container.commit())
+//				{
+//					m_container.rollback();
+//					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+//				}
 		}
 		else
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

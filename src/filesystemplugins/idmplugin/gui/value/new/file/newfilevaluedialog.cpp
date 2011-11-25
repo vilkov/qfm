@@ -3,43 +3,9 @@
 #include <QtGui/QMessageBox>
 
 
-NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, const QStringList &files, QWidget *parent) :
+NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent) :
 	NewCompositeValueDialog(container, value, parent)
-{
-	IdmEntity *entity = value->entity();
-
-	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
-    	if (entity->at(i).entity->type() == Database::Path)
-    	{
-    		IdmEntityValue *localValue;
-    		CompositeValueModel::ValueList list;
-    		QModelIndex index = model().index(i, 0);
-    		entity = entity->at(i).entity;
-
-			for (QStringList::size_type i = 0, size = files.size(); i < size; ++i)
-				if (localValue = container.addValue(entity, files.at(i)))
-					list.push_back(localValue);
-				else
-				{
-					qDeleteAll(list);
-					list.clear();
-					break;
-				}
-
-			if (list.isEmpty())
-				QMessageBox::critical(this, windowTitle(), container.lastError());
-			else
-				if (container.addValue(value, list))
-					model().add(index, list);
-				else
-				{
-					qDeleteAll(list);
-					QMessageBox::critical(this, windowTitle(), container.lastError());
-				}
-
-			break;
-    	}
-}
+{}
 
 void NewFileValueDialog::addValue()
 {

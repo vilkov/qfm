@@ -20,16 +20,45 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 
 		if (value)
 		{
-			NewFileValueDialog dialog(m_container, value.data(), toStringList(files), &Application::instance()->mainWindow());
+			IdmEntity *path;
+    		CompositeValueModel::ValueList list;
+    		list.reserve(files->size());
 
-			if (dialog.exec() != NewFileValueDialog::Accepted)
-				m_container.rollback();
-			else
-				if (!m_container.commit())
-				{
+			for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
+		    	if ((path = m_entity->at(i).entity)->type() == Database::Path)
+		    	{
+		    		IdmEntityValue *localValue;
+
+					for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
+						if (localValue = m_container.addValue(path, absoluteFilePath(files->at(i)->fileName())))
+							list.push_back(localValue);
+						else
+						{
+							m_container.rollback();
+							return false;
+						}
+
+					break;
+		    	}
+
+			if (m_container.addValue(value.data(), list))
+			{
+				NewFileValueDialog dialog(m_container, value.data(), &Application::instance()->mainWindow());
+
+				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-				}
+				else
+					if (!m_container.commit())
+					{
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+			}
+			else
+			{
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
+			}
 		}
 		else
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

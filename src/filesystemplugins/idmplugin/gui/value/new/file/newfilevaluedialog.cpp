@@ -1,6 +1,5 @@
 #include "newfilevaluedialog.h"
 #include "../../model/items/compositevaluepropertyitem.h"
-#include <QtGui/QMessageBox>
 
 
 NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent) :

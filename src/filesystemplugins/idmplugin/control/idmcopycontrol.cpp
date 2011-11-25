@@ -35,6 +35,7 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 						else
 						{
 							m_container.rollback();
+							qDeleteAll(list);
 							return false;
 						}
 
@@ -58,6 +59,7 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 			{
 				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
+				qDeleteAll(list);
 			}
 		}
 		else

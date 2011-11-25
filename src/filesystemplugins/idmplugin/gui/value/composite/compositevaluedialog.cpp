@@ -81,6 +81,7 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 				}
 			else
 			{
+				delete value;
 				m_container.rollback(name);
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 			}

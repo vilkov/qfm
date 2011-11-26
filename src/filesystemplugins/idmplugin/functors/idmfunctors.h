@@ -1,7 +1,8 @@
 #ifndef IDMFUNCTORS_H_
 #define IDMFUNCTORS_H_
 
-#include "../items/idmbaseitem.h"
+#include <QtCore/QModelIndex>
+#include "../model/items/idmitem.h"
 #include "../../../filesystem/filesystem_ns.h"
 
 

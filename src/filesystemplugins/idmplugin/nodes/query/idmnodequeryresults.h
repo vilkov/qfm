@@ -3,7 +3,6 @@
 
 #include "idmqueryresultsdelegate.h"
 #include "interface/idminodequeryresults.h"
-#include "../../items/idmbaseitem.h"
 #include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"

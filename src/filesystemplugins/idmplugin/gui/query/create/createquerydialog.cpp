@@ -1,6 +1,6 @@
 #include "createquerydialog.h"
+#include "model/items/queryentitiesmodelitem.h"
 #include "../constraint/constraintquerydialog.h"
-#include "../../../items/idmentitypropertyitem.h"
 #include <QtGui/QMessageBox>
 
 
@@ -78,13 +78,13 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 			QModelIndex index1 = currentIndex1();
 
 			if (index1.isValid())
-				if (static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->entity()->type() != Database::Composite)
+				if (static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->entity()->type() != Database::Composite)
 				{
 					QModelIndex index2 = currentIndex2();
 
 					if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
 					{
-						ConstraintQueryDialog dialog(m_container, static_cast<IdmEntityPropertyItem*>(index1.internalPointer())->property(), this);
+						ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->property(), this);
 
 						if (dialog.exec() == ConstraintQueryDialog::Accepted)
 							m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint*>(index2.internalPointer())), index2);

@@ -1,29 +1,21 @@
 #ifndef IDMNODEBASE_H_
 #define IDMNODEBASE_H_
 
-#include "idmnodedelegate.h"
-#include "idmnodeproxymodel.h"
 #include "../idmplugin_ns.h"
-#include "../items/idmbaseitem.h"
 #include "../functors/idmfunctors.h"
 #include "../model/idmmodelcontainer.h"
 #include "../containeres/idmcontainer.h"
-#include "../../../filesystem/folder/base/filesystemfoldernodebase.h"
+#include "../../../filesystem/folder/filesystemfoldernode.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmNodeBase : public FolderNodeBase
+class IdmNodeBase : public FolderNode
 {
 public:
 	IdmNodeBase(const IdmContainer &container, const Info &info, Node *parent = 0);
-	virtual ~IdmNodeBase();
-
-    /* FileSystemModel */
-	virtual int columnCount(const QModelIndex &parent) const;
 
 	/* INode::IFileOperations */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
@@ -37,40 +29,6 @@ public:
 	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:
-	/* Node */
-	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const;
-	virtual QAbstractItemDelegate *itemDelegate() const;
-	virtual const INodeView::MenuActionList &menuActions() const;
-
-	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
-
-protected:
-	/* FolderNodeBase */
-	virtual UpdatesList::Map updateFilesMap() const;
-	virtual void updateFilesEvent(const UpdatesList &updates);
-	virtual void scanForSizeEvent(bool canceled, const InfoListItem *entries);
-	virtual bool scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move);
-	virtual bool scanForRemoveEvent(bool canceled, const InfoListItem *entries);
-	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move);
-	virtual void performRemoveEvent(const InfoListItem *entries);
-
-	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
-
-protected:
-	IdmItem *rootItem() const { return m_items.at(1); }
-	QModelIndex index(IdmItem *item) const;
-
-	bool processIndexList(const QModelIndexList &list, const IdmFunctors::Functor &functor) const;
-	bool processRemoveItem(const QModelIndex &index, IdmItem *item);
-
-protected:
-	IdmModelContainer m_itemsContainer;
-	IdmModelContainer::Container &m_items;
-	IdmNodeProxyModel m_proxy;
-	IdmNodeDelegate m_delegate;
 	IdmContainer m_container;
 };
 

@@ -43,7 +43,7 @@ void EntitiesTreeModel::doAdd(IdmItem *item, IdmEntity *property)
 
 void EntitiesTreeModel::doRemove(IdmItem *item, Container::size_type index)
 {
-	Container &items = m_entities[static_cast<IdmEntityItem*>(item)->entity()];
+	Container &items = m_entities[static_cast<IdmEntitiesTreeItem*>(item)->entity()];
 	items.removeAt(items.indexOf(item));
 	static_cast<IdmEntitiesTreeItem*>(item->parent())->remove(index);
 }

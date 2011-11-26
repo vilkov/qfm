@@ -1,6 +1,6 @@
 #include "listentitydialog.h"
+#include "model/items/idmentitiestreeitem.h"
 #include "../create/createentitydialog.h"
-#include "../../items/idmentityitem.h"
 #include <QtGui/QMessageBox>
 
 
@@ -80,9 +80,9 @@ void ListEntityDialog::removeEntity(const QModelIndex &index)
 		if (QMessageBox::question(this,
 							  tr("Remove entity"),
 							  tr("Do you really want to remove entity \"%1\"?").
-							  arg(static_cast<IdmEntityItem*>(index.internalPointer())->entity()->name()),
+							  arg(static_cast<IdmEntitiesTreeItem*>(index.internalPointer())->entity()->name()),
 							  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-			if (m_container.removeEntity(static_cast<IdmEntityItem*>(index.internalPointer())->entity()))
+			if (m_container.removeEntity(static_cast<IdmEntitiesTreeItem*>(index.internalPointer())->entity()))
 				if (m_container.release(name))
 					m_model.remove(index);
 				else

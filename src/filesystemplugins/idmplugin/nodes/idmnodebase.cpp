@@ -163,4 +163,9 @@ void IdmNodeBase::move(const INodeView *source, INodeView *destination)
 
 }
 
+const INodeView::MenuActionList &IdmNodeBase::menuActions() const
+{
+	return m_container.menuActions();
+}
+
 IDM_PLUGIN_NS_END

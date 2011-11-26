@@ -29,6 +29,10 @@ public:
 	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:
+	/* Node */
+	virtual const INodeView::MenuActionList &menuActions() const;
+
+protected:
 	IdmContainer m_container;
 };
 

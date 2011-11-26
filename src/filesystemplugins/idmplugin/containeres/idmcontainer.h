@@ -7,6 +7,7 @@
 #include <QtGui/QAction>
 #include "idmentitytypes.h"
 #include "../storage/idmstorage.h"
+#include "../../../filesystem/interfaces/filesysteminodeview.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -33,7 +34,7 @@ public:
 public:
 	IdmContainer(const Info &storage);
 
-	const QList<QAction*> &menuActions() const { return m_data->menuActions; }
+	const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
 	const IdmEntityTypes &entityTypes() const { return m_data->entityTypes; }
 
 	/* IdmStorage */
@@ -81,7 +82,7 @@ private:
 
 		IdmStorage storage;
 		IdmEntityTypes entityTypes;
-		QList<QAction*> menuActions;
+		INodeView::MenuActionList menuActions;
 	};
 
 private:

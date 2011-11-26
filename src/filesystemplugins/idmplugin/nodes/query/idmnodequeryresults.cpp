@@ -384,8 +384,10 @@ void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEnt
 
 void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)
 {
+	QueryResultValueItem *item;
+
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (QueryResultValueItem *item = value_cast(list.at(i).internalPointer(), item))
+		if (item = value_cast(list.at(i).internalPointer(), item))
 			functor(list.at(i), item);
 }
 

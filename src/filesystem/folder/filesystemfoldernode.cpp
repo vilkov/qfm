@@ -94,6 +94,24 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	}
 }
 
+void FolderNode::rename(const QModelIndex &index, INodeView *view)
+{
+	FileSystemBaseItem *entry = static_cast<FileSystemBaseItem*>(m_proxy.mapToSource(index).internalPointer());
+
+	if (!entry->isRootItem() && !static_cast<FileSystemEntryItem*>(entry)->isLocked())
+	{
+		entry->info().refresh();
+
+		if (entry->info().exists())
+		{
+			RenameFunctor functor(this, m_items);
+			functor(index.row(), entry);
+		}
+		else
+			removeEntry(index);
+	}
+}
+
 void FolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
 	RenameFunctor functor(this, m_items);

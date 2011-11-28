@@ -271,12 +271,84 @@ void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *v
 
 }
 
+void IdmNodeQueryResults::rename(const QModelIndex &index, INodeView *view)
+{
+	if (QueryResultValueItem *value = value_cast(index.internalPointer(), value))
+		if (value->value()->entity()->type() == Database::Path)
+		{
+			if (m_container.transaction())
+			{
+				QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(value);
+				StringDialog dialog(
+						tr("Enter new name for file \"%1\"").arg(file->info().fileName()),
+						tr("Name"),
+						file->info().fileName(),
+						&Application::instance()->mainWindow());
+
+				if (dialog.exec() == QDialog::Accepted)
+				{
+					QString error;
+					QString fileName = file->info().fileName();
+
+					if (file->info().rename(dialog.value(), error))
+						if (m_container.updateValue(file->value(), file->info().absoluteFilePath(dialog.value())))
+							if (m_container.commit())
+							{
+								file->update();
+								emit dataChanged(index, index);
+							}
+							else
+							{
+								m_container.rollback();
+								file->info().rename(fileName, error);
+								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+							}
+						else
+						{
+							m_container.rollback();
+							file->info().rename(fileName, error);
+							QMessageBox::critical(
+										&Application::instance()->mainWindow(),
+										tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+										m_container.lastError());
+						}
+					else
+					{
+						m_container.rollback();
+						QMessageBox::critical(
+									&Application::instance()->mainWindow(),
+									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+									error);
+					}
+				}
+				else
+					m_container.rollback();
+			}
+			else
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		}
+		else
+			view->edit(index);
+	else
+		view->edit(index);
+}
+
 void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 {
-	process(list, callTo(this, view, &IdmNodeQueryResults::doRename));
+
 }
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
+{
+	process(list, callTo(this, view, &IdmNodeQueryResults::doRemove));
+}
+
+void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
+void IdmNodeQueryResults::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 	QModelIndex index = list.at(0);
 
@@ -310,16 +382,6 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 			m_container.rollback();
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 		}
-}
-
-void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void IdmNodeQueryResults::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
 }
 
 void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list, INodeView *view)
@@ -391,63 +453,46 @@ void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &fu
 			functor(list.at(i), item);
 }
 
-void IdmNodeQueryResults::doRename(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)
+void IdmNodeQueryResults::processRemove(const QModelIndexList &list, const Functor &functor)
 {
-	if (value->value()->entity()->type() == Database::Path)
+	QueryResultValueItem *item;
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (item = value_cast(list.at(i).internalPointer(), item))
+			functor(list.at(i), item);
+}
+
+void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)
+{
+	if (m_container.transaction())
 	{
-		if (m_container.transaction())
+		QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(value->parent());
+
+		if (m_container.removeValue(property->rootValue(), value->value()))
 		{
-			QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(value);
-			StringDialog dialog(
-					tr("Enter new name for file \"%1\"").arg(file->info().fileName()),
-					tr("Name"),
-					file->info().fileName(),
-					&Application::instance()->mainWindow());
+			beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
 
-			if (dialog.exec() == QDialog::Accepted)
-			{
-				QString error;
-				QString fileName = file->info().fileName();
-
-				if (file->info().rename(dialog.value(), error))
-					if (m_container.updateValue(file->value(), file->info().absoluteFilePath(dialog.value())))
-						if (m_container.commit())
-						{
-							file->update();
-							emit dataChanged(index, index);
-						}
-						else
-						{
-							m_container.rollback();
-							file->info().rename(fileName, error);
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-						}
-					else
-					{
-						m_container.rollback();
-						file->info().rename(fileName, error);
-						QMessageBox::critical(
-									&Application::instance()->mainWindow(),
-									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-									m_container.lastError());
-					}
-				else
-				{
-					m_container.rollback();
-					QMessageBox::critical(
-								&Application::instance()->mainWindow(),
-								tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-								error);
-				}
-			}
+			if (m_container.commit())
+				property->remove(index.row());
 			else
+			{
 				m_container.rollback();
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			}
+
+			endRemoveRows();
 		}
 		else
+		{
+			m_container.rollback();
 			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		}
 	}
 	else
-		view->edit(index);
+	{
+		m_container.rollback();
+		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+	}
 }
 
 IDM_PLUGIN_NS_END

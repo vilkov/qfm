@@ -179,6 +179,11 @@ void M3uNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 }
 
+void M3uNode::rename(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void M3uNode::rename(const QModelIndexList &list, INodeView *view)
 {
 

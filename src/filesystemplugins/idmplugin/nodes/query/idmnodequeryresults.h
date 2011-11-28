@@ -43,6 +43,7 @@ public:
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);
+	virtual void rename(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndexList &list, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
@@ -67,7 +68,9 @@ protected:
 
 private:
 	void process(const QModelIndexList &list, const Functor &functor);
+	void processRemove(const QModelIndexList &list, const Functor &functor);
 	void doRename(INodeView *view, const QModelIndex &index, QueryResultValueItem *value);
+	void doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value);
 
 private:
     enum { PrefetchLimit = 256 };

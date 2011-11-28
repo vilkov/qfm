@@ -80,6 +80,11 @@ void RootNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 }
 
+void RootNode::rename(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void RootNode::rename(const QModelIndexList &list, INodeView *view)
 {
 

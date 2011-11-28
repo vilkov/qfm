@@ -23,6 +23,7 @@ public:
 	virtual void menuAction(QAction *action, INodeView *view) = 0;
 	virtual void createFile(const QModelIndex &index, INodeView *view) = 0;
 	virtual void createDirectory(const QModelIndex &index, INodeView *view) = 0;
+	virtual void rename(const QModelIndex &index, INodeView *view) = 0;
 	virtual void rename(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void remove(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void cancel(const QModelIndexList &list, INodeView *view) = 0;

@@ -119,6 +119,11 @@ void IdmNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 }
 
+void IdmNode::rename(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void IdmNode::rename(const QModelIndexList &list, INodeView *view)
 {
 

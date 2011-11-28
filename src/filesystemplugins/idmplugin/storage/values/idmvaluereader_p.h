@@ -55,7 +55,7 @@ public:
 						IdmEntity::size_type index = entity()->indexOf(format.at(i).string());
 
 						if (index == IdmEntity::InvalidIndex)
-							val.append(tr("Property \"%1\" not exists").arg(format.at(i).string()));
+							val.append(tr("Property \"%1\" does not exists").arg(format.at(i).string()));
 						else
 						{
 							const InternalList values = m_items.value(entity()->at(index).entity);

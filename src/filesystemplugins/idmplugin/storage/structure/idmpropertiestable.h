@@ -21,6 +21,7 @@ struct PropertiesTable
 	static QByteArray create();
 	static QByteArray select(Database::id_type entity);
 	static QByteArray insert(Database::id_type id, Database::id_type entity, Database::id_type property, const QString &name);
+	static QByteArray rename(Database::id_type entity, Database::id_type property, const QString &name);
 	static QByteArray remove(Database::id_type entity, Database::id_type property);
 	static QByteArray addValue(const QString &tableName, Database::id_type id, Database::id_type entity, Database::id_type property);
 	static QByteArray removeValue(const QString &tableName, Database::id_type entity, Database::id_type property);

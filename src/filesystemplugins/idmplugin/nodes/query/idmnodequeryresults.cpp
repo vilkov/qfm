@@ -1,7 +1,5 @@
 #include "idmnodequeryresults.h"
-#include "items/idmqueryresultrootitem.h"
-#include "items/idmqueryresultpropertyitem.h"
-#include "items/idmqueryresultpathvalueitem.h"
+#include "items/idmqueryresultvaluecast.h"
 #include "functors/idmqueryresultsfunctor.h"
 #include "control/idmqueryresultscopycontrol.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
@@ -13,52 +11,6 @@
 
 
 IDM_PLUGIN_NS_BEGIN
-
-template <typename T> inline T *value_cast(void *item, T *to);
-
-template <> inline QueryResultValueItem *value_cast(void *item, QueryResultValueItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<IdmItem*>(item)->isList())
-		return 0;
-	else
-		return static_cast<QueryResultValueItem*>(item);
-}
-
-template <> inline QueryResultListItem *value_cast(void *item, QueryResultListItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<IdmItem*>(item)->isList())
-		return static_cast<QueryResultListItem*>(item);
-	else
-		return 0;
-}
-
-template <> inline QueryResultPropertyItem *value_cast(void *item, QueryResultPropertyItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<IdmItem*>(item)->isList() &&
-		static_cast<QueryResultListItem*>(item)->isProperty())
-		return static_cast<QueryResultPropertyItem*>(item);
-	else
-		return 0;
-}
-
-template <> inline QueryResultPathValueItem *value_cast(void *item, QueryResultPathValueItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<IdmItem*>(item)->isList())
-		return 0;
-	else
-		if (static_cast<QueryResultValueItem*>(item)->value()->entity()->type() == Database::Path)
-			return static_cast<QueryResultPathValueItem*>(item);
-		else
-			return 0;
-}
 
 
 IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent) :
@@ -273,64 +225,7 @@ void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *v
 
 void IdmNodeQueryResults::rename(const QModelIndex &index, INodeView *view)
 {
-	if (QueryResultValueItem *value = value_cast(index.internalPointer(), value))
-		if (value->value()->entity()->type() == Database::Path)
-		{
-			if (m_container.transaction())
-			{
-				QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(value);
-				StringDialog dialog(
-						tr("Enter new name for file \"%1\"").arg(file->info().fileName()),
-						tr("Name"),
-						file->info().fileName(),
-						&Application::instance()->mainWindow());
-
-				if (dialog.exec() == QDialog::Accepted)
-				{
-					QString error;
-					QString fileName = file->info().fileName();
-
-					if (file->info().rename(dialog.value(), error))
-						if (m_container.updateValue(file->value(), file->info().absoluteFilePath(dialog.value())))
-							if (m_container.commit())
-							{
-								file->update();
-								emit dataChanged(index, index);
-							}
-							else
-							{
-								m_container.rollback();
-								file->info().rename(fileName, error);
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-							}
-						else
-						{
-							m_container.rollback();
-							file->info().rename(fileName, error);
-							QMessageBox::critical(
-										&Application::instance()->mainWindow(),
-										tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-										m_container.lastError());
-						}
-					else
-					{
-						m_container.rollback();
-						QMessageBox::critical(
-									&Application::instance()->mainWindow(),
-									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-									error);
-					}
-				}
-				else
-					m_container.rollback();
-			}
-			else
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-		}
-		else
-			view->edit(index);
-	else
-		view->edit(index);
+	view->edit(index);
 }
 
 void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)

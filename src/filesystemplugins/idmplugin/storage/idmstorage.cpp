@@ -9,6 +9,7 @@
 #include "undo/concrete/idmstorageundoupdatevalue.h"
 #include "undo/concrete/idmstorageundoaddvalue.h"
 #include "undo/concrete/idmstorageundoremovevalue.h"
+#include "undo/concrete/idmstorageundorenameproperty.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 #include <QtCore/QDebug>
 
@@ -284,6 +285,29 @@ bool IdmStorage::addProperty(IdmEntity *entity, IdmEntity *property, const QStri
 
 			sqlite3_free(errorMsg);
 		}
+	}
+
+	return false;
+}
+
+bool IdmStorage::renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name)
+{
+	if (entity->indexOf(property->id()) != IdmEntity::InvalidIndex)
+	{
+		char *errorMsg = 0;
+		QByteArray sqlQuery = PropertiesTable::rename(entity->id(), property->id(), name);
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+		{
+			m_undo.last().push_back(new IdmStorageUndoRenameProperty(entity, property));
+			entity->rename(property, name);
+
+			return true;
+		}
+		else
+			setLastError(sqlQuery, errorMsg);
+
+		sqlite3_free(errorMsg);
 	}
 
 	return false;

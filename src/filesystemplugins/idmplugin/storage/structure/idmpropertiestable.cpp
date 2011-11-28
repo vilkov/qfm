@@ -32,6 +32,16 @@ QByteArray PropertiesTable::insert(Database::id_type id, Database::id_type entit
 							   arg(name).toUtf8();
 }
 
+QByteArray PropertiesTable::rename(Database::id_type entity, Database::id_type property, const QString &name)
+{
+	return QString::fromLatin1("update PROPERTIES set NAME = '").
+							   append(name).
+							   append(QString::fromLatin1("' where ENTITY_ID = ")).
+							   append(QString::number(entity)).
+							   append(QString::fromLatin1(" and ENTITY_PROPERTY_ID = ")).
+							   append(QString::number(property)).toUtf8();
+}
+
 QByteArray PropertiesTable::remove(Database::id_type entity, Database::id_type property)
 {
 	return QString::fromLatin1("delete from PROPERTIES where ENTITY_ID = %1 and ENTITY_PROPERTY_ID = %2").

@@ -58,6 +58,7 @@ public:
 	bool removeEntity(IdmEntity *entity);
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
+	bool renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
 	IdmCompositeEntityValue *addValue(IdmEntity *entity) const;

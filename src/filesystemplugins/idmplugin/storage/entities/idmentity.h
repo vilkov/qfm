@@ -49,14 +49,7 @@ public:
 	const Property &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(id_type id) const { return m_items.indexOf(id); }
-	size_type indexOf(IdmEntity *entity) const
-	{
-		for (size_type i = 0, size = m_items.size(); i < size; ++i)
-			if (m_items.at(i).entity == entity)
-				return i;
-
-		return InvalidIndex;
-	}
+	size_type indexOf(IdmEntity *entity) const { return m_items.indexOf(entity->id()); }
 	size_type indexOf(const QString &name) const
 	{
 		for (size_type i = 0, size = m_items.size(); i < size; ++i)
@@ -72,10 +65,19 @@ public:
 	const Parents &parents() const { return m_parents; }
 	const IdmShortFormat &shortFormat() const { return m_shortFormat; }
 
+protected:
+	friend class IdmStorage;
+	friend class IdmStorageUndoAddEntity;
+	friend class IdmStorageUndoAddProperty;
+	friend class IdmStorageUndoRemoveEntity;
+	friend class IdmStorageUndoRemoveProperty;
+	friend class IdmStorageUndoRenameProperty;
+
 	void addParent(IdmEntity *parent) { m_parents.add(parent->id(), parent); }
 	void removeParent(IdmEntity *parent) { m_parents.remove(parent->id()); }
 
 	void add(IdmEntity *item, const QString &name) { m_items.add(item->id(), Property(item, name)); }
+	void rename(IdmEntity *item, const QString &name) { m_items[m_items.indexOf(item->id())].name = name; }
 	void remove(IdmEntity *item) { m_items.remove(item->id()); }
 	IdmEntity *take(size_type index) { return m_items.take(index).entity; }
 

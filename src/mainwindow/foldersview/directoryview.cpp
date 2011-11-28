@@ -250,7 +250,7 @@ void DirectoryView::pathToClipboard()
 
 void DirectoryView::rename()
 {
-	m_node->rename(selectedIndexes(), this);
+	m_node->rename(currentIndex(), this);
 }
 
 void DirectoryView::createFile()

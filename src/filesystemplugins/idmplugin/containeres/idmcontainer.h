@@ -59,6 +59,7 @@ public:
 	bool removeEntity(IdmEntity *entity) { return m_data->storage.removeEntity(entity); }
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
+	bool renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.renameProperty(entity, property, name); }
 	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_data->storage.removeProperty(entity, property); }
 
 	IdmCompositeEntityValue *addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }

@@ -2,13 +2,13 @@
 #define PERFORMREMOVEBASETASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "performtask.h"
-#include "taskprogress.h"
+#include "../filesystembasetask.h"
+#include "../tools/taskprogress.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformRemoveBaseTask : public PerformTask
+class PerformRemoveBaseTask : public BaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveBaseTask)
 

@@ -4,7 +4,7 @@
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtGui/QMessageBox>
-#include "filesystembasetask.h"
+#include "../filesystembasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN

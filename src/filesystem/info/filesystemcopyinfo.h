@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "filesysteminfo.h"
-#include "../interfaces/filesystemicopycontrol.h"
+#include "../tasks/interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

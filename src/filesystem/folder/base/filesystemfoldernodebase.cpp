@@ -17,54 +17,42 @@ FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner
 
 bool FolderNodeBase::event(QEvent *e)
 {
-	switch (static_cast<FolderBaseTask::Event::Type>(e->type()))
+	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
-		case FolderBaseTask::Event::UpdateFiles:
+		case ModelEvent::UpdateFiles:
 		{
 			e->accept();
 			updateFiles(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case FolderBaseTask::Event::ScanFilesForRemove:
+		case ModelEvent::ScanFilesForRemove:
 		{
 			e->accept();
 			scanForRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case FolderBaseTask::Event::RemoveFiles:
+		case ModelEvent::RemoveFiles:
 		{
 			e->accept();
 			performRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case FolderBaseTask::Event::ScanFilesForSize:
+		case ModelEvent::ScanFilesForSize:
 		{
 			e->accept();
 			scanForSize(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case FolderBaseTask::Event::ScanFilesForCopy:
+		case ModelEvent::ScanFilesForCopy:
 		{
 			e->accept();
 			scanForCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case FolderBaseTask::Event::CopyFiles:
+		case ModelEvent::CopyFiles:
 		{
 			e->accept();
 			performCopy(static_cast<BaseTask::Event*>(e));
-			return true;
-		}
-		case FolderBaseTask::Event::UpdateProgress:
-		{
-			e->accept();
-			updateProgress(static_cast<BaseTask::Event*>(e));
-			return true;
-		}
-		case FolderBaseTask::Event::CompletedProgress:
-		{
-			e->accept();
-			completedProgress(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
 		default:
@@ -247,24 +235,6 @@ void FolderNodeBase::performRemove(const BaseTask::Event *e)
 
 	performRemoveEvent(event->entries.data());
 	removeAllTaskLinks(event->entries->at(0)->fileName());
-}
-
-void FolderNodeBase::updateProgress(const BaseTask::Event *e)
-{
-	typedef PerformTask::UpdateProgressEvent * NotConstEvent;
-	typedef const PerformTask::UpdateProgressEvent * Event;
-	Event event = static_cast<Event>(e);
-
-	updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
-}
-
-void FolderNodeBase::completedProgress(const BaseTask::Event *e)
-{
-	typedef PerformTask::CompletedProgressEvent * NotConstEvent;
-	typedef const PerformTask::CompletedProgressEvent * Event;
-	Event event = static_cast<Event>(e);
-
-	completedProgressEvent(event->fileName, event->timeElapsed);
 }
 
 FILE_SYSTEM_NS_END

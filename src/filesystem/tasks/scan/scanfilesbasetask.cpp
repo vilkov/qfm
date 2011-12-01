@@ -1,4 +1,6 @@
 #include "scanfilesbasetask.h"
+#include "../containers/filesysteminfoentryitem.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 #include <QtCore/QDir>
 #include <QtCore/QDirIterator>
 
@@ -6,7 +8,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
-	FolderTask(receiver)
+	BaseTask(receiver)
 {}
 
 InfoListItem *ScanFilesBaseTask::scan(const QString &root, const volatile bool &aborted) const

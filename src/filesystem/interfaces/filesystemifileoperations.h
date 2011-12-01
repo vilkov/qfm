@@ -4,8 +4,7 @@
 #include <QtGui/QAction>
 #include <QtCore/QModelIndexList>
 #include "filesysteminodeview.h"
-#include "filesystemicopycontrol.h"
-#include "../filesystem_ns.h"
+#include "../tasks/interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

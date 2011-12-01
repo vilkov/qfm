@@ -2,15 +2,16 @@
 #define SCANFILESBASETASK_H_
 
 #include <QtCore/QStringList>
-#include "../filesystemfoldertask.h"
+#include "../filesystembasetask.h"
+#include "../containers/filesysteminfolistitem.h"
 #ifndef Q_OS_WIN
-#	include "../taskpermissionscache.h"
+#	include "../tools/taskpermissionscache.h"
 #endif
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class ScanFilesBaseTask : public FolderTask
+class ScanFilesBaseTask : public BaseTask
 {
 public:
 	ScanFilesBaseTask(TasksNode *receiver);

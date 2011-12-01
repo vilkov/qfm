@@ -9,7 +9,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver) :
-	PerformTask(receiver),
+	BaseTask(receiver),
 	m_progress(receiver)
 {}
 

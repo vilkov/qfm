@@ -1,5 +1,6 @@
 #include "filesystemtasksnode.h"
-#include "filesystemtaskdialog.h"
+#include "tools/filesystemtaskdialog.h"
+#include "tools/filesystemtaskprogressevents.h"
 #include "../../application.h"
 
 
@@ -11,19 +12,46 @@ TasksNode::TasksNode(const ModelContainer &conteiner, Node *parent) :
 
 bool TasksNode::event(QEvent *e)
 {
-	if (static_cast<BaseTask::Event::Type>(e->type()) == BaseTask::Event::Question)
+	switch (static_cast<BaseTask::Event::Type>(e->type()))
 	{
-		QuestionEvent *event = static_cast<QuestionEvent*>(e);
+		case BaseTask::Event::Question:
+		{
+			QuestionEvent *event = static_cast<QuestionEvent*>(e);
 
-		event->accept();
-		event->result()->lock();
-		event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
-		event->result()->unlock();
+			event->accept();
+			event->result()->lock();
+			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+			event->result()->unlock();
 
-		return true;
+			return true;
+		}
+		case BaseTask::Event::Progress:
+		{
+			typedef UpdateProgressEvent * NotConstEvent;
+			typedef const UpdateProgressEvent * Event;
+			Event event = static_cast<Event>(e);
+			e->accept();
+
+			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
+
+			return true;
+		}
+		case BaseTask::Event::Completed:
+		{
+			typedef CompletedProgressEvent * NotConstEvent;
+			typedef const CompletedProgressEvent * Event;
+			Event event = static_cast<Event>(e);
+			e->accept();
+
+			completedProgressEvent(event->fileName, event->timeElapsed);
+
+			return true;
+		}
+		default:
+			break;
 	}
-	else
-		return Node::event(e);
+
+	return Node::event(e);
 }
 
 void TasksNode::addTask(BaseTask *task, const QStringList &files)

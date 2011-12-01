@@ -62,6 +62,12 @@ protected:
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
+protected:
+	/* TasksNode */
+	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
+
+protected:
 	/* IQueryResultsUpdater */
 	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
 	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values);

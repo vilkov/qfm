@@ -6,7 +6,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformCopyTask::PerformCopyTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
-	PerformTask(receiver),
+	BaseTask(receiver),
 	m_entries(entries.take()),
 	m_control(control.take()),
 	m_move(move),

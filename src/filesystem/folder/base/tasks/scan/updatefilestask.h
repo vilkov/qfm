@@ -1,23 +1,24 @@
 #ifndef UPDATEFILESTASK_H_
 #define UPDATEFILESTASK_H_
 
+#include "../../events/filesystemmodelevent.h"
 #include "../../containers/filesystemupdateslist.h"
-#include "../filesystemfolderbasetask.h"
+#include "../../../../tasks/scan/scanfilesbasetask.h"
 #ifndef Q_OS_WIN
-#	include "../taskpermissionscache.h"
+#	include "../../../../tasks/tools/taskpermissionscache.h"
 #endif
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class UpdateFilesTask : public FolderBaseTask
+class UpdateFilesTask : public ScanFilesBaseTask
 {
 public:
-	class Event : public FolderBaseTask::Event
+	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
 		Event(bool isLastEvent, const UpdatesList &updates) :
-			FolderBaseTask::Event(UpdateFiles),
+			ScanFilesBaseTask::Event(static_cast<Type>(ModelEvent::UpdateFiles)),
 			isLastEvent(isLastEvent),
 			updates(updates)
 		{}

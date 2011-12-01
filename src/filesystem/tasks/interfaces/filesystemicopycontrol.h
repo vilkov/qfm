@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMICOPYCONTROL_H_
 #define FILESYSTEMICOPYCONTROL_H_
 
-#include "filesystemifilecontrol.h"
 #include "../containers/filesysteminfolistitem.h"
+#include "../../interfaces/filesystemifilecontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

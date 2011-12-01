@@ -3,7 +3,7 @@
 
 #include "scanfilestask.h"
 #include "../../../../interfaces/filesysteminode.h"
-#include "../../../../interfaces/filesystemicopycontrol.h"
+#include "../../../../tasks/interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -35,7 +35,7 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(ModelEvent::Type type, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			ScanFilesTask::Event(type, canceled, entries),
 			control(control.take()),
 			move(move)

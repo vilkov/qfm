@@ -30,9 +30,11 @@ public:
 		enum Type
 		{
 			Question = User,
+			Progress = User + 1,
+			Completed = User + 2,
 
 			/* First user event id. */
-			User = Question + 1
+			User = Completed + 1
 		};
 
 	protected:

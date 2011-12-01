@@ -58,6 +58,8 @@ protected:
 	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move);
 	virtual void performRemoveEvent(const InfoListItem *entries);
 
+protected:
+	/* TasksNode */
 	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
 

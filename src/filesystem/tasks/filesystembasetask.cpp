@@ -1,6 +1,6 @@
 #include "filesystembasetask.h"
 #include "filesystemtasksnode.h"
-#include "filesystemtaskdialog.h"
+#include "tools/filesystemtaskdialog.h"
 #include "../../tools/pointers/pscopedpointer.h"
 #include <QtCore/QThread>
 #include <QtCore/QCoreApplication>

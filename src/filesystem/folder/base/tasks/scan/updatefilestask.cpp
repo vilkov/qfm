@@ -10,7 +10,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, const Info &info, const UpdatesList &updates) :
-	FolderBaseTask(receiver),
+	ScanFilesBaseTask(receiver),
 	m_info(info),
 	m_updates(updates)
 {}

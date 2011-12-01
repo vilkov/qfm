@@ -4,30 +4,36 @@
 #include <QtCore/QDir>
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
-#include "performtask.h"
-#include "taskprogress.h"
-#include "../../../../interfaces/filesystemicopycontrol.h"
+#include "../../events/filesystemmodelevent.h"
+#include "../../../../tasks/tools/taskprogress.h"
+#include "../../../../tasks/filesystembasetask.h"
+#include "../../../../tasks/interfaces/filesystemicopycontrol.h"
+#include "../../../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformCopyTask : public PerformTask
+class PerformCopyTask : public BaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
 	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 
-	class Event : public PerformTask::Event
+	class Event : public BaseTask::Event
 	{
 	public:
 		Event(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
-			PerformTask::Event(CopyFiles, canceled, entries),
+			BaseTask::Event(static_cast<Type>(ModelEvent::CopyFiles)),
+			entries(entries.take()),
 			control(control.take()),
+			canceled(canceled),
 			move(move)
 		{}
 
+		PScopedPointer<InfoListItem> entries;
 		PScopedPointer<ICopyControl> control;
+		bool canceled;
 		bool move;
 	};
 

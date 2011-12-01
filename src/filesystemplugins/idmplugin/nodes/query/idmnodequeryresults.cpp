@@ -344,6 +344,16 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *pl
 	return 0;
 }
 
+void IdmNodeQueryResults::updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed)
+{
+
+}
+
+void IdmNodeQueryResults::completedProgressEvent(const QString &fileName, quint64 timeElapsed)
+{
+
+}
+
 void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
 	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))

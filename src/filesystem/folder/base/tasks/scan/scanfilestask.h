@@ -1,7 +1,9 @@
 #ifndef SCANFILESTASK_H_
 #define SCANFILESTASK_H_
 
-#include "scanfilesbasetask.h"
+#include "../../events/filesystemmodelevent.h"
+#include "../../../../tasks/scan/scanfilesbasetask.h"
+#include "../../../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,11 +14,13 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
-			ScanFilesBaseTask::Event(type, canceled),
+		Event(ModelEvent::Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
+			ScanFilesBaseTask::Event(static_cast<Type>(type)),
+			canceled(canceled),
 			entries(entries.take())
 		{}
 
+		bool canceled;
 		PScopedPointer<InfoListItem> entries;
 	};
 

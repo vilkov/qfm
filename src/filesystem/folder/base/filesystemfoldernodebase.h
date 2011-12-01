@@ -48,9 +48,6 @@ protected:
 	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move) = 0;
 	virtual void performRemoveEvent(const InfoListItem *entries) = 0;
 
-	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) = 0;
-	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed) = 0;
-
 protected:
 	/* Prepare tasks */
 	void scanForSize(const QStringList &entries);
@@ -75,10 +72,6 @@ private:
 	void scanForRemove(const BaseTask::Event *event);
 	void performCopy(const BaseTask::Event *event);
 	void performRemove(const BaseTask::Event *event);
-
-	void questionAnswer(const BaseTask::Event *event);
-	void updateProgress(const BaseTask::Event *event);
-	void completedProgress(const BaseTask::Event *event);
 
 private:
 	bool m_updating;

@@ -14,7 +14,7 @@ void PerformRemoveTask::run(const volatile bool &aborted)
 
 	if (!aborted && !isReceiverDead())
 	{
-		PScopedPointer<Event> event(new Event(Event::RemoveFiles, isCanceled(), m_entries));
+		PScopedPointer<Event> event(new Event(ModelEvent::RemoveFiles, isCanceled(), m_entries));
 		QCoreApplication::postEvent(receiver(), event.take());
 	}
 }

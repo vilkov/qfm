@@ -22,6 +22,10 @@ public:
     virtual bool event(QEvent *event);
 
 protected:
+	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) = 0;
+	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed) = 0;
+
+protected:
 	void addTask(BaseTask *task, const QStringList &files);
 	void resetTask(BaseTask *task, const QString &fileName);
 	void handleTask(BaseTask *task);

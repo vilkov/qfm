@@ -22,6 +22,10 @@ public:
 	virtual qint64 totalSize() const = 0;
 
 	bool shouldRemove() const { return m_shouldRemove; }
+
+protected:
+	friend class PerformRemoveBaseTask;
+
 	void setShouldRemove(bool value) { m_shouldRemove = value; }
 
 private:

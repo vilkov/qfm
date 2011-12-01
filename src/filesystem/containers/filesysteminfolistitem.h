@@ -19,8 +19,6 @@ public:
 
 	virtual bool isList() const;
 	virtual qint64 totalSize() const;
-	void incTotalSize(qint64 count) { m_totalSize += count; }
-	void decTotalSize(qint64 count) { m_totalSize -= count; }
 
 	value_type &operator[](size_type index) { return m_items[index]; }
 	const value_type &operator[](size_type index) const { return m_items[index]; }
@@ -29,6 +27,12 @@ public:
 	const value_type &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(value_type item) const { return m_items.indexOf(item); }
+
+protected:
+	friend class ScanFilesBaseTask;
+
+	void incTotalSize(qint64 count) { m_totalSize += count; }
+	void decTotalSize(qint64 count) { m_totalSize -= count; }
 
 	const value_type &last() const { return m_items.last(); }
 	value_type &last() { return m_items.last(); }

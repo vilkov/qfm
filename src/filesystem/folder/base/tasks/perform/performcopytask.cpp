@@ -44,7 +44,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_control, m_move));
-		Application::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 

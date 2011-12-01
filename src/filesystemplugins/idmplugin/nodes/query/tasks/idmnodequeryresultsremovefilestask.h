@@ -16,7 +16,7 @@ public:
 	typedef QList<QPair<QModelIndex, QueryResultValueItem*> > List;
 
 public:
-	RemoveFilesTask(QObject *receiver, const List &values, const List &files);
+	RemoveFilesTask(TaskNode *receiver, const List &values, const List &files);
 
 	virtual void run(const volatile bool &aborted);
 

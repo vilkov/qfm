@@ -12,7 +12,7 @@ class BaseTask::DeleteHandler : public QObject
 {
 public:
 	DeleteHandler(BaseTask *task, TaskNode *parent) :
-		QObject(static_cast<QObject*>(parent)),
+		QObject(parent),
 		mutexHolder(task->m_mutexHolder),
 		task(task)
 	{}

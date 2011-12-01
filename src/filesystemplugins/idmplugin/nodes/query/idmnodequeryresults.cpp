@@ -3,6 +3,7 @@
 #include "functors/idmqueryresultsfunctor.h"
 #include "control/idmqueryresultscopycontrol.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
+#include "../../../../tools/rangeintersection.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../application.h"
@@ -245,6 +246,46 @@ void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 {
+	typedef QMap<QModelIndex, RangeIntersection> Map;
+
+	if (m_container.transaction())
+	{
+		Map processed;
+		QueryResultValueItem *item;
+
+//		QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(value->parent());
+
+		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+			if (item = value_cast(list.at(i).internalPointer(), item))
+			{
+
+			}
+
+//		if (m_container.removeValue(property->rootValue(), value->value()))
+//		{
+//			beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
+//
+//			if (m_container.commit())
+//				property->remove(index.row());
+//			else
+//			{
+//				m_container.rollback();
+//				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+//			}
+//
+//			endRemoveRows();
+//		}
+//		else
+//		{
+//			m_container.rollback();
+//			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+//		}
+	}
+	else
+		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+
+
+
 	process(list, callTo(this, view, &IdmNodeQueryResults::doRemove));
 }
 
@@ -255,38 +296,7 @@ void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
 
 void IdmNodeQueryResults::calculateSize(const QModelIndexList &list, INodeView *view)
 {
-	QModelIndex index = list.at(0);
 
-	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
-		if (m_container.transaction())
-		{
-			QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(item->parent());
-
-			if (m_container.removeValue(property->rootValue(), item->value()))
-			{
-				beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
-
-				if (m_container.commit())
-					property->remove(index.row());
-				else
-				{
-					m_container.rollback();
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-				}
-
-				endRemoveRows();
-			}
-			else
-			{
-				m_container.rollback();
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-			}
-		}
-		else
-		{
-			m_container.rollback();
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-		}
 }
 
 void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list, INodeView *view)

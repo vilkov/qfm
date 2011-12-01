@@ -15,7 +15,7 @@ void ScanFilesForSizeTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForSize, isCanceled(), subnode()));
-		Application::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 
@@ -31,7 +31,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForRemove, isCanceled(), subnode()));
-		Application::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 
@@ -49,7 +49,7 @@ void ScanFilesForCopyTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::ScanFilesForCopy, isCanceled(), subnode(), m_control, m_move));
-		Application::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
+		Application::postEvent(receiver(), event.take());
 	}
 }
 

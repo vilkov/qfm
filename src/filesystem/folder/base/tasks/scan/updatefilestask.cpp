@@ -38,12 +38,12 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				Application::postEvent(reinterpret_cast<QObject*>(receiver()), new Event(false, localUpdates));
+				Application::postEvent(receiver(), new Event(false, localUpdates));
 		}
 	}
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(reinterpret_cast<QObject*>(receiver()), new Event(true, m_updates.takeUpdates()));
+		Application::postEvent(receiver(), new Event(true, m_updates.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

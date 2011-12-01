@@ -11,7 +11,7 @@ TasksNode::TasksNode(const ModelContainer &conteiner, Node *parent) :
 
 bool TasksNode::event(QEvent *e)
 {
-	if (e->type() == BaseTask::Event::Question)
+	if (static_cast<BaseTask::Event::Type>(e->type()) == BaseTask::Event::Question)
 	{
 		QuestionEvent *event = static_cast<QuestionEvent*>(e);
 

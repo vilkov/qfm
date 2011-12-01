@@ -34,7 +34,10 @@ bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
 
 		if (m_container.addValue(m_value, list))
 			if (m_container.commit())
+			{
 				m_model->add(m_index, list);
+				return true;
+			}
 			else
 			{
 				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());

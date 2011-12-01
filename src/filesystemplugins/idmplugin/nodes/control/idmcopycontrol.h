@@ -24,9 +24,6 @@ public:
 	virtual void canceled();
 
 private:
-	QStringList toStringList(const InfoListItem *files) const;
-
-private:
 	IdmContainer m_container;
 	IdmEntity *m_entity;
 };

@@ -49,7 +49,9 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();
 				else
-					if (!m_container.commit())
+					if (m_container.commit())
+						return true;
+					else
 					{
 						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
@@ -79,17 +81,6 @@ void IdmCopyControl::done(bool error)
 void IdmCopyControl::canceled()
 {
 
-}
-
-QStringList IdmCopyControl::toStringList(const InfoListItem *files) const
-{
-	QStringList res;
-	res.reserve(files->size());
-
-	for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
-		res.push_back(absoluteFilePath(files->at(i)->fileName()));
-
-	return res;
 }
 
 IDM_PLUGIN_NS_END

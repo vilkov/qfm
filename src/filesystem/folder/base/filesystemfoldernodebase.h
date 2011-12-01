@@ -2,7 +2,6 @@
 #define FILESYSTEMFOLDERNODEBASE_H_
 
 #include <QtCore/QStringList>
-#include "events/filesystemmodelevent.h"
 #include "containers/filesystemupdateslist.h"
 #include "../../tasks/filesystemtasksnode.h"
 #include "../../../tools/pointers/pscopedpointer.h"
@@ -22,7 +21,7 @@ class FolderNodeBase : public TasksNode
 public:
 	FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent = 0);
 
-	/* FileSystemModel */
+	/* TasksNode */
     virtual bool event(QEvent *event);
 
 	/* INode::IFileInfo */
@@ -70,16 +69,16 @@ protected:
 
 private:
 	void updateFiles();
-	void updateFiles(const ModelEvent *event);
-	void scanForSize(const ModelEvent *event);
-	void scanForCopy(const ModelEvent *event);
-	void scanForRemove(const ModelEvent *event);
-	void performCopy(const ModelEvent *event);
-	void performRemove(const ModelEvent *event);
+	void updateFiles(const BaseTask::Event *event);
+	void scanForSize(const BaseTask::Event *event);
+	void scanForCopy(const BaseTask::Event *event);
+	void scanForRemove(const BaseTask::Event *event);
+	void performCopy(const BaseTask::Event *event);
+	void performRemove(const BaseTask::Event *event);
 
-	void questionAnswer(const ModelEvent *event);
-	void updateProgress(const ModelEvent *event);
-	void completedProgress(const ModelEvent *event);
+	void questionAnswer(const BaseTask::Event *event);
+	void updateProgress(const BaseTask::Event *event);
+	void completedProgress(const BaseTask::Event *event);
 
 private:
 	bool m_updating;

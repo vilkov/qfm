@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	ScanFilesForSizeTask(QObject *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForSizeTask(TaskNode *receiver, const Info &info, const QStringList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -22,7 +22,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	ScanFilesForRemoveTask(QObject *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForRemoveTask(TaskNode *receiver, const Info &info, const QStringList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -46,7 +46,7 @@ public:
 	};
 
 public:
-	ScanFilesForCopyTask(QObject *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	ScanFilesForCopyTask(TaskNode *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 

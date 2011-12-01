@@ -2,9 +2,9 @@
 #define UPDATEFILESTASK_H_
 
 #include "../../containers/filesystemupdateslist.h"
-#include "../../../tasks/filesystemfolderbasetask.h"
+#include "../filesystemfolderbasetask.h"
 #ifndef Q_OS_WIN
-#	include "../../../tasks/taskpermissionscache.h"
+#	include "../taskpermissionscache.h"
 #endif
 
 
@@ -13,11 +13,11 @@ FILE_SYSTEM_NS_BEGIN
 class UpdateFilesTask : public FolderBaseTask
 {
 public:
-	class Event : public ModelEvent
+	class Event : public FolderBaseTask::Event
 	{
 	public:
 		Event(bool isLastEvent, const UpdatesList &updates) :
-			ModelEvent(UpdateFiles),
+			FolderBaseTask::Event(UpdateFiles),
 			isLastEvent(isLastEvent),
 			updates(updates)
 		{}
@@ -27,7 +27,7 @@ public:
 	};
 
 public:
-	UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates);
+	UpdateFilesTask(TaskNode *receiver, const Info &info, const UpdatesList &updates);
 
 	virtual void run(const volatile bool &aborted);
 

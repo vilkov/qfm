@@ -13,7 +13,7 @@ class PerformRemoveTask : public PerformTask
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
 public:
-	PerformRemoveTask(QObject *receiver, PScopedPointer<InfoListItem> &entries);
+	PerformRemoveTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries);
 
 	virtual void run(const volatile bool &aborted);
 

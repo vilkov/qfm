@@ -2,7 +2,7 @@
 #define SCANFILESBASETASK_H_
 
 #include <QtCore/QStringList>
-#include "../filesystemfolderbasetask.h"
+#include "../filesystemfoldertask.h"
 #ifndef Q_OS_WIN
 #	include "../taskpermissionscache.h"
 #endif
@@ -10,10 +10,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class ScanFilesBaseTask : public FolderBaseTask
+class ScanFilesBaseTask : public FolderTask
 {
 public:
-	ScanFilesBaseTask(QObject *receiver);
+	ScanFilesBaseTask(TaskNode *receiver);
 
 protected:
 	InfoListItem *scan(const QString &root, const volatile bool &aborted) const;

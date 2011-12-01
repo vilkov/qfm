@@ -8,7 +8,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask(QObject *receiver, const Info &info, const UpdatesList &updates) :
+UpdateFilesTask::UpdateFilesTask(TaskNode *receiver, const Info &info, const UpdatesList &updates) :
 	FolderBaseTask(receiver),
 	m_info(info),
 	m_updates(updates)
@@ -38,12 +38,12 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				Application::postEvent(receiver(), new Event(false, localUpdates));
+				Application::postEvent(reinterpret_cast<QObject*>(receiver()), new Event(false, localUpdates));
 		}
 	}
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(receiver(), new Event(true, m_updates.takeUpdates()));
+		Application::postEvent(reinterpret_cast<QObject*>(receiver()), new Event(true, m_updates.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

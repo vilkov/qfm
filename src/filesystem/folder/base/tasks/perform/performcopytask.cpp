@@ -1,10 +1,11 @@
 #include "performcopytask.h"
-#include "../../../../application.h"
+#include "../../../../../application.h"
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(QObject *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+PerformCopyTask::PerformCopyTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	PerformTask(receiver),
 	m_entries(entries.take()),
 	m_control(control.take()),
@@ -43,7 +44,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(isCanceled(), m_entries, m_control, m_move));
-		Application::postEvent(receiver(), event.take());
+		Application::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
 	}
 }
 
@@ -178,73 +179,59 @@ void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volat
 
 void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted)
 {
-	QuestionAnswerEvent::Result result;
-	PScopedPointer<QuestionAnswerEvent> event(
-			new QuestionAnswerEvent(
-					title,
-					text,
-					QMessageBox::Yes |
-					QMessageBox::YesToAll |
-					QMessageBox::No |
-					QMessageBox::NoToAll |
-					QMessageBox::Cancel,
-					&result
-			)
-	);
+	qint32 answer = askUser(
+						title,
+						text,
+						QMessageBox::Yes |
+						QMessageBox::YesToAll |
+						QMessageBox::No |
+						QMessageBox::NoToAll |
+						QMessageBox::Cancel,
+						aborted);
 
-	Application::postEvent(receiver(), event.take());
+	switch (answer)
+	{
+		case QMessageBox::Yes:
+			tryAgain = true;
+			break;
 
-	if (result.waitFor(aborted, isReceiverDead()))
-		switch (result.answer())
-		{
-			case QMessageBox::Yes:
-				tryAgain = true;
-				break;
+		case QMessageBox::YesToAll:
+			m_overwriteAll = tryAgain = true;
+			break;
 
-			case QMessageBox::YesToAll:
-				m_overwriteAll = tryAgain = true;
-				break;
+		case QMessageBox::No:
+			tryAgain = false;
+			break;
 
-			case QMessageBox::No:
-				tryAgain = false;
-				break;
+		case QMessageBox::NoToAll:
+			m_overwriteAll = tryAgain = false;
+			break;
 
-			case QMessageBox::NoToAll:
-				m_overwriteAll = tryAgain = false;
-				break;
-
-			case QMessageBox::Cancel:
-				cancel();
-				break;
-		}
+		case QMessageBox::Cancel:
+			cancel();
+			break;
+	}
 }
 
 void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted)
 {
-	QuestionAnswerEvent::Result result;
-	PScopedPointer<QuestionAnswerEvent> event(
-			new QuestionAnswerEvent(
-					title,
-					text,
-					QMessageBox::Yes |
-					QMessageBox::YesToAll |
-					QMessageBox::Retry |
-					QMessageBox::Cancel,
-					&result
-			)
-	);
+	qint32 answer = askUser(
+						title,
+						text,
+						QMessageBox::Yes |
+						QMessageBox::YesToAll |
+						QMessageBox::Retry |
+						QMessageBox::Cancel,
+						aborted);
 
-	Application::postEvent(receiver(), event.take());
-
-	if (result.waitFor(aborted, isReceiverDead()))
-		if (result.answer() == QMessageBox::YesToAll)
-			m_skipAllIfNotCopy = true;
+	if (answer == QMessageBox::YesToAll)
+		m_skipAllIfNotCopy = true;
+	else
+		if (answer == QMessageBox::Retry)
+			tryAgain = true;
 		else
-			if (result.answer() == QMessageBox::Retry)
-				tryAgain = true;
-			else
-				if (result.answer() == QMessageBox::Cancel)
-					cancel();
+			if (answer == QMessageBox::Cancel)
+				cancel();
 }
 
 FILE_SYSTEM_NS_END

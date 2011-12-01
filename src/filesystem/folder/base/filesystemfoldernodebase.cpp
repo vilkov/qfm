@@ -1,12 +1,10 @@
 #include "filesystemfoldernodebase.h"
 #include "tasks/scan/updatefilestask.h"
 #include "tasks/scan/scanfilestasks.h"
-#include "../tasks/perform/performcopytask.h"
-#include "../tasks/perform/performremovetask.h"
+#include "tasks/perform/performcopytask.h"
+#include "tasks/perform/performremovetask.h"
 #include "../../info/filesystemcopyinfo.h"
 #include "../../../application.h"
-
-#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -19,67 +17,61 @@ FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner
 
 bool FolderNodeBase::event(QEvent *e)
 {
-	switch (static_cast<ModelEvent::Type>(e->type()))
+	switch (static_cast<FolderBaseTask::Event::Type>(e->type()))
 	{
-		case ModelEvent::UpdateFiles:
+		case FolderBaseTask::Event::UpdateFiles:
 		{
 			e->accept();
-			updateFiles(static_cast<ModelEvent*>(e));
+			updateFiles(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForRemove:
+		case FolderBaseTask::Event::ScanFilesForRemove:
 		{
 			e->accept();
-			scanForRemove(static_cast<ModelEvent*>(e));
+			scanForRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::RemoveFiles:
+		case FolderBaseTask::Event::RemoveFiles:
 		{
 			e->accept();
-			performRemove(static_cast<ModelEvent*>(e));
+			performRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForSize:
+		case FolderBaseTask::Event::ScanFilesForSize:
 		{
 			e->accept();
-			scanForSize(static_cast<ModelEvent*>(e));
+			scanForSize(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForCopy:
+		case FolderBaseTask::Event::ScanFilesForCopy:
 		{
 			e->accept();
-			scanForCopy(static_cast<ModelEvent*>(e));
+			scanForCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::CopyFiles:
+		case FolderBaseTask::Event::CopyFiles:
 		{
 			e->accept();
-			performCopy(static_cast<ModelEvent*>(e));
+			performCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::QuestionAnswer:
+		case FolderBaseTask::Event::UpdateProgress:
 		{
 			e->accept();
-			questionAnswer(static_cast<ModelEvent*>(e));
+			updateProgress(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::UpdateProgress:
+		case FolderBaseTask::Event::CompletedProgress:
 		{
 			e->accept();
-			updateProgress(static_cast<ModelEvent*>(e));
-			return true;
-		}
-		case ModelEvent::CompletedProgress:
-		{
-			e->accept();
-			completedProgress(static_cast<ModelEvent*>(e));
+			completedProgress(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
 		default:
 			break;
 	}
 
-	return QAbstractItemModel::event(e);
+	return TasksNode::event(e);
 }
 
 bool FolderNodeBase::isDir() const
@@ -147,45 +139,45 @@ ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 
 void FolderNodeBase::scanForSize(const QStringList &entries)
 {
-	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
-	addTask(task.take(), entries);
+//	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
+//	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
-	addTask(task.take(), entries);
+//	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
+//	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const QStringList &entries)
 {
-	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
-	addTask(task.take(), entries);
+//	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
+//	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
-	resetTask(task.take(), entries->at(0)->fileName());
+//	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
+//	resetTask(task.take(), entries->at(0)->fileName());
 }
 
 void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 {
-	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
-	resetTask(task.take(), entries->at(0)->fileName());
+//	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
+//	resetTask(task.take(), entries->at(0)->fileName());
 }
 
 void FolderNodeBase::updateFiles()
 {
-	if (isVisible())
-	{
-		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
-		setUpdating(true);
-		handleTask(task.take());
-	}
+//	if (isVisible())
+//	{
+//		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
+//		setUpdating(true);
+//		handleTask(task.take());
+//	}
 }
 
-void FolderNodeBase::updateFiles(const ModelEvent *e)
+void FolderNodeBase::updateFiles(const BaseTask::Event *e)
 {
 	typedef const UpdateFilesTask::Event * Event;
 	Event event = static_cast<Event>(e);
@@ -199,7 +191,7 @@ void FolderNodeBase::updateFiles(const ModelEvent *e)
 	}
 }
 
-void FolderNodeBase::scanForSize(const ModelEvent *e)
+void FolderNodeBase::scanForSize(const BaseTask::Event *e)
 {
 	typedef ScanFilesForSizeTask::Event * NotConstEvent;
 	typedef const ScanFilesForSizeTask::Event * Event;
@@ -209,7 +201,7 @@ void FolderNodeBase::scanForSize(const ModelEvent *e)
 	removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
-void FolderNodeBase::scanForCopy(const ModelEvent *e)
+void FolderNodeBase::scanForCopy(const BaseTask::Event *e)
 {
 	typedef ScanFilesForCopyTask::Event * NotConstEvent;
 	typedef const ScanFilesForCopyTask::Event * Event;
@@ -221,7 +213,7 @@ void FolderNodeBase::scanForCopy(const ModelEvent *e)
 		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
-void FolderNodeBase::scanForRemove(const ModelEvent *e)
+void FolderNodeBase::scanForRemove(const BaseTask::Event *e)
 {
 	typedef ScanFilesForRemoveTask::Event * NotConstEvent;
 	typedef const ScanFilesForRemoveTask::Event * Event;
@@ -233,7 +225,7 @@ void FolderNodeBase::scanForRemove(const ModelEvent *e)
 		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
-void FolderNodeBase::performCopy(const ModelEvent *e)
+void FolderNodeBase::performCopy(const BaseTask::Event *e)
 {
 	typedef PerformCopyTask::Event * NotConstEvent;
 	typedef const PerformCopyTask::Event * Event;
@@ -247,7 +239,7 @@ void FolderNodeBase::performCopy(const ModelEvent *e)
 		removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
-void FolderNodeBase::performRemove(const ModelEvent *e)
+void FolderNodeBase::performRemove(const BaseTask::Event *e)
 {
 	typedef PerformRemoveTask::Event * NotConstEvent;
 	typedef const PerformRemoveTask::Event * Event;
@@ -257,18 +249,7 @@ void FolderNodeBase::performRemove(const ModelEvent *e)
 	removeAllTaskLinks(event->entries->at(0)->fileName());
 }
 
-void FolderNodeBase::questionAnswer(const ModelEvent *e)
-{
-	typedef FolderBaseTask::QuestionAnswerEvent * NotConstEvent;
-	typedef const FolderBaseTask::QuestionAnswerEvent * Event;
-	Event event = static_cast<Event>(e);
-
-	event->result()->lock();
-	event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
-	event->result()->unlock();
-}
-
-void FolderNodeBase::updateProgress(const ModelEvent *e)
+void FolderNodeBase::updateProgress(const BaseTask::Event *e)
 {
 	typedef PerformTask::UpdateProgressEvent * NotConstEvent;
 	typedef const PerformTask::UpdateProgressEvent * Event;
@@ -277,7 +258,7 @@ void FolderNodeBase::updateProgress(const ModelEvent *e)
 	updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
 }
 
-void FolderNodeBase::completedProgress(const ModelEvent *e)
+void FolderNodeBase::completedProgress(const BaseTask::Event *e)
 {
 	typedef PerformTask::CompletedProgressEvent * NotConstEvent;
 	typedef const PerformTask::CompletedProgressEvent * Event;

@@ -1,7 +1,7 @@
 #ifndef SCANFILESTASK_H_
 #define SCANFILESTASK_H_
 
-#include "../../../tasks/scan/scanfilesbasetask.h"
+#include "scanfilesbasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -9,11 +9,11 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public ScanFilesBaseTask
 {
 public:
-	class Event : public FolderBaseTask::Event
+	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
 		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
-			FolderBaseTask::Event(type, canceled),
+			ScanFilesBaseTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
@@ -21,7 +21,7 @@ public:
 	};
 
 public:
-	ScanFilesTask(QObject *receiver, const Info &root, const QStringList &files);
+	ScanFilesTask(TaskNode *receiver, const Info &root, const QStringList &files);
 
 	virtual void run(const volatile bool &aborted);
 

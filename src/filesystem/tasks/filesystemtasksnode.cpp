@@ -1,4 +1,5 @@
 #include "filesystemtasksnode.h"
+#include "filesystemtaskdialog.h"
 #include "../../application.h"
 
 
@@ -7,6 +8,23 @@ FILE_SYSTEM_NS_BEGIN
 TasksNode::TasksNode(const ModelContainer &conteiner, Node *parent) :
 	Node(conteiner, parent)
 {}
+
+bool TasksNode::event(QEvent *e)
+{
+	if (e->type() == BaseTask::Event::Question)
+	{
+		QuestionEvent *event = static_cast<QuestionEvent*>(e);
+
+		event->accept();
+		event->result()->lock();
+		event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+		event->result()->unlock();
+
+		return true;
+	}
+	else
+		return Node::event(e);
+}
 
 void TasksNode::addTask(BaseTask *task, const QStringList &files)
 {

@@ -3,7 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(QObject *receiver, const Info &root, const QStringList &files) :
+ScanFilesTask::ScanFilesTask(TaskNode *receiver, const Info &root, const QStringList &files) :
 	ScanFilesBaseTask(receiver),
 	m_root(root),
 	m_files(files)

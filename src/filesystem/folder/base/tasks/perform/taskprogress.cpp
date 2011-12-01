@@ -1,11 +1,12 @@
 #include "taskprogress.h"
-#include "../filesystemfolderbasetask.h"
-#include "../../../../application.h"
+#include "../filesystemfoldertask.h"
+#include "../../../../tasks/filesystemtasksnode.h"
+#include "../../../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-TaskProgress::TaskProgress(QObject *receiver) :
+TaskProgress::TaskProgress(TaskNode *receiver) :
 	m_receiver(receiver)
 {}
 
@@ -36,7 +37,7 @@ void TaskProgress::complete()
 	typedef FolderBaseTask::CompletedProgressEvent Event;
 
 	PScopedPointer<Event> event(new Event(m_fileName, m_startTime.msecsTo(QDateTime::currentDateTime())));
-	Application::postEvent(m_receiver, event.take());
+	Application::postEvent(reinterpret_cast<QObject*>(m_receiver), event.take());
 }
 
 void TaskProgress::clear()
@@ -49,7 +50,7 @@ void TaskProgress::postEvent()
 	typedef FolderBaseTask::UpdateProgressEvent Event;
 
 	PScopedPointer<Event> event(new Event(m_fileName, m_progress, m_startTime.msecsTo(m_currentTime)));
-	Application::postEvent(m_receiver, event.take());
+	Application::postEvent(reinterpret_cast<QObject*>(m_receiver), event.take());
 }
 
 FILE_SYSTEM_NS_END

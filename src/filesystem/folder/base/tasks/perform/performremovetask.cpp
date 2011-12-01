@@ -1,14 +1,15 @@
 #include "performremovetask.h"
-#include "../../../../application.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
 #endif
 #include <QtCore/QDir>
+#include <QtCore/QCoreApplication>
+#include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTask::PerformRemoveTask(QObject *receiver, PScopedPointer<InfoListItem> &entries) :
+PerformRemoveTask::PerformRemoveTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries) :
 	PerformTask(receiver),
 	m_progress(receiver),
 	m_entries(entries.take())
@@ -42,7 +43,7 @@ void PerformRemoveTask::run(const volatile bool &aborted)
 	if (!aborted && !isReceiverDead())
 	{
 		PScopedPointer<Event> event(new Event(Event::RemoveFiles, isCanceled(), m_entries));
-		Application::postEvent(receiver(), event.take());
+		QCoreApplication::postEvent(reinterpret_cast<QObject*>(receiver()), event.take());
 	}
 }
 
@@ -83,37 +84,30 @@ void PerformRemoveTask::removeDir(InfoItem *entry, volatile bool &tryAgain, cons
 			entry->setShouldRemove(false);
 		else
 		{
-			QuestionAnswerEvent::Result result;
-			PScopedPointer<QuestionAnswerEvent> event(
-					new QuestionAnswerEvent(
-							tr("Failed to remove"),
-							tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath()),
-							QMessageBox::Yes |
-							QMessageBox::YesToAll |
-							QMessageBox::Retry |
-							QMessageBox::Cancel,
-							&result
-					)
-			);
+			qint32 answer = askUser(
+								tr("Failed to remove"),
+								tr("Directory \"%1\". Skip it?").arg(entry->absoluteFilePath()),
+								QMessageBox::Yes |
+								QMessageBox::YesToAll |
+								QMessageBox::Retry |
+								QMessageBox::Cancel,
+								aborted);
 
-			Application::postEvent(receiver(), event.take());
-
-			if (result.waitFor(aborted, isReceiverDead()))
-				if (result.answer() == QMessageBox::YesToAll)
+			if (answer == QMessageBox::YesToAll)
+			{
+				m_skipAllIfNotRemove = true;
+				entry->setShouldRemove(false);
+			}
+			else
+				if (answer == QMessageBox::Retry)
+					tryAgain = true;
+				else
 				{
-					m_skipAllIfNotRemove = true;
+					if (answer == QMessageBox::Cancel)
+						cancel();
+
 					entry->setShouldRemove(false);
 				}
-				else
-					if (result.answer() == QMessageBox::Retry)
-						tryAgain = true;
-					else
-					{
-						if (result.answer() == QMessageBox::Cancel)
-							cancel();
-
-						entry->setShouldRemove(false);
-					}
 		}
 }
 
@@ -124,37 +118,30 @@ void PerformRemoveTask::removeFile(InfoItem *entry, volatile bool &tryAgain, con
 			entry->setShouldRemove(false);
 		else
 		{
-			QuestionAnswerEvent::Result result;
-			PScopedPointer<QuestionAnswerEvent> event(
-					new QuestionAnswerEvent(
-							tr("Failed to remove"),
-							tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error),
-							QMessageBox::Yes |
-							QMessageBox::YesToAll |
-							QMessageBox::Retry |
-							QMessageBox::Cancel,
-							&result
-					)
-			);
+			qint32 answer = askUser(
+								tr("Failed to remove"),
+								tr("File \"%1\" (%2). Skip it?").arg(entry->absoluteFilePath()).arg(m_error),
+								QMessageBox::Yes |
+								QMessageBox::YesToAll |
+								QMessageBox::Retry |
+								QMessageBox::Cancel,
+								aborted);
 
-			Application::postEvent(receiver(), event.take());
-
-			if (result.waitFor(aborted, isReceiverDead()))
-				if (result.answer() == QMessageBox::YesToAll)
+			if (answer == QMessageBox::YesToAll)
+			{
+				m_skipAllIfNotRemove = true;
+				entry->setShouldRemove(false);
+			}
+			else
+				if (answer == QMessageBox::Retry)
+					tryAgain = true;
+				else
 				{
-					m_skipAllIfNotRemove = true;
+					if (answer == QMessageBox::Cancel)
+						cancel();
+
 					entry->setShouldRemove(false);
 				}
-				else
-					if (result.answer() == QMessageBox::Retry)
-						tryAgain = true;
-					else
-					{
-						if (result.answer() == QMessageBox::Cancel)
-							cancel();
-
-						entry->setShouldRemove(false);
-					}
 		}
 }
 

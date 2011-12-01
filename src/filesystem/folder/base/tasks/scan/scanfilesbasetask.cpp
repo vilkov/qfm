@@ -5,8 +5,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesBaseTask::ScanFilesBaseTask(QObject *receiver) :
-	FolderBaseTask(receiver)
+ScanFilesBaseTask::ScanFilesBaseTask(TaskNode *receiver) :
+	FolderTask(receiver)
 {}
 
 InfoListItem *ScanFilesBaseTask::scan(const QString &root, const volatile bool &aborted) const

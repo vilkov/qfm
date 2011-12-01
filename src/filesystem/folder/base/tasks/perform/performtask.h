@@ -1,19 +1,19 @@
 #ifndef PERFORMTASK_H_
 #define PERFORMTASK_H_
 
-#include "../filesystemfolderbasetask.h"
+#include "../filesystemfoldertask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformTask : public FolderBaseTask
+class PerformTask : public FolderTask
 {
 public:
-	class Event : public FolderBaseTask::Event
+	class Event : public FolderTask::Event
 	{
 	public:
 		Event(Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
-			FolderBaseTask::Event(type, canceled),
+			FolderTask::Event(type, canceled),
 			entries(entries.take())
 		{}
 
@@ -21,8 +21,8 @@ public:
 	};
 
 public:
-	PerformTask(QObject *receiver) :
-		FolderBaseTask(receiver)
+	PerformTask(TaskNode *receiver) :
+		FolderTask(receiver)
 	{}
 };
 

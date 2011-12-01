@@ -6,7 +6,7 @@
 #include <QtCore/QCoreApplication>
 #include "performtask.h"
 #include "taskprogress.h"
-#include "../../../interfaces/filesystemicopycontrol.h"
+#include "../../../../interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -32,7 +32,7 @@ public:
 	};
 
 public:
-	PerformCopyTask(QObject *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformCopyTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 

@@ -2,7 +2,6 @@
 #define FILESYSTEMTASKSNODE_H_
 
 #include <QtCore/QStringList>
-#include "filesystembasetask.h"
 #include "containers/filesystemtasksmap.h"
 #include "../filesystemnode.h"
 
@@ -18,6 +17,9 @@ class TasksNode : public Node
 {
 public:
 	TasksNode(const ModelContainer &conteiner, Node *parent = 0);
+
+	/* QObject */
+    virtual bool event(QEvent *event);
 
 protected:
 	void addTask(BaseTask *task, const QStringList &files);

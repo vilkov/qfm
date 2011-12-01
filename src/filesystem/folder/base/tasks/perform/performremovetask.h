@@ -1,14 +1,12 @@
 #ifndef PERFORMREMOVETASK_H_
 #define PERFORMREMOVETASK_H_
 
-#include <QtCore/QCoreApplication>
-#include "performtask.h"
-#include "taskprogress.h"
+#include "performremovebasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformRemoveTask : public PerformTask
+class PerformRemoveTask : public PerformRemoveBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
@@ -17,16 +15,7 @@ public:
 
 	virtual void run(const volatile bool &aborted);
 
-protected:
-	void removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	bool doRemoveFile(const QString &filePath, QString &error);
-
-protected:
-	QString m_error;
-	bool m_skipAllIfNotRemove;
-	TaskProgress m_progress;
+private:
 	PScopedPointer<InfoListItem> m_entries;
 };
 

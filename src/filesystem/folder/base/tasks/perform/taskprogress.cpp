@@ -1,12 +1,11 @@
 #include "taskprogress.h"
 #include "../filesystemfoldertask.h"
-#include "../../../../tasks/filesystemtasksnode.h"
 #include "../../../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-TaskProgress::TaskProgress(TaskNode *receiver) :
+TaskProgress::TaskProgress(TasksNode *receiver) :
 	m_receiver(receiver)
 {}
 

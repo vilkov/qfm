@@ -1,4 +1,5 @@
 #include "updatefilestask.h"
+#include "../../../../tasks/filesystemtasksnode.h"
 #include "../../../../../application.h"
 #include <QtCore/QSet>
 #include <QtCore/QDir>
@@ -8,7 +9,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask(TaskNode *receiver, const Info &info, const UpdatesList &updates) :
+UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, const Info &info, const UpdatesList &updates) :
 	FolderBaseTask(receiver),
 	m_info(info),
 	m_updates(updates)

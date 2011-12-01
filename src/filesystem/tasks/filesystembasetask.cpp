@@ -11,7 +11,7 @@ FILE_SYSTEM_NS_BEGIN
 class BaseTask::DeleteHandler : public QObject
 {
 public:
-	DeleteHandler(BaseTask *task, TaskNode *parent) :
+	DeleteHandler(BaseTask *task, TasksNode *parent) :
 		QObject(parent),
 		mutexHolder(task->m_mutexHolder),
 		task(task)
@@ -38,7 +38,7 @@ public:
 };
 
 
-BaseTask::BaseTask(TaskNode *receiver) :
+BaseTask::BaseTask(TasksNode *receiver) :
 	m_mutexHolder(new MutexHolder()),
 	m_receiver(receiver),
 	m_handler(new DeleteHandler(this, m_receiver)),

@@ -65,7 +65,7 @@ public:
 	};
 
 public:
-	FolderBaseTask(TaskNode *receiver) :
+	FolderBaseTask(TasksNode *receiver) :
 		BaseTask(receiver)
 	{}
 };

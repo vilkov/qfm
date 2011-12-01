@@ -13,7 +13,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesBaseTask : public FolderTask
 {
 public:
-	ScanFilesBaseTask(TaskNode *receiver);
+	ScanFilesBaseTask(TasksNode *receiver);
 
 protected:
 	InfoListItem *scan(const QString &root, const volatile bool &aborted) const;

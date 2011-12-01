@@ -10,7 +10,8 @@
 
 
 FILE_SYSTEM_NS_BEGIN
-class TaskNode;
+class TasksNode;
+
 
 /*
  * This class and it's subclasses should be created only
@@ -41,13 +42,13 @@ public:
 	};
 
 public:
-	BaseTask(TaskNode *receiver);
+	BaseTask(TasksNode *receiver);
 	virtual ~BaseTask();
 
     void cancel() { m_canceled = true; }
 
 protected:
-    TaskNode *receiver() const { return m_receiver; }
+    TasksNode *receiver() const { return m_receiver; }
 	const volatile bool isCanceled() const { return m_canceled; }
 	const volatile bool &isReceiverDead() const { return m_controllerDead; }
 
@@ -64,7 +65,7 @@ private:
 
 private:
     MutexHolderPointer m_mutexHolder;
-    TaskNode *m_receiver;
+    TasksNode *m_receiver;
     DeleteHandler *m_handler;
 	volatile bool m_canceled;
 	volatile bool m_controllerDead;

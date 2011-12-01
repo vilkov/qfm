@@ -5,7 +5,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesBaseTask::ScanFilesBaseTask(TaskNode *receiver) :
+ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
 	FolderTask(receiver)
 {}
 

@@ -1,10 +1,11 @@
 #include "scanfilestasks.h"
+#include "../../../../tasks/filesystemtasksnode.h"
 #include "../../../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(TaskNode *receiver, const Info &info, const QStringList &entries) :
+ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, const Info &info, const QStringList &entries) :
 	ScanFilesTask(receiver, info, entries)
 {}
 
@@ -20,7 +21,7 @@ void ScanFilesForSizeTask::run(const volatile bool &aborted)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(TaskNode *receiver, const Info &info, const QStringList &entries) :
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, const Info &info, const QStringList &entries) :
 	ScanFilesTask(receiver, info, entries)
 {}
 
@@ -36,7 +37,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(TaskNode *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	ScanFilesTask(receiver, info, entries),
 	m_control(control.take()),
 	m_move(move)

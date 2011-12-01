@@ -32,7 +32,7 @@ public:
 	};
 
 public:
-	PerformCopyTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformCopyTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 

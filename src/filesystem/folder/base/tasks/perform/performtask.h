@@ -21,7 +21,7 @@ public:
 	};
 
 public:
-	PerformTask(TaskNode *receiver) :
+	PerformTask(TasksNode *receiver) :
 		FolderTask(receiver)
 	{}
 };

@@ -21,7 +21,7 @@ public:
 	};
 
 public:
-	ScanFilesTask(TaskNode *receiver, const Info &root, const QStringList &files);
+	ScanFilesTask(TasksNode *receiver, const Info &root, const QStringList &files);
 
 	virtual void run(const volatile bool &aborted);
 

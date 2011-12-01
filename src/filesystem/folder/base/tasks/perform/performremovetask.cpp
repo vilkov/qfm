@@ -9,7 +9,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTask::PerformRemoveTask(TaskNode *receiver, PScopedPointer<InfoListItem> &entries) :
+PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries) :
 	PerformTask(receiver),
 	m_progress(receiver),
 	m_entries(entries.take())

@@ -27,7 +27,7 @@ public:
 	};
 
 public:
-	UpdateFilesTask(TaskNode *receiver, const Info &info, const UpdatesList &updates);
+	UpdateFilesTask(TasksNode *receiver, const Info &info, const UpdatesList &updates);
 
 	virtual void run(const volatile bool &aborted);
 

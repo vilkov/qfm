@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-RemoveFilesTask::RemoveFilesTask(TaskNode *receiver, const List &values, const List &files) :
+RemoveFilesTask::RemoveFilesTask(TasksNode *receiver, const List &values, const List &files) :
 	BaseTask(receiver),
 	m_values(values),
 	m_files(files)

@@ -2,6 +2,7 @@
 #include "items/idmqueryresultvaluecast.h"
 #include "functors/idmqueryresultsfunctor.h"
 #include "control/idmqueryresultscopycontrol.h"
+#include "tasks/scan/idmnodequeryresultsscantask.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/rangeintersection.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
@@ -241,47 +242,50 @@ void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 {
-	typedef QMap<QModelIndex, RangeIntersection> Map;
-
 	if (m_container.transaction())
 	{
-		Map processed;
+		QModelIndex index;
+		ScanFilesTask::List files;
 		QueryResultValueItem *item;
-
-//		QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(value->parent());
+		QueryResultPropertyItem *property;
+		QueryResultPropertyItem::size_type idx;
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (item = value_cast(list.at(i).internalPointer(), item))
-			{
+			if (item = value_cast((index = list.at(i)).internalPointer(), item))
+				if (item->value()->entity()->type() == Database::Path)
+					files.push_back(ScanFilesTask::List::value_type(index, item));
+				else
+				{
+					property = static_cast<QueryResultPropertyItem*>(item->parent());
 
-			}
+					if (m_container.removeValue(property->rootValue(), item->value()))
+					{
+						idx = property->indexOf(item);
 
-//		if (m_container.removeValue(property->rootValue(), value->value()))
-//		{
-//			beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
-//
-//			if (m_container.commit())
-//				property->remove(index.row());
-//			else
-//			{
-//				m_container.rollback();
-//				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-//			}
-//
-//			endRemoveRows();
-//		}
-//		else
-//		{
-//			m_container.rollback();
-//			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-//		}
+						beginRemoveRows(FileSystemModel::parent(index), idx, idx);
+						property->remove(idx);
+						endRemoveRows();
+					}
+					else
+					{
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+						return;
+					}
+				}
+
+		if (m_container.commit())
+		{
+
+		}
+		else
+		{
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			m_container.rollback();
+		}
 	}
 	else
 		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-
-
-
-	process(list, callTo(this, view, &IdmNodeQueryResults::doRemove));
 }
 
 void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)

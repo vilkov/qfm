@@ -127,15 +127,10 @@ public:
 		size_type index = indexOf(hash);
 
 		if (index != InvalidIndex)
-		{
-			m_map.remove(hash);
-			m_list.removeAt(index);
-		}
+			remove(index);
 	}
 	void remove(size_type index)
 	{
-		const T &value = m_list.at(index);
-
 		for (typename ValueMap::iterator it = m_map.begin(), end = m_map.end(); it != end; ++it)
 			if (*it == index)
 			{

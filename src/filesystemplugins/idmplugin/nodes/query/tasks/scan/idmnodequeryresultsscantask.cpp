@@ -3,8 +3,9 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(TasksNode *receiver) :
-	ScanFilesBaseTask(receiver)
+ScanFilesTask::ScanFilesTask(TasksNode *receiver, const List &files) :
+	ScanFilesBaseTask(receiver),
+	m_files(files)
 {}
 
 void ScanFilesTask::run(const volatile bool &aborted)

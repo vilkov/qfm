@@ -127,42 +127,42 @@ ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 
 void FolderNodeBase::scanForSize(const QStringList &entries)
 {
-//	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
-//	addTask(task.take(), entries);
+	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_info, entries));
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-//	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
-//	addTask(task.take(), entries);
+	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_info, entries, control, move));
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const QStringList &entries)
 {
-//	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
-//	addTask(task.take(), entries);
+	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_info, entries));
+	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-//	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
-//	resetTask(task.take(), entries->at(0)->fileName());
+	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
+	resetTask(task.take(), entries->at(0)->fileName());
 }
 
 void FolderNodeBase::performRemove(PScopedPointer<InfoListItem> &entries)
 {
-//	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
-//	resetTask(task.take(), entries->at(0)->fileName());
+	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, entries));
+	resetTask(task.take(), entries->at(0)->fileName());
 }
 
 void FolderNodeBase::updateFiles()
 {
-//	if (isVisible())
-//	{
-//		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
-//		setUpdating(true);
-//		handleTask(task.take());
-//	}
+	if (isVisible())
+	{
+		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
+		setUpdating(true);
+		handleTask(task.take());
+	}
 }
 
 void FolderNodeBase::updateFiles(const BaseTask::Event *e)

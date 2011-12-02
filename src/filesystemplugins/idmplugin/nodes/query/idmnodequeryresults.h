@@ -19,6 +19,9 @@ class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
 
+	/* QObject */
+    virtual bool event(QEvent *event);
+
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
     virtual void fetchMore(const QModelIndex &parent);

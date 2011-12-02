@@ -2,6 +2,7 @@
 #include "items/idmqueryresultvaluecast.h"
 #include "functors/idmqueryresultsfunctor.h"
 #include "control/idmqueryresultscopycontrol.h"
+#include "events/idmqueryresultsmodelevents.h"
 #include "tasks/scan/idmnodequeryresultsscantask.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/rangeintersection.h"
@@ -14,17 +15,6 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-
-class SelectValuesFunctor : public Functor
-{
-public:
-	SelectValuesFunctor()
-	{
-
-	}
-};
-
-
 IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
@@ -34,6 +24,39 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_info(info),
 	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
 {}
+
+bool IdmNodeQueryResults::event(QEvent *e)
+{
+	switch (static_cast<ModelEvent::Type>(e->type()))
+	{
+		case ModelEvent::ScanFilesForRemove:
+		{
+			QuestionEvent *event = static_cast<QuestionEvent*>(e);
+
+			event->accept();
+			event->result()->lock();
+			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+			event->result()->unlock();
+
+			return true;
+		}
+		case ModelEvent::RemoveFiles:
+		{
+			typedef UpdateProgressEvent * NotConstEvent;
+			typedef const UpdateProgressEvent * Event;
+			Event event = static_cast<Event>(e);
+			e->accept();
+
+			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
+
+			return true;
+		}
+		default:
+			break;
+	}
+
+	return TasksNode::event(e);
+}
 
 int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
 {

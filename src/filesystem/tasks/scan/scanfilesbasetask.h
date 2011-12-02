@@ -1,7 +1,6 @@
 #ifndef SCANFILESBASETASK_H_
 #define SCANFILESBASETASK_H_
 
-#include <QtCore/QStringList>
 #include "../filesystembasetask.h"
 #include "../containers/filesysteminfolistitem.h"
 #ifndef Q_OS_WIN

@@ -1,6 +1,7 @@
 #ifndef SCANFILESTASK_H_
 #define SCANFILESTASK_H_
 
+#include <QtCore/QStringList>
 #include "../../events/filesystemmodelevent.h"
 #include "../../../../tasks/scan/scanfilesbasetask.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"

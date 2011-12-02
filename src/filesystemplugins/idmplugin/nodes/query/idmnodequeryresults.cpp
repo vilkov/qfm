@@ -67,12 +67,7 @@ bool IdmNodeQueryResults::canFetchMore(const QModelIndex &parent) const
 
 Qt::ItemFlags IdmNodeQueryResults::flags(const QModelIndex &index) const
 {
-//	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
-//		if (item->value()->entity()->type() != Database::Composite &&
-//			item->value()->entity()->type() != Database::Path)
-			return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
-
-//	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientation, int role) const

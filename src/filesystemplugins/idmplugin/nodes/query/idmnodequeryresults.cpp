@@ -311,7 +311,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 				static_cast<QueryResultValueItem*>(files.at(i))->lock(reason);
 			}
 
-			new ScanFilesTask(this, files);
+			addTask(new ScanFilesTask(this, files), files);
 
 			for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
 				for (::Tools::Containers::Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)

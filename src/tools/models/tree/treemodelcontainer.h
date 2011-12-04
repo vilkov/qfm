@@ -1,7 +1,7 @@
 #ifndef TREEMODELCONTAINER_H_
 #define TREEMODELCONTAINER_H_
 
-#include "items/treemodelitem.h"
+#include "items/treemodellistitem.h"
 
 
 MODELS_TREE_NS_BEGIN
@@ -9,7 +9,7 @@ MODELS_TREE_NS_BEGIN
 class Container
 {
 public:
-	typedef int size_type;
+	typedef ListItem::size_type size_type;
 	typedef ::Tools::Models::Tree::Item Item;
 	enum { InvalidIndex = (size_type)-1 };
 

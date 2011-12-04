@@ -4,9 +4,15 @@
 FILE_SYSTEM_NS_BEGIN
 
 FileSystemBaseItem::FileSystemBaseItem(const Info &info, Item *parent) :
-	FileSystemItem(parent),
+	TaskNodeItem(parent),
+	m_node(0),
 	m_info(info)
 {}
+
+bool FileSystemBaseItem::isList() const
+{
+	return false;
+}
 
 FileSystemBaseItem::ItemInfo::ItemInfo(const Info &info) :
 	Info(info)

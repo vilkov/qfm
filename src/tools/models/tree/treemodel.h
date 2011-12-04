@@ -27,6 +27,10 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
+protected:
+	QModelIndex index(Item *item) const;
+	QModelIndex parent(Item *item, ListItem::size_type &row) const;
+
 private:
 	const Container &m_conteiner;
 };

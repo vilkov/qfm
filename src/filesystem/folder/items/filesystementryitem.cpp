@@ -96,23 +96,18 @@ bool FileSystemEntryItem::isListItem() const
 
 void FileSystemEntryItem::lock(const QString &reason, quint64 totalSize)
 {
-	m_locked = true;
-	m_lockReason = reason;
 	m_totalSize = totalSize;
-	m_doneSize = 0;
-	m_timeElapsed = 0;
+	FileSystemBaseItem::lock(reason);
 }
 
 void FileSystemEntryItem::lock(const QString &reason)
 {
-	m_locked = true;
-	m_lockReason = reason;
+	FileSystemBaseItem::lock(reason);
 }
 
 void FileSystemEntryItem::unlock()
 {
-	m_locked = false;
-	m_lockReason.clear();
+	FileSystemBaseItem::unlock();
 	m_doneSize.clear();
 	m_timeElapsed.clear();
 }

@@ -1,16 +1,22 @@
 #ifndef FILESYSTEMBASEITEM_H_
 #define FILESYSTEMBASEITEM_H_
 
+#include "../../../filesystemnode.h"
 #include "../../../info/filesysteminfo.h"
-#include "../../../model/items/filesystemitem.h"
+#include "../../../tasks/items/filesystemtasknodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileSystemBaseItem : public FileSystemItem
+class FileSystemBaseItem : public TaskNodeItem
 {
 public:
 	FileSystemBaseItem(const Info &info, Item *parent = 0);
+
+	/* FileSystemItem */
+	virtual bool isList() const;
+
+	Node *node() const { return m_node; }
 
 	virtual bool isRootItem() const = 0;
 	virtual bool isListItem() const = 0;
@@ -19,6 +25,9 @@ public:
 	Info &info() { return m_info; }
 
 	void setInfo(const Info &info) { m_info = info; }
+
+protected:
+	void setNode(Node *node) { m_node = node; }
 
 private:
 	class ItemInfo : public Info
@@ -33,6 +42,7 @@ private:
 	};
 
 private:
+	Node *m_node;
 	ItemInfo m_info;
 };
 

@@ -16,11 +16,8 @@ public:
 	ScanFilesBaseTask(TasksNode *receiver);
 
 protected:
-	InfoListItem *scan(const QString &root, const volatile bool &aborted) const;
-	InfoListItem *scan(const QString &root, const QStringList &files, const volatile bool &aborted) const;
-
-private:
-	void scan(InfoListItem *node, const volatile bool &aborted) const;
+	void scan(InfoListItem *root, const volatile bool &aborted) const;
+	void scan(InfoListItem *root, const QString &file, const volatile bool &aborted) const;
 
 private:
 #ifndef Q_OS_WIN

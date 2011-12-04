@@ -5,7 +5,7 @@
 #include "events/idmqueryresultsmodelevents.h"
 #include "tasks/scan/idmnodequeryresultsscantask.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
-#include "../../../../tools/rangeintersection.h"
+#include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../application.h"
@@ -31,23 +31,23 @@ bool IdmNodeQueryResults::event(QEvent *e)
 	{
 		case ModelEvent::ScanFilesForRemove:
 		{
-			QuestionEvent *event = static_cast<QuestionEvent*>(e);
-
-			event->accept();
-			event->result()->lock();
-			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
-			event->result()->unlock();
+//			QuestionEvent *event = static_cast<QuestionEvent*>(e);
+//
+//			event->accept();
+//			event->result()->lock();
+//			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+//			event->result()->unlock();
 
 			return true;
 		}
 		case ModelEvent::RemoveFiles:
 		{
-			typedef UpdateProgressEvent * NotConstEvent;
-			typedef const UpdateProgressEvent * Event;
-			Event event = static_cast<Event>(e);
-			e->accept();
-
-			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
+//			typedef UpdateProgressEvent * NotConstEvent;
+//			typedef const UpdateProgressEvent * Event;
+//			Event event = static_cast<Event>(e);
+//			e->accept();
+//
+//			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
 
 			return true;
 		}
@@ -274,9 +274,9 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		QueryResultPropertyItem::size_type idx;
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (item = value_cast((index = list.at(i)).internalPointer(), item))
+			if ((item = value_cast((index = list.at(i)).internalPointer(), item)) && !item->isLocked())
 				if (item->value()->entity()->type() == Database::Path)
-					files.push_back(ScanFilesTask::List::value_type(index, item));
+					files.push_back(item);
 				else
 				{
 					property = static_cast<QueryResultPropertyItem*>(item->parent());
@@ -299,7 +299,24 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 
 		if (m_container.commit())
 		{
+			typedef QMap<QueryResultListItem*, ::Tools::Containers::Union> Map;
+			qint32 lastColumn = columnCount(QModelIndex()) - 1;
+			QString reason = tr("Removing...");
+			Map map;
 
+			for (ScanFilesTask::List::size_type i = 0, size = files.size(); i < size; ++i)
+			{
+				property = static_cast<QueryResultPropertyItem*>(files.at(i)->parent());
+				map[property].add(property->indexOf(files.at(i)));
+				files.at(i)->lock(reason);
+			}
+
+			new ScanFilesTask(this, files);
+
+			for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
+				for (::Tools::Containers::Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
+					emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
+									 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 		}
 		else
 		{
@@ -366,12 +383,12 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *pl
 	return 0;
 }
 
-void IdmNodeQueryResults::updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed)
+void IdmNodeQueryResults::updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::completedProgressEvent(const QString &fileName, quint64 timeElapsed)
+void IdmNodeQueryResults::completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed)
 {
 
 }

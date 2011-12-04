@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	ScanFilesForSizeTask(TasksNode *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForSizeTask(TasksNode *receiver, const Info &info, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -22,7 +22,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	ScanFilesForRemoveTask(TasksNode *receiver, const Info &info, const QStringList &entries);
+	ScanFilesForRemoveTask(TasksNode *receiver, const Info &info, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile bool &aborted);
 };
@@ -35,8 +35,8 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
-			ScanFilesTask::Event(type, canceled, entries),
+		Event(ModelEvent::Type type, BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+			ScanFilesTask::Event(type, task, canceled, entries),
 			control(control.take()),
 			move(move)
 		{}
@@ -46,7 +46,7 @@ public:
 	};
 
 public:
-	ScanFilesForCopyTask(TasksNode *receiver, const Info &info, const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	ScanFilesForCopyTask(TasksNode *receiver, const Info &info, const TasksNode::TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 

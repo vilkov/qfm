@@ -23,14 +23,16 @@ public:
 	class Event : public BaseTask::Event
 	{
 	public:
-		Event(bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			BaseTask::Event(static_cast<Type>(ModelEvent::CopyFiles)),
+			task(task),
 			entries(entries.take()),
 			control(control.take()),
 			canceled(canceled),
 			move(move)
 		{}
 
+		BaseTask *task;
 		PScopedPointer<InfoListItem> entries;
 		PScopedPointer<ICopyControl> control;
 		bool canceled;

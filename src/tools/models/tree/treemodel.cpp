@@ -66,4 +66,32 @@ QModelIndex Model::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+QModelIndex Model::index(Item *item) const
+{
+	if (Item *parent = item->parent())
+		return createIndex(static_cast<ListItem*>(parent)->indexOf(item), 0, item);
+	else
+		return createIndex(m_conteiner.indexOf(item), 0, item);
+}
+
+QModelIndex Model::parent(Item *item, ListItem::size_type &row) const
+{
+	if (Item *parent = item->parent())
+		if (Item *parentParent = parent->parent())
+		{
+			row = static_cast<ListItem*>(parent)->indexOf(item);
+			return createIndex(static_cast<ListItem*>(parentParent)->indexOf(parent), 0, parent);
+		}
+		else
+		{
+			row = static_cast<ListItem*>(parent)->indexOf(item);
+			return createIndex(m_conteiner.indexOf(parent), 0, parent);
+		}
+	else
+	{
+		row = m_conteiner.indexOf(item);
+		return QModelIndex();
+	}
+}
+
 MODELS_TREE_NS_END

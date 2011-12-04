@@ -59,7 +59,7 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FileSystemBaseItem*>(index.internalPointer())->isRootItem())
-		return Node::parent();
+		return parentNode();
 	else
 		return &m_items[index.row()]->info();
 }
@@ -195,7 +195,7 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 	QModelIndex index = m_proxy.mapToSource(idx);
 
 	if (static_cast<FileSystemBaseItem*>(index.internalPointer())->isRootItem())
-		return Node::parent();
+		return parentNode();
 	else
 		if (!static_cast<FileSystemEntryItem*>(index.internalPointer())->isLocked())
 		{
@@ -296,8 +296,8 @@ UpdatesList::Map FolderNode::updateFilesMap() const
 
 void FolderNode::updateFilesEvent(const UpdatesList &updates)
 {
+	Union updateRange;
 	UpdatesList updatesLocal(updates);
-	RangeIntersection updateRange;
 	ItemsContainer::size_type index;
 
 	for (UpdatesList::iterator update = updatesLocal.begin(), end = updatesLocal.end(); update != end;)
@@ -308,7 +308,7 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
 				{
 					m_items[index]->setInfo(update.value().info());
-					updateRange.add(index, index);
+					updateRange.add(index);
 				}
 
 				update = updatesLocal.erase(update);
@@ -350,7 +350,7 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 
 void FolderNode::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 {
-	RangeIntersection updateRange;
+	Union updateRange;
 	ItemsContainer::size_type index;
 	FileSystemEntryItem *entry;
 
@@ -360,7 +360,7 @@ void FolderNode::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 			entry = static_cast<FileSystemEntryItem*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())]);
 			entry->clearTotalSize();
 			entry->unlock();
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 	else
 		for (InfoListItem::size_type i = 0, size = entries->size(); i < size; ++i)
@@ -368,7 +368,7 @@ void FolderNode::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 			entry = static_cast<FileSystemEntryItem*>(m_items[index = m_items.indexOf(entries->at(i)->fileName())]);
 			entry->setTotalSize(static_cast<InfoListItem*>(entries->at(i))->totalSize());
 			entry->unlock();
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 
 	updateBothColumns(updateRange);
@@ -376,7 +376,7 @@ void FolderNode::scanForSizeEvent(bool canceled, const InfoListItem *entries)
 
 bool FolderNode::scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move)
 {
-	RangeIntersection updateRange;
+	Union updateRange;
 	ItemsContainer::size_type index;
 
 	if (canceled)
@@ -392,7 +392,7 @@ bool FolderNode::scanForCopyEvent(bool canceled, const InfoListItem *entries, IC
 				{
 					index = m_items.indexOf((entry = entries->at(i))->fileName());
 					static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason, entry->totalSize());
-					updateRange.add(index, index);
+					updateRange.add(index);
 				}
 
 				updateSecondColumn(updateRange);
@@ -406,7 +406,7 @@ bool FolderNode::scanForCopyEvent(bool canceled, const InfoListItem *entries, IC
 		index = m_items.indexOf(entries->at(i)->fileName());
 		static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(entries->at(i)->totalSize());
 		static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
-		updateRange.add(index, index);
+		updateRange.add(index);
 	}
 
 	updateBothColumns(updateRange);
@@ -416,7 +416,7 @@ bool FolderNode::scanForCopyEvent(bool canceled, const InfoListItem *entries, IC
 
 bool FolderNode::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 {
-	RangeIntersection updateRange;
+	Union updateRange;
 	ItemsContainer::size_type index;
 	QStringList folders;
 	QStringList files;
@@ -450,7 +450,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 			{
 				index = m_items.indexOf(entry->fileName());
 				static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason, entry->totalSize());
-				updateRange.add(index, index);
+				updateRange.add(index);
 			}
 
 		updateSecondColumn(updateRange);
@@ -464,7 +464,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 			index = m_items.indexOf(entries->at(i)->fileName());
 			static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(entries->at(i)->totalSize());
 			static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 
 		updateBothColumns(updateRange);
@@ -475,7 +475,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const InfoListItem *entries)
 
 bool FolderNode::performCopyEvent(bool canceled, const InfoListItem *entries, bool move)
 {
-	RangeIntersection updateRange;
+	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
 
@@ -492,7 +492,7 @@ bool FolderNode::performCopyEvent(bool canceled, const InfoListItem *entries, bo
 			else
 				static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason);
 
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 
 		updateSecondColumn(updateRange);
@@ -505,7 +505,7 @@ bool FolderNode::performCopyEvent(bool canceled, const InfoListItem *entries, bo
 		{
 			index = m_items.indexOf((entry = entries->at(i))->fileName());
 			static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 
 		updateBothColumns(updateRange);
@@ -516,7 +516,7 @@ bool FolderNode::performCopyEvent(bool canceled, const InfoListItem *entries, bo
 
 void FolderNode::performRemoveEvent(const InfoListItem *entries)
 {
-	RangeIntersection updateRange;
+	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
 
@@ -528,15 +528,15 @@ void FolderNode::performRemoveEvent(const InfoListItem *entries)
 			index = m_items.indexOf(entry->fileName());
 			static_cast<FileSystemEntryItem*>(m_items[index])->clearTotalSize();
 			static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
-			updateRange.add(index, index);
+			updateRange.add(index);
 		}
 
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed)
+void FolderNode::updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(fileName);
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(item)->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->setDoneSize(progress);
@@ -544,9 +544,9 @@ void FolderNode::updateProgressEvent(const QString &fileName, quint64 progress, 
 	updateSecondColumn(index, entry);
 }
 
-void FolderNode::completedProgressEvent(const QString &fileName, quint64 timeElapsed)
+void FolderNode::completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(fileName);
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(item)->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->setDoneSize(entry->totalSize().toULongLong());
@@ -556,7 +556,7 @@ void FolderNode::completedProgressEvent(const QString &fileName, quint64 timeEla
 
 void FolderNode::CancelFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 {
-	m_node->cancelTask(entry->info().fileName());
+	m_node->cancelTask(entry);
 }
 
 void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
@@ -637,10 +637,10 @@ void FolderNode::processLockedIndexList(const QModelIndexList &list, Functors::F
 
 void FolderNode::scanForRemove(const ProcessedList &entries)
 {
-	QStringList list;
+	Union updateRange;
+	TasksItemList list;
 	FileSystemEntryItem *entry;
 	ItemsContainer::size_type index;
-	RangeIntersection updateRange;
 
 	list.reserve(entries.size());
 
@@ -653,8 +653,8 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 		else
 			entry->lock(tr("Removing..."));
 
-		updateRange.add(index, index);
-		list.push_back(entry->info().fileName());
+		updateRange.add(index);
+		list.push_back(entry);
 	}
 
 	updateFirstColumn(updateRange);
@@ -663,10 +663,10 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 
 void FolderNode::scanForSize(const ProcessedList &entries)
 {
-	QStringList list;
+	Union updateRange;
+	TasksItemList list;
 	FileSystemEntryItem *entry;
 	ItemsContainer::size_type index;
-	RangeIntersection updateRange;
 
 	list.reserve(entries.size());
 
@@ -675,8 +675,8 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 		{
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
-			updateRange.add(index, index);
-			list.push_back(entry->info().fileName());
+			updateRange.add(index);
+			list.push_back(entry);
 		}
 
 	if (!list.isEmpty())
@@ -692,10 +692,10 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 
 	if (control)
 	{
-		QStringList list;
+		Union updateRange;
+		TasksItemList list;
 		FileSystemEntryItem *entry;
 		ItemsContainer::size_type index;
-		RangeIntersection updateRange;
 		QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 		QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
 
@@ -710,8 +710,8 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 			else
 				entry->lock(fileLockReason);
 
-			updateRange.add(index, index);
-			list.push_back(entry->info().fileName());
+			updateRange.add(index);
+			list.push_back(entry);
 		}
 
 		updateFirstColumn(updateRange);
@@ -757,9 +757,9 @@ void FolderNode::updateFirstColumn(FileSystemBaseItem *entry)
 	updateFirstColumn(m_items.indexOf(entry), entry);
 }
 
-void FolderNode::updateFirstColumn(const RangeIntersection &range)
+void FolderNode::updateFirstColumn(const Union &range)
 {
-	for (RangeIntersection::RangeList::size_type i = 0, size = range.size(); i < size; ++i)
+	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
 		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
 						 createIndex(range.at(i).bottom(), 0, m_items[range.at(i).bottom()]));
 }
@@ -775,9 +775,9 @@ void FolderNode::updateSecondColumn(FileSystemBaseItem *entry)
 	updateSecondColumn(m_items.indexOf(entry), entry);
 }
 
-void FolderNode::updateSecondColumn(const RangeIntersection &range)
+void FolderNode::updateSecondColumn(const Union &range)
 {
-	for (RangeIntersection::RangeList::size_type i = 0, size = range.size(); i < size; ++i)
+	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
 		emit dataChanged(createIndex(range.at(i).top(), 1, m_items[range.at(i).top()]),
 						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()]));
 }
@@ -793,9 +793,9 @@ void FolderNode::updateBothColumns(FileSystemBaseItem *entry)
 	updateBothColumns(m_items.indexOf(entry), entry);
 }
 
-void FolderNode::updateBothColumns(const RangeIntersection &range)
+void FolderNode::updateBothColumns(const Union &range)
 {
-	for (RangeIntersection::RangeList::size_type i = 0, size = range.size(); i < size; ++i)
+	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
 		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
 						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()]));
 }
@@ -805,9 +805,9 @@ void FolderNode::updateBothColumns(ItemsContainer::size_type index, FileSystemBa
 	emit dataChanged(createIndex(index, 0, entry), createIndex(index, 1, entry));
 }
 
-void FolderNode::updateColumns(const RangeIntersection &range, int lastColumn)
+void FolderNode::updateColumns(const Union &range, int lastColumn)
 {
-	for (RangeIntersection::RangeList::size_type i = 0, size = range.size(); i < size; ++i)
+	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
 		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
 						 createIndex(range.at(i).bottom(), lastColumn, m_items[range.at(i).bottom()]));
 }

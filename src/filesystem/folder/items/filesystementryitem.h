@@ -21,6 +21,10 @@ public:
 	virtual bool isRootItem() const;
 	virtual bool isListItem() const;
 
+	void lock(const QString &reason, quint64 totalSize);
+	void lock(const QString &reason);
+	void unlock();
+
 public:
 	const QVariant &totalSize() const { return m_totalSize; }
 	void setTotalSize(quint64 value) { m_totalSize = value; }
@@ -35,12 +39,6 @@ public:
 	bool isInProgress() const { return !m_doneSize.isNull() && m_totalSize.toULongLong() > 0; }
 	bool isCompleted() const { return m_doneSize == m_totalSize; }
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
-
-	bool isLocked() const { return m_locked; }
-	const QString &lockReason() const { return m_lockReason; }
-	void lock(const QString &reason, quint64 totalSize);
-	void lock(const QString &reason);
-	void unlock();
 
 private:
 	bool m_locked;

@@ -1,9 +1,10 @@
 #include "scanfilestask.h"
+#include "../../items/filesystembaseitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(TasksNode *receiver, const Info &root, const QStringList &files) :
+ScanFilesTask::ScanFilesTask(TasksNode *receiver, const Info &root, const TasksNode::TasksItemList &files) :
 	ScanFilesBaseTask(receiver),
 	m_root(root),
 	m_files(files)
@@ -11,7 +12,12 @@ ScanFilesTask::ScanFilesTask(TasksNode *receiver, const Info &root, const QStrin
 
 void ScanFilesTask::run(const volatile bool &aborted)
 {
-	m_subnode.reset(scan(m_root.absoluteFilePath(), m_files, aborted));
+	PScopedPointer<InfoListItem> root(new InfoListItem(m_root));
+
+	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size; ++i)
+		scan(root.data(), static_cast<FileSystemBaseItem*>(m_files.at(i))->info().fileName(), aborted);
+
+	m_subnode.swap(root);
 }
 
 FILE_SYSTEM_NS_END

@@ -10,7 +10,7 @@ Node::Node(const ModelContainer &conteiner, Node *parent) :
 
 INode *Node::root() const
 {
-	if (INode *res = Node::parent())
+	if (INode *res = parentNode())
 		return res->root();
 	else
 		return (INode*)this;
@@ -27,10 +27,10 @@ void Node::viewCloseAll()
 	{
 		QModelIndex index;
 		qint32 count = m_view.size();
-		Node *parent = Node::parent();
+		Node *parent = parentNode();
 
 		while (!parent->exists())
-			parent = static_cast<Node*>(parent->Node::parent());
+			parent = parent->parentNode();
 
 		for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
 			parent->viewThis(*it, index);
@@ -39,7 +39,7 @@ void Node::viewCloseAll()
 	}
 
 	if (!isLinked())
-		static_cast<Node*>(parent())->allChildLinksRemoved(this);
+		parentNode()->allChildLinksRemoved(this);
 }
 
 void Node::viewClosed(INodeView *nodeView)
@@ -49,7 +49,7 @@ void Node::viewClosed(INodeView *nodeView)
 
 void Node::viewParent(INodeView *nodeView)
 {
-	Node *parent = Node::parent();
+	Node *parent = parentNode();
 
 	if (static_cast<INode*>(parent) != root())
 		if (parent->exists())
@@ -80,7 +80,7 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 
 	if (Node *node = viewChild(idx, plugins, selected))
 	{
-		if (node == Node::parent())
+		if (node == parentNode())
 			node->viewThis(nodeView, m_parentEntryIndex);
 		else
 			node->viewThis(nodeView, selected);
@@ -98,7 +98,7 @@ void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsMan
 	{
 		if ((++path).atEnd())
 		{
-			if (node == Node::parent())
+			if (node == parentNode())
 				node->viewThis(nodeView, m_parentEntryIndex);
 			else
 				node->viewThis(nodeView, selected);
@@ -152,8 +152,8 @@ void Node::addLink()
 {
 	++m_links;
 
-	if (parent())
-		static_cast<Node*>(parent())->addLink();
+	if (Node *parent = parentNode())
+		parent->addLink();
 }
 
 void Node::removeLink()
@@ -161,7 +161,7 @@ void Node::removeLink()
 	removeLinks(1);
 
 	if (!isLinked())
-		static_cast<Node*>(parent())->allChildLinksRemoved(this);
+		parentNode()->allChildLinksRemoved(this);
 }
 
 bool Node::isLinked() const
@@ -173,8 +173,8 @@ void Node::removeLinks(qint32 count)
 {
 	m_links -= count;
 
-	if (parent())
-		static_cast<Node*>(parent())->removeLinks(count);
+	if (Node *parent = parentNode())
+		parent->removeLinks(count);
 }
 
 void Node::allChildLinksRemoved(Node *child)
@@ -185,10 +185,10 @@ void Node::allChildLinksRemoved(Node *child)
 		delete child;
 	}
 	else
-		if (parent())
+		if (Node *parent = parentNode())
 		{
 			delete child;
-			static_cast<Node*>(parent())->allChildLinksRemoved(this);
+			parent->allChildLinksRemoved(this);
 		}
 		else
 		{

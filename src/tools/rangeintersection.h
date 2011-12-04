@@ -1,7 +1,7 @@
 #ifndef RANGEINTERSECTION_H_
 #define RANGEINTERSECTION_H_
 
-#include <QList>
+#include <QtCore/QList>
 
 
 class RangeIntersection

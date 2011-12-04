@@ -4,6 +4,7 @@
 #include <QtCore/QStringList>
 #include "../../events/filesystemmodelevent.h"
 #include "../../../../tasks/scan/scanfilesbasetask.h"
+#include "../../../../tasks/filesystemtasksnode.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"
 
 
@@ -15,18 +16,20 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
+		Event(ModelEvent::Type type, BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries) :
 			ScanFilesBaseTask::Event(static_cast<Type>(type)),
+			task(task),
 			canceled(canceled),
 			entries(entries.take())
 		{}
 
+		BaseTask *task;
 		bool canceled;
 		PScopedPointer<InfoListItem> entries;
 	};
 
 public:
-	ScanFilesTask(TasksNode *receiver, const Info &root, const QStringList &files);
+	ScanFilesTask(TasksNode *receiver, const Info &root, const TasksNode::TasksItemList &files);
 
 	virtual void run(const volatile bool &aborted);
 
@@ -36,7 +39,7 @@ protected:
 
 private:
 	Info m_root;
-	QStringList m_files;
+	TasksNode::TasksItemList m_files;
 	PScopedPointer<InfoListItem> m_subnode;
 };
 

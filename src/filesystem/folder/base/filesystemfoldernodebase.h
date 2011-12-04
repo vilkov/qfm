@@ -1,7 +1,6 @@
 #ifndef FILESYSTEMFOLDERNODEBASE_H_
 #define FILESYSTEMFOLDERNODEBASE_H_
 
-#include <QtCore/QStringList>
 #include "containers/filesystemupdateslist.h"
 #include "../../tasks/filesystemtasksnode.h"
 #include "../../../tools/pointers/pscopedpointer.h"
@@ -50,11 +49,11 @@ protected:
 
 protected:
 	/* Prepare tasks */
-	void scanForSize(const QStringList &entries);
-	void scanForCopy(const QStringList &entries, PScopedPointer<ICopyControl> &control, bool move);
-	void scanForRemove(const QStringList &entries);
-	void performCopy(PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
-	void performRemove(PScopedPointer<InfoListItem> &entries);
+	void scanForSize(const TasksItemList &entries);
+	void scanForCopy(const TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void scanForRemove(const TasksItemList &entries);
+	void performCopy(BaseTask *oldTask, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void performRemove(BaseTask *oldTask, PScopedPointer<InfoListItem> &entries);
 
 protected:
 	bool isRoot() const { return m_info.isRoot(); }

@@ -2,6 +2,7 @@
 #define FILESYSTEMTASKPROGRESSEVENTS_H_
 
 #include "../filesystembasetask.h"
+#include "../items/filesystemtasknodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -9,14 +10,14 @@ FILE_SYSTEM_NS_BEGIN
 class UpdateProgressEvent : public BaseTask::Event
 {
 public:
-	UpdateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed) :
+	UpdateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed) :
 		BaseTask::Event(BaseTask::Event::Progress),
-		fileName(fileName),
+		item(item),
 		progress(progress),
 		timeElapsed(timeElapsed)
 	{}
 
-	QString fileName;
+	TaskNodeItem *item;
 	quint64 progress;
 	quint64 timeElapsed;
 };
@@ -25,13 +26,13 @@ public:
 class CompletedProgressEvent : public BaseTask::Event
 {
 public:
-	CompletedProgressEvent(const QString &fileName, quint64 timeElapsed) :
+	CompletedProgressEvent(TaskNodeItem *item, quint64 timeElapsed) :
 		BaseTask::Event(BaseTask::Event::Completed),
-		fileName(fileName),
+		item(item),
 		timeElapsed(timeElapsed)
 	{}
 
-	QString fileName;
+	TaskNodeItem *item;
 	quint64 timeElapsed;
 };
 

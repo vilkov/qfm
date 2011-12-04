@@ -32,7 +32,7 @@ bool TasksNode::event(QEvent *e)
 			Event event = static_cast<Event>(e);
 			e->accept();
 
-			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
+			updateProgressEvent(event->item, event->progress, event->timeElapsed);
 
 			return true;
 		}
@@ -43,7 +43,7 @@ bool TasksNode::event(QEvent *e)
 			Event event = static_cast<Event>(e);
 			e->accept();
 
-			completedProgressEvent(event->fileName, event->timeElapsed);
+			completedProgressEvent(event->item, event->timeElapsed);
 
 			return true;
 		}
@@ -54,16 +54,16 @@ bool TasksNode::event(QEvent *e)
 	return Node::event(e);
 }
 
-void TasksNode::addTask(BaseTask *task, const QStringList &files)
+void TasksNode::addTask(BaseTask *task, const TasksItemList &items)
 {
-	m_tasks.add(task, files);
+	m_tasks.add(task, items);
 	addLink();
 	Application::instance()->taskPool().handle(task);
 }
 
-void TasksNode::resetTask(BaseTask *task, const QString &fileName)
+void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask)
 {
-	m_tasks.resetTask(task, fileName);
+	m_tasks.resetTask(task, oldTask);
 	Application::instance()->taskPool().handle(task);
 }
 
@@ -78,15 +78,15 @@ void TasksNode::taskHandled()
 	removeLink();
 }
 
-void TasksNode::cancelTask(const QString &fileName)
+void TasksNode::cancelTask(TaskNodeItem *item)
 {
-	if (BaseTask *task = m_tasks.take(fileName))
+	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();
 }
 
-void TasksNode::removeAllTaskLinks(const QString &fileName)
+void TasksNode::removeAllTaskLinks(BaseTask *task)
 {
-	m_tasks.removeAll(fileName);
+	m_tasks.removeAll(task);
 	removeLink();
 }
 

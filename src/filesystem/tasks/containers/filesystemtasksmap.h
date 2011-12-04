@@ -2,9 +2,9 @@
 #define FILESYSTEMTASKSMAP_H_
 
 #include <QtCore/QMap>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QtCore/QList>
 #include "../filesystembasetask.h"
+#include "../items/filesystemtasknodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,79 +12,76 @@ FILE_SYSTEM_NS_BEGIN
 class TasksMap
 {
 public:
+	typedef QList<TaskNodeItem*> List;
+
+public:
 	TasksMap()
 	{}
 
-	void add(BaseTask *task, const QString &fileName)
+	void add(BaseTask *task, TaskNodeItem *item)
 	{
-		m_tasks[task].push_back(fileName);
-		m_names[fileName] = task;
+		m_tasks[task].push_back(item);
+		m_items[item] = task;
 	}
-	void add(BaseTask *task, const QStringList &names)
+	void add(BaseTask *task, const List &items)
 	{
-		m_tasks[task] = names;
+		m_tasks[task] = items;
 
-		for (QStringList::size_type i = 0, size = names.size(); i < size; ++i)
-			m_names[names.at(i)] = task;
+		for (List::size_type i = 0, size = items.size(); i < size; ++i)
+			m_items[items.at(i)] = task;
 	}
-	void remove(const QString &name)
+	void remove(TaskNodeItem *item)
 	{
-		if (BaseTask *task = m_names.value(name, 0))
+		if (BaseTask *task = m_items.value(item, 0))
 		{
-			QStringList &list = m_tasks[task];
-			QStringList::size_type index;
+			List &list = m_tasks[task];
+			List::size_type index;
 
-			if ((index = list.indexOf(name)) != -1)
+			if ((index = list.indexOf(item)) != -1)
 				list.removeAt(index);
 
-			m_names.remove(name);
+			m_items.remove(item);
 
 			if (list.isEmpty())
 				m_tasks.remove(task);
 		}
 	}
-	void removeAll(const QString &name)
+	void removeAll(BaseTask *task)
 	{
-		if (BaseTask *task = m_names.value(name, 0))
-		{
-			QStringList list = m_tasks.take(task);
+		List list = m_tasks.take(task);
 
-			for (QStringList::size_type i = 0, size = list.size(); i < size; ++i)
-				m_names.remove(list.at(i));
-		}
+		for (List::size_type i = 0, size = list.size(); i < size; ++i)
+			m_items.remove(list.at(i));
 	}
-	BaseTask *take(const QString &name)
+	BaseTask *take(TaskNodeItem *item)
 	{
-		if (BaseTask *task = m_names.value(name, 0))
+		if (BaseTask *task = m_items.value(item, 0))
 		{
-			QStringList list = m_tasks.take(task);
+			List list = m_tasks.take(task);
 
-			for (QStringList::size_type i = 0, size = list.size(); i < size; ++i)
-				m_names.remove(list.at(i));
+			for (List::size_type i = 0, size = list.size(); i < size; ++i)
+				m_items.remove(list.at(i));
 
 			return task;
 		}
 
 		return 0;
 	}
-	void resetTask(BaseTask *task, const QString &name)
+	void resetTask(BaseTask *task, BaseTask *oldTask)
 	{
-		if (BaseTask *oldTask = m_names.value(name, 0))
-		{
-			const QStringList &list = (m_tasks[task] = m_tasks.take(oldTask));
+		const List &list = (m_tasks[task] = m_tasks.take(oldTask));
 
-			for (QStringList::size_type i = 0, size = list.size(); i < size; ++i)
-				m_names[list.at(i)] = task;
-		}
+		for (List::size_type i = 0, size = list.size(); i < size; ++i)
+			m_items[list.at(i)] = task;
 	}
 
 private:
-	typedef QMap<BaseTask*, QStringList> Tasks;
-	typedef QMap<QString, BaseTask*>     Names;
+	typedef QMap<BaseTask*, List>          Tasks;
+	typedef QMap<TaskNodeItem*, BaseTask*> Items;
 
 private:
 	Tasks m_tasks;
-	Names m_names;
+	Items m_items;
 };
 
 FILE_SYSTEM_NS_END

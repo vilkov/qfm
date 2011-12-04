@@ -12,7 +12,7 @@ IDM_PLUGIN_NS_BEGIN
 class ScanFilesTask : public ScanFilesBaseTask
 {
 public:
-	typedef QList<QPair<QModelIndex, QueryResultValueItem*> > List;
+	typedef QList<QueryResultValueItem*> List;
 
 public:
 	ScanFilesTask(TasksNode *receiver, const List &files);

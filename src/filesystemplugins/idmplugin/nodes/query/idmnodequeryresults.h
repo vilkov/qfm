@@ -67,8 +67,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
+	virtual void updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed);
 
 protected:
 	/* IQueryResultsUpdater */

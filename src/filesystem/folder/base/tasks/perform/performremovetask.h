@@ -16,12 +16,14 @@ public:
 	class Event : public PerformRemoveBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, bool canceled, PScopedPointer<InfoListItem> &entries) :
+		Event(ModelEvent::Type type, BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries) :
 			PerformRemoveBaseTask::Event(static_cast<Type>(type)),
+			task(task),
 			entries(entries.take()),
 			canceled(canceled)
 		{}
 
+		BaseTask *task;
 		PScopedPointer<InfoListItem> entries;
 		bool canceled;
 	};

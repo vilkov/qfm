@@ -6,8 +6,7 @@
 #include "functors/filesystemfoldernodefunctors.h"
 #include "base/filesystemfoldernodebase.h"
 #include "containers/filesystemitemscontainer.h"
-#include "../../tools/metatemplates.h"
-#include "../../tools/rangeintersection.h"
+#include "../../tools/containers/union.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -60,8 +59,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const QString &fileName, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const QString &fileName, quint64 timeElapsed);
+	virtual void updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed);
 
 protected:
 	typedef QPair<ItemsContainer::size_type, FileSystemBaseItem*> ProcessedValue;
@@ -128,16 +127,19 @@ private:
 	QModelIndex indexForFile(FileSystemBaseItem *item) const;
 	QModelIndex indexForFile(FileSystemBaseItem *item, ItemsContainer::size_type index) const;
 
+private:
+	typedef ::Tools::Containers::Union Union;
+
 	void updateFirstColumn(FileSystemBaseItem *entry);
-	void updateFirstColumn(const RangeIntersection &range);
+	void updateFirstColumn(const Union &range);
 	void updateFirstColumn(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 	void updateSecondColumn(FileSystemBaseItem *entry);
-	void updateSecondColumn(const RangeIntersection &range);
+	void updateSecondColumn(const Union &range);
 	void updateSecondColumn(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 	void updateBothColumns(FileSystemBaseItem *entry);
-	void updateBothColumns(const RangeIntersection &range);
+	void updateBothColumns(const Union &range);
 	void updateBothColumns(ItemsContainer::size_type index, FileSystemBaseItem *entry);
-	void updateColumns(const RangeIntersection &range, int lastColumn);
+	void updateColumns(const Union &range, int lastColumn);
 	void removeEntry(ItemsContainer::size_type index);
 	void removeEntry(const QModelIndex &index);
 

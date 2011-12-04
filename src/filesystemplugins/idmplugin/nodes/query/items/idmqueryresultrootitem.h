@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultRootItem : public QueryResultListItem
 {
 public:
-	QueryResultRootItem(IdmEntityValue *value, IdmItem *parent = 0);
+	QueryResultRootItem(IdmEntityValue *value, Base *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

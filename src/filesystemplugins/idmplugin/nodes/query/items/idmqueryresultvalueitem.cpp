@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultValueItem::QueryResultValueItem(IdmEntityValue *value, IdmItem *parent) :
+QueryResultValueItem::QueryResultValueItem(IdmEntityValue *value, Base *parent) :
 	QueryResultItem(parent),
 	m_value(value)
 {}

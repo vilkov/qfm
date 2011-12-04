@@ -3,7 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-TaskNodeItem::TaskNodeItem(FileSystemItem *parent) :
+TaskNodeItem::TaskNodeItem(Base *parent) :
 	FileSystemItem(parent)
 {}
 

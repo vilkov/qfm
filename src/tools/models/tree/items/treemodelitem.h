@@ -10,6 +10,9 @@ MODELS_TREE_NS_BEGIN
 class Item
 {
 public:
+	typedef Item Base;
+
+public:
 	Item(Item *parent);
 	virtual ~Item();
 

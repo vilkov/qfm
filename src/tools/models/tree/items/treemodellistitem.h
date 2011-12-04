@@ -10,7 +10,8 @@ MODELS_TREE_NS_BEGIN
 class ListItem : public Item
 {
 public:
-	typedef QList<Item*>      Container;
+	typedef Item                 Base;
+	typedef QList<Item*>         Container;
 	typedef Container::size_type size_type;
 	enum { InvalidIndex = (size_type)-1 };
 

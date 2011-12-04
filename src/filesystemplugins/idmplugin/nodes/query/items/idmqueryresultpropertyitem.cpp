@@ -5,7 +5,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, IdmItem *parent) :
+QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, Base *parent) :
 	QueryResultListItem(parent),
 	m_property(property)
 {

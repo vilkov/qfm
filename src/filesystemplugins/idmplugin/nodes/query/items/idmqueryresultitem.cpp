@@ -7,13 +7,13 @@ IQueryResultItem::~IQueryResultItem()
 {}
 
 
-QueryResultItem::QueryResultItem(IdmItem *parent) :
-	IdmItem(parent)
+QueryResultItem::QueryResultItem(Base *parent) :
+	TaskNodeItem(parent)
 {}
 
 
-QueryResultListItem::QueryResultListItem(IdmItem *parent) :
-	IdmListItem(parent)
+QueryResultListItem::QueryResultListItem(Base *parent) :
+	TaskNodeListItem(parent)
 {}
 
 IDM_PLUGIN_NS_END

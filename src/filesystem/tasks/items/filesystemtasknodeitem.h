@@ -12,7 +12,7 @@ class TaskNodeItem : public FileSystemItem
 	DECLARE_MODEL_ITEM_LOCKER;
 
 public:
-	TaskNodeItem(FileSystemItem *parent);
+	TaskNodeItem(Base *parent);
 };
 
 FILE_SYSTEM_NS_END

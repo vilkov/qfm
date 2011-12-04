@@ -14,7 +14,7 @@ template <> inline QueryResultValueItem *value_cast(void *item, QueryResultValue
 {
 	Q_UNUSED(to);
 
-	if (static_cast<IdmItem*>(item)->isList())
+	if (static_cast<QueryResultValueItem::Base*>(item)->isList())
 		return 0;
 	else
 		return static_cast<QueryResultValueItem*>(item);
@@ -24,7 +24,7 @@ template <> inline QueryResultListItem *value_cast(void *item, QueryResultListIt
 {
 	Q_UNUSED(to);
 
-	if (static_cast<IdmItem*>(item)->isList())
+	if (static_cast<QueryResultListItem::Base*>(item)->isList())
 		return static_cast<QueryResultListItem*>(item);
 	else
 		return 0;
@@ -34,7 +34,7 @@ template <> inline QueryResultPropertyItem *value_cast(void *item, QueryResultPr
 {
 	Q_UNUSED(to);
 
-	if (static_cast<IdmItem*>(item)->isList() &&
+	if (static_cast<QueryResultPropertyItem::Base*>(item)->isList() &&
 		static_cast<QueryResultListItem*>(item)->isProperty())
 		return static_cast<QueryResultPropertyItem*>(item);
 	else
@@ -45,7 +45,7 @@ template <> inline QueryResultPathValueItem *value_cast(void *item, QueryResultP
 {
 	Q_UNUSED(to);
 
-	if (static_cast<IdmItem*>(item)->isList())
+	if (static_cast<QueryResultPathValueItem::Base*>(item)->isList())
 		return 0;
 	else
 		if (static_cast<QueryResultValueItem*>(item)->value()->entity()->type() == Database::Path)

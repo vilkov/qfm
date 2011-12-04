@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPathValueItem : public QueryResultValueItem
 {
 public:
-	QueryResultPathValueItem(IdmEntityValue *value, IdmItem *parent);
+	QueryResultPathValueItem(IdmEntityValue *value, Base *parent);
 
 	const Info &info() const { return m_info; }
 	Info &info() { return m_info; }

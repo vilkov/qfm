@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPropertyItem : public QueryResultListItem
 {
 public:
-	QueryResultPropertyItem(const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, IdmItem *parent);
+	QueryResultPropertyItem(const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, Base *parent);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

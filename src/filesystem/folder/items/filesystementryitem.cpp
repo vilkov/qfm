@@ -5,12 +5,12 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FileSystemEntryItem::FileSystemEntryItem(const Info &info, Item *parent) :
+FileSystemEntryItem::FileSystemEntryItem(const Info &info, Base *parent) :
 	FileSystemBaseItem(info, parent),
 	m_locked(false)
 {}
 
-FileSystemEntryItem::FileSystemEntryItem(const Info &info, Node *node, Item *parent) :
+FileSystemEntryItem::FileSystemEntryItem(const Info &info, Node *node, Base *parent) :
 	FileSystemBaseItem(info, parent),
 	m_locked(false)
 {

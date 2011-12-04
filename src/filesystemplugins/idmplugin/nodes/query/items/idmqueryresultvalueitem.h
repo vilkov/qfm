@@ -4,17 +4,14 @@
 #include <QtGui/QIcon>
 #include "idmqueryresultitem.h"
 #include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../tools/models/macros/declareitemlocker.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 class QueryResultValueItem : public QueryResultItem
 {
-	DECLARE_MODEL_ITEM_LOCKER;
-
 public:
-	QueryResultValueItem(IdmEntityValue *value, IdmItem *parent);
+	QueryResultValueItem(IdmEntityValue *value, Base *parent);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

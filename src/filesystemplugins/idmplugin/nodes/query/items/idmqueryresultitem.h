@@ -1,7 +1,8 @@
 #ifndef IDMQUERYRESULTITEM_H_
 #define IDMQUERYRESULTITEM_H_
 
-#include "../../../model/items/idmlistitem.h"
+#include "../../../idmplugin_ns.h"
+#include "../../../../../filesystem/tasks/items/filesystemtasknodeitemlist.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -17,17 +18,17 @@ public:
 };
 
 
-class QueryResultItem : public IdmItem, public IQueryResultItem
+class QueryResultItem : public TaskNodeItem, public IQueryResultItem
 {
 public:
-	QueryResultItem(IdmItem *parent);
+	QueryResultItem(Base *parent);
 };
 
 
-class QueryResultListItem : public IdmListItem, public IQueryResultItem
+class QueryResultListItem : public TaskNodeListItem, public IQueryResultItem
 {
 public:
-	QueryResultListItem(IdmItem *parent);
+	QueryResultListItem(Base *parent);
 };
 
 IDM_PLUGIN_NS_END

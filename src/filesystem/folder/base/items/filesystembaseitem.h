@@ -11,7 +11,7 @@ FILE_SYSTEM_NS_BEGIN
 class FileSystemBaseItem : public TaskNodeItem
 {
 public:
-	FileSystemBaseItem(const Info &info, Item *parent = 0);
+	FileSystemBaseItem(const Info &info, Base *parent = 0);
 
 	/* FileSystemItem */
 	virtual bool isList() const;

@@ -268,7 +268,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 	if (m_container.transaction())
 	{
 		QModelIndex index;
-		ScanFilesTask::List files;
+		TasksItemList files;
 		QueryResultValueItem *item;
 		QueryResultPropertyItem *property;
 		QueryResultPropertyItem::size_type idx;
@@ -304,11 +304,11 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 			QString reason = tr("Removing...");
 			Map map;
 
-			for (ScanFilesTask::List::size_type i = 0, size = files.size(); i < size; ++i)
+			for (TasksItemList::size_type i = 0, size = files.size(); i < size; ++i)
 			{
 				property = static_cast<QueryResultPropertyItem*>(files.at(i)->parent());
 				map[property].add(property->indexOf(files.at(i)));
-				files.at(i)->lock(reason);
+				static_cast<QueryResultValueItem*>(files.at(i))->lock(reason);
 			}
 
 			new ScanFilesTask(this, files);

@@ -12,13 +12,13 @@ FILE_SYSTEM_NS_BEGIN
 class TasksMap
 {
 public:
-	typedef QList<TaskNodeItem*> List;
+	typedef QList<TaskNodeItem::Base*> List;
 
 public:
 	TasksMap()
 	{}
 
-	void add(BaseTask *task, TaskNodeItem *item)
+	void add(BaseTask *task, TaskNodeItem::Base *item)
 	{
 		m_tasks[task].push_back(item);
 		m_items[item] = task;
@@ -30,7 +30,7 @@ public:
 		for (List::size_type i = 0, size = items.size(); i < size; ++i)
 			m_items[items.at(i)] = task;
 	}
-	void remove(TaskNodeItem *item)
+	void remove(TaskNodeItem::Base *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -53,7 +53,7 @@ public:
 		for (List::size_type i = 0, size = list.size(); i < size; ++i)
 			m_items.remove(list.at(i));
 	}
-	BaseTask *take(TaskNodeItem *item)
+	BaseTask *take(TaskNodeItem::Base *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -76,8 +76,8 @@ public:
 	}
 
 private:
-	typedef QMap<BaseTask*, List>          Tasks;
-	typedef QMap<TaskNodeItem*, BaseTask*> Items;
+	typedef QMap<BaseTask*, List>                Tasks;
+	typedef QMap<TaskNodeItem::Base*, BaseTask*> Items;
 
 private:
 	Tasks m_tasks;

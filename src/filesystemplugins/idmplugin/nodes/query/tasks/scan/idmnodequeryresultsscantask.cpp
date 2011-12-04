@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(TasksNode *receiver, const List &files) :
+ScanFilesTask::ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files) :
 	ScanFilesBaseTask(receiver),
 	m_files(files)
 {}

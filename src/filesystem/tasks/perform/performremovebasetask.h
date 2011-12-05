@@ -19,16 +19,22 @@ public:
 		typedef BaseTask::Event::Type Type;
 
 	public:
-		Event(Type type) :
+		Event(Type type, BaseTask *task, const ScanedFiles &files, bool canceled) :
 			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
+			task(task),
+			files(files),
 			canceled(false)
 		{}
 
+		BaseTask *task;
+		ScanedFiles files;
 		bool canceled;
 	};
 
 public:
-	PerformRemoveBaseTask(TasksNode *receiver);
+	PerformRemoveBaseTask(TasksNode *receiver, Event::Type type, const ScanedFiles &files);
+
+	virtual void run(const volatile bool &aborted);
 
 protected:
 	void remove(const ScanedFiles &entries, const volatile bool &aborted);
@@ -40,6 +46,8 @@ private:
 	bool doRemoveFile(const QString &filePath, QString &error);
 
 private:
+	Event::Type m_type;
+	ScanedFiles m_files;
 	QString m_error;
 	bool m_skipAllIfNotRemove;
 	TaskProgress m_progress;

@@ -1,18 +1,33 @@
 #include "performremovebasetask.h"
 #include "../containers/filesysteminfolistitem.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
 #endif
 #include <QtCore/QDir>
+#include <QtCore/QCoreApplication>
 #include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver) :
+PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver, Event::Type type, const ScanedFiles &files) :
 	BaseTask(receiver),
+	m_type(),
+	m_files(files),
 	m_progress(receiver)
 {}
+
+void PerformRemoveBaseTask::run(const volatile bool &aborted)
+{
+	remove(m_files, aborted);
+
+	if (!aborted && !isReceiverDead())
+	{
+		PScopedPointer<Event> event(new Event(m_type, this, m_files, isCanceled()));
+		QCoreApplication::postEvent(receiver(), event.take());
+	}
+}
 
 void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile bool &aborted)
 {

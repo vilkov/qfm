@@ -233,7 +233,7 @@ void FolderNodeBase::performRemove(const BaseTask::Event *e)
 	typedef const PerformRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	performRemoveEvent(event->entries);
+	performRemoveEvent(event->files);
 	removeAllTaskLinks(event->task);
 }
 

@@ -13,7 +13,7 @@ FILE_SYSTEM_NS_BEGIN
 
 PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver, Event::Type type, const ScanedFiles &files) :
 	BaseTask(receiver),
-	m_type(),
+	m_type(type),
 	m_files(files),
 	m_progress(receiver)
 {}

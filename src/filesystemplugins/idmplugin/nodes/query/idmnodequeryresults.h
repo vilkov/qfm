@@ -85,7 +85,9 @@ private:
 
 private:
 	typedef ::Tools::Containers::Union Union;
+
 	void scanForRemove(const BaseTask::Event *e);
+	void performRemove(const BaseTask::Event *e);
 
 private:
 	void lock(const TasksItemList &list, const QString &reason);

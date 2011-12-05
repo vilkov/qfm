@@ -4,6 +4,7 @@
 #include "control/idmqueryresultscopycontrol.h"
 #include "events/idmqueryresultsmodelevents.h"
 #include "tasks/scan/idmnodequeryresultsscantask.h"
+#include "tasks/perform/idmnodequeryresultsremovefilestask.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
@@ -39,13 +40,8 @@ bool IdmNodeQueryResults::event(QEvent *e)
 		}
 		case ModelEvent::RemoveFiles:
 		{
-//			typedef UpdateProgressEvent * NotConstEvent;
-//			typedef const UpdateProgressEvent * Event;
-//			Event event = static_cast<Event>(e);
-//			e->accept();
-//
-//			updateProgressEvent(event->fileName, event->progress, event->timeElapsed);
-
+			e->accept();
+			performRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
 		default:
@@ -458,8 +454,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 			else
 				files.push_back(entry->fileName());
 
-		if (!event->canceled &&
-			QMessageBox::question(
+		if (QMessageBox::question(
 				&Application::instance()->mainWindow(),
 				tr("Remove..."),
 				tr("Would you like to remove").
@@ -474,11 +469,74 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 		{
 			lock(list, tr("Removing..."));
+			resetTask(new RemoveFilesTask(this, event->files), event->task);
 			return;
 		}
 	}
 
 	unlock(list);
+	removeAllTaskLinks(event->task);
+}
+
+void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
+{
+	typedef const RemoveFilesTask::Event *Event;
+	QueryResultPropertyItem::size_type idx;
+	Event event = static_cast<Event>(e);
+	ScanedFiles::List list(event->files);
+	QueryResultPropertyItem *property;
+	QModelIndex modelIdx;
+
+	if (m_container.transaction())
+	{
+		bool ok = true;
+		QueryResultValueItem *item;
+
+		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+			if (list.at(i).second->shouldRemove())
+			{
+				property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
+
+				if (!m_container.removeValue(property->rootValue(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
+				{
+					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+					m_container.rollback();
+					ok = false;
+					break;
+				}
+			}
+
+		if (ok)
+			if (m_container.commit())
+			{
+				for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+					if (list.at(i).second->shouldRemove())
+					{
+						property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
+						idx = property->indexOf(list.at(i).first);
+
+						beginRemoveRows(index(property), idx, idx);
+						property->remove(idx);
+						endRemoveRows();
+					}
+			}
+			else
+			{
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
+			}
+	}
+	else
+		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+
+	for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!list.at(i).second->shouldRemove())
+		{
+			static_cast<QueryResultValueItem*>(list.at(i).first)->unlock();
+			modelIdx = index(list.at(i).first);
+			emit dataChanged(modelIdx, modelIdx);
+		}
+
 	removeAllTaskLinks(event->task);
 }
 

@@ -425,7 +425,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 	InfoItem *entry;
 	ScanedFiles::List list(entries);
 
-	for (ScanedFiles::List::size_type i = 0; i < list.size();)
+	for (ScanedFiles::List::size_type i = 0; i < list.size(); ++i)
 		if ((entry = list.at(i).second)->isDir())
 			folders.push_back(entry->fileName());
 		else

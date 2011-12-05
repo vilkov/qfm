@@ -10,7 +10,6 @@
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
-#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -25,19 +24,17 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
 {}
 
+IdmNodeQueryResults::~IdmNodeQueryResults()
+{}
+
 bool IdmNodeQueryResults::event(QEvent *e)
 {
 	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
 		case ModelEvent::ScanFilesForRemove:
 		{
-//			QuestionEvent *event = static_cast<QuestionEvent*>(e);
-//
-//			event->accept();
-//			event->result()->lock();
-//			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
-//			event->result()->unlock();
-
+			e->accept();
+			scanForRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
 		case ModelEvent::RemoveFiles:
@@ -299,24 +296,8 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 
 		if (m_container.commit())
 		{
-			typedef QMap<QueryResultListItem*, ::Tools::Containers::Union> Map;
-			qint32 lastColumn = columnCount(QModelIndex()) - 1;
-			QString reason = tr("Removing...");
-			Map map;
-
-			for (TasksItemList::size_type i = 0, size = files.size(); i < size; ++i)
-			{
-				property = static_cast<QueryResultPropertyItem*>(files.at(i)->parent());
-				map[property].add(property->indexOf(files.at(i)));
-				static_cast<QueryResultValueItem*>(files.at(i))->lock(reason);
-			}
-
+			lock(files, tr("Scanning for remove..."));
 			addTask(new ScanFilesTask(this, files), files);
-
-			for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
-				for (::Tools::Containers::Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
-					emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
-									 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 		}
 		else
 		{
@@ -457,6 +438,108 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 		m_container.rollback();
 		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 	}
+}
+
+void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
+{
+	typedef const ScanFilesTask::Event *Event;
+	Event event = static_cast<Event>(e);
+	ScanedFiles::List list(event->files);
+
+	if (!event->canceled)
+	{
+		QStringList folders;
+		QStringList files;
+		InfoItem *entry;
+
+		for (ScanedFiles::List::size_type i = 0; i < list.size(); ++i)
+			if ((entry = list.at(i).second)->isDir())
+				folders.push_back(entry->fileName());
+			else
+				files.push_back(entry->fileName());
+
+		if (!event->canceled &&
+			QMessageBox::question(
+				&Application::instance()->mainWindow(),
+				tr("Remove..."),
+				tr("Would you like to remove").
+					append(QString::fromLatin1("\n\t")).
+					append(tr("directories:")).append(QString::fromLatin1("\n\t\t")).
+					append(folders.join(QString::fromLatin1("\n\t\t"))).
+					append(QString::fromLatin1("\n\t")).
+					append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
+					append(files.join(QString::fromLatin1("\n\t\t"))).
+					append(QString::fromLatin1("\n")).
+					append(tr("it will free ").append(Tools::humanReadableSize(event->files.totalSize()))),
+				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		{
+			lock(list, tr("Removing..."));
+			return;
+		}
+	}
+
+	unlock(list);
+	removeAllTaskLinks(event->task);
+}
+
+void IdmNodeQueryResults::lock(const TasksItemList &list, const QString &reason)
+{
+	typedef QMap<QueryResultListItem*, Union> Map;
+	qint32 lastColumn = columnCount(QModelIndex()) - 1;
+	QueryResultPropertyItem *property;
+	Map map;
+
+	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	{
+		property = static_cast<QueryResultPropertyItem*>(list.at(i)->parent());
+		map[property].add(property->indexOf(list.at(i)));
+		static_cast<QueryResultValueItem*>(list.at(i))->lock(reason);
+	}
+
+	for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
+		for (Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
+			emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
+							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
+}
+
+void IdmNodeQueryResults::lock(const ScanedFiles::List &list, const QString &reason)
+{
+	typedef QMap<QueryResultListItem*, Union> Map;
+	qint32 lastColumn = columnCount(QModelIndex()) - 1;
+	QueryResultPropertyItem *property;
+	Map map;
+
+	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	{
+		property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
+		map[property].add(property->indexOf(list.at(i).first));
+		static_cast<QueryResultValueItem*>(list.at(i).first)->lock(reason);
+	}
+
+	for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
+		for (Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
+			emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
+							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
+}
+
+void IdmNodeQueryResults::unlock(const ScanedFiles::List &list)
+{
+	typedef QMap<QueryResultListItem*, Union> Map;
+	qint32 lastColumn = columnCount(QModelIndex()) - 1;
+	QueryResultPropertyItem *property;
+	Map map;
+
+	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	{
+		property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
+		map[property].add(property->indexOf(list.at(i).first));
+		static_cast<QueryResultValueItem*>(list.at(i).first)->unlock();
+	}
+
+	for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
+		for (Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
+			emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
+							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
 IDM_PLUGIN_NS_END

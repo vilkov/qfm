@@ -7,6 +7,7 @@
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../../tools/containers/union.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -18,6 +19,7 @@ class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
 {
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
+	virtual ~IdmNodeQueryResults();
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -80,6 +82,15 @@ private:
 	void processRemove(const QModelIndexList &list, const Functor &functor);
 	void doRename(INodeView *view, const QModelIndex &index, QueryResultValueItem *value);
 	void doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value);
+
+private:
+	typedef ::Tools::Containers::Union Union;
+	void scanForRemove(const BaseTask::Event *e);
+
+private:
+	void lock(const TasksItemList &list, const QString &reason);
+	void lock(const ScanedFiles::List &list, const QString &reason);
+	void unlock(const ScanedFiles::List &list);
 
 private:
     enum { PrefetchLimit = 256 };

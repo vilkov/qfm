@@ -51,16 +51,16 @@ protected:
 	/* FolderNodeBase */
 	virtual UpdatesList::Map updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
-	virtual void scanForSizeEvent(bool canceled, const InfoListItem *entries);
-	virtual bool scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move);
-	virtual bool scanForRemoveEvent(bool canceled, const InfoListItem *entries);
-	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move);
-	virtual void performRemoveEvent(const InfoListItem *entries);
+	virtual void scanForSizeEvent(bool canceled, const ScanedFiles &entries);
+	virtual bool scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move);
+	virtual bool scanForRemoveEvent(bool canceled, const ScanedFiles &entries);
+	virtual bool performCopyEvent(bool canceled, const ScanedFiles &entries, bool move);
+	virtual void performRemoveEvent(const ScanedFiles &entries);
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
 protected:
 	typedef QPair<ItemsContainer::size_type, FileSystemBaseItem*> ProcessedValue;

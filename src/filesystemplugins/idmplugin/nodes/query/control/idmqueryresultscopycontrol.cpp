@@ -14,16 +14,16 @@ IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &conta
 	m_index(index)
 {}
 
-bool IdmQueryResultsCopyControl::start(const InfoListItem *files, bool move)
+bool IdmQueryResultsCopyControl::start(const ScanedFiles::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
 		IdmEntityValue *localValue;
 		IdmCompositeEntityValue::List list;
-		list.reserve(files->size());
+		list.reserve(files.size());
 
-		for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
-			if (localValue = m_container.addValue(m_property.entity, absoluteFilePath(files->at(i)->fileName())))
+		for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+			if (localValue = m_container.addValue(m_property.entity, absoluteFilePath(files.at(i)->fileName())))
 				list.push_back(localValue);
 			else
 			{
@@ -64,17 +64,6 @@ void IdmQueryResultsCopyControl::done(bool error)
 void IdmQueryResultsCopyControl::canceled()
 {
 
-}
-
-QStringList IdmQueryResultsCopyControl::toStringList(const InfoListItem *files) const
-{
-	QStringList res;
-	res.reserve(files->size());
-
-	for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
-		res.push_back(absoluteFilePath(files->at(i)->fileName()));
-
-	return res;
 }
 
 IDM_PLUGIN_NS_END

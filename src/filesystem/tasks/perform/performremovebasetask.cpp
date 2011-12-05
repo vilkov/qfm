@@ -1,4 +1,5 @@
 #include "performremovebasetask.h"
+#include "../containers/filesysteminfolistitem.h"
 #ifdef Q_OS_WIN32
 #	include <QtCore/qt_windows.h>
 #endif
@@ -13,21 +14,22 @@ PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver) :
 	m_progress(receiver)
 {}
 
-void PerformRemoveBaseTask::remove(const InfoListItem *entries, const volatile bool &aborted)
+void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile bool &aborted)
 {
 	bool tryAgain;
 	InfoItem *entry;
+	ScanedFiles::List list(entries);
 
-	for (InfoListItem::size_type i = 0;
-			i < entries->size() &&
+	for (ScanedFiles::List::size_type i = 0;
+			i < list.size() &&
 			!isCanceled() &&
 			!isReceiverDead() &&
 			!aborted;
 			++i)
 	{
-		if ((entry = entries->at(i))->isDir())
+		if ((entry = list.at(i).second)->isDir())
 		{
-			m_progress.init(entry->fileName());
+			m_progress.init(list.at(i).first);
 			removeEntry(entry, tryAgain = false, aborted);
 			m_progress.complete();
 		}

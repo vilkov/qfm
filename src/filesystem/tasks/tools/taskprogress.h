@@ -13,7 +13,7 @@ class TaskProgress
 public:
 	TaskProgress(TasksNode *receiver);
 
-	void init(const QString &fileName);
+	void init(TaskNodeItem::Base *item);
 	void update(quint64 progressIncrement);
 	void complete();
 	void clear();
@@ -22,8 +22,8 @@ private:
 	void postEvent();
 
 private:
+	TaskNodeItem::Base *m_item;
 	quint64 m_progress;
-	QString m_fileName;
 	TasksNode *m_receiver;
 	QDateTime m_baseTime;
 	QDateTime m_currentTime;

@@ -16,25 +16,25 @@ public:
 	class Event : public PerformRemoveBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries) :
+		Event(ModelEvent::Type type, BaseTask *task, bool canceled, const ScanedFiles &entries) :
 			PerformRemoveBaseTask::Event(static_cast<Type>(type)),
 			task(task),
-			entries(entries.take()),
-			canceled(canceled)
-		{}
+			entries(entries)
+		{
+			this->canceled = canceled;
+		}
 
 		BaseTask *task;
-		PScopedPointer<InfoListItem> entries;
-		bool canceled;
+		ScanedFiles entries;
 	};
 
 public:
-	PerformRemoveTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries);
+	PerformRemoveTask(TasksNode *receiver, const ScanedFiles &entries);
 
 	virtual void run(const volatile bool &aborted);
 
 private:
-	PScopedPointer<InfoListItem> m_entries;
+	ScanedFiles m_entries;
 };
 
 FILE_SYSTEM_NS_END

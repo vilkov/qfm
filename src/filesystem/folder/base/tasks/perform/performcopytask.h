@@ -7,6 +7,7 @@
 #include "../../events/filesystemmodelevent.h"
 #include "../../../../tasks/tools/taskprogress.h"
 #include "../../../../tasks/filesystembasetask.h"
+#include "../../../../tasks/containers/filesystemscanedfiles.h"
 #include "../../../../tasks/interfaces/filesystemicopycontrol.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"
 
@@ -23,24 +24,24 @@ public:
 	class Event : public BaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(BaseTask *task, bool canceled, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
 			BaseTask::Event(static_cast<Type>(ModelEvent::CopyFiles)),
 			task(task),
-			entries(entries.take()),
+			entries(entries),
 			control(control.take()),
 			canceled(canceled),
 			move(move)
 		{}
 
 		BaseTask *task;
-		PScopedPointer<InfoListItem> entries;
+		ScanedFiles entries;
 		PScopedPointer<ICopyControl> control;
 		bool canceled;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile bool &aborted);
 
@@ -51,7 +52,7 @@ protected:
 	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
 
 private:
-	PScopedPointer<InfoListItem> m_entries;
+	ScanedFiles m_entries;
 	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 	bool m_skipAllIfNotCreate;

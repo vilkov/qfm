@@ -127,17 +127,6 @@ void Node::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, Pl
 			viewChild(nodeView, it, plugins);
 }
 
-QStringList Node::toFileNameList(const InfoListItem *files) const
-{
-	QStringList res;
-	res.reserve(files->size());
-
-	for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
-		res.push_back(files->at(i)->fileName());
-
-	return res;
-}
-
 void Node::switchTo(Node *node, INodeView *view)
 {
 	node->viewThis(view, QModelIndex());

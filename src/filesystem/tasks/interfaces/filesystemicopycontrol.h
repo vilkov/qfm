@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMICOPYCONTROL_H_
 #define FILESYSTEMICOPYCONTROL_H_
 
-#include "../containers/filesysteminfolistitem.h"
+#include "../containers/filesystemscanedfiles.h"
 #include "../../interfaces/filesystemifilecontrol.h"
 
 
@@ -11,7 +11,7 @@ class ICopyControl : public IFileControl
 {
 public:
 	virtual bool physicalCopyIsNecessary() const = 0;
-	virtual bool start(const InfoListItem *files, bool move) = 0;
+	virtual bool start(const ScanedFiles::Files &files, bool move) = 0;
 	virtual void done(bool error) = 0;
 	virtual void canceled() = 0;
 };

@@ -13,10 +13,25 @@ class PerformRemoveBaseTask : public BaseTask
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveBaseTask)
 
 public:
+	class Event : public BaseTask::Event
+	{
+	public:
+		typedef BaseTask::Event::Type Type;
+
+	public:
+		Event(Type type) :
+			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
+			canceled(false)
+		{}
+
+		bool canceled;
+	};
+
+public:
 	PerformRemoveBaseTask(TasksNode *receiver);
 
 protected:
-	void remove(const InfoListItem *entries, const volatile bool &aborted);
+	void remove(const ScanedFiles &entries, const volatile bool &aborted);
 
 private:
 	void removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);

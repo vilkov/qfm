@@ -1,13 +1,14 @@
 #include "performcopytask.h"
+#include "../../../../tasks/containers/filesysteminfolistitem.h"
 #include "../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move) :
+PerformCopyTask::PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	BaseTask(receiver),
-	m_entries(entries.take()),
+	m_entries(entries),
 	m_control(control.take()),
 	m_move(move),
 	m_skipAllIfNotCreate(false),
@@ -24,17 +25,17 @@ void PerformCopyTask::run(const volatile bool &aborted)
 	if (m_control->exists())
 	{
 		bool tryAgain;
-		InfoItem *entry;
+		ScanedFiles::List list(m_entries);
 
-		for (InfoListItem::size_type i = 0;
-				i < m_entries->size() &&
+		for (ScanedFiles::List::size_type i = 0;
+				i < list.size() &&
 				!isCanceled() &&
 				!isReceiverDead() &&
 				!aborted;
 				++i)
 		{
-			m_progress.init((entry = m_entries->at(i))->fileName());
-			copyEntry(m_control.data(), entry, tryAgain = false, aborted);
+			m_progress.init(list.at(i).first);
+			copyEntry(m_control.data(), list.at(i).second, tryAgain = false, aborted);
 			m_progress.complete();
 		}
 	}

@@ -24,8 +24,8 @@ public:
     virtual bool event(QEvent *event);
 
 protected:
-	virtual void updateProgressEvent(TaskNodeItem *item, quint64 progress, quint64 timeElapsed) = 0;
-	virtual void completedProgressEvent(TaskNodeItem *item, quint64 timeElapsed) = 0;
+	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed) = 0;
+	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed) = 0;
 
 protected:
 	void addTask(BaseTask *task, const TasksItemList &items);

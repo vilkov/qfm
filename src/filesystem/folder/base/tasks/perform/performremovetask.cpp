@@ -3,14 +3,14 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, PScopedPointer<InfoListItem> &entries) :
+PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const ScanedFiles &entries) :
 	PerformRemoveBaseTask(receiver),
-	m_entries(entries.take())
+	m_entries(entries)
 {}
 
 void PerformRemoveTask::run(const volatile bool &aborted)
 {
-	remove(m_entries.data(), aborted);
+	remove(m_entries, aborted);
 
 	if (!aborted && !isReceiverDead())
 	{

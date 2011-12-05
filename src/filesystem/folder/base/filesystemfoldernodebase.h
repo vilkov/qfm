@@ -3,6 +3,7 @@
 
 #include "containers/filesystemupdateslist.h"
 #include "../../tasks/filesystemtasksnode.h"
+#include "../../tasks/containers/filesystemscanedfiles.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -41,19 +42,19 @@ protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
-	virtual void scanForSizeEvent(bool canceled, const InfoListItem *entries) = 0;
-	virtual bool scanForCopyEvent(bool canceled, const InfoListItem *entries, ICopyControl *control, bool move) = 0;
-	virtual bool scanForRemoveEvent(bool canceled, const InfoListItem *entries) = 0;
-	virtual bool performCopyEvent(bool canceled, const InfoListItem *entries, bool move) = 0;
-	virtual void performRemoveEvent(const InfoListItem *entries) = 0;
+	virtual void scanForSizeEvent(bool canceled, const ScanedFiles &entries) = 0;
+	virtual bool scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move) = 0;
+	virtual bool scanForRemoveEvent(bool canceled, const ScanedFiles &entries) = 0;
+	virtual bool performCopyEvent(bool canceled, const ScanedFiles &entries, bool move) = 0;
+	virtual void performRemoveEvent(const ScanedFiles &entries) = 0;
 
 protected:
 	/* Prepare tasks */
 	void scanForSize(const TasksItemList &entries);
 	void scanForCopy(const TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
 	void scanForRemove(const TasksItemList &entries);
-	void performCopy(BaseTask *oldTask, PScopedPointer<InfoListItem> &entries, PScopedPointer<ICopyControl> &control, bool move);
-	void performRemove(BaseTask *oldTask, PScopedPointer<InfoListItem> &entries);
+	void performCopy(BaseTask *oldTask, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void performRemove(BaseTask *oldTask, const ScanedFiles &entries);
 
 protected:
 	bool isRoot() const { return m_info.isRoot(); }

@@ -4,7 +4,6 @@
 #include <QtCore/QStringList>
 #include "../../events/filesystemmodelevent.h"
 #include "../../../../tasks/scan/scanfilesbasetask.h"
-#include "../../../../tasks/filesystemtasksnode.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"
 
 
@@ -16,31 +15,25 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, BaseTask *task, bool canceled, PScopedPointer<InfoListItem> &entries) :
+		Event(ModelEvent::Type type, BaseTask *task) :
 			ScanFilesBaseTask::Event(static_cast<Type>(type)),
 			task(task),
-			canceled(canceled),
-			entries(entries.take())
+			canceled(false)
 		{}
 
 		BaseTask *task;
 		bool canceled;
-		PScopedPointer<InfoListItem> entries;
+		ScanedFiles files;
 	};
 
 public:
-	ScanFilesTask(TasksNode *receiver, const Info &root, const TasksNode::TasksItemList &files);
-
-	virtual void run(const volatile bool &aborted);
+	ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files);
 
 protected:
-	const PScopedPointer<InfoListItem> &subnode() const { return m_subnode; }
-	PScopedPointer<InfoListItem> &subnode() { return m_subnode; }
+	ScanedFiles scan(const volatile bool &aborted) const;
 
 private:
-	Info m_root;
 	TasksNode::TasksItemList m_files;
-	PScopedPointer<InfoListItem> m_subnode;
 };
 
 FILE_SYSTEM_NS_END

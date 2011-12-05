@@ -95,18 +95,18 @@ bool CopyInfo::physicalCopyIsNecessary() const
 	return true;
 }
 
-bool CopyInfo::start(const InfoListItem *files, bool move)
+bool CopyInfo::start(const ScanedFiles::Files &files, bool move)
 {
 	IFile::size_type fs;
 
-	return (files->totalSize() <= (fs = freeSpace()) ||
+	return (files.totalSize() <= (fs = freeSpace()) ||
 		QMessageBox::question(
 							&Application::instance()->mainWindow(),
 							tr("Insufficient space on device"),
 							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
 								arg(absoluteFilePath()).
 								arg(Tools::humanReadableShortSize(fs)).
-								arg(Tools::humanReadableShortSize(files->totalSize())),
+								arg(Tools::humanReadableShortSize(files.totalSize())),
 							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 }
 

@@ -66,4 +66,24 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const QString &file, const vola
 		root->add(new InfoEntryItem(info));
 }
 
+InfoItem *ScanFilesBaseTask::scan(const QString &absoluteFilePath, const volatile bool &aborted) const
+{
+#ifndef Q_OS_WIN
+	Info info(m_permissions.getInfo(absoluteFilePath));
+#else
+	Info info(absoluteFilePath);
+#endif
+
+	if (info.exists() && info.isDir())
+	{
+		PScopedPointer<InfoListItem> subnode(new InfoListItem(info));
+
+		scan(subnode.data(), aborted);
+
+		return subnode.take();
+	}
+	else
+		return new InfoEntryItem(info);
+}
+
 FILE_SYSTEM_NS_END

@@ -12,7 +12,7 @@ IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity,
 	m_entity(entity)
 {}
 
-bool IdmCopyControl::start(const InfoListItem *files, bool move)
+bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
@@ -22,15 +22,15 @@ bool IdmCopyControl::start(const InfoListItem *files, bool move)
 		{
 			IdmEntity *path;
     		CompositeValueModel::ValueList list;
-    		list.reserve(files->size());
+    		list.reserve(files.size());
 
 			for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
 		    	if ((path = m_entity->at(i).entity)->type() == Database::Path)
 		    	{
 		    		IdmEntityValue *localValue;
 
-					for (InfoListItem::size_type i = 0, size = files->size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, absoluteFilePath(files->at(i)->fileName())))
+					for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+						if (localValue = m_container.addValue(path, absoluteFilePath(files.at(i)->fileName())))
 							list.push_back(localValue);
 						else
 						{

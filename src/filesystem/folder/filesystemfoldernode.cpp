@@ -412,7 +412,6 @@ bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICo
 	}
 
 	updateBothColumns(updateRange);
-
 	return false;
 }
 

@@ -219,8 +219,6 @@ void FolderNodeBase::performCopy(const BaseTask::Event *e)
 	typedef const PerformCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	removeLink();
-
 	if (performCopyEvent(event->canceled, event->entries, event->move))
 		performRemove(event->task, const_cast<NotConstEvent>(event)->entries);
 	else

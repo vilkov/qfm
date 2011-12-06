@@ -180,7 +180,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
 					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
 
-				if (!(destination = tree.choose(&Application::instance()->mainWindow())).isEmpty())
+				if (!(destination = tree.choose(tr("Choose a directory"), &Application::instance()->mainWindow())).isEmpty())
 					return new IdmQueryResultsCopyControl(
 							m_container,
 							item->rootValue(),
@@ -497,7 +497,15 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 			{
 				property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
 
-				if (!m_container.removeValue(property->rootValue(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
+				if (m_container.removeValue(property->rootValue(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
+				{
+					idx = property->indexOf(list.at(i).first);
+
+					beginRemoveRows(index(property), idx, idx);
+					property->remove(idx);
+					endRemoveRows();
+				}
+				else
 				{
 					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 					m_container.rollback();
@@ -507,20 +515,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 			}
 
 		if (ok)
-			if (m_container.commit())
-			{
-				for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
-					if (list.at(i).second->shouldRemove())
-					{
-						property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
-						idx = property->indexOf(list.at(i).first);
-
-						beginRemoveRows(index(property), idx, idx);
-						property->remove(idx);
-						endRemoveRows();
-					}
-			}
-			else
+			if (!m_container.commit())
 			{
 				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();

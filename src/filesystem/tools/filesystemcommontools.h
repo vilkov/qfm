@@ -21,7 +21,7 @@ struct Tools
 	public:
 		DestinationFromPathList();
 
-		QString choose(QWidget *parent) const;
+		QString choose(const QString &title, QWidget *parent) const;
 		void add(const QString &file);
 
 	private:

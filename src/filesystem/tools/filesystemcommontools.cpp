@@ -1,7 +1,9 @@
 #include "filesystemcommontools.h"
 #include "../../tools/os/osdependent.h"
+#include "../../tools/widgets/choosedialog/choosedialog.h"
 #include <QtCore/QStringList>
 #include <QtCore/QFileInfo>
+#include <QtCore/QSet>
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)
 #	include <windows.h>
@@ -10,7 +12,6 @@
 #else
 #	error OS is unknown!
 #endif
-#include <QtCore/QDebug>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -104,11 +105,11 @@ Tools::DestinationFromPathList::DestinationFromPathList() :
 	Tree('/')
 {}
 
-QString Tools::DestinationFromPathList::choose(QWidget *parent) const
+QString Tools::DestinationFromPathList::choose(const QString &title, QWidget *parent) const
 {
 	QString str;
-	QStringList list;
 	QSet<Item*> items;
+	ChooseDialog::List list;
 	Item *item = const_cast<Tools::DestinationFromPathList*>(this);
 
 	while (item->size() == 1)
@@ -117,12 +118,12 @@ QString Tools::DestinationFromPathList::choose(QWidget *parent) const
 	if (isDir(str = make(item)))
 	{
 		items.insert(item);
-		list.push_back(str);
+		list.push_back(ChooseDialog::List::value_type(str, item));
 	}
 	else
 	{
 		items.insert(item->parent());
-		list.push_back(make(item->parent()));
+		list.push_back(ChooseDialog::List::value_type(make(item->parent()), item->parent()));
 	}
 
 	for (Item::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
@@ -130,8 +131,8 @@ QString Tools::DestinationFromPathList::choose(QWidget *parent) const
 		{
 			if (!items.contains(*i))
 			{
-				items.insert(item);
-				list.push_back(str);
+				items.insert(*i);
+				list.push_back(ChooseDialog::List::value_type(str, *i));
 			}
 		}
 		else
@@ -139,7 +140,7 @@ QString Tools::DestinationFromPathList::choose(QWidget *parent) const
 			if (!items.contains((*i)->parent()))
 			{
 				items.insert((*i)->parent());
-				list.push_back(make((*i)->parent()));
+				list.push_back(ChooseDialog::List::value_type(make((*i)->parent()), (*i)->parent()));
 			}
 		}
 
@@ -147,10 +148,15 @@ QString Tools::DestinationFromPathList::choose(QWidget *parent) const
 		return QString();
 	else
 		if (list.size() == 1)
-			return list.at(0);
+			return list.at(0).first;
 		else
 		{
-			qDebug() << list;
+			ChooseDialog dialog(title, list, parent);
+
+			if (dialog.exec() == ChooseDialog::Accepted)
+				return make(static_cast<Item*>(dialog.value()));
+			else
+				return QString();
 		}
 }
 

@@ -28,13 +28,23 @@ QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id
 								   arg(name).
 								   arg(shortFormat).toUtf8();
 	else
-		return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
-								   "create table ENTITY_%1 (ID int primary key, VALUE %5)").
-								   arg(QString::number(id)).
-								   arg(QString::number(type)).
-								   arg(name).
-								   arg(shortFormat).
-								   arg(Database::typeToString(type)).toUtf8();
+		if (type == Database::String || type == Database::Path)
+			return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
+									   "create table ENTITY_%1 (ID int primary key, VALUE %5);"
+									   "create index ENTITY_%1_INDEX on ENTITY_%1 (VALUE)").
+									   arg(QString::number(id)).
+									   arg(QString::number(type)).
+									   arg(name).
+									   arg(shortFormat).
+									   arg(Database::typeToString(type)).toUtf8();
+		else
+			return QString::fromLatin1("insert into ENTITY (ID, TYPE, NAME, SHORT_FORMAT) values (%1, %2, '%3', '%4');"
+									   "create table ENTITY_%1 (ID int primary key, VALUE %5)").
+									   arg(QString::number(id)).
+									   arg(QString::number(type)).
+									   arg(name).
+									   arg(shortFormat).
+									   arg(Database::typeToString(type)).toUtf8();
 }
 
 QByteArray EntitiesTable::remove(Database::id_type entity)

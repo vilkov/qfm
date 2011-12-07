@@ -1,5 +1,5 @@
 #include "idmplugin.h"
-#include "nodes/idmrootnode.h"
+#include "nodes/root/idmrootnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN

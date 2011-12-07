@@ -23,7 +23,7 @@ public:
 
 private:
 	friend class IdmModel;
-	friend class IdmNodeBase;
+	friend class IdmRootNode;
 	friend class IdmNodeQueryResults;
 	Container m_container;
 };

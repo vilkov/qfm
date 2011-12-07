@@ -4,7 +4,7 @@
 
 FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
-	m_doNotRefreshTab(false),
+	m_doNotRefreshTab(true),
     m_layout(this),
     m_tabWidget(this),
 	m_other(other)

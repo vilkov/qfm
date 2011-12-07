@@ -1,7 +1,7 @@
 #include "idmrootnode.h"
 #include "items/idmrootnoderootitem.h"
+#include "control/idmcopycontrol.h"
 #include "../query/idmnodequeryresults.h"
-#include "../control/idmcopycontrol.h"
 #include "../../gui/list/listentitydialog.h"
 #include "../../gui/create/createentitydialog.h"
 #include "../../gui/choose/choosefileentitydialog.h"

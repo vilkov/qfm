@@ -13,7 +13,7 @@ class QueryResultValueItem : public QueryResultItem
 public:
 	QueryResultValueItem(IdmEntityValue *value, Base *parent);
 
-	/* IdmItem */
+	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 	virtual bool isRoot();
 	virtual bool isProperty();

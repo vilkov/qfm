@@ -1,4 +1,5 @@
 #include "idmrootnode.h"
+#include "items/idmrootnoderootitem.h"
 #include "../query/idmnodequeryresults.h"
 #include "../control/idmcopycontrol.h"
 #include "../../gui/list/listentitydialog.h"
@@ -11,12 +12,29 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+template <typename T> inline T *value_cast(void *item, T *to);
+
+template <> inline RootNodeRootItem *value_cast(void *item, RootNodeRootItem *to)
+{
+	Q_UNUSED(to);
+
+	if (!static_cast<RootNodeRootItem::Base*>(item)->isList())
+		if (static_cast<RootNodeItem*>(item)->isRoot())
+			return static_cast<RootNodeRootItem*>(item);
+
+	return 0;
+}
+
+
 IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_info(storage.absolutePath()),
 	m_container(storage),
+	m_delegate(m_container),
 	m_items(m_itemsContainer.m_container)
-{}
+{
+	m_items.push_back(new RootNodeRootItem());
+}
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
 {
@@ -236,7 +254,7 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex IdmRootNode::rootIndex() const
 {
-	return QModelIndex();
+	return createIndex(0, 0, m_items.at(0));
 }
 
 QAbstractItemModel *IdmRootNode::proxyModel() const
@@ -246,7 +264,7 @@ QAbstractItemModel *IdmRootNode::proxyModel() const
 
 QAbstractItemDelegate *IdmRootNode::itemDelegate() const
 {
-	return 0;
+	return const_cast<IdmRootNodeDelegate*>(&m_delegate);
 }
 
 const INodeView::MenuActionList &IdmRootNode::menuActions() const
@@ -256,7 +274,10 @@ const INodeView::MenuActionList &IdmRootNode::menuActions() const
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	return 0;
+	if (RootNodeRootItem *item = value_cast(idx.internalPointer(), item))
+		return parentNode();
+	else
+		return 0;
 }
 
 Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

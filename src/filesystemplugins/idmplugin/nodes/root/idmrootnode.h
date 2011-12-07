@@ -1,7 +1,7 @@
 #ifndef IDMROOTNODE_H_
 #define IDMROOTNODE_H_
 
-#include "../../idmplugin_ns.h"
+#include "idmrootnodedelegate.h"
 #include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
@@ -64,6 +64,7 @@ protected:
 	IdmModelContainer m_itemsContainer;
 	IdmModelContainer::Container &m_items;
 	IdmContainer m_container;
+	IdmRootNodeDelegate m_delegate;
 	Info m_info;
 };
 

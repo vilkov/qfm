@@ -90,41 +90,13 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 	}
 }
 
-void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
+void Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
 {
-	QModelIndex selected;
-
-	if (Node *node = viewChild(*path, plugins, selected))
-	{
-		if ((++path).atEnd())
-		{
-			if (node == parentNode())
-				node->viewThis(nodeView, m_parentEntryIndex);
-			else
-				node->viewThis(nodeView, selected);
-
-			node->refresh();
-		}
-		else
-			node->viewChild(nodeView, path, plugins);
-
-		removeView(nodeView);
-	}
-}
-
-void Node::viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins)
-{
-	Path path(absoluteFilePath);
+	Path path(filePath);
 	Path::Iterator it = path.begin();
 
 	if (!it.atEnd())
-		if (path.isAbsolute())
-		{
-			removeView(nodeView);
-			root()->viewChild(nodeView, it, plugins);
-		}
-		else
-			viewChild(nodeView, it, plugins);
+		viewChild(nodeView, it, plugins);
 }
 
 void Node::switchTo(Node *node, INodeView *view)
@@ -151,6 +123,31 @@ void Node::removeLink()
 
 	if (!isLinked())
 		parentNode()->allChildLinksRemoved(this);
+}
+
+void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)
+{
+	QModelIndex selected;
+
+	if (Node *node = viewChild(*path, plugins, selected))
+	{
+		if ((++path).atEnd())
+		{
+			if (node == parentNode())
+				node->viewThis(nodeView, m_parentEntryIndex);
+			else
+				node->viewThis(nodeView, selected);
+
+			node->refresh();
+
+			if (node == this)
+				return;
+		}
+		else
+			node->viewChild(nodeView, path, plugins);
+
+		removeView(nodeView);
+	}
 }
 
 bool Node::isLinked() const

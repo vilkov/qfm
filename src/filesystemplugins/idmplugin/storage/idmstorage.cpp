@@ -11,7 +11,6 @@
 #include "undo/concrete/idmstorageundoremovevalue.h"
 #include "undo/concrete/idmstorageundorenameproperty.h"
 #include "../../../tools/pointers/pscopedpointer.h"
-#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN

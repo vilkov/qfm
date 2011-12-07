@@ -268,7 +268,7 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex IdmRootNode::rootIndex() const
 {
-	return createIndex(0, 0, m_items.at(RootItem));
+	return createIndex(RootItem, 0, m_items.at(RootItem));
 }
 
 QAbstractItemModel *IdmRootNode::proxyModel() const
@@ -316,6 +316,17 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 
 Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
+	m_info.refresh();
+
+	if (m_info.exists())
+		if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->node())
+			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+		else
+		{
+			static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->setNode(node = new IdmFolderNode(m_info, this));
+			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+		}
+
 	return 0;
 }
 

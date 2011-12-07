@@ -25,6 +25,10 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
 	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
+
+private:
+	friend class IdmRootNode;
+	Node *privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 };
 
 IDM_PLUGIN_NS_END

@@ -67,4 +67,9 @@ void IdmFolderNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+Node *IdmFolderNode::privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+{
+	return FolderNode::viewChild(fileName, plugins, selected);
+}
+
 IDM_PLUGIN_NS_END

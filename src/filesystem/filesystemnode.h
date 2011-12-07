@@ -4,6 +4,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
+#include "filesystempath.h"
 #include "model/filesystemmodel.h"
 #include "model/filesystemmodelcontainer.h"
 #include "interfaces/filesysteminode.h"
@@ -33,8 +34,7 @@ public:
 	virtual void viewParent(INodeView *nodeView);
 	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
 	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
-	virtual void viewAbsolute(INodeView *nodeView, const QString &absoluteFilePath, PluginsManager *plugins);
+	virtual void viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins);
 
 	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 
@@ -56,6 +56,9 @@ protected:
 protected:
 	void addLink();
 	void removeLink();
+
+private:
+	void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
 
 private:
 	bool isLinked() const;

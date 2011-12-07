@@ -16,6 +16,7 @@ public:
 
 	/* IRootNodeItem */
 	virtual bool isRoot();
+	virtual bool isFiles();
 
 private:
 	QVariant m_label;

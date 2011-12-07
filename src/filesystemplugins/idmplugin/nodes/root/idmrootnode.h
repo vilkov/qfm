@@ -54,13 +54,21 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual void nodeRemoved(Node *node);
 
 protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
-protected:
+private:
+	enum Items
+	{
+		RootItem = 0,
+		FilesItem = 1
+	};
+
+private:
 	IdmModelContainer m_itemsContainer;
 	IdmModelContainer::Container &m_items;
 	IdmContainer m_container;

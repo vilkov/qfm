@@ -13,6 +13,7 @@ public:
 	virtual ~IRootNodeItem();
 
 	virtual bool isRoot() = 0;
+	virtual bool isFiles() = 0;
 };
 
 

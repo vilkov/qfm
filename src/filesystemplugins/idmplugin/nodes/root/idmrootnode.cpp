@@ -1,7 +1,9 @@
 #include "idmrootnode.h"
 #include "items/idmrootnoderootitem.h"
+#include "items/idmrootnodefilesitem.h"
 #include "control/idmcopycontrol.h"
 #include "../query/idmnodequeryresults.h"
+#include "../folder/idmfoldernode.h"
 #include "../../gui/list/listentitydialog.h"
 #include "../../gui/create/createentitydialog.h"
 #include "../../gui/choose/choosefileentitydialog.h"
@@ -12,7 +14,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-template <typename T> inline T *value_cast(void *item, T *to);
+template <typename T> inline T *value_cast(void *item, T *to = 0);
 
 template <> inline RootNodeRootItem *value_cast(void *item, RootNodeRootItem *to)
 {
@@ -21,6 +23,17 @@ template <> inline RootNodeRootItem *value_cast(void *item, RootNodeRootItem *to
 	if (!static_cast<RootNodeRootItem::Base*>(item)->isList())
 		if (static_cast<RootNodeItem*>(item)->isRoot())
 			return static_cast<RootNodeRootItem*>(item);
+
+	return 0;
+}
+
+template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *to)
+{
+	Q_UNUSED(to);
+
+	if (!static_cast<RootNodeFilesItem::Base*>(item)->isList())
+		if (static_cast<RootNodeItem*>(item)->isFiles())
+			return static_cast<RootNodeFilesItem*>(item);
 
 	return 0;
 }
@@ -34,6 +47,7 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	m_items(m_itemsContainer.m_container)
 {
 	m_items.push_back(new RootNodeRootItem());
+	m_items.push_back(new RootNodeFilesItem());
 }
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
@@ -254,7 +268,7 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex IdmRootNode::rootIndex() const
 {
-	return createIndex(0, 0, m_items.at(0));
+	return createIndex(0, 0, m_items.at(RootItem));
 }
 
 QAbstractItemModel *IdmRootNode::proxyModel() const
@@ -274,15 +288,40 @@ const INodeView::MenuActionList &IdmRootNode::menuActions() const
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	if (RootNodeRootItem *item = value_cast(idx.internalPointer(), item))
+	if (RootNodeItem *item = value_cast<RootNodeRootItem>(idx.internalPointer()))
 		return parentNode();
 	else
-		return 0;
+		if (item = value_cast<RootNodeFilesItem>(idx.internalPointer()))
+		{
+			m_info.refresh();
+
+			if (m_info.exists())
+			{
+				if (static_cast<RootNodeFilesItem*>(item)->node())
+					static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
+				else
+				{
+					Node *node = new IdmFolderNode(m_info, this);
+
+					node->setParentEntryIndex(idx);
+					static_cast<RootNodeFilesItem*>(item)->setNode(node);
+				}
+
+				return static_cast<RootNodeFilesItem*>(item)->node();
+			}
+		}
+
+	return 0;
 }
 
 Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
 	return 0;
+}
+
+void IdmRootNode::nodeRemoved(Node *node)
+{
+	static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->setNode(0);
 }
 
 void IdmRootNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)

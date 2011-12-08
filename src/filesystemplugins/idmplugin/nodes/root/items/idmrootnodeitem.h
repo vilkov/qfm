@@ -14,6 +14,7 @@ public:
 
 	virtual bool isRoot() = 0;
 	virtual bool isFiles() = 0;
+	virtual bool isEntity() = 0;
 };
 
 

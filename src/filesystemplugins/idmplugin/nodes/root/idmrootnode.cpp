@@ -6,10 +6,10 @@
 #include "control/idmcopycontrol.h"
 #include "../query/idmnodequeryresults.h"
 #include "../folder/idmfoldernode.h"
-#include "../../gui/list/listentitydialog.h"
 #include "../../gui/create/createentitydialog.h"
 #include "../../gui/choose/choosefileentitydialog.h"
 #include "../../gui/query/create/createquerydialog.h"
+#include "../../gui/value/list/editable/editablevaluelistdialog.h"
 #include "../../../../application.h"
 #include <QtGui/QMessageBox>
 
@@ -293,28 +293,55 @@ const INodeView::MenuActionList &IdmRootNode::menuActions() const
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	if (RootNodeItem *item = value_cast<RootNodeRootItem>(idx.internalPointer()))
-		return parentNode();
-	else
-		if (item = value_cast<RootNodeFilesItem>(idx.internalPointer()))
-		{
-			m_info.refresh();
+	RootNodeItem::Base *item;
 
-			if (m_info.exists())
+	if ((item = static_cast<RootNodeItem::Base*>(idx.internalPointer()))->isList())
+	{
+		if (static_cast<RootNodeListItem*>(item)->isEntity())
+			if (m_container.transaction())
 			{
-				if (static_cast<RootNodeFilesItem*>(item)->node())
-					static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
-				else
+				EditableValueListDialog dialog(
+						m_container,
+						Select(static_cast<RootNodeEntityItem*>(item)->entity()),
+						&Application::instance()->mainWindow());
+
+				if (dialog.exec() == EditableValueListDialog::Accepted)
 				{
-					Node *node = new IdmFolderNode(m_info, this);
-
-					node->setParentEntryIndex(idx);
-					static_cast<RootNodeFilesItem*>(item)->setNode(node);
+					if (!m_container.commit())
+					{
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
 				}
-
-				return static_cast<RootNodeFilesItem*>(item)->node();
+				else
+					m_container.rollback();
 			}
-		}
+			else
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+	}
+	else
+		if (static_cast<RootNodeItem*>(item)->isRoot())
+			return parentNode();
+		else
+			if (static_cast<RootNodeItem*>(item)->isFiles())
+			{
+				m_info.refresh();
+
+				if (m_info.exists())
+				{
+					if (static_cast<RootNodeFilesItem*>(item)->node())
+						static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
+					else
+					{
+						Node *node = new IdmFolderNode(m_info, this);
+
+						node->setParentEntryIndex(idx);
+						static_cast<RootNodeFilesItem*>(item)->setNode(node);
+					}
+
+					return static_cast<RootNodeFilesItem*>(item)->node();
+				}
+			}
 
 	return 0;
 }

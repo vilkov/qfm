@@ -1,7 +1,7 @@
 #include "compositevaluedialog.h"
 #include "../model/items/compositevaluevalueitem.h"
 #include "../model/items/compositevaluepropertyitem.h"
-#include "../list/editable/editablevaluelistdialog.h"
+#include "../list/selectable/selectablevaluelistdialog.h"
 #include "../../../storage/values/idmvaluereader.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"
 #include <QtGui/QMessageBox>
@@ -65,7 +65,7 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 
 	if (m_container.savepoint(name))
 	{
-		EditableValueListDialog dialog(m_container, Select(entity), this);
+		SelectableValueListDialog dialog(m_container, Select(entity), this);
 
 		if (dialog.exec() == EditableValueListDialog::Accepted)
 		{

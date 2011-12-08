@@ -21,6 +21,7 @@ public:
 	/* IRootNodeItem */
 	virtual bool isRoot();
 	virtual bool isFiles();
+	virtual bool isEntity();
 
 	Node *node() const { return m_node; }
 	void setNode(Node *node) { m_node = node; }

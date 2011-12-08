@@ -15,6 +15,7 @@ public:
 	/* IRootNodeItem */
 	virtual bool isRoot();
 	virtual bool isFiles();
+	virtual bool isEntity();
 };
 
 
@@ -26,6 +27,7 @@ public:
 	/* IRootNodeItem */
 	virtual bool isRoot();
 	virtual bool isFiles();
+	virtual bool isEntity();
 };
 
 IDM_PLUGIN_NS_END

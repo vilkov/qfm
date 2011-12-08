@@ -17,6 +17,11 @@ bool RootNodeEntityBaseItem::isFiles()
 	return false;
 }
 
+bool RootNodeEntityBaseItem::isEntity()
+{
+	return true;
+}
+
 
 RootNodeEntityBaseListItem::RootNodeEntityBaseListItem(Base *parent) :
 	RootNodeListItem(parent)
@@ -30,6 +35,11 @@ bool RootNodeEntityBaseListItem::isRoot()
 bool RootNodeEntityBaseListItem::isFiles()
 {
 	return false;
+}
+
+bool RootNodeEntityBaseListItem::isEntity()
+{
+	return true;
 }
 
 IDM_PLUGIN_NS_END

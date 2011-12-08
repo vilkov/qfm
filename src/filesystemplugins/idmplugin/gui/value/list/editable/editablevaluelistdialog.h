@@ -21,10 +21,8 @@ class EditableValueListDialog : public QDialog
 public:
 	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
-	IdmEntityValue *takeValue();
-    virtual void accept();
-
 protected:
+	IdmEntityValue *takeValue();
     QModelIndex currentIndex() const;
 
 private:

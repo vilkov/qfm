@@ -27,4 +27,9 @@ bool RootNodeFilesItem::isFiles()
 	return true;
 }
 
+bool RootNodeFilesItem::isEntity()
+{
+	return false;
+}
+
 IDM_PLUGIN_NS_END

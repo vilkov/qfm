@@ -1,0 +1,23 @@
+#ifndef IDMROOTNODEPROPERTYITEM_H_
+#define IDMROOTNODEPROPERTYITEM_H_
+
+#include "idmrootnodeentitybaseitem.h"
+
+
+IDM_PLUGIN_NS_BEGIN
+
+class RootNodePropertyItem : public RootNodeEntityBaseListItem
+{
+public:
+	RootNodePropertyItem(const IdmEntity::Property &property, Base *parent);
+
+	/* Base */
+	virtual QVariant data(qint32 column, qint32 role) const;
+
+private:
+	const IdmEntity::Property &m_property;
+};
+
+IDM_PLUGIN_NS_END
+
+#endif /* IDMROOTNODEPROPERTYITEM_H_ */

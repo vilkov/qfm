@@ -173,11 +173,14 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 									break;
 								}
 
-							if (ok && !m_container.commit())
-							{
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-								m_container.rollback();
-							}
+							if (ok)
+								if (m_container.commit())
+									add(entity);
+								else
+								{
+									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+									m_container.rollback();
+								}
 						}
 						else
 						{

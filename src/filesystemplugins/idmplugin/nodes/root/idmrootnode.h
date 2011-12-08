@@ -2,9 +2,9 @@
 #define IDMROOTNODE_H_
 
 #include "idmrootnodedelegate.h"
-#include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../../filesystem/model/filesystemmodelcontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -69,8 +69,39 @@ private:
 	};
 
 private:
-	IdmModelContainer m_itemsContainer;
-	IdmModelContainer::Container &m_items;
+	class ItemsContainer : public ModelContainer
+	{
+	public:
+		typedef QList<Item*> List;
+
+	public:
+		ItemsContainer();
+		virtual ~ItemsContainer();
+
+		virtual size_type size() const;
+		virtual Item *at(size_type index) const;
+		virtual size_type indexOf(Item *item) const;
+
+	private:
+		friend class IdmRootNode;
+		List m_container;
+	};
+
+private:
+	void add(IdmEntity *entity);
+	void remove(const QModelIndex &index);
+	void doAdd(IdmEntity *entity);
+	void doAdd(ItemsContainer::Item *item, IdmEntity *property);
+	void doRemove(ItemsContainer::Item *item, ItemsContainer::size_type index);
+	void expand(ItemsContainer::Item *parent);
+
+private:
+	typedef QMap<IdmEntity*, ItemsContainer::List> EntitiesMap;
+
+private:
+	ItemsContainer m_itemsContainer;
+	ItemsContainer::List &m_items;
+	EntitiesMap m_entities;
 	IdmContainer m_container;
 	IdmRootNodeDelegate m_delegate;
 	Info m_info;

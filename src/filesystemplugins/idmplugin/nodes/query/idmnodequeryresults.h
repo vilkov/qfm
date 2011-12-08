@@ -3,7 +3,6 @@
 
 #include "idmqueryresultsdelegate.h"
 #include "interface/idminodequeryresults.h"
-#include "../../model/idmmodelcontainer.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
@@ -98,9 +97,28 @@ private:
     enum { PrefetchLimit = 256 };
 
 private:
+	class ItemsContainer : public ModelContainer
+	{
+	public:
+		typedef QList<Item*> List;
+
+	public:
+		ItemsContainer();
+		virtual ~ItemsContainer();
+
+		virtual size_type size() const;
+		virtual Item *at(size_type index) const;
+		virtual size_type indexOf(Item *item) const;
+
+	private:
+		friend class IdmNodeQueryResults;
+		List m_container;
+	};
+
+private:
+    ItemsContainer m_itemsContainer;
+    ItemsContainer::List &m_items;
     INodeView::MenuActionList m_actions;
-	IdmModelContainer m_itemsContainer;
-	IdmModelContainer::Container &m_items;
 	IdmQueryResultsDelegate m_delegate;
 	IdmContainer m_container;
 	IdmValueReader m_reader;

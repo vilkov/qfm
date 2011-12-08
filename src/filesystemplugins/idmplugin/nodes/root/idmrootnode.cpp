@@ -1,6 +1,8 @@
 #include "idmrootnode.h"
 #include "items/idmrootnoderootitem.h"
 #include "items/idmrootnodefilesitem.h"
+#include "items/idmrootnodeentityitem.h"
+#include "items/idmrootnodepropertyitem.h"
 #include "control/idmcopycontrol.h"
 #include "../query/idmnodequeryresults.h"
 #include "../folder/idmfoldernode.h"
@@ -48,6 +50,9 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 {
 	m_items.push_back(new RootNodeRootItem());
 	m_items.push_back(new RootNodeFilesItem());
+
+    for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
+    	doAdd(m_container.at(i));
 }
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
@@ -343,6 +348,84 @@ void IdmRootNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress
 void IdmRootNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed)
 {
 
+}
+
+IdmRootNode::ItemsContainer::ItemsContainer() :
+	ModelContainer()
+{}
+
+IdmRootNode::ItemsContainer::~ItemsContainer()
+{
+	qDeleteAll(m_container);
+}
+
+IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::size() const
+{
+	return m_container.size();
+}
+
+IdmRootNode::ItemsContainer::Item *IdmRootNode::ItemsContainer::at(size_type index) const
+{
+	return m_container.at(index);
+}
+
+IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(Item *item) const
+{
+	return m_container.indexOf(item);
+}
+
+void IdmRootNode::add(IdmEntity *entity)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+	doAdd(entity);
+	endInsertRows();
+}
+
+void IdmRootNode::remove(const QModelIndex &index)
+{
+//	beginRemoveRows(QModelIndex(), index.row(), index.row());
+//	delete m_items.at(index.row());
+//	m_items.remove(index.row());
+//	endRemoveRows();
+}
+
+void IdmRootNode::doAdd(IdmEntity *entity)
+{
+	RootNodeEntityItem *item;
+
+	m_items.push_back(item = new RootNodeEntityItem(entity));
+	m_entities[entity].push_back(item);
+	expand(item);
+}
+
+void IdmRootNode::doAdd(ItemsContainer::Item *item, IdmEntity *property)
+{
+	RootNodeEntityItem *child;
+
+	static_cast<RootNodeEntityItem*>(item)->add(child = new RootNodeEntityItem(property, item));
+	m_entities[property].push_back(child);
+	expand(child);
+}
+
+void IdmRootNode::doRemove(ItemsContainer::Item *item, ItemsContainer::size_type index)
+{
+	ItemsContainer::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
+	items.removeAt(items.indexOf(item));
+	static_cast<RootNodeEntityItem*>(item->parent())->remove(index);
+}
+
+void IdmRootNode::expand(ItemsContainer::Item *p)
+{
+	IdmEntity *entity;
+	RootNodeEntityItem *item;
+	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem*>(p);
+
+	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
+	{
+		parent->add(item = new RootNodeEntityItem(entity = parent->entity()->at(i).entity, parent));
+		m_entities[entity].push_back(item);
+		expand(item);
+	}
 }
 
 IDM_PLUGIN_NS_END

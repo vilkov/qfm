@@ -59,7 +59,7 @@ int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
 void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue *item;
-	IdmModelContainer::Container list;
+	ItemsContainer::List list;
 
 	list.reserve(PrefetchLimit);
 
@@ -593,6 +593,30 @@ void IdmNodeQueryResults::unlock(const ScanedFiles::List &list)
 		for (Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
 			emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
+}
+
+IdmNodeQueryResults::ItemsContainer::ItemsContainer() :
+	ModelContainer()
+{}
+
+IdmNodeQueryResults::ItemsContainer::~ItemsContainer()
+{
+	qDeleteAll(m_container);
+}
+
+IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::size() const
+{
+	return m_container.size();
+}
+
+IdmNodeQueryResults::ItemsContainer::Item *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
+{
+	return m_container.at(index);
+}
+
+IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(Item *item) const
+{
+	return m_container.indexOf(item);
 }
 
 IDM_PLUGIN_NS_END

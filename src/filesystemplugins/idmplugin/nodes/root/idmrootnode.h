@@ -5,6 +5,7 @@
 #include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../../filesystem/model/filesystemmodelcontainer.h"
+#include "../../../../filesystem/interfaces/filesysteminodeview.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -13,6 +14,7 @@ class IdmRootNode : public TasksNode
 {
 public:
 	IdmRootNode(const Info &storage, Node *parent = 0);
+	virtual ~IdmRootNode();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -62,6 +64,15 @@ protected:
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
 private:
+	enum MenuId
+	{
+		Create,
+		Remove,
+		AddProperty,
+		RemoveProperty,
+		Find
+	};
+
 	enum Items
 	{
 		RootItem = 0,
@@ -99,6 +110,7 @@ private:
 	typedef QMap<IdmEntity*, ItemsContainer::List> EntitiesMap;
 
 private:
+	INodeView::MenuActionList m_menuActions;
 	ItemsContainer m_itemsContainer;
 	ItemsContainer::List &m_items;
 	EntitiesMap m_entities;

@@ -48,11 +48,32 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	m_delegate(m_container),
 	m_items(m_itemsContainer.m_container)
 {
+	m_menuActions.push_back(new QAction(tr("Create"), 0));
+	m_menuActions.last()->setData(Create);
+
+	m_menuActions.push_back(new QAction(tr("Remove"), 0));
+	m_menuActions.last()->setData(Remove);
+
+	m_menuActions.push_back(new QAction(tr("AddProperty"), 0));
+	m_menuActions.last()->setData(AddProperty);
+
+	m_menuActions.push_back(new QAction(tr("RemoveProperty"), 0));
+	m_menuActions.last()->setData(RemoveProperty);
+
+	m_menuActions.push_back(new QAction(tr("Find"), 0));
+	m_menuActions.last()->setData(Find);
+
+
 	m_items.push_back(new RootNodeRootItem());
 	m_items.push_back(new RootNodeFilesItem());
 
     for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
     	doAdd(m_container.at(i));
+}
+
+IdmRootNode::~IdmRootNode()
+{
+	qDeleteAll(m_menuActions);
 }
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
@@ -130,9 +151,9 @@ ICopyControl *IdmRootNode::createControl(INodeView *view) const
 
 void IdmRootNode::menuAction(QAction *action, INodeView *view)
 {
-	switch (static_cast<IdmContainer::MenuId>(action->data().toInt()))
+	switch (static_cast<MenuId>(action->data().toInt()))
 	{
-		case IdmContainer::Create:
+		case Create:
 		{
 			CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
 
@@ -146,37 +167,38 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 							for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
 								if (!m_container.addProperty(entity, dialog.property(i), dialog.propertyName(i)))
 								{
-									ok = false;
-									m_container.rollback();
 									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+									m_container.rollback();
+									ok = false;
 									break;
 								}
 
 							if (ok && !m_container.commit())
 							{
-								m_container.rollback();
 								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+								m_container.rollback();
 							}
 						}
 						else
 						{
 							if (!m_container.commit())
 							{
-								m_container.rollback();
 								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+								m_container.rollback();
 							}
 						}
 					else
 					{
-						m_container.rollback();
 						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
 					}
 				else
 					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 
 			break;
 		}
-		case IdmContainer::Find:
+
+		case Find:
 		{
 			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
 			{
@@ -185,28 +207,6 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 				if (dialog.exec() == CreateQueryDialog::Accepted)
 					switchTo(new IdmNodeQueryResults(m_container, dialog.query(), absoluteFilePath(), this), view);
 			}
-
-			break;
-		}
-		case IdmContainer::List:
-		{
-			if (m_container.transaction())
-			{
-				ListEntityDialog dialog(m_container, &Application::instance()->mainWindow());
-
-				if (dialog.exec() == ListEntityDialog::Accepted)
-				{
-					if (!m_container.commit())
-					{
-						m_container.rollback();
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-					}
-				}
-				else
-					m_container.rollback();
-			}
-			else
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
 
 			break;
 		}
@@ -288,7 +288,7 @@ QAbstractItemDelegate *IdmRootNode::itemDelegate() const
 
 const INodeView::MenuActionList &IdmRootNode::menuActions() const
 {
-	return m_container.menuActions();
+	return m_menuActions;
 }
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

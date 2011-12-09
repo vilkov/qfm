@@ -1,12 +1,12 @@
 #ifndef IDMROOTNODEPROPERTYITEM_H_
 #define IDMROOTNODEPROPERTYITEM_H_
 
-#include "idmrootnodeentitybaseitem.h"
+#include "idmrootnodeentityitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class RootNodePropertyItem : public RootNodeEntityBaseListItem
+class RootNodePropertyItem : public RootNodeEntityItem
 {
 public:
 	RootNodePropertyItem(const IdmEntity::Property &property, Base *parent);
@@ -16,6 +16,7 @@ public:
 
 private:
 	const IdmEntity::Property &m_property;
+	QVariant m_label;
 };
 
 IDM_PLUGIN_NS_END

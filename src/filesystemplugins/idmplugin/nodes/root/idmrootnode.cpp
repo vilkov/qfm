@@ -446,14 +446,13 @@ void IdmRootNode::doRemove(ItemsContainer::Item *item, ItemsContainer::size_type
 
 void IdmRootNode::expand(ItemsContainer::Item *p)
 {
-	IdmEntity *entity;
 	RootNodeEntityItem *item;
 	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem*>(p);
 
 	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{
-		parent->add(item = new RootNodeEntityItem(entity = parent->entity()->at(i).entity, parent));
-		m_entities[entity].push_back(item);
+		parent->add(item = new RootNodePropertyItem(parent->entity()->at(i), parent));
+		m_entities[item->entity()].push_back(item);
 		expand(item);
 	}
 }

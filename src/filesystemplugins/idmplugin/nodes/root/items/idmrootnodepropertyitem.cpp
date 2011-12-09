@@ -17,4 +17,9 @@ QVariant RootNodePropertyItem::data(qint32 column, qint32 role) const
 		return QVariant();
 }
 
+bool RootNodePropertyItem::isProperty()
+{
+	return true;
+}
+
 IDM_PLUGIN_NS_END

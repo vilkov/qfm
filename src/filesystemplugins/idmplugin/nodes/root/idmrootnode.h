@@ -75,8 +75,8 @@ private:
 
 	enum Items
 	{
-		RootItem = 0,
-		FilesItem = 1
+		RootItemIndex = 0,
+		FilesItemIndex = 1
 	};
 
 private:
@@ -97,6 +97,10 @@ private:
 		friend class IdmRootNode;
 		List m_container;
 	};
+
+private:
+	void createEntity();
+	void addProperty(ItemsContainer::Item *item);
 
 private:
 	void add(IdmEntity *entity);

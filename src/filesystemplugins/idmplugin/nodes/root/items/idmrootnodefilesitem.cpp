@@ -32,4 +32,9 @@ bool RootNodeFilesItem::isEntity()
 	return false;
 }
 
+bool RootNodeFilesItem::isProperty()
+{
+	return false;
+}
+
 IDM_PLUGIN_NS_END

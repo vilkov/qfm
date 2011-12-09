@@ -16,6 +16,7 @@ public:
 	virtual bool isRoot();
 	virtual bool isFiles();
 	virtual bool isEntity();
+	virtual bool isProperty();
 };
 
 
@@ -28,6 +29,7 @@ public:
 	virtual bool isRoot();
 	virtual bool isFiles();
 	virtual bool isEntity();
+	virtual bool isProperty();
 };
 
 IDM_PLUGIN_NS_END

@@ -18,6 +18,7 @@ public:
 	virtual bool isRoot();
 	virtual bool isFiles();
 	virtual bool isEntity();
+	virtual bool isProperty();
 
 private:
 	QVariant m_label;

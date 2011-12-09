@@ -155,49 +155,7 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 	{
 		case Create:
 		{
-			CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
-
-			if (dialog.exec() == CreateEntityDialog::Accepted)
-				if (m_container.transaction())
-					if (IdmEntity *entity = m_container.createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
-						if (entity->type() == Database::Composite)
-						{
-							bool ok = true;
-
-							for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
-								if (!m_container.addProperty(entity, dialog.property(i), dialog.propertyName(i)))
-								{
-									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-									m_container.rollback();
-									ok = false;
-									break;
-								}
-
-							if (ok)
-								if (m_container.commit())
-									add(entity);
-								else
-								{
-									QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-									m_container.rollback();
-								}
-						}
-						else
-						{
-							if (!m_container.commit())
-							{
-								QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-								m_container.rollback();
-							}
-						}
-					else
-					{
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-						m_container.rollback();
-					}
-				else
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
-
+			createEntity();
 			break;
 		}
 
@@ -218,7 +176,14 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 
 void IdmRootNode::createFile(const QModelIndex &index, INodeView *view)
 {
+	RootNodeItem::Base *item;
 
+	if ((item = static_cast<RootNodeItem::Base*>(index.internalPointer()))->isList())
+	{
+
+	}
+	else
+		createEntity();
 }
 
 void IdmRootNode::createDirectory(const QModelIndex &index, INodeView *view)
@@ -276,7 +241,7 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex IdmRootNode::rootIndex() const
 {
-	return createIndex(RootItem, 0, m_items.at(RootItem));
+	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
 }
 
 QAbstractItemModel *IdmRootNode::proxyModel() const
@@ -354,11 +319,11 @@ Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, Q
 	m_info.refresh();
 
 	if (m_info.exists())
-		if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->node())
+		if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->node())
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		else
 		{
-			static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->setNode(node = new IdmFolderNode(m_info, this));
+			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_info, this));
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		}
 
@@ -367,7 +332,7 @@ Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, Q
 
 void IdmRootNode::nodeRemoved(Node *node)
 {
-	static_cast<RootNodeFilesItem*>(m_items.at(FilesItem))->setNode(0);
+	static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(0);
 }
 
 void IdmRootNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
@@ -402,6 +367,57 @@ IdmRootNode::ItemsContainer::Item *IdmRootNode::ItemsContainer::at(size_type ind
 IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(Item *item) const
 {
 	return m_container.indexOf(item);
+}
+
+void IdmRootNode::createEntity()
+{
+	CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
+
+	if (dialog.exec() == CreateEntityDialog::Accepted)
+		if (m_container.transaction())
+			if (IdmEntity *entity = m_container.createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
+				if (entity->type() == Database::Composite)
+				{
+					bool ok = true;
+
+					for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
+						if (!m_container.addProperty(entity, dialog.property(i), dialog.propertyName(i)))
+						{
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+							ok = false;
+							break;
+						}
+
+					if (ok)
+						if (m_container.commit())
+							add(entity);
+						else
+						{
+							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+						}
+				}
+				else
+				{
+					if (!m_container.commit())
+					{
+						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+				}
+			else
+			{
+				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
+			}
+		else
+			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+}
+
+void IdmRootNode::addProperty(ItemsContainer::Item *item)
+{
+
 }
 
 void IdmRootNode::add(IdmEntity *entity)

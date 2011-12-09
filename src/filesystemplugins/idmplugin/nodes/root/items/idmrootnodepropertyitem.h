@@ -14,6 +14,9 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
+	/* IRootNodeItem */
+	virtual bool isProperty();
+
 private:
 	const IdmEntity::Property &m_property;
 	QVariant m_label;

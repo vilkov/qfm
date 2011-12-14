@@ -558,6 +558,17 @@ void FolderNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeEl
 	updateSecondColumn(index, entry);
 }
 
+Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
+{
+	if (Node *res = plugins->node(&info, const_cast<FolderNode*>(this)))
+		return res;
+	else
+		if (info.isDir())
+			return new FolderNode(info, const_cast<FolderNode*>(this));
+		else
+			return 0;
+}
+
 void FolderNode::CancelFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 {
 	m_node->cancelTask(entry);
@@ -731,17 +742,6 @@ QModelIndex FolderNode::index(int column, FileSystemBaseItem *item) const
 		return createIndex(index, column, item);
 	else
 		return QModelIndex();
-}
-
-Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
-{
-	if (Node *res = plugins->node(&info, const_cast<FolderNode*>(this)))
-		return res;
-	else
-		if (info.isDir())
-			return new FolderNode(info, const_cast<FolderNode*>(this));
-		else
-			return 0;
 }
 
 QModelIndex FolderNode::indexForFile(FileSystemBaseItem *item) const

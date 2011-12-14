@@ -26,6 +26,9 @@ public:
 	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
 
+protected:
+	virtual Node *createNode(const Info &info, PluginsManager *plugins) const;
+
 private:
 	friend class IdmRootNode;
 	Node *privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);

@@ -1,4 +1,5 @@
 #include "idmfoldernode.h"
+#include "../../../../filesystem/filesystempluginsmanager.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -65,6 +66,17 @@ void IdmFolderNode::copy(const INodeView *source, INodeView *destination)
 void IdmFolderNode::move(const INodeView *source, INodeView *destination)
 {
 
+}
+
+Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
+{
+	if (Node *res = plugins->node(&info, const_cast<IdmFolderNode*>(this)))
+		return res;
+	else
+		if (info.isDir())
+			return new IdmFolderNode(info, const_cast<IdmFolderNode*>(this));
+		else
+			return 0;
 }
 
 Node *IdmFolderNode::privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMITEMSCONTAINER_H_
 #define FILESYSTEMITEMSCONTAINER_H_
 
+#include <QtCore/QSet>
 #include "../base/items/filesystembaseitem.h"
 #include "../../model/filesystemmodelcontainer.h"
 #include "../../../tools/containers/hashedlist.h"

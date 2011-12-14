@@ -63,6 +63,9 @@ protected:
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
 protected:
+	virtual Node *createNode(const Info &info, PluginsManager *plugins) const;
+
+protected:
 	typedef QPair<ItemsContainer::size_type, FileSystemBaseItem*> ProcessedValue;
 	class ProcessedList : public Functors::Functor, public QList<ProcessedValue>
 	{
@@ -123,7 +126,6 @@ private:
 
 private:
 	QModelIndex index(int column, FileSystemBaseItem *item) const;
-	Node *createNode(const Info &info, PluginsManager *plugins) const;
 	QModelIndex indexForFile(FileSystemBaseItem *item) const;
 	QModelIndex indexForFile(FileSystemBaseItem *item, ItemsContainer::size_type index) const;
 

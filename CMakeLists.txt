@@ -55,6 +55,11 @@ if (USE_GPROF)
 endif (USE_GPROF)
  
 # Definitions
+if (UNIX)
+    # This is for xdgmimecache
+    add_definitions (-DHAVE_MMAP)
+endif ()
+
 add_definitions (
     -DUNICODE
     -DTOOLS_THREADS_BACKEND_QT

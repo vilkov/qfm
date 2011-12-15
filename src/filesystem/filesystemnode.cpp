@@ -1,4 +1,5 @@
 #include "filesystemnode.h"
+#include "filetype/filetypemanager.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -76,6 +77,9 @@ void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
 
 void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
 {
+	FileTypeManager().info(info(idx)->absoluteFilePath());
+
+
 	QModelIndex selected;
 
 	if (Node *node = viewChild(idx, plugins, selected))

@@ -26,7 +26,7 @@ public:
 		IdentityCacheRecordsLifeTime = CommonBase + 5,
 		NetworkTimeout = CommonBase + 6,
 		NetworkErrors = CommonBase + 7,
-		VerboseLog = CommonBase + 8,
+		VerboseLog = CommonBase + 8
 	};
 
 public:

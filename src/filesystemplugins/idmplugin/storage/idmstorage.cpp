@@ -391,7 +391,6 @@ bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *
 		if (id != IdmEntity::InvalidId)
 		{
 			char *errorMsg = 0;
-			sqlite3_stmt *statement;
 			QByteArray sqlQuery = PropertiesTable::addValue(table, id, entityValue->id(), propertyValue->id());
 
 			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
@@ -554,7 +553,6 @@ bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const
 bool IdmStorage::removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
 {
 	char *errorMsg = 0;
-	sqlite3_stmt *statement;
 	QString table =
 			QString::fromLatin1("ENTITY_").
 			append(QString::number(entityValue->entity()->id())).
@@ -732,7 +730,6 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 	bool res = true;
 	char *errorMsg = 0;
 	QByteArray sqlQuery;
-	sqlite3_stmt *statement;
 	QString query = PropertiesTable::Incomplete::dropProperty2(entity->id());
 
 	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)

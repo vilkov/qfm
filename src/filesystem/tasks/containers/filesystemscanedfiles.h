@@ -43,7 +43,7 @@ private:
 
 class ScanedFiles::List
 {
-	Q_DISABLE_COPY(List);
+	Q_DISABLE_COPY(List)
 
 public:
 	typedef Container::size_type  size_type;
@@ -66,7 +66,7 @@ private:
 
 class ScanedFiles::Files
 {
-	Q_DISABLE_COPY(Files);
+	Q_DISABLE_COPY(Files)
 
 public:
 	typedef Container::size_type  size_type;

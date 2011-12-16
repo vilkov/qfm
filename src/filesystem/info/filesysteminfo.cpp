@@ -3,6 +3,7 @@
 #include "../tools/filesystemcommontools.h"
 #include "../../application.h"
 #include <QtCore/QFSFileEngine>
+#include <unistd.h>
 
 
 FILE_SYSTEM_NS_BEGIN

@@ -117,6 +117,8 @@ IdmEntityValue *CreationTools::createValue(const QString &title, const QString &
 		case Database::Path:
 			return processAddValue<Database::Path>(title, label, parent, container, entity, declined);
 
+		default:
+			return 0;
 	}
 }
 

@@ -46,6 +46,9 @@ QString Constraint::operatorToString(Operator op)
 
 		case Like:
 			return tr("like");
+
+		default:
+			return QString();
 	}
 }
 

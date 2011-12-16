@@ -95,20 +95,20 @@ ApplicationSettings::Argument ApplicationSettings::createSettins()
 {
 	SettingsList settings;
 	ConstraintsList constraints;
-	ConfigOptionValue *setting1;
-	ConfigOptionValue *setting2;
-	ConfigOptionGroup *group;
-	ConfigOptionGroup *subGroup;
-	ConfigOptionValue *networkTimeout;
-	ConfigOptionValue *webServerDataRequestTimeout;
-	ConfigOptionValue *databaseReconnectTimeout;
-
-	/* Common */
-	settings.push_back(group = new ConfigOptionGroup(tr("Common")));
-
-	setting1 = group->add<QLineEdit>(StorageLocation, tr("Storage location"), QDir(QDesktopServices::storageLocation(QDesktopServices::DataLocation)).absolutePath());
-	constraints.push_back(new ConfigOptionConstraintEmpty(setting1));
-
+//	ConfigOptionValue *setting1;
+//	ConfigOptionValue *setting2;
+//	ConfigOptionGroup *group;
+//	ConfigOptionGroup *subGroup;
+//	ConfigOptionValue *networkTimeout;
+//	ConfigOptionValue *webServerDataRequestTimeout;
+//	ConfigOptionValue *databaseReconnectTimeout;
+//
+//	/* Common */
+//	settings.push_back(group = new ConfigOptionGroup(tr("Common")));
+//
+//	setting1 = group->add<QLineEdit>(StorageLocation, tr("Storage location"), QDir(QDesktopServices::storageLocation(QDesktopServices::DataLocation)).absolutePath());
+//	constraints.push_back(new ConfigOptionConstraintEmpty(setting1));
+//
 //	setting1 = group->add<QSpinBox>(NumberOfThreads, tr("Number of threads"), 10);
 //	constraints.push_back(new ConfigOptionConstraintRange(setting1, 1, 20));
 //

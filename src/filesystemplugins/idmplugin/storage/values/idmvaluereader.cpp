@@ -127,6 +127,8 @@ IdmEntityValue *IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, 
 			return createValue(entity, id, contextValue<Database::Rating>(m_context, column + 1));
 		case Database::Path:
 			return createValue(entity, id, contextValue<Database::Path>(m_context, column + 1));
+		default:
+			return 0;
 	}
 }
 

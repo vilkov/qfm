@@ -774,8 +774,8 @@ namespace Loki
         bool makeNewChunk()
         {
             bool allocated = false;
-            try
-            {
+//            try
+//            {
                 std::size_t size = m_chunks.size();
                 // Calling chunks_.reserve *before* creating and initializing the new
                 // Chunk means that nothing is leaked by this function in case an
@@ -792,11 +792,11 @@ namespace Loki
                 allocated = newChunk.init(m_blockSize, m_numBlocks);
                 if (allocated)
                     m_chunks.push_back(newChunk);
-            }
-            catch ( ... )
-            {
-                allocated = false;
-            }
+//            }
+//            catch ( ... )
+//            {
+//                allocated = false;
+//            }
 
             if (!allocated)
             	return false;

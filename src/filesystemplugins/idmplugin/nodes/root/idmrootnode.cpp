@@ -43,10 +43,10 @@ template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *
 
 IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
-	m_info(storage.absolutePath()),
+	m_items(m_itemsContainer.m_container),
 	m_container(storage),
 	m_delegate(m_container),
-	m_items(m_itemsContainer.m_container)
+	m_info(storage.absolutePath())
 {
 	m_menuActions.push_back(new QAction(tr("Create"), 0));
 	m_menuActions.last()->setData(Create);

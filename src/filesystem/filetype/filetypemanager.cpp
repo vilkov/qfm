@@ -48,7 +48,6 @@ Info FileTypeManager::info(const QString &absoluteFilePath) const
 		qDebug() << type->userSpecifiedIconName();
 	}
 
-
 	struct stat st;
 	stat(absoluteFilePath.toUtf8().data(), &st);
 

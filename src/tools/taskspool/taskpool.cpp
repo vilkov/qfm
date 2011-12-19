@@ -18,7 +18,7 @@ void deleteAll(Container &container)
 
 TASKSPOOL_NS_BEGIN
 
-TaskPool::TaskPool(types::int32_t maxThreads) :
+TaskPool::TaskPool(ThreadList::size_type maxThreads) :
 	m_clearing(false),
 	m_maxThreads(maxThreads)
 {}

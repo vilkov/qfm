@@ -28,7 +28,6 @@ void QueryEntitiesModel::remove(const QModelIndex &index)
 
 void QueryEntitiesModel::expand(IdmItem *p)
 {
-	IdmEntity *entity;
 	QueryEntitiesModelItem *item;
 	QueryEntitiesModelItem *parent = static_cast<QueryEntitiesModelItem*>(p);
 

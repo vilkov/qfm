@@ -14,7 +14,10 @@ TASKSPOOL_NS_BEGIN
 class TaskPool
 {
 public:
-	TaskPool(types::int32_t maxThreads);
+	typedef std::list<TaskThread*> ThreadList;
+
+public:
+	TaskPool(ThreadList::size_type maxThreads);
 	~TaskPool();
 
 	void handle(Task *task);
@@ -27,10 +30,10 @@ protected:
 private:
 	PMutex m_mutex;
     bool m_clearing;
-    types::int32_t m_maxThreads;
+    ThreadList m_threads;
+    ThreadList m_freeThreads;
     std::list<Task*> m_tasks;
-	std::list<TaskThread*> m_threads;
-	std::list<TaskThread*> m_freeThreads;
+    ThreadList::size_type m_maxThreads;
 };
 
 TASKSPOOL_NS_END

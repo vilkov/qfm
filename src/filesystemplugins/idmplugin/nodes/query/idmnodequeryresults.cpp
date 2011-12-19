@@ -490,7 +490,6 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	if (m_container.transaction())
 	{
 		bool ok = true;
-		QueryResultValueItem *item;
 
 		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
 			if (list.at(i).second->shouldRemove())

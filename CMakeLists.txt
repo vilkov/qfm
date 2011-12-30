@@ -79,10 +79,6 @@ find_package (Sqlite REQUIRED)
 include_directories (${SQLITE_INCLUDE})
 set (qfm_LIBS ${qfm_LIBS} "${SQLITE_LIBRARY}")
 
-find_package (KDE4Core REQUIRED)
-include (${KDE4CORE_INCLUDE})
-set (qfm_LIBS ${qfm_LIBS} "${KDE4CORE_LIB}")
-
 
 # Includes
 

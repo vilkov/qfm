@@ -50,7 +50,7 @@ Info FileTypeManager::info(const QString &absoluteFilePath) const
 			if (const XdgAppArray *apps = xdg_mime_user_apps_lookup(mimeType))
 			{
 				const XdgAppGroup *group;
-				const XdgAppEntryValueArray *values;
+				const XdgEntryValueArray *values;
 
 				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
 					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))
@@ -62,7 +62,7 @@ Info FileTypeManager::info(const QString &absoluteFilePath) const
 			if (const XdgAppArray *apps = xdg_mime_default_apps_lookup(mimeType))
 			{
 				const XdgAppGroup *group;
-				const XdgAppEntryValueArray *values;
+				const XdgEntryValueArray *values;
 
 				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
 					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))
@@ -74,7 +74,7 @@ Info FileTypeManager::info(const QString &absoluteFilePath) const
 			if (const XdgAppArray *apps = xdg_mime_known_apps_lookup(mimeType))
 			{
 				const XdgAppGroup *group;
-				const XdgAppEntryValueArray *values;
+				const XdgEntryValueArray *values;
 
 				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
 					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))

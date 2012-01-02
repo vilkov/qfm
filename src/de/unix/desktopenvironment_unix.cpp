@@ -35,8 +35,10 @@ static const char *x11_atomnames[NAtoms] =
 
 
 DesktopEnvironment::DesktopEnvironment() :
-	m_type(DE_Unknown),
-	m_version(0)
+	m_type(DE_Unknown)
+#ifdef DESKTOP_ENVIRONMENT_IS_KDE
+	,m_version(0)
+#endif
 {
     if (Display *display = XOpenDisplay(NULL))
     {
@@ -61,9 +63,10 @@ DesktopEnvironment::DesktopEnvironment() :
 			{
 				m_type = DE_Kde;
 
+#ifdef DESKTOP_ENVIRONMENT_IS_KDE
 				if (var = getenv("KDE_SESSION_VERSION"))
 					m_version = atoi(var);
-
+#endif
 				break;
 			}
 
@@ -130,14 +133,16 @@ DesktopEnvironment::~DesktopEnvironment()
 	xdg_mime_shutdown();
 }
 
-QString DesktopEnvironment::themeName() const
-{
-    QString result;
-    return result;
-}
-
 bool DesktopEnvironment::info(const QString &absoluteFilePath) const
 {
+#ifdef DESKTOP_ENVIRONMENT_IS_KDE
+	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName(m_version).toUtf8();
+#else
+	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName().toUtf8();
+#endif
+
+	qDebug() << iconThemeName;
+
 	QByteArray fileName = absoluteFilePath.toUtf8();
 	const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName.data());
 

@@ -21,12 +21,13 @@ public:
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
+	QString themeName() const;
+
 	bool info(const QString &absoluteFilePath) const;
 
 private:
 	Type m_type;
 	int m_version;
 };
-
 
 #endif /* DESKTOPENVIRONMENT_H_ */

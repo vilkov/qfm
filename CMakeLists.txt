@@ -45,6 +45,17 @@ message (STATUS "CMake generates " ${CMAKE_GENERATOR})
 # Main settings
 set (USE_GPROF    NO)
 set (UNIT_TESTING NO CACHE BOOL "Compile binary executable for unit testing?")
+
+if (UNIX)
+    set (DESKTOP_ENVIRONMENT "KDE" CACHE STRING "Desktop environment")
+    set_property(CACHE DESKTOP_ENVIRONMENT PROPERTY STRINGS
+        "KDE"
+        "GNOME"
+        "Xfce4")
+else (WIN32)
+    set (DESKTOP_ENVIRONMENT "Windows")
+endif ()
+
 set (PROJECT_GENERATED_FILES_DIR "${PROJECT_BINARY_DIR}/generated")
 
 
@@ -99,6 +110,17 @@ endif (USE_GPROF)
 if (UNIX)
     # This is for xdgmimecache
     add_definitions (-DHAVE_MMAP)
+    
+    if (DESKTOP_ENVIRONMENT STREQUAL "KDE")
+        set (DESKTOP_ENVIRONMENT_IS_KDE YES)
+        add_definitions (-DDESKTOP_ENVIRONMENT_IS_KDE)
+    else ()
+        set (DESKTOP_ENVIRONMENT_IS_GTK YES)
+        add_definitions (-DDESKTOP_ENVIRONMENT_IS_GTK)
+    endif ()
+elseif (WIN32)
+    set (DESKTOP_ENVIRONMENT_IS_WINDOWS YES)
+    add_definitions (-DDESKTOP_ENVIRONMENT_IS_WINDOWS)
 endif ()
 
 add_definitions (

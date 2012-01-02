@@ -69,7 +69,7 @@ else (UNIX)
     find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml QtDbus REQUIRED)
 endif ()
 include (${QT_USE_FILE})
-set (qfm_LIBS ${qfm_LIBS} "${QT_LIBRARIES}")
+set (qfm_LIBS ${qfm_LIBS} ${QT_LIBRARIES})
 add_definitions (${QT_DEFINITIONS})
 
 find_package (Stlsoft REQUIRED)
@@ -77,7 +77,13 @@ include_directories (${STLSOFT_INCLUDE})
 
 find_package (Sqlite REQUIRED)
 include_directories (${SQLITE_INCLUDE})
-set (qfm_LIBS ${qfm_LIBS} "${SQLITE_LIBRARY}")
+set (qfm_LIBS ${qfm_LIBS} ${SQLITE_LIBRARY})
+
+if (UNIX)
+    find_package (X11 REQUIRED)
+    include_directories (${X11_INCLUDE_DIR})
+    set (qfm_LIBS ${qfm_LIBS} ${X11_LIBRARIES})
+endif ()
 
 
 # Includes

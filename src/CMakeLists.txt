@@ -8,10 +8,10 @@ set (USE_WIN_CONTEXTMENU NO)
 
 # FIXME: It shouldn't be this way!
 # CMake doesn't create relative path correctly because of SYMLINK. 
-file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "filesystem/filetype/xdgmime/*.h")
+file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/xdgmime/*.h")
 set (src_HEADERS ${src_HEADERS} ${tmp_0})
 
-file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "filesystem/filetype/xdgmime/*.c")
+file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/xdgmime/*.c")
 set (src_SOURCES ${src_SOURCES} ${tmp_0})
 
 

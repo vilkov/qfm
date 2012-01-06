@@ -68,7 +68,7 @@ public:
 		else
 			if (change.type() == Deleted)
 				if (change.info().lastModified() == info.lastModified() &&
-					change.info().size() == info.size())
+					change.info().fileSize() == info.fileSize())
 					change.update(NoChange);
 				else
 					change.update(info, Updated);

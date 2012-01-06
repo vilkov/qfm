@@ -50,7 +50,7 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 				case Qt::EditRole:
 				case Qt::DisplayRole:
 					if (info().isFile())
-						return Tools::humanReadableSize(info().size());
+						return Tools::humanReadableSize(info().fileSize());
 					else
 						if (m_totalSize.isNull())
 							return QString::fromLatin1("<DIR>");

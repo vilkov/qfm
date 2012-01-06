@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMINFO_H_
 #define FILESYSTEMINFO_H_
 
-#include <QtCore/QFileInfo>
 #include <QtGui/QIcon>
+#include "../tools/filesystemfileinfo.h"
 #include "../interfaces/filesystemifilecontrol.h"
 
 
@@ -13,21 +13,19 @@ class Info : public IFileControl
 public:
     Info();
     Info(const QString &filePath);
-    Info(const QFileInfo &info);
-#ifndef Q_OS_WIN
-    Info(const QString &filePath, uint userId, uint groupId);
-    Info(const QFileInfo &info, uint userId, uint groupId);
-#endif
 
 	/* IFileControl::IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
+	virtual bool isLink() const;
 	virtual bool exists() const;
+	virtual qint64 fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
+	virtual int permissions() const;
 	virtual void refresh();
 
 	/* IFileControl */
@@ -42,27 +40,15 @@ public:
 	virtual IFileControl *create(const QString &name, FileType type, QString &error) const;
 
 public:
-	bool isRoot() const { return m_info.isRoot(); }
-	qint64 size() const { return m_info.size(); }
+	bool isRoot() const { return m_isRoot; }
     const QIcon &icon() const;
     const QString &displayType() const;
-    bool isCaseSensitive() const;
-
-    const QFile::Permissions &permissions() const { return m_permissions; }
 
 private:
-#ifndef Q_OS_WIN
-    void translatePermissions(uint userId, uint groupId);
-#endif
-
-private:
-    QFileInfo m_info;
-    QFile::Permissions m_permissions;
-    mutable QString m_displayType;
-    mutable QIcon m_icon;
-#ifndef Q_OS_WIN
-    static QString root;
-#endif
+    bool m_isRoot;
+    QString m_filePath;
+    QString m_fileName;
+    FileInfo m_info;
 };
 
 FILE_SYSTEM_NS_END

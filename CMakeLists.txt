@@ -118,6 +118,8 @@ if (UNIX)
         set (DESKTOP_ENVIRONMENT_IS_GTK YES)
         add_definitions (-DDESKTOP_ENVIRONMENT_IS_GTK)
     endif ()
+
+    add_definitions (-D_FILE_OFFSET_BITS=64)
 elseif (WIN32)
     set (DESKTOP_ENVIRONMENT_IS_WINDOWS YES)
     add_definitions (-DDESKTOP_ENVIRONMENT_IS_WINDOWS)

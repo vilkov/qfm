@@ -5,9 +5,6 @@
 #include "../filesystemtasksnode.h"
 #include "../containers/filesystemscanedfiles.h"
 #include "../containers/filesysteminfolistitem.h"
-#ifndef Q_OS_WIN
-#	include "../tools/taskpermissionscache.h"
-#endif
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -36,11 +33,6 @@ protected:
 	void scan(InfoListItem *root, const volatile bool &aborted) const;
 	void scan(InfoListItem *root, const QString &file, const volatile bool &aborted) const;
 	InfoItem *scan(const QString &absoluteFilePath, const volatile bool &aborted) const;
-
-private:
-#ifndef Q_OS_WIN
-	TaskPermissionsCache m_permissions;
-#endif
 };
 
 FILE_SYSTEM_NS_END

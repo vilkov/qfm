@@ -80,9 +80,29 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+bool M3uNode::isDir() const
+{
+	return false;
+}
+
+bool M3uNode::isFile() const
+{
+	return false;
+}
+
+bool M3uNode::isLink() const
+{
+	return false;
+}
+
 bool M3uNode::exists() const
 {
 	return rootItem()->exists();
+}
+
+qint64 M3uNode::fileSize() const
+{
+	return rootItem()->fileSize();
 }
 
 QString M3uNode::fileName() const
@@ -108,6 +128,11 @@ QString M3uNode::absoluteFilePath(const QString &fileName) const
 QDateTime M3uNode::lastModified() const
 {
 	return rootItem()->lastModified();
+}
+
+int M3uNode::permissions() const
+{
+	return rootItem()->permissions();
 }
 
 void M3uNode::refresh()

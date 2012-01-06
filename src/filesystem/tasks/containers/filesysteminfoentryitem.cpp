@@ -14,7 +14,7 @@ bool InfoEntryItem::isList() const
 
 qint64 InfoEntryItem::totalSize() const
 {
-	return size();
+	return fileSize();
 }
 
 FILE_SYSTEM_NS_END

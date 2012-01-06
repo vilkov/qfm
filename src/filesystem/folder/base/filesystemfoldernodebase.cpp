@@ -72,10 +72,19 @@ bool FolderNodeBase::isFile() const
 	return false;
 }
 
+bool FolderNodeBase::isLink() const
+{
+	return m_info.isLink();
+}
+
 bool FolderNodeBase::exists() const
 {
-	((FolderNodeBase*)this)->m_info.refresh();
 	return m_info.exists();
+}
+
+qint64 FolderNodeBase::fileSize() const
+{
+	return m_info.fileSize();
 }
 
 QString FolderNodeBase::fileName() const
@@ -104,6 +113,11 @@ QString FolderNodeBase::absoluteFilePath(const QString &fileName) const
 QDateTime FolderNodeBase::lastModified() const
 {
 	return m_info.lastModified();
+}
+
+int FolderNodeBase::permissions() const
+{
+	return m_info.permissions();
 }
 
 void FolderNodeBase::refresh()

@@ -115,9 +115,19 @@ bool IdmNodeQueryResults::isFile() const
 	return false;
 }
 
+bool IdmNodeQueryResults::isLink() const
+{
+	return false;
+}
+
 bool IdmNodeQueryResults::exists() const
 {
 	return true;
+}
+
+qint64 IdmNodeQueryResults::fileSize() const
+{
+	return 0;
 }
 
 QString IdmNodeQueryResults::fileName() const
@@ -143,6 +153,11 @@ QString IdmNodeQueryResults::absoluteFilePath(const QString &fileName) const
 QDateTime IdmNodeQueryResults::lastModified() const
 {
 	return m_info.lastModified();
+}
+
+int IdmNodeQueryResults::permissions() const
+{
+	return 0;
 }
 
 void IdmNodeQueryResults::refresh()

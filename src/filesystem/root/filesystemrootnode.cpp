@@ -20,9 +20,19 @@ bool RootNode::isFile() const
 	return false;
 }
 
+bool RootNode::isLink() const
+{
+	return false;
+}
+
 bool RootNode::exists() const
 {
 	return true;
+}
+
+qint64 RootNode::fileSize() const
+{
+	return 0;
 }
 
 QString RootNode::fileName() const
@@ -48,6 +58,11 @@ QString RootNode::absoluteFilePath(const QString &fileName) const
 QDateTime RootNode::lastModified() const
 {
 	return QDateTime();
+}
+
+int RootNode::permissions() const
+{
+	return 0;
 }
 
 void RootNode::refresh()

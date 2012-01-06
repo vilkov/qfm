@@ -101,9 +101,19 @@ bool IdmRootNode::isFile() const
 	return false;
 }
 
+bool IdmRootNode::isLink() const
+{
+	return false;
+}
+
 bool IdmRootNode::exists() const
 {
 	return m_info.exists();
+}
+
+qint64 IdmRootNode::fileSize() const
+{
+	return m_info.fileSize();
 }
 
 QString IdmRootNode::fileName() const
@@ -129,6 +139,11 @@ QString IdmRootNode::absoluteFilePath(const QString &fileName) const
 QDateTime IdmRootNode::lastModified() const
 {
 	return m_info.lastModified();
+}
+
+int IdmRootNode::permissions() const
+{
+	return m_info.permissions();
 }
 
 void IdmRootNode::refresh()

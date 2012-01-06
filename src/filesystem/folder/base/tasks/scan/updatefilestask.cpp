@@ -27,11 +27,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 	{
 		current = QTime::currentTime();
 
-#ifndef Q_OS_WIN
-		m_updates.update(m_permissions.getInfo(dirIt.next()));
-#else
 		m_updates.update(dirIt.next());
-#endif
 
 		if (base.msecsTo(current) > 300)
 		{

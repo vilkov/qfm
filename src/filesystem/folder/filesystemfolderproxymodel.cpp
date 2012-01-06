@@ -44,7 +44,7 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 						if (rightItem->info().isDir())
 							return false;
 						else
-							return leftItem->info().size() < rightItem->info().size();
+							return leftItem->info().fileSize() < rightItem->info().fileSize();
 				case 2:
 					if (leftItem->info().isDir())
 						if (rightItem->info().isDir())

@@ -3,13 +3,14 @@
 
 #include <QtCore/QThread>
 #include <QtGui/QApplication>
-#include <QtGui/QFileIconProvider>
+//#include <QtGui/QFileIconProvider>
 //#include <QtSingleInstance/QSingleApplication>
 #include "tools/exceptionshandler/exceptionshandler.h"
 #include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
 #include "mainwindow/mainwindow.h"
 #include "iconprovider/iconprovider.h"
+#include "de/desktopenvironment.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -22,7 +23,8 @@ public:
 
 	virtual bool notify(QObject *receiver, QEvent *event);
 
-	QFileIconProvider &iconProvider() { return m_iconProvider; }
+	DesktopEnvironment &desktopEnvironment() { return m_desktopEnvironment; }
+//	QFileIconProvider &iconProvider() { return m_iconProvider; }
 	Tools::TasksPool::TaskPool &taskPool() { return m_taskPool; }
 	ApplicationSettings &config() { return m_settings; }
 	MainWindow &mainWindow() { return m_mainWindow; }
@@ -38,7 +40,8 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const char *where, const char *what);
 
 private:
-	QFileIconProvider m_iconProvider;
+	DesktopEnvironment m_desktopEnvironment;
+//	QFileIconProvider m_iconProvider;
 	ApplicationSettings m_settings;
 	Tools::TasksPool::TaskPool m_taskPool;
 	MainWindow m_mainWindow;

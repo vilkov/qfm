@@ -33,12 +33,15 @@ public:
 	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
+	virtual bool isLink() const;
 	virtual bool exists() const;
+	virtual qint64 fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
 	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
+	virtual int permissions() const;
 	virtual void refresh();
 
 	/* IFileOperations */

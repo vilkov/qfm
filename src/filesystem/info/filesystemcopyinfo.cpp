@@ -20,9 +20,19 @@ bool CopyInfo::isFile() const
 	return m_info.isFile();
 }
 
+bool CopyInfo::isLink() const
+{
+	return m_info.isLink();
+}
+
 bool CopyInfo::exists() const
 {
 	return m_info.exists();
+}
+
+qint64 CopyInfo::fileSize() const
+{
+	return m_info.fileSize();
 }
 
 QString CopyInfo::fileName() const
@@ -48,6 +58,11 @@ QString CopyInfo::absoluteFilePath(const QString &fileName) const
 QDateTime CopyInfo::lastModified() const
 {
 	return m_info.lastModified();
+}
+
+int CopyInfo::permissions() const
+{
+	return m_info.permissions();
 }
 
 void CopyInfo::refresh()

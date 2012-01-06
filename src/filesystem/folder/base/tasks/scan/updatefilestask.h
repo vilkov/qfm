@@ -4,9 +4,6 @@
 #include "../../events/filesystemmodelevent.h"
 #include "../../containers/filesystemupdateslist.h"
 #include "../../../../tasks/scan/scanfilesbasetask.h"
-#ifndef Q_OS_WIN
-#	include "../../../../tasks/tools/taskpermissionscache.h"
-#endif
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -35,11 +32,6 @@ public:
 private:
 	Info m_info;
 	UpdatesList m_updates;
-
-#ifndef Q_OS_WIN
-private:
-	TaskPermissionsCache m_permissions;
-#endif
 };
 
 FILE_SYSTEM_NS_END

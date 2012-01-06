@@ -2,6 +2,7 @@
 #define DESKTOPENVIRONMENT_H_
 
 #include <QtCore/QString>
+#include "../filesystem/tools/filesystemfileinfo.h"
 
 
 class DesktopEnvironment
@@ -21,11 +22,11 @@ public:
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
-	bool info(const QString &absoluteFilePath) const;
+	FileSystem::FileInfo info(const QString &absoluteFilePath) const;
 
 private:
 	Type m_type;
-#ifdef DESKTOP_ENVIRONMENT_IS_KDE
+#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 	int m_version;
 #endif
 };

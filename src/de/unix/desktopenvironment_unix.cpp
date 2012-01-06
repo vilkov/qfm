@@ -99,7 +99,7 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 	{
 		if (char *icon_path = xdg_mime_icon_lookup("folder", size, Places, iconThemeName.constData()))
 		{
-			info.icon = QIcon(QString::fromUtf8(icon_path));
+			info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
 			free(icon_path);
 		}
 	}
@@ -116,7 +116,7 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 		{
 			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
 			{
-				info.icon = QIcon(QString::fromUtf8(icon_path));
+				info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
 				info.type = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 				free(icon_path);
 			}
@@ -125,13 +125,13 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 		{
 			if (char *icon_path = loadIcon(mimeType, size, iconThemeName.constData()))
 			{
-				info.icon = QIcon(QString::fromUtf8(icon_path));
+				info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
 				free(icon_path);
 			}
 			else
 				if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
 				{
-					info.icon = QIcon(QString::fromUtf8(icon_path));
+					info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
 					free(icon_path);
 				}
 

@@ -3,11 +3,9 @@
 
 #include <QtCore/QDebug>
 
-#ifdef DESKTOP_ENVIRONMENT_IS_KDE
+#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 #	include "kde/kde_de_p.h"
-#endif
-
-#ifdef DESKTOP_ENVIRONMENT_IS_GTK
+#elif defined(DESKTOP_ENVIRONMENT_IS_GTK)
 #	include "gtk/gtk_de_p.h"
 #endif
 
@@ -126,6 +124,8 @@ DesktopEnvironment::DesktopEnvironment() :
 
 		XCloseDisplay(display);
     }
+
+    xdg_mime_init();
 }
 
 DesktopEnvironment::~DesktopEnvironment()
@@ -153,40 +153,49 @@ bool DesktopEnvironment::info(const QString &absoluteFilePath) const
 
 		if ((mimeType = xdg_mime_get_mime_type_for_file(fileName.data(), &st)) != XDG_MIME_TYPE_UNKNOWN)
 		{
-			if (const XdgAppArray *apps = xdg_mime_user_apps_lookup(mimeType))
-			{
-				const XdgAppGroup *group;
-				const XdgEntryValueArray *values;
+			char *file_path = xdg_mime_type_icon_lookup(mimeType, 16, iconThemeName.constData());
+			qDebug() << file_path;
+			free(file_path);
 
-				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
-					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))
+			if (const XdgArray *apps = xdg_mime_user_apps_lookup(mimeType))
+			{
+				const XdgArray *values;
+				const XdgAppGroup *group;
+
+				for (int i = 0, size = xdg_mime_array_size(apps); i < size; ++i)
+					if (group = xdg_mime_app_group_lookup(xdg_mime_array_app_item_at(apps, i), "Desktop Entry"))
 						if (values = xdg_mime_app_entry_lookup(group, "Name"))
-							for (int i = 0, size = xdg_mime_entry_value_array_size(values); i < size; ++i)
-								qDebug() << xdg_mime_entry_value_array_item_at(values, i);
+							for (int i = 0, size = xdg_mime_array_size(values); i < size; ++i)
+							{
+								char *file_path = xdg_mime_app_icon_lookup(xdg_mime_array_app_item_at(apps, i), iconThemeName.constData(), 16);
+								qDebug() << file_path;
+								free(file_path);
+								qDebug() << xdg_mime_array_string_item_at(values, i);
+							}
 			}
 
-			if (const XdgAppArray *apps = xdg_mime_default_apps_lookup(mimeType))
+			if (const XdgArray *apps = xdg_mime_default_apps_lookup(mimeType))
 			{
+				const XdgArray *values;
 				const XdgAppGroup *group;
-				const XdgEntryValueArray *values;
 
-				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
-					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))
+				for (int i = 0, size = xdg_mime_array_size(apps); i < size; ++i)
+					if (group = xdg_mime_app_group_lookup(xdg_mime_array_app_item_at(apps, i), "Desktop Entry"))
 						if (values = xdg_mime_app_entry_lookup(group, "Name"))
-							for (int i = 0, size = xdg_mime_entry_value_array_size(values); i < size; ++i)
-								qDebug() << xdg_mime_entry_value_array_item_at(values, i);
+							for (int i = 0, size = xdg_mime_array_size(values); i < size; ++i)
+								qDebug() << xdg_mime_array_string_item_at(values, i);
 			}
 
-			if (const XdgAppArray *apps = xdg_mime_known_apps_lookup(mimeType))
+			if (const XdgArray *apps = xdg_mime_known_apps_lookup(mimeType))
 			{
+				const XdgArray *values;
 				const XdgAppGroup *group;
-				const XdgEntryValueArray *values;
 
-				for (int i = 0, size = xdg_mime_app_array_size(apps); i < size; ++i)
-					if (group = xdg_mime_app_group_lookup(xdg_mime_app_array_item_at(apps, i), "Desktop Entry"))
+				for (int i = 0, size = xdg_mime_array_size(apps); i < size; ++i)
+					if (group = xdg_mime_app_group_lookup(xdg_mime_array_app_item_at(apps, i), "Desktop Entry"))
 						if (values = xdg_mime_app_entry_lookup(group, "Name"))
-							for (int i = 0, size = xdg_mime_entry_value_array_size(values); i < size; ++i)
-								qDebug() << xdg_mime_entry_value_array_item_at(values, i);
+							for (int i = 0, size = xdg_mime_array_size(values); i < size; ++i)
+								qDebug() << xdg_mime_array_string_item_at(values, i);
 			}
 		}
 	}

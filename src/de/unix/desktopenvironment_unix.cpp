@@ -117,10 +117,12 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
 			{
 				info.icon = QIcon(QString::fromUtf8(icon_path));
+				info.type = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 				free(icon_path);
 			}
 		}
 		else
+		{
 			if (char *icon_path = loadIcon(mimeType, size, iconThemeName.constData()))
 			{
 				info.icon = QIcon(QString::fromUtf8(icon_path));
@@ -132,6 +134,9 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 					info.icon = QIcon(QString::fromUtf8(icon_path));
 					free(icon_path);
 				}
+
+			info.type = QString::fromUtf8(mimeType);
+		}
 	}
 }
 

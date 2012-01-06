@@ -2,13 +2,14 @@
 #include "../../filesystem/interfaces/filesystemifileinfo.h"
 #include "xdgmime/src/xdgmime.h"
 
-#include <QtCore/QDebug>
-
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 #	include "kde/kde_de_p.h"
 #elif defined(DESKTOP_ENVIRONMENT_IS_GTK)
 #	include "gtk/gtk_de_p.h"
 #endif
+
+#include <QtCore/QCache>
+#include <QtCore/QReadWriteLock>
 
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +35,51 @@ static const char *x11_atomnames[NAtoms] =
 
 static uint userId = getuid();
 static uint groupId = getgid();
+
+
+class IconCache
+{
+public:
+	IconCache()
+	{}
+
+	QIcon findIcon(const QString &name, const QSize &size)
+	{
+		if (QIcon *icon = iconFromCache(name))
+			return *icon;
+		else
+			return *iconToCache(name, size);
+	}
+
+private:
+	QIcon *iconFromCache(const QString &name)
+	{
+		QReadLocker lock(&m_cacheLock);
+		return m_cache.object(name);
+	}
+
+	QIcon *iconToCache(const QString &name, const QSize &size)
+	{
+		QWriteLocker lock(&m_cacheLock);
+
+		if (QIcon *icon = m_cache.object(name))
+			return icon;
+		else
+		{
+			QScopedPointer<QIcon> icon(new QIcon());
+
+			icon->addFile(name, size);
+			m_cache.insert(name, icon.data());
+
+			return icon.take();
+		}
+	}
+
+private:
+	QReadWriteLock m_cacheLock;
+	QCache<QString, QIcon> m_cache;
+};
+static IconCache *iconCache = 0;
 
 
 static int translatePermissions(const struct stat &st)
@@ -99,7 +145,7 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 	{
 		if (char *icon_path = xdg_mime_icon_lookup("folder", size, Places, iconThemeName.constData()))
 		{
-			info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
+			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
 			free(icon_path);
 		}
 	}
@@ -116,7 +162,7 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 		{
 			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
 			{
-				info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
+				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
 				info.type = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 				free(icon_path);
 			}
@@ -125,13 +171,13 @@ static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &in
 		{
 			if (char *icon_path = loadIcon(mimeType, size, iconThemeName.constData()))
 			{
-				info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
+				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
 				free(icon_path);
 			}
 			else
 				if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
 				{
-					info.icon.addFile(QString::fromUtf8(icon_path), QSize(size, size));
+					info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
 					free(icon_path);
 				}
 
@@ -147,7 +193,9 @@ DesktopEnvironment::DesktopEnvironment() :
 	,m_version(0)
 #endif
 {
-    if (Display *display = XOpenDisplay(NULL))
+	iconCache = new IconCache();
+
+	if (Display *display = XOpenDisplay(NULL))
     {
         int rc;
         Atom type;
@@ -240,6 +288,7 @@ DesktopEnvironment::DesktopEnvironment() :
 DesktopEnvironment::~DesktopEnvironment()
 {
 	xdg_mime_shutdown();
+	delete iconCache;
 }
 
 FileSystem::FileInfo DesktopEnvironment::info(const QString &absoluteFilePath) const

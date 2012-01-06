@@ -1,10 +1,14 @@
 #ifndef DESKTOPENVIRONMENT_H_
 #define DESKTOPENVIRONMENT_H_
 
-#include <QtCore/QString>
 #include "../filesystem/tools/filesystemfileinfo.h"
 
 
+/**
+ * DesktopEnvironment - singleton, must be initialized
+ * before any calls to it's methods!
+ *
+ **/
 class DesktopEnvironment
 {
 public:

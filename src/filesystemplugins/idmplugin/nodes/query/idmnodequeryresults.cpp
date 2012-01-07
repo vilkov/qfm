@@ -51,11 +51,6 @@ bool IdmNodeQueryResults::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
-int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
-{
-	return 1;
-}
-
 void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue *item;
@@ -103,6 +98,26 @@ QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientatio
 		}
 
 	return QVariant();
+}
+
+QIcon IdmNodeQueryResults::icon() const
+{
+	return m_info.icon();
+}
+
+QString IdmNodeQueryResults::name() const
+{
+	return m_info.name();
+}
+
+QString IdmNodeQueryResults::description() const
+{
+	return m_info.description();
+}
+
+int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
+{
+	return 1;
 }
 
 bool IdmNodeQueryResults::isDir() const

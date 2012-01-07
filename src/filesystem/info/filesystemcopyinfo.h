@@ -15,7 +15,12 @@ class CopyInfo : public ICopyControl
 public:
 	CopyInfo(const Info &info);
 
-	/* ICopyControl::IFileControl::IFileInfo */
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
+
+	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
@@ -29,7 +34,7 @@ public:
 	virtual int permissions() const;
 	virtual void refresh();
 
-	/* ICopyControl::IFileControl */
+	/* IFileControl */
 	virtual IFile::size_type freeSpace() const;
 	virtual bool contains(IFileControl *info) const;
 	virtual bool rename(const QString &newFileName, QString &error) const;

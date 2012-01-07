@@ -10,6 +10,21 @@ RootNode::RootNode() :
 	Node(m_items)
 {}
 
+QIcon RootNode::icon() const
+{
+	return QIcon();
+}
+
+QString RootNode::name() const
+{
+	return QString();
+}
+
+QString RootNode::description() const
+{
+	return QString();
+}
+
 bool RootNode::isDir() const
 {
 	return true;

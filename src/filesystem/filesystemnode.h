@@ -28,7 +28,7 @@ public:
 	virtual INode *root() const;
 	virtual int columnsCount() const;
 
-	/* INode::IFileNavigation */
+	/* IFileNavigation */
 	virtual void viewCloseAll();
 	virtual void viewClosed(INodeView *nodeView);
 	virtual void viewParent(INodeView *nodeView);

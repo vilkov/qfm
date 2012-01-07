@@ -24,7 +24,12 @@ public:
 	/* TasksNode */
     virtual bool event(QEvent *event);
 
-	/* INode::IFileInfo */
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
+
+	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
@@ -38,7 +43,7 @@ public:
 	virtual int permissions() const;
 	virtual void refresh();
 
-    /* INode::IFileOperations */
+    /* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 
 protected:

@@ -21,6 +21,11 @@ public:
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
+
 	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;

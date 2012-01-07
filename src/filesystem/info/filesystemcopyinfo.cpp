@@ -10,6 +10,21 @@ CopyInfo::CopyInfo(const Info &info) :
 	m_info(info)
 {}
 
+QIcon CopyInfo::icon() const
+{
+	return m_info.icon();
+}
+
+QString CopyInfo::name() const
+{
+	return m_info.name();
+}
+
+QString CopyInfo::description() const
+{
+	return m_info.description();
+}
+
 bool CopyInfo::isDir() const
 {
 	return m_info.isDir();

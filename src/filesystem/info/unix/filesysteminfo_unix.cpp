@@ -11,6 +11,31 @@
 FILE_SYSTEM_NS_BEGIN
 
 static QString root = QString::fromLatin1("/");
+static uint userId = getuid();
+static uint groupId = getgid();
+
+
+static int translatePermissions(const struct stat &st)
+{
+	int res = 0;
+
+	if ((st.st_mode & S_IROTH) ||
+		(st.st_uid == userId && (st.st_mode & S_IRUSR)) ||
+		(st.st_gid == groupId && (st.st_mode & S_IRGRP)))
+		res |= IFileInfo::Read;
+
+	if ((st.st_mode & S_IWOTH) ||
+		(st.st_uid == userId  && (st.st_mode & S_IWUSR)) ||
+		(st.st_gid == groupId && (st.st_mode & S_IWGRP)))
+		res |= IFileInfo::Write;
+
+	if ((st.st_mode & S_IXOTH) ||
+		(st.st_uid == userId  && (st.st_mode & S_IXUSR)) ||
+		(st.st_gid == groupId && (st.st_mode & S_IXGRP)))
+		res |= IFileInfo::Exec;
+
+	return res;
+}
 
 
 static QString normalizeFilePath(const QString &filePath, bool &isRoot)
@@ -49,6 +74,30 @@ Info::Info(const QString &filePath) :
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
 {
 	refresh();
+}
+
+QIcon Info::icon() const
+{
+	if (m_typeInfo.mimeType.isEmpty())
+		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
+
+	return m_typeInfo.icon;
+}
+
+QString Info::name() const
+{
+	if (m_typeInfo.mimeType.isEmpty())
+		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
+
+	return m_typeInfo.mimeType;
+}
+
+QString Info::description() const
+{
+	if (m_typeInfo.mimeType.isEmpty())
+		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
+
+	return m_typeInfo.descritpion;
 }
 
 bool Info::isDir() const
@@ -126,7 +175,35 @@ int Info::permissions() const
 
 void Info::refresh()
 {
-	m_info = Application::instance()->desktopEnvironment().info(m_filePath);
+	int res;
+	struct stat st;
+	QByteArray name = m_filePath.toUtf8();
+
+	if ((res = lstat(name.constData(), &st)) == 0)
+		if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
+		{
+			m_info.permissions = translatePermissions(st);
+			m_info.size = st.st_size;
+			m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
+		}
+		else if (m_info.isLink = S_ISLNK(st.st_mode))
+		{
+			char buff[PATH_MAX] = {};
+
+			if ((res = readlink(name.constData(), buff, PATH_MAX)) == 0)
+				if (char *realName = canonicalize_file_name(buff))
+				{
+					if ((res = stat(realName, &st)) == 0)
+						if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
+						{
+							m_info.permissions = translatePermissions(st);
+							m_info.size = st.st_size;
+							m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
+						}
+
+					free(realName);
+				}
+		}
 }
 
 IFile::size_type Info::freeSpace() const
@@ -204,16 +281,6 @@ IFileControl *Info::create(const QString &name, FileType type, QString &error) c
 			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(name));
 
 	return 0;
-}
-
-const QIcon &Info::icon() const
-{
-	return m_info.icon;
-}
-
-const QString &Info::displayType() const
-{
-	return m_info.type;
 }
 
 FILE_SYSTEM_NS_END

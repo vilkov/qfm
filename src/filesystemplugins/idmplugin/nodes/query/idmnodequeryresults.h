@@ -23,12 +23,17 @@ public:
 	/* QObject */
     virtual bool event(QEvent *event);
 
-    /* FileSystemModel */
+	/* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
     virtual void fetchMore(const QModelIndex &parent);
     virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
 
 	/* IFileInfo */
 	virtual bool isDir() const;

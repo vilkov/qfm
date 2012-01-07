@@ -19,8 +19,6 @@ struct FileInfo
     int permissions;
     qint64 size;
     QDateTime lastModified;
-    QString type;
-    QIcon icon;
 };
 
 FILE_SYSTEM_NS_END

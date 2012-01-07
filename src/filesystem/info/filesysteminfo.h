@@ -4,6 +4,7 @@
 #include <QtGui/QIcon>
 #include "../tools/filesystemfileinfo.h"
 #include "../interfaces/filesystemifilecontrol.h"
+#include "../../de/filesystemfiletypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -14,7 +15,12 @@ public:
     Info();
     Info(const QString &filePath);
 
-	/* IFileControl::IFileInfo */
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
+
+	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
@@ -41,14 +47,13 @@ public:
 
 public:
 	bool isRoot() const { return m_isRoot; }
-    const QIcon &icon() const;
-    const QString &displayType() const;
 
 private:
     bool m_isRoot;
     QString m_filePath;
     QString m_fileName;
     FileInfo m_info;
+    FileTypeInfo m_typeInfo;
 };
 
 FILE_SYSTEM_NS_END

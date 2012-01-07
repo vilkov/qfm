@@ -3,12 +3,12 @@
 
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
-#include "../filesystem_ns.h"
+#include "filesystemifiletype.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IFileInfo
+class IFileInfo : public IFileType
 {
 public:
     enum Permissions

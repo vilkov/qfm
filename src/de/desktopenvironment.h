@@ -1,6 +1,7 @@
 #ifndef DESKTOPENVIRONMENT_H_
 #define DESKTOPENVIRONMENT_H_
 
+#include "filesystemfiletypeinfo.h"
 #include "../filesystem/tools/filesystemfileinfo.h"
 
 
@@ -26,7 +27,7 @@ public:
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
-	FileSystem::FileInfo info(const QString &absoluteFilePath) const;
+	FileTypeInfo info(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const;
 
 private:
 	Type m_type;

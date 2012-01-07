@@ -21,6 +21,11 @@ public:
 		m_title(title)
 	{}
 
+	/* IFileType */
+	virtual QIcon icon() const { return QIcon(); }
+	virtual QString name() const { return QString(); }
+	virtual QString description() const { return QString(); }
+
 	/* IFileInfo */
 	virtual bool isDir() const { return m_info.isDir(); }
 	virtual bool isFile() const { return m_info.isFile(); }

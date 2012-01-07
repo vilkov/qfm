@@ -62,6 +62,21 @@ bool FolderNodeBase::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
+QIcon FolderNodeBase::icon() const
+{
+	return m_info.icon();
+}
+
+QString FolderNodeBase::name() const
+{
+	return m_info.name();
+}
+
+QString FolderNodeBase::description() const
+{
+	return m_info.description();
+}
+
 bool FolderNodeBase::isDir() const
 {
 	return true;

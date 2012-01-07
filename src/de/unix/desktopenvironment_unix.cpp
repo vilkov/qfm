@@ -33,9 +33,6 @@ static const char *x11_atomnames[NAtoms] =
 	"_SGI_DESKS_MANAGER"
 };
 
-static uint userId = getuid();
-static uint groupId = getgid();
-
 
 class IconCache
 {
@@ -82,28 +79,6 @@ private:
 static IconCache *iconCache = 0;
 
 
-static int translatePermissions(const struct stat &st)
-{
-	int res = 0;
-
-	if ((st.st_mode & S_IROTH) ||
-		(st.st_uid == userId && (st.st_mode & S_IRUSR)) ||
-		(st.st_gid == groupId && (st.st_mode & S_IRGRP)))
-		res |= FileSystem::IFileInfo::Read;
-
-	if ((st.st_mode & S_IWOTH) ||
-		(st.st_uid == userId  && (st.st_mode & S_IWUSR)) ||
-		(st.st_gid == groupId && (st.st_mode & S_IWGRP)))
-		res |= FileSystem::IFileInfo::Write;
-
-	if ((st.st_mode & S_IXOTH) ||
-		(st.st_uid == userId  && (st.st_mode & S_IXUSR)) ||
-		(st.st_gid == groupId && (st.st_mode & S_IXGRP)))
-		res |= FileSystem::IFileInfo::Exec;
-
-	return res;
-}
-
 static char *loadIcon(const char *mimeType, int size, const char *theme)
 {
 	if (char *icon_path = xdg_mime_type_icon_lookup(mimeType, size, theme))
@@ -129,61 +104,6 @@ static char *loadIcon(const char *mimeType, int size, const char *theme)
 	}
 
 	return 0;
-}
-
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
-static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &info, struct stat &st, int size, int version)
-{
-	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName(version).toUtf8();
-#else
-static void initTypeAndIcon(const QByteArray &fileName, FileSystem::FileInfo &info, struct stat &st, int size)
-{
-	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName().toUtf8();
-#endif
-
-	if (info.isDir)
-	{
-		if (char *icon_path = xdg_mime_icon_lookup("folder", size, Places, iconThemeName.constData()))
-		{
-			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
-			free(icon_path);
-		}
-	}
-	else
-	{
-		const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName.data());
-
-		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
-			mimeType = xdg_mime_get_mime_type_for_file(fileName.data(), &st);
-
-		if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
-			strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
-			strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
-		{
-			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
-			{
-				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
-				info.type = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
-				free(icon_path);
-			}
-		}
-		else
-		{
-			if (char *icon_path = loadIcon(mimeType, size, iconThemeName.constData()))
-			{
-				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
-				free(icon_path);
-			}
-			else
-				if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, size, iconThemeName.constData()))
-				{
-					info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(size, size));
-					free(icon_path);
-				}
-
-			info.type = QString::fromUtf8(mimeType);
-		}
-	}
 }
 
 
@@ -291,48 +211,62 @@ DesktopEnvironment::~DesktopEnvironment()
 	delete iconCache;
 }
 
-FileSystem::FileInfo DesktopEnvironment::info(const QString &absoluteFilePath) const
+FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const
 {
 	int res;
 	struct stat st;
-	FileSystem::FileInfo info;
-	QByteArray name = absoluteFilePath.toUtf8();
+	FileTypeInfo info;
+	QByteArray fileName = absoluteFilePath.toUtf8();
 
-	if ((res = lstat(name.constData(), &st)) == 0)
-		if ((info.isFile = S_ISREG(st.st_mode)) || (info.isDir = S_ISDIR(st.st_mode)))
-		{
-			info.permissions = translatePermissions(st);
-			info.size = st.st_size;
-			info.lastModified = QDateTime::fromTime_t(st.st_mtime);
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
-			initTypeAndIcon(name, info, st, 16, m_version);
+	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName(m_version).toUtf8();
 #else
-			initTypeAndIcon(name, info, st, 16);
+	QByteArray iconThemeName = DesktopEnvironmentPrivate::iconThemeName().toUtf8();
 #endif
-		}
-		else if (info.isLink = S_ISLNK(st.st_mode))
-		{
-			char buff[PATH_MAX] = {};
 
-			if ((res = readlink(name.constData(), buff, PATH_MAX)) == 0)
-				if (char *realName = canonicalize_file_name(buff))
+	if (fileInfo.isDir)
+	{
+		if (char *icon_path = xdg_mime_icon_lookup("folder", iconSize, Places, iconThemeName.constData()))
+		{
+			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+			free(icon_path);
+		}
+	}
+	else
+	{
+		const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName.data());
+
+		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
+			mimeType = xdg_mime_get_mime_type_for_file(fileName.data(), &st);
+
+		if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
+		{
+			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName.constData()))
+			{
+				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+				info.mimeType = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
+				free(icon_path);
+			}
+		}
+		else
+		{
+			if (char *icon_path = loadIcon(mimeType, iconSize, iconThemeName.constData()))
+			{
+				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+				free(icon_path);
+			}
+			else
+				if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName.constData()))
 				{
-					if ((res = stat(realName, &st)) == 0)
-						if ((info.isFile = S_ISREG(st.st_mode)) || (info.isDir = S_ISDIR(st.st_mode)))
-						{
-							info.permissions = translatePermissions(st);
-							info.size = st.st_size;
-							info.lastModified = QDateTime::fromTime_t(st.st_mtime);
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
-							initTypeAndIcon(name, info, st, 16, m_version);
-#else
-							initTypeAndIcon(name, info, st, 16);
-#endif
-						}
-
-					free(realName);
+					info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+					free(icon_path);
 				}
+
+			info.mimeType = QString::fromUtf8(mimeType);
 		}
+	}
 
 	return info;
 }

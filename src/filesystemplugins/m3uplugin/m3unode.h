@@ -26,7 +26,12 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	/* INode::IFileInfo */
+	/* IFileType */
+	virtual QIcon icon() const;
+	virtual QString name() const;
+	virtual QString description() const;
+
+	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
@@ -40,7 +45,7 @@ public:
 	virtual int permissions() const;
 	virtual void refresh();
 
-	/* INode::IFileOperations */
+	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);

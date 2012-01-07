@@ -80,6 +80,21 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+QIcon M3uNode::icon() const
+{
+	return QIcon();
+}
+
+QString M3uNode::name() const
+{
+	return QString();
+}
+
+QString M3uNode::description() const
+{
+	return QString();
+}
+
 bool M3uNode::isDir() const
 {
 	return false;

@@ -67,11 +67,10 @@ public:
 			change.update(info);
 		else
 			if (change.type() == Deleted)
-				if (change.info().lastModified() == info.lastModified() &&
-					change.info().fileSize() == info.fileSize())
-					change.update(NoChange);
-				else
+				if (change.info().shouldBeUpdatedBy(info))
 					change.update(info, Updated);
+				else
+					change.update(NoChange);
 	}
 	UpdatesList takeUpdates()
 	{

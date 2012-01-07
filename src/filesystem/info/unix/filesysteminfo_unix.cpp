@@ -89,25 +89,16 @@ Info::Info(const QString &filePath, bool identifyType) :
 
 QIcon Info::icon() const
 {
-	if (m_typeInfo.mimeType.isEmpty())
-		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
-
 	return m_typeInfo.icon;
 }
 
 QString Info::name() const
 {
-	if (m_typeInfo.mimeType.isEmpty())
-		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
-
 	return m_typeInfo.mimeType;
 }
 
 QString Info::description() const
 {
-	if (m_typeInfo.mimeType.isEmpty())
-		const_cast<Info*>(this)->m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
-
 	return m_typeInfo.descritpion;
 }
 

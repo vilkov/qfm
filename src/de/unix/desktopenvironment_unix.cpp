@@ -229,6 +229,7 @@ FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, cons
 		if (char *icon_path = xdg_mime_icon_lookup("folder", iconSize, Places, iconThemeName.constData()))
 		{
 			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+			info.mimeType = QString::fromLatin1("<DIR>");
 			free(icon_path);
 		}
 	}

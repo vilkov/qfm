@@ -27,7 +27,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 	{
 		current = QTime::currentTime();
 
-		m_updates.update(dirIt.next());
+		m_updates.update(Info(dirIt.next(), true));
 
 		if (base.msecsTo(current) > 300)
 		{

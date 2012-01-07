@@ -76,6 +76,17 @@ Info::Info(const QString &filePath) :
 	refresh();
 }
 
+Info::Info(const QString &filePath, bool identifyType) :
+	m_isRoot(false),
+	m_filePath(normalizeFilePath(filePath, m_isRoot)),
+	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
+{
+	refresh();
+
+	if (identifyType)
+		m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
+}
+
 QIcon Info::icon() const
 {
 	if (m_typeInfo.mimeType.isEmpty())

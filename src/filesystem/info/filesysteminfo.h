@@ -14,6 +14,7 @@ class Info : public IFileControl
 public:
     Info();
     Info(const QString &filePath);
+    Info(const QString &filePath, bool identifyType);
 
 	/* IFileType */
 	virtual QIcon icon() const;

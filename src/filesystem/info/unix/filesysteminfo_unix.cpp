@@ -84,22 +84,22 @@ Info::Info(const QString &filePath, bool identifyType) :
 	refresh();
 
 	if (identifyType)
-		m_typeInfo = Application::instance()->desktopEnvironment().info(m_info, m_filePath, 16);
+		m_info.type = Application::instance()->desktopEnvironment().fileTypeInfo(m_info, m_filePath, 16);
 }
 
 QIcon Info::icon() const
 {
-	return m_typeInfo.icon;
+	return m_info.type.icon;
 }
 
 QString Info::name() const
 {
-	return m_typeInfo.mimeType;
+	return m_info.type.name;
 }
 
 QString Info::description() const
 {
-	return m_typeInfo.descritpion;
+	return m_info.type.descritpion;
 }
 
 bool Info::isDir() const

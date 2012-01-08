@@ -22,12 +22,18 @@ public:
 		DE_Unknown
 	};
 
+	enum FileTypes
+	{
+		M3uFile
+	};
+
 public:
 	DesktopEnvironment();
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
-	FileTypeInfo info(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const;
+	FileTypeId fileTypeId(FileTypes id) const;
+	FileTypeInfo fileTypeInfo(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const;
 
 private:
 	Type m_type;

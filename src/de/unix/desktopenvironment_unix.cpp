@@ -211,9 +211,24 @@ DesktopEnvironment::~DesktopEnvironment()
 	delete iconCache;
 }
 
-FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const
+FileTypeId DesktopEnvironment::fileTypeId(FileTypes id) const
 {
-	int res;
+	FileTypeId typeId;
+
+	switch (id)
+	{
+		case M3uFile:
+		{
+			typeId.mime = QString::fromLatin1("");
+			break;
+		}
+	}
+
+	return typeId;
+}
+
+FileTypeInfo DesktopEnvironment::fileTypeInfo(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const
+{
 	struct stat st;
 	FileTypeInfo info;
 	QByteArray fileName = absoluteFilePath.toUtf8();
@@ -229,7 +244,7 @@ FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, cons
 		if (char *icon_path = xdg_mime_icon_lookup("folder", iconSize, Places, iconThemeName.constData()))
 		{
 			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-			info.mimeType = QString::fromLatin1("<DIR>");
+			info.name = info.id.mime = QString::fromLatin1("<DIR>");
 			free(icon_path);
 		}
 	}
@@ -247,7 +262,7 @@ FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, cons
 			if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName.constData()))
 			{
 				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-				info.mimeType = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
+				info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 				free(icon_path);
 			}
 		}
@@ -265,7 +280,7 @@ FileTypeInfo DesktopEnvironment::info(const FileSystem::FileInfo &fileInfo, cons
 					free(icon_path);
 				}
 
-			info.mimeType = QString::fromUtf8(mimeType);
+			info.name = info.id.mime = QString::fromUtf8(mimeType);
 		}
 	}
 

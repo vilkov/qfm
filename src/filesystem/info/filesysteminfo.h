@@ -4,7 +4,6 @@
 #include <QtGui/QIcon>
 #include "../tools/filesystemfileinfo.h"
 #include "../interfaces/filesystemifilecontrol.h"
-#include "../../de/filesystemfiletypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -53,7 +52,7 @@ public:
 		return
 			m_info.lastModified != other.m_info.lastModified ||
 			m_info.size != other.m_info.size ||
-			m_typeInfo.mimeType.isEmpty();
+			m_info.type.name.isEmpty();
 	}
 
 private:
@@ -61,7 +60,6 @@ private:
     QString m_filePath;
     QString m_fileName;
     FileInfo m_info;
-    FileTypeInfo m_typeInfo;
 };
 
 FILE_SYSTEM_NS_END

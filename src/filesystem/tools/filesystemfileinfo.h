@@ -5,6 +5,7 @@
 #include <QtCore/QDateTime>
 #include <QtGui/QIcon>
 #include "../filesystem_ns.h"
+#include "../../de/filesystemfiletypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -19,6 +20,7 @@ struct FileInfo
     int permissions;
     qint64 size;
     QDateTime lastModified;
+    FileTypeInfo type;
 };
 
 FILE_SYSTEM_NS_END

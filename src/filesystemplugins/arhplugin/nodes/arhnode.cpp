@@ -1,4 +1,5 @@
 #include "arhnode.h"
+#include <zlib.h>
 
 
 ARH_PLUGIN_NS_BEGIN

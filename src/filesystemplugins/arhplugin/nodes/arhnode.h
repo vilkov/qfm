@@ -1,7 +1,8 @@
 #ifndef ARHNODE_H_
 #define ARHNODE_H_
 
-#include "../arhplugin_ns.h"
+#include "../model/arhdelegate.h"
+#include "../../../filesystem/info/filesysteminfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 
 
@@ -10,7 +11,7 @@ ARH_PLUGIN_NS_BEGIN
 class ArhNode : public TasksNode
 {
 public:
-	ArhNode(Node *parent = 0);
+	ArhNode(const Info &info, Node *parent = 0);
 
 	/* IFileType */
 	virtual FileTypeId id() const;
@@ -56,7 +57,6 @@ protected:
 
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
-	virtual void nodeRemoved(Node *node);
 
 protected:
 	/* TasksNode */
@@ -85,6 +85,9 @@ private:
 private:
 	ItemsContainer m_itemsContainer;
     ItemsContainer::List &m_items;
+    ArhDelegate m_delegate;
+    Info m_info;
+    INodeView::MenuActionList m_actions;
 };
 
 ARH_PLUGIN_NS_END

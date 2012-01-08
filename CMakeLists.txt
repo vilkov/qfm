@@ -96,6 +96,10 @@ if (UNIX)
     set (qfm_LIBS ${qfm_LIBS} ${X11_LIBRARIES})
 endif ()
 
+find_package (ZLIB REQUIRED)
+include_directories (${ZLIB_INCLUDE_DIRS})
+set (qfm_LIBS ${qfm_LIBS} ${ZLIB_LIBRARIES})
+
 
 # Includes
 

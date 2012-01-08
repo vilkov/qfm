@@ -202,8 +202,6 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 			FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(index.internalPointer());
 			entry->info().refresh();
 
-			QMessageBox::information(&Application::instance()->mainWindow(), QString(), entry->info().name());
-
 			if (entry->info().exists())
 			{
 				if (entry->node())

@@ -58,8 +58,8 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 							return Tools::humanReadableSize(m_totalSize.toULongLong());
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
-//					case Qt::ToolTipRole:
-//						return QDir::toNativeSeparators(QDir::cleanPath(m_info.fileInfo().absoluteDir().absolutePath()));
+				case Qt::ToolTipRole:
+					return info().name();
 			}
 			break;
 		}

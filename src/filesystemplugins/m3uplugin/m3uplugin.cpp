@@ -14,8 +14,8 @@ Node *M3uPlugin::node(const IFileInfo *info, Node *parent) const
 	return 0;
 }
 
-Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
-{
+//Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
+//{
 //	if (QTextCodec *codec = QTextCodec::codecForName("UTF-8"))
 //	{
 //		uchar data[64] = {};
@@ -31,8 +31,8 @@ Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
 //					break;
 //			}
 //	}
-
-	return 0;
-}
+//
+//	return 0;
+//}
 
 M3U_PLUGIN_NS_END

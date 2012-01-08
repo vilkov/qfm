@@ -22,6 +22,7 @@ public:
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 	/* IFileType */
+	virtual FileTypeId id() const;
 	virtual QIcon icon() const;
 	virtual QString name() const;
 	virtual QString description() const;

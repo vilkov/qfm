@@ -22,6 +22,7 @@ public:
 	{}
 
 	/* IFileType */
+	virtual FileTypeId id() const { return FileTypeId(); }
 	virtual QIcon icon() const { return QIcon(); }
 	virtual QString name() const { return QString(); }
 	virtual QString description() const { return QString(); }

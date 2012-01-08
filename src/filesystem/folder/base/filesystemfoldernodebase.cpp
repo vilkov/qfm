@@ -62,6 +62,11 @@ bool FolderNodeBase::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
+FileTypeId FolderNodeBase::id() const
+{
+	return m_info.id();
+}
+
 QIcon FolderNodeBase::icon() const
 {
 	return m_info.icon();

@@ -2,18 +2,17 @@
 #define M3UPLUGIN_H_
 
 #include "m3uplugin_ns.h"
-#include "../../filesystem/filesystempluginsmanager.h"
+#include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
 M3U_PLUGIN_NS_BEGIN
 
-class M3uPlugin : public PluginsManager::Plugin
+class M3uPlugin : public IPlugin
 {
 public:
 	M3uPlugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
-	virtual Node *node(const IFileInfo *info, IFile *file, Node *parent) const;
 
 private:
 	QString m_identity;

@@ -10,6 +10,11 @@ CopyInfo::CopyInfo(const Info &info) :
 	m_info(info)
 {}
 
+FileTypeId CopyInfo::id() const
+{
+	return m_info.id();
+}
+
 QIcon CopyInfo::icon() const
 {
 	return m_info.icon();

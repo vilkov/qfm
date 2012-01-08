@@ -100,6 +100,11 @@ QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
+FileTypeId IdmNodeQueryResults::id() const
+{
+	return m_info.id();
+}
+
 QIcon IdmNodeQueryResults::icon() const
 {
 	return m_info.icon();

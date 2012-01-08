@@ -5,9 +5,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmPlugin::IdmPlugin()
-{
-
-}
+{}
 
 Node *IdmPlugin::node(const IFileInfo *info, Node *parent) const
 {
@@ -15,11 +13,6 @@ Node *IdmPlugin::node(const IFileInfo *info, Node *parent) const
 		return new IdmRootNode(info->absoluteFilePath(QString::fromLatin1(".storage.idm")), parent);
 	else
 		return 0;
-}
-
-Node *IdmPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const
-{
-	return 0;
 }
 
 IDM_PLUGIN_NS_END

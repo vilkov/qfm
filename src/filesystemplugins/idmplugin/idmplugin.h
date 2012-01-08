@@ -2,21 +2,17 @@
 #define IDMPLUGIN_H_
 
 #include "idmplugin_ns.h"
-#include "../../filesystem/filesystempluginsmanager.h"
+#include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmPlugin : public PluginsManager::Plugin
+class IdmPlugin : public IPlugin
 {
 public:
 	IdmPlugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
-	virtual Node *node(const IFileInfo *info, IFile *file, Node *parent) const;
-
-private:
-	QString m_identity;
 };
 
 IDM_PLUGIN_NS_END

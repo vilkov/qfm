@@ -8,7 +8,10 @@ struct FileTypeId_Win32
 {
 	FileTypeId_Win32();
 
-    QString extension;
+	bool operator==(const FileTypeId_Unix &other) const;
+	bool operator<(const FileTypeId_Unix &other) const;
+
+	QString extension;
     QIcon icon;
 };
 

@@ -16,6 +16,7 @@ public:
 	CopyInfo(const Info &info);
 
 	/* IFileType */
+	virtual FileTypeId id() const;
 	virtual QIcon icon() const;
 	virtual QString name() const;
 	virtual QString description() const;

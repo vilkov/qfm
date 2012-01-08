@@ -87,6 +87,11 @@ Info::Info(const QString &filePath, bool identifyType) :
 		m_info.type = Application::instance()->desktopEnvironment().fileTypeInfo(m_info, m_filePath, 16);
 }
 
+FileTypeId Info::id() const
+{
+	return m_info.type.id;
+}
+
 QIcon Info::icon() const
 {
 	return m_info.type.icon;

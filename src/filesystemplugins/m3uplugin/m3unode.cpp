@@ -80,6 +80,11 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+FileTypeId M3uNode::id() const
+{
+	return FileTypeId();
+}
+
 QIcon M3uNode::icon() const
 {
 	return QIcon();

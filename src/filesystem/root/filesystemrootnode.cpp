@@ -10,6 +10,11 @@ RootNode::RootNode() :
 	Node(m_items)
 {}
 
+FileTypeId RootNode::id() const
+{
+	return FileTypeId();
+}
+
 QIcon RootNode::icon() const
 {
 	return QIcon();

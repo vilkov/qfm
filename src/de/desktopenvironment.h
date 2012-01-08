@@ -22,9 +22,41 @@ public:
 		DE_Unknown
 	};
 
-	enum FileTypes
+	struct FileTypes
 	{
-		M3uFile
+		struct Audio
+		{
+			enum Type
+			{
+				M3uFile
+			};
+		};
+
+		struct Application
+		{
+			enum Type
+			{
+				GZipFile,
+				TarFile,
+				CompressedTarFile,
+				BZipCompressedTarFile,
+				ZipFile,
+				BZipFile,
+				RarFile,
+				TarzFile,
+				BZip2File,
+				JavaArchiveFile,
+				DebFile,
+				Arch7zCompressedFile,
+				CompressFile,
+				ZipCompressedFile,
+				LzmaFile,
+				ServicepackFile,
+				XzCompressedTarFile,
+				LzmaCompressedTarFile,
+				CdImageFile
+			};
+		};
 	};
 
 public:
@@ -32,7 +64,8 @@ public:
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
-	FileTypeId fileTypeId(FileTypes id) const;
+	FileTypeId fileTypeId(FileTypes::Audio::Type id) const;
+	FileTypeId fileTypeId(FileTypes::Application::Type id) const;
 	FileTypeInfo fileTypeInfo(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const;
 
 private:

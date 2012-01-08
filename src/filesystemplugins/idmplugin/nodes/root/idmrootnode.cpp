@@ -91,6 +91,11 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 	return QVariant();
 }
 
+FileTypeId IdmRootNode::id() const
+{
+	return m_info.id();
+}
+
 QIcon IdmRootNode::icon() const
 {
 	return m_info.icon();

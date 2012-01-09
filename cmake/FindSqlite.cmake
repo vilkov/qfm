@@ -6,6 +6,14 @@
 #     SQLITE_INCLUDE - where to find export.h, etc.
 #     SQLITE_LIBRARY - library.
 #
+# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
 
 find_path (SQLITE_INCLUDE
           NAMES "sqlite3.h"

@@ -1,3 +1,12 @@
+# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+
 function (collect_sources THIS_HEADERS THIS_SOURCES RELATIVE_DIR)
     # "THIS_HEADERS", "THIS_SOURCES" and "RELATIVE_DIR" contains names of the actual variables passed into here.
     

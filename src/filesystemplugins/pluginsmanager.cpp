@@ -11,7 +11,7 @@ MyPluginsManager::MyPluginsManager() :
 			FileTypeIdList() <<
 			Application::instance()->desktopEnvironment().fileTypeId(DesktopEnvironment::FileTypes::Audio::M3uFile));
 	registerStatic(&m_idmplugin);
-	registerStatic(&m_arhplugin,
+	registerStatic(&m_arcplugin,
 			FileTypeIdList() <<
 			Application::instance()->desktopEnvironment().fileTypeId(DesktopEnvironment::FileTypes::Application::GZipFile));
 }

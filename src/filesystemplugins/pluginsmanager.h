@@ -4,7 +4,7 @@
 #include "filesystemplugins_ns.h"
 #include "m3uplugin/m3uplugin.h"
 #include "idmplugin/idmplugin.h"
-#include "arhplugin/arhplugin.h"
+#include "arcplugin/arcplugin.h"
 #include "../filesystem/filesystempluginsmanager.h"
 
 
@@ -18,7 +18,7 @@ public:
 private:
 	M3u::M3uPlugin m_m3uplugin;
 	Idm::IdmPlugin m_idmplugin;
-	Arh::ArhPlugin m_arhplugin;
+	Arc::ArcPlugin m_arcplugin;
 };
 
 FILESYSTEM_PLUGINS_NS_END

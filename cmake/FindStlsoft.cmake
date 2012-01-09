@@ -5,6 +5,14 @@
 #     STLSOFT_FOUND   - True if STLSOFT_INCLUDE are found
 #     STLSOFT_INCLUDE - where to find export.h, etc.
 #
+# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
 
 find_path (STLSOFT_INCLUDE
           NAMES "stlsoft.h"

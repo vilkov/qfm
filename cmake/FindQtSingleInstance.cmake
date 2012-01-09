@@ -6,6 +6,14 @@
 #     QTSINGLEINSTANCE_INCLUDE - where to find export.h, etc.
 #     QTSINGLEINSTANCE_LIBRARY - the QtSingleInstance library
 #
+# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+#
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
 
 find_path (QTSINGLEINSTANCE_INCLUDE
           NAMES "export.h"

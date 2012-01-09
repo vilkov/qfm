@@ -5,20 +5,14 @@
 #     KDE4CORE_INCLUDE - Where to find includes.
 #     KDE4CORE_LIB     - Binary library.
 #
-# Author: Dmitriy Vilkov <dav.daemon@gmail.com>
-
-#=============================================================================
-# Copyright 2011 Dmitriy Vilkov <dav.daemon@gmail.com>
+# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
 #
 # Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
+# see accompanying file COPYING-CMAKE-SCRIPTS for details.
 #
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the License for more information.
-#=============================================================================
-# (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
 
 find_path (KDE4CORE_INCLUDE
           NAMES "kdecore_export.h"

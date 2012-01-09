@@ -11,6 +11,8 @@ class Task
 public:
 	virtual ~Task() {}
 
+protected:
+	friend class TaskThread;
 	virtual void run(const volatile bool &aborted) = 0;
 };
 

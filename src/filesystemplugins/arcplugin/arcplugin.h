@@ -7,12 +7,13 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcPlugin : public IPlugin
+class ArcPlugin : public IFileReaderPlugin
 {
 public:
 	ArcPlugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
+	virtual FileTypeIdList fileTypes() const;
 };
 
 ARC_PLUGIN_NS_END

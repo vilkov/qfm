@@ -14,12 +14,12 @@ class TasksNode;
 
 
 /*
- * This class and it's subclasses should be created only
+ * This class and subclasses of this class should be created only
  * in the same thread as "receiver" because of DeleteHandler!
  *
  */
 
-class BaseTask : public Tools::TasksPool::Task
+class BaseTask : public ::Tools::TasksPool::Task
 {
 public:
 	class Event : public QEvent

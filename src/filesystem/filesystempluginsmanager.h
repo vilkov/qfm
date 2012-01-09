@@ -7,7 +7,6 @@
 #include "filesystem_ns.h"
 #include "filesystemnode.h"
 #include "interfaces/filesystemiplugin.h"
-#include "../de/filesystemfiletypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -23,13 +22,11 @@ public:
 	Node *node(const IFileInfo *info, Node *parent) const;
 
 protected:
-	typedef QList<FileTypeId> FileTypeIdList;
-
 	void registerStatic(IPlugin *plugin);
-	void registerStatic(IPlugin *plugin, const FileTypeIdList &types);
+	void registerStatic(IFileReaderPlugin *plugin);
 
 	void registerDynamic(IPlugin *plugin);
-	void registerDynamic(IPlugin *plugin, const FileTypeIdList &types);
+	void registerDynamic(IFileReaderPlugin *plugin);
 
 private:
 	typedef QSet<IPlugin*>                PluginsSet;

@@ -37,9 +37,11 @@ void PluginsManager::registerStatic(IPlugin *plugin)
 	m_otherPlugins.push_back(plugin);
 }
 
-void PluginsManager::registerStatic(IPlugin *plugin, const FileTypeIdList &types)
+void PluginsManager::registerStatic(IFileReaderPlugin *plugin)
 {
-	for (FileTypeIdList::const_iterator i = types.constBegin(), end = types.constEnd(); i != end; ++i)
+	IFileReaderPlugin::FileTypeIdList types = plugin->fileTypes();
+
+	for (IFileReaderPlugin::FileTypeIdList::const_iterator i = types.constBegin(), end = types.constEnd(); i != end; ++i)
 		m_filePlugins[*i].push_back(plugin);
 }
 
@@ -49,9 +51,11 @@ void PluginsManager::registerDynamic(IPlugin *plugin)
 	m_dynamicPlugins.insert(plugin);
 }
 
-void PluginsManager::registerDynamic(IPlugin *plugin, const FileTypeIdList &types)
+void PluginsManager::registerDynamic(IFileReaderPlugin *plugin)
 {
-	for (FileTypeIdList::const_iterator i = types.constBegin(), end = types.constEnd(); i != end; ++i)
+	IFileReaderPlugin::FileTypeIdList types = plugin->fileTypes();
+
+	for (IFileReaderPlugin::FileTypeIdList::const_iterator i = types.constBegin(), end = types.constEnd(); i != end; ++i)
 	{
 		m_filePlugins[*i].push_back(plugin);
 		m_dynamicPlugins.insert(plugin);

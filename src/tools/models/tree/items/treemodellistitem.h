@@ -10,21 +10,20 @@ MODELS_TREE_NS_BEGIN
 class ListItem : public Item
 {
 public:
-	typedef Item                 Base;
-	typedef QList<Item*>         Container;
+	typedef QList<Base*>         Container;
 	typedef Container::size_type size_type;
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	ListItem(Item *parent = 0);
+	ListItem(Base *parent = 0);
 	virtual ~ListItem();
 
 	/* Item */
 	virtual bool isList() const;
 
-	Item *at(size_type index) const { return m_items.at(index); }
+	Base *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
-	size_type indexOf(Item *item) const { return m_items.indexOf(item); }
+	size_type indexOf(Base *item) const { return m_items.indexOf(item); }
 
 protected:
 	Container m_items;

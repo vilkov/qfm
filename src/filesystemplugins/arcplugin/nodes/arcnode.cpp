@@ -1,4 +1,5 @@
 #include "arcnode.h"
+#include "../archive/arcarchive.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -156,7 +157,7 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return createIndex(0, 0, m_items.at(0));
+	return QModelIndex();//createIndex(0, 0, m_items.at(0));
 }
 
 QAbstractItemModel *ArcNode::proxyModel() const

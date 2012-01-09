@@ -3,6 +3,7 @@
 
 #include "filesystemifileinfo.h"
 #include "../filesystemnode.h"
+#include "../../de/filesystemfiletypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -13,6 +14,16 @@ public:
 	virtual ~IPlugin() {}
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const = 0;
+};
+
+
+class IFileReaderPlugin : public IPlugin
+{
+public:
+	typedef QList<FileTypeId> FileTypeIdList;
+
+public:
+	virtual FileTypeIdList fileTypes() const = 0;
 };
 
 FILE_SYSTEM_NS_END

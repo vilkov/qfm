@@ -11,6 +11,7 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 	m_info(info)
 {
 	m_items.push_back(new ArcNodeRootItem());
+	handleTask(new ReadArchiveTask(m_info.absoluteFilePath(), this));
 }
 
 bool ArcNode::event(QEvent *e)
@@ -223,6 +224,8 @@ void ArcNode::scanCompleteEvent(const Archive::Contents &contents)
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + contents.items.size() - 1);
 	m_items.append(contents.items);
 	endInsertRows();
+
+	taskHandled();
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

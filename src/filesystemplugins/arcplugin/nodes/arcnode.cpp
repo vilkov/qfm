@@ -10,6 +10,7 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 	m_items(m_itemsContainer.m_container),
 	m_info(info)
 {
+	m_proxy.setSourceModel(this);
 	m_items.push_back(new ArcNodeRootItem());
 	handleTask(new ReadArchiveTask(m_info.absoluteFilePath(), this));
 }
@@ -181,12 +182,12 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return createIndex(0, 0, m_items.at(0));
+	return QModelIndex(); //createIndex(0, 0, m_items.at(0));
 }
 
 QAbstractItemModel *ArcNode::proxyModel() const
 {
-	return const_cast<ArcNode*>(this);
+	return const_cast<ArcNodeProxyModel*>(&m_proxy);
 }
 
 QAbstractItemDelegate *ArcNode::itemDelegate() const

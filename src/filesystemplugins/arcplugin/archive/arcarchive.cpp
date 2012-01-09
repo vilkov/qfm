@@ -1,5 +1,6 @@
 #include "arcarchive.h"
 #include "../nodes/items/arcnodeentryitem.h"
+#include "../nodes/items/arcnodedirentryitem.h"
 #include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
@@ -18,11 +19,11 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 			archive_read_support_format_all(a) == ARCHIVE_OK &&
 			archive_read_open_filename(a, fileName.toUtf8(), 10240) == ARCHIVE_OK)
 		{
-		    QMap<QString, ArcNodeEntryItem *> parents;
-		    ArcNodeEntryItem::size_type index;
+		    QMap<QString, ArcNodeDirEntryItem *> parents;
+		    ArcNodeDirEntryItem::size_type index;
 		    struct archive_entry *e;
-		    ArcNodeEntryItem *entry;
-		    ArcNodeEntryItem *parent;
+		    ArcNodeDirEntryItem *entry;
+		    ArcNodeDirEntryItem *parent;
 		    QString fileName;
 		    const char *path;
 		    char *sep;
@@ -37,11 +38,11 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 		    	if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
 		    	{
 		    		(*sep) = 0;
-		    		ArcNodeEntryItem *&p = parents[fileName = QString::fromUtf8(path)];
+		    		ArcNodeDirEntryItem *&p = parents[fileName = QString::fromUtf8(path)];
 
 		    		if (p == NULL)
 		    		{
-		    			p = parent = new ArcNodeEntryItem(fileName);
+		    			p = parent = new ArcNodeDirEntryItem(fileName);
 		    			contents.items.push_back(parent);
 		    		}
 		    		else
@@ -53,13 +54,13 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 		    		{
 			    		(*sep) = 0;
 
-			    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArcNodeEntryItem::InvalidIndex)
+			    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArcNodeDirEntryItem::InvalidIndex)
 			    		{
-			    			parent->add(entry = new ArcNodeEntryItem(fileName, parent));
+			    			parent->add(entry = new ArcNodeDirEntryItem(fileName, parent));
 			    			parent = entry;
 			    		}
 			    		else
-			    			parent = static_cast<ArcNodeEntryItem *>(parent->at(index));
+			    			parent = static_cast<ArcNodeDirEntryItem *>(parent->at(index));
 
 			    		path = (++sep);
 		    		}

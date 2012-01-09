@@ -1,6 +1,7 @@
 #ifndef ARCNODE_H_
 #define ARCNODE_H_
 
+#include "arcnodeproxymodel.h"
 #include "items/arcnodeitem.h"
 #include "../model/arcdelegate.h"
 #include "../archive/arcarchive.h"
@@ -92,6 +93,7 @@ private:
 private:
 	ItemsContainer m_itemsContainer;
     ItemsContainer::List &m_items;
+    ArcNodeProxyModel m_proxy;
     ArcDelegate m_delegate;
     Info m_info;
     INodeView::MenuActionList m_actions;

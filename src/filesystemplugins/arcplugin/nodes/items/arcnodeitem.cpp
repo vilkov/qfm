@@ -3,6 +3,9 @@
 
 ARC_PLUGIN_NS_BEGIN
 
+IArcNodeItem::~IArcNodeItem()
+{}
+
 ArcNodeItem::ArcNodeItem(Base *parent) :
 	FileSystemItem(parent)
 {}

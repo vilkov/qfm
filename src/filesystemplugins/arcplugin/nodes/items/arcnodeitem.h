@@ -7,14 +7,24 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcNodeItem : public FileSystemItem
+class IArcNodeItem
+{
+public:
+	virtual ~IArcNodeItem();
+
+	virtual bool isRoot() = 0;
+	virtual bool isDir() = 0;
+};
+
+
+class ArcNodeItem : public FileSystemItem, public IArcNodeItem
 {
 public:
 	ArcNodeItem(Base *parent);
 };
 
 
-class ArcNodeListItem : public FileSystemListItem
+class ArcNodeListItem : public FileSystemListItem, public IArcNodeItem
 {
 public:
 	ArcNodeListItem(Base *parent);

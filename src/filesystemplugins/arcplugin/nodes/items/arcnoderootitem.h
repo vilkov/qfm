@@ -14,6 +14,10 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
+	/* IArcNodeItem */
+	virtual bool isRoot();
+	virtual bool isDir();
+
 private:
 	QVariant m_label;
 };

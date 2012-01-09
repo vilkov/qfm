@@ -50,11 +50,13 @@ public:
     void cancel() { m_canceled = true; }
 
 protected:
-    TasksNode *receiver() const { return m_receiver; }
 	const volatile bool isCanceled() const { return m_canceled; }
 	const volatile bool &isReceiverDead() const { return m_controllerDead; }
 
-	/* Sync post event to GUI thread. */
+	/* Posts event to receiver(). */
+	void postEvent(Event *event) const;
+
+	/* Sync post event to the GUI thread. */
 	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile bool &aborted) const;
 
 private:

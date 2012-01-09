@@ -1,18 +1,17 @@
-#ifndef ARCARCHIVEENTRY_H_
-#define ARCARCHIVEENTRY_H_
+#ifndef ARCNODEENTRYITEM_H_
+#define ARCNODEENTRYITEM_H_
 
 #include <QtCore/QMap>
 #include <QtCore/QString>
-#include "../../arcplugin_ns.h"
-#include "../../../../filesystem/model/items/filesystemlistitem.h"
+#include "arcnodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArchiveEntry : public FileSystemListItem
+class ArcNodeEntryItem : public ArcNodeListItem
 {
 public:
-	ArchiveEntry(const QString &fileName, Base *parent = 0);
+	ArcNodeEntryItem(const QString &fileName, Base *parent = 0);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -22,7 +21,7 @@ public:
 
 private:
 	friend class Archive;
-	void add(ArchiveEntry *item)
+	void add(ArcNodeEntryItem *item)
 	{
 		m_index[item->m_fileName] = m_items.size();
 		m_items.push_back(item);
@@ -38,4 +37,4 @@ private:
 
 ARC_PLUGIN_NS_END
 
-#endif /* ARCARCHIVEENTRY_H_ */
+#endif /* ARCNODEENTRYITEM_H_ */

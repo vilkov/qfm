@@ -1,6 +1,4 @@
 #include "updatefilestask.h"
-#include "../../../../tasks/filesystemtasksnode.h"
-#include "../../../../../application.h"
 #include <QtCore/QSet>
 #include <QtCore/QDir>
 #include <QtCore/QDateTime>
@@ -35,12 +33,12 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				Application::postEvent(receiver(), new Event(false, localUpdates));
+				postEvent(new Event(false, localUpdates));
 		}
 	}
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(receiver(), new Event(true, m_updates.takeUpdates()));
+		postEvent(new Event(true, m_updates.takeUpdates()));
 }
 
 FILE_SYSTEM_NS_END

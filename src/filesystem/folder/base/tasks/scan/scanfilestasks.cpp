@@ -1,5 +1,4 @@
 #include "scanfilestasks.h"
-#include "../../../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -16,7 +15,7 @@ void ScanFilesForSizeTask::run(const volatile bool &aborted)
 	event->canceled = isCanceled();
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(receiver(), event.take());
+		postEvent(event.take());
 }
 
 
@@ -32,7 +31,7 @@ void ScanFilesForRemoveTask::run(const volatile bool &aborted)
 	event->canceled = isCanceled();
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(receiver(), event.take());
+		postEvent(event.take());
 }
 
 
@@ -50,7 +49,7 @@ void ScanFilesForCopyTask::run(const volatile bool &aborted)
 	event->canceled = isCanceled();
 
 	if (!aborted && !isReceiverDead())
-		Application::postEvent(receiver(), event.take());
+		postEvent(event.take());
 }
 
 FILE_SYSTEM_NS_END

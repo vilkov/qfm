@@ -5,7 +5,6 @@
 #	include <QtCore/qt_windows.h>
 #endif
 #include <QtCore/QDir>
-#include <QtCore/QCoreApplication>
 #include <QtGui/QMessageBox>
 
 
@@ -23,10 +22,7 @@ void PerformRemoveBaseTask::run(const volatile bool &aborted)
 	remove(m_files, aborted);
 
 	if (!aborted && !isReceiverDead())
-	{
-		PScopedPointer<Event> event(new Event(m_type, this, m_files, isCanceled()));
-		QCoreApplication::postEvent(receiver(), event.take());
-	}
+		postEvent(new Event(m_type, this, m_files, isCanceled()));
 }
 
 void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile bool &aborted)

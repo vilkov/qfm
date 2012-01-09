@@ -1,7 +1,6 @@
 #include "idmnodequeryresultsscantask.h"
 #include "../../items/idmqueryresultpathvalueitem.h"
 #include "../../../../../../tools/pointers/pscopedpointer.h"
-#include <QtCore/QCoreApplication>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -16,7 +15,7 @@ void ScanFilesTask::run(const volatile bool &aborted)
 	PScopedPointer<Event> event(new Event(ModelEvent::ScanFilesForRemove, this));
 	event->files = scan(aborted);
 	event->canceled = isCanceled();
-	QCoreApplication::postEvent(receiver(), event.take());
+	postEvent(event.take());
 }
 
 ScanedFiles ScanFilesTask::scan(const volatile bool &aborted) const

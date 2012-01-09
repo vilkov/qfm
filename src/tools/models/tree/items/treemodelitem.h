@@ -13,16 +13,16 @@ public:
 	typedef Item Base;
 
 public:
-	Item(Item *parent);
+	Item(Base *parent);
 	virtual ~Item();
 
-	Item *parent() const { return m_parent; }
+	Base *parent() const { return m_parent; }
 
 	virtual bool isList() const;
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 
 private:
-	Item *m_parent;
+	Base *m_parent;
 };
 
 MODELS_TREE_NS_END

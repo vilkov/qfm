@@ -1,4 +1,5 @@
 #include "arcarchive.h"
+#include "../nodes/items/arcnodeentryitem.h"
 #include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
@@ -21,11 +22,11 @@ Archive::Contents Archive::read(const QString &fileName)
 			archive_read_support_format_all(a) == ARCHIVE_OK &&
 			archive_read_open_filename(a, fileName.toUtf8(), 10240) == ARCHIVE_OK)
 		{
-		    QMap<QString, ArchiveEntry *> parents;
-		    ArchiveEntry::size_type index;
+		    QMap<QString, ArcNodeEntryItem *> parents;
+		    ArcNodeEntryItem::size_type index;
 		    struct archive_entry *e;
-		    ArchiveEntry *entry;
-		    ArchiveEntry *parent;
+		    ArcNodeEntryItem *entry;
+		    ArcNodeEntryItem *parent;
 		    QString fileName;
 		    const char *path;
 		    char *sep;
@@ -40,11 +41,11 @@ Archive::Contents Archive::read(const QString &fileName)
 		    	if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
 		    	{
 		    		(*sep) = 0;
-		    		ArchiveEntry *&p = parents[fileName = QString::fromUtf8(path)];
+		    		ArcNodeEntryItem *&p = parents[fileName = QString::fromUtf8(path)];
 
 		    		if (p == NULL)
 		    		{
-		    			p = parent = new ArchiveEntry(fileName);
+		    			p = parent = new ArcNodeEntryItem(fileName);
 		    			contents.items.push_back(parent);
 		    		}
 		    		else
@@ -56,22 +57,22 @@ Archive::Contents Archive::read(const QString &fileName)
 		    		{
 			    		(*sep) = 0;
 
-			    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArchiveEntry::InvalidIndex)
+			    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArcNodeEntryItem::InvalidIndex)
 			    		{
-			    			parent->add(entry = new ArchiveEntry(fileName, parent));
+			    			parent->add(entry = new ArcNodeEntryItem(fileName, parent));
 			    			parent = entry;
 			    		}
 			    		else
-			    			parent = static_cast<ArchiveEntry *>(parent->at(index));
+			    			parent = static_cast<ArcNodeEntryItem *>(parent->at(index));
 
 			    		path = (++sep);
 		    		}
 
 		    		if (!(fileName = QString::fromUtf8(path)).isEmpty())
-		    			parent->add(new ArchiveEntry(fileName, parent));
+		    			parent->add(new ArcNodeEntryItem(fileName, parent));
 		    	}
 		    	else
-		    		contents.items.push_back(new ArchiveEntry(QString::fromUtf8(path)));
+		    		contents.items.push_back(new ArcNodeEntryItem(QString::fromUtf8(path)));
 
 		        archive_read_data_skip(a);
 		    }

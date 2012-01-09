@@ -1,5 +1,6 @@
 #include "arcnode.h"
-#include "../archive/arcarchive.h"
+#include "items/arcnoderootitem.h"
+#include "../tasks/arcreadarchivetask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -8,7 +9,29 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
 	m_info(info)
-{}
+{
+	m_items.push_back(new ArcNodeRootItem());
+}
+
+bool ArcNode::event(QEvent *e)
+{
+	switch (static_cast<ReadArchiveTask::Event::Type>(e->type()))
+	{
+		case ReadArchiveTask::Event::ScanComplete:
+		{
+			ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
+
+			event->accept();
+			scanCompleteEvent(event->contents);
+
+			return true;
+		}
+		default:
+			break;
+	}
+
+	return TasksNode::event(e);
+}
 
 FileTypeId ArcNode::id() const
 {
@@ -157,7 +180,7 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return QModelIndex();//createIndex(0, 0, m_items.at(0));
+	return createIndex(0, 0, m_items.at(0));
 }
 
 QAbstractItemModel *ArcNode::proxyModel() const
@@ -193,6 +216,13 @@ void ArcNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, qu
 void ArcNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed)
 {
 
+}
+
+void ArcNode::scanCompleteEvent(const Archive::Contents &contents)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + contents.items.size() - 1);
+	m_items.append(contents.items);
+	endInsertRows();
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

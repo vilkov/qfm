@@ -2,7 +2,7 @@
 #define ARCARCHIVE_H_
 
 #include <QtCore/QString>
-#include "items/arcarchiveentry.h"
+#include "../nodes/items/arcnodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -10,7 +10,7 @@ ARC_PLUGIN_NS_BEGIN
 class Archive
 {
 public:
-	typedef QList<ArchiveEntry*> Container;
+	typedef QList<ArcNodeItem::Base *> Container;
 	struct Contents
 	{
 		Contents();

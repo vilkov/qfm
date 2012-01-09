@@ -4,6 +4,7 @@
 #include <QtCore/QCoreApplication>
 #include "../filesystembasetask.h"
 #include "../tools/taskprogress.h"
+#include "../containers/filesystemscanedfiles.h"
 
 
 FILE_SYSTEM_NS_BEGIN

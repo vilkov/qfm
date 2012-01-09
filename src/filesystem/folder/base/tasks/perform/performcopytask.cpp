@@ -1,6 +1,5 @@
 #include "performcopytask.h"
 #include "../../../../tasks/containers/filesysteminfolistitem.h"
-#include "../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
@@ -43,10 +42,7 @@ void PerformCopyTask::run(const volatile bool &aborted)
 		cancel();
 
 	if (!aborted && !isReceiverDead())
-	{
-		PScopedPointer<Event> event(new Event(this, isCanceled(), m_entries, m_control, m_move));
-		Application::postEvent(receiver(), event.take());
-	}
+		postEvent(new Event(this, isCanceled(), m_entries, m_control, m_move));
 }
 
 void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)

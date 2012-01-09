@@ -1,5 +1,6 @@
 #include "taskprogress.h"
 #include "filesystemtaskprogressevents.h"
+#include "../filesystemtasksnode.h"
 #include "../../../application.h"
 
 

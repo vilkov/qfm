@@ -2,8 +2,8 @@
 #include "filesystemtasksnode.h"
 #include "tools/filesystemtaskdialog.h"
 #include "../../tools/pointers/pscopedpointer.h"
+#include "../../application.h"
 #include <QtCore/QThread>
-#include <QtCore/QCoreApplication>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -60,10 +60,15 @@ BaseTask::~BaseTask()
 	}
 }
 
+void BaseTask::postEvent(Event *event) const
+{
+	Application::postEvent(m_receiver, event);
+}
+
 qint32 BaseTask::askUser(const QString &title, const QString &question, qint32 buttons, const volatile bool &aborted) const
 {
 	QuestionEvent::Result result;
-	QCoreApplication::postEvent(receiver(), new QuestionEvent(title, question, buttons, &result));
+	postEvent(new QuestionEvent(title, question, buttons, &result));
 
 	if (result.waitFor(aborted, isReceiverDead()))
 		return result.answer();

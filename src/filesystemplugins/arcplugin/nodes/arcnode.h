@@ -1,7 +1,9 @@
 #ifndef ARCNODE_H_
 #define ARCNODE_H_
 
+#include "items/arcnodeitem.h"
 #include "../model/arcdelegate.h"
+#include "../archive/arcarchive.h"
 #include "../../../filesystem/info/filesysteminfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 
@@ -13,7 +15,10 @@ class ArcNode : public TasksNode
 public:
 	ArcNode(const Info &info, Node *parent = 0);
 
-	/* IFileType */
+	/* QObject */
+    virtual bool event(QEvent *event);
+
+    /* IFileType */
 	virtual FileTypeId id() const;
 	virtual QIcon icon() const;
 	virtual QString name() const;
@@ -63,11 +68,13 @@ protected:
 	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
+	void scanCompleteEvent(const Archive::Contents &contents);
+
 private:
 	class ItemsContainer : public ModelContainer
 	{
 	public:
-		typedef QList<Item*> List;
+		typedef QList<ArcNodeItem::Base *> List;
 
 	public:
 		ItemsContainer();

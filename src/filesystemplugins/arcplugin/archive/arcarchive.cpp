@@ -53,7 +53,7 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 
 		    		path = (++sep);
 
-		    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL && !aborted && !canceled)
+		    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
 		    		{
 			    		(*sep) = 0;
 

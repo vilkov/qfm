@@ -221,9 +221,12 @@ void ArcNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElaps
 
 void ArcNode::scanCompleteEvent(const Archive::Contents &contents)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + contents.items.size() - 1);
-	m_items.append(contents.items);
-	endInsertRows();
+	if (!contents.items.isEmpty())
+	{
+		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + contents.items.size() - 1);
+		m_items.append(contents.items);
+		endInsertRows();
+	}
 
 	taskHandled();
 }

@@ -8,10 +8,6 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-Archive::Contents::Contents() :
-	extractedSize(0)
-{}
-
 Archive::Contents Archive::read(const QString &fileName, const volatile bool &aborted, const volatile bool &canceled)
 {
 	Contents contents;

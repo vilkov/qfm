@@ -13,7 +13,9 @@ public:
 	typedef QList<ArcNodeItem::Base *> Container;
 	struct Contents
 	{
-		Contents();
+		Contents() :
+			extractedSize(0)
+		{}
 
 		Container items;
 		QString lastError;

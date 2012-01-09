@@ -19,10 +19,9 @@ public:
 		};
 
 	public:
-		Event(const Archive::Contents &contents, Type type) :
+		Event(Type type) :
 			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
-			canceled(false),
-			contents(contents)
+			canceled(false)
 		{}
 
 		bool canceled;

@@ -21,7 +21,7 @@ public:
 	};
 
 public:
-	static Contents read(const QString &fileName);
+	static Contents read(const QString &fileName, const volatile bool &aborted, const volatile bool &canceled);
 };
 
 ARC_PLUGIN_NS_END

@@ -12,7 +12,7 @@ Archive::Contents::Contents() :
 	extractedSize(0)
 {}
 
-Archive::Contents Archive::read(const QString &fileName)
+Archive::Contents Archive::read(const QString &fileName, const volatile bool &aborted, const volatile bool &canceled)
 {
 	Contents contents;
 
@@ -32,7 +32,7 @@ Archive::Contents Archive::read(const QString &fileName)
 		    char *sep;
 		    int res;
 
-		    while ((res = archive_read_next_header(a, &e)) == ARCHIVE_OK)
+		    while ((res = archive_read_next_header(a, &e)) == ARCHIVE_OK && !aborted && !canceled)
 		    {
 		    	contents.extractedSize += archive_entry_size(e);
 
@@ -53,7 +53,7 @@ Archive::Contents Archive::read(const QString &fileName)
 
 		    		path = (++sep);
 
-		    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
+		    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL && !aborted && !canceled)
 		    		{
 			    		(*sep) = 0;
 

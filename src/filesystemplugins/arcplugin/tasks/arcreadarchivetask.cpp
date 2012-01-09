@@ -1,7 +1,6 @@
 #include "arcreadarchivetask.h"
 #include "../archive/arcarchive.h"
 #include "../../../tools/pointers/pscopedpointer.h"
-#include "../../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -13,8 +12,15 @@ ReadArchiveTask::ReadArchiveTask(const QString &fileName, TasksNode *receiver) :
 
 void ReadArchiveTask::run(const volatile bool &aborted)
 {
-	PScopedPointer<Event> event(new Event(Archive::read(m_fileName), Event::ScanComplete));
-	postEvent(event.take());
+	PScopedPointer<Event> event(new Event(Event::ScanComplete));
+	Archive::Contents contents = Archive::read(m_fileName, aborted, isCanceled());
+
+	event->canceled = isCanceled();
+
+	if (!aborted && !isReceiverDead())
+		postEvent(event.take());
+	else
+		qDeleteAll(contents.items);
 }
 
 ARC_PLUGIN_NS_END

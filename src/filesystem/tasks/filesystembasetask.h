@@ -50,7 +50,7 @@ public:
     void cancel() { m_canceled = true; }
 
 protected:
-	const volatile bool isCanceled() const { return m_canceled; }
+	const volatile bool &isCanceled() const { return m_canceled; }
 	const volatile bool &isReceiverDead() const { return m_controllerDead; }
 
 	/* Posts event to receiver(). */

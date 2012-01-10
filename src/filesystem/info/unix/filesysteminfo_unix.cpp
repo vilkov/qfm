@@ -84,7 +84,7 @@ Info::Info(const QString &filePath, bool identifyType) :
 	refresh();
 
 	if (identifyType)
-		m_info.type = Application::instance()->desktopEnvironment().fileTypeInfo(m_info, m_filePath, 16);
+		m_info.type = Application::instance()->desktopEnvironment().fileTypeInfo(m_filePath, m_info.isDir, 16);
 }
 
 FileTypeId Info::id() const

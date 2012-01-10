@@ -41,6 +41,7 @@ private:
 private:
 	IndexMap m_index;
 	QString m_fileName;
+	FileTypeInfo m_typeInfo;
 };
 
 ARC_PLUGIN_NS_END

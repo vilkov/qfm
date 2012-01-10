@@ -2,6 +2,7 @@
 #define ARCNODEENTRYITEM_H_
 
 #include "arcnodeitem.h"
+#include "../../../../de/filesystemfiletypeinfo.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -22,6 +23,7 @@ public:
 
 private:
 	QString m_fileName;
+	FileTypeInfo m_typeInfo;
 };
 
 ARC_PLUGIN_NS_END

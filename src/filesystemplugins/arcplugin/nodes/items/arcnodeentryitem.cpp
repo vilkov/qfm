@@ -1,19 +1,28 @@
 #include "arcnodeentryitem.h"
+#include "../../../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
 ArcNodeEntryItem::ArcNodeEntryItem(const QString &fileName, Base *parent) :
 	ArcNodeItem(parent),
-	m_fileName(fileName)
+	m_fileName(fileName),
+	m_typeInfo(Application::instance()->desktopEnvironment().fileTypeInfoFromFileName(m_fileName, false, 16))
 {}
 
 QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_fileName;
-	else
-		return QVariant();
+	switch (role)
+	{
+		case Qt::DisplayRole:
+			return m_fileName;
+
+		case Qt::DecorationRole:
+			return m_typeInfo.icon;
+
+		default:
+			return QVariant();
+	}
 }
 
 bool ArcNodeEntryItem::isRoot()

@@ -64,15 +64,20 @@ public:
 	~DesktopEnvironment();
 
 	Type type() const { return m_type; }
+
 	FileTypeId fileTypeId(FileTypes::Audio::Type id) const;
 	FileTypeId fileTypeId(FileTypes::Application::Type id) const;
-	FileTypeInfo fileTypeInfo(const FileSystem::FileInfo &fileInfo, const QString &absoluteFilePath, int iconSize) const;
+
+	FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
+	FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
+
+private:
+	QByteArray themeName() const;
+	FileTypeInfo fileTypeInfo(int iconSize) const;
+	FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
 
 private:
 	Type m_type;
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
-	int m_version;
-#endif
 };
 
 #endif /* DESKTOPENVIRONMENT_H_ */

@@ -53,7 +53,8 @@ protected:
 	bool isVisible() const { return !m_view.isEmpty(); }
 	void switchTo(Node *node, INodeView *view);
 
-protected:
+private:
+	friend class TasksNode;
 	void addLink();
 	void removeLink();
 

@@ -1,6 +1,7 @@
 #include "arcnode.h"
 #include "items/arcnoderootitem.h"
 #include "../tasks/arcreadarchivetask.h"
+#include <QtCore/QDebug>
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -182,7 +183,7 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return QModelIndex(); //createIndex(0, 0, m_items.at(0));
+	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0)));
 }
 
 QAbstractItemModel *ArcNode::proxyModel() const
@@ -202,6 +203,16 @@ const INodeView::MenuActionList &ArcNode::menuActions() const
 
 Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
+	ArcNodeItem::Base *item;
+
+	if ((item = static_cast<ArcNodeItem::Base*>(m_proxy.mapToSource(idx).internalPointer()))->isList())
+	{
+
+	}
+	else
+		if (static_cast<ArcNodeItem*>(item)->isRoot())
+			return parentNode();
+
 	return 0;
 }
 

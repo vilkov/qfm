@@ -14,10 +14,10 @@ bool ArcNodeProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 		if (static_cast<ArcNodeItem::Base*>(right.internalPointer())->isList())
 			return static_cast<ArcNodeDirEntryItem*>(left.internalPointer())->fileName() < static_cast<ArcNodeDirEntryItem*>(right.internalPointer())->fileName();
 		else
-			return static_cast<ArcNodeItem*>(right.internalPointer())->isRoot();
+			return !static_cast<ArcNodeItem*>(right.internalPointer())->isRoot();
 	else
 		if (static_cast<ArcNodeItem::Base*>(right.internalPointer())->isList())
-			return !static_cast<ArcNodeItem*>(left.internalPointer())->isRoot();
+			return static_cast<ArcNodeItem*>(left.internalPointer())->isRoot();
 		else
 			return static_cast<ArcNodeEntryItem*>(left.internalPointer())->fileName() < static_cast<ArcNodeEntryItem*>(right.internalPointer())->fileName();
 }

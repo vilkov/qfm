@@ -70,11 +70,6 @@ private:
 	void removeView(INodeView *view);
 
 private:
-	class Nodes : public QList<Node*>
-	{
-	public:
-		enum { InvalidIndex = (size_type)-1 };
-	};
 	typedef QSet<INodeView*> ViewSet;
 
 private:

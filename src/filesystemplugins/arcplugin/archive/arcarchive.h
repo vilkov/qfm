@@ -25,7 +25,7 @@ public:
 
 public:
 	static Contents read(const QString &fileName, const volatile BaseTask::Task::Flags &aborted);
-	static bool extract(const QString &fileName, const QString &entry, QString &error, const volatile BaseTask::Task::Flags &aborted);
+	static bool extract(const QString &fileName, const ArcNodeItem::Base *entry, QString &error, const volatile BaseTask::Task::Flags &aborted);
 };
 
 ARC_PLUGIN_NS_END

@@ -82,7 +82,7 @@ Archive::Contents Archive::read(const QString &fileName, const volatile BaseTask
 	return contents;
 }
 
-bool Archive::extract(const QString &fileName, const QString &entry, QString &error, const volatile BaseTask::Task::Flags &aborted)
+bool Archive::extract(const QString &fileName, const ArcNodeItem::Base *entry, QString &error, const volatile BaseTask::Task::Flags &aborted)
 {
 	return false;
 }

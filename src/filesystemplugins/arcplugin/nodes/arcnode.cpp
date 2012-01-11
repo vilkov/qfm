@@ -196,6 +196,11 @@ const INodeView::MenuActionList &ArcNode::actions() const
 	return m_actions;
 }
 
+QAbstractItemView::SelectionMode ArcNode::selectionMode() const
+{
+	return QAbstractItemView::SingleSelection;
+}
+
 QModelIndex ArcNode::rootIndex() const
 {
 	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0)));

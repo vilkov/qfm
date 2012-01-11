@@ -118,6 +118,7 @@ void DirectoryView::setNode(FileSystem::INode *node)
     m_node = node;
 	m_view.setModel(node->model());
 	m_view.setItemDelegate(node->delegate());
+	m_view.setSelectionMode(node->selectionMode());
 	m_header.pathEdit.setText(m_node->absoluteFilePath());
 	m_parent->updateTitle(this, m_node->fileName());
 

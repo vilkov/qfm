@@ -58,6 +58,7 @@ public:
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
+	virtual QAbstractItemView::SelectionMode selectionMode() const;
 
 protected:
 	/* Node */

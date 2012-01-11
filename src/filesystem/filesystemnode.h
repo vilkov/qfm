@@ -24,10 +24,6 @@ class Node : public FileSystemModel, public INode
 public:
 	Node(const ModelContainer &conteiner, Node *parent = 0);
 
-	/* INode */
-	virtual INode *root() const;
-	virtual int columnsCount() const;
-
 	/* IFileNavigation */
 	virtual void viewCloseAll();
 	virtual void viewClosed(INodeView *nodeView);
@@ -35,6 +31,11 @@ public:
 	virtual void viewThis(INodeView *nodeView, const QModelIndex &selected);
 	virtual void viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual void viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins);
+
+	/* INode */
+	virtual INode *root() const;
+	virtual int columnsCount() const;
+	virtual QAbstractItemView::SelectionMode selectionMode() const;
 
 	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 

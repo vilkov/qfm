@@ -8,19 +8,6 @@ Node::Node(const ModelContainer &conteiner, Node *parent) :
 	m_links(0)
 {}
 
-INode *Node::root() const
-{
-	if (INode *res = parentNode())
-		return res->root();
-	else
-		return (INode*)this;
-}
-
-int Node::columnsCount() const
-{
-	return columnCount(QModelIndex());
-}
-
 void Node::viewCloseAll()
 {
 	if (!m_view.isEmpty())
@@ -97,6 +84,24 @@ void Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsMan
 
 	if (!it.atEnd())
 		viewChild(nodeView, it, plugins);
+}
+
+INode *Node::root() const
+{
+	if (INode *res = parentNode())
+		return res->root();
+	else
+		return (INode*)this;
+}
+
+int Node::columnsCount() const
+{
+	return columnCount(QModelIndex());
+}
+
+QAbstractItemView::SelectionMode Node::selectionMode() const
+{
+	return QAbstractItemView::ExtendedSelection;
 }
 
 void Node::switchTo(Node *node, INodeView *view)

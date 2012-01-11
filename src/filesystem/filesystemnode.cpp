@@ -36,18 +36,8 @@ void Node::viewClosed(INodeView *nodeView)
 
 void Node::viewParent(INodeView *nodeView)
 {
-	Node *parent = parentNode();
-
-	if (static_cast<INode*>(parent) != root())
-		if (parent->exists())
-		{
-			parent->viewThis(nodeView, m_parentEntryIndex);
-			parent->refresh();
-
-			removeView(nodeView);
-		}
-		else
-			viewCloseAll();
+	if (static_cast<INode*>(parentNode()) != root())
+		viewChild(nodeView, rootIndex(), 0);
 }
 
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)

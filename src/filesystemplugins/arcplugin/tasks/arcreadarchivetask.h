@@ -13,10 +13,11 @@ public:
 	class Event : public TaskEvent
 	{
 	public:
-		Event() :
+		Event(BaseTask *task) :
 			TaskEvent(ScanComplete)
 		{}
 
+		BaseTask *task;
 		Archive::Contents contents;
 	};
 

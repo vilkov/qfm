@@ -14,7 +14,8 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 {
 	m_proxy.setSourceModel(this);
 	m_items.push_back(new ArcNodeRootItem());
-	handleTask(new ReadArchiveTask(m_info.absoluteFilePath(), this));
+
+	addTask(new ReadArchiveTask(m_info.absoluteFilePath(), this), TasksItemList() << m_items.at(RootItemIndex));
 }
 
 bool ArcNode::event(QEvent *e)
@@ -26,7 +27,7 @@ bool ArcNode::event(QEvent *e)
 			ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
 
 			event->accept();
-			scanCompleteEvent(event->contents);
+			scanCompleteEvent(event->task, event->contents);
 
 			return true;
 		}
@@ -222,7 +223,7 @@ QAbstractItemView::SelectionMode ArcNode::selectionMode() const
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0)));
+	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex)));
 }
 
 Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
@@ -235,7 +236,10 @@ Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModel
 	}
 	else
 		if (static_cast<ArcNodeItem*>(item)->isRoot())
+		{
+			cancelTask(m_items.at(RootItemIndex));
 			return parentNode();
+		}
 
 	return 0;
 }
@@ -255,7 +259,7 @@ void ArcNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElaps
 
 }
 
-void ArcNode::scanCompleteEvent(const Archive::Contents &contents)
+void ArcNode::scanCompleteEvent(BaseTask *task, const Archive::Contents &contents)
 {
 	if (!contents.items.isEmpty())
 	{
@@ -264,7 +268,7 @@ void ArcNode::scanCompleteEvent(const Archive::Contents &contents)
 		endInsertRows();
 	}
 
-	taskHandled();
+	removeAllTaskLinks(task);
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

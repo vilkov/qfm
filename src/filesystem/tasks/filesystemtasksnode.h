@@ -32,7 +32,7 @@ protected:
 	void resetTask(BaseTask *task, BaseTask *oldTask);
 	void handleTask(BaseTask *task);
 	void taskHandled();
-	void cancelTask(TaskNodeItem *item);
+	void cancelTask(TaskNodeItem::Base *item);
 	void removeAllTaskLinks(BaseTask *task);
 
 private:

@@ -72,9 +72,14 @@ protected:
 	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
-	void scanCompleteEvent(const Archive::Contents &contents);
+	void scanCompleteEvent(BaseTask *task, const Archive::Contents &contents);
 
 private:
+	enum
+	{
+		RootItemIndex = 0
+	};
+
 	class ItemsContainer : public ModelContainer
 	{
 	public:

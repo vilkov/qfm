@@ -65,6 +65,8 @@ public:
 
 	Type type() const { return m_type; }
 
+	QIcon processingIcon(int iconSize) const;
+
 	FileTypeId fileTypeId(FileTypes::Audio::Type id) const;
 	FileTypeId fileTypeId(FileTypes::Application::Type id) const;
 

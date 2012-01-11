@@ -7,11 +7,11 @@ IArcNodeItem::~IArcNodeItem()
 {}
 
 ArcNodeItem::ArcNodeItem(Base *parent) :
-	FileSystemItem(parent)
+	TaskNodeItem(parent)
 {}
 
 ArcNodeListItem::ArcNodeListItem(Base *parent) :
-	FileSystemListItem(parent)
+	TaskNodeListItem(parent)
 {}
 
 ARC_PLUGIN_NS_END

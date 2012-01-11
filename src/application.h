@@ -21,15 +21,14 @@ public:
 
 	virtual bool notify(QObject *receiver, QEvent *event);
 
-	DesktopEnvironment &desktopEnvironment() { return m_desktopEnvironment; }
-	Tools::TasksPool::TaskPool &taskPool() { return m_taskPool; }
-	ApplicationSettings &config() { return m_settings; }
-	MainWindow &mainWindow() { return m_mainWindow; }
-
 	qint32 exec();
 	QString version() const;
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
+	static DesktopEnvironment *desktopEnvironment() { return &instance()->m_desktopEnvironment; }
+	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
+	static ApplicationSettings *config() { return &instance()->m_settings; }
+	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);

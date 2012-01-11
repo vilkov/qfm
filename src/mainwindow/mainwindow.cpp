@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_splitter.addWidget(&m_leftFoldersView);
 	m_splitter.addWidget(&m_rightFoldersView);
 
-	Application::instance()->config().loadState(this);
+	Application::config()->loadState(this);
 
 	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F1, &MainWindow::showMountsForLeft);
 	m_eventHandler.registerShortcut(Qt::ALT, Qt::Key_F2, &MainWindow::showMountsForRight);
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-	Application::instance()->config().saveState(this);
+	Application::config()->saveState(this);
 	saveTabs();
 }
 

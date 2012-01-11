@@ -13,6 +13,9 @@ class TaskNodeListItem : public FileSystemListItem
 
 public:
 	TaskNodeListItem(Base *parent);
+
+	void lock(const QString &reason);
+    void unlock() { MODEL_ITEM_LOCKER_UNLOCK; }
 };
 
 FILE_SYSTEM_NS_END

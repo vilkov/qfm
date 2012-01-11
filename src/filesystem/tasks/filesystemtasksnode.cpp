@@ -20,7 +20,7 @@ bool TasksNode::event(QEvent *e)
 
 			event->accept();
 			event->result()->lock();
-			event->result()->setAnswer(QMessageBox::question(&Application::instance()->mainWindow(), event->title(), event->question(), event->buttons()));
+			event->result()->setAnswer(QMessageBox::question(Application::mainWindow(), event->title(), event->question(), event->buttons()));
 			event->result()->unlock();
 
 			return true;
@@ -58,19 +58,19 @@ void TasksNode::addTask(BaseTask *task, const TasksItemList &items)
 {
 	m_tasks.add(task, items);
 	addLink();
-	Application::instance()->taskPool().handle(task);
+	Application::taskPool()->handle(task);
 }
 
 void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask)
 {
 	m_tasks.resetTask(task, oldTask);
-	Application::instance()->taskPool().handle(task);
+	Application::taskPool()->handle(task);
 }
 
 void TasksNode::handleTask(BaseTask *task)
 {
 	addLink();
-	Application::instance()->taskPool().handle(task);
+	Application::taskPool()->handle(task);
 }
 
 void TasksNode::taskHandled()

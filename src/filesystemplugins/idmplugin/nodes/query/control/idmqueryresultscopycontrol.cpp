@@ -40,18 +40,18 @@ bool IdmQueryResultsCopyControl::start(const ScanedFiles::Files &files, bool mov
 			}
 			else
 			{
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
 			}
 		else
 		{
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			m_container.rollback();
 			qDeleteAll(list);
 		}
 	}
 	else
-		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 
 	return false;
 }

@@ -136,7 +136,7 @@ bool CopyInfo::start(const ScanedFiles::Files &files, bool move)
 
 	return (files.totalSize() <= (fs = freeSpace()) ||
 		QMessageBox::question(
-							&Application::instance()->mainWindow(),
+							Application::mainWindow(),
 							tr("Insufficient space on device"),
 							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
 								arg(absoluteFilePath()).

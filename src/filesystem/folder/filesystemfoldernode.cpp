@@ -82,7 +82,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 			tr("Enter name for the new directory"),
 			tr("Name"),
 			idx.isValid() ? m_items[idx.row()]->info().fileName() : QString(),
-			&Application::instance()->mainWindow());
+			Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
 	{
@@ -90,7 +90,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 		PScopedPointer<IFileControl> folder(create(dialog.value(), IFileControl::Folder, error));
 
 		if (!folder)
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Failed to create directory..."), error);
+			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);
 	}
 }
 
@@ -432,7 +432,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 
 	if (!canceled &&
 		QMessageBox::question(
-			&Application::instance()->mainWindow(),
+			Application::mainWindow(),
 			tr("Remove..."),
 			tr("Would you like to remove").
 				append(QString::fromLatin1("\n\t")).
@@ -582,7 +582,7 @@ void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystem
 					tr("Enter new name for file \"%1\"").arg(entry->info().fileName()),
 			tr("Name"),
 			entry->info().fileName(),
-			&Application::instance()->mainWindow());
+			Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
 	{
@@ -602,7 +602,7 @@ void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystem
 			}
 		}
 		else
-			QMessageBox::critical(&Application::instance()->mainWindow(),
+			QMessageBox::critical(Application::mainWindow(),
 						entry->info().isDir() ?
 							tr("Failed to rename directory \"%1\"").arg(entry->info().fileName()) :
 							tr("Failed to rename file \"%1\"").arg(entry->info().fileName()),

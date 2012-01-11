@@ -15,7 +15,7 @@ Node *ArcPlugin::node(const IFileInfo *info, Node *parent) const
 
 ArcPlugin::FileTypeIdList ArcPlugin::fileTypes() const
 {
-	const DesktopEnvironment &de = Application::instance()->desktopEnvironment();
+	const DesktopEnvironment &de = *Application::desktopEnvironment();
 
 	return FileTypeIdList() <<
 			de.fileTypeId(DesktopEnvironment::FileTypes::Application::GZipFile) <<

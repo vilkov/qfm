@@ -2,7 +2,7 @@
 #define ARCNODEITEM_H_
 
 #include "../../arcplugin_ns.h"
-#include "../../../../filesystem/model/items/filesystemlistitem.h"
+#include "../../../../filesystem/tasks/items/filesystemtasknodeitemlist.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -17,14 +17,14 @@ public:
 };
 
 
-class ArcNodeItem : public FileSystemItem, public IArcNodeItem
+class ArcNodeItem : public TaskNodeItem, public IArcNodeItem
 {
 public:
 	ArcNodeItem(Base *parent);
 };
 
 
-class ArcNodeListItem : public FileSystemListItem, public IArcNodeItem
+class ArcNodeListItem : public TaskNodeListItem, public IArcNodeItem
 {
 public:
 	ArcNodeListItem(Base *parent);

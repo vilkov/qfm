@@ -178,7 +178,7 @@ IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
 
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
+	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
 		return new IdmCopyControl(m_container, entity, absoluteFilePath());
 	else
 		return 0;
@@ -196,9 +196,9 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 
 		case Find:
 		{
-			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, &Application::instance()->mainWindow()))
+			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
 			{
-				CreateQueryDialog dialog(m_container, entity, &Application::instance()->mainWindow());
+				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
 
 				if (dialog.exec() == CreateQueryDialog::Accepted)
 					switchTo(new IdmNodeQueryResults(m_container, dialog.query(), absoluteFilePath(), this), view);
@@ -244,7 +244,7 @@ void IdmRootNode::remove(const QModelIndexList &list, INodeView *view)
 //		else
 //			if (!m_container.commit())
 //			{
-//				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+//				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 //				m_container.rollback();
 //			}
 }
@@ -306,13 +306,13 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 				EditableValueListDialog dialog(
 						m_container,
 						Select(static_cast<RootNodeEntityItem*>(item)->entity()),
-						&Application::instance()->mainWindow());
+						Application::mainWindow());
 
 				if (dialog.exec() == EditableValueListDialog::Accepted)
 				{
 					if (!m_container.commit())
 					{
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
 				}
@@ -320,7 +320,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 					m_container.rollback();
 			}
 			else
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 	}
 	else
 		if (static_cast<RootNodeItem*>(item)->isRoot())
@@ -406,7 +406,7 @@ IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(Item
 
 void IdmRootNode::createEntity()
 {
-	CreateEntityDialog dialog(m_container, QString(), &Application::instance()->mainWindow());
+	CreateEntityDialog dialog(m_container, QString(), Application::mainWindow());
 
 	if (dialog.exec() == CreateEntityDialog::Accepted)
 		if (m_container.transaction())
@@ -418,7 +418,7 @@ void IdmRootNode::createEntity()
 					for (CreateEntityDialog::size_type i = 0, size = dialog.size(); i < size; ++i)
 						if (!m_container.addProperty(entity, dialog.property(i), dialog.propertyName(i)))
 						{
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 							m_container.rollback();
 							ok = false;
 							break;
@@ -429,7 +429,7 @@ void IdmRootNode::createEntity()
 							add(entity);
 						else
 						{
-							QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 							m_container.rollback();
 						}
 				}
@@ -437,17 +437,17 @@ void IdmRootNode::createEntity()
 				{
 					if (!m_container.commit())
 					{
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
 				}
 			else
 			{
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
 			}
 		else
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void IdmRootNode::addProperty(ItemsContainer::Item *item)

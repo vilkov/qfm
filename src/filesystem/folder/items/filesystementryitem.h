@@ -41,8 +41,6 @@ public:
 	qint32 progress() const { return (m_doneSize.toULongLong() * 100) / m_totalSize.toULongLong(); }
 
 private:
-	bool m_locked;
-	QString m_lockReason;
 	QVariant m_totalSize;
 	QVariant m_doneSize;
 	QVariant m_timeElapsed;

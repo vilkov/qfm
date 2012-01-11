@@ -61,7 +61,7 @@ DirectoryView::~DirectoryView()
 
 void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 {
-	root->viewAbsolute(this, tab.path, Application::instance()->mainWindow().plugins());
+	root->viewAbsolute(this, tab.path, Application::mainWindow()->plugins());
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
@@ -71,13 +71,13 @@ void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 
 void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath)
 {
-	root->viewAbsolute(this, absoluteFilePath, Application::instance()->mainWindow().plugins());
+	root->viewAbsolute(this, absoluteFilePath, Application::mainWindow()->plugins());
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const Geometry &geometry)
 {
-	root->viewAbsolute(this, absoluteFilePath, Application::instance()->mainWindow().plugins());
+	root->viewAbsolute(this, absoluteFilePath, Application::mainWindow()->plugins());
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
@@ -210,7 +210,7 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	m_node->root()->viewAbsolute(this, filePath, Application::instance()->mainWindow().plugins());
+	m_node->root()->viewAbsolute(this, filePath, Application::mainWindow()->plugins());
 }
 
 void DirectoryView::goUp()
@@ -239,7 +239,7 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-		m_node->viewChild(this, index, Application::instance()->mainWindow().plugins());
+		m_node->viewChild(this, index, Application::mainWindow()->plugins());
 }
 
 void DirectoryView::pathToClipboard()

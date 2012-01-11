@@ -44,7 +44,7 @@ bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
 
 			if (m_container.addValue(value.data(), list))
 			{
-				NewFileValueDialog dialog(m_container, value.data(), &Application::instance()->mainWindow());
+				NewFileValueDialog dialog(m_container, value.data(), Application::mainWindow());
 
 				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();
@@ -53,22 +53,22 @@ bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
 						return true;
 					else
 					{
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
 			}
 			else
 			{
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
 				qDeleteAll(list);
 			}
 		}
 		else
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 	}
 	else
-		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 
 	return false;
 }

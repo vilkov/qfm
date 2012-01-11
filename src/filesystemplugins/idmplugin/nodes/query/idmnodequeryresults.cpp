@@ -215,7 +215,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
 					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
 
-				if (!(destination = tree.choose(tr("Choose a directory"), &Application::instance()->mainWindow())).isEmpty())
+				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 					return new IdmQueryResultsCopyControl(
 							m_container,
 							item->rootValue(),
@@ -241,7 +241,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 			bool declined = false;
 			PScopedPointer<IdmEntityValue> value(
 					CreationTools::chooseOrCreateValue(
-					&Application::instance()->mainWindow(),
+					Application::mainWindow(),
 					m_container,
 					item->property().entity,
 					declined));
@@ -257,23 +257,23 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 					else
 					{
 						m_container.rollback();
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 					}
 				else
 				{
 					m_container.rollback();
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				}
 			else
 			{
 				m_container.rollback();
 
 				if (!declined)
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			}
 		}
 		else
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)
@@ -319,7 +319,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 					}
 					else
 					{
-						QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 						return;
 					}
@@ -332,12 +332,12 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		}
 		else
 		{
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			m_container.rollback();
 		}
 	}
 	else
-		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
@@ -453,7 +453,7 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 			else
 			{
 				m_container.rollback();
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			}
 
 			endRemoveRows();
@@ -461,13 +461,13 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 		else
 		{
 			m_container.rollback();
-			QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 		}
 	}
 	else
 	{
 		m_container.rollback();
-		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 	}
 }
 
@@ -490,7 +490,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 				files.push_back(entry->fileName());
 
 		if (QMessageBox::question(
-				&Application::instance()->mainWindow(),
+				Application::mainWindow(),
 				tr("Remove..."),
 				tr("Would you like to remove").
 					append(QString::fromLatin1("\n\t")).
@@ -541,7 +541,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 				}
 				else
 				{
-					QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 					m_container.rollback();
 					ok = false;
 					break;
@@ -551,12 +551,12 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 		if (ok)
 			if (!m_container.commit())
 			{
-				QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
 			}
 	}
 	else
-		QMessageBox::critical(&Application::instance()->mainWindow(), tr("Error"), m_container.lastError());
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 
 	for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
 		if (!list.at(i).second->shouldRemove())

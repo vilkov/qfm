@@ -1,8 +1,8 @@
 #ifndef ARCREADARCHIVETASK_H_
 #define ARCREADARCHIVETASK_H_
 
+#include "arctaskevent.h"
 #include "../archive/arcarchive.h"
-#include "../../../filesystem/tasks/filesystembasetask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -10,21 +10,13 @@ ARC_PLUGIN_NS_BEGIN
 class ReadArchiveTask : public BaseTask
 {
 public:
-	class Event : public BaseTask::Event
+	class Event : public TaskEvent
 	{
 	public:
-		enum Type
-		{
-			ScanComplete = User
-		};
-
-	public:
-		Event(Type type) :
-			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
-			canceled(false)
+		Event() :
+			TaskEvent(ScanComplete)
 		{}
 
-		bool canceled;
 		Archive::Contents contents;
 	};
 

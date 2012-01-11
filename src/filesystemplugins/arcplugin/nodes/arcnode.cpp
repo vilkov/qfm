@@ -18,9 +18,9 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 
 bool ArcNode::event(QEvent *e)
 {
-	switch (static_cast<ReadArchiveTask::Event::Type>(e->type()))
+	switch (static_cast<TaskEvent::Type>(e->type()))
 	{
-		case ReadArchiveTask::Event::ScanComplete:
+		case TaskEvent::ScanComplete:
 		{
 			ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
 

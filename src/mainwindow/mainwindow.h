@@ -9,7 +9,6 @@
 #include "foldersview/foldersview.h"
 #include "../filesystem/root/filesystemrootnode.h"
 #include "../filesystem/tools/mountpoints/mountpoints.h"
-#include "../filesystemplugins/pluginsmanager.h"
 
 
 class MainWindow : public QMainWindow
@@ -20,7 +19,6 @@ public:
     MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
-	FileSystem::Plugins::MyPluginsManager *plugins() { return &m_plugins; }
 	void switchToOtherPanel();
 
 protected:
@@ -87,7 +85,6 @@ private:
 
 private:
     MountPoints m_mounts;
-    FileSystem::Plugins::MyPluginsManager m_plugins;
     FileSystem::RootNode m_root;
 
     CentralWidgetEventHandler m_eventHandler;

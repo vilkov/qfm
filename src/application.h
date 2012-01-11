@@ -9,6 +9,7 @@
 #include "settings/applicationsettings.h"
 #include "mainwindow/mainwindow.h"
 #include "de/desktopenvironment.h"
+#include "filesystemplugins/pluginsmanager.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -29,6 +30,7 @@ public:
 	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
+	static ::FileSystem::PluginsManager *plugins() { return &instance()->m_plugins; }
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
@@ -39,6 +41,7 @@ private:
 	DesktopEnvironment m_desktopEnvironment;
 	ApplicationSettings m_settings;
 	Tools::TasksPool::TaskPool m_taskPool;
+    FileSystem::Plugins::MyPluginsManager m_plugins;
 	MainWindow m_mainWindow;
 };
 

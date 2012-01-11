@@ -27,7 +27,7 @@ public:
 
 	virtual void edit(const QModelIndex &index) = 0;
 	virtual void select(const QModelIndex &index) = 0;
-	virtual void setNode(INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate = 0, const MenuActionList &menuActions = MenuActionList()) = 0;
+	virtual void setNode(INode *node) = 0;
 };
 
 FILE_SYSTEM_NS_END

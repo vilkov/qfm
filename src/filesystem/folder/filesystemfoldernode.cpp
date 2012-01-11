@@ -167,27 +167,27 @@ void FolderNode::move(const INodeView *source, INodeView *destination)
 		scanForCopy(entries, destination, true);
 }
 
+QAbstractItemModel *FolderNode::model() const
+{
+	return const_cast<FolderProxyModel*>(&m_proxy);
+}
+
+QAbstractItemDelegate *FolderNode::delegate() const
+{
+	return const_cast<FolderDelegate*>(&m_delegate);
+}
+
+const INodeView::MenuActionList &FolderNode::actions() const
+{
+	return m_menuActions;
+}
+
 QModelIndex FolderNode::rootIndex() const
 {
 	if (isRoot())
 		return QModelIndex();
 	else
 		return m_proxy.mapFromSource(createIndex(0, 0, m_items[0]));
-}
-
-QAbstractItemModel *FolderNode::proxyModel() const
-{
-	return const_cast<FolderProxyModel*>(&m_proxy);
-}
-
-QAbstractItemDelegate *FolderNode::itemDelegate() const
-{
-	return const_cast<FolderDelegate*>(&m_delegate);
-}
-
-const INodeView::MenuActionList &FolderNode::menuActions() const
-{
-	return m_menuActions;
 }
 
 Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

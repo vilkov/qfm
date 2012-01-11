@@ -113,22 +113,22 @@ void DirectoryView::select(const QModelIndex &index)
 	m_view.setFocus();
 }
 
-void DirectoryView::setNode(FileSystem::INode *node, QAbstractItemModel *model, QAbstractItemDelegate *delegate, const FileSystem::INodeView::MenuActionList &menuActions)
+void DirectoryView::setNode(FileSystem::INode *node)
 {
     m_node = node;
-	m_view.setModel(model);
-	m_view.setItemDelegate(delegate);
+	m_view.setModel(node->model());
+	m_view.setItemDelegate(node->delegate());
 	m_header.pathEdit.setText(m_node->absoluteFilePath());
 	m_parent->updateTitle(this, m_node->fileName());
 
-	if (menuActions.isEmpty())
+	if (node->actions().isEmpty())
 	{
 		m_toolBar.setVisible(false);
 		m_toolBar.clear();
 	}
 	else
 	{
-		m_toolBar.addActions(menuActions);
+		m_toolBar.addActions(node->actions());
 		m_toolBar.setVisible(true);
 	}
 }

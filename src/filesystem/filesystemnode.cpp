@@ -66,7 +66,7 @@ void Node::viewParent(INodeView *nodeView)
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
 {
 	addView(nodeView);
-	nodeView->setNode(this, proxyModel(), itemDelegate(), menuActions());
+	nodeView->setNode(this);
 
 	if (selected.isValid())
 		nodeView->select(selected);

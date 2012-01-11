@@ -56,13 +56,14 @@ public:
 	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
 
+	/* INode */
+	virtual QAbstractItemModel *model() const;
+	virtual QAbstractItemDelegate *delegate() const;
+	virtual const INodeView::MenuActionList &actions() const;
+
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual QAbstractItemModel *proxyModel() const;
-	virtual QAbstractItemDelegate *itemDelegate() const;
-	virtual const INodeView::MenuActionList &menuActions() const;
-
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 	virtual void nodeRemoved(Node *node);
@@ -123,7 +124,7 @@ private:
 	typedef QMap<IdmEntity*, ItemsContainer::List> EntitiesMap;
 
 private:
-	INodeView::MenuActionList m_menuActions;
+	INodeView::MenuActionList m_actions;
 	ItemsContainer m_itemsContainer;
 	ItemsContainer::List &m_items;
 	EntitiesMap m_entities;

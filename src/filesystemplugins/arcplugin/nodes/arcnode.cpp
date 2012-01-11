@@ -181,24 +181,24 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 }
 
-QModelIndex ArcNode::rootIndex() const
-{
-	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0)));
-}
-
-QAbstractItemModel *ArcNode::proxyModel() const
+QAbstractItemModel *ArcNode::model() const
 {
 	return const_cast<ArcNodeProxyModel*>(&m_proxy);
 }
 
-QAbstractItemDelegate *ArcNode::itemDelegate() const
+QAbstractItemDelegate *ArcNode::delegate() const
 {
 	return const_cast<ArcDelegate*>(&m_delegate);
 }
 
-const INodeView::MenuActionList &ArcNode::menuActions() const
+const INodeView::MenuActionList &ArcNode::actions() const
 {
 	return m_actions;
+}
+
+QModelIndex ArcNode::rootIndex() const
+{
+	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(0)));
 }
 
 Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

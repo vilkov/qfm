@@ -48,20 +48,20 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 	m_delegate(m_container),
 	m_info(storage.absolutePath())
 {
-	m_menuActions.push_back(new QAction(tr("Create"), 0));
-	m_menuActions.last()->setData(Create);
+	m_actions.push_back(new QAction(tr("Create"), 0));
+	m_actions.last()->setData(Create);
 
-	m_menuActions.push_back(new QAction(tr("Remove"), 0));
-	m_menuActions.last()->setData(Remove);
+	m_actions.push_back(new QAction(tr("Remove"), 0));
+	m_actions.last()->setData(Remove);
 
-	m_menuActions.push_back(new QAction(tr("AddProperty"), 0));
-	m_menuActions.last()->setData(AddProperty);
+	m_actions.push_back(new QAction(tr("AddProperty"), 0));
+	m_actions.last()->setData(AddProperty);
 
-	m_menuActions.push_back(new QAction(tr("RemoveProperty"), 0));
-	m_menuActions.last()->setData(RemoveProperty);
+	m_actions.push_back(new QAction(tr("RemoveProperty"), 0));
+	m_actions.last()->setData(RemoveProperty);
 
-	m_menuActions.push_back(new QAction(tr("Find"), 0));
-	m_menuActions.last()->setData(Find);
+	m_actions.push_back(new QAction(tr("Find"), 0));
+	m_actions.last()->setData(Find);
 
 
 	m_items.push_back(new RootNodeRootItem());
@@ -73,7 +73,7 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 
 IdmRootNode::~IdmRootNode()
 {
-	qDeleteAll(m_menuActions);
+	qDeleteAll(m_actions);
 }
 
 int IdmRootNode::columnCount(const QModelIndex &parent) const
@@ -274,24 +274,24 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 }
 
-QModelIndex IdmRootNode::rootIndex() const
-{
-	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
-}
-
-QAbstractItemModel *IdmRootNode::proxyModel() const
+QAbstractItemModel *IdmRootNode::model() const
 {
 	return const_cast<IdmRootNode*>(this);
 }
 
-QAbstractItemDelegate *IdmRootNode::itemDelegate() const
+QAbstractItemDelegate *IdmRootNode::delegate() const
 {
 	return const_cast<IdmRootNodeDelegate*>(&m_delegate);
 }
 
-const INodeView::MenuActionList &IdmRootNode::menuActions() const
+const INodeView::MenuActionList &IdmRootNode::actions() const
 {
-	return m_menuActions;
+	return m_actions;
+}
+
+QModelIndex IdmRootNode::rootIndex() const
+{
+	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
 }
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

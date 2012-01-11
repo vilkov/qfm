@@ -40,10 +40,6 @@ public:
 
 protected:
 	virtual QModelIndex rootIndex() const = 0;
-	virtual QAbstractItemModel *proxyModel() const = 0;
-	virtual QAbstractItemDelegate *itemDelegate() const = 0;
-	virtual const INodeView::MenuActionList &menuActions() const = 0;
-
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual void nodeRemoved(Node *node);

@@ -365,24 +365,24 @@ void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
 
 }
 
-QModelIndex IdmNodeQueryResults::rootIndex() const
-{
-	return QModelIndex();
-}
-
-QAbstractItemModel *IdmNodeQueryResults::proxyModel() const
+QAbstractItemModel *IdmNodeQueryResults::model() const
 {
 	return const_cast<IdmNodeQueryResults*>(this);
 }
 
-QAbstractItemDelegate *IdmNodeQueryResults::itemDelegate() const
+QAbstractItemDelegate *IdmNodeQueryResults::delegate() const
 {
 	return const_cast<IdmQueryResultsDelegate*>(&m_delegate);
 }
 
-const INodeView::MenuActionList &IdmNodeQueryResults::menuActions() const
+const INodeView::MenuActionList &IdmNodeQueryResults::actions() const
 {
 	return m_actions;
+}
+
+QModelIndex IdmNodeQueryResults::rootIndex() const
+{
+	return QModelIndex();
 }
 
 Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

@@ -155,24 +155,24 @@ void RootNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+QAbstractItemModel *RootNode::model() const
+{
+	return 0;
+}
+
+QAbstractItemDelegate *RootNode::delegate() const
+{
+	return 0;
+}
+
+const INodeView::MenuActionList &RootNode::actions() const
+{
+	return m_menuActions;
+}
+
 QModelIndex RootNode::rootIndex() const
 {
 	return QModelIndex();
-}
-
-QAbstractItemModel *RootNode::proxyModel() const
-{
-	return 0;
-}
-
-QAbstractItemDelegate *RootNode::itemDelegate() const
-{
-	return 0;
-}
-
-const INodeView::MenuActionList &RootNode::menuActions() const
-{
-	return m_menuActions;
 }
 
 Node *RootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

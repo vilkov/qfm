@@ -9,7 +9,7 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-Archive::Contents Archive::read(const QString &fileName, const volatile bool &aborted, const volatile bool &canceled)
+Archive::Contents Archive::read(const QString &fileName, const volatile BaseTask::Task::Flags &aborted)
 {
 	Contents contents;
 
@@ -29,7 +29,7 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 		    char *sep;
 		    int res;
 
-		    while ((res = archive_read_next_header(a, &e)) == ARCHIVE_OK && !aborted && !canceled)
+		    while ((res = archive_read_next_header(a, &e)) == ARCHIVE_OK && !aborted)
 		    {
 		    	contents.extractedSize += archive_entry_size(e);
 
@@ -80,6 +80,11 @@ Archive::Contents Archive::read(const QString &fileName, const volatile bool &ab
 	}
 
 	return contents;
+}
+
+bool Archive::extract(const QString &fileName, const QString &entry, QString &error, const volatile BaseTask::Task::Flags &aborted)
+{
+	return false;
 }
 
 ARC_PLUGIN_NS_END

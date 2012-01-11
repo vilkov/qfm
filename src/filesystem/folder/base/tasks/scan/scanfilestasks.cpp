@@ -7,14 +7,14 @@ ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, const TasksNode:
 	ScanFilesTask(receiver, entries)
 {}
 
-void ScanFilesForSizeTask::run(const volatile bool &aborted)
+void ScanFilesForSizeTask::run(const volatile Flags &aborted)
 {
 	PScopedPointer<Event> event(new Event(ModelEvent::ScanFilesForSize, this));
 
 	event->files = scan(aborted);
 	event->canceled = isCanceled();
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(event.take());
 }
 
@@ -23,14 +23,14 @@ ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, const TasksN
 	ScanFilesTask(receiver, entries)
 {}
 
-void ScanFilesForRemoveTask::run(const volatile bool &aborted)
+void ScanFilesForRemoveTask::run(const volatile Flags &aborted)
 {
 	PScopedPointer<Event> event(new Event(ModelEvent::ScanFilesForRemove, this));
 
 	event->files = scan(aborted);
 	event->canceled = isCanceled();
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(event.take());
 }
 
@@ -41,14 +41,14 @@ ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, const TasksNode:
 	m_move(move)
 {}
 
-void ScanFilesForCopyTask::run(const volatile bool &aborted)
+void ScanFilesForCopyTask::run(const volatile Flags &aborted)
 {
 	PScopedPointer<Event> event(new Event(ModelEvent::ScanFilesForCopy, this, m_control, m_move));
 
 	event->files = scan(aborted);
 	event->canceled = isCanceled();
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(event.take());
 }
 

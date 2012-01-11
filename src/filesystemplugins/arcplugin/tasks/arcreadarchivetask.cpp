@@ -10,14 +10,14 @@ ReadArchiveTask::ReadArchiveTask(const QString &fileName, TasksNode *receiver) :
 	m_fileName(fileName)
 {}
 
-void ReadArchiveTask::run(const volatile bool &aborted)
+void ReadArchiveTask::run(const volatile Flags &aborted)
 {
 	PScopedPointer<Event> event(new Event());
 
-	event->contents = Archive::read(m_fileName, aborted, isCanceled());
+	event->contents = Archive::read(m_fileName, aborted);
 	event->canceled = isCanceled();
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(event.take());
 	else
 		qDeleteAll(event->contents.items);

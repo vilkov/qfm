@@ -50,14 +50,13 @@ public:
     void cancel() { m_canceled = true; }
 
 protected:
-	const volatile bool &isCanceled() const { return m_canceled; }
-	const volatile bool &isReceiverDead() const { return m_controllerDead; }
+	bool isCanceled() const { return m_canceled; }
 
 	/* Posts event to receiver(). */
 	void postEvent(Event *event) const;
 
 	/* Sync post event to the GUI thread. */
-	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile bool &aborted) const;
+	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const;
 
 private:
 	struct MutexHolder : public QSharedData
@@ -71,8 +70,10 @@ private:
     MutexHolderPointer m_mutexHolder;
     TasksNode *m_receiver;
     DeleteHandler *m_handler;
-	volatile bool m_canceled;
-	volatile bool m_controllerDead;
+	Flag m_canceled;
+	Bit m_canceledBit;
+	Flag m_controllerDead;
+	Bit m_controllerDeadBit;
 };
 
 FILE_SYSTEM_NS_END

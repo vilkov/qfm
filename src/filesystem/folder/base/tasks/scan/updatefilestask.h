@@ -27,7 +27,7 @@ public:
 public:
 	UpdateFilesTask(TasksNode *receiver, const Info &info, const UpdatesList &updates);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 private:
 	Info m_info;

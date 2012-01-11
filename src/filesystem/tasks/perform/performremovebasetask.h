@@ -35,15 +35,15 @@ public:
 public:
 	PerformRemoveBaseTask(TasksNode *receiver, Event::Type type, const ScanedFiles &files);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 protected:
-	void remove(const ScanedFiles &entries, const volatile bool &aborted);
+	void remove(const ScanedFiles &entries, const volatile Flags &aborted);
 
 private:
-	void removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
+	void removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 	bool doRemoveFile(const QString &filePath, QString &error);
 
 private:

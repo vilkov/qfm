@@ -3,6 +3,7 @@
 
 #include <QtCore/QString>
 #include "../nodes/items/arcnodeitem.h"
+#include "../../../filesystem/tasks/filesystembasetask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -23,7 +24,8 @@ public:
 	};
 
 public:
-	static Contents read(const QString &fileName, const volatile bool &aborted, const volatile bool &canceled);
+	static Contents read(const QString &fileName, const volatile BaseTask::Task::Flags &aborted);
+	static bool extract(const QString &fileName, const QString &entry, QString &error, const volatile BaseTask::Task::Flags &aborted);
 };
 
 ARC_PLUGIN_NS_END

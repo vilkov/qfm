@@ -17,26 +17,21 @@ PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver, Event::Type ty
 	m_progress(receiver)
 {}
 
-void PerformRemoveBaseTask::run(const volatile bool &aborted)
+void PerformRemoveBaseTask::run(const volatile Flags &aborted)
 {
 	remove(m_files, aborted);
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(new Event(m_type, this, m_files, isCanceled()));
 }
 
-void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile bool &aborted)
+void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile Flags &aborted)
 {
 	bool tryAgain;
 	InfoItem *entry;
 	ScanedFiles::List list(entries);
 
-	for (ScanedFiles::List::size_type i = 0;
-			i < list.size() &&
-			!isCanceled() &&
-			!isReceiverDead() &&
-			!aborted;
-			++i)
+	for (ScanedFiles::List::size_type i = 0; i < list.size() && !aborted; ++i)
 	{
 		if ((entry = list.at(i).second)->isDir())
 		{
@@ -52,7 +47,7 @@ void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile bo
 	}
 }
 
-void PerformRemoveBaseTask::removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveBaseTask::removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	entry->refresh();
 
@@ -72,15 +67,15 @@ void PerformRemoveBaseTask::removeEntry(InfoItem *entry, volatile bool &tryAgain
 			if (entry->shouldRemove())
 				do
 					removeDir(entry, tryAgain = false, aborted);
-				while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
+				while (tryAgain && !aborted);
 		}
 		else
 			do
 				removeFile(entry, tryAgain = false, aborted);
-			while (tryAgain && !isCanceled() && !isReceiverDead() && !aborted);
+			while (tryAgain && !aborted);
 }
 
-void PerformRemoveBaseTask::removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveBaseTask::removeDir(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	QDir dir = entry->absolutePath();
 
@@ -116,7 +111,7 @@ void PerformRemoveBaseTask::removeDir(InfoItem *entry, volatile bool &tryAgain, 
 		}
 }
 
-void PerformRemoveBaseTask::removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted)
+void PerformRemoveBaseTask::removeFile(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (!doRemoveFile(entry->absoluteFilePath(), m_error))
 		if (m_skipAllIfNotRemove)

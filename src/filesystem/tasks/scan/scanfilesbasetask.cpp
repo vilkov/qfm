@@ -11,12 +11,12 @@ ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
 	BaseTask(receiver)
 {}
 
-void ScanFilesBaseTask::scan(InfoListItem *root, const volatile bool &aborted) const
+void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) const
 {
 	Info info;
 	QDirIterator dirIt(root->absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while (!isCanceled() && !aborted && !isReceiverDead() && dirIt.hasNext())
+	while (!aborted && dirIt.hasNext())
 		if ((info = dirIt.next()).isDir())
 		{
 			PScopedPointer<InfoListItem> subtree(new InfoListItem(info));
@@ -32,7 +32,7 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile bool &aborted) c
 		}
 }
 
-void ScanFilesBaseTask::scan(InfoListItem *root, const QString &file, const volatile bool &aborted) const
+void ScanFilesBaseTask::scan(InfoListItem *root, const QString &file, const volatile Flags &aborted) const
 {
 	Info info(root->absoluteFilePath(file));
 
@@ -54,7 +54,7 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const QString &file, const vola
 		root->add(new InfoEntryItem(info));
 }
 
-InfoItem *ScanFilesBaseTask::scan(const QString &absoluteFilePath, const volatile bool &aborted) const
+InfoItem *ScanFilesBaseTask::scan(const QString &absoluteFilePath, const volatile Flags &aborted) const
 {
 	Info info(absoluteFilePath);
 

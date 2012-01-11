@@ -1,6 +1,7 @@
 #include "arcnode.h"
 #include "items/arcnoderootitem.h"
 #include "../tasks/arcreadarchivetask.h"
+#include "../tasks/arcperformcopytask.h"
 #include <QtCore/QDebug>
 
 
@@ -173,7 +174,25 @@ void ArcNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 
 void ArcNode::copy(const INodeView *source, INodeView *destination)
 {
+	QModelIndex index = m_proxy.mapToSource(source->currentIndex());
 
+	if (index.isValid())
+	{
+		PScopedPointer<ICopyControl> control(destination->node()->createControl(destination));
+
+		if (control)
+		{
+			TasksItemList list;
+
+			if (static_cast<ArcNodeItem::Base*>(index.internalPointer())->isList())
+				static_cast<ArcNodeListItem*>(index.internalPointer())->lock(tr("Extracting..."));
+			else
+				static_cast<ArcNodeItem*>(index.internalPointer())->lock(tr("Extracting..."));
+
+			updateFirstColumn(index.row(), static_cast<ArcNodeItem::Base*>(index.internalPointer()));
+			addTask(new PerformCopyTask(m_info.absoluteFilePath(), static_cast<ArcNodeItem::Base*>(index.internalPointer()), control, false, this), list);
+		}
+	}
 }
 
 void ArcNode::move(const INodeView *source, INodeView *destination)
@@ -269,6 +288,12 @@ ArcNode::ItemsContainer::Item *ArcNode::ItemsContainer::at(size_type index) cons
 ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) const
 {
 	return m_container.indexOf(item);
+}
+
+void ArcNode::updateFirstColumn(ItemsContainer::size_type index, ArcNodeItem::Base *entry)
+{
+	QModelIndex idx = createIndex(index, 0, entry);
+	emit dataChanged(idx, idx);
 }
 
 ARC_PLUGIN_NS_END

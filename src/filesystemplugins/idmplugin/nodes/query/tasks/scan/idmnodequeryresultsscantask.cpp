@@ -10,22 +10,22 @@ ScanFilesTask::ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList
 	m_files(files)
 {}
 
-void ScanFilesTask::run(const volatile bool &aborted)
+void ScanFilesTask::run(const volatile Flags &flags)
 {
 	PScopedPointer<Event> event(new Event(ModelEvent::ScanFilesForRemove, this));
-	event->files = scan(aborted);
+	event->files = scan(flags);
 	event->canceled = isCanceled();
 	postEvent(event.take());
 }
 
-ScanedFiles ScanFilesTask::scan(const volatile bool &aborted) const
+ScanedFiles ScanFilesTask::scan(const volatile Flags &flags) const
 {
 	InfoItem *item;
 	ScanedFiles res(m_files.size());
 
 	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size; ++i)
 	{
-		item = ScanFilesBaseTask::scan(static_cast<QueryResultPathValueItem*>(m_files.at(i))->info().absoluteFilePath(), aborted);
+		item = ScanFilesBaseTask::scan(static_cast<QueryResultPathValueItem*>(m_files.at(i))->info().absoluteFilePath(), flags);
 		res.push_back(m_files.at(i), item);
 	}
 

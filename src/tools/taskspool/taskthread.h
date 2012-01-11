@@ -26,7 +26,7 @@ protected:
 private:
     Task *m_task;
     TaskPool *m_pool;
-    volatile bool m_abort;
+    Task::Flag m_abort;
     PMutex m_mutex;
     PCondition m_condition;
 };

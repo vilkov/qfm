@@ -14,7 +14,7 @@ class ScanFilesForSizeTask : public ScanFilesTask
 public:
 	ScanFilesForSizeTask(TasksNode *receiver, const TasksNode::TasksItemList &entries);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 };
 
 
@@ -24,7 +24,7 @@ class ScanFilesForRemoveTask : public ScanFilesTask
 public:
 	ScanFilesForRemoveTask(TasksNode *receiver, const TasksNode::TasksItemList &entries);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 };
 
 
@@ -48,7 +48,7 @@ public:
 public:
 	ScanFilesForCopyTask(TasksNode *receiver, const TasksNode::TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 private:
 	INode *m_destination;

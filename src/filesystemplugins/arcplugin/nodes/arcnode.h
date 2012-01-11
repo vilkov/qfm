@@ -7,6 +7,7 @@
 #include "../archive/arcarchive.h"
 #include "../../../filesystem/info/filesysteminfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../tools/containers/union.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -91,6 +92,10 @@ private:
 		friend class ArcNode;
 		List m_container;
 	};
+
+private:
+	typedef ::Tools::Containers::Union Union;
+	void updateFirstColumn(ItemsContainer::size_type index, ArcNodeItem::Base *entry);
 
 private:
 	ItemsContainer m_itemsContainer;

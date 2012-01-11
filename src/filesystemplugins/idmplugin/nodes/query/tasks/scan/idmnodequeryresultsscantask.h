@@ -26,10 +26,10 @@ public:
 public:
 	ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &flags);
 
 protected:
-	ScanedFiles scan(const volatile bool &aborted) const;
+	ScanedFiles scan(const volatile Flags &flags) const;
 
 private:
 	TasksNode::TasksItemList m_files;

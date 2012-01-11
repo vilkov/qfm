@@ -23,11 +23,11 @@ public:
 		void setAnswer(qint32 value) { m_answer = value; }
 		void unlock() { m_mutex.unlock(); }
 
-		bool waitFor(const volatile bool &stopedFlag, const volatile bool &isControllerDead)
+		bool waitFor(const volatile BaseTask::Flags &aborted)
 		{
 			QMutexLocker locker(&m_mutex);
 
-			while (!stopedFlag && !isControllerDead)
+			while (!aborted)
 			{
 				m_condition.wait(&m_mutex, 1000);
 

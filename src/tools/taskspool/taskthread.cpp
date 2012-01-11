@@ -9,8 +9,7 @@ TASKSPOOL_NS_BEGIN
 TaskThread::TaskThread(TaskPool *pool, Task *task) :
 	PThread(),
 	m_task(task),
-	m_pool(pool),
-	m_abort(false)
+	m_pool(pool)
 {}
 
 TaskThread::~TaskThread()
@@ -49,12 +48,13 @@ void TaskThread::run()
 			else
 			{
 				PScopedPointer<Task> task(m_task);
+				Task::Bit bit(m_abort, 0, task->flags());
 				m_task = 0;
 
 				locker.unlock();
 				TRY
 				{
-					task->run(m_abort);
+					task->run(task->flags());
 				}
 				CATCH_ALL
 				(

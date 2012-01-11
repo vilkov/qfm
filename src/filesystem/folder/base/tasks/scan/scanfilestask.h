@@ -30,7 +30,7 @@ public:
 	ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files);
 
 protected:
-	ScanedFiles scan(const volatile bool &aborted) const;
+	ScanedFiles scan(const volatile Flags &aborted) const;
 
 private:
 	TasksNode::TasksItemList m_files;

@@ -30,9 +30,9 @@ public:
 	ScanFilesBaseTask(TasksNode *receiver);
 
 protected:
-	void scan(InfoListItem *root, const volatile bool &aborted) const;
-	void scan(InfoListItem *root, const QString &file, const volatile bool &aborted) const;
-	InfoItem *scan(const QString &absoluteFilePath, const volatile bool &aborted) const;
+	void scan(InfoListItem *root, const volatile Flags &aborted) const;
+	void scan(InfoListItem *root, const QString &file, const volatile Flags &aborted) const;
+	InfoItem *scan(const QString &absoluteFilePath, const volatile Flags &aborted) const;
 };
 
 FILE_SYSTEM_NS_END

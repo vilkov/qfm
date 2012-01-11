@@ -24,7 +24,7 @@ public:
 	ReadArchiveTask(const QString &fileName, TasksNode *receiver);
 
 protected:
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 private:
 	QString m_fileName;

@@ -43,13 +43,13 @@ public:
 public:
 	PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
 
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 protected:
-	void copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile bool &aborted);
-	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
-	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile bool &aborted);
+	void copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
+	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
 
 private:
 	ScanedFiles m_entries;

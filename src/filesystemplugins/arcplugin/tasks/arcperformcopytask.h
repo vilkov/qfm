@@ -15,7 +15,7 @@ public:
 	class Event : public TaskEvent
 	{
 	public:
-		Event(BaseTask *task, PScopedPointer<ICopyControl> &control, bool move) :
+		Event(BaseTask *task, bool move) :
 			TaskEvent(CopyComplete),
 			task(task),
 			control(control.take()),
@@ -24,21 +24,22 @@ public:
 		{}
 
 		BaseTask *task;
-		const ArcNodeItem * item;
+		const ArcNodeItem::Base *item;
 		PScopedPointer<ICopyControl> control;
+		QString error;
 		bool canceled;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(const QString &fileName, const ArcNodeItem * item, PScopedPointer<ICopyControl> &control, bool move, TasksNode *receiver);
+	PerformCopyTask(const QString &fileName, const ArcNodeItem::Base *item, PScopedPointer<ICopyControl> &control, bool move, TasksNode *receiver);
 
 protected:
-	virtual void run(const volatile bool &aborted);
+	virtual void run(const volatile Flags &aborted);
 
 private:
 	QString m_fileName;
-	const ArcNodeItem * m_item;
+	const ArcNodeItem::Base *m_item;
 	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 };

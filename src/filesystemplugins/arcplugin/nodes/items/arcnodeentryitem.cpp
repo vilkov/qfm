@@ -18,7 +18,19 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 			return m_fileName;
 
 		case Qt::DecorationRole:
-			return m_typeInfo.icon;
+			if (isLocked())
+				return lockIcon();
+			else
+				return m_typeInfo.icon;
+
+		case Qt::TextAlignmentRole:
+			return Qt::AlignLeft;
+
+		case Qt::ToolTipRole:
+			if (isLocked())
+				return lockReason();
+			else
+				return QVariant();
 
 		default:
 			return QVariant();

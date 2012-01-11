@@ -13,7 +13,7 @@ UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, const Info &info, const Up
 	m_updates(updates)
 {}
 
-void UpdateFilesTask::run(const volatile bool &aborted)
+void UpdateFilesTask::run(const volatile Flags &aborted)
 {
 	QTime base = QTime::currentTime();
 	QTime current;
@@ -21,7 +21,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 	UpdatesList localUpdates;
 	QDirIterator dirIt(m_info.absoluteFilePath(), QDir::AllEntries | QDir::System | QDir::Hidden | QDir::NoDotAndDotDot);
 
-	while(!aborted && !isReceiverDead() && dirIt.hasNext())
+	while(!aborted && dirIt.hasNext())
 	{
 		current = QTime::currentTime();
 
@@ -37,7 +37,7 @@ void UpdateFilesTask::run(const volatile bool &aborted)
 		}
 	}
 
-	if (!aborted && !isReceiverDead())
+	if (!aborted || isCanceled())
 		postEvent(new Event(true, m_updates.takeUpdates()));
 }
 

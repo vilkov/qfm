@@ -39,11 +39,12 @@ public:
 
 
 BaseTask::BaseTask(TasksNode *receiver) :
+	Task(),
 	m_mutexHolder(new MutexHolder()),
 	m_receiver(receiver),
 	m_handler(new DeleteHandler(this, m_receiver)),
-	m_canceled(false),
-	m_controllerDead(false)
+	m_canceledBit(m_canceled, 1, flags()),
+	m_controllerDeadBit(m_controllerDead, 2, flags())
 {
 	Q_ASSERT(m_receiver != 0);
 	Q_ASSERT(m_receiver->thread() == QThread::currentThread());
@@ -65,12 +66,12 @@ void BaseTask::postEvent(Event *event) const
 	Application::postEvent(m_receiver, event);
 }
 
-qint32 BaseTask::askUser(const QString &title, const QString &question, qint32 buttons, const volatile bool &aborted) const
+qint32 BaseTask::askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const
 {
 	QuestionEvent::Result result;
 	postEvent(new QuestionEvent(title, question, buttons, &result));
 
-	if (result.waitFor(aborted, isReceiverDead()))
+	if (result.waitFor(aborted))
 		return result.answer();
 	else
 		return 0;

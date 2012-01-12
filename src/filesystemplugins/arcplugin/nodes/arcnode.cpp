@@ -24,10 +24,8 @@ bool ArcNode::event(QEvent *e)
 	{
 		case TaskEvent::ScanComplete:
 		{
-			ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
-
-			event->accept();
-			scanCompleteEvent(event->task, event->contents);
+			e->accept();
+			scanCompleteEvent(static_cast<TaskEvent*>(e));
 
 			return true;
 		}
@@ -259,16 +257,21 @@ void ArcNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElaps
 
 }
 
-void ArcNode::scanCompleteEvent(BaseTask *task, const Archive::Contents &contents)
+void ArcNode::scanCompleteEvent(TaskEvent *e)
 {
-	if (!contents.items.isEmpty())
-	{
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + contents.items.size() - 1);
-		m_items.append(contents.items);
-		endInsertRows();
-	}
+	ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
 
-	removeAllTaskLinks(task);
+	if (event->canceled)
+		qDeleteAll(event->contents.items);
+	else
+		if (!event->contents.items.isEmpty())
+		{
+			beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->contents.items.size() - 1);
+			m_items.append(event->contents.items);
+			endInsertRows();
+		}
+
+	removeAllTaskLinks(event->task);
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

@@ -5,6 +5,7 @@
 #include "items/arcnodeitem.h"
 #include "../model/arcdelegate.h"
 #include "../archive/arcarchive.h"
+#include "../tasks/arctaskevent.h"
 #include "../../../filesystem/info/filesysteminfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
@@ -72,7 +73,7 @@ protected:
 	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
-	void scanCompleteEvent(BaseTask *task, const Archive::Contents &contents);
+	void scanCompleteEvent(TaskEvent *event);
 
 private:
 	enum

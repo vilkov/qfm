@@ -1,19 +1,25 @@
 #ifndef ARCPLUGIN_H_
 #define ARCPLUGIN_H_
 
-#include "arcplugin_ns.h"
+#include "plugins/arclibarchiveplugin.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcPlugin : public IFileReaderPlugin
+class Plugin : public IFileReaderPlugin
 {
 public:
-	ArcPlugin();
+	Plugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
 	virtual FileTypeIdList fileTypes() const;
+
+	static const Archive **archivers();
+
+private:
+	LibArchivePlugin m_libArchive;
+	const Archive *m_archivers[2];
 };
 
 ARC_PLUGIN_NS_END

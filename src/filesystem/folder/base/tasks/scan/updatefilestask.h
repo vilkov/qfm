@@ -14,11 +14,13 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(bool isLastEvent, const UpdatesList &updates) :
-			ScanFilesBaseTask::Event(static_cast<Type>(ModelEvent::UpdateFiles)),
+		Event(BaseTask *task, bool isLastEvent, const UpdatesList &updates, bool canceled = false) :
+			ScanFilesBaseTask::Event(task, static_cast<Type>(ModelEvent::UpdateFiles)),
 			isLastEvent(isLastEvent),
 			updates(updates)
-		{}
+		{
+			this->canceled = canceled;
+		}
 
 		bool isLastEvent;
 		UpdatesList updates;

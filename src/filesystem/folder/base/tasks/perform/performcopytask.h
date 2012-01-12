@@ -25,8 +25,7 @@ public:
 	{
 	public:
 		Event(BaseTask *task, bool canceled, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
-			BaseTask::Event(static_cast<Type>(ModelEvent::CopyFiles)),
-			task(task),
+			BaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles)),
 			entries(entries),
 			control(control.take()),
 			canceled(canceled),

@@ -21,7 +21,11 @@ public:
 	/* QObject */
     virtual bool event(QEvent *event);
 
-    /* IFileType */
+    /* FileSystemModel */
+	virtual int columnCount(const QModelIndex &parent) const;
+	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+	/* IFileType */
 	virtual FileTypeId id() const;
 	virtual QIcon icon() const;
 	virtual QString name() const;

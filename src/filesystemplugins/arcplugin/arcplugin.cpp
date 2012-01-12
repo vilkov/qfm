@@ -4,16 +4,22 @@
 
 
 ARC_PLUGIN_NS_BEGIN
+static Plugin *instance = 0;
 
-ArcPlugin::ArcPlugin()
-{}
 
-Node *ArcPlugin::node(const IFileInfo *info, Node *parent) const
+Plugin::Plugin()
+{
+	m_archivers[0] = &m_libArchive;
+	m_archivers[1] = 0;
+	instance = this;
+}
+
+Node *Plugin::node(const IFileInfo *info, Node *parent) const
 {
 	return new ArcNode(Info(info->absoluteFilePath(), true), parent);
 }
 
-ArcPlugin::FileTypeIdList ArcPlugin::fileTypes() const
+Plugin::FileTypeIdList Plugin::fileTypes() const
 {
 	const DesktopEnvironment &de = *Application::desktopEnvironment();
 
@@ -27,6 +33,11 @@ ArcPlugin::FileTypeIdList ArcPlugin::fileTypes() const
 			de.fileTypeId(DesktopEnvironment::FileTypes::Application::RarFile) <<
 			de.fileTypeId(DesktopEnvironment::FileTypes::Application::TarzFile) <<
 			de.fileTypeId(DesktopEnvironment::FileTypes::Application::BZip2File);
+}
+
+const Archive **Plugin::archivers()
+{
+	return instance->m_archivers;
 }
 
 ARC_PLUGIN_NS_END

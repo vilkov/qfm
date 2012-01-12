@@ -4,10 +4,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmPlugin::IdmPlugin()
+Plugin::Plugin()
 {}
 
-Node *IdmPlugin::node(const IFileInfo *info, Node *parent) const
+Node *Plugin::node(const IFileInfo *info, Node *parent) const
 {
 	if (info->absoluteFilePath() == QString::fromLatin1("/home/dav/idm"))
 		return new IdmRootNode(info->absoluteFilePath(QString::fromLatin1(".storage.idm")), parent);

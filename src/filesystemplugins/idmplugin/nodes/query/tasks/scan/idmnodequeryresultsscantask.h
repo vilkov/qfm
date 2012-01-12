@@ -14,22 +14,20 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, BaseTask *task) :
-			ScanFilesBaseTask::Event(static_cast<ScanFilesBaseTask::Event::Type>(type)),
-			task(task)
+		Event(BaseTask *task, ModelEvent::Type type) :
+			ScanFilesBaseTask::Event(task, static_cast<ScanFilesBaseTask::Event::Type>(type))
 		{}
 
-		BaseTask *task;
 		ScanedFiles files;
 	};
 
 public:
 	ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files);
 
-	virtual void run(const volatile Flags &flags);
+	virtual void run(const volatile Flags &aborted);
 
 protected:
-	ScanedFiles scan(const volatile Flags &flags) const;
+	ScanedFiles scan(const volatile Flags &aborted) const;
 
 private:
 	TasksNode::TasksItemList m_files;

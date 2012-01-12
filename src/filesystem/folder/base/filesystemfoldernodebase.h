@@ -55,7 +55,7 @@ protected:
 	virtual bool scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move) = 0;
 	virtual bool scanForRemoveEvent(bool canceled, const ScanedFiles &entries) = 0;
 	virtual bool performCopyEvent(bool canceled, const ScanedFiles &entries, bool move) = 0;
-	virtual void performRemoveEvent(const ScanedFiles &entries) = 0;
+	virtual void performRemoveEvent(bool canceled, const ScanedFiles &entries) = 0;
 
 protected:
 	/* Prepare tasks */

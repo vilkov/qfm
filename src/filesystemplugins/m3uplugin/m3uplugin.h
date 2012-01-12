@@ -7,10 +7,10 @@
 
 M3U_PLUGIN_NS_BEGIN
 
-class M3uPlugin : public IPlugin
+class Plugin : public IPlugin
 {
 public:
-	M3uPlugin();
+	Plugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
 

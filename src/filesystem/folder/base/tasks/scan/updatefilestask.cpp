@@ -33,12 +33,11 @@ void UpdateFilesTask::run(const volatile Flags &aborted)
 			base = current;
 
 			if (!localUpdates.isEmpty())
-				postEvent(new Event(false, localUpdates));
+				postEvent(new Event(this, false, localUpdates));
 		}
 	}
 
-	if (!aborted || isCanceled())
-		postEvent(new Event(true, m_updates.takeUpdates()));
+	postEvent(new Event(this, true, m_updates.takeUpdates(), aborted));
 }
 
 FILE_SYSTEM_NS_END

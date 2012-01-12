@@ -1,5 +1,6 @@
 #include "arcperformcopytask.h"
 #include "../archive/arcarchive.h"
+#include "../nodes/items/arcnodedirentryitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 
 
@@ -15,6 +16,8 @@ PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Bas
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
+
+
 //	if (val)
 //	{
 //

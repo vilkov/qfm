@@ -20,9 +20,7 @@ PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver, Event::Type ty
 void PerformRemoveBaseTask::run(const volatile Flags &aborted)
 {
 	remove(m_files, aborted);
-
-	if (!aborted || isCanceled())
-		postEvent(new Event(m_type, this, m_files, isCanceled()));
+	postEvent(new Event(this, m_type, m_files, aborted));
 }
 
 void PerformRemoveBaseTask::remove(const ScanedFiles &entries, const volatile Flags &aborted)

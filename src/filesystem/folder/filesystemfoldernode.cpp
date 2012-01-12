@@ -517,7 +517,7 @@ bool FolderNode::performCopyEvent(bool canceled, const ScanedFiles &entries, boo
 	return false;
 }
 
-void FolderNode::performRemoveEvent(const ScanedFiles &entries)
+void FolderNode::performRemoveEvent(bool canceled, const ScanedFiles &entries)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;

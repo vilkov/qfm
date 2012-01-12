@@ -17,12 +17,9 @@ public:
 	};
 
 public:
-	TaskEvent(Type type) :
-		BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
-		canceled(false)
+	TaskEvent(BaseTask *task, Type type) :
+		BaseTask::Event(task, static_cast<BaseTask::Event::Type>(type))
 	{}
-
-	bool canceled;
 };
 
 ARC_PLUGIN_NS_END

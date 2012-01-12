@@ -5,11 +5,11 @@
 
 M3U_PLUGIN_NS_BEGIN
 
-M3uPlugin::M3uPlugin() :
+Plugin::Plugin() :
 	m_identity(QString::fromLatin1("#EXTM3U"))
 {}
 
-Node *M3uPlugin::node(const IFileInfo *info, Node *parent) const
+Node *Plugin::node(const IFileInfo *info, Node *parent) const
 {
 	return 0;
 }

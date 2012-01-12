@@ -7,10 +7,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmPlugin : public IPlugin
+class Plugin : public IPlugin
 {
 public:
-	IdmPlugin();
+	Plugin();
 
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
 };

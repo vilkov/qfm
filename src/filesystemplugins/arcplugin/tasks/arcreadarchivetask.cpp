@@ -12,15 +12,17 @@ ReadArchiveTask::ReadArchiveTask(const QString &fileName, TasksNode *receiver) :
 
 void ReadArchiveTask::run(const volatile Flags &aborted)
 {
+	Archive::State *state;
 	PScopedPointer<Event> event(new Event(this));
 
-	event->contents = Archive::read(m_fileName, aborted);
-	event->canceled = isCanceled();
+	if (const Archive *archive = Archive::archive(m_fileName, &state))
+	{
+		event->contents = archive->readAll(state, aborted);
+		archive->endRead(state);
+	}
 
-	if (!aborted || isCanceled())
-		postEvent(event.take());
-	else
-		qDeleteAll(event->contents.items);
+	event->canceled = aborted;
+	postEvent(event.take());
 }
 
 ARC_PLUGIN_NS_END

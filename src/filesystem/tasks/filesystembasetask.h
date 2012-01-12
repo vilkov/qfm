@@ -37,9 +37,15 @@ public:
 			User = Completed + 1
 		};
 
+	public:
+		BaseTask *task;
+		bool canceled;
+
 	protected:
-		Event(Type type) :
-			QEvent(static_cast<QEvent::Type>(type))
+		Event(BaseTask *task, Type type) :
+			QEvent(static_cast<QEvent::Type>(type)),
+			task(task),
+			canceled(false)
 		{}
 	};
 

@@ -12,21 +12,6 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesBaseTask : public BaseTask
 {
 public:
-	class Event : public BaseTask::Event
-	{
-	public:
-		typedef BaseTask::Event::Type Type;
-
-	public:
-		Event(Type type) :
-			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
-			canceled(false)
-		{}
-
-		bool canceled;
-	};
-
-public:
 	ScanFilesBaseTask(TasksNode *receiver);
 
 protected:

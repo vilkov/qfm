@@ -20,16 +20,14 @@ public:
 		typedef BaseTask::Event::Type Type;
 
 	public:
-		Event(Type type, BaseTask *task, const ScanedFiles &files, bool canceled) :
-			BaseTask::Event(static_cast<BaseTask::Event::Type>(type)),
-			task(task),
-			files(files),
-			canceled(false)
-		{}
+		Event(BaseTask *task, Type type, const ScanedFiles &files, bool canceled) :
+			BaseTask::Event(task, static_cast<Type>(type)),
+			files(files)
+		{
+			this->canceled = canceled;
+		}
 
-		BaseTask *task;
 		ScanedFiles files;
-		bool canceled;
 	};
 
 public:

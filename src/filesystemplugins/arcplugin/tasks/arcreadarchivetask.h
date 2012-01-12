@@ -14,10 +14,9 @@ public:
 	{
 	public:
 		Event(BaseTask *task) :
-			TaskEvent(ScanComplete)
+			TaskEvent(task, ScanComplete)
 		{}
 
-		BaseTask *task;
 		Archive::Contents contents;
 	};
 

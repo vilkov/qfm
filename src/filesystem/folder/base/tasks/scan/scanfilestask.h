@@ -15,14 +15,10 @@ public:
 	class Event : public ScanFilesBaseTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, BaseTask *task) :
-			ScanFilesBaseTask::Event(static_cast<Type>(type)),
-			task(task),
-			canceled(false)
+		Event(BaseTask *task, ModelEvent::Type type) :
+			ScanFilesBaseTask::Event(task, static_cast<Type>(type))
 		{}
 
-		BaseTask *task;
-		bool canceled;
 		ScanedFiles files;
 	};
 

@@ -16,18 +16,14 @@ public:
 	{
 	public:
 		Event(BaseTask *task, bool move) :
-			TaskEvent(CopyComplete),
-			task(task),
+			TaskEvent(task, CopyComplete),
 			control(control.take()),
-			canceled(canceled),
 			move(move)
 		{}
 
-		BaseTask *task;
 		const ArcNodeItem::Base *item;
 		PScopedPointer<ICopyControl> control;
 		QString error;
-		bool canceled;
 		bool move;
 	};
 

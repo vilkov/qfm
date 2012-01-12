@@ -2,7 +2,6 @@
 #include "items/arcnoderootitem.h"
 #include "../tasks/arcreadarchivetask.h"
 #include "../tasks/arcperformcopytask.h"
-#include <QtCore/QDebug>
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -34,6 +33,36 @@ bool ArcNode::event(QEvent *e)
 	}
 
 	return TasksNode::event(e);
+}
+
+int ArcNode::columnCount(const QModelIndex &parent) const
+{
+	return 3;
+}
+
+QVariant ArcNode::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+		switch (section)
+		{
+			case 0:
+			{
+				return tr("Name");
+				break;
+			}
+			case 1:
+			{
+				return tr("Size");
+				break;
+			}
+			case 2:
+			{
+				return tr("Modified");
+				break;
+			}
+		}
+
+	return QVariant();
 }
 
 FileTypeId ArcNode::id() const

@@ -16,9 +16,9 @@ public:
 	MyPluginsManager();
 
 private:
-	M3u::M3uPlugin m_m3uplugin;
-	Idm::IdmPlugin m_idmplugin;
-	Arc::ArcPlugin m_arcplugin;
+	M3u::Plugin m_m3uplugin;
+	Idm::Plugin m_idmplugin;
+	Arc::Plugin m_arcplugin;
 };
 
 FILESYSTEM_PLUGINS_NS_END

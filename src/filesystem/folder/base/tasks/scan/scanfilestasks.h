@@ -35,8 +35,8 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(ModelEvent::Type type, BaseTask *task, PScopedPointer<ICopyControl> &control, bool move) :
-			ScanFilesTask::Event(type, task),
+		Event(BaseTask *task, ModelEvent::Type type, PScopedPointer<ICopyControl> &control, bool move) :
+			ScanFilesTask::Event(task, type),
 			control(control.take()),
 			move(move)
 		{}

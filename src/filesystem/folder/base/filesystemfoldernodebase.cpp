@@ -204,7 +204,8 @@ void FolderNodeBase::updateFiles(const BaseTask::Event *e)
 	typedef const UpdateFilesTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	updateFilesEvent(event->updates);
+	if (!event->canceled)
+		updateFilesEvent(event->updates);
 
 	if (event->isLastEvent)
 	{
@@ -265,7 +266,7 @@ void FolderNodeBase::performRemove(const BaseTask::Event *e)
 	typedef const PerformRemoveTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	performRemoveEvent(event->files);
+	performRemoveEvent(event->canceled, event->files);
 	removeAllTaskLinks(event->task);
 }
 

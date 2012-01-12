@@ -10,7 +10,7 @@ ARC_PLUGIN_NS_BEGIN
 class ArcNodeDirEntryItem : public ArcNodeListItem
 {
 public:
-	ArcNodeDirEntryItem(const QString &fileName, Base *parent = 0);
+	ArcNodeDirEntryItem(const QString &fileName, const QDateTime &lastModified, Base *parent = 0);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -22,13 +22,17 @@ public:
 	const QString &fileName() const { return m_fileName; }
 	size_type indexOf(const QString &fileName) const { return m_index.value(fileName, InvalidIndex); }
 
-private:
-	friend class Archive;
 	void add(ArcNodeEntryItem *item)
 	{
 		m_index[item->fileName()] = m_items.size();
 		m_items.push_back(item);
+
+		m_extractedSize += item->extractedSize();
+
+		for (ArcNodeDirEntryItem *p = static_cast<ArcNodeDirEntryItem *>(parent()); p; p = static_cast<ArcNodeDirEntryItem *>(p->parent()))
+			p->m_extractedSize += item->extractedSize();
 	}
+
 	void add(ArcNodeDirEntryItem *item)
 	{
 		m_index[item->fileName()] = m_items.size();
@@ -41,6 +45,8 @@ private:
 private:
 	IndexMap m_index;
 	QString m_fileName;
+	qint64 m_extractedSize;
+	QDateTime m_lastModified;
 	FileTypeInfo m_typeInfo;
 };
 

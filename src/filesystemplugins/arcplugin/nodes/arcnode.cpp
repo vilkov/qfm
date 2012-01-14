@@ -1,6 +1,5 @@
 #include "arcnode.h"
 #include "items/arcnoderootitem.h"
-#include "items/arcnodedirentryitem.h"
 #include "../tasks/arcreadarchivetask.h"
 #include "../tasks/arcperformcopytask.h"
 
@@ -354,7 +353,7 @@ void ArcNode::updateFirstColumn(ArcNodeItem::Base *entry)
 {
 	QModelIndex index;
 
-	if (ArcNodeDirEntryItem *parent = static_cast<ArcNodeDirEntryItem *>(entry->parent()))
+	if (ArcNodeListItem *parent = static_cast<ArcNodeListItem *>(entry->parent()))
 		index = createIndex(parent->indexOf(entry), 0, entry);
 	else
 		index = createIndex(m_items.indexOf(entry), 0, entry);

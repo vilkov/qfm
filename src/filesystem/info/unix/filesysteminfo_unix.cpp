@@ -218,9 +218,9 @@ IFile::size_type Info::freeSpace() const
 	return Tools::freeSpace(m_info.isDir ? absoluteFilePath().toUtf8() : absolutePath().toUtf8());
 }
 
-bool Info::contains(IFileControl *info) const
+bool Info::contains(const QString &fileName) const
 {
-	return QDir(absoluteFilePath()).exists(info->fileName());
+	return QDir(absoluteFilePath()).exists(fileName);
 }
 
 bool Info::rename(const QString &newFileName, QString &error) const
@@ -236,7 +236,7 @@ bool Info::rename(const QString &newFileName, QString &error) const
 	}
 }
 
-IFile *Info::open(IFile::OpenMode mode, QString &error) const
+IFile *Info::file(IFile::OpenMode mode, QString &error) const
 {
 	QFile::OpenMode openMode;
 	PScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
@@ -246,8 +246,9 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 		case IFile::ReadOnly:
 			openMode = QFile::ReadOnly;
 			break;
-		case IFile::WriteOnly:
-			openMode = QFile::WriteOnly | QFile::Truncate;
+
+		case IFile::ReadWrite:
+			openMode = QFile::ReadWrite | QFile::Truncate;
 			break;
 	}
 
@@ -259,33 +260,23 @@ IFile *Info::open(IFile::OpenMode mode, QString &error) const
 	return 0;
 }
 
-IFileControl *Info::open(IFileControl *info, QString &error) const
+IFileControl *Info::openFile(const QString &fileName, QString &error) const
 {
-	return new Info(absoluteFilePath(info->fileName()));
+	return new Info(absoluteFilePath(fileName));
 }
 
-IFileControl *Info::create(IFileControl *info, QString &error) const
+IFileControl *Info::openFolder(const QString &fileName, bool create, QString &error) const
 {
-	if (info->isFile())
-		return new Info(absoluteFilePath(info->fileName()));
-	else
-		if (QDir(absoluteFilePath()).mkdir(info->fileName()))
-			return new Info(absoluteFilePath(info->fileName()));
-		else
-			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(info->fileName()));
+	QDir dir(absoluteFilePath());
 
-	return 0;
-}
-
-IFileControl *Info::create(const QString &name, FileType type, QString &error) const
-{
-	if (type == File)
-		return new Info(absoluteFilePath(name));
+	if (dir.exists(fileName))
+		return new Info(dir.absoluteFilePath(fileName));
 	else
-		if (QDir(absoluteFilePath()).mkdir(name))
-			return new Info(absoluteFilePath(name));
-		else
-			error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(name));
+		if (create)
+			if (dir.mkdir(fileName))
+				return new Info(dir.absoluteFilePath(fileName));
+			else
+				error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
 
 	return 0;
 }

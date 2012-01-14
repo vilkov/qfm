@@ -87,7 +87,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
-		PScopedPointer<IFileControl> folder(create(dialog.value(), IFileControl::Folder, error));
+		PScopedPointer<IFileControl> folder(openFolder(dialog.value(), true, error));
 
 		if (!folder)
 			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);

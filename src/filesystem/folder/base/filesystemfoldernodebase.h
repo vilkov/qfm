@@ -71,7 +71,7 @@ protected:
 	void setUpdating(bool value) { m_updating = value; }
 	void setInfo(const Info &info) { m_info = info; }
 
-	IFileControl *create(const QString &name, IFileControl::FileType type, QString &error) const { return m_info.create(name, type, error); }
+	IFileControl *openFolder(const QString &fileName, bool create, QString &error) const { return m_info.openFolder(fileName, create, error); }
 
 private:
 	void updateFiles();

@@ -37,14 +37,12 @@ public:
 
 	/* IFileControl */
 	virtual IFile::size_type freeSpace() const;
-	virtual bool contains(IFileControl *info) const;
+	virtual bool contains(const QString &fileName) const;
 	virtual bool rename(const QString &newFileName, QString &error) const;
 
-	virtual IFile *open(IFile::OpenMode mode, QString &error) const;
-	virtual IFileControl *open(IFileControl *info, QString &error) const;
-
-	virtual IFileControl *create(IFileControl *info, QString &error) const;
-	virtual IFileControl *create(const QString &name, FileType type, QString &error) const;
+	virtual IFile *file(IFile::OpenMode mode, QString &error) const;
+	virtual IFileControl *openFile(const QString &fileName, QString &error) const;
+	virtual IFileControl *openFolder(const QString &fileName, bool create, QString &error) const;
 
 public:
 	bool isRoot() const { return m_isRoot; }

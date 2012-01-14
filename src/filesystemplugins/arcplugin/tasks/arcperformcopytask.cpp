@@ -16,18 +16,17 @@ PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Bas
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
+	Archive::State *state;
+	PScopedPointer<Event> event(new Event(this, m_move));
 
+	if (const Archive *archive = Archive::archive(m_fileName, &state))
+	{
+		archive->extract(state, m_item, m_control.data(), aborted);
+		archive->endRead(state);
+	}
 
-//	if (val)
-//	{
-//
-//		PScopedPointer<Event> event(new Event(this, m_move));
-//
-//		event->canceled = isCanceled();
-//
-//		if (!aborted && !isReceiverDead())
-//			postEvent(event.take());
-//	}
+	event->canceled = aborted;
+	postEvent(event.take());
 }
 
 ARC_PLUGIN_NS_END

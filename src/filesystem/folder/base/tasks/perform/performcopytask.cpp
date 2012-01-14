@@ -43,12 +43,12 @@ void PerformCopyTask::run(const volatile Flags &aborted)
 void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
-		if (destination->contains(entry))
+		if (destination->contains(entry->fileName()))
 			if (entry->isDir())
 			{
 				PScopedPointer<IFileControl> dest;
 
-				if (dest = destination->open(entry, m_lastError))
+				if (dest = destination->openFolder(entry->fileName(), false, m_lastError))
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
@@ -81,7 +81,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 			{
 				PScopedPointer<IFileControl> dest;
 
-				if (dest = destination->create(entry, m_lastError))
+				if (dest = destination->openFolder(entry->fileName(), true, m_lastError))
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
@@ -105,10 +105,10 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
-		if (m_sourceFile = entry->open(IFile::ReadOnly, m_lastError))
-			if (m_destEntry = destination->create(entry, m_lastError))
+		if (m_sourceFile = entry->file(IFile::ReadOnly, m_lastError))
+			if (m_destEntry = destination->openFile(entry->fileName(), m_lastError))
 			{
-				if (m_destFile = m_destEntry->open(IFile::WriteOnly, m_lastError))
+				if (m_destFile = m_destEntry->file(IFile::ReadWrite, m_lastError))
 				{
 					m_written = 0;
 

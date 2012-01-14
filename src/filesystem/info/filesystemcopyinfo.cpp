@@ -95,9 +95,9 @@ IFile::size_type CopyInfo::freeSpace() const
 	return m_info.freeSpace();
 }
 
-bool CopyInfo::contains(IFileControl *info) const
+bool CopyInfo::contains(const QString &fileName) const
 {
-	return m_info.contains(info);
+	return m_info.contains(fileName);
 }
 
 bool CopyInfo::rename(const QString &newFileName, QString &error) const
@@ -105,24 +105,19 @@ bool CopyInfo::rename(const QString &newFileName, QString &error) const
 	return m_info.rename(newFileName, error);
 }
 
-IFile *CopyInfo::open(IFile::OpenMode mode, QString &error) const
+IFile *CopyInfo::file(IFile::OpenMode mode, QString &error) const
 {
-	return m_info.open(mode, error);
+	return m_info.file(mode, error);
 }
 
-IFileControl *CopyInfo::open(IFileControl *info, QString &error) const
+IFileControl *CopyInfo::openFile(const QString &fileName, QString &error) const
 {
-	return m_info.open(info, error);
+	return m_info.openFile(fileName, error);
 }
 
-IFileControl *CopyInfo::create(IFileControl *info, QString &error) const
+IFileControl *CopyInfo::openFolder(const QString &fileName, bool create, QString &error) const
 {
-	return m_info.create(info, error);
-}
-
-IFileControl *CopyInfo::create(const QString &name, FileType type, QString &error) const
-{
-	return m_info.create(name, type, error);
+	return m_info.openFolder(fileName, create, error);
 }
 
 bool CopyInfo::physicalCopyIsNecessary() const

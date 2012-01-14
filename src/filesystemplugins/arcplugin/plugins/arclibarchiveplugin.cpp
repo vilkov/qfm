@@ -12,6 +12,10 @@ ARC_PLUGIN_NS_BEGIN
 
 struct LibArchiveState : public LibArchivePlugin::State
 {
+	LibArchiveState() :
+		a(NULL)
+	{}
+
     struct archive *a;
 };
 
@@ -104,18 +108,29 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     return contents;
 }
 
-void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, IFileControl *dest, const volatile Flags &aborted) const
+void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, const volatile Flags &aborted) const
 {
 	Q_ASSERT(s->error.isEmpty());
 
+	if (entry->isList())
+	{
+
+	}
+	else
+	{
+//		dest->create(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), IFileControl::File, s->error);
+	}
 }
 
 void LibArchivePlugin::endRead(State *s) const
 {
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
 
-	archive_read_close(state->a);
-	archive_read_finish(state->a);
+	if (state->a)
+	{
+		archive_read_close(state->a);
+		archive_read_finish(state->a);
+	}
 
 	delete state;
 }

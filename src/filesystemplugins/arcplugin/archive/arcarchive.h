@@ -36,7 +36,7 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const = 0;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const = 0;
-	virtual void extract(State *state, const ArcNodeItem::Base *entry, const IFileControl *dest, const volatile Flags &aborted) const = 0;
+	virtual void extract(State *state, const ArcNodeItem::Base *entry, const IFileControl *dest, IFile::value_type *buffer, IFile::size_type bufferSize, const volatile Flags &aborted) const = 0;
 	virtual void endRead(State *state) const = 0;
 };
 

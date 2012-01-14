@@ -1,5 +1,5 @@
 #include "application.h"
-#include "memory/memorymanager.h"
+//#include "memory/memorymanager.h"
 
 
 int main(int argc, char *argv[])

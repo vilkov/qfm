@@ -21,10 +21,12 @@ void PerformCopyTask::run(const volatile Flags &aborted)
 
 	if (const Archive *archive = Archive::archive(m_fileName, &state))
 	{
-		archive->extract(state, m_item, m_control.data(), aborted);
+		archive->extract(state, m_item, m_control.data(), m_buffer, FileReadWriteGranularity, aborted);
 		archive->endRead(state);
 	}
 
+	event->item = m_item;
+	event->move = m_move;
 	event->canceled = aborted;
 	postEvent(event.take());
 }

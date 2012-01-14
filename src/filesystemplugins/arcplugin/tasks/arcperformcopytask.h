@@ -12,18 +12,17 @@ ARC_PLUGIN_NS_BEGIN
 class PerformCopyTask : public BaseTask
 {
 public:
+	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
+
 	class Event : public TaskEvent
 	{
 	public:
 		Event(BaseTask *task, bool move) :
 			TaskEvent(task, CopyComplete),
-			control(control.take()),
 			move(move)
 		{}
 
 		const ArcNodeItem::Base *item;
-		PScopedPointer<ICopyControl> control;
-		QString error;
 		bool move;
 	};
 
@@ -38,6 +37,7 @@ private:
 	const ArcNodeItem::Base *m_item;
 	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
+	IFile::value_type m_buffer[FileReadWriteGranularity];
 };
 
 ARC_PLUGIN_NS_END

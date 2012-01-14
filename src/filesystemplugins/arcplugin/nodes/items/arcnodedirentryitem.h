@@ -21,6 +21,7 @@ public:
 
 	const QString &fileName() const { return m_fileName; }
 	size_type indexOf(const QString &fileName) const { return m_index.value(fileName, InvalidIndex); }
+	using ArcNodeListItem::indexOf;
 
 	void add(ArcNodeEntryItem *item)
 	{

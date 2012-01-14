@@ -108,9 +108,10 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     return contents;
 }
 
-void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, const volatile Flags &aborted) const
+void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, IFile::value_type *buffer, IFile::size_type bufferSize, const volatile Flags &aborted) const
 {
 	Q_ASSERT(s->error.isEmpty());
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
 
 	if (entry->isList())
 	{
@@ -118,7 +119,54 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const I
 	}
 	else
 	{
-//		dest->create(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), IFileControl::File, s->error);
+		PScopedPointer<IFileControl> destFile;
+		QString entryPath = static_cast<const ArcNodeEntryItem *>(entry)->fileName();
+
+		if (destFile = dest->openFile(entryPath, state->error))
+		{
+			PScopedPointer<IFile> file;
+
+			if (file = destFile->file(IFile::ReadWrite, state->error))
+			{
+			    int res;
+			    struct archive_entry *e;
+				QByteArray entryPathUtf8;
+
+				for (ArcNodeDirEntryItem *parent = static_cast<const ArcNodeDirEntryItem *>(entry->parent()); parent; parent = static_cast<const ArcNodeDirEntryItem *>(parent->parent()))
+					entryPath.prepend(QChar('/')).prepend(static_cast<const ArcNodeDirEntryItem *>(parent)->fileName());
+
+				entryPathUtf8 = entryPath.toUtf8();
+
+			    while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
+			    	if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
+					{
+			    		int size;
+
+						for (;;)
+						{
+							size = archive_read_data(state->a, buffer, bufferSize);
+
+							if (size < 0)
+							{
+								state->error = QString::fromUtf8(archive_error_string(state->a));
+								break;
+							}
+
+							if (size == 0)
+								break;
+
+							file->write(buffer, size);
+						}
+
+						break;
+					}
+			    	else
+			    		archive_read_data_skip(state->a);
+
+			    if (res != ARCHIVE_EOF && res != ARCHIVE_OK)
+					state->error = QString::fromUtf8(archive_error_string(state->a));
+			}
+		}
 	}
 }
 

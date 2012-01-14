@@ -78,6 +78,7 @@ protected:
 	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
 
 	void scanCompleteEvent(TaskEvent *event);
+	void copyCompleteEvent(TaskEvent *event);
 
 private:
 	enum
@@ -105,7 +106,7 @@ private:
 
 private:
 	typedef ::Tools::Containers::Union Union;
-	void updateFirstColumn(ItemsContainer::size_type index, ArcNodeItem::Base *entry);
+	void updateFirstColumn(ArcNodeItem::Base *entry);
 
 private:
 	ItemsContainer m_itemsContainer;

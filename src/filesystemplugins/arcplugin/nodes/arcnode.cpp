@@ -1,5 +1,6 @@
 #include "arcnode.h"
 #include "items/arcnoderootitem.h"
+#include "items/arcnodedirentryitem.h"
 #include "../tasks/arcreadarchivetask.h"
 #include "../tasks/arcperformcopytask.h"
 
@@ -28,6 +29,15 @@ bool ArcNode::event(QEvent *e)
 
 			return true;
 		}
+
+		case TaskEvent::CopyComplete:
+		{
+			e->accept();
+			copyCompleteEvent(static_cast<TaskEvent*>(e));
+
+			return true;
+		}
+
 		default:
 			break;
 	}
@@ -217,7 +227,7 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 			else
 				static_cast<ArcNodeItem*>(index.internalPointer())->lock(tr("Extracting..."));
 
-			updateFirstColumn(index.row(), static_cast<ArcNodeItem::Base*>(index.internalPointer()));
+			updateFirstColumn(static_cast<ArcNodeItem::Base*>(index.internalPointer()));
 			addTask(new PerformCopyTask(m_info.absoluteFilePath(), static_cast<ArcNodeItem::Base*>(index.internalPointer()), control, false, this), list);
 		}
 	}
@@ -303,6 +313,20 @@ void ArcNode::scanCompleteEvent(TaskEvent *e)
 	removeAllTaskLinks(event->task);
 }
 
+void ArcNode::copyCompleteEvent(TaskEvent *e)
+{
+	PerformCopyTask::Event *event = static_cast<PerformCopyTask::Event*>(e);
+	ArcNodeItem::Base *item = const_cast<ArcNodeItem::Base *>(event->item);
+
+	if (item->isList())
+		static_cast<ArcNodeListItem*>(item)->unlock();
+	else
+		static_cast<ArcNodeItem*>(item)->unlock();
+
+	updateFirstColumn(item);
+	removeAllTaskLinks(event->task);
+}
+
 ArcNode::ItemsContainer::ItemsContainer()
 {}
 
@@ -326,10 +350,16 @@ ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) 
 	return m_container.indexOf(item);
 }
 
-void ArcNode::updateFirstColumn(ItemsContainer::size_type index, ArcNodeItem::Base *entry)
+void ArcNode::updateFirstColumn(ArcNodeItem::Base *entry)
 {
-	QModelIndex idx = createIndex(index, 0, entry);
-	emit dataChanged(idx, idx);
+	QModelIndex index;
+
+	if (ArcNodeDirEntryItem *parent = static_cast<ArcNodeDirEntryItem *>(entry->parent()))
+		index = createIndex(parent->indexOf(entry), 0, entry);
+	else
+		index = createIndex(m_items.indexOf(entry), 0, entry);
+
+	emit dataChanged(index, index);
 }
 
 ARC_PLUGIN_NS_END

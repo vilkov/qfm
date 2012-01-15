@@ -26,9 +26,4 @@ bool FilesystemRootItem::isRootItem() const
 	return true;
 }
 
-bool FilesystemRootItem::isListItem() const
-{
-	return false;
-}
-
 FILE_SYSTEM_NS_END

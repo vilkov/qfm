@@ -86,15 +86,11 @@ bool FileSystemEntryItem::isRootItem() const
 	return false;
 }
 
-bool FileSystemEntryItem::isListItem() const
-{
-	return false;
-}
-
 void FileSystemEntryItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_totalSize = totalSize;
 	FileSystemBaseItem::lock(reason);
+	start(totalSize);
 }
 
 void FileSystemEntryItem::lock(const QString &reason)
@@ -104,9 +100,8 @@ void FileSystemEntryItem::lock(const QString &reason)
 
 void FileSystemEntryItem::unlock()
 {
+	stop();
 	FileSystemBaseItem::unlock();
-	m_doneSize.clear();
-	m_timeElapsed.clear();
 }
 
 FILE_SYSTEM_NS_END

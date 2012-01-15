@@ -19,7 +19,6 @@ public:
 
 	/* FileSystemBaseItem */
 	virtual bool isRootItem() const;
-	virtual bool isListItem() const;
 
 private:
 	QVariant m_label;

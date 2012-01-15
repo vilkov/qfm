@@ -5,7 +5,9 @@
 FILE_SYSTEM_NS_BEGIN
 
 TaskNodeItem::TaskNodeItem(Base *parent) :
-	FileSystemItem(parent)
+	FileSystemItem(parent),
+	m_total(0),
+	m_timeElapsed(0)
 {}
 
 void TaskNodeItem::lock(const QString &reason)

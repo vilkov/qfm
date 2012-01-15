@@ -543,8 +543,7 @@ void FolderNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 pro
 	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem::Base *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
-	entry->setDoneSize(progress);
-	entry->setTimeElapsed(timeElapsed);
+	entry->updateProgress(progress, timeElapsed);
 	updateSecondColumn(index, entry);
 }
 
@@ -553,8 +552,7 @@ void FolderNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 
 	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem::Base *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
-	entry->setDoneSize(entry->totalSize().toULongLong());
-	entry->setTimeElapsed(timeElapsed);
+	entry->updateProgress(entry->total(), timeElapsed);
 	updateSecondColumn(index, entry);
 }
 

@@ -31,7 +31,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 				progressBarOption.minimum = 0;
 				progressBarOption.maximum = 100;
 				progressBarOption.progress = 100;
-				progressBarOption.text = Tools::humanReadableTime(entry->timeElapsed().toULongLong());
+				progressBarOption.text = Tools::humanReadableTime(entry->timeElapsed());
 				progressBarOption.textAlignment = Qt::AlignCenter;
 				progressBarOption.textVisible = true;
 
@@ -52,11 +52,11 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 					progressBarOption.progress = progress;
 
 					progressBarOption.text =
-							Tools::humanReadableShortSize(entry->doneSize().toULongLong()).
+							Tools::humanReadableShortSize(entry->done()).
 							append(QString::fromLatin1(" / ")).
-							append(Tools::humanReadableShortSize(entry->totalSize().toULongLong())).
+							append(Tools::humanReadableShortSize(entry->total())).
 							append(QString::fromLatin1("  ")).
-							append(Tools::humanReadableTime((entry->totalSize().toULongLong() / entry->doneSize().toULongLong()) * entry->timeElapsed().toULongLong()));
+							append(Tools::humanReadableTime((entry->total() / entry->done()) * entry->timeElapsed()));
 					progressBarOption.textAlignment = Qt::AlignCenter;
 					progressBarOption.textVisible = true;
 
@@ -72,12 +72,5 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 
 	Delegate::paint(painter, option, index);
 }
-
-//QSize FolderDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-//{
-//	QSize size = QStyledItemFolderDelegate::sizeHint(option, index);
-//	size.setHeight(size.height() + 3);
-//	return size;
-//}
 
 FILE_SYSTEM_NS_END

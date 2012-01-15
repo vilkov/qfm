@@ -13,13 +13,12 @@ class FileSystemBaseItem : public TaskNodeItem
 public:
 	FileSystemBaseItem(const Info &info, Base *parent = 0);
 
-	/* FileSystemItem */
+	/* ::Tools::Models::Tree::Item */
 	virtual bool isList() const;
 
 	Node *node() const { return m_node; }
 
 	virtual bool isRootItem() const = 0;
-	virtual bool isListItem() const = 0;
 
 	const Info &info() const { return m_info; }
 	Info &info() { return m_info; }

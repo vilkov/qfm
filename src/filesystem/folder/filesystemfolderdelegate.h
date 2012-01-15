@@ -2,12 +2,12 @@
 #define FILESYSTEMFOLDERDELEGATE_H_
 
 #include <QtGui/QAbstractProxyModel>
-#include "../filesystemdelegate.h"
+#include "../tasks/filesystemtasksnodedelegate.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderDelegate : public Delegate
+class FolderDelegate : public TasksNodeDelegate
 {
 	Q_DISABLE_COPY(FolderDelegate)
 

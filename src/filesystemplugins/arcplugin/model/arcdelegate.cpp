@@ -4,8 +4,36 @@
 ARC_PLUGIN_NS_BEGIN
 
 ArcDelegate::ArcDelegate(QAbstractProxyModel *proxy, QObject *parent) :
-	TasksNodeDelegate(proxy, 1, parent)
-{}
+	TasksNodeDelegate(parent),
+	m_proxy(proxy)
+{
+	Q_ASSERT(m_proxy != 0);
+}
+
+void ArcDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	if (index.column() == 1)
+	{
+		QModelIndex idx = m_proxy->mapToSource(index);
+
+		if (static_cast<TaskNodeItem::Base *>(idx.internalPointer())->isList())
+		{
+			const TaskNodeListItem *entry = static_cast<const TaskNodeListItem *>(idx.internalPointer());
+
+			if (entry->isInProgress())
+				paintProgressInMb(entry, painter, option);
+		}
+		else
+		{
+			TaskNodeItem *entry = static_cast<TaskNodeItem *>(idx.internalPointer());
+
+			if (entry->isInProgress())
+				paintProgressInMb(entry, painter, option);
+		}
+	}
+
+	TasksNodeDelegate::paint(painter, option, index);
+}
 
 void ArcDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

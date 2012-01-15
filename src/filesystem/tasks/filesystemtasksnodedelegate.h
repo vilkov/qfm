@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMTASKSNODEDELEGATE_H_
 #define FILESYSTEMTASKSNODEDELEGATE_H_
 
-#include <QtGui/QAbstractProxyModel>
+#include "items/filesystemtasknodeitemlist.h"
 #include "../filesystemdelegate.h"
 
 
@@ -12,13 +12,11 @@ class TasksNodeDelegate : public Delegate
 	Q_DISABLE_COPY(TasksNodeDelegate)
 
 public:
-	TasksNodeDelegate(QAbstractProxyModel *proxy, uint progressColumn, QObject *parent = 0);
+	TasksNodeDelegate(QObject *parent = 0);
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
-    QAbstractProxyModel *m_proxy;
-    uint m_progressColumn;
+protected:
+    void paintProgressInMb(const TaskNodeItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const;
+    void paintProgressInMb(const TaskNodeListItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const;
 };
 
 FILE_SYSTEM_NS_END

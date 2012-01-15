@@ -8,7 +8,14 @@ Delegate::Delegate(QObject *parent) :
 	QStyledItemDelegate(parent)
 {}
 
-void Delegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+//QSize Delegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+//{
+//	QSize size = QStyledItemDelegate::sizeHint(option, index);
+//	size.setHeight(size.height() + 3);
+//	return size;
+//}
+
+void Delegate::paintBackgroundLines(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QStyleOptionViewItemV4 opt = option;
 	initStyleOption(&opt, index);
@@ -23,12 +30,5 @@ void Delegate::paint(QPainter *painter, const QStyleOptionViewItem &option, cons
 	else
 		QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
 }
-
-//QSize Delegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-//{
-//	QSize size = QStyledItemDelegate::sizeHint(option, index);
-//	size.setHeight(size.height() + 3);
-//	return size;
-//}
 
 FILE_SYSTEM_NS_END

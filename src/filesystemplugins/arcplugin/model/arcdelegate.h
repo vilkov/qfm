@@ -1,6 +1,7 @@
 #ifndef ARCDELEGATE_H_
 #define ARCDELEGATE_H_
 
+#include <QtGui/QAbstractProxyModel>
 #include "../arcplugin_ns.h"
 #include "../../../filesystem/tasks/filesystemtasksnodedelegate.h"
 
@@ -14,8 +15,12 @@ class ArcDelegate : public TasksNodeDelegate
 public:
 	ArcDelegate(QAbstractProxyModel *proxy, QObject *parent = 0);
 
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+    QAbstractProxyModel *m_proxy;
 };
 
 ARC_PLUGIN_NS_END

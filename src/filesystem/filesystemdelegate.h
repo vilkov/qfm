@@ -15,8 +15,11 @@ class Delegate : public QStyledItemDelegate
 public:
 	Delegate(QObject *parent = 0);
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+//    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 //    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+protected:
+    void paintBackgroundLines(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 FILE_SYSTEM_NS_END

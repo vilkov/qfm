@@ -16,12 +16,12 @@ QVariant ArcNodeRootItem::data(qint32 column, qint32 role) const
 		return QVariant();
 }
 
-bool ArcNodeRootItem::isRoot()
+bool ArcNodeRootItem::isRoot() const
 {
 	return true;
 }
 
-bool ArcNodeRootItem::isDir()
+bool ArcNodeRootItem::isDir() const
 {
 	return false;
 }

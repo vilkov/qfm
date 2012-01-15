@@ -14,6 +14,7 @@ class Archive
 public:
 	typedef BaseTask::Task::Flags      Flags;
 	typedef QList<ArcNodeItem::Base *> Container;
+
 	struct Contents
 	{
 		Contents() :
@@ -22,6 +23,20 @@ public:
 
 		Container items;
 		qint64 extractedSize;
+	};
+
+	class Callback
+	{
+	public:
+		virtual ~Callback();
+
+		virtual IFile::value_type *buffer() const = 0;
+		virtual IFile::size_type bufferSize() const = 0;
+
+		virtual bool overwriteAll() const = 0;
+		virtual bool skipAllIfNotCopy() const = 0;
+		virtual void askForOverwrite(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted) = 0;
+		virtual void askForSkipIfNotCopy(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted) = 0;
 	};
 
 	struct State
@@ -36,7 +51,7 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const = 0;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const = 0;
-	virtual void extract(State *state, const ArcNodeItem::Base *entry, const IFileControl *dest, IFile::value_type *buffer, IFile::size_type bufferSize, const volatile Flags &aborted) const = 0;
+	virtual void extract(State *state, const ArcNodeItem::Base *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const = 0;
 	virtual void endRead(State *state) const = 0;
 };
 

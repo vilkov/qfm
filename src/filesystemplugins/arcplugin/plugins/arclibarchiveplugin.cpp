@@ -13,10 +13,12 @@ ARC_PLUGIN_NS_BEGIN
 struct LibArchiveState : public LibArchivePlugin::State
 {
 	LibArchiveState() :
-		a(NULL)
+		a(NULL),
+		callback(0)
 	{}
 
     struct archive *a;
+    LibArchivePlugin::Callback *callback;
 };
 
 
@@ -44,7 +46,7 @@ LibArchivePlugin::State *LibArchivePlugin::beginRead(const QString &fileName) co
 
 LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Flags &aborted) const
 {
-	Q_ASSERT(s->error.isEmpty());
+	Q_ASSERT(s && s->error.isEmpty());
 	Contents contents;
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
     QMap<QString, ArcNodeDirEntryItem *> parents;
@@ -108,43 +110,138 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     return contents;
 }
 
-void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, IFile::value_type *buffer, IFile::size_type bufferSize, const volatile Flags &aborted) const
+void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
 {
-	Q_ASSERT(s->error.isEmpty());
+	Q_ASSERT(s && s->error.isEmpty());
+	Q_ASSERT(callback);
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+	state->callback = callback;
+	bool tryAgain;
 
 	if (entry->isList())
-	{
-
-	}
+		extractEntry(state, dest, static_cast<const ArcNodeListItem *>(entry), tryAgain = false, aborted);
 	else
+		extractFile(state, dest, static_cast<const ArcNodeItem *>(entry), tryAgain = false, aborted);
+}
+
+void LibArchivePlugin::endRead(State *s) const
+{
+	Q_ASSERT(s);
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+
+	if (state->a)
 	{
-		PScopedPointer<IFileControl> destFile;
-		QString entryPath = static_cast<const ArcNodeEntryItem *>(entry)->fileName();
+		archive_read_close(state->a);
+		archive_read_finish(state->a);
+	}
 
-		if (destFile = dest->openFile(entryPath, state->error))
+	delete state;
+}
+
+void LibArchivePlugin::extractEntry(State *s, const IFileControl *destination, const ArcNodeListItem *e, volatile bool &tryAgain, const volatile Flags &aborted) const
+{
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+	const ArcNodeDirEntryItem *entry = static_cast<const ArcNodeDirEntryItem *>(e);
+
+	do
+		if (destination->contains(entry->fileName()))
 		{
-			PScopedPointer<IFile> file;
+			PScopedPointer<IFileControl> dest;
 
-			if (file = destFile->file(IFile::ReadWrite, state->error))
-			{
-			    int res;
-			    struct archive_entry *e;
-				QByteArray entryPathUtf8;
+			if (dest = destination->openFolder(entry->fileName(), false, state->error))
+				for (ArcNodeListItem::size_type i = 0;
+						i < entry->size() && !aborted;
+						++i)
+					if (entry->at(i)->isList())
+						extractEntry(state, dest.data(), static_cast<const ArcNodeListItem *>(entry->at(i)), tryAgain = false, aborted);
+					else
+						extractFile(state, dest.data(), static_cast<const ArcNodeItem *>(entry->at(i)), tryAgain = false, aborted);
+			else
+				if (state->callback->skipAllIfNotCopy() || tryAgain)
+					break;
+				else
+					state->callback->askForSkipIfNotCopy(
+							tr("Failed to open directory \"%1\". Skip it?").
+								arg(destination->absoluteFilePath(entry->fileName())),
+							tryAgain = false,
+							aborted);
+		}
+		else
+		{
+			PScopedPointer<IFileControl> dest;
 
-				for (ArcNodeDirEntryItem *parent = static_cast<const ArcNodeDirEntryItem *>(entry->parent()); parent; parent = static_cast<const ArcNodeDirEntryItem *>(parent->parent()))
-					entryPath.prepend(QChar('/')).prepend(static_cast<const ArcNodeDirEntryItem *>(parent)->fileName());
+			if (dest = destination->openFolder(entry->fileName(), true, state->error))
+				for (ArcNodeListItem::size_type i = 0;
+						i < entry->size() && !aborted;
+						++i)
+					if (entry->at(i)->isList())
+						extractEntry(state, dest.data(), static_cast<const ArcNodeListItem *>(entry->at(i)), tryAgain = false, aborted);
+					else
+						extractFile(state, dest.data(), static_cast<const ArcNodeItem *>(entry->at(i)), tryAgain = false, aborted);
+			else
+				if (state->callback->skipAllIfNotCopy())
+					break;
+				else
+					state->callback->askForSkipIfNotCopy(
+							tr("Failed to create directory \"%1\". Skip it?").
+								arg(destination->absoluteFilePath(entry->fileName())),
+							tryAgain = false,
+							aborted);
+		}
+	while (tryAgain && !aborted);
+}
 
-				entryPathUtf8 = entryPath.toUtf8();
+void LibArchivePlugin::extractFile(State *s, const IFileControl *destination, const ArcNodeItem *e, volatile bool &tryAgain, const volatile Flags &aborted) const
+{
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+	const ArcNodeEntryItem *entry = static_cast<const ArcNodeEntryItem *>(e);
 
-			    while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
-			    	if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
+	do
+		if (destination->contains(entry->fileName()))
+			if (state->callback->overwriteAll())
+				doExtractFile(state, destination, entry, tryAgain = false, aborted);
+			else
+				state->callback->askForOverwrite(
+						tr("File \"%1\" already exists in \"%3\". Overwrite it?").
+							arg(entry->fileName()).
+							arg(destination->absoluteFilePath()),
+						tryAgain = false,
+						aborted);
+		else
+			doExtractFile(state, destination, entry, tryAgain = false, aborted);
+	while (tryAgain && !aborted);
+}
+
+void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const
+{
+    int res;
+    struct archive_entry *e;
+    QString entryPath;
+	QByteArray entryPathUtf8;
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+
+	for (ArcNodeDirEntryItem *parent = static_cast<const ArcNodeDirEntryItem *>(entry->parent()); parent; parent = static_cast<const ArcNodeDirEntryItem *>(parent->parent()))
+		entryPath.prepend(QChar('/')).prepend(static_cast<const ArcNodeDirEntryItem *>(parent)->fileName());
+
+	entryPathUtf8 = entryPath.toUtf8();
+
+	while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
+		if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
+		{
+			PScopedPointer<IFileControl> m_destEntry;
+
+			do
+				if (m_destEntry = destination->openFile(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), state->error))
+				{
+					PScopedPointer<IFile> m_destFile;
+
+					if (m_destFile = m_destEntry->file(IFile::ReadWrite, state->error))
 					{
-			    		int size;
+						int size;
 
 						for (;;)
 						{
-							size = archive_read_data(state->a, buffer, bufferSize);
+							size = archive_read_data(state->a, state->callback->buffer(), state->callback->bufferSize());
 
 							if (size < 0)
 							{
@@ -155,32 +252,41 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const I
 							if (size == 0)
 								break;
 
-							file->write(buffer, size);
+							if (m_destFile->write(state->callback->buffer(), size) != (IFile::size_type)size)
+//								m_progress.update(size);
+//							else
+							{
+								state->callback->askForSkipIfNotCopy(
+										tr("Failed to write to file \"%1\" (%2). Skip it?").
+											arg(m_destEntry->absoluteFilePath()).
+											arg(state->error = m_destFile->lastError()),
+										tryAgain = false,
+										aborted);
+
+								break;
+							}
 						}
-
-						break;
 					}
-			    	else
-			    		archive_read_data_skip(state->a);
+				}
+				else
+					if (state->callback->skipAllIfNotCopy() || tryAgain)
+						break;
+					else
+						state->callback->askForSkipIfNotCopy(
+								tr("Failed to create file \"%1\" (%2). Skip it?").
+									arg(destination->absoluteFilePath(static_cast<const ArcNodeEntryItem *>(entry)->fileName())).
+									arg(state->error),
+								tryAgain = false,
+								aborted);
+			while (tryAgain && !aborted);
 
-			    if (res != ARCHIVE_EOF && res != ARCHIVE_OK)
-					state->error = QString::fromUtf8(archive_error_string(state->a));
-			}
+			break;
 		}
-	}
-}
+		else
+			archive_read_data_skip(state->a);
 
-void LibArchivePlugin::endRead(State *s) const
-{
-	LibArchiveState *state = static_cast<LibArchiveState *>(s);
-
-	if (state->a)
-	{
-		archive_read_close(state->a);
-		archive_read_finish(state->a);
-	}
-
-	delete state;
+	if (res != ARCHIVE_EOF && res != ARCHIVE_OK)
+		state->error = QString::fromUtf8(archive_error_string(state->a));
 }
 
 ARC_PLUGIN_NS_END

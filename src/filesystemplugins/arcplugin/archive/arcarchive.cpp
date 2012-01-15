@@ -4,6 +4,9 @@
 
 ARC_PLUGIN_NS_BEGIN
 
+Archive::Callback::~Callback()
+{}
+
 Archive::~Archive()
 {}
 

@@ -16,8 +16,8 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 	/* IArcNodeItem */
-	virtual bool isRoot();
-	virtual bool isDir();
+	virtual bool isRoot() const;
+	virtual bool isDir() const;
 
 	const QString &fileName() const { return m_fileName; }
 	size_type indexOf(const QString &fileName) const { return m_index.value(fileName, InvalidIndex); }

@@ -12,8 +12,8 @@ class IArcNodeItem
 public:
 	virtual ~IArcNodeItem();
 
-	virtual bool isRoot() = 0;
-	virtual bool isDir() = 0;
+	virtual bool isRoot() const = 0;
+	virtual bool isDir() const = 0;
 };
 
 

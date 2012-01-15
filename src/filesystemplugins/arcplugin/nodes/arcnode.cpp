@@ -289,7 +289,12 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 
 void ArcNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
 {
+	if (item->isList())
+		static_cast<ArcNodeListItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
+	else
+		static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
 
+	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
 }
 
 void ArcNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)

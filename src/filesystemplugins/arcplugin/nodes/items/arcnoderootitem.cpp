@@ -10,10 +10,30 @@ ArcNodeRootItem::ArcNodeRootItem(Base *parent) :
 
 QVariant ArcNodeRootItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_label;
-	else
-		return QVariant();
+	if (column == 0)
+		switch (role)
+		{
+			case Qt::EditRole:
+			case Qt::DisplayRole:
+				return m_label;
+
+			case Qt::DecorationRole:
+				if (isLocked())
+					return lockIcon();
+				else
+					break;
+
+			case Qt::TextAlignmentRole:
+				return Qt::AlignLeft;
+
+			case Qt::ToolTipRole:
+				if (isLocked())
+					return lockReason();
+				else
+					break;
+		}
+
+	return QVariant();
 }
 
 bool ArcNodeRootItem::isRoot() const

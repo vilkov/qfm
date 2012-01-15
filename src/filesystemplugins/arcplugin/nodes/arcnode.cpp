@@ -15,6 +15,7 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 	m_proxy.setSourceModel(this);
 	m_items.push_back(new ArcNodeRootItem());
 
+	static_cast<ArcNodeItem *>(m_items.at(RootItemIndex))->lock(tr("Scanning archive..."));
 	addTask(new ReadArchiveTask(m_info.absoluteFilePath(), this), TasksItemList() << m_items.at(RootItemIndex));
 }
 
@@ -310,6 +311,8 @@ void ArcNode::scanCompleteEvent(TaskEvent *e)
 			endInsertRows();
 		}
 
+	static_cast<ArcNodeItem *>(m_items.at(RootItemIndex))->unlock();
+	updateFirstColumn(m_items.at(RootItemIndex));
 	removeAllTaskLinks(event->task);
 }
 

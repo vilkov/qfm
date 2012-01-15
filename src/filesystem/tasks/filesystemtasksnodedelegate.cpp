@@ -16,7 +16,7 @@ TasksNodeDelegate::TasksNodeDelegate(QAbstractProxyModel *proxy, uint progressCo
 
 void TasksNodeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	if (index.column() == m_progressColumn)
+	if (index.column() == (int)m_progressColumn)
 	{
 		QModelIndex idx = m_proxy->mapToSource(index);
 

@@ -3,8 +3,8 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcDelegate::ArcDelegate(QObject *parent) :
-	QStyledItemDelegate(parent)
+ArcDelegate::ArcDelegate(QAbstractProxyModel *proxy, QObject *parent) :
+	TasksNodeDelegate(proxy, 1, parent)
 {}
 
 void ArcDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const

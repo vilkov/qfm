@@ -9,6 +9,7 @@ ARC_PLUGIN_NS_BEGIN
 ArcNode::ArcNode(const Info &info, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
+    m_delegate(&m_proxy),
 	m_info(info)
 {
 	m_proxy.setSourceModel(this);

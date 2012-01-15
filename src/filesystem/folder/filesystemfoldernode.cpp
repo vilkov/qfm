@@ -538,9 +538,9 @@ void FolderNode::performRemoveEvent(bool canceled, const ScanedFiles &entries)
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
+void FolderNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(item)->info().fileName());
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem::Base *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->setDoneSize(progress);
@@ -548,9 +548,9 @@ void FolderNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress,
 	updateSecondColumn(index, entry);
 }
 
-void FolderNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed)
+void FolderNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(item)->info().fileName());
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem::Base *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->setDoneSize(entry->totalSize().toULongLong());

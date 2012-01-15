@@ -33,6 +33,10 @@ public:
 		virtual IFile::value_type *buffer() const = 0;
 		virtual IFile::size_type bufferSize() const = 0;
 
+		virtual void progressInit(const ArcNodeItem::Base *item) = 0;
+		virtual void progressUpdate(quint64 progressIncrement) = 0;
+		virtual void progresscomplete() = 0;
+
 		virtual bool overwriteAll() const = 0;
 		virtual bool skipAllIfNotCopy() const = 0;
 		virtual void askForOverwrite(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted) = 0;

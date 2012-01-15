@@ -5,6 +5,7 @@
 #include "arctaskevent.h"
 #include "../archive/arcarchive.h"
 #include "../../../tools/pointers/pscopedpointer.h"
+#include "../../../filesystem/tasks/tools/taskprogress.h"
 #include "../../../filesystem/tasks/interfaces/filesystemicopycontrol.h"
 
 
@@ -36,6 +37,10 @@ public:
 	virtual IFile::value_type *buffer() const;
 	virtual IFile::size_type bufferSize() const;
 
+	virtual void progressInit(const ArcNodeItem::Base *item);
+	virtual void progressUpdate(quint64 progressIncrement);
+	virtual void progresscomplete();
+
 	virtual bool overwriteAll() const;
 	virtual bool skipAllIfNotCopy() const;
 	virtual void askForOverwrite(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
@@ -52,6 +57,7 @@ private:
 	IFile::value_type m_buffer[FileReadWriteGranularity];
 	bool m_overwriteAll;
 	bool m_skipAllIfNotCopy;
+	TaskProgress m_progress;
 };
 
 ARC_PLUGIN_NS_END

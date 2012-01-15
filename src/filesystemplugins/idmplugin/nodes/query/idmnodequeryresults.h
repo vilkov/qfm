@@ -78,8 +78,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed);
 
 protected:
 	/* IQueryResultsUpdater */

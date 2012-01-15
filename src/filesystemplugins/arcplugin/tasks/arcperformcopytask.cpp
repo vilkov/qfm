@@ -13,7 +13,8 @@ PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Bas
 	m_control(control.take()),
 	m_move(move),
 	m_overwriteAll(false),
-	m_skipAllIfNotCopy(false)
+	m_skipAllIfNotCopy(false),
+	m_progress(receiver)
 {}
 
 IFile::value_type *PerformCopyTask::buffer() const
@@ -24,6 +25,21 @@ IFile::value_type *PerformCopyTask::buffer() const
 IFile::size_type PerformCopyTask::bufferSize() const
 {
 	return FileReadWriteGranularity;
+}
+
+void PerformCopyTask::progressInit(const ArcNodeItem::Base *item)
+{
+	m_progress.init(item);
+}
+
+void PerformCopyTask::progressUpdate(quint64 progressIncrement)
+{
+	m_progress.update(progressIncrement);
+}
+
+void PerformCopyTask::progresscomplete()
+{
+	m_progress.complete();
 }
 
 bool PerformCopyTask::overwriteAll() const

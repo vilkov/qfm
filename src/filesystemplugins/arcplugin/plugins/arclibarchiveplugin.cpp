@@ -118,10 +118,14 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const I
 	state->callback = callback;
 	bool tryAgain;
 
+	state->callback->progressInit(entry);
+
 	if (entry->isList())
 		extractEntry(state, dest, static_cast<const ArcNodeListItem *>(entry), tryAgain = false, aborted);
 	else
 		extractFile(state, dest, static_cast<const ArcNodeItem *>(entry), tryAgain = false, aborted);
+
+	state->callback->progresscomplete();
 }
 
 void LibArchivePlugin::endRead(State *s) const
@@ -252,9 +256,9 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 							if (size == 0)
 								break;
 
-							if (m_destFile->write(state->callback->buffer(), size) != (IFile::size_type)size)
-//								m_progress.update(size);
-//							else
+							if (m_destFile->write(state->callback->buffer(), size) == (IFile::size_type)size)
+								state->callback->progressUpdate(size);
+							else
 							{
 								state->callback->askForSkipIfNotCopy(
 										tr("Failed to write to file \"%1\" (%2). Skip it?").

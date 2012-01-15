@@ -285,12 +285,12 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
-void ArcNode::updateProgressEvent(TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
+void ArcNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void ArcNode::completedProgressEvent(TaskNodeItem::Base *item, quint64 timeElapsed)
+void ArcNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
 {
 
 }

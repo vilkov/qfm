@@ -157,7 +157,7 @@ void LibArchivePlugin::extractEntry(State *s, const IFileControl *destination, c
 					else
 						extractFile(state, dest.data(), static_cast<const ArcNodeItem *>(entry->at(i)), tryAgain = false, aborted);
 			else
-				if (state->callback->skipAllIfNotCopy() || tryAgain)
+				if (state->callback->skipAllIfNotCopy())
 					break;
 				else
 					state->callback->askForSkipIfNotCopy(
@@ -198,7 +198,7 @@ void LibArchivePlugin::extractFile(State *s, const IFileControl *destination, co
 
 	do
 		if (destination->contains(entry->fileName()))
-			if (state->callback->overwriteAll())
+			if (tryAgain || state->callback->overwriteAll())
 				doExtractFile(state, destination, entry, tryAgain = false, aborted);
 			else
 				state->callback->askForOverwrite(
@@ -216,9 +216,9 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 {
     int res;
     struct archive_entry *e;
-    QString entryPath;
 	QByteArray entryPathUtf8;
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+    QString entryPath = static_cast<const ArcNodeEntryItem *>(entry)->fileName();
 
 	for (ArcNodeDirEntryItem *parent = static_cast<const ArcNodeDirEntryItem *>(entry->parent()); parent; parent = static_cast<const ArcNodeDirEntryItem *>(parent->parent()))
 		entryPath.prepend(QChar('/')).prepend(static_cast<const ArcNodeDirEntryItem *>(parent)->fileName());
@@ -226,7 +226,7 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 	entryPathUtf8 = entryPath.toUtf8();
 
 	while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
-		if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
+    	if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
 		{
 			PScopedPointer<IFileControl> m_destEntry;
 

@@ -20,7 +20,7 @@ bool TasksNode::event(QEvent *e)
 
 			event->accept();
 			event->result()->lock();
-			event->result()->setAnswer(QMessageBox::question(Application::mainWindow(), event->title(), event->question(), event->buttons()));
+			event->result()->setAnswer(QMessageBox::question(Application::mainWindow(), event->title(), event->question(), QMessageBox::StandardButtons(event->buttons())));
 			event->result()->unlock();
 
 			return true;

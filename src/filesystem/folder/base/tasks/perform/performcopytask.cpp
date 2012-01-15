@@ -54,7 +54,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 							++i)
 						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
-					if (m_skipAllIfNotCopy || tryAgain)
+					if (m_skipAllIfNotCopy)
 						break;
 					else
 						askForSkipIfNotCopy(

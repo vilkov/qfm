@@ -1,6 +1,7 @@
 #include "arcperformcopytask.h"
 #include "../nodes/items/arcnodedirentryitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
+#include <QtGui/QMessageBox>
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -37,12 +38,59 @@ bool PerformCopyTask::skipAllIfNotCopy() const
 
 void PerformCopyTask::askForOverwrite(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
+	qint32 answer = askUser(
+						tr("Extracting..."),
+						text,
+						QMessageBox::Yes |
+						QMessageBox::YesToAll |
+						QMessageBox::No |
+						QMessageBox::NoToAll |
+						QMessageBox::Cancel,
+						aborted);
 
+	switch (answer)
+	{
+		case QMessageBox::Yes:
+			tryAgain = true;
+			break;
+
+		case QMessageBox::YesToAll:
+			m_overwriteAll = tryAgain = true;
+			break;
+
+		case QMessageBox::No:
+			tryAgain = false;
+			break;
+
+		case QMessageBox::NoToAll:
+			m_overwriteAll = tryAgain = false;
+			break;
+
+		case QMessageBox::Cancel:
+			cancel();
+			break;
+	}
 }
 
 void PerformCopyTask::askForSkipIfNotCopy(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
+	qint32 answer = askUser(
+						tr("Extracting..."),
+						text,
+						QMessageBox::Yes |
+						QMessageBox::YesToAll |
+						QMessageBox::Retry |
+						QMessageBox::Cancel,
+						aborted);
 
+	if (answer == QMessageBox::YesToAll)
+		m_skipAllIfNotCopy = true;
+	else
+		if (answer == QMessageBox::Retry)
+			tryAgain = true;
+		else
+			if (answer == QMessageBox::Cancel)
+				cancel();
 }
 
 void PerformCopyTask::run(const volatile Flags &aborted)

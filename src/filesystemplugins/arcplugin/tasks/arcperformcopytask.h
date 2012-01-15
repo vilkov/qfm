@@ -1,6 +1,7 @@
 #ifndef ARCPERFORMCOPYTASK_H_
 #define ARCPERFORMCOPYTASK_H_
 
+#include <QtCore/QCoreApplication>
 #include "arctaskevent.h"
 #include "../archive/arcarchive.h"
 #include "../../../tools/pointers/pscopedpointer.h"
@@ -11,6 +12,8 @@ ARC_PLUGIN_NS_BEGIN
 
 class PerformCopyTask : public BaseTask, public Archive::Callback
 {
+	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
+
 public:
 	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 

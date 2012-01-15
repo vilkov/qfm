@@ -25,7 +25,7 @@ public:
 
 		bool waitFor(const volatile BaseTask::Flags &aborted)
 		{
-			QMutexLocker locker(&m_mutex);
+			QMutexLocker lock(&m_mutex);
 
 			while (!aborted)
 			{

@@ -17,24 +17,9 @@ QVariant RootNodeFilesItem::data(qint32 column, qint32 role) const
 		return QVariant();
 }
 
-bool RootNodeFilesItem::isRoot()
-{
-	return false;
-}
-
 bool RootNodeFilesItem::isFiles()
 {
 	return true;
-}
-
-bool RootNodeFilesItem::isEntity()
-{
-	return false;
-}
-
-bool RootNodeFilesItem::isProperty()
-{
-	return false;
 }
 
 IDM_PLUGIN_NS_END

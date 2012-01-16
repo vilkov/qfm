@@ -299,7 +299,12 @@ void ArcNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progre
 
 void ArcNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
 {
+	if (item->isList())
+		static_cast<ArcNodeListItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeListItem *>(item)->total(), timeElapsed);
+	else
+		static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
 
+	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
 }
 
 void ArcNode::scanCompleteEvent(TaskEvent *e)

@@ -21,19 +21,4 @@ bool RootNodeRootItem::isRoot()
 	return true;
 }
 
-bool RootNodeRootItem::isFiles()
-{
-	return false;
-}
-
-bool RootNodeRootItem::isEntity()
-{
-	return false;
-}
-
-bool RootNodeRootItem::isProperty()
-{
-	return false;
-}
-
 IDM_PLUGIN_NS_END

@@ -86,4 +86,9 @@ bool ArcNodeDirEntryItem::isDir() const
 	return true;
 }
 
+void ArcNodeDirEntryItem::lock(const QString &reason)
+{
+	TaskNodeListItem::lock(m_extractedSize);
+}
+
 ARC_PLUGIN_NS_END

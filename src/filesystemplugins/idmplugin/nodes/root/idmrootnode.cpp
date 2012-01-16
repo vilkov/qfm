@@ -22,9 +22,8 @@ template <> inline RootNodeRootItem *value_cast(void *item, RootNodeRootItem *to
 {
 	Q_UNUSED(to);
 
-	if (!static_cast<RootNodeRootItem::Base*>(item)->isList())
-		if (static_cast<RootNodeItem*>(item)->isRoot())
-			return static_cast<RootNodeRootItem*>(item);
+	if (static_cast<RootNodeItem*>(item)->isRoot())
+		return static_cast<RootNodeRootItem*>(item);
 
 	return 0;
 }
@@ -33,9 +32,8 @@ template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *
 {
 	Q_UNUSED(to);
 
-	if (!static_cast<RootNodeFilesItem::Base*>(item)->isList())
-		if (static_cast<RootNodeItem*>(item)->isFiles())
-			return static_cast<RootNodeFilesItem*>(item);
+	if (static_cast<RootNodeItem*>(item)->isFiles())
+		return static_cast<RootNodeFilesItem*>(item);
 
 	return 0;
 }
@@ -211,14 +209,14 @@ void IdmRootNode::menuAction(QAction *action, INodeView *view)
 
 void IdmRootNode::createFile(const QModelIndex &index, INodeView *view)
 {
-	RootNodeItem::Base *item;
-
-	if ((item = static_cast<RootNodeItem::Base*>(index.internalPointer()))->isList())
-	{
-
-	}
-	else
-		createEntity();
+//	RootNodeItem::Base *item;
+//
+//	if ((item = static_cast<RootNodeItem::Base*>(index.internalPointer()))->isList())
+//	{
+//
+//	}
+//	else
+//		createEntity();
 }
 
 void IdmRootNode::createDirectory(const QModelIndex &index, INodeView *view)
@@ -296,37 +294,34 @@ QModelIndex IdmRootNode::rootIndex() const
 
 Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	RootNodeItem::Base *item;
+	RootNodeItem *item;
 
-	if ((item = static_cast<RootNodeItem::Base*>(idx.internalPointer()))->isList())
-	{
-		if (static_cast<RootNodeListItem*>(item)->isEntity())
-			if (m_container.transaction())
+	if ((item = static_cast<RootNodeItem*>(idx.internalPointer()))->isEntity())
+		if (m_container.transaction())
+		{
+			EditableValueListDialog dialog(
+					m_container,
+					Select(static_cast<RootNodeEntityItem*>(item)->entity()),
+					Application::mainWindow());
+
+			if (dialog.exec() == EditableValueListDialog::Accepted)
 			{
-				EditableValueListDialog dialog(
-						m_container,
-						Select(static_cast<RootNodeEntityItem*>(item)->entity()),
-						Application::mainWindow());
-
-				if (dialog.exec() == EditableValueListDialog::Accepted)
+				if (!m_container.commit())
 				{
-					if (!m_container.commit())
-					{
-						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-						m_container.rollback();
-					}
-				}
-				else
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 					m_container.rollback();
+				}
 			}
 			else
-				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-	}
+				m_container.rollback();
+		}
+		else
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 	else
-		if (static_cast<RootNodeItem*>(item)->isRoot())
+		if (item->isRoot())
 			return parentNode();
 		else
-			if (static_cast<RootNodeItem*>(item)->isFiles())
+			if (item->isFiles())
 			{
 				m_info.refresh();
 

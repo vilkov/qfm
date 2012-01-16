@@ -1,5 +1,7 @@
 #include "idmqueryresultsdelegate.h"
-#include "items/idmqueryresultvaluecast.h"
+#include "items/idmqueryresultvalueitem.h"
+#include "items/idmqueryresultpropertyitem.h"
+#include "items/idmqueryresultpathvalueitem.h"
 #include "../../gui/value/edit/editcompositevaluedialog.h"
 #include "../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
 #include <QtGui/QMessageBox>
@@ -14,7 +16,10 @@ IdmQueryResultsDelegate::IdmQueryResultsDelegate(const IdmContainer &container, 
 
 QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
+	{
+		QueryResultValueItem *item = static_cast<QueryResultValueItem *>(index.internalPointer());
+
 		switch (item->value()->entity()->type())
 		{
 			case Database::Int:
@@ -68,8 +73,9 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 			default:
 				break;
 		}
+	}
 	else
-		if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+		if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
 			return new Editor<QString>::type(parent);
 
 	return 0;
@@ -77,8 +83,11 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 
 void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
-		switch (static_cast<QueryResultValueItem*>(index.internalPointer())->value()->entity()->type())
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
+	{
+		QueryResultValueItem *item = static_cast<QueryResultValueItem *>(index.internalPointer());
+
+		switch (item->value()->entity()->type())
 		{
 			case Database::Int:
 				EditorValue<typename EntityValueType<Database::Int>::type>::setValue(editor, index.data(Qt::DisplayRole));
@@ -115,14 +124,16 @@ void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &
 			default:
 				break;
 		}
+	}
 	else
 		EditorValue<QString>::setValue(editor, static_cast<QueryResultPropertyItem*>(index.internalPointer())->property().name);
 }
 
 void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-	if (QueryResultValueItem *item = value_cast(index.internalPointer(), item))
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
 	{
+		QueryResultValueItem *item = static_cast<QueryResultValueItem *>(index.internalPointer());
 		QVariant value;
 
 		switch (item->value()->entity()->type())

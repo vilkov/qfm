@@ -11,6 +11,8 @@ class Item
 {
 public:
 	typedef Item Base;
+	typedef int  size_type;
+	enum { InvalidIndex = (size_type)-1 };
 
 public:
 	Item(Base *parent);
@@ -18,7 +20,10 @@ public:
 
 	Base *parent() const { return m_parent; }
 
-	virtual bool isList() const;
+	virtual Base *at(size_type index) const;
+	virtual size_type size() const;
+	virtual size_type indexOf(Base *item) const;
+
 	virtual QVariant data(qint32 column, qint32 role) const = 0;
 
 private:

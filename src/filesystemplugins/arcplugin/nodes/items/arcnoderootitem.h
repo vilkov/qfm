@@ -17,6 +17,7 @@ public:
 	/* IArcNodeItem */
 	virtual bool isRoot() const;
 	virtual bool isDir() const;
+	virtual void lock(const QString &reason);
 
 private:
 	QVariant m_label;

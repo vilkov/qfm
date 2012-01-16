@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMTASKSNODEDELEGATE_H_
 #define FILESYSTEMTASKSNODEDELEGATE_H_
 
-#include "items/filesystemtasknodeitemlist.h"
+#include "items/filesystemtasknodeitem.h"
 #include "../filesystemdelegate.h"
 
 
@@ -16,7 +16,6 @@ public:
 
 protected:
     void paintProgressInMb(const TaskNodeItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const;
-    void paintProgressInMb(const TaskNodeListItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const;
 };
 
 FILE_SYSTEM_NS_END

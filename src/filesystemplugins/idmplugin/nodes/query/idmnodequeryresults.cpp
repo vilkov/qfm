@@ -1,10 +1,12 @@
 #include "idmnodequeryresults.h"
-#include "items/idmqueryresultvaluecast.h"
 #include "functors/idmqueryresultsfunctor.h"
 #include "control/idmqueryresultscopycontrol.h"
 #include "events/idmqueryresultsmodelevents.h"
 #include "tasks/scan/idmnodequeryresultsscantask.h"
 #include "tasks/perform/idmnodequeryresultsremovefilestask.h"
+#include "items/idmqueryresultvalueitem.h"
+#include "items/idmqueryresultpropertyitem.h"
+#include "items/idmqueryresultpathvalueitem.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
@@ -187,8 +189,8 @@ void IdmNodeQueryResults::refresh()
 
 IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 {
-	if (QueryResultPathValueItem *item = value_cast(idx.internalPointer(), item))
-		return &item->info();
+	if (static_cast<QueryResultItem *>(idx.internalPointer())->isValue())
+		return &static_cast<QueryResultPathValueItem *>(idx.internalPointer())->info();
 	else
 		return 0;
 }
@@ -197,7 +199,10 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 {
 	QModelIndex index = view->currentIndex();
 
-	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
+	{
+		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+
 		if (item->property().entity->type() == Database::Path)
 			if (item->size() == 0)
 				return new IdmQueryResultsCopyControl(
@@ -224,6 +229,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 							index,
 							destination);
 			}
+	}
 
 	return 0;
 }
@@ -235,7 +241,10 @@ void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
 
 void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
-	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
+	{
+		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+
 		if (m_container.transaction())
 		{
 			bool declined = false;
@@ -274,6 +283,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		}
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+	}
 }
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)
@@ -302,28 +312,33 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		QueryResultPropertyItem::size_type idx;
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if ((item = value_cast((index = list.at(i)).internalPointer(), item)) && !item->isLocked())
-				if (item->value()->entity()->type() == Database::Path)
-					files.push_back(item);
-				else
-				{
-					property = static_cast<QueryResultPropertyItem*>(item->parent());
+			if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
+			{
+				item = static_cast<QueryResultValueItem *>(index.internalPointer());
 
-					if (m_container.removeValue(property->rootValue(), item->value()))
-					{
-						idx = property->indexOf(item);
-
-						beginRemoveRows(FileSystemModel::parent(index), idx, idx);
-						property->remove(idx);
-						endRemoveRows();
-					}
+				if (!item->isLocked())
+					if (item->value()->entity()->type() == Database::Path)
+						files.push_back(item);
 					else
 					{
-						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-						m_container.rollback();
-						return;
+						property = static_cast<QueryResultPropertyItem*>(item->parent());
+
+						if (m_container.removeValue(property->rootValue(), item->value()))
+						{
+							idx = property->indexOf(item);
+
+							beginRemoveRows(FileSystemModel::parent(index), idx, idx);
+							property->remove(idx);
+							endRemoveRows();
+						}
+						else
+						{
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+							return;
+						}
 					}
-				}
+			}
 
 		if (m_container.commit())
 		{
@@ -407,8 +422,10 @@ void IdmNodeQueryResults::completedProgressEvent(const TaskNodeItem::Base *item,
 
 void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
-	if (QueryResultPropertyItem *item = value_cast(index.internalPointer(), item))
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
 	{
+		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+
 		beginInsertRows(index, item->size(), item->size() + values.size() - 1);
 		item->add(values);
 		endInsertRows();
@@ -422,20 +439,20 @@ void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEnt
 
 void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)
 {
-	QueryResultValueItem *item;
+	QueryResultItem *item;
 
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (item = value_cast(list.at(i).internalPointer(), item))
-			functor(list.at(i), item);
+		if ((item = static_cast<QueryResultItem *>(list.at(i).internalPointer()))->isValue())
+			functor(list.at(i), static_cast<QueryResultValueItem *>(item));
 }
 
 void IdmNodeQueryResults::processRemove(const QModelIndexList &list, const Functor &functor)
 {
-	QueryResultValueItem *item;
+	QueryResultItem *item;
 
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (item = value_cast(list.at(i).internalPointer(), item))
-			functor(list.at(i), item);
+		if ((item = static_cast<QueryResultItem *>(list.at(i).internalPointer()))->isValue())
+			functor(list.at(i), static_cast<QueryResultValueItem *>(item));
 }
 
 void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)

@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 RootNodeEntityItem::RootNodeEntityItem(IdmEntity *entity, Base *parent) :
-	RootNodeEntityBaseListItem(parent),
+	RootNodeListItem(parent),
 	m_entity(entity)
 {}
 
@@ -14,6 +14,11 @@ QVariant RootNodeEntityItem::data(qint32 column, qint32 role) const
 		return m_entity->name();
 	else
 		return QVariant();
+}
+
+bool RootNodeEntityItem::isEntity()
+{
+	return true;
 }
 
 IDM_PLUGIN_NS_END

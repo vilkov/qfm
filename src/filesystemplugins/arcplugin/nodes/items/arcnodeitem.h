@@ -2,36 +2,38 @@
 #define ARCNODEITEM_H_
 
 #include "../../arcplugin_ns.h"
-#include "../../../../filesystem/tasks/items/filesystemtasknodeitemlist.h"
+#include "../../../../filesystem/tasks/items/filesystemtasknodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class IArcNodeItem
-{
-public:
-	virtual ~IArcNodeItem();
-
-	virtual bool isRoot() const = 0;
-	virtual bool isDir() const = 0;
-};
-
-
-class ArcNodeItem : public TaskNodeItem, public IArcNodeItem
+class ArcNodeItem : public TaskNodeItem
 {
 public:
 	ArcNodeItem(Base *parent);
 
+	virtual bool isRoot() const = 0;
+	virtual bool isDir() const = 0;
+
 	void updateProgress(quint64 value, quint64 timeElapsed) { progress(value, timeElapsed); }
 };
 
 
-class ArcNodeListItem : public TaskNodeListItem, public IArcNodeItem
+class ArcNodeListItem : public ArcNodeItem
 {
+public:
+	typedef QList<ArcNodeItem *> Container;
+
 public:
 	ArcNodeListItem(Base *parent);
 
-	void updateProgress(quint64 value, quint64 timeElapsed) { progress(value, timeElapsed); }
+	/* Base */
+	virtual Base *at(size_type index) const;
+	virtual size_type size() const;
+	virtual size_type indexOf(Base *item) const;
+
+protected:
+	Container m_items;
 };
 
 ARC_PLUGIN_NS_END

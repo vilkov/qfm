@@ -19,10 +19,7 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 	/* IRootNodeItem */
-	virtual bool isRoot();
 	virtual bool isFiles();
-	virtual bool isEntity();
-	virtual bool isProperty();
 
 	Node *node() const { return m_node; }
 	void setNode(Node *node) { m_node = node; }

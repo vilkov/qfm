@@ -18,6 +18,7 @@ public:
 	/* IArcNodeItem */
 	virtual bool isRoot() const;
 	virtual bool isDir() const;
+	virtual void lock(const QString &reason);
 
 	const QString &fileName() const { return m_fileName; }
 	size_type indexOf(const QString &fileName) const { return m_index.value(fileName, InvalidIndex); }

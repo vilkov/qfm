@@ -1,21 +1,23 @@
 #ifndef FILESYSTEMTASKNODEITEM_H_
 #define FILESYSTEMTASKNODEITEM_H_
 
+#include <QtGui/QIcon>
 #include "../../model/items/filesystemitem.h"
-#include "../../../tools/models/macros/declareitemlocker.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 class TaskNodeItem : public FileSystemItem
 {
-	DECLARE_MODEL_ITEM_LOCKER;
-
 public:
 	TaskNodeItem(Base *parent);
 
+	bool isLocked() const { return m_locked; }
+	const QString &lockReason() const { return m_reason; }
+	const QIcon &lockIcon() const { return m_icon; }
+
 	void lock(const QString &reason);
-    void unlock() { MODEL_ITEM_LOCKER_UNLOCK; }
+    void unlock() { m_locked = false; m_reason.clear(); m_icon = QIcon(); }
 
 	bool isInProgress() const { return !m_done.isNull(); }
 	bool isCompleted() const { return m_done == m_total; }
@@ -32,6 +34,9 @@ protected:
 	void stop() { m_done.clear(); m_total = 0; m_timeElapsed = 0; }
 
 private:
+	bool m_locked;
+	QString m_reason;
+	QIcon m_icon;
 	QVariant m_done;
 	quint64 m_total;
 	quint64 m_timeElapsed;

@@ -3,17 +3,28 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IQueryResultItem::~IQueryResultItem()
-{}
-
-
 QueryResultItem::QueryResultItem(Base *parent) :
 	TaskNodeItem(parent)
 {}
 
 
 QueryResultListItem::QueryResultListItem(Base *parent) :
-	TaskNodeListItem(parent)
+	QueryResultItem(parent)
 {}
+
+QueryResultListItem::Base *QueryResultListItem::at(size_type index) const
+{
+	return m_items.at(index);
+}
+
+QueryResultListItem::size_type QueryResultListItem::size() const
+{
+	return m_items.size();
+}
+
+QueryResultListItem::size_type QueryResultListItem::indexOf(Base *item) const
+{
+	return m_items.indexOf(static_cast<QueryResultItem *>(item));
+}
 
 IDM_PLUGIN_NS_END

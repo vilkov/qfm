@@ -14,11 +14,8 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* IRootNodeItem */
+	/* RootNodeItem */
 	virtual bool isRoot();
-	virtual bool isFiles();
-	virtual bool isEntity();
-	virtual bool isProperty();
 
 private:
 	QVariant m_label;

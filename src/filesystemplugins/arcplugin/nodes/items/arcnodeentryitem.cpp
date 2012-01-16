@@ -86,4 +86,9 @@ bool ArcNodeEntryItem::isDir() const
 	return false;
 }
 
+void ArcNodeEntryItem::lock(const QString &reason)
+{
+
+}
+
 ARC_PLUGIN_NS_END

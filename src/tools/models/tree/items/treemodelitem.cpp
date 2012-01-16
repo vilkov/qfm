@@ -10,9 +10,19 @@ Item::Item(Item *parent) :
 Item::~Item()
 {}
 
-bool Item::isList() const
+Item::Base *Item::at(size_type index) const
 {
-	return false;
+	return NULL;
+}
+
+Item::size_type Item::size() const
+{
+	return 0;
+}
+
+Item::size_type Item::indexOf(Base *item) const
+{
+	return InvalidIndex;
 }
 
 MODELS_TREE_NS_END

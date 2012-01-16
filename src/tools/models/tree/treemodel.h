@@ -9,7 +9,7 @@ MODELS_TREE_NS_BEGIN
 
 /*
  * Notice:
- * 	Any QModelIndex instance must have internalPointer() == some Item instance!
+ * 	Any QModelIndex instance must have internalPointer() == some "Item" instance!
  *
  */
 
@@ -30,7 +30,7 @@ public:
 protected:
 	QModelIndex index(Item *item) const;
 	QModelIndex parent(Item *item) const;
-	QModelIndex parent(Item *item, ListItem::size_type &row) const;
+	QModelIndex parent(Item *item, Item::size_type &row) const;
 
 private:
 	const Container &m_conteiner;

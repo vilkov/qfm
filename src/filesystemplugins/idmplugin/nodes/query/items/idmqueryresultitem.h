@@ -2,15 +2,15 @@
 #define IDMQUERYRESULTITEM_H_
 
 #include "../../../idmplugin_ns.h"
-#include "../../../../../filesystem/tasks/items/filesystemtasknodeitemlist.h"
+#include "../../../../../filesystem/tasks/items/filesystemtasknodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IQueryResultItem
+class QueryResultItem : public TaskNodeItem
 {
 public:
-	virtual ~IQueryResultItem();
+	QueryResultItem(Base *parent);
 
 	virtual bool isRoot() = 0;
 	virtual bool isProperty() = 0;
@@ -18,17 +18,21 @@ public:
 };
 
 
-class QueryResultItem : public TaskNodeItem, public IQueryResultItem
+class QueryResultListItem : public QueryResultItem
 {
 public:
-	QueryResultItem(Base *parent);
-};
+	typedef QList<QueryResultItem *> Container;
 
-
-class QueryResultListItem : public TaskNodeListItem, public IQueryResultItem
-{
 public:
 	QueryResultListItem(Base *parent);
+
+	/* Base */
+	virtual Base *at(size_type index) const;
+	virtual size_type size() const;
+	virtual size_type indexOf(Base *item) const;
+
+protected:
+	Container m_items;
 };
 
 IDM_PLUGIN_NS_END

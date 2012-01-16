@@ -14,7 +14,7 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* IRootNodeItem */
+	/* RootNodeItem */
 	virtual bool isProperty();
 
 private:

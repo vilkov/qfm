@@ -26,18 +26,18 @@ public:
 			move(move)
 		{}
 
-		const ArcNodeItem::Base *item;
+		const ArcNodeItem *item;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(const QString &fileName, const ArcNodeItem::Base *item, PScopedPointer<ICopyControl> &control, bool move, TasksNode *receiver);
+	PerformCopyTask(const QString &fileName, const ArcNodeItem *item, PScopedPointer<ICopyControl> &control, bool move, TasksNode *receiver);
 
 	/* Archive::Callback */
 	virtual IFile::value_type *buffer() const;
 	virtual IFile::size_type bufferSize() const;
 
-	virtual void progressInit(const ArcNodeItem::Base *item);
+	virtual void progressInit(const ArcNodeItem *item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 
@@ -51,7 +51,7 @@ protected:
 
 private:
 	QString m_fileName;
-	const ArcNodeItem::Base *m_item;
+	const ArcNodeItem *m_item;
 	PScopedPointer<ICopyControl> m_control;
 	bool m_move;
 	IFile::value_type m_buffer[FileReadWriteGranularity];

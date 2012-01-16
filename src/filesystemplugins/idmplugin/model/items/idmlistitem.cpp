@@ -19,7 +19,7 @@ IdmListItem::size_type IdmListItem::size() const
 
 IdmListItem::size_type IdmListItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(static_cast<QueryResultItem *>(item));
+	return m_items.indexOf(static_cast<IdmItem *>(item));
 }
 
 IDM_PLUGIN_NS_END

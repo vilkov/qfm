@@ -46,7 +46,7 @@ void CompositeValueDialog::addValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList())
+	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isProperty())
 		doAddValue(index);
 }
 
@@ -54,7 +54,7 @@ void CompositeValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() && !static_cast<IdmItem*>(index.internalPointer())->isList())
+	if (index.isValid() && !static_cast<CompositeValueItem *>(index.internalPointer())->isProperty())
 		doRemoveValue(index);
 }
 

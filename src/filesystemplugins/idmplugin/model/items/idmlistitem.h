@@ -21,7 +21,6 @@ public:
 
 protected:
 	Container m_items;
-
 };
 
 IDM_PLUGIN_NS_END

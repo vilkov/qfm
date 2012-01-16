@@ -41,14 +41,4 @@ bool ArcNodeRootItem::isRoot() const
 	return true;
 }
 
-bool ArcNodeRootItem::isDir() const
-{
-	return false;
-}
-
-void ArcNodeRootItem::lock(const QString &reason)
-{
-
-}
-
 ARC_PLUGIN_NS_END

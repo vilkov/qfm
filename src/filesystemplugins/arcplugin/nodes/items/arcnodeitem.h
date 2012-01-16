@@ -12,8 +12,8 @@ class ArcNodeItem : public TaskNodeItem
 public:
 	ArcNodeItem(Base *parent);
 
-	virtual bool isRoot() const = 0;
-	virtual bool isDir() const = 0;
+	virtual bool isRoot() const;
+	virtual bool isDir() const;
 
 	void updateProgress(quint64 value, quint64 timeElapsed) { progress(value, timeElapsed); }
 };

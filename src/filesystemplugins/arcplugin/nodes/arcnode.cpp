@@ -221,15 +221,11 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 
 		if (control)
 		{
-			TasksItemList list;
+			ArcNodeItem *item = static_cast<ArcNodeItem*>(index.internalPointer());
 
-			if (static_cast<ArcNodeItem::Base*>(index.internalPointer())->isList())
-				static_cast<ArcNodeListItem*>(index.internalPointer())->lock(tr("Extracting..."));
-			else
-				static_cast<ArcNodeItem*>(index.internalPointer())->lock(tr("Extracting..."));
-
-			updateFirstColumn(static_cast<ArcNodeItem::Base*>(index.internalPointer()));
-			addTask(new PerformCopyTask(m_info.absoluteFilePath(), static_cast<ArcNodeItem::Base*>(index.internalPointer()), control, false, this), list);
+			item->lock(tr("Extracting..."));
+			updateFirstColumn(item);
+			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
 		}
 	}
 }
@@ -266,18 +262,11 @@ QModelIndex ArcNode::rootIndex() const
 
 Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	ArcNodeItem::Base *item;
-
-	if ((item = static_cast<ArcNodeItem::Base*>(m_proxy.mapToSource(idx).internalPointer()))->isList())
+	if (static_cast<ArcNodeItem*>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
 	{
-
+		cancelTask(m_items.at(RootItemIndex));
+		return parentNode();
 	}
-	else
-		if (static_cast<ArcNodeItem*>(item)->isRoot())
-		{
-			cancelTask(m_items.at(RootItemIndex));
-			return parentNode();
-		}
 
 	return 0;
 }
@@ -289,21 +278,13 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 
 void ArcNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
 {
-	if (item->isList())
-		static_cast<ArcNodeListItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
-	else
-		static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
-
+	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
 	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
 }
 
 void ArcNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
 {
-	if (item->isList())
-		static_cast<ArcNodeListItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeListItem *>(item)->total(), timeElapsed);
-	else
-		static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
-
+	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
 	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
 }
 
@@ -329,12 +310,9 @@ void ArcNode::scanCompleteEvent(TaskEvent *e)
 void ArcNode::copyCompleteEvent(TaskEvent *e)
 {
 	PerformCopyTask::Event *event = static_cast<PerformCopyTask::Event*>(e);
-	ArcNodeItem::Base *item = const_cast<ArcNodeItem::Base *>(event->item);
+	ArcNodeItem *item = const_cast<ArcNodeItem *>(event->item);
 
-	if (item->isList())
-		static_cast<ArcNodeListItem*>(item)->unlock();
-	else
-		static_cast<ArcNodeItem*>(item)->unlock();
+	item->unlock();
 
 	updateFirstColumn(item);
 	removeAllTaskLinks(event->task);

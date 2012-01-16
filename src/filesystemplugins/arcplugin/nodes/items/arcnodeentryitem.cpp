@@ -76,19 +76,4 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool ArcNodeEntryItem::isRoot() const
-{
-	return false;
-}
-
-bool ArcNodeEntryItem::isDir() const
-{
-	return false;
-}
-
-void ArcNodeEntryItem::lock(const QString &reason)
-{
-
-}
-
 ARC_PLUGIN_NS_END

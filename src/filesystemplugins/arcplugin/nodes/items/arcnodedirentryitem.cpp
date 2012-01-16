@@ -76,19 +76,9 @@ QVariant ArcNodeDirEntryItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool ArcNodeDirEntryItem::isRoot() const
-{
-	return false;
-}
-
 bool ArcNodeDirEntryItem::isDir() const
 {
 	return true;
-}
-
-void ArcNodeDirEntryItem::lock(const QString &reason)
-{
-	TaskNodeListItem::lock(m_extractedSize);
 }
 
 ARC_PLUGIN_NS_END

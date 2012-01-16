@@ -1,19 +1,28 @@
 #ifndef COMPOSITEVALUEPROPERTYITEM_H_
 #define COMPOSITEVALUEPROPERTYITEM_H_
 
-#include "../../../../model/items/idmlistitem.h"
-#include "../../../../storage/entities/idmentity.h"
+#include "compositevalueitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class CompositeValuePropertyItem : public IdmListItem
+class CompositeValuePropertyItem : public CompositeValueItem
 {
+public:
+	typedef QList<IdmItem *> Container;
+
 public:
 	CompositeValuePropertyItem(const IdmEntity::Property &property, IdmItem *parent = 0);
 
-	/* IdmItem */
+	/* Base */
+	virtual Base *at(size_type index) const;
+	virtual size_type size() const;
+	virtual size_type indexOf(Base *item) const;
+
 	virtual QVariant data(qint32 column, qint32 role) const;
+
+	/* CompositeValueItem */
+	virtual bool isProperty() const;
 
 	IdmEntity *entity() const { return m_property.entity; }
 
@@ -24,6 +33,7 @@ protected:
 
 private:
 	const IdmEntity::Property &m_property;
+	Container m_items;
 };
 
 IDM_PLUGIN_NS_END

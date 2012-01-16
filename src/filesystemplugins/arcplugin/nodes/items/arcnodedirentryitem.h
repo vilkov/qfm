@@ -15,10 +15,8 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* IArcNodeItem */
-	virtual bool isRoot() const;
+	/* ArcNodeItem */
 	virtual bool isDir() const;
-	virtual void lock(const QString &reason);
 
 	const QString &fileName() const { return m_fileName; }
 	size_type indexOf(const QString &fileName) const { return m_index.value(fileName, InvalidIndex); }

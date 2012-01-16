@@ -16,11 +16,6 @@ public:
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* IArcNodeItem */
-	virtual bool isRoot() const;
-	virtual bool isDir() const;
-	virtual void lock(const QString &reason);
-
 	const QString &fileName() const { return m_fileName; }
 	qint64 extractedSize() const { return m_extractedSize; }
 

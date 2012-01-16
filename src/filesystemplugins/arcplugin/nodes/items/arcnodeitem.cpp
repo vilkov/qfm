@@ -7,6 +7,16 @@ ArcNodeItem::ArcNodeItem(Base *parent) :
 	TaskNodeItem(parent)
 {}
 
+bool ArcNodeItem::isRoot() const
+{
+	return false;
+}
+
+bool ArcNodeItem::isDir() const
+{
+	return false;
+}
+
 ArcNodeListItem::ArcNodeListItem(Base *parent) :
 	ArcNodeItem(parent)
 {}
@@ -23,7 +33,7 @@ ArcNodeListItem::size_type ArcNodeListItem::size() const
 
 ArcNodeListItem::size_type ArcNodeListItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(item);
+	return m_items.indexOf(static_cast<ArcNodeItem *>(item));
 }
 
 ARC_PLUGIN_NS_END

@@ -110,7 +110,7 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     return contents;
 }
 
-void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
+void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
 {
 	Q_ASSERT(s && s->error.isEmpty());
 	Q_ASSERT(callback);
@@ -120,7 +120,7 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem::Base *entry, const I
 
 	state->callback->progressInit(entry);
 
-	if (entry->isList())
+	if (entry->isDir())
 		extractEntry(state, dest, static_cast<const ArcNodeListItem *>(entry), tryAgain = false, aborted);
 	else
 		extractFile(state, dest, static_cast<const ArcNodeItem *>(entry), tryAgain = false, aborted);
@@ -156,7 +156,7 @@ void LibArchivePlugin::extractEntry(State *s, const IFileControl *destination, c
 				for (ArcNodeListItem::size_type i = 0;
 						i < entry->size() && !aborted;
 						++i)
-					if (entry->at(i)->isList())
+					if (static_cast<const ArcNodeItem *>(entry->at(i))->isDir())
 						extractEntry(state, dest.data(), static_cast<const ArcNodeListItem *>(entry->at(i)), tryAgain = false, aborted);
 					else
 						extractFile(state, dest.data(), static_cast<const ArcNodeItem *>(entry->at(i)), tryAgain = false, aborted);
@@ -178,7 +178,7 @@ void LibArchivePlugin::extractEntry(State *s, const IFileControl *destination, c
 				for (ArcNodeListItem::size_type i = 0;
 						i < entry->size() && !aborted;
 						++i)
-					if (entry->at(i)->isList())
+					if (static_cast<const ArcNodeItem *>(entry->at(i))->isDir())
 						extractEntry(state, dest.data(), static_cast<const ArcNodeListItem *>(entry->at(i)), tryAgain = false, aborted);
 					else
 						extractFile(state, dest.data(), static_cast<const ArcNodeItem *>(entry->at(i)), tryAgain = false, aborted);

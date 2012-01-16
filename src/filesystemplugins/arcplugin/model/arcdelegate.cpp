@@ -14,22 +14,10 @@ void ArcDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, c
 {
 	if (index.column() == 1)
 	{
-		QModelIndex idx = m_proxy->mapToSource(index);
+		TaskNodeItem *entry = static_cast<TaskNodeItem *>(m_proxy->mapToSource(index).internalPointer());
 
-		if (static_cast<TaskNodeItem::Base *>(idx.internalPointer())->isList())
-		{
-			const TaskNodeListItem *entry = static_cast<const TaskNodeListItem *>(idx.internalPointer());
-
-			if (entry->isInProgress())
-				paintProgressInMb(entry, painter, option);
-		}
-		else
-		{
-			TaskNodeItem *entry = static_cast<TaskNodeItem *>(idx.internalPointer());
-
-			if (entry->isInProgress())
-				paintProgressInMb(entry, painter, option);
-		}
+		if (entry->isInProgress())
+			paintProgressInMb(entry, painter, option);
 	}
 
 	TasksNodeDelegate::paint(painter, option, index);

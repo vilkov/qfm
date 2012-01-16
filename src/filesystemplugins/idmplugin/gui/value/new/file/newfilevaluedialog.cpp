@@ -10,7 +10,7 @@ void NewFileValueDialog::addValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() && static_cast<IdmItem*>(index.internalPointer())->isList() &&
+	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
 		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
 		doAddValue(index);
 }
@@ -19,7 +19,7 @@ void NewFileValueDialog::removeValue()
 {
 	QModelIndex index = currentIndex();
 
-	if (index.isValid() && !static_cast<IdmItem*>(index.internalPointer())->isList() &&
+	if (index.isValid() && !static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
 		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
 		doRemoveValue(index);
 }

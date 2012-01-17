@@ -12,7 +12,7 @@ TaskProgress::TaskProgress(TasksNode *receiver) :
 {}
 
 
-void TaskProgress::init(const TaskNodeItem::Base *item)
+void TaskProgress::init(const TaskNodeItem *item)
 {
 	m_item = item;
 	m_progress = 0;

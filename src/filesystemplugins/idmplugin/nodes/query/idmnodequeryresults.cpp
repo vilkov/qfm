@@ -410,12 +410,12 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *pl
 	return 0;
 }
 
-void IdmNodeQueryResults::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
+void IdmNodeQueryResults::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
+void IdmNodeQueryResults::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
 {
 
 }

@@ -12,8 +12,8 @@ ARC_PLUGIN_NS_BEGIN
 class Archive
 {
 public:
-	typedef BaseTask::Task::Flags      Flags;
-	typedef QList<ArcNodeItem::Base *> Container;
+	typedef BaseTask::Task::Flags Flags;
+	typedef QList<ArcNodeItem *>  Container;
 
 	struct Contents
 	{

@@ -78,7 +78,7 @@ void TasksNode::taskHandled()
 	removeLink();
 }
 
-void TasksNode::cancelTask(TaskNodeItem::Base *item)
+void TasksNode::cancelTask(TaskNodeItem *item)
 {
 	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();

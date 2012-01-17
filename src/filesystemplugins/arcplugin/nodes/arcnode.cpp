@@ -276,16 +276,16 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
-void ArcNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
+void ArcNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(progress, timeElapsed);
-	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
+	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(progress, timeElapsed);
+	updateFirstColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
 }
 
-void ArcNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
+void ArcNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem::Base *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
-	updateFirstColumn(const_cast<TaskNodeItem::Base *>(item));
+	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
+	updateFirstColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
 }
 
 void ArcNode::scanCompleteEvent(TaskEvent *e)
@@ -338,10 +338,10 @@ ArcNode::ItemsContainer::Item *ArcNode::ItemsContainer::at(size_type index) cons
 
 ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) const
 {
-	return m_container.indexOf(item);
+	return m_container.indexOf(static_cast<ArcNodeItem *>(item));
 }
 
-void ArcNode::updateFirstColumn(ArcNodeItem::Base *entry)
+void ArcNode::updateFirstColumn(ArcNodeItem *entry)
 {
 	QModelIndex index;
 

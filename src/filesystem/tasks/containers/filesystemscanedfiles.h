@@ -14,14 +14,14 @@ class ScanedFiles
 public:
 	class List;
 	class Files;
-	typedef QList<QPair<TaskNodeItem::Base*, InfoItem*> > Container;
+	typedef QList<QPair<TaskNodeItem *, InfoItem *> > Container;
 
 public:
 	ScanedFiles();
 	ScanedFiles(Container::size_type reserver);
 
 	IFile::size_type totalSize() const { return m_data->totalSize; }
-	void push_back(TaskNodeItem::Base *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
+	void push_back(TaskNodeItem *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
 	void remove(Container::size_type index) { InfoItem *info = m_data->list.takeAt(index).second; m_data->totalSize -= info->totalSize(); delete info; }
 
 private:

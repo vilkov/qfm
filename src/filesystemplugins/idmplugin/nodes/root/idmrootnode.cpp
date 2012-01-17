@@ -365,12 +365,12 @@ void IdmRootNode::nodeRemoved(Node *node)
 	static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(0);
 }
 
-void IdmRootNode::updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed)
+void IdmRootNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmRootNode::completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed)
+void IdmRootNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
 {
 
 }

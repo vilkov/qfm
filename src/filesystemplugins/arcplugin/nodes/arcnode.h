@@ -74,8 +74,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed);
 
 	void scanCompleteEvent(TaskEvent *event);
 	void copyCompleteEvent(TaskEvent *event);
@@ -89,7 +89,7 @@ private:
 	class ItemsContainer : public ModelContainer
 	{
 	public:
-		typedef QList<ArcNodeItem::Base *> List;
+		typedef QList<ArcNodeItem *> List;
 
 	public:
 		ItemsContainer();
@@ -106,7 +106,7 @@ private:
 
 private:
 	typedef ::Tools::Containers::Union Union;
-	void updateFirstColumn(ArcNodeItem::Base *entry);
+	void updateFirstColumn(ArcNodeItem *entry);
 
 private:
 	ItemsContainer m_itemsContainer;

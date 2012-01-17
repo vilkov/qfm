@@ -24,15 +24,15 @@ public:
     virtual bool event(QEvent *event);
 
 protected:
-	virtual void updateProgressEvent(const TaskNodeItem::Base *item, quint64 progress, quint64 timeElapsed) = 0;
-	virtual void completedProgressEvent(const TaskNodeItem::Base *item, quint64 timeElapsed) = 0;
+	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed) = 0;
+	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed) = 0;
 
 protected:
 	void addTask(BaseTask *task, const TasksItemList &items);
 	void resetTask(BaseTask *task, BaseTask *oldTask);
 	void handleTask(BaseTask *task);
 	void taskHandled();
-	void cancelTask(TaskNodeItem::Base *item);
+	void cancelTask(TaskNodeItem *item);
 	void removeAllTaskLinks(BaseTask *task);
 
 private:

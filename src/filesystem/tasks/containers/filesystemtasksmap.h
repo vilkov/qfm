@@ -67,6 +67,20 @@ public:
 
 		return 0;
 	}
+	BaseTask *take(TaskNodeItem *item, List &list)
+	{
+		if (BaseTask *task = m_items.value(item, 0))
+		{
+			list = m_tasks.take(task);
+
+			for (List::size_type i = 0, size = list.size(); i < size; ++i)
+				m_items.remove(list.at(i));
+
+			return task;
+		}
+
+		return 0;
+	}
 	void resetTask(BaseTask *task, BaseTask *oldTask)
 	{
 		const List &list = (m_tasks[task] = m_tasks.take(oldTask));

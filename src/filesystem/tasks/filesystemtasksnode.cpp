@@ -90,4 +90,14 @@ void TasksNode::removeAllTaskLinks(BaseTask *task)
 	removeLink();
 }
 
+TasksMap::List TasksNode::cancelTaskAndTakeItems(TaskNodeItem *item)
+{
+	TasksMap::List res;
+
+	if (BaseTask *task = m_tasks.take(item, res))
+		task->cancel();
+
+	return res;
+}
+
 FILE_SYSTEM_NS_END

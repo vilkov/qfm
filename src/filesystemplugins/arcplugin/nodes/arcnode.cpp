@@ -198,7 +198,12 @@ void ArcNode::remove(const QModelIndexList &list, INodeView *view)
 
 void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 {
+	ArcNodeItem *item;
 
+	if (!list.isEmpty() && !(item = static_cast<ArcNodeItem *>(list.at(0).internalPointer()))->isRoot())
+	{
+		TasksItemList items = cancelTaskAndTakeItems(item);
+	}
 }
 
 void ArcNode::calculateSize(const QModelIndexList &list, INodeView *view)

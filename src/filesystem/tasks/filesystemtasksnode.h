@@ -34,6 +34,7 @@ protected:
 	void taskHandled();
 	void cancelTask(TaskNodeItem *item);
 	void removeAllTaskLinks(BaseTask *task);
+	TasksMap::List cancelTaskAndTakeItems(TaskNodeItem *item);
 
 private:
 	TasksMap m_tasks;

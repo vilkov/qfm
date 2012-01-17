@@ -221,7 +221,7 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 
 		if (control)
 		{
-			ArcNodeItem *item = static_cast<ArcNodeItem*>(index.internalPointer());
+			ArcNodeItem *item = static_cast<ArcNodeItem *>(index.internalPointer());
 
 			item->lock(tr("Extracting..."));
 			updateFirstColumn(item);
@@ -279,13 +279,13 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 void ArcNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(progress, timeElapsed);
-	updateFirstColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
 }
 
 void ArcNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
 {
 	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
-	updateFirstColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
 }
 
 void ArcNode::scanCompleteEvent(TaskEvent *e)
@@ -349,6 +349,18 @@ void ArcNode::updateFirstColumn(ArcNodeItem *entry)
 		index = createIndex(parent->indexOf(entry), 0, entry);
 	else
 		index = createIndex(m_items.indexOf(entry), 0, entry);
+
+	emit dataChanged(index, index);
+}
+
+void ArcNode::updateSecondColumn(ArcNodeItem *entry)
+{
+	QModelIndex index;
+
+	if (ArcNodeListItem *parent = static_cast<ArcNodeListItem *>(entry->parent()))
+		index = createIndex(parent->indexOf(entry), 1, entry);
+	else
+		index = createIndex(m_items.indexOf(entry), 1, entry);
 
 	emit dataChanged(index, index);
 }

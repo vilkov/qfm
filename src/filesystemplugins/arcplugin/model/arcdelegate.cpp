@@ -17,7 +17,10 @@ void ArcDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, c
 		TaskNodeItem *entry = static_cast<TaskNodeItem *>(m_proxy->mapToSource(index).internalPointer());
 
 		if (entry->isInProgress())
+		{
 			paintProgressInMb(entry, painter, option);
+			return;
+		}
 	}
 
 	TasksNodeDelegate::paint(painter, option, index);

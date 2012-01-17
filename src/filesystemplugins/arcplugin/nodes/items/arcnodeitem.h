@@ -12,6 +12,9 @@ class ArcNodeItem : public TaskNodeItem
 public:
 	ArcNodeItem(Base *parent);
 
+	virtual void lock(const QString &reason);
+	void unlock() { TaskNodeItem::unlock(); stop(); }
+
 	virtual bool isRoot() const;
 	virtual bool isDir() const;
 

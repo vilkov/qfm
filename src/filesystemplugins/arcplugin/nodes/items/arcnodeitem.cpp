@@ -7,6 +7,11 @@ ArcNodeItem::ArcNodeItem(Base *parent) :
 	TaskNodeItem(parent)
 {}
 
+void ArcNodeItem::lock(const QString &reason)
+{
+	TaskNodeItem::lock(reason);
+}
+
 bool ArcNodeItem::isRoot() const
 {
 	return false;

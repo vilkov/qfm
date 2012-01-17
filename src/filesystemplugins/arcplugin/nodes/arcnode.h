@@ -107,6 +107,7 @@ private:
 private:
 	typedef ::Tools::Containers::Union Union;
 	void updateFirstColumn(ArcNodeItem *entry);
+	void updateSecondColumn(ArcNodeItem *entry);
 
 private:
 	ItemsContainer m_itemsContainer;

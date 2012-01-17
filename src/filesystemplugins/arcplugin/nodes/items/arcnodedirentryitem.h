@@ -16,6 +16,7 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 	/* ArcNodeItem */
+	virtual void lock(const QString &reason);
 	virtual bool isDir() const;
 
 	const QString &fileName() const { return m_fileName; }

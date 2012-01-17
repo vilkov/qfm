@@ -20,7 +20,10 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 		FileSystemBaseItem *entry = static_cast<FileSystemBaseItem*>(m_proxy->mapToSource(index).internalPointer());
 
 		if (!entry->isRootItem() && entry->isInProgress())
+		{
 			paintProgressInMb(entry, painter, option);
+			return;
+		}
 	}
 
 	Delegate::paintBackgroundLines(painter, option, index);

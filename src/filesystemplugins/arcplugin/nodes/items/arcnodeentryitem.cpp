@@ -76,4 +76,10 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
+void ArcNodeEntryItem::lock(const QString &reason)
+{
+	start(m_extractedSize);
+	TaskNodeItem::lock(reason);
+}
+
 ARC_PLUGIN_NS_END

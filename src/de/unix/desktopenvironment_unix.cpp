@@ -39,39 +39,62 @@ static const char *x11_atomnames[NAtoms] =
 #endif
 
 
+struct IconIndex
+{
+	IconIndex()
+	{}
+	IconIndex(const QString &name, int size, int context) :
+		name(name),
+		size(size),
+		context(context)
+	{}
+
+	bool operator==(const IconIndex &other) const
+	{
+		return context == other.context && size == other.size && name == other.name;
+	}
+
+	bool operator<(const IconIndex &other) const
+	{
+		return context < other.context || size < other.size || name < other.name;
+	}
+
+	QString name;
+	int size;
+	int context;
+};
+
+uint qHash(const IconIndex &index)
+{
+	return qHash(index.name) + index.size + index.context;
+}
+
+
 class IconCache
 {
 public:
 	IconCache()
 	{}
 
-	QIcon findIcon(const QString &name, const QSize &size)
-	{
-		if (QIcon *icon = iconFromCache(name))
-			return *icon;
-		else
-			return *iconToCache(name, size);
-	}
-
-private:
-	QIcon *iconFromCache(const QString &name)
+	QIcon *iconFromCache(const QString &name, int size, int context)
 	{
 		QReadLocker lock(&m_cacheLock);
-		return m_cache.object(name);
+		return m_cache.object(IconIndex(name, size, context));
 	}
 
-	QIcon *iconToCache(const QString &name, const QSize &size)
+	QIcon *iconToCache(const QString &name, int size, int context, const QString &fileName)
 	{
+		IconIndex index(name, size, context);
 		QWriteLocker lock(&m_cacheLock);
 
-		if (QIcon *icon = m_cache.object(name))
+		if (QIcon *icon = m_cache.object(index))
 			return icon;
 		else
 		{
 			QScopedPointer<QIcon> icon(new QIcon());
 
-			icon->addFile(name, size);
-			m_cache.insert(name, icon.data());
+			icon->addFile(fileName, QSize(size, size));
+			m_cache.insert(index, icon.data());
 
 			return icon.take();
 		}
@@ -79,12 +102,12 @@ private:
 
 private:
 	QReadWriteLock m_cacheLock;
-	QCache<QString, QIcon> m_cache;
+	QCache<IconIndex, QIcon> m_cache;
 };
 static IconCache *iconCache = 0;
 
 
-static char *loadIcon(const char *mimeType, int size, const char *theme)
+inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char *theme)
 {
 	if (char *icon_path = xdg_mime_type_icon_lookup(mimeType, size, theme))
 		return icon_path;
@@ -215,28 +238,12 @@ DesktopEnvironment::~DesktopEnvironment()
 
 QIcon DesktopEnvironment::processingIcon(int iconSize) const
 {
-	QIcon res;
-
-	if (char *icon_path = xdg_mime_icon_lookup("view-refresh", iconSize, Actions, themeName()))
-	{
-		res = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-		free(icon_path);
-	}
-
-	return res;
+	return findIcon("view-refresh", iconSize, Actions);
 }
 
 QIcon DesktopEnvironment::cancelingIcon(int iconSize) const
 {
-	QIcon res;
-
-	if (char *icon_path = xdg_mime_icon_lookup("application-exit", iconSize, Actions, themeName()))
-	{
-		res = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-		free(icon_path);
-	}
-
-	return res;
+	return findIcon("application-exit", iconSize, Actions);
 }
 
 FileTypeId DesktopEnvironment::fileTypeId(FileTypes::Audio::Type id) const
@@ -377,12 +384,8 @@ FileTypeInfo DesktopEnvironment::fileTypeInfo(int iconSize) const
 {
 	FileTypeInfo info;
 
-	if (char *icon_path = xdg_mime_icon_lookup("folder", iconSize, Places, themeName()))
-	{
-		info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-		info.name = info.id.mime = QString::fromLatin1("<DIR>");
-		free(icon_path);
-	}
+	info.icon = findIcon("folder", iconSize, Places);
+	info.name = info.id.mime = QString::fromLatin1("<DIR>");
 
 	return info;
 }
@@ -395,31 +398,61 @@ FileTypeInfo DesktopEnvironment::fileTypeInfo(const char *mimeType, int iconSize
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
 	{
-		if (char *icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, themeName()))
-		{
-			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
-			info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
-			free(icon_path);
-		}
+		info.icon = findIcon(XDG_MIME_TYPE_TEXTPLAIN, iconSize, MimeTypes);
+		info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 	}
 	else
 	{
+		info.icon = findMimeTypeIcon(mimeType, iconSize);
+		info.name = info.id.mime = QString::fromUtf8(mimeType);
+	}
+
+	return info;
+}
+
+QIcon DesktopEnvironment::findIcon(const char *name, int iconSize, int context) const
+{
+	QString nameString = QString::fromLatin1(name);
+
+	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, context))
+		return *icon;
+	else
+	{
+		QIcon res;
+
+		if (char *icon_path = xdg_mime_icon_lookup(name, iconSize, static_cast<Context>(context), themeName()))
+		{
+			res = *iconCache->iconToCache(nameString, iconSize, context, QString::fromUtf8(icon_path));
+			free(icon_path);
+		}
+
+		return res;
+	}
+}
+
+QIcon DesktopEnvironment::findMimeTypeIcon(const char *mimeType, int iconSize) const
+{
+	QString nameString = QString::fromLatin1(mimeType);
+
+	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, MimeTypes))
+		return *icon;
+	else
+	{
+		QIcon res;
 		QByteArray iconThemeName = themeName();
 
-		if (char *icon_path = loadIcon(mimeType, iconSize, iconThemeName))
+		if (char *icon_path = loadMimeTypeIcon(mimeType, iconSize, iconThemeName))
 		{
-			info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+			res = *iconCache->iconToCache(nameString, iconSize, MimeTypes, QString::fromUtf8(icon_path));
 			free(icon_path);
 		}
 		else
 			if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName))
 			{
-				info.icon = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+				res = *iconCache->iconToCache(nameString, iconSize, MimeTypes, QString::fromUtf8(icon_path));
 				free(icon_path);
 			}
 
-		info.name = info.id.mime = QString::fromUtf8(mimeType);
+		return res;
 	}
-
-	return info;
 }

@@ -226,6 +226,19 @@ QIcon DesktopEnvironment::processingIcon(int iconSize) const
 	return res;
 }
 
+QIcon DesktopEnvironment::cancelingIcon(int iconSize) const
+{
+	QIcon res;
+
+	if (char *icon_path = xdg_mime_icon_lookup("application-exit", iconSize, Actions, themeName()))
+	{
+		res = iconCache->findIcon(QString::fromUtf8(icon_path), QSize(iconSize, iconSize));
+		free(icon_path);
+	}
+
+	return res;
+}
+
 FileTypeId DesktopEnvironment::fileTypeId(FileTypes::Audio::Type id) const
 {
 	FileTypeId typeId;

@@ -17,6 +17,7 @@ public:
 	const QIcon &lockIcon() const { return m_icon; }
 
 	void lock(const QString &reason);
+	void cancel(const QString &reason);
     void unlock() { m_locked = false; m_reason.clear(); m_icon = QIcon(); }
 
 	bool isInProgress() const { return !m_done.isNull(); }

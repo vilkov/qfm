@@ -81,10 +81,7 @@ protected:
 	void copyCompleteEvent(TaskEvent *event);
 
 private:
-	enum
-	{
-		RootItemIndex = 0
-	};
+	enum { RootItemIndex = 0 };
 
 	class ItemsContainer : public ModelContainer
 	{

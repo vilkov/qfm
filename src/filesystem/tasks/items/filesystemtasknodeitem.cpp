@@ -18,4 +18,10 @@ void TaskNodeItem::lock(const QString &reason)
 	m_locked = true;
 }
 
+void TaskNodeItem::cancel(const QString &reason)
+{
+	m_reason = reason;
+	m_icon = Application::desktopEnvironment()->cancelingIcon(16);
+}
+
 FILE_SYSTEM_NS_END

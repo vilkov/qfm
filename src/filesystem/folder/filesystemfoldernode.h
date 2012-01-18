@@ -89,15 +89,21 @@ protected:
 	class CancelFunctor : public Functors::Functor
 	{
 	public:
-		CancelFunctor(FolderNode *node) :
-			m_node(node)
+		CancelFunctor(FolderNode *node, const QString &reason) :
+			m_node(node),
+			m_reason(reason)
 		{}
+
+		const ::Tools::Containers::Union &updateUnion() const { return m_union; }
 
 	protected:
 		virtual void call(ItemsContainer::size_type index, FileSystemBaseItem *entry);
 
 	private:
 		FolderNode *m_node;
+		QString m_reason;
+		TasksItemList m_items;
+		::Tools::Containers::Union m_union;
 	};
 	friend class CancelFunctor;
 

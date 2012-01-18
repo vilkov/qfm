@@ -129,8 +129,9 @@ void FolderNode::remove(const QModelIndexList &list, INodeView *view)
 
 void FolderNode::cancel(const QModelIndexList &list, INodeView *view)
 {
-	CancelFunctor cancelFunctor(this);
+	CancelFunctor cancelFunctor(this, tr("Canceling..."));
 	processLockedIndexList(list, cancelFunctor);
+	updateFirstColumn(cancelFunctor.updateUnion());
 }
 
 void FolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
@@ -569,7 +570,13 @@ Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 
 void FolderNode::CancelFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)
 {
-	m_node->cancelTask(entry);
+	m_items = m_node->cancelTaskAndTakeItems(entry);
+
+	for (TasksItemList::size_type i = 0, size = m_items.size(); i < size; ++i)
+	{
+		m_union.add(index);
+		m_items.at(i)->cancel(m_reason);
+	}
 }
 
 void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystemBaseItem *entry)

@@ -200,9 +200,16 @@ void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 	ArcNodeItem *item;
 
-	if (!list.isEmpty() && !(item = static_cast<ArcNodeItem *>(list.at(0).internalPointer()))->isRoot())
+	if (!list.isEmpty() && !(item = static_cast<ArcNodeItem *>(m_proxy.mapToSource(list.at(0)).internalPointer()))->isRoot())
 	{
+		QString reason = tr("Canceling...");
 		TasksItemList items = cancelTaskAndTakeItems(item);
+
+		for (TasksItemList::size_type i = 0, size = items.size(); i < size; ++i)
+		{
+			items.at(i)->cancel(reason);
+			updateFirstColumn(static_cast<ArcNodeItem *>(items.at(i)));
+		}
 	}
 }
 

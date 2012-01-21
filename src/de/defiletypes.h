@@ -11,22 +11,18 @@ struct FileTypes
 {
 	struct Audio
 	{
+		enum { _from = 0, _count = 1 };
 		enum Type
 		{
-			/* Internal fields! */
-			_from = 0, _count = 1,
-
-			M3uFile = _from
+			MpegUrl = _from
 		};
 	};
 
 	struct Application
 	{
+		enum { _from = Audio::_count, _count = 19 };
 		enum Type
 		{
-			/* Internal fields! */
-			_from = 1, _count = 19,
-
 			GZipFile              = _from,
 			TarFile               = _from + 1,
 			CompressedTarFile     = _from + 2,
@@ -48,10 +44,10 @@ struct FileTypes
 			CdImageFile           = _from + 18
 		};
 	};
-
-	static FileTypeId fileTypeId(Audio::Type id);
-	static FileTypeId fileTypeId(Application::Type id);
 };
+
+FileTypeId fileTypeId(FileTypes::Audio::Type id);
+FileTypeId fileTypeId(FileTypes::Application::Type id);
 
 DE_NS_END
 

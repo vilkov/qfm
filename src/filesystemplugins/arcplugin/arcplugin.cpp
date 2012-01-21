@@ -21,16 +21,17 @@ Node *Plugin::node(const IFileInfo *info, Node *parent) const
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
+	using namespace ::DesktopEnvironment;
 	return FileTypeIdList() <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::GZipFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::TarFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::CompressedTarFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::BZipCompressedTarFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::ZipFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::BZipFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::RarFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::TarzFile) <<
-			DesktopEnvironment::FileTypes::fileTypeId(DesktopEnvironment::FileTypes::Application::BZip2File);
+			fileTypeId(FileTypes::Application::GZipFile) <<
+			fileTypeId(FileTypes::Application::TarFile) <<
+			fileTypeId(FileTypes::Application::CompressedTarFile) <<
+			fileTypeId(FileTypes::Application::BZipCompressedTarFile) <<
+			fileTypeId(FileTypes::Application::ZipFile) <<
+			fileTypeId(FileTypes::Application::BZipFile) <<
+			fileTypeId(FileTypes::Application::RarFile) <<
+			fileTypeId(FileTypes::Application::TarzFile) <<
+			fileTypeId(FileTypes::Application::BZip2File);
 }
 
 const Archive **Plugin::archivers()

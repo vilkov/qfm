@@ -3,13 +3,13 @@
 
 DE_NS_BEGIN
 
-FileTypeId FileTypes::fileTypeId(Audio::Type id)
+FileTypeId fileTypeId(FileTypes::Audio::Type id)
 {
 	FileTypeId typeId;
 
 	switch (id)
 	{
-		case FileTypes::Audio::M3uFile:
+		case FileTypes::Audio::MpegUrl:
 			typeId.mime = QString::fromLatin1("audio/x-mpegurl");
 			break;
 	}
@@ -17,7 +17,7 @@ FileTypeId FileTypes::fileTypeId(Audio::Type id)
 	return typeId;
 }
 
-FileTypeId FileTypes::fileTypeId(Application::Type id)
+FileTypeId fileTypeId(FileTypes::Application::Type id)
 {
 	FileTypeId typeId;
 

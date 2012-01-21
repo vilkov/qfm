@@ -22,7 +22,7 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-	/* INode::IFileOperations */
+	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);

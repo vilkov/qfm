@@ -24,6 +24,9 @@ class Node : public FileSystemModel, public INode
 public:
 	Node(const ModelContainer &conteiner, Node *parent = 0);
 
+	/* IFileOperations */
+	virtual IFileInfo *info(const QModelIndex &idx) const;
+
 	/* IFileNavigation */
 	virtual void viewCloseAll();
 	virtual void viewClosed(INodeView *nodeView);

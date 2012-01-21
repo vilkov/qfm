@@ -11,7 +11,6 @@
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
-#include "contextmenu/contextmenu.h"
 #include "../../filesystem/interfaces/filesysteminode.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
@@ -154,7 +153,6 @@ private:
 private:
 	FoldersView *m_parent;
     FileSystem::INode *m_node;
-	ContextMenu m_menu;
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;
     Header m_header;

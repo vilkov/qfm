@@ -7,8 +7,8 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
+#include "../de/mountpoints/mountpoints.h"
 #include "../filesystem/root/filesystemrootnode.h"
-#include "../filesystem/tools/mountpoints/mountpoints.h"
 
 
 class MainWindow : public QMainWindow

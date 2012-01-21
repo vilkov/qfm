@@ -7,7 +7,7 @@
 #include <platformstl/platformstl.hpp>
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)
-#	include "win/mountpoints_p.h"
+#	include "win32/mountpoints_p.h"
 #elif defined(PLATFORMSTL_OS_IS_UNIX)
 #	include "unix/mountpoints_p.h"
 #else

@@ -1,42 +1,20 @@
 #ifndef CONTEXTMENU_H_
 #define CONTEXTMENU_H_
 
-#include <QtCore/QSharedData>
-#include <QtCore/QStringList>
-#include <QtCore/QString>
+#include <QtCore/QCoreApplication>
 #include <QtCore/QPoint>
-#include <QtGui/QWidget>
+#include <QtGui/QMenu>
 
 
 class ContextMenu
 {
-public:
-	class Implementation : public QSharedData
-	{
-		Q_DISABLE_COPY(Implementation)
-
-	public:
-		Implementation(QWidget *parent) :
-			QSharedData(),
-			m_parent(parent)
-		{}
-		virtual ~Implementation()
-		{}
-
-		QWidget *parent() const { return m_parent; }
-		virtual void popup(const QString &parentDir, const QStringList &files, const QPoint &pos) = 0;
-
-	private:
-		QWidget *m_parent;
-	};
+	Q_DECLARE_TR_FUNCTIONS(ContextMenu)
 
 public:
-	ContextMenu(QWidget *parent);
-
-	void popup(const QString &parentDir, const QStringList &files);
+	ContextMenu();
 
 private:
-    QExplicitlySharedDataPointer<Implementation> m_data;
+	QMenu m_menu;
 };
 
 #endif /* CONTEXTMENU_H_ */

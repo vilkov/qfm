@@ -10,7 +10,6 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	QWidget(),
 	m_parent(parent),
     m_node(0),
-	m_menu(this),
 	m_layout(this),
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),

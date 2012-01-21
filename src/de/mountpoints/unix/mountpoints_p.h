@@ -6,7 +6,7 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusConnectionInterface>
 #include "../mountpoint.h"
-#include "../../filesystemcommontools.h"
+#include "../../../filesystem/tools/filesystemcommontools.h"
 
 
 /* UDisks */

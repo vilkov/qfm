@@ -1,5 +1,7 @@
-#include "../contextmenu.h"
+#include "../decontextmenu.h"
 
+
+DE_NS_BEGIN
 
 ContextMenu::ContextMenu()
 {
@@ -12,3 +14,10 @@ ContextMenu::ContextMenu()
 	m_menu.addSeparator();
 	m_menu.addAction(tr("Properties"));
 }
+
+void ContextMenu::popup(QWidget *parent, ::FileSystem::INode *node, const QList< ::FileSystem::IFileInfo *> &files) const
+{
+
+}
+
+DE_NS_END

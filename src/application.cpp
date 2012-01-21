@@ -46,7 +46,10 @@ bool Application::notify(QObject *receiver, QEvent *event)
 	}
 	CATCH_ALL
 	(
-		QString::fromLatin1("Application::notify trows an unhandled exception: receiver \"%1\" event \"%2\"!").arg(receiver->objectName()).arg(QString::number(event->type())),
+		QString::fromLatin1("Application::notify trows an unhandled exception: receiver \"%1\" event \"%2\"!").
+		arg(receiver->objectName()).
+		arg(QString::number(event->type())),
+		DO_NOTHING
 	)
 
 	return true;

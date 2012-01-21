@@ -10,6 +10,7 @@
 #include "mainwindow/mainwindow.h"
 #include "filesystemplugins/pluginsmanager.h"
 #include "de/deservice.h"
+#include "de/contextmenu/decontextmenu.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -27,6 +28,7 @@ public:
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 	static ::DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
+    static ::DesktopEnvironment::ContextMenu *globalMenu() { return &instance()->m_globalMenu; }
 	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
@@ -38,9 +40,10 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const char *where, const char *what);
 
 private:
-	::DesktopEnvironment::Service m_desktopService;
-	::Tools::TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
+	::Tools::TasksPool::TaskPool m_taskPool;
+	::DesktopEnvironment::Service m_desktopService;
+    ::DesktopEnvironment::ContextMenu m_globalMenu;
     ::FileSystem::Plugins::MyPluginsManager m_plugins;
 	MainWindow m_mainWindow;
 };

@@ -16,9 +16,12 @@ class ContextMenu
 	Q_DECLARE_TR_FUNCTIONS(ContextMenu)
 
 public:
+	typedef QList< ::FileSystem::IFileInfo *> Files;
+
+public:
 	ContextMenu();
 
-	void popup(QWidget *parent, ::FileSystem::INode *node, const QList< ::FileSystem::IFileInfo *> &files) const;
+	static void popup(QWidget *parent, ::FileSystem::INode *node, const Files &files);
 
 private:
 	QMenu m_menu;

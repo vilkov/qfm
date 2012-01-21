@@ -3,7 +3,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
-#include <QtGui/QIcon>
 #include "../filesystem_ns.h"
 #include "../../de/filetypeinfo.h"
 

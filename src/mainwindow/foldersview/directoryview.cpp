@@ -1,5 +1,6 @@
 #include "directoryview.h"
 #include "foldersview.h"
+#include "../../de/contextmenu/decontextmenu.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 #include <QtGui/QHeaderView>
@@ -316,8 +317,13 @@ void DirectoryView::editPath()
 
 void DirectoryView::contextMenu()
 {
-	QStringList selectedFiles;
-//	m_menu.popup(m_model.selectedFiles(selectedIndexes(), selectedFiles), selectedFiles);
+	QModelIndexList list = selectedIndexes();
+	::DesktopEnvironment::ContextMenu::Files files;
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+		files.push_back(m_node->info(list.at(i)));
+
+	::DesktopEnvironment::ContextMenu::popup(this, m_node, files);
 }
 
 void DirectoryView::refreshOther()

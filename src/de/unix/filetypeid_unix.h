@@ -2,7 +2,6 @@
 #define FILETYPEID_UNIX_H_
 
 #include <QtCore/QString>
-#include <QtGui/QIcon>
 
 
 struct FileTypeId_Unix
@@ -12,6 +11,7 @@ struct FileTypeId_Unix
 
 	bool operator==(const FileTypeId_Unix &other) const { return mime == other.mime; }
 	bool operator<(const FileTypeId_Unix &other) const { return mime < other.mime; }
+	bool isValid() const { return !mime.isEmpty(); }
 
     QString mime;
 };

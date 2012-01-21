@@ -9,9 +9,14 @@ DE_NS_BEGIN
 
 struct FileTypes
 {
+	enum Type
+	{
+		Unknown = 0
+	};
+
 	struct Audio
 	{
-		enum { _from = 0, _count = 1 };
+		enum { _from = 1, _count = 1 };
 		enum Type
 		{
 			MpegUrl = _from

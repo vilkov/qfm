@@ -1,7 +1,6 @@
 #ifndef FILESYSTEMINFO_H_
 #define FILESYSTEMINFO_H_
 
-#include <QtGui/QIcon>
 #include "../tools/filesystemfileinfo.h"
 #include "../interfaces/filesystemifilecontrol.h"
 

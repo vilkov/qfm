@@ -10,7 +10,7 @@ ArcNodeDirEntryItem::ArcNodeDirEntryItem(const QString &fileName, const QDateTim
 	m_fileName(fileName),
 	m_extractedSize(0),
 	m_lastModified(lastModified),
-	m_typeInfo(Application::desktopEnvironment()->fileTypeInfoFromFileName(m_fileName, true, 16))
+	m_typeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_fileName, true, 16))
 {}
 
 QVariant ArcNodeDirEntryItem::data(qint32 column, qint32 role) const

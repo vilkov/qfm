@@ -8,8 +8,8 @@
 #include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
 #include "mainwindow/mainwindow.h"
-#include "de/desktopenvironment.h"
 #include "filesystemplugins/pluginsmanager.h"
+#include "de/deservice.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -26,7 +26,7 @@ public:
 	QString version() const;
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
-	static DesktopEnvironment *desktopEnvironment() { return &instance()->m_desktopEnvironment; }
+	static ::DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
 	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
@@ -38,10 +38,10 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const char *where, const char *what);
 
 private:
-	DesktopEnvironment m_desktopEnvironment;
+	::DesktopEnvironment::Service m_desktopService;
+	::Tools::TasksPool::TaskPool m_taskPool;
 	ApplicationSettings m_settings;
-	Tools::TasksPool::TaskPool m_taskPool;
-    FileSystem::Plugins::MyPluginsManager m_plugins;
+    ::FileSystem::Plugins::MyPluginsManager m_plugins;
 	MainWindow m_mainWindow;
 };
 

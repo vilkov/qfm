@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMFILETYPEID_UNIX_H_
-#define FILESYSTEMFILETYPEID_UNIX_H_
+#ifndef FILETYPEID_UNIX_H_
+#define FILETYPEID_UNIX_H_
 
 #include <QtCore/QString>
 #include <QtGui/QIcon>
@@ -7,7 +7,8 @@
 
 struct FileTypeId_Unix
 {
-	FileTypeId_Unix();
+	FileTypeId_Unix()
+	{}
 
 	bool operator==(const FileTypeId_Unix &other) const { return mime == other.mime; }
 	bool operator<(const FileTypeId_Unix &other) const { return mime < other.mime; }
@@ -15,4 +16,4 @@ struct FileTypeId_Unix
     QString mime;
 };
 
-#endif /* FILESYSTEMFILETYPEID_UNIX_H_ */
+#endif /* FILETYPEID_UNIX_H_ */

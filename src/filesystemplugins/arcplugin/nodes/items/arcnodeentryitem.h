@@ -3,7 +3,7 @@
 
 #include <QtCore/QDateTime>
 #include "arcnodeitem.h"
-#include "../../../../de/filesystemfiletypeinfo.h"
+#include "../../../../de/filetypeinfo.h"
 
 
 ARC_PLUGIN_NS_BEGIN

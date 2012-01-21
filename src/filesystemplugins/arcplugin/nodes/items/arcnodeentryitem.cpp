@@ -10,7 +10,7 @@ ArcNodeEntryItem::ArcNodeEntryItem(const QString &fileName, qint64 extractedSize
 	m_fileName(fileName),
 	m_extractedSize(extractedSize),
 	m_lastModified(lastModified),
-	m_typeInfo(Application::desktopEnvironment()->fileTypeInfoFromFileName(m_fileName, false, 16))
+	m_typeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_fileName, false, 16))
 {}
 
 QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const

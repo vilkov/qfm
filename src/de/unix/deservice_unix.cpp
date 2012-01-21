@@ -1,4 +1,4 @@
-#include "../desktopenvironment.h"
+#include "../deservice.h"
 #include "../../filesystem/interfaces/filesystemifileinfo.h"
 #include "xdgmime/src/xdgmime.h"
 
@@ -135,7 +135,9 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 }
 
 
-DesktopEnvironment::DesktopEnvironment() :
+DE_NS_BEGIN
+
+Service::Service() :
 	m_type(DE_Unknown)
 {
 	iconCache = new IconCache();
@@ -230,123 +232,23 @@ DesktopEnvironment::DesktopEnvironment() :
     xdg_mime_init();
 }
 
-DesktopEnvironment::~DesktopEnvironment()
+Service::~Service()
 {
 	xdg_mime_shutdown();
 	delete iconCache;
 }
 
-QIcon DesktopEnvironment::processingIcon(int iconSize) const
+QIcon Service::processingIcon(int iconSize) const
 {
 	return findIcon("view-refresh", iconSize, Actions);
 }
 
-QIcon DesktopEnvironment::cancelingIcon(int iconSize) const
+QIcon Service::cancelingIcon(int iconSize) const
 {
 	return findIcon("application-exit", iconSize, Actions);
 }
 
-FileTypeId DesktopEnvironment::fileTypeId(FileTypes::Audio::Type id) const
-{
-	FileTypeId typeId;
-
-	switch (id)
-	{
-		case FileTypes::Audio::M3uFile:
-			typeId.mime = QString::fromLatin1("audio/x-mpegurl");
-			break;
-	}
-
-	return typeId;
-}
-
-FileTypeId DesktopEnvironment::fileTypeId(FileTypes::Application::Type id) const
-{
-	FileTypeId typeId;
-
-	switch (id)
-	{
-		case FileTypes::Application::GZipFile:
-			typeId.mime = QString::fromLatin1("application/x-gzip");
-			break;
-
-		case FileTypes::Application::TarFile:
-			typeId.mime = QString::fromLatin1("application/x-tar");
-			break;
-
-		case FileTypes::Application::CompressedTarFile:
-			typeId.mime = QString::fromLatin1("application/x-compressed-tar");
-			break;
-
-		case FileTypes::Application::BZipCompressedTarFile:
-			typeId.mime = QString::fromLatin1("application/x-bzip-compressed-tar");
-			break;
-
-		case FileTypes::Application::ZipFile:
-			typeId.mime = QString::fromLatin1("application/zip");
-			break;
-
-		case FileTypes::Application::BZipFile:
-			typeId.mime = QString::fromLatin1("application/x-bzip");
-			break;
-
-		case FileTypes::Application::RarFile:
-			typeId.mime = QString::fromLatin1("application/x-rar");
-			break;
-
-		case FileTypes::Application::TarzFile:
-			typeId.mime = QString::fromLatin1("application/x-tarz");
-			break;
-
-		case FileTypes::Application::BZip2File:
-			typeId.mime = QString::fromLatin1("application/x-bzip2");
-			break;
-
-		case FileTypes::Application::JavaArchiveFile:
-			typeId.mime = QString::fromLatin1("application/x-java-archive");
-			break;
-
-		case FileTypes::Application::DebFile:
-			typeId.mime = QString::fromLatin1("application/x-deb");
-			break;
-
-		case FileTypes::Application::Arch7zCompressedFile:
-			typeId.mime = QString::fromLatin1("application/x-7z-compressed");
-			break;
-
-		case FileTypes::Application::CompressFile:
-			typeId.mime = QString::fromLatin1("application/x-compress");
-			break;
-
-		case FileTypes::Application::ZipCompressedFile:
-			typeId.mime = QString::fromLatin1("application/x-zip-compressed");
-			break;
-
-		case FileTypes::Application::LzmaFile:
-			typeId.mime = QString::fromLatin1("application/x-lzma");
-			break;
-
-		case FileTypes::Application::ServicepackFile:
-			typeId.mime = QString::fromLatin1("application/x-servicepack");
-			break;
-
-		case FileTypes::Application::XzCompressedTarFile:
-			typeId.mime = QString::fromLatin1("application/x-xz-compressed-tar");
-			break;
-
-		case FileTypes::Application::LzmaCompressedTarFile:
-			typeId.mime = QString::fromLatin1("application/x-lzma-compressed-tar");
-			break;
-
-		case FileTypes::Application::CdImageFile:
-			typeId.mime = QString::fromLatin1("application/x-cd-image");
-			break;
-	}
-
-	return typeId;
-}
-
-FileTypeInfo DesktopEnvironment::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
+FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -363,7 +265,7 @@ FileTypeInfo DesktopEnvironment::fileTypeInfo(const QString &absoluteFilePath, b
 	}
 }
 
-FileTypeInfo DesktopEnvironment::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
+FileTypeInfo Service::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -371,7 +273,7 @@ FileTypeInfo DesktopEnvironment::fileTypeInfoFromFileName(const QString &fileNam
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
 }
 
-QByteArray DesktopEnvironment::themeName() const
+QByteArray Service::themeName() const
 {
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 	return DesktopEnvironmentPrivate::iconThemeName(kde_version).toUtf8();
@@ -380,7 +282,7 @@ QByteArray DesktopEnvironment::themeName() const
 #endif
 }
 
-FileTypeInfo DesktopEnvironment::fileTypeInfo(int iconSize) const
+FileTypeInfo Service::fileTypeInfo(int iconSize) const
 {
 	FileTypeInfo info;
 
@@ -390,7 +292,7 @@ FileTypeInfo DesktopEnvironment::fileTypeInfo(int iconSize) const
 	return info;
 }
 
-FileTypeInfo DesktopEnvironment::fileTypeInfo(const char *mimeType, int iconSize) const
+FileTypeInfo Service::fileTypeInfo(const char *mimeType, int iconSize) const
 {
 	FileTypeInfo info;
 
@@ -410,7 +312,7 @@ FileTypeInfo DesktopEnvironment::fileTypeInfo(const char *mimeType, int iconSize
 	return info;
 }
 
-QIcon DesktopEnvironment::findIcon(const char *name, int iconSize, int context) const
+QIcon Service::findIcon(const char *name, int iconSize, int context) const
 {
 	QString nameString = QString::fromLatin1(name);
 
@@ -430,7 +332,7 @@ QIcon DesktopEnvironment::findIcon(const char *name, int iconSize, int context) 
 	}
 }
 
-QIcon DesktopEnvironment::findMimeTypeIcon(const char *mimeType, int iconSize) const
+QIcon Service::findMimeTypeIcon(const char *mimeType, int iconSize) const
 {
 	QString nameString = QString::fromLatin1(mimeType);
 
@@ -456,3 +358,5 @@ QIcon DesktopEnvironment::findMimeTypeIcon(const char *mimeType, int iconSize) c
 		return res;
 	}
 }
+
+DE_NS_END

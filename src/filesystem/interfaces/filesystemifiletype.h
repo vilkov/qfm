@@ -4,7 +4,7 @@
 #include <QtCore/QString>
 #include <QtGui/QIcon>
 #include "../filesystem_ns.h"
-#include "../../de/filesystemfiletypeinfo.h"
+#include "../../de/filetypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

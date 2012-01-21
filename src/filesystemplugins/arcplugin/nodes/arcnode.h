@@ -46,7 +46,6 @@ public:
 	virtual void refresh();
 
 	/* IFileOperations */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);

@@ -156,11 +156,6 @@ void ArcNode::refresh()
 
 }
 
-IFileInfo *ArcNode::info(const QModelIndex &idx) const
-{
-	return 0;
-}
-
 ICopyControl *ArcNode::createControl(INodeView *view) const
 {
 	return 0;

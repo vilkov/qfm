@@ -19,6 +19,7 @@ public:
 	virtual IFileInfo *info(const QModelIndex &idx) const = 0;
 	virtual ICopyControl *createControl(INodeView *view) const = 0;
 
+	virtual void contextMenu(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void menuAction(QAction *action, INodeView *view) = 0;
 	virtual void createFile(const QModelIndex &index, INodeView *view) = 0;
 	virtual void createDirectory(const QModelIndex &index, INodeView *view) = 0;

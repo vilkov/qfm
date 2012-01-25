@@ -24,6 +24,7 @@ public:
 
 	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
+	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
 	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);

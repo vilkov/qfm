@@ -182,6 +182,11 @@ ICopyControl *IdmRootNode::createControl(INodeView *view) const
 		return 0;
 }
 
+void IdmRootNode::contextMenu(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 void IdmRootNode::menuAction(QAction *action, INodeView *view)
 {
 	switch (static_cast<MenuId>(action->data().toInt()))

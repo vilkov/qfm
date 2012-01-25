@@ -64,6 +64,11 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 		return &m_items[index.row()]->info();
 }
 
+void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 void FolderNode::menuAction(QAction *action, INodeView *view)
 {
 

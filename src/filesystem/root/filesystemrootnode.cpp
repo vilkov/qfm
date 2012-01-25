@@ -100,6 +100,11 @@ ICopyControl *RootNode::createControl(INodeView *view) const
 	return 0;
 }
 
+void RootNode::contextMenu(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 void RootNode::menuAction(QAction *action, INodeView *view)
 {
 

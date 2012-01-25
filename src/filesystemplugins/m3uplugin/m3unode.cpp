@@ -209,6 +209,11 @@ ICopyControl *M3uNode::createControl(INodeView *view) const
 	return 0;
 }
 
+void M3uNode::contextMenu(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 void M3uNode::menuAction(QAction *action, INodeView *view)
 {
 

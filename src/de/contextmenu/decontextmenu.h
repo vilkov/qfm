@@ -6,8 +6,8 @@
 #include <QtCore/QList>
 #include <QtGui/QMenu>
 #include "../de_ns.h"
+#include "../../filesystem/actions/filesystemfileaction.h"
 #include "../../filesystem/filetypeinfo/filetypeinfo.h"
-#include "../../filesystem/interfaces/filesysteminode.h"
 
 
 DE_NS_BEGIN
@@ -17,12 +17,17 @@ class ContextMenu
 	Q_DECLARE_TR_FUNCTIONS(ContextMenu)
 
 public:
-	typedef QList< ::FileSystem::IFileInfo *> Files;
+	typedef ::FileSystem::FileTypeId FileTypeId;
+	typedef QList<FileTypeId>        FileTypesList;
 
 public:
 	ContextMenu();
 
-	static void popup(QWidget *parent, ::FileSystem::INode *node, const Files &files);
+	void registerAction(const ::FileSystem::FileAction *action);
+
+private:
+	typedef QList<const ::FileSystem::FileAction *> FileActionsList;
+	typedef QMap<FileTypeId, FileActionsList>       Map;
 
 private:
 	QMenu m_menu;

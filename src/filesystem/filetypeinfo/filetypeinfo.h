@@ -5,10 +5,10 @@
 
 #if !defined(DESKTOP_ENVIRONMENT_IS_WINDOWS)
 #	include "unix/filetypeid_unix.h"
-	typedef ::FileSystem::FileTypeId_Unix FileTypeId;
+	FILE_SYSTEM_NS(typedef ::FileSystem::FileTypeId_Unix FileTypeId)
 #else
 #	include "win32/filetypeid_win32.h"
-	typedef ::FileSystem::FileTypeId_Win32 FileTypeId;
+	FILE_SYSTEM_NS(typedef ::FileSystem::FileTypeId_Win32 FileTypeId)
 #endif
 
 

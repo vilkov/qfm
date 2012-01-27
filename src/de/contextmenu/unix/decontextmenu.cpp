@@ -15,9 +15,4 @@ ContextMenu::ContextMenu()
 	m_menu.addAction(tr("Properties"));
 }
 
-void ContextMenu::popup(QWidget *parent, ::FileSystem::INode *node, const Files &files)
-{
-
-}
-
 DE_NS_END

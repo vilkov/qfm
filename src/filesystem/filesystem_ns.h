@@ -6,4 +6,9 @@
 #define FILE_SYSTEM_NS_BEGIN namespace FileSystem {
 #define FILE_SYSTEM_NS_END }
 
+#define FILE_SYSTEM_NS(Expression) \
+		FILE_SYSTEM_NS_BEGIN       \
+			Expression;            \
+		FILE_SYSTEM_NS_END
+
 #endif /* FILESYSTEM_NS_H_ */

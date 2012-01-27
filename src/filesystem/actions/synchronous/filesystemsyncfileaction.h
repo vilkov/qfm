@@ -13,10 +13,10 @@ public:
 	typedef QList<const IFileControl *> FilesList;
 
 public:
+	virtual bool isAsynchronous() const;
 	virtual void process(const FilesList &files) const = 0;
 };
 
 FILE_SYSTEM_NS_END
-
 
 #endif /* FILESYSTEMSYNCFILEACTION_H_ */

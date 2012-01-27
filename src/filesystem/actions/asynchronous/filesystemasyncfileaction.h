@@ -20,10 +20,10 @@ public:
 	typedef QList<FileItem>                                   FilesList;
 
 public:
+	virtual bool isAsynchronous() const;
 	virtual void process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const = 0;
 };
 
 FILE_SYSTEM_NS_END
-
 
 #endif /* FILESYSTEMASYNCFILEACTION_H_ */

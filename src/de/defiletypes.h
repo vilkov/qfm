@@ -2,7 +2,7 @@
 #define DEFILETYPES_H_
 
 #include "de_ns.h"
-#include "filetypeinfo.h"
+#include "../filesystem/filetypeinfo/filetypeinfo.h"
 
 
 DE_NS_BEGIN

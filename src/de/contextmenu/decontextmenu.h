@@ -6,6 +6,7 @@
 #include <QtCore/QList>
 #include <QtGui/QMenu>
 #include "../de_ns.h"
+#include "../../filesystem/filetypeinfo/filetypeinfo.h"
 #include "../../filesystem/interfaces/filesysteminode.h"
 
 

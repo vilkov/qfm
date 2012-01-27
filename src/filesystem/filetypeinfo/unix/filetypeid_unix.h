@@ -2,7 +2,10 @@
 #define FILETYPEID_UNIX_H_
 
 #include <QtCore/QString>
+#include "../../filesystem_ns.h"
 
+
+FILE_SYSTEM_NS_BEGIN
 
 struct FileTypeId_Unix
 {
@@ -15,5 +18,7 @@ struct FileTypeId_Unix
 
     QString mime;
 };
+
+FILE_SYSTEM_NS_END
 
 #endif /* FILETYPEID_UNIX_H_ */

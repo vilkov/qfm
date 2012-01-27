@@ -34,13 +34,13 @@ public:
 	QIcon processingIcon(int iconSize) const;
 	QIcon cancelingIcon(int iconSize) const;
 
-	FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
-	FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
+	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
+	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
 
 private:
 	QByteArray themeName() const;
-	FileTypeInfo fileTypeInfo(int iconSize) const;
-	FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
+	::FileSystem::FileTypeInfo fileTypeInfo(int iconSize) const;
+	::FileSystem::FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
 	QIcon findIcon(const char *name, int iconSize, int context) const;
 	QIcon findMimeTypeIcon(const char *mimeType, int iconSize) const;
 

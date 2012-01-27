@@ -3,7 +3,7 @@
 
 #include "filesystemifileinfo.h"
 #include "../filesystemnode.h"
-#include "../../de/filetypeinfo.h"
+#include "../filetypeinfo/filetypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

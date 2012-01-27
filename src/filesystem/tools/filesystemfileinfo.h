@@ -4,7 +4,7 @@
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
 #include "../filesystem_ns.h"
-#include "../../de/filetypeinfo.h"
+#include "../filetypeinfo/filetypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

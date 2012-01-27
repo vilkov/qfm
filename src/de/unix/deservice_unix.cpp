@@ -248,7 +248,7 @@ QIcon Service::cancelingIcon(int iconSize) const
 	return findIcon("application-exit", iconSize, Actions);
 }
 
-FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
+::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -265,7 +265,7 @@ FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, 
 	}
 }
 
-FileTypeInfo Service::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
+::FileSystem::FileTypeInfo Service::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -282,9 +282,9 @@ QByteArray Service::themeName() const
 #endif
 }
 
-FileTypeInfo Service::fileTypeInfo(int iconSize) const
+::FileSystem::FileTypeInfo Service::fileTypeInfo(int iconSize) const
 {
-	FileTypeInfo info;
+	::FileSystem::FileTypeInfo info;
 
 	info.icon = findIcon("folder", iconSize, Places);
 	info.name = info.id.mime = QString::fromLatin1("<DIR>");
@@ -292,9 +292,9 @@ FileTypeInfo Service::fileTypeInfo(int iconSize) const
 	return info;
 }
 
-FileTypeInfo Service::fileTypeInfo(const char *mimeType, int iconSize) const
+::FileSystem::FileTypeInfo Service::fileTypeInfo(const char *mimeType, int iconSize) const
 {
-	FileTypeInfo info;
+	::FileSystem::FileTypeInfo info;
 
 	if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||

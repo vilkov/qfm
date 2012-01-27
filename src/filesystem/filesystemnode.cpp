@@ -89,7 +89,7 @@ INode *Node::root() const
 	if (INode *res = parentNode())
 		return res->root();
 	else
-		return (INode*)this;
+		return const_cast<Node *>(this);
 }
 
 int Node::columnsCount() const

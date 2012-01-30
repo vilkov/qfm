@@ -1,6 +1,7 @@
 #include "filesystemfoldernode.h"
 #include "items/filesystemrootitem.h"
 #include "items/filesystementryitem.h"
+#include "actions/filesystemfoldercopyaction.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
@@ -11,6 +12,8 @@
 
 
 FILE_SYSTEM_NS_BEGIN
+static FolderCopyAction copyAction;
+
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
 	FolderNodeBase(info, m_items, parent),
@@ -66,7 +69,30 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 
 void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
+	QMenu menu;
+	QModelIndex index;
 
+	if (list.size() == 1)
+	{
+
+	}
+	else
+	{
+		::DesktopEnvironment::ContextMenuFactory::FileActionsList actions;
+		QSet<const FileAction *> set;
+		FileAction::FilesList files;
+		const FileAction *action;
+		FileSystemBaseItem *item;
+
+		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+			if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
+			{
+				actions = Application::globalMenu()->actions(item->info().id());
+				set.insert();
+			}
+
+		menu.addAction();
+	}
 }
 
 void FolderNode::menuAction(QAction *action, INodeView *view)

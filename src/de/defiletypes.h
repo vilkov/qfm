@@ -11,12 +11,13 @@ struct FileTypes
 {
 	enum Type
 	{
-		Unknown = 0
+		Unknown = 0,
+		Folder = 1
 	};
 
 	struct Audio
 	{
-		enum { _from = 1, _count = 1 };
+		enum { _from = 2, _count = 1 };
 		enum Type
 		{
 			MpegUrl = _from
@@ -25,7 +26,7 @@ struct FileTypes
 
 	struct Application
 	{
-		enum { _from = Audio::_count, _count = 19 };
+		enum { _from = Audio::_from + Audio::_count, _count = 19 };
 		enum Type
 		{
 			GZipFile              = _from,
@@ -51,8 +52,9 @@ struct FileTypes
 	};
 };
 
-FileTypeId fileTypeId(FileTypes::Audio::Type id);
-FileTypeId fileTypeId(FileTypes::Application::Type id);
+::FileSystem::FileTypeId fileTypeId(FileTypes::Type id);
+::FileSystem::FileTypeId fileTypeId(FileTypes::Audio::Type id);
+::FileSystem::FileTypeId fileTypeId(FileTypes::Application::Type id);
 
 DE_NS_END
 

@@ -287,7 +287,7 @@ QByteArray Service::themeName() const
 	::FileSystem::FileTypeInfo info;
 
 	info.icon = findIcon("folder", iconSize, Places);
-	info.name = info.id.mime = QString::fromLatin1("<DIR>");
+	info.name = (info.id = fileTypeId(FileTypes::Folder)).mime;
 
 	return info;
 }

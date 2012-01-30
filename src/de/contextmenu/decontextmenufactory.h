@@ -14,8 +14,9 @@ DE_NS_BEGIN
 class ContextMenuFactory
 {
 public:
-	typedef ::FileSystem::FileTypeId FileTypeId;
-	typedef QList<FileTypeId>        FileTypesList;
+	typedef ::FileSystem::FileTypeId                FileTypeId;
+	typedef QList<FileTypeId>                       FileTypesList;
+	typedef QList<const ::FileSystem::FileAction *> FileActionsList;
 
 	enum Type
 	{
@@ -30,12 +31,14 @@ public:
 public:
 	ContextMenuFactory();
 
+	FileActionsList actions(Type type) { return m_actions[type]; }
+	FileActionsList actions(const FileTypeId &type) { return m_files.value(type); }
+
 	void registerAction(const ::FileSystem::FileAction *action, Type type);
 	void registerAction(const ::FileSystem::FileAction *action, const FileTypesList &fileTypes);
 
 private:
-	typedef QList<const ::FileSystem::FileAction *> FileActionsList;
-	typedef QMap<FileTypeId, FileActionsList>       FileActionsMap;
+	typedef QMap<FileTypeId, FileActionsList> FileActionsMap;
 
 private:
 	FileActionsMap m_files;

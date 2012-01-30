@@ -1,10 +1,11 @@
 #include "filesystemfolderpasteaction.h"
+#include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 FolderPasteAction::FolderPasteAction() :
-	m_action(tr("Paste"), 0)
+	m_action(Application::desktopService()->pasteActionIcon(16), tr("Paste"), 0)
 {
 	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
 }

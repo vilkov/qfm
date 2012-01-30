@@ -34,6 +34,11 @@ public:
 	QIcon processingIcon(int iconSize) const;
 	QIcon cancelingIcon(int iconSize) const;
 
+	QIcon copyActionIcon(int iconSize) const;
+	QIcon cutActionIcon(int iconSize) const;
+	QIcon pasteActionIcon(int iconSize) const;
+	QIcon propertiesActionIcon(int iconSize) const;
+
 	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
 

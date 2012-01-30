@@ -248,6 +248,26 @@ QIcon Service::cancelingIcon(int iconSize) const
 	return findIcon("application-exit", iconSize, Actions);
 }
 
+QIcon Service::copyActionIcon(int iconSize) const
+{
+	return findIcon("edit-copy", iconSize, Actions);
+}
+
+QIcon Service::cutActionIcon(int iconSize) const
+{
+	return findIcon("edit-cut", iconSize, Actions);
+}
+
+QIcon Service::pasteActionIcon(int iconSize) const
+{
+	return findIcon("edit-paste", iconSize, Actions);
+}
+
+QIcon Service::propertiesActionIcon(int iconSize) const
+{
+	return findIcon("document-properties", iconSize, Actions);
+}
+
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)

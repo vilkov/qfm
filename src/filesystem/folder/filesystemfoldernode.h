@@ -17,6 +17,7 @@ class FolderNode : public FolderNodeBase
 
 public:
 	FolderNode(const Info &info, Node *parent = 0);
+	virtual ~FolderNode();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;

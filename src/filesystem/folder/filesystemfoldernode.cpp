@@ -17,12 +17,57 @@
 
 
 FILE_SYSTEM_NS_BEGIN
-static FolderCopyAction copyAction;
-static FolderCutAction cutAction;
-static FolderPasteAction pasteAction;
-static FolderPasteIntoFolderAction pasteIntoFolderAction;
-static FolderPropertiesAction propertiesAction;
-static FolderPasteClipboardAction pasteClipboardAction;
+
+struct GlobalActions
+{
+	GlobalActions() :
+		copyAction(NULL),
+		cutAction(NULL),
+		pasteAction(NULL),
+		pasteIntoFolderAction(NULL),
+		propertiesAction(NULL),
+		pasteClipboardAction(NULL),
+		m_ref(0)
+	{}
+
+	void addRef()
+	{
+		if (m_ref++ == 0)
+		{
+			copyAction = new FolderCopyAction();
+			cutAction = new FolderCutAction();
+			pasteAction = new FolderPasteAction();
+			pasteIntoFolderAction = new FolderPasteIntoFolderAction();
+			propertiesAction = new FolderPropertiesAction();
+			pasteClipboardAction = new FolderPasteClipboardAction();
+		}
+	}
+
+	void release()
+	{
+		if (--m_ref == 0)
+		{
+			delete copyAction;
+			delete cutAction;
+			delete pasteAction;
+			delete pasteIntoFolderAction;
+			delete propertiesAction;
+			delete pasteClipboardAction;
+		}
+	}
+
+	FolderCopyAction *copyAction;
+	FolderCutAction *cutAction;
+	FolderPasteAction *pasteAction;
+	FolderPasteIntoFolderAction *pasteIntoFolderAction;
+	FolderPropertiesAction *propertiesAction;
+	FolderPasteClipboardAction *pasteClipboardAction;
+
+private:
+	int m_ref;
+};
+
+static GlobalActions globalActions;
 
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
@@ -30,11 +75,18 @@ FolderNode::FolderNode(const Info &info, Node *parent) :
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {
+	globalActions.addRef();
+
 	if (!isRoot())
 		m_items.add(new FilesystemRootItem());
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
+}
+
+FolderNode::~FolderNode()
+{
+	globalActions.release();
 }
 
 int FolderNode::columnCount(const QModelIndex &parent) const
@@ -98,12 +150,12 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	items = set.toList();
 
-	menu.addAction(const_cast<QAction*>(copyAction.action()));
-	menu.addAction(const_cast<QAction*>(cutAction.action()));
+	menu.addAction(const_cast<QAction*>(globalActions.copyAction->action()));
+	menu.addAction(const_cast<QAction*>(globalActions.cutAction->action()));
 
 	if (items.isEmpty())
 	{
-		menu.addAction(const_cast<QAction*>(pasteClipboardAction.action()));
+		menu.addAction(const_cast<QAction*>(globalActions.pasteClipboardAction->action()));
 	}
 	else
 	{
@@ -111,7 +163,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			if ((item = items.at(0))->info().isDir())
 			{
-				menu.addAction(const_cast<QAction*>(pasteIntoFolderAction.action()));
+				menu.addAction(const_cast<QAction*>(globalActions.pasteIntoFolderAction->action()));
 
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 
@@ -120,7 +172,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			}
 			else
 			{
-				menu.addAction(const_cast<QAction*>(pasteAction.action()));
+				menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
 
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
 
@@ -130,7 +182,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		}
 		else
 		{
-			menu.addAction(const_cast<QAction*>(pasteAction.action()));
+			menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
 
 			actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::MultipleFilesOrFolders);
 
@@ -166,7 +218,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		menu.addSeparator();
 	}
 
-	menu.addAction(const_cast<QAction*>(propertiesAction.action()));
+	menu.addAction(const_cast<QAction*>(globalActions.propertiesAction->action()));
 
 	if (QAction *action = menu.exec(QCursor::pos()))
 	{

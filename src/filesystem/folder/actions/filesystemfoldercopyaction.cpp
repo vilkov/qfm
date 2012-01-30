@@ -5,7 +5,9 @@ FILE_SYSTEM_NS_BEGIN
 
 FolderCopyAction::FolderCopyAction() :
 	m_action(tr("Copy"), 0)
-{}
+{
+	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
+}
 
 const QAction *FolderCopyAction::action() const
 {

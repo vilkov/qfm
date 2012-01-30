@@ -6,6 +6,7 @@
 #include "actions/filesystemfolderpasteaction.h"
 #include "actions/filesystemfolderpasteintofolderaction.h"
 #include "actions/filesystemfolderpropertiesaction.h"
+#include "actions/filesystemfolderpasteclipboardaction.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
@@ -21,6 +22,7 @@ static FolderCutAction cutAction;
 static FolderPasteAction pasteAction;
 static FolderPasteIntoFolderAction pasteIntoFolderAction;
 static FolderPropertiesAction propertiesAction;
+static FolderPasteClipboardAction pasteClipboardAction;
 
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
@@ -80,19 +82,59 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	QMenu menu;
 	Union update;
 	QModelIndex index;
+	FileSystemBaseItem *item;
+	QMap<const FileAction *, FileAction::FilesList> map;
+	::DesktopEnvironment::ContextMenuFactory::FileActionsList actions;
 
-	if (list.size() == 1)
+	menu.addAction(const_cast<QAction*>(copyAction.action()));
+	menu.addAction(const_cast<QAction*>(cutAction.action()));
+
+	if (list.isEmpty())
 	{
-
+		menu.addAction(const_cast<QAction*>(pasteClipboardAction.action()));
 	}
 	else
 	{
-		::DesktopEnvironment::ContextMenuFactory::FileActionsList actions;
-		QMap<const FileAction *, FileAction::FilesList> map;
-		FileSystemBaseItem *item;
+		if (list.size() == 1)
+		{
+			if (!(item = m_items[m_proxy.mapToSource(list.at(0)).row()])->isRootItem())
+				if (item->info().isDir())
+				{
+					menu.addAction(const_cast<QAction*>(pasteIntoFolderAction.action()));
+
+					actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
+
+					for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+						map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+				}
+				else
+				{
+					menu.addAction(const_cast<QAction*>(pasteAction.action()));
+
+					actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
+
+					for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+						map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+				}
+		}
+		else
+		{
+			menu.addAction(const_cast<QAction*>(pasteAction.action()));
+
+			actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::MultipleFilesOrFolders);
+
+			for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+			{
+				FileAction::FilesList &files = map[actions.at(i)];
+
+				for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+					if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
+						files.push_back(FileAction::FilesList::value_type(item, &item->info()));
+			}
+		}
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()])->isRootItem())
+			if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
 			{
 				actions = Application::globalMenu()->actions(item->info().id());
 
@@ -100,6 +142,21 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
 			}
 	}
+
+	if (!map.isEmpty())
+	{
+		menu.addSeparator();
+
+		for (QMap<const FileAction *, FileAction::FilesList>::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
+			menu.addAction(const_cast<QAction*>(it.key()->action()));
+	}
+
+	if (QAction *action = menu.exec(QCursor::pos()))
+	{
+		QMessageBox::information(Application::mainWindow(), tr("Test"), static_cast<FileAction *>(action->data().value<void *>())->action()->text());
+	}
+
+	menu.clear();
 }
 
 void FolderNode::menuAction(QAction *action, INodeView *view)

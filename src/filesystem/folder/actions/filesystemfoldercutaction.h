@@ -14,11 +14,7 @@ class FolderCutAction : public SyncFileAction
 public:
 	FolderCutAction();
 
-	virtual const QAction *action() const;
 	virtual void process(const FilesList &files) const;
-
-private:
-	QAction m_action;
 };
 
 FILE_SYSTEM_NS_END

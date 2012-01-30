@@ -15,6 +15,8 @@ public:
 	typedef BaseTask::Flags Flags;
 
 public:
+	AsyncFileAction(const QIcon &icon, const QString &text);
+
 	virtual bool isAsynchronous() const;
 
 	virtual bool prepare(const FilesList &files) = 0;

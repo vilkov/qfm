@@ -5,15 +5,8 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderCopyAction::FolderCopyAction() :
-	m_action(Application::desktopService()->copyActionIcon(16), tr("Copy"), 0)
-{
-	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
-}
-
-const QAction *FolderCopyAction::action() const
-{
-	return &m_action;
-}
+	SyncFileAction(Application::desktopService()->copyActionIcon(16), tr("Copy"))
+{}
 
 void FolderCopyAction::process(const FilesList &files) const
 {

@@ -235,7 +235,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	if (QAction *action = menu.exec(QCursor::pos()))
 	{
-		QMessageBox::information(Application::mainWindow(), tr("Test"), static_cast<FileAction *>(action->data().value<void *>())->action()->text());
+		QMessageBox::information(Application::mainWindow(), tr("Test"), FileAction::fromAction(action)->action()->text());
 	}
 
 	menu.clear();

@@ -5,13 +5,8 @@
 ARC_PLUGIN_NS_BEGIN
 
 UnPackIntoSubdirAction::UnPackIntoSubdirAction() :
-	m_action(Application::desktopService()->unpackActionIcon(16), tr("Unpack into subfolder"), 0)
+	AsyncFileAction(Application::desktopService()->unpackActionIcon(16), tr("Unpack into subfolder"))
 {}
-
-const QAction *UnPackIntoSubdirAction::action() const
-{
-	return &m_action;
-}
 
 bool UnPackIntoSubdirAction::prepare(const FilesList &files)
 {

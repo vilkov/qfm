@@ -5,13 +5,8 @@
 ARC_PLUGIN_NS_BEGIN
 
 UnPackAction::UnPackAction() :
-	m_action(Application::desktopService()->unpackActionIcon(16), tr("Unpack..."), 0)
+	AsyncFileAction(Application::desktopService()->unpackActionIcon(16), tr("Unpack..."))
 {}
-
-const QAction *UnPackAction::action() const
-{
-	return &m_action;
-}
 
 bool UnPackAction::prepare(const FilesList &files)
 {

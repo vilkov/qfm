@@ -5,15 +5,8 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderPropertiesAction::FolderPropertiesAction() :
-	m_action(Application::desktopService()->propertiesActionIcon(16), tr("Properties..."), 0)
-{
-	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
-}
-
-const QAction *FolderPropertiesAction::action() const
-{
-	return &m_action;
-}
+	SyncFileAction(Application::desktopService()->propertiesActionIcon(16), tr("Properties..."))
+{}
 
 void FolderPropertiesAction::process(const FilesList &files) const
 {

@@ -9,6 +9,8 @@ FILE_SYSTEM_NS_BEGIN
 class SyncFileAction : public FileAction
 {
 public:
+	SyncFileAction(const QIcon &icon, const QString &text);
+
 	virtual bool isAsynchronous() const;
 	virtual void process(const FilesList &files) const = 0;
 };

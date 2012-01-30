@@ -4,13 +4,8 @@
 IDM_PLUGIN_NS_BEGIN
 
 CreateDbAction::CreateDbAction() :
-	m_action(tr("Create database..."), 0)
+	SyncFileAction(QIcon(), tr("Create database..."))
 {}
-
-const QAction *CreateDbAction::action() const
-{
-	return &m_action;
-}
 
 void CreateDbAction::process(const FilesList &files) const
 {

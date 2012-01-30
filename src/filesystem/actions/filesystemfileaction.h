@@ -16,10 +16,16 @@ public:
 	typedef QList<FileItem>                                     FilesList;
 
 public:
+	FileAction(const QIcon &icon, const QString &text);
 	virtual ~FileAction();
 
+	const QAction *action() const { return &m_action; }
+	static const FileAction *fromAction(const QAction *action);
+
 	virtual bool isAsynchronous() const = 0;
-	virtual const QAction *action() const = 0;
+
+private:
+	QAction m_action;
 };
 
 FILE_SYSTEM_NS_END

@@ -5,15 +5,8 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderPasteClipboardAction::FolderPasteClipboardAction() :
-	m_action(Application::desktopService()->pasteActionIcon(16), tr("Paste from clipboard"), 0)
-{
-	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
-}
-
-const QAction *FolderPasteClipboardAction::action() const
-{
-	return &m_action;
-}
+	SyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste from clipboard"))
+{}
 
 void FolderPasteClipboardAction::process(const FilesList &files) const
 {

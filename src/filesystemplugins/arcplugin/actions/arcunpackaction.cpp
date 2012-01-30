@@ -1,10 +1,11 @@
 #include "arcunpackaction.h"
+#include "../../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
 UnPackAction::UnPackAction() :
-	m_action(tr("Unpack..."), 0)
+	m_action(Application::desktopService()->unpackActionIcon(16), tr("Unpack..."), 0)
 {}
 
 const QAction *UnPackAction::action() const

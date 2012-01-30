@@ -268,6 +268,16 @@ QIcon Service::propertiesActionIcon(int iconSize) const
 	return findIcon("document-properties", iconSize, Actions);
 }
 
+QIcon Service::packActionIcon(int iconSize) const
+{
+	return findIcon("application-x-archive", iconSize, MimeTypes);
+}
+
+QIcon Service::unpackActionIcon(int iconSize) const
+{
+	return findIcon("archive-extract", iconSize, Actions);
+}
+
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)

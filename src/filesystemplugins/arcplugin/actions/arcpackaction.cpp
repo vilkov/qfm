@@ -1,10 +1,11 @@
 #include "arcpackaction.h"
+#include "../../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
 PackAction::PackAction() :
-	m_action(tr("Pack..."), 0)
+	m_action(Application::desktopService()->packActionIcon(16), tr("Pack..."), 0)
 {}
 
 const QAction *PackAction::action() const

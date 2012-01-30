@@ -14,7 +14,18 @@ FileAction::~FileAction()
 
 const FileAction *FileAction::fromAction(const QAction *action)
 {
-	return static_cast<const FileAction *>(action->data().value<void *>());
+	if (action)
+		return static_cast<const FileAction *>(action->data().value<void *>());
+	else
+		return 0;
+}
+
+FileAction *FileAction::fromAction(QAction *action)
+{
+	if (action)
+		return static_cast<FileAction *>(action->data().value<void *>());
+	else
+		return 0;
 }
 
 FILE_SYSTEM_NS_END

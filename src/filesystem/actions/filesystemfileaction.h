@@ -20,7 +20,9 @@ public:
 	virtual ~FileAction();
 
 	const QAction *action() const { return &m_action; }
+
 	static const FileAction *fromAction(const QAction *action);
+	static FileAction *fromAction(QAction *action);
 
 	virtual bool isAsynchronous() const = 0;
 

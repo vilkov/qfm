@@ -224,7 +224,6 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	if (!map.isEmpty())
 	{
-
 		for (ActionsMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
 			menu.addAction(const_cast<QAction*>(it.key()->action()));
 
@@ -233,9 +232,9 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	menu.addAction(const_cast<QAction*>(globalActions.propertiesAction->action()));
 
-	if (QAction *action = menu.exec(QCursor::pos()))
+	if (FileAction *action = FileAction::fromAction(menu.exec(QCursor::pos())))
 	{
-		QMessageBox::information(Application::mainWindow(), tr("Test"), FileAction::fromAction(action)->action()->text());
+		QMessageBox::information(Application::mainWindow(), tr("Test"), action->action()->text());
 	}
 
 	menu.clear();

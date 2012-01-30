@@ -12,6 +12,11 @@ const QAction *UnPackIntoSubdirAction::action() const
 	return &m_action;
 }
 
+bool UnPackIntoSubdirAction::prepare(const FilesList &files)
+{
+	return true;
+}
+
 void UnPackIntoSubdirAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const
 {
 

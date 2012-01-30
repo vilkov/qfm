@@ -12,6 +12,11 @@ const QAction *UnPackHereAction::action() const
 	return &m_action;
 }
 
+bool UnPackHereAction::prepare(const FilesList &files)
+{
+	return true;
+}
+
 void UnPackHereAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const
 {
 

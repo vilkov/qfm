@@ -16,6 +16,8 @@ public:
 
 public:
 	virtual bool isAsynchronous() const;
+
+	virtual bool prepare(const FilesList &files) = 0;
 	virtual void process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const = 0;
 };
 

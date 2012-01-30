@@ -12,6 +12,11 @@ const QAction *PackAction::action() const
 	return &m_action;
 }
 
+bool PackAction::prepare(const FilesList &files)
+{
+	return true;
+}
+
 void PackAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const
 {
 

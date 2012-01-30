@@ -207,6 +207,19 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		}
 	}
 
+	actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
+
+	for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+	{
+		FileAction::FilesList &files = map[actions.at(i)];
+
+		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
+		{
+			item = items.at(i);
+			files.push_back(FileAction::FilesList::value_type(item, &item->info()));
+		}
+	}
+
 	menu.addSeparator();
 
 	if (!map.isEmpty())

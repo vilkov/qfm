@@ -1,6 +1,10 @@
 #ifndef ARCPLUGIN_H_
 #define ARCPLUGIN_H_
 
+#include "actions/arcpackaction.h"
+#include "actions/arcunpackaction.h"
+#include "actions/arcunpackhereaction.h"
+#include "actions/arcunpackintosubdiraction.h"
 #include "plugins/arclibarchiveplugin.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
@@ -19,6 +23,10 @@ public:
 	static const Archive **archivers();
 
 private:
+	PackAction m_packAction;
+	UnPackAction m_unPackAction;
+	UnPackHereAction m_unPackHereAction;
+	UnPackIntoSubdirAction m_unPackIntoSubdirAction;
 	LibArchivePlugin m_libArchive;
 	const Archive *m_archivers[2];
 };

@@ -16,7 +16,13 @@ Plugin::Plugin()
 
 void Plugin::registered()
 {
+	Plugin::FileTypeIdList list = fileTypes();
 
+	Application::globalMenu()->registerAction(&m_unPackAction, list);
+	Application::globalMenu()->registerAction(&m_unPackHereAction, list);
+	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
+
+	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
 }
 
 Node *Plugin::node(const IFileInfo *info, Node *parent) const

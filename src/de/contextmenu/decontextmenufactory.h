@@ -23,6 +23,7 @@ public:
 		SingleFolder,
 		SingleFile,
 		MultipleFilesOrFolders,
+		AnyFilesOrFolders,
 
 		/* Internal use only! */
 		TypeCount

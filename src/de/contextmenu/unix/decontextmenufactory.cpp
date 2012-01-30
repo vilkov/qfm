@@ -4,9 +4,7 @@
 DE_NS_BEGIN
 
 ContextMenuFactory::ContextMenuFactory()
-{
-
-}
+{}
 
 void ContextMenuFactory::registerAction(const ::FileSystem::FileAction *action, Type type)
 {

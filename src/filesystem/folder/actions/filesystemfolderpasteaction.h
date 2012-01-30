@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMFOLDERCOPYACTION_H_
-#define FILESYSTEMFOLDERCOPYACTION_H_
+#ifndef FILESYSTEMFOLDERPASTEACTION_H_
+#define FILESYSTEMFOLDERPASTEACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../../actions/synchronous/filesystemsyncfileaction.h"
@@ -7,12 +7,12 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderCopyAction : public SyncFileAction
+class FolderPasteAction : public SyncFileAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderCopyAction)
+	Q_DECLARE_TR_FUNCTIONS(FolderPasteAction)
 
 public:
-	FolderCopyAction();
+	FolderPasteAction();
 
 	virtual const QAction *action() const;
 	virtual void process(const FilesList &files) const;
@@ -23,4 +23,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFOLDERCOPYACTION_H_ */
+#endif /* FILESYSTEMFOLDERPASTEACTION_H_ */

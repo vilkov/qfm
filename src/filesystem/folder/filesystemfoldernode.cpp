@@ -2,6 +2,10 @@
 #include "items/filesystemrootitem.h"
 #include "items/filesystementryitem.h"
 #include "actions/filesystemfoldercopyaction.h"
+#include "actions/filesystemfoldercutaction.h"
+#include "actions/filesystemfolderpasteaction.h"
+#include "actions/filesystemfolderpasteintofolderaction.h"
+#include "actions/filesystemfolderpropertiesaction.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
@@ -13,6 +17,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 static FolderCopyAction copyAction;
+static FolderCutAction cutAction;
+static FolderPasteAction pasteAction;
+static FolderPasteIntoFolderAction pasteIntoFolderAction;
+static FolderPropertiesAction propertiesAction;
 
 
 FolderNode::FolderNode(const Info &info, Node *parent) :
@@ -70,6 +78,7 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
 	QMenu menu;
+	Union update;
 	QModelIndex index;
 
 	if (list.size() == 1)
@@ -79,19 +88,17 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	else
 	{
 		::DesktopEnvironment::ContextMenuFactory::FileActionsList actions;
-		QSet<const FileAction *> set;
-		FileAction::FilesList files;
-		const FileAction *action;
+		QMap<const FileAction *, FileAction::FilesList> map;
 		FileSystemBaseItem *item;
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
+			if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()])->isRootItem())
 			{
 				actions = Application::globalMenu()->actions(item->info().id());
-				set.insert();
-			}
 
-		menu.addAction();
+				for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+			}
 	}
 }
 

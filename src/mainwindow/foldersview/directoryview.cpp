@@ -317,13 +317,7 @@ void DirectoryView::editPath()
 
 void DirectoryView::contextMenu()
 {
-	QModelIndexList list = selectedIndexes();
-	::DesktopEnvironment::ContextMenu::Files files;
-
-	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		files.push_back(m_node->info(list.at(i)));
-
-	::DesktopEnvironment::ContextMenu::popup(this, m_node, files);
+	m_node->contextMenu(selectedIndexes(), this);
 }
 
 void DirectoryView::refreshOther()

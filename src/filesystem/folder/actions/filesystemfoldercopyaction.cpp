@@ -3,7 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FolderCopyAction::FolderCopyAction()
+FolderCopyAction::FolderCopyAction() :
+	m_action(tr("Copy"), 0)
 {}
 
 const QAction *FolderCopyAction::action() const

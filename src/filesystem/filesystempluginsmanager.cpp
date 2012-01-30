@@ -35,6 +35,7 @@ Node *PluginsManager::node(const IFileInfo *info, Node *parent) const
 void PluginsManager::registerStatic(IPlugin *plugin)
 {
 	m_otherPlugins.push_back(plugin);
+	plugin->registered();
 }
 
 void PluginsManager::registerStatic(IFileReaderPlugin *plugin)
@@ -43,12 +44,15 @@ void PluginsManager::registerStatic(IFileReaderPlugin *plugin)
 
 	for (IFileReaderPlugin::FileTypeIdList::const_iterator i = types.constBegin(), end = types.constEnd(); i != end; ++i)
 		m_filePlugins[*i].push_back(plugin);
+
+	plugin->registered();
 }
 
 void PluginsManager::registerDynamic(IPlugin *plugin)
 {
 	m_otherPlugins.push_back(plugin);
 	m_dynamicPlugins.insert(plugin);
+	plugin->registered();
 }
 
 void PluginsManager::registerDynamic(IFileReaderPlugin *plugin)
@@ -60,6 +64,8 @@ void PluginsManager::registerDynamic(IFileReaderPlugin *plugin)
 		m_filePlugins[*i].push_back(plugin);
 		m_dynamicPlugins.insert(plugin);
 	}
+
+	plugin->registered();
 }
 
 FILE_SYSTEM_NS_END

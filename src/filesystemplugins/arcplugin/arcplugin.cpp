@@ -14,6 +14,11 @@ Plugin::Plugin()
 	instance = this;
 }
 
+void Plugin::registered()
+{
+
+}
+
 Node *Plugin::node(const IFileInfo *info, Node *parent) const
 {
 	return new ArcNode(Info(info->absoluteFilePath(), true), parent);

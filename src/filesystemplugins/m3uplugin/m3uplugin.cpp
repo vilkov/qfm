@@ -9,6 +9,11 @@ Plugin::Plugin() :
 	m_identity(QString::fromLatin1("#EXTM3U"))
 {}
 
+void Plugin::registered()
+{
+
+}
+
 Node *Plugin::node(const IFileInfo *info, Node *parent) const
 {
 	return 0;

@@ -12,6 +12,7 @@ class Plugin : public IFileReaderPlugin
 public:
 	Plugin();
 
+	virtual void registered();
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
 	virtual FileTypeIdList fileTypes() const;
 

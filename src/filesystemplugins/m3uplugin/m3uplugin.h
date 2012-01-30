@@ -12,6 +12,7 @@ class Plugin : public IPlugin
 public:
 	Plugin();
 
+	virtual void registered();
 	virtual Node *node(const IFileInfo *info, Node *parent) const;
 
 private:

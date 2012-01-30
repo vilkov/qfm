@@ -79,43 +79,54 @@ IFileInfo *FolderNode::info(const QModelIndex &idx) const
 
 void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
+	typedef QSet<FileSystemBaseItem *>                                ItemsSet;
+	typedef QList<FileSystemBaseItem *>                               ItemsList;
+	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
+	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
+
 	QMenu menu;
 	Union update;
-	QModelIndex index;
+	ItemsSet set;
+	ActionsMap map;
+	ItemsList items;
 	FileSystemBaseItem *item;
-	QMap<const FileAction *, FileAction::FilesList> map;
-	::DesktopEnvironment::ContextMenuFactory::FileActionsList actions;
+	FileActionsList actions;
+
+	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
+			set.insert(item);
+
+	items = set.toList();
 
 	menu.addAction(const_cast<QAction*>(copyAction.action()));
 	menu.addAction(const_cast<QAction*>(cutAction.action()));
 
-	if (list.isEmpty())
+	if (items.isEmpty())
 	{
 		menu.addAction(const_cast<QAction*>(pasteClipboardAction.action()));
 	}
 	else
 	{
-		if (list.size() == 1)
+		if (items.size() == 1)
 		{
-			if (!(item = m_items[m_proxy.mapToSource(list.at(0)).row()])->isRootItem())
-				if (item->info().isDir())
-				{
-					menu.addAction(const_cast<QAction*>(pasteIntoFolderAction.action()));
+			if ((item = items.at(0))->info().isDir())
+			{
+				menu.addAction(const_cast<QAction*>(pasteIntoFolderAction.action()));
 
-					actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
+				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 
-					for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-						map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
-				}
-				else
-				{
-					menu.addAction(const_cast<QAction*>(pasteAction.action()));
+				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+			}
+			else
+			{
+				menu.addAction(const_cast<QAction*>(pasteAction.action()));
 
-					actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
+				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
 
-					for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-						map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
-				}
+				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+			}
 		}
 		else
 		{
@@ -123,33 +134,39 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 			actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::MultipleFilesOrFolders);
 
-			for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 			{
 				FileAction::FilesList &files = map[actions.at(i)];
 
-				for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-					if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
-						files.push_back(FileAction::FilesList::value_type(item, &item->info()));
+				for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
+				{
+					item = items.at(i);
+					files.push_back(FileAction::FilesList::value_type(item, &item->info()));
+				}
 			}
 		}
 
-		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
-			{
-				actions = Application::globalMenu()->actions(item->info().id());
+		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
+		{
+			actions = Application::globalMenu()->actions((item = items.at(i))->info().id());
 
-				for (::DesktopEnvironment::ContextMenuFactory::FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
-			}
+			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, &item->info()));
+		}
 	}
+
+	menu.addSeparator();
 
 	if (!map.isEmpty())
 	{
-		menu.addSeparator();
 
-		for (QMap<const FileAction *, FileAction::FilesList>::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
+		for (ActionsMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
 			menu.addAction(const_cast<QAction*>(it.key()->action()));
+
+		menu.addSeparator();
 	}
+
+	menu.addAction(const_cast<QAction*>(propertiesAction.action()));
 
 	if (QAction *action = menu.exec(QCursor::pos()))
 	{

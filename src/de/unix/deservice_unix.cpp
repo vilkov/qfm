@@ -1,6 +1,6 @@
 #include "../deservice.h"
 #include "../../filesystem/interfaces/filesystemifileinfo.h"
-#include "xdgmime/src/xdgmime.h"
+#include "xdgmime/src/xdg.h"
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 #	include "kde/kde_de_p.h"
@@ -11,6 +11,7 @@
 #include <QtCore/QCache>
 #include <QtCore/QReadWriteLock>
 
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <cassert>
@@ -115,19 +116,19 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 	{
 		const XdgArray *apps;
 
-		if (apps = xdg_mime_user_apps_lookup(mimeType))
+		if (apps = xdg_user_apps_lookup(mimeType))
 			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_mime_app_icon_lookup(xdg_mime_array_app_item_at(apps, i), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 
-		if (apps = xdg_mime_default_apps_lookup(mimeType))
+		if (apps = xdg_default_apps_lookup(mimeType))
 			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_mime_app_icon_lookup(xdg_mime_array_app_item_at(apps, i), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 
-		if (apps = xdg_mime_known_apps_lookup(mimeType))
+		if (apps = xdg_known_apps_lookup(mimeType))
 			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_mime_app_icon_lookup(xdg_mime_array_app_item_at(apps, i), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 	}
 
@@ -229,12 +230,12 @@ Service::Service() :
 		XCloseDisplay(display);
     }
 
-    xdg_mime_init();
+    xdg_init();
 }
 
 Service::~Service()
 {
-	xdg_mime_shutdown();
+	xdg_shutdown();
 	delete iconCache;
 }
 
@@ -352,7 +353,7 @@ QIcon Service::findIcon(const char *name, int iconSize, int context) const
 	{
 		QIcon res;
 
-		if (char *icon_path = xdg_mime_icon_lookup(name, iconSize, static_cast<Context>(context), themeName()))
+		if (char *icon_path = xdg_icon_lookup(name, iconSize, static_cast<Context>(context), themeName()))
 		{
 			res = *iconCache->iconToCache(nameString, iconSize, context, QString::fromUtf8(icon_path));
 			free(icon_path);

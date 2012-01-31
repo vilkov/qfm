@@ -15,6 +15,26 @@ public:
 	typedef QPair<const FileSystemItem *, const IFileControl *> FileItem;
 	typedef QList<FileItem>                                     FilesList;
 
+	class FilesListAdapter
+	{
+	public:
+		typedef FilesList              base_class;
+		typedef const FileSystemItem * value_type;
+		typedef base_class::size_type  size_type;
+
+	public:
+		FilesListAdapter(const FilesList &filesList) :
+			m_filesList(filesList)
+		{}
+
+		const value_type &operator[](int index) const { return m_filesList[index].first; }
+		const value_type &at(int index) const { return m_filesList.at(index).first; }
+		int size() const { return m_filesList.size(); }
+
+	private:
+		const FilesList &m_filesList;
+	};
+
 public:
 	FileAction(const QIcon &icon, const QString &text);
 	virtual ~FileAction();

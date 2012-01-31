@@ -9,6 +9,7 @@
 #include "actions/filesystemfolderpasteclipboardaction.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
+#include "../tasks/perform/performactiontask.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 
@@ -234,7 +235,17 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	if (FileAction *action = FileAction::fromAction(menu.exec(QCursor::pos())))
 	{
-		QMessageBox::information(Application::mainWindow(), tr("Test"), action->action()->text());
+		const FileAction::FilesList files = map.value(action);
+
+		if (action->isAsynchronous())
+		{
+			if (static_cast<AsyncFileAction *>(action)->prepare(files))
+			{
+				handleTask(new PerformActionTask(this, static_cast<AsyncFileAction *>(action), files));
+			}
+		}
+		else
+			static_cast<SyncFileAction *>(action)->process(files);
 	}
 
 	menu.clear();

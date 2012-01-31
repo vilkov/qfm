@@ -331,7 +331,7 @@ QByteArray Service::themeName() const
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
 	{
-		info.icon = findIcon(XDG_MIME_TYPE_TEXTPLAIN, iconSize, MimeTypes);
+		info.icon = findIcon("text-plain", iconSize, MimeTypes);
 		info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 	}
 	else

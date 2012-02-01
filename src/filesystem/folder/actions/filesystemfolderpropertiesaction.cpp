@@ -10,7 +10,7 @@ FolderPropertiesAction::FolderPropertiesAction() :
 
 void FolderPropertiesAction::process(const FilesList &files) const
 {
-
+	Application::desktopService()->test();
 }
 
 FILE_SYSTEM_NS_END

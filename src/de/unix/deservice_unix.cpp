@@ -117,17 +117,17 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 		const XdgArray *apps;
 
 		if (apps = xdg_user_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
+			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
 				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 
 		if (apps = xdg_default_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
+			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
 				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 
 		if (apps = xdg_known_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_mime_array_size(apps); i < sz; ++i)
+			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
 				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;
 	}
@@ -302,6 +302,11 @@ QIcon Service::unpackActionIcon(int iconSize) const
 		return fileTypeInfo(iconSize);
 	else
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
+}
+
+void Service::test() const
+{
+	xdg_app_rebuild_cache();
 }
 
 QByteArray Service::themeName() const

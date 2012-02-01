@@ -45,6 +45,9 @@ public:
 	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
 
+
+	void test() const;
+
 private:
 	QByteArray themeName() const;
 	::FileSystem::FileTypeInfo fileTypeInfo(int iconSize) const;

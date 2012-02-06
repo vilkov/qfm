@@ -16,6 +16,16 @@ if (UNIX)
     set (src_SOURCES ${src_SOURCES} ${tmp_0})
 
 
+    # Exclude "main.c" file from xdgmime library.
+    set (tmp_src_SOURCES "")
+    foreach (src_SOURCE ${src_SOURCES})
+        if (NOT ${src_SOURCE} MATCHES ".*/main.c" OR ${src_SOURCE} MATCHES ".*/main.cpp")
+            set (tmp_src_SOURCES ${tmp_src_SOURCES} ${src_SOURCE})
+        endif ()
+    endforeach ()
+    set (src_SOURCES ${tmp_src_SOURCES})
+
+
     if (DESKTOP_ENVIRONMENT_IS_KDE)
         # Headers
         set (tmp_src_HEADERS "")

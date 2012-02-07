@@ -116,7 +116,7 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 	{
 		const XdgArray *apps;
 
-		if (apps = xdg_user_apps_lookup(mimeType))
+		if (apps = xdg_added_apps_lookup(mimeType))
 			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
 				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
 					return icon_path;

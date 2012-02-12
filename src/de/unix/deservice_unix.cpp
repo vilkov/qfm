@@ -1,5 +1,8 @@
 #include "../deservice.h"
 #include "../../filesystem/interfaces/filesystemifileinfo.h"
+
+#include <QtCore/QDebug>
+
 #include "xdgmime/src/xdg.h"
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
@@ -114,22 +117,25 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 		return icon_path;
 	else
 	{
-		const XdgArray *apps;
+		const XdgList *apps;
 
-		if (apps = xdg_added_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
+		if (apps = xdg_list_begin(xdg_added_apps_lookup(mimeType)))
+			do
+				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
+			while (apps = xdg_list_next(apps));
 
-		if (apps = xdg_default_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
+		if (apps = xdg_list_begin(xdg_default_apps_lookup(mimeType)))
+			do
+				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
+			while (apps = xdg_list_next(apps));
 
-		if (apps = xdg_known_apps_lookup(mimeType))
-			for (int i = 0, sz = xdg_array_size(apps); i < sz; ++i)
-				if (icon_path = xdg_app_icon_lookup(xdg_array_app_item_at(apps, i), theme, size))
+		if (apps = xdg_list_begin(xdg_known_apps_lookup(mimeType)))
+			do
+				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
+			while (apps = xdg_list_next(apps));
 	}
 
 	return 0;
@@ -306,7 +312,30 @@ QIcon Service::unpackActionIcon(int iconSize) const
 
 void Service::test() const
 {
-	xdg_app_rebuild_cache();
+	const XdgList *apps;
+	const XdgList *values;
+	const XdgAppGroup *group;
+
+	if (apps = xdg_list_begin(xdg_known_apps_lookup("video/x-msvideo")))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+		}
+		while (apps = xdg_list_next(apps));
 }
 
 QByteArray Service::themeName() const

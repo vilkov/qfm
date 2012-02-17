@@ -147,7 +147,7 @@ bool IdmNodeQueryResults::exists() const
 	return true;
 }
 
-qint64 IdmNodeQueryResults::fileSize() const
+IFile::size_type IdmNodeQueryResults::fileSize() const
 {
 	return 0;
 }
@@ -421,6 +421,11 @@ void IdmNodeQueryResults::updateProgressEvent(const TaskNodeItem *item, quint64 
 }
 
 void IdmNodeQueryResults::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
+{
+
+}
+
+void IdmNodeQueryResults::performActionEvent(const AsyncFileAction::FilesList &files)
 {
 
 }

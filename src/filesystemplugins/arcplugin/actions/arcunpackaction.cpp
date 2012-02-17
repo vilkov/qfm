@@ -5,7 +5,7 @@
 ARC_PLUGIN_NS_BEGIN
 
 UnPackAction::UnPackAction() :
-	AsyncFileAction(Application::desktopService()->unpackActionIcon(16), tr("Unpack..."))
+	Action(tr("Unpacking..."), Application::desktopService()->unpackActionIcon(16), tr("Unpack..."))
 {}
 
 bool UnPackAction::prepare(const FilesList &files)

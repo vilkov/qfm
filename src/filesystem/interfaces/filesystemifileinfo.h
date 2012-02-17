@@ -3,6 +3,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
+#include "filesystemifile.h"
 #include "filesystemifiletype.h"
 
 
@@ -23,7 +24,7 @@ public:
 	virtual bool isFile() const = 0;
 	virtual bool isLink() const = 0;
 	virtual bool exists() const = 0;
-	virtual qint64 fileSize() const = 0;
+	virtual IFile::size_type fileSize() const = 0;
 	virtual QString fileName() const = 0;
 	virtual QString absolutePath() const = 0;
 	virtual QString absoluteFilePath() const = 0;

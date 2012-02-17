@@ -1,4 +1,5 @@
 #include "performactiontask.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -13,6 +14,7 @@ PerformActionTask::PerformActionTask(TasksNode *receiver, const AsyncFileAction 
 void PerformActionTask::run(const volatile Flags &aborted)
 {
 	m_action->process(this, m_files, aborted);
+	postEvent(new Event(this, Event::Action, m_files, isCanceled()));
 }
 
 FILE_SYSTEM_NS_END

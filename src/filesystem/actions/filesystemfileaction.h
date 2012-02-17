@@ -41,8 +41,8 @@ public:
 
 	const QAction *action() const { return &m_action; }
 
-	static const FileAction *fromAction(const QAction *action);
-	static FileAction *fromAction(QAction *action);
+	static const FileAction *fromQAction(const QAction *action);
+	static FileAction *fromQAction(QAction *action);
 
 	virtual bool isAsynchronous() const = 0;
 

@@ -46,7 +46,7 @@ bool InvalidInfo::exists() const
 	return false;
 }
 
-qint64 InvalidInfo::fileSize() const
+IFile::size_type InvalidInfo::fileSize() const
 {
 	return 0;
 }

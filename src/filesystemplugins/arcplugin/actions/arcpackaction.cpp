@@ -5,7 +5,7 @@
 ARC_PLUGIN_NS_BEGIN
 
 PackAction::PackAction() :
-	AsyncFileAction(Application::desktopService()->packActionIcon(16), tr("Pack..."))
+	Action(tr("Packing..."), Application::desktopService()->packActionIcon(16), tr("Pack..."))
 {}
 
 bool PackAction::prepare(const FilesList &files)

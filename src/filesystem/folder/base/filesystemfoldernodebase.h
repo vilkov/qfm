@@ -35,7 +35,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual bool exists() const;
-	virtual qint64 fileSize() const;
+	virtual IFile::size_type fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;

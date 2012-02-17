@@ -14,8 +14,12 @@ class FolderPasteIntoFolderAction : public AsyncFileAction
 public:
 	FolderPasteIntoFolderAction();
 
+	virtual const QString &lockReason() const;
 	virtual bool prepare(const FilesList &files);
 	virtual void process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const;
+
+private:
+	QString m_lockReason;
 };
 
 FILE_SYSTEM_NS_END

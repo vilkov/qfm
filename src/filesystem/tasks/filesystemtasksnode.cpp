@@ -1,4 +1,5 @@
 #include "filesystemtasksnode.h"
+#include "perform/performactiontask.h"
 #include "tools/filesystemtaskdialog.h"
 #include "tools/filesystemtaskprogressevents.h"
 #include "../../application.h"
@@ -44,6 +45,17 @@ bool TasksNode::event(QEvent *e)
 			e->accept();
 
 			completedProgressEvent(event->item, event->timeElapsed);
+
+			return true;
+		}
+		case BaseTask::Event::Action:
+		{
+			typedef PerformActionTask::Event * NotConstEvent;
+			typedef const PerformActionTask::Event * Event;
+			Event event = static_cast<Event>(e);
+			e->accept();
+
+			performActionEvent(event->files);
 
 			return true;
 		}

@@ -102,7 +102,7 @@ bool FolderNodeBase::exists() const
 	return m_info.exists();
 }
 
-qint64 FolderNodeBase::fileSize() const
+IFile::size_type FolderNodeBase::fileSize() const
 {
 	return m_info.fileSize();
 }

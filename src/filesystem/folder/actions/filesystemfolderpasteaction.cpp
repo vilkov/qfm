@@ -5,8 +5,14 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderPasteAction::FolderPasteAction() :
-	AsyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste"))
+	AsyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste")),
+	m_lockReason(tr("Copying..."))
 {}
+
+const QString &FolderPasteAction::lockReason() const
+{
+	return m_lockReason;
+}
 
 bool FolderPasteAction::prepare(const FilesList &files)
 {

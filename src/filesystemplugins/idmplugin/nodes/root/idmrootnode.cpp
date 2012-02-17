@@ -129,7 +129,7 @@ bool IdmRootNode::exists() const
 	return m_info.exists();
 }
 
-qint64 IdmRootNode::fileSize() const
+IFile::size_type IdmRootNode::fileSize() const
 {
 	return m_info.fileSize();
 }
@@ -376,6 +376,11 @@ void IdmRootNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress
 }
 
 void IdmRootNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
+{
+
+}
+
+void IdmRootNode::performActionEvent(const AsyncFileAction::FilesList &files)
 {
 
 }

@@ -128,7 +128,7 @@ bool Info::exists() const
 	return stat(m_filePath.toUtf8().constData(), &st) != ENOENT;
 }
 
-qint64 Info::fileSize() const
+IFile::size_type Info::fileSize() const
 {
 	return m_info.size;
 }
@@ -267,7 +267,7 @@ IFileControl *Info::openFile(const QString &fileName, QString &error) const
 
 IFileControl *Info::openFolder(const QString &fileName, bool create, QString &error) const
 {
-	QDir dir(absoluteFilePath());
+	QDir dir(isDir() ? absoluteFilePath() : absolutePath());
 
 	if (dir.exists(fileName))
 		return new Info(dir.absoluteFilePath(fileName));

@@ -64,6 +64,7 @@ protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed);
+	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 protected:
 	virtual Node *createNode(const Info &info, PluginsManager *plugins) const;

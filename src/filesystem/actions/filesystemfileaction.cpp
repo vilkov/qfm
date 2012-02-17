@@ -12,7 +12,7 @@ FileAction::FileAction(const QIcon &icon, const QString &text) :
 FileAction::~FileAction()
 {}
 
-const FileAction *FileAction::fromAction(const QAction *action)
+const FileAction *FileAction::fromQAction(const QAction *action)
 {
 	if (action)
 		return static_cast<const FileAction *>(action->data().value<void *>());
@@ -20,7 +20,7 @@ const FileAction *FileAction::fromAction(const QAction *action)
 		return 0;
 }
 
-FileAction *FileAction::fromAction(QAction *action)
+FileAction *FileAction::fromQAction(QAction *action)
 {
 	if (action)
 		return static_cast<FileAction *>(action->data().value<void *>());

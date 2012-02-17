@@ -30,7 +30,7 @@ public:
 	qint32 progress() const { return (m_done.toULongLong() * 100) / m_total; }
 
 protected:
-	void start(quint64 total) { m_done = quint64(1); m_total = total; }
+	void start(quint64 total) { m_done = quint64(1); m_total = total < 1 ? 1 : total; }
 	void progress(quint64 value, quint64 timeElapsed) { m_done = value; m_timeElapsed = timeElapsed; }
 	void stop() { m_done.clear(); m_total = 0; m_timeElapsed = 0; }
 

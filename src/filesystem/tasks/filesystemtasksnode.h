@@ -2,6 +2,7 @@
 #define FILESYSTEMTASKSNODE_H_
 
 #include "containers/filesystemtasksmap.h"
+#include "../actions/asynchronous/filesystemasyncfileaction.h"
 #include "../filesystemnode.h"
 
 
@@ -26,6 +27,7 @@ public:
 protected:
 	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed) = 0;
 	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed) = 0;
+	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
 
 protected:
 	void addTask(BaseTask *task, const TasksItemList &items);

@@ -32,9 +32,10 @@ public:
 			Question = User,
 			Progress = User + 1,
 			Completed = User + 2,
+			Action = User + 3,
 
 			/* First user event id. */
-			User = Completed + 1
+			User = Action + 1
 		};
 
 	public:

@@ -32,7 +32,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual bool exists() const;
-	virtual qint64 fileSize() const;
+	virtual IFile::size_type fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
@@ -73,6 +73,7 @@ protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed);
+	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 private:
 	enum MenuId

@@ -2,13 +2,12 @@
 #define ARCUNPACKHEREACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include "../arcplugin_ns.h"
-#include "../../../filesystem/actions/asynchronous/filesystemasyncfileaction.h"
+#include "arcaction.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class UnPackHereAction : public AsyncFileAction
+class UnPackHereAction : public Action
 {
 	Q_DECLARE_TR_FUNCTIONS(UnPackHereAction)
 

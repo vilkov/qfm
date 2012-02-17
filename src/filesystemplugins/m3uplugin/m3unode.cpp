@@ -120,7 +120,7 @@ bool M3uNode::exists() const
 	return rootItem()->exists();
 }
 
-qint64 M3uNode::fileSize() const
+IFile::size_type M3uNode::fileSize() const
 {
 	return rootItem()->fileSize();
 }

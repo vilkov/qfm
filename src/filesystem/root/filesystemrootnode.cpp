@@ -50,7 +50,7 @@ bool RootNode::exists() const
 	return true;
 }
 
-qint64 RootNode::fileSize() const
+IFile::size_type RootNode::fileSize() const
 {
 	return 0;
 }

@@ -116,7 +116,7 @@ bool ArcNode::exists() const
 	return m_info.exists();
 }
 
-qint64 ArcNode::fileSize() const
+IFile::size_type ArcNode::fileSize() const
 {
 	return m_info.fileSize();
 }
@@ -298,6 +298,11 @@ void ArcNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElaps
 {
 	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
 	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
+}
+
+void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)
+{
+
 }
 
 void ArcNode::scanCompleteEvent(TaskEvent *e)

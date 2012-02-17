@@ -135,19 +135,24 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	typedef QSet<FileSystemBaseItem *>                                ItemsSet;
 	typedef QList<FileSystemBaseItem *>                               ItemsList;
 	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
+	typedef QMap<const TaskNodeItem *, ::Tools::Containers::Dot>      ItemsIndexMap;
 	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
 
 	QMenu menu;
-	Union update;
 	ItemsSet set;
 	ActionsMap map;
 	ItemsList items;
+	QModelIndex index;
+	ItemsIndexMap itemsIndex;
 	FileSystemBaseItem *item;
 	FileActionsList actions;
 
 	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!(item = m_items[m_proxy.mapToSource(list.at(i)).row()])->isRootItem())
+		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()])->isRootItem() && !set.contains(item))
+		{
 			set.insert(item);
+			itemsIndex[item] = index.row();
+		}
 
 	items = set.toList();
 
@@ -233,7 +238,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	menu.addAction(const_cast<QAction*>(globalActions.propertiesAction->action()));
 
-	if (FileAction *action = FileAction::fromAction(menu.exec(QCursor::pos())))
+	if (FileAction *action = FileAction::fromQAction(menu.exec(QCursor::pos())))
 	{
 		const FileAction::FilesList files = map.value(action);
 
@@ -241,7 +246,22 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			if (static_cast<AsyncFileAction *>(action)->prepare(files))
 			{
-				handleTask(new PerformActionTask(this, static_cast<AsyncFileAction *>(action), files));
+				Union update;
+				TasksItemList list;
+				TaskNodeItem *item;
+				list.reserve(files.size());
+
+				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
+				{
+					item = const_cast<TaskNodeItem *>(static_cast<const TaskNodeItem *>(files.at(i).first));
+
+					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
+					update.add(itemsIndex.value(item));
+					list.push_back(item);
+				}
+
+				addTask(new PerformActionTask(this, static_cast<AsyncFileAction *>(action), files), list);
+				updateFirstColumn(update);
 			}
 		}
 		else
@@ -644,7 +664,6 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 			}
 
 		updateSecondColumn(updateRange);
-
 		return true;
 	}
 	else
@@ -742,6 +761,11 @@ void FolderNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeEl
 
 	entry->updateProgress(entry->total(), timeElapsed);
 	updateSecondColumn(index, entry);
+}
+
+void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
+{
+
 }
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const

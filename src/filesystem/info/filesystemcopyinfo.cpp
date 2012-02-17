@@ -50,7 +50,7 @@ bool CopyInfo::exists() const
 	return m_info.exists();
 }
 
-qint64 CopyInfo::fileSize() const
+IFile::size_type CopyInfo::fileSize() const
 {
 	return m_info.fileSize();
 }

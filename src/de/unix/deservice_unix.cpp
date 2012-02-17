@@ -316,7 +316,70 @@ void Service::test() const
 	const XdgList *values;
 	const XdgAppGroup *group;
 
-	if (apps = xdg_list_begin(xdg_known_apps_lookup("video/x-msvideo")))
+	if (apps = xdg_list_begin(xdg_default_apps_lookup("text/plain")))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+		}
+		while (apps = xdg_list_next(apps));
+
+	if (apps = xdg_list_begin(xdg_removed_apps_lookup("text/plain")))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+		}
+		while (apps = xdg_list_next(apps));
+
+	if (apps = xdg_list_begin(xdg_added_apps_lookup("text/plain")))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+
+			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
+				do
+				{
+					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
+				}
+				while (values = xdg_list_next(values));
+		}
+		while (apps = xdg_list_next(apps));
+
+	if (apps = xdg_list_begin(xdg_known_apps_lookup("text/plain")))
 		do
 		{
 			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");

@@ -9,10 +9,10 @@ collect_sources (src_HEADERS src_SOURCES ${CMAKE_SOURCE_DIR})
 if (UNIX)
     # FIXME: It shouldn't be this way!
     # CMake doesn't create relative path correctly because of SYMLINK. 
-    file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/unix/xdgmime/*.h")
+    file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/unix/xdgmime/src/*.h")
     set (src_HEADERS ${src_HEADERS} ${tmp_0})
     
-    file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/unix/xdgmime/*.c")
+    file (GLOB_RECURSE tmp_0 FOLLOW_SYMLINKS "de/unix/xdgmime/src/*.c")
     set (src_SOURCES ${src_SOURCES} ${tmp_0})
 
 

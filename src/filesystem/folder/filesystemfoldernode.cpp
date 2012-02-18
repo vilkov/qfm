@@ -745,18 +745,18 @@ void FolderNode::performRemoveEvent(bool canceled, const ScanedFiles &entries)
 	updateBothColumns(updateRange);
 }
 
-void FolderNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
+void FolderNode::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem *>(item))->info().fileName());
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<FileSystemItem *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->updateProgress(progress, timeElapsed);
 	updateSecondColumn(index, entry);
 }
 
-void FolderNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
+void FolderNode::completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<TaskNodeItem *>(item))->info().fileName());
+	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<FileSystemItem *>(item))->info().fileName());
 	FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(m_items[index]);
 
 	entry->updateProgress(entry->total(), timeElapsed);
@@ -765,7 +765,18 @@ void FolderNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeEl
 
 void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
 {
+	Union update;
+	TaskNodeItem *item;
 
+	for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
+	{
+		item = const_cast<TaskNodeItem *>(static_cast<const TaskNodeItem *>(files.at(i).first));
+
+		item->unlock();
+		update.add(m_items.indexOf(item));
+	}
+
+	updateFirstColumn(update);
 }
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
@@ -786,7 +797,7 @@ void FolderNode::CancelFunctor::call(ItemsContainer::size_type index, FileSystem
 	for (TasksItemList::size_type i = 0, size = m_items.size(); i < size; ++i)
 	{
 		m_union.add(index);
-		m_items.at(i)->cancel(m_reason);
+		static_cast<TaskNodeItem *>(m_items.at(i))->cancel(m_reason);
 	}
 }
 

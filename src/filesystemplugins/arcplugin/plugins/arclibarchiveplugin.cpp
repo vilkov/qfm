@@ -128,6 +128,11 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileCo
 	state->callback->progresscomplete();
 }
 
+void LibArchivePlugin::extractAll(State *state, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
+{
+
+}
+
 void LibArchivePlugin::endRead(State *s) const
 {
 	Q_ASSERT(s);

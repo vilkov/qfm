@@ -27,7 +27,7 @@ IFile::size_type PerformCopyTask::bufferSize() const
 	return FileReadWriteGranularity;
 }
 
-void PerformCopyTask::progressInit(const ArcNodeItem *item)
+void PerformCopyTask::progressInit(const FileSystemItem *item)
 {
 	m_progress.init(item);
 }

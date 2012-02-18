@@ -32,13 +32,24 @@ public:
 
 	virtual void run(const volatile Flags &aborted);
 
-protected:
-	friend class AsyncFileAction;
+public:
+	class Context
+	{
+	public:
+		Context(PerformActionTask *task) :
+			m_task(task)
+		{}
 
-	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const { return BaseTask::askUser(title, question, buttons, aborted); }
+		qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const { return m_task->askUser(title, question, buttons, aborted); }
 
-	const TaskProgress &progress() const { return m_progress; }
-	TaskProgress &progress() { return m_progress; }
+		const TaskProgress &progress() const { return m_task->m_progress; }
+		TaskProgress &progress() { return m_task->m_progress; }
+
+
+	private:
+		PerformActionTask *m_task;
+	};
+	friend class Context;
 
 private:
 	TaskProgress m_progress;

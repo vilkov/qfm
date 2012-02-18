@@ -4,7 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include "../filesystembasetask.h"
-#include "../items/filesystemtasknodeitem.h"
+#include "../../model/items/filesystemitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,13 +12,13 @@ FILE_SYSTEM_NS_BEGIN
 class TasksMap
 {
 public:
-	typedef QList<TaskNodeItem *> List;
+	typedef QList<FileSystemItem *> List;
 
 public:
 	TasksMap()
 	{}
 
-	void add(BaseTask *task, TaskNodeItem *item)
+	void add(BaseTask *task, FileSystemItem *item)
 	{
 		m_tasks[task].push_back(item);
 		m_items[item] = task;
@@ -30,7 +30,7 @@ public:
 		for (List::size_type i = 0, size = items.size(); i < size; ++i)
 			m_items[items.at(i)] = task;
 	}
-	void remove(TaskNodeItem *item)
+	void remove(FileSystemItem *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -53,7 +53,7 @@ public:
 		for (List::size_type i = 0, size = list.size(); i < size; ++i)
 			m_items.remove(list.at(i));
 	}
-	BaseTask *take(TaskNodeItem *item)
+	BaseTask *take(FileSystemItem *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -67,7 +67,7 @@ public:
 
 		return 0;
 	}
-	BaseTask *take(TaskNodeItem *item, List &list)
+	BaseTask *take(FileSystemItem *item, List &list)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -91,7 +91,7 @@ public:
 
 private:
 	typedef QMap<BaseTask *, List>           Tasks;
-	typedef QMap<TaskNodeItem *, BaseTask *> Items;
+	typedef QMap<FileSystemItem *, BaseTask *> Items;
 
 private:
 	Tasks m_tasks;

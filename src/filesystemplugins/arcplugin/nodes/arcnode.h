@@ -74,8 +74,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 	void scanCompleteEvent(TaskEvent *event);

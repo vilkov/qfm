@@ -37,7 +37,7 @@ public:
 	virtual IFile::value_type *buffer() const;
 	virtual IFile::size_type bufferSize() const;
 
-	virtual void progressInit(const ArcNodeItem *item);
+	virtual void progressInit(const FileSystemItem *item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 

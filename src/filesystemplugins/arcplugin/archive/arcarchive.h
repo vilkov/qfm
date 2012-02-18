@@ -33,7 +33,7 @@ public:
 		virtual IFile::value_type *buffer() const = 0;
 		virtual IFile::size_type bufferSize() const = 0;
 
-		virtual void progressInit(const ArcNodeItem *item) = 0;
+		virtual void progressInit(const FileSystemItem *item) = 0;
 		virtual void progressUpdate(quint64 progressIncrement) = 0;
 		virtual void progresscomplete() = 0;
 
@@ -56,6 +56,7 @@ public:
 	virtual State *beginRead(const QString &fileName) const = 0;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const = 0;
 	virtual void extract(State *state, const ArcNodeItem *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const = 0;
+	virtual void extractAll(State *state, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const = 0;
 	virtual void endRead(State *state) const = 0;
 };
 

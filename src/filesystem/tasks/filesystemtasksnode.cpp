@@ -56,6 +56,7 @@ bool TasksNode::event(QEvent *e)
 			e->accept();
 
 			performActionEvent(event->files);
+			removeAllTaskLinks(event->task);
 
 			return true;
 		}
@@ -90,7 +91,7 @@ void TasksNode::taskHandled()
 	removeLink();
 }
 
-void TasksNode::cancelTask(TaskNodeItem *item)
+void TasksNode::cancelTask(FileSystemItem *item)
 {
 	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();
@@ -102,7 +103,7 @@ void TasksNode::removeAllTaskLinks(BaseTask *task)
 	removeLink();
 }
 
-TasksMap::List TasksNode::cancelTaskAndTakeItems(TaskNodeItem *item)
+TasksMap::List TasksNode::cancelTaskAndTakeItems(FileSystemItem *item)
 {
 	TasksMap::List res;
 

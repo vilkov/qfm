@@ -207,7 +207,7 @@ void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 
 		for (TasksItemList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
-			items.at(i)->cancel(reason);
+			static_cast<ArcNodeItem *>(items.at(i))->cancel(reason);
 			updateFirstColumn(static_cast<ArcNodeItem *>(items.at(i)));
 		}
 	}
@@ -288,16 +288,16 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
-void ArcNode::updateProgressEvent(const TaskNodeItem *item, quint64 progress, quint64 timeElapsed)
+void ArcNode::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(progress, timeElapsed);
-	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
+	static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item))->updateProgress(progress, timeElapsed);
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item)));
 }
 
-void ArcNode::completedProgressEvent(const TaskNodeItem *item, quint64 timeElapsed)
+void ArcNode::completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
-	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<TaskNodeItem *>(item)));
+	static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item)));
 }
 
 void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)

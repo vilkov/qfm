@@ -19,7 +19,7 @@ bool FolderPasteAction::prepare(const FilesList &files)
 	return false;
 }
 
-void FolderPasteAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const
+void FolderPasteAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const
 {
 
 }

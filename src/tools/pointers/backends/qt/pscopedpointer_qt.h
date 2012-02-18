@@ -22,7 +22,7 @@ public:
 
     class_type &operator=(T *p) { reset(p); return *this; }
 
-    bool reset(T *p = 0) { m_data.reset(p);  return !m_data.isNull(); }
+    bool reset(T *p = 0) { m_data.reset(p); return !m_data.isNull(); }
     void swap(class_type &other) { m_data.swap(other.m_data); }
     T *take() { return m_data.take(); }
 

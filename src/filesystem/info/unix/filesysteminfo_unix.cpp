@@ -125,7 +125,7 @@ bool Info::isLink() const
 bool Info::exists() const
 {
 	struct stat st;
-	return stat(m_filePath.toUtf8().constData(), &st) != ENOENT;
+	return stat(m_filePath.toUtf8(), &st) == 0;
 }
 
 IFile::size_type Info::fileSize() const
@@ -186,7 +186,7 @@ void Info::refresh()
 	struct stat st;
 	QByteArray name = m_filePath.toUtf8();
 
-	if ((res = lstat(name.constData(), &st)) == 0)
+	if ((res = lstat(name, &st)) == 0)
 		if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
 		{
 			m_info.permissions = translatePermissions(st);
@@ -197,7 +197,7 @@ void Info::refresh()
 		{
 			char buff[PATH_MAX] = {};
 
-			if ((res = readlink(name.constData(), buff, PATH_MAX)) == 0)
+			if ((res = readlink(name, buff, PATH_MAX)) == 0)
 				if (char *realName = canonicalize_file_name(buff))
 				{
 					if ((res = stat(realName, &st)) == 0)

@@ -13,7 +13,7 @@ bool UnPackHereAction::prepare(const FilesList &files)
 	return true;
 }
 
-void UnPackHereAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &flags) const
+void UnPackHereAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const
 {
 
 }

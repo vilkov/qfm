@@ -1,7 +1,7 @@
 #include "arclibarchiveplugin.h"
 #include "../nodes/items/arcnodeentryitem.h"
 #include "../nodes/items/arcnodedirentryitem.h"
-#include "../../../tools/pointers/pscopedpointer.h"
+#include "../../../filesystem/info/filesystemfilestree.h"
 #include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
@@ -104,7 +104,7 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
         archive_read_data_skip(state->a);
     }
 
-    if (res != ARCHIVE_EOF)
+    if (res != ARCHIVE_EOF && !aborted)
 		state->error = QString::fromUtf8(archive_error_string(state->a));
 
     return contents;
@@ -128,9 +128,48 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileCo
 	state->callback->progresscomplete();
 }
 
-void LibArchivePlugin::extractAll(State *state, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
+void LibArchivePlugin::extractAll(State *s, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const
 {
+	Q_ASSERT(s && s->error.isEmpty());
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+	const IFileControl *control;
+    struct archive_entry *e;
+	FilesTree tree(dest);
+    int res;
 
+    while (!aborted && (res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK)
+    	if (control = tree.open(const_cast<char *>(archive_entry_pathname(e)), true, state->error))
+    	{
+    		if (control->isFile() || !control->exists())
+    		{
+				PScopedPointer<IFile> file;
+
+				if (file = control->file(IFile::ReadWrite, state->error))
+				{
+					int size;
+
+					for (; !aborted ;)
+					{
+						size = archive_read_data(state->a, callback->buffer(), callback->bufferSize());
+
+						if (size < 0)
+						{
+							state->error = QString::fromUtf8(archive_error_string(state->a));
+							break;
+						}
+
+						if (size == 0)
+							break;
+
+						if (file->write(callback->buffer(), size) != (IFile::size_type)size)
+							break;
+					}
+				}
+    		}
+    	}
+
+    if (res != ARCHIVE_EOF && !aborted)
+		state->error = QString::fromUtf8(archive_error_string(state->a));
 }
 
 void LibArchivePlugin::endRead(State *s) const

@@ -274,7 +274,7 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 	entryPathUtf8 = entryPath.toUtf8();
 
 	while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
-    	if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
+		if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
 		{
 			PScopedPointer<IFileControl> m_destEntry;
 

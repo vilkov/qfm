@@ -1,4 +1,5 @@
 #include "arcunpackintosubdiraction.h"
+#include "tasks/arcunpackintosubdiractiontask.h"
 #include "../../../application.h"
 
 
@@ -10,7 +11,7 @@ UnPackIntoSubdirAction::UnPackIntoSubdirAction() :
 
 PerformActionTask *UnPackIntoSubdirAction::process(TasksNode *receiver, const FilesList &files) const
 {
-	return NULL;
+	return new UnPackIntoSubdirActionTask(receiver, files);
 }
 
 ARC_PLUGIN_NS_END

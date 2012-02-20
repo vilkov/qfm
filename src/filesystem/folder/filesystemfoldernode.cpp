@@ -244,7 +244,9 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 		if (action->isAsynchronous())
 		{
-			if (PerformActionTask *task = static_cast<AsyncFileAction *>(action)->process(this, files))
+			PScopedPointer<PerformActionTask> task;
+
+			if (task = static_cast<AsyncFileAction *>(action)->process(this, files))
 			{
 				Union update;
 				TasksItemList list;
@@ -260,7 +262,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 					list.push_back(item);
 				}
 
-				addTask(task, list);
+				addTask(task.take(), list);
 				updateFirstColumn(update);
 			}
 		}

@@ -138,54 +138,26 @@ void LibArchivePlugin::extractAll(State *s, const IFileControl *dest, Callback *
 	FilesTree tree(dest);
     int res;
 
+    state->callback = callback;
+
     while (!aborted && (res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK)
     	do
 			if (control = tree.open(const_cast<char *>(archive_entry_pathname(e)), true, state->error))
-			{
-//				if (control->isFile())
-//					if (tryAgain || callback->overwriteAll())
-//						doExtractFile(state, destination, entry, tryAgain = false, aborted);
-//					else
-//						state->callback->askForOverwrite(
-//								tr("File \"%1\" already exists in \"%3\". Overwrite it?").
-//									arg(entry->fileName()).
-//									arg(destination->absoluteFilePath()),
-//								tryAgain = false,
-//								aborted);
-//				else
-//					doExtractFile(state, destination, entry, tryAgain = false, aborted);
-
-
-				if (control->isFile() )
-				{
-					PScopedPointer<IFile> file;
-
-					if (file = control->file(IFile::ReadWrite, state->error))
-					{
-						int size;
-
-						for (; !aborted ;)
-						{
-							size = archive_read_data(state->a, callback->buffer(), callback->bufferSize());
-
-							if (size < 0)
-							{
-								state->error = QString::fromUtf8(archive_error_string(state->a));
-								break;
-							}
-
-							if (size == 0)
-								break;
-
-							if (file->write(callback->buffer(), size) != (IFile::size_type)size)
-								break;
-						}
-					}
-				}
-			}
+				if (control->isFile())
+					if (tryAgain || state->callback->overwriteAll())
+						doExtractFile(state, control, tryAgain = false, aborted);
+					else
+						state->callback->askForOverwrite(
+								tr("File \"%1\" already exists in \"%3\". Overwrite it?").
+									arg(control->fileName()).
+									arg(control->absolutePath()),
+								tryAgain = false,
+								aborted);
+				else
+					doExtractFile(state, control, tryAgain = false, aborted);
 			else
-				callback->askForSkipIfNotCopy(
-						tr("Failed to open directory \"%1\". Skip it?").arg(state->error),
+				state->callback->askForSkipIfNotCopy(
+						tr("Failed to open/create directory \"%1\". Skip it?").arg(state->error),
 						tryAgain = false,
 						aborted);
     	while (tryAgain && !aborted);
@@ -308,10 +280,12 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 					if (m_destFile = m_destEntry->file(IFile::ReadWrite, state->error))
 					{
 						int size;
+						IFile::value_type *buffer = state->callback->buffer();
+						IFile::size_type bufferSize = state->callback->bufferSize();
 
 						for (;;)
 						{
-							size = archive_read_data(state->a, state->callback->buffer(), state->callback->bufferSize());
+							size = archive_read_data(state->a, buffer, bufferSize);
 
 							if (size < 0)
 							{
@@ -322,7 +296,7 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 							if (size == 0)
 								break;
 
-							if (m_destFile->write(state->callback->buffer(), size) == (IFile::size_type)size)
+							if (m_destFile->write(buffer, size) == (IFile::size_type)size)
 								state->callback->progressUpdate(size);
 							else
 							{
@@ -357,6 +331,36 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 
 	if (res != ARCHIVE_EOF && res != ARCHIVE_OK)
 		state->error = QString::fromUtf8(archive_error_string(state->a));
+}
+
+void LibArchivePlugin::doExtractFile(State *s, const IFileControl *control, volatile bool &tryAgain, const volatile Flags &aborted) const
+{
+	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+	PScopedPointer<IFile> file;
+
+	if (file = control->file(IFile::ReadWrite, state->error))
+	{
+		int size;
+		IFile::value_type *buffer = state->callback->buffer();
+		IFile::size_type bufferSize = state->callback->bufferSize();
+
+		for (; !aborted ;)
+		{
+			size = archive_read_data(state->a, buffer, bufferSize);
+
+			if (size < 0)
+			{
+				state->error = QString::fromUtf8(archive_error_string(state->a));
+				break;
+			}
+
+			if (size == 0)
+				break;
+
+			if (file->write(buffer, size) != (IFile::size_type)size)
+				break;
+		}
+	}
 }
 
 ARC_PLUGIN_NS_END

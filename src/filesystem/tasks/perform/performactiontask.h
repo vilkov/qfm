@@ -18,42 +18,25 @@ public:
 
 	public:
 		Event(BaseTask *task, Type type, const AsyncFileAction::FilesList &files, bool canceled) :
-			BaseTask::Event(task, static_cast<Type>(type)),
+			BaseTask::Event(task, static_cast<Type>(type), canceled),
 			files(files)
-		{
-			this->canceled = canceled;
-		}
+		{}
 
 		AsyncFileAction::FilesList files;
 	};
 
 public:
-	PerformActionTask(TasksNode *receiver, const AsyncFileAction *action, const AsyncFileAction::FilesList &files);
+	PerformActionTask(TasksNode *receiver, const AsyncFileAction::FilesList &files);
 
 	virtual void run(const volatile Flags &aborted);
 
-public:
-	class Context
-	{
-	public:
-		Context(PerformActionTask *task) :
-			m_task(task)
-		{}
+protected:
+	virtual void process(const volatile Flags &aborted) = 0;
 
-		qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const { return m_task->askUser(title, question, buttons, aborted); }
-
-		const TaskProgress &progress() const { return m_task->m_progress; }
-		TaskProgress &progress() { return m_task->m_progress; }
-
-
-	private:
-		PerformActionTask *m_task;
-	};
-	friend class Context;
+protected:
+	const AsyncFileAction::FilesList &files() const { return m_files; }
 
 private:
-	TaskProgress m_progress;
-	const AsyncFileAction *m_action;
 	AsyncFileAction::FilesList m_files;
 };
 

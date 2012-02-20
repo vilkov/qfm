@@ -14,8 +14,7 @@ class UnPackAction : public Action
 public:
 	UnPackAction();
 
-	virtual bool prepare(const FilesList &files);
-	virtual void process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const;
+	virtual PerformActionTask *process(TasksNode *receiver, const FilesList &files) const;
 };
 
 ARC_PLUGIN_NS_END

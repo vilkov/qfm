@@ -14,14 +14,9 @@ const QString &FolderPasteAction::lockReason() const
 	return m_lockReason;
 }
 
-bool FolderPasteAction::prepare(const FilesList &files)
+PerformActionTask *FolderPasteAction::process(TasksNode *receiver, const FilesList &files) const
 {
-	return false;
-}
-
-void FolderPasteAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const
-{
-
+	return NULL;
 }
 
 FILE_SYSTEM_NS_END

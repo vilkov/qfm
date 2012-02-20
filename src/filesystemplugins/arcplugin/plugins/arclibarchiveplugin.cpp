@@ -134,39 +134,61 @@ void LibArchivePlugin::extractAll(State *s, const IFileControl *dest, Callback *
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
 	const IFileControl *control;
     struct archive_entry *e;
+    bool tryAgain = false;
 	FilesTree tree(dest);
     int res;
 
     while (!aborted && (res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK)
-    	if (control = tree.open(const_cast<char *>(archive_entry_pathname(e)), true, state->error))
-    	{
-    		if (control->isFile() || !control->exists())
-    		{
-				PScopedPointer<IFile> file;
+    	do
+			if (control = tree.open(const_cast<char *>(archive_entry_pathname(e)), true, state->error))
+			{
+//				if (control->isFile())
+//					if (tryAgain || callback->overwriteAll())
+//						doExtractFile(state, destination, entry, tryAgain = false, aborted);
+//					else
+//						state->callback->askForOverwrite(
+//								tr("File \"%1\" already exists in \"%3\". Overwrite it?").
+//									arg(entry->fileName()).
+//									arg(destination->absoluteFilePath()),
+//								tryAgain = false,
+//								aborted);
+//				else
+//					doExtractFile(state, destination, entry, tryAgain = false, aborted);
 
-				if (file = control->file(IFile::ReadWrite, state->error))
+
+				if (control->isFile() )
 				{
-					int size;
+					PScopedPointer<IFile> file;
 
-					for (; !aborted ;)
+					if (file = control->file(IFile::ReadWrite, state->error))
 					{
-						size = archive_read_data(state->a, callback->buffer(), callback->bufferSize());
+						int size;
 
-						if (size < 0)
+						for (; !aborted ;)
 						{
-							state->error = QString::fromUtf8(archive_error_string(state->a));
-							break;
+							size = archive_read_data(state->a, callback->buffer(), callback->bufferSize());
+
+							if (size < 0)
+							{
+								state->error = QString::fromUtf8(archive_error_string(state->a));
+								break;
+							}
+
+							if (size == 0)
+								break;
+
+							if (file->write(callback->buffer(), size) != (IFile::size_type)size)
+								break;
 						}
-
-						if (size == 0)
-							break;
-
-						if (file->write(callback->buffer(), size) != (IFile::size_type)size)
-							break;
 					}
 				}
-    		}
-    	}
+			}
+			else
+				callback->askForSkipIfNotCopy(
+						tr("Failed to open directory \"%1\". Skip it?").arg(state->error),
+						tryAgain = false,
+						aborted);
+    	while (tryAgain && !aborted);
 
     if (res != ARCHIVE_EOF && !aborted)
 		state->error = QString::fromUtf8(archive_error_string(state->a));

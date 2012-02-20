@@ -16,8 +16,6 @@ class PerformCopyTask : public BaseTask, public Archive::Callback
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
-	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
-
 	class Event : public TaskEvent
 	{
 	public:
@@ -33,7 +31,6 @@ public:
 public:
 	PerformCopyTask(const QString &fileName, const ArcNodeItem *item, PScopedPointer<ICopyControl> &control, bool move, TasksNode *receiver);
 
-	/* Archive::Callback */
 	virtual IFile::value_type *buffer() const;
 	virtual IFile::size_type bufferSize() const;
 
@@ -48,6 +45,9 @@ public:
 
 protected:
 	virtual void run(const volatile Flags &aborted);
+
+private:
+	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 
 private:
 	QString m_fileName;

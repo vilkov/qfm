@@ -8,14 +8,9 @@ UnPackAction::UnPackAction() :
 	Action(tr("Unpacking..."), Application::desktopService()->unpackActionIcon(16), tr("Unpack..."))
 {}
 
-bool UnPackAction::prepare(const FilesList &files)
+PerformActionTask *UnPackAction::process(TasksNode *receiver, const FilesList &files) const
 {
-	return true;
-}
-
-void UnPackAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const
-{
-
+	return NULL;
 }
 
 ARC_PLUGIN_NS_END

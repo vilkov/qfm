@@ -8,14 +8,9 @@ PackAction::PackAction() :
 	Action(tr("Packing..."), Application::desktopService()->packActionIcon(16), tr("Pack..."))
 {}
 
-bool PackAction::prepare(const FilesList &files)
+PerformActionTask *PackAction::process(TasksNode *receiver, const FilesList &files) const
 {
-	return true;
-}
-
-void PackAction::process(PerformActionTask *task, const FilesList &files, const volatile Flags &aborted) const
-{
-
+	return NULL;
 }
 
 ARC_PLUGIN_NS_END

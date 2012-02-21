@@ -3,7 +3,7 @@
 
 #include <QtCore/QDebug>
 
-#include "xdgmime/src/xdg.h"
+#include <xdg/xdg.h>
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 #	include "kde/kde_de_p.h"

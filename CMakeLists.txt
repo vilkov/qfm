@@ -94,6 +94,10 @@ if (UNIX)
     find_package (X11 REQUIRED)
     include_directories (${X11_INCLUDE_DIR})
     set (qfm_LIBS ${qfm_LIBS} ${X11_LIBRARIES})
+    
+    find_package (XDG REQUIRED)
+    include_directories (${XDG_INCLUDE})
+    set (qfm_LIBS ${qfm_LIBS} ${XDG_LIBRARY})
 endif ()
 
 find_package (LibArchive REQUIRED)
@@ -112,9 +116,6 @@ endif (USE_GPROF)
  
 # Definitions
 if (UNIX)
-    # This is for xdgmimecache
-    add_definitions (-DHAVE_MMAP)
-    
     if (DESKTOP_ENVIRONMENT STREQUAL "KDE")
         set (DESKTOP_ENVIRONMENT_IS_KDE YES)
         add_definitions (-DDESKTOP_ENVIRONMENT_IS_KDE)

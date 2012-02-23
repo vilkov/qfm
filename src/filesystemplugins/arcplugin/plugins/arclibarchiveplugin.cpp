@@ -270,20 +270,20 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 	while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
 		if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
 		{
-			PScopedPointer<IFileControl> m_destEntry;
+			PScopedPointer<IFileControl> destEntry;
 
 			do
-				if (m_destEntry = destination->openFile(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), state->error))
+				if (destEntry = destination->openFile(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), state->error))
 				{
 					PScopedPointer<IFile> m_destFile;
 
-					if (m_destFile = m_destEntry->file(IFile::ReadWrite, state->error))
+					if (m_destFile = destEntry->file(IFile::ReadWrite, state->error))
 					{
 						int size;
 						IFile::value_type *buffer = state->callback->buffer();
 						IFile::size_type bufferSize = state->callback->bufferSize();
 
-						for (;;)
+						for (;!aborted;)
 						{
 							size = archive_read_data(state->a, buffer, bufferSize);
 
@@ -302,7 +302,7 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 							{
 								state->callback->askForSkipIfNotCopy(
 										tr("Failed to write to file \"%1\" (%2). Skip it?").
-											arg(m_destEntry->absoluteFilePath()).
+											arg(destEntry->absoluteFilePath()).
 											arg(state->error = m_destFile->lastError()),
 										tryAgain = false,
 										aborted);
@@ -311,6 +311,16 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *destination, 
 							}
 						}
 					}
+					else
+						if (state->callback->skipAllIfNotCopy() || tryAgain)
+							break;
+						else
+							state->callback->askForSkipIfNotCopy(
+									tr("Failed to create file \"%1\" (%2). Skip it?").
+										arg(destination->absoluteFilePath(static_cast<const ArcNodeEntryItem *>(entry)->fileName())).
+										arg(state->error),
+									tryAgain = false,
+									aborted);
 				}
 				else
 					if (state->callback->skipAllIfNotCopy() || tryAgain)
@@ -338,29 +348,41 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileControl *control, vola
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
 	PScopedPointer<IFile> file;
 
-	if (file = control->file(IFile::ReadWrite, state->error))
-	{
-		int size;
-		IFile::value_type *buffer = state->callback->buffer();
-		IFile::size_type bufferSize = state->callback->bufferSize();
-
-		for (; !aborted ;)
+	do
+		if (file = control->file(IFile::ReadWrite, state->error))
 		{
-			size = archive_read_data(state->a, buffer, bufferSize);
+			int size;
+			IFile::value_type *buffer = state->callback->buffer();
+			IFile::size_type bufferSize = state->callback->bufferSize();
 
-			if (size < 0)
+			for (;!aborted;)
 			{
-				state->error = QString::fromUtf8(archive_error_string(state->a));
-				break;
+				size = archive_read_data(state->a, buffer, bufferSize);
+
+				if (size < 0)
+				{
+					state->error = QString::fromUtf8(archive_error_string(state->a));
+					break;
+				}
+
+				if (size == 0)
+					break;
+
+				if (file->write(buffer, size) != (IFile::size_type)size)
+					break;
 			}
-
-			if (size == 0)
-				break;
-
-			if (file->write(buffer, size) != (IFile::size_type)size)
-				break;
 		}
-	}
+		else
+			if (state->callback->skipAllIfNotCopy() || tryAgain)
+				break;
+			else
+				state->callback->askForSkipIfNotCopy(
+						tr("Failed to create file \"%1\" (%2). Skip it?").
+							arg(control->absoluteFilePath()).
+							arg(state->error),
+						tryAgain = false,
+						aborted);
+	while (tryAgain && !aborted);
 }
 
 ARC_PLUGIN_NS_END

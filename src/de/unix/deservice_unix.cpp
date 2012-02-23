@@ -117,25 +117,25 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 		return icon_path;
 	else
 	{
-		const XdgList *apps;
+		const XdgJointList *apps;
 
-		if (apps = xdg_list_begin(xdg_added_apps_lookup(mimeType)))
+		if (apps = xdg_joint_list_begin(xdg_added_apps_lookup(mimeType)))
 			do
 				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
-			while (apps = xdg_list_next(apps));
+			while (apps = xdg_joint_list_next(apps));
 
-		if (apps = xdg_list_begin(xdg_default_apps_lookup(mimeType)))
+		if (apps = xdg_joint_list_begin(xdg_default_apps_lookup(mimeType)))
 			do
 				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
-			while (apps = xdg_list_next(apps));
+			while (apps = xdg_joint_list_next(apps));
 
-		if (apps = xdg_list_begin(xdg_known_apps_lookup(mimeType)))
+		if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
 			do
 				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
 					return icon_path;
-			while (apps = xdg_list_next(apps));
+			while (apps = xdg_joint_list_next(apps));
 	}
 
 	return 0;
@@ -312,11 +312,11 @@ QIcon Service::unpackActionIcon(int iconSize) const
 
 void Service::test() const
 {
-	const XdgList *apps;
 	const XdgList *values;
 	const XdgAppGroup *group;
+	const XdgJointList *apps;
 
-	if (apps = xdg_list_begin(xdg_default_apps_lookup("text/plain")))
+	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup("video/x-msvideo")))
 		do
 		{
 			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
@@ -335,9 +335,9 @@ void Service::test() const
 				}
 				while (values = xdg_list_next(values));
 		}
-		while (apps = xdg_list_next(apps));
+		while (apps = xdg_joint_list_next(apps));
 
-	if (apps = xdg_list_begin(xdg_removed_apps_lookup("text/plain")))
+	if (apps = xdg_joint_list_begin(xdg_removed_apps_lookup("video/x-msvideo")))
 		do
 		{
 			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
@@ -356,9 +356,9 @@ void Service::test() const
 				}
 				while (values = xdg_list_next(values));
 		}
-		while (apps = xdg_list_next(apps));
+		while (apps = xdg_joint_list_next(apps));
 
-	if (apps = xdg_list_begin(xdg_added_apps_lookup("text/plain")))
+	if (apps = xdg_joint_list_begin(xdg_added_apps_lookup("video/x-msvideo")))
 		do
 		{
 			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
@@ -377,9 +377,9 @@ void Service::test() const
 				}
 				while (values = xdg_list_next(values));
 		}
-		while (apps = xdg_list_next(apps));
+		while (apps = xdg_joint_list_next(apps));
 
-	if (apps = xdg_list_begin(xdg_known_apps_lookup("text/plain")))
+	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup("video/x-msvideo")))
 		do
 		{
 			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
@@ -398,7 +398,7 @@ void Service::test() const
 				}
 				while (values = xdg_list_next(values));
 		}
-		while (apps = xdg_list_next(apps));
+		while (apps = xdg_joint_list_next(apps));
 }
 
 QByteArray Service::themeName() const

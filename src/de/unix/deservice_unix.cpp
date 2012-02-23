@@ -121,19 +121,19 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 
 		if (apps = xdg_joint_list_begin(xdg_added_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
 					return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 
 		if (apps = xdg_joint_list_begin(xdg_default_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
 					return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 
 		if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_list_item_app(apps), theme, size))
+				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
 					return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 	}
@@ -319,7 +319,7 @@ void Service::test() const
 	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup("video/x-msvideo")))
 		do
 		{
-			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
 
 			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
 				do
@@ -340,7 +340,7 @@ void Service::test() const
 	if (apps = xdg_joint_list_begin(xdg_removed_apps_lookup("video/x-msvideo")))
 		do
 		{
-			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
 
 			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
 				do
@@ -361,7 +361,7 @@ void Service::test() const
 	if (apps = xdg_joint_list_begin(xdg_added_apps_lookup("video/x-msvideo")))
 		do
 		{
-			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
 
 			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
 				do
@@ -382,7 +382,7 @@ void Service::test() const
 	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup("video/x-msvideo")))
 		do
 		{
-			group = xdg_app_group_lookup(xdg_list_item_app(apps), "Desktop Entry");
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
 
 			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
 				do

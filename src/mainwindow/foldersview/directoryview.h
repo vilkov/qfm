@@ -11,6 +11,7 @@
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "widgets/pathedit.h"
+#include "../../history/navigationhistory.h"
 #include "../../filesystem/interfaces/filesysteminode.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
@@ -159,6 +160,7 @@ private:
     QToolBar m_toolBar;
     DirectoryListView m_view;
     DirectoryListViewEventHandler m_eventHandler;
+    History::Navigation m_navigation;
 };
 
 #endif // DIRECTORYVIEW_H

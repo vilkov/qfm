@@ -211,23 +211,26 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	m_node->root()->viewAbsolute(this, filePath, Application::plugins());
+	m_node->viewAbsolute(this, filePath, Application::plugins());
 }
 
 void DirectoryView::goUp()
 {
+//	m_navigation.insert(new History::DirectoryEntry(m_node->absolutePath()));
 	m_node->viewParent(this);
 	m_parent->updateTitle(this, m_node->fileName());
 }
 
 void DirectoryView::goBack()
 {
-
+//	if (History::Entry *entry = m_navigation.backward())
+//		m_node->viewAbsolute(this, static_cast<History::DirectoryEntry *>(entry)->direcory(), Application::plugins());
 }
 
 void DirectoryView::goForward()
 {
-
+//	if (History::Entry *entry = m_navigation.forvard())
+//		m_node->viewAbsolute(this, static_cast<History::DirectoryEntry *>(entry)->direcory(), Application::plugins());
 }
 
 void DirectoryView::refresh()
@@ -240,7 +243,10 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
+	{
+//		m_navigation.insert(new History::DirectoryEntry(m_node->info(index)->absoluteFilePath()));
 		m_node->viewChild(this, index, Application::plugins());
+	}
 }
 
 void DirectoryView::pathToClipboard()
@@ -298,7 +304,7 @@ void DirectoryView::openInNewTab()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-		m_parent->openInNewTab(m_node->root(), m_node->info(index)->absoluteFilePath(), geometry());
+		m_parent->openInNewTab(m_node, m_node->info(index)->absoluteFilePath(), geometry());
 }
 
 void DirectoryView::closeTab()

@@ -528,8 +528,8 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 			{
 				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
 				{
-					if (m_items[index]->node())
-						m_items[index]->node()->viewCloseAll();
+//					if (m_items[index]->node())
+//						m_items[index]->node()->viewCloseAll();
 
 					if (!static_cast<FileSystemEntryItem*>(m_items[index])->isLocked())
 						removeEntry(index);
@@ -826,7 +826,7 @@ void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystem
 
 			if (static_cast<FileSystemEntryItem*>(entry)->node())
 			{
-				static_cast<FileSystemEntryItem*>(entry)->node()->viewCloseAll();
+//				static_cast<FileSystemEntryItem*>(entry)->node()->viewCloseAll();
 				static_cast<FileSystemEntryItem*>(entry)->setNode(0);
 			}
 		}

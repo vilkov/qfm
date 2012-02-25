@@ -12,7 +12,6 @@ class INode : public IFileInfo, public IFileOperations, public IFileNavigation
 public:
 	virtual ~INode() {}
 
-	virtual INode *root() const = 0;
 	virtual int columnsCount() const = 0;
 
 	virtual QAbstractItemModel *model() const = 0;

@@ -16,50 +16,20 @@ IFileInfo *Node::info(const QModelIndex &idx) const
 	return &invalidInfo;
 }
 
-void Node::viewCloseAll()
-{
-	if (!m_view.isEmpty())
-	{
-		QModelIndex index;
-		qint32 count = m_view.size();
-		Node *parent = parentNode();
-
-		while (!parent->exists())
-			parent = parent->parentNode();
-
-		for (ViewSet::iterator it = m_view.begin(), end = m_view.end(); it != end; it = m_view.erase(it))
-			parent->viewThis(*it, index);
-
-		removeLinks(count);
-	}
-
-	if (!isLinked())
-		parentNode()->allChildLinksRemoved(this);
-}
-
 void Node::viewClosed(INodeView *nodeView)
 {
 	removeView(nodeView);
 }
 
-void Node::viewParent(INodeView *nodeView)
+::History::Entry *Node::viewParent(INodeView *nodeView)
 {
 	if (static_cast<INode*>(parentNode()) != root())
 		viewChild(nodeView, rootIndex(), 0);
+
+	return NULL;
 }
 
-void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
-{
-	addView(nodeView);
-	nodeView->setNode(this);
-
-	if (selected.isValid())
-		nodeView->select(selected);
-	else
-		nodeView->select(rootIndex());
-}
-
-void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
+::History::Entry *Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
 {
 	QModelIndex selected;
 
@@ -73,23 +43,19 @@ void Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager
 		node->refresh();
 		removeView(nodeView);
 	}
+
+	return NULL;
 }
 
-void Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
+::History::Entry *Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
 {
 	Path path(filePath);
 	Path::Iterator it = path.begin();
 
 	if (!it.atEnd())
-		viewChild(nodeView, it, plugins);
-}
+		root()->viewChild(nodeView, it, plugins);
 
-INode *Node::root() const
-{
-	if (INode *res = parentNode())
-		return res->root();
-	else
-		return const_cast<Node *>(this);
+	return NULL;
 }
 
 int Node::columnsCount() const
@@ -102,15 +68,44 @@ QAbstractItemView::SelectionMode Node::selectionMode() const
 	return QAbstractItemView::ExtendedSelection;
 }
 
+Node::HistoryEntry::HistoryEntry(::FileSystem::Node *node) :
+	m_node(node)
+{
+	m_node->addLink();
+}
+
+Node::HistoryEntry::~HistoryEntry()
+{
+	m_node->removeLink();
+}
+
+::FileSystem::INode *Node::HistoryEntry::node()
+{
+	return m_node;
+}
+
+Node::HistoryEntry *Node::historyEntry() const
+{
+	return NULL;
+}
+
+void Node::nodeRemoved(Node *node)
+{}
+
+Node *Node::root() const
+{
+	if (Node *res = parentNode())
+		return res->root();
+	else
+		return const_cast<Node *>(this);
+}
+
 void Node::switchTo(Node *node, INodeView *view)
 {
 	node->viewThis(view, QModelIndex());
 	node->refresh();
 	removeView(view);
 }
-
-void Node::nodeRemoved(Node *node)
-{}
 
 void Node::addLink()
 {
@@ -126,6 +121,17 @@ void Node::removeLink()
 
 	if (!isLinked())
 		parentNode()->allChildLinksRemoved(this);
+}
+
+void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
+{
+	addView(nodeView);
+	nodeView->setNode(this);
+
+	if (selected.isValid())
+		nodeView->select(selected);
+	else
+		nodeView->select(rootIndex());
 }
 
 void Node::viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins)

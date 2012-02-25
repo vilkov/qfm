@@ -41,20 +41,7 @@ public:
 	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
 
 protected:
-	class HistoryEntry : public ::History::Entry
-	{
-	public:
-		HistoryEntry(::FileSystem::Node *node);
-		virtual ~HistoryEntry();
-
-		virtual ::FileSystem::INode *node();
-
-	private:
-		::FileSystem::Node *m_node;
-	};
-
 	virtual QModelIndex rootIndex() const = 0;
-	virtual HistoryEntry *historyEntry() const;
 	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
 	virtual void nodeRemoved(Node *node);
@@ -72,8 +59,20 @@ private:
 	void removeLink();
 
 private:
+	class HistoryEntry : public ::History::Entry
+	{
+	public:
+		HistoryEntry(::FileSystem::Node *node);
+		virtual ~HistoryEntry();
+
+		::FileSystem::Node *node() { return m_node; }
+
+	private:
+		::FileSystem::Node *m_node;
+	};
+
 	void viewThis(INodeView *nodeView, const QModelIndex &selected);
-	void viewChild(INodeView *nodeView, const Path::Iterator &path, PluginsManager *plugins);
+	Node *viewChild(INodeView *nodeView, const Path::Iterator &path, QModelIndex &selected, PluginsManager *plugins);
 
 private:
 	bool isLinked() const;
@@ -82,6 +81,7 @@ private:
 
 	void addView(INodeView *view);
 	void removeView(INodeView *view);
+	void removeViewWithoutLink(INodeView *view);
 
 private:
 	typedef QSet<INodeView*> ViewSet;

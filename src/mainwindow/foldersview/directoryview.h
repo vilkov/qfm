@@ -75,7 +75,7 @@ public:
 
 public Q_SLOTS:
 	void goUp();
-    void goBack();
+    void goBackward();
     void goForward();
     void refresh();
     void activated();

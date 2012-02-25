@@ -12,13 +12,10 @@ public:
 	Navigation();
 	~Navigation();
 
-	void insert(Entry *entry);
-
+	void init(Entry *entry);
+	void save(Entry *entry);
 	Entry *backward();
-	Entry *forvard();
-
-private:
-	inline void removeTail(Entry *entry);
+	Entry *forward();
 
 private:
 	Entry *m_current;

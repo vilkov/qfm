@@ -31,7 +31,7 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_eventHandler.registerContextMenuEventHandler(&DirectoryView::contextMenu);
 	m_eventHandler.registerMouseDoubleClickEventHandler(&DirectoryView::activated);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Backspace, &DirectoryView::goUp);
-	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Left,      &DirectoryView::goBack);
+	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Left,      &DirectoryView::goBackward);
 	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Right,     &DirectoryView::goForward);
 	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Up,        &DirectoryView::editPath);
 	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_F5,        &DirectoryView::refresh);
@@ -61,7 +61,10 @@ DirectoryView::~DirectoryView()
 
 void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 {
-	root->viewAbsolute(this, tab.path, Application::plugins());
+	if (::History::Entry *entry = root->viewAbsolute(this, tab.path, Application::plugins()))
+		m_navigation.init(entry);
+	else
+		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
@@ -71,13 +74,20 @@ void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 
 void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath)
 {
-	root->viewAbsolute(this, absoluteFilePath, Application::plugins());
+	if (::History::Entry *entry = root->viewAbsolute(this, absoluteFilePath, Application::plugins()))
+		m_navigation.init(entry);
+	else
+		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
+
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const Geometry &geometry)
 {
-	root->viewAbsolute(this, absoluteFilePath, Application::plugins());
+	if (::History::Entry *entry = root->viewAbsolute(this, absoluteFilePath, Application::plugins()))
+		m_navigation.init(entry);
+	else
+		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
@@ -211,26 +221,26 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	m_node->viewAbsolute(this, filePath, Application::plugins());
+	if (::History::Entry *entry = m_node->viewAbsolute(this, filePath, Application::plugins()))
+		m_navigation.save(entry);
 }
 
 void DirectoryView::goUp()
 {
-//	m_navigation.insert(new History::DirectoryEntry(m_node->absolutePath()));
-	m_node->viewParent(this);
-	m_parent->updateTitle(this, m_node->fileName());
+	if (::History::Entry *entry = m_node->viewParent(this))
+		m_navigation.save(entry);
 }
 
-void DirectoryView::goBack()
+void DirectoryView::goBackward()
 {
-//	if (History::Entry *entry = m_navigation.backward())
-//		m_node->viewAbsolute(this, static_cast<History::DirectoryEntry *>(entry)->direcory(), Application::plugins());
+	if (History::Entry *entry = m_navigation.backward())
+		m_node->viewHistory(this, entry);
 }
 
 void DirectoryView::goForward()
 {
-//	if (History::Entry *entry = m_navigation.forvard())
-//		m_node->viewAbsolute(this, static_cast<History::DirectoryEntry *>(entry)->direcory(), Application::plugins());
+	if (History::Entry *entry = m_navigation.forward())
+		m_node->viewHistory(this, entry);
 }
 
 void DirectoryView::refresh()
@@ -243,10 +253,8 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-	{
-//		m_navigation.insert(new History::DirectoryEntry(m_node->info(index)->absoluteFilePath()));
-		m_node->viewChild(this, index, Application::plugins());
-	}
+		if (::History::Entry *entry = m_node->viewChild(this, index, Application::plugins()))
+			m_navigation.save(entry);
 }
 
 void DirectoryView::pathToClipboard()

@@ -35,13 +35,17 @@ void Node::viewClosed(INodeView *nodeView)
 
 	if (Node *node = viewChild(idx, plugins, selected))
 	{
+		/* XXX: Add 2 links because of HistoryEntry */
+
 		if (node == parentNode())
-			node->viewThis(nodeView, m_parentEntryIndex);
+			node->viewThis(nodeView, m_parentEntryIndex, 2);
 		else
-			node->viewThis(nodeView, selected);
+			node->viewThis(nodeView, selected, 2);
 
 		node->refresh();
 		removeView(nodeView);
+
+		return new HistoryEntry(node);
 	}
 
 	return NULL;
@@ -58,19 +62,34 @@ void Node::viewClosed(INodeView *nodeView)
 
 		if (Node *node = root()->viewChild(nodeView, it, selected, plugins))
 		{
+			/* XXX: Add 2 links because of HistoryEntry */
+
 			if (node == parentNode())
-				node->viewThis(nodeView, m_parentEntryIndex);
+				node->viewThis(nodeView, m_parentEntryIndex, 2);
 			else
-				node->viewThis(nodeView, selected);
+				node->viewThis(nodeView, selected, 2);
 
 			node->refresh();
-			removeViewWithoutLink(nodeView);
+			removeView(nodeView);
 
-			return new HistoryEntry(this);
+			return new HistoryEntry(node);
 		}
 	}
 
 	return NULL;
+}
+
+void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
+{
+	Node *node = static_cast<HistoryEntry *>(entry)->node();
+
+	if (node == parentNode())
+		node->viewThis(nodeView, m_parentEntryIndex);
+	else
+		node->viewThis(nodeView, QModelIndex());
+
+	node->refresh();
+	removeView(nodeView);
 }
 
 int Node::columnsCount() const
@@ -109,6 +128,14 @@ void Node::addLink()
 		parent->addLink();
 }
 
+void Node::addLinks(qint32 count)
+{
+	m_links += count;
+
+	if (Node *parent = parentNode())
+		parent->addLinks(count);
+}
+
 void Node::removeLink()
 {
 	removeLinks(1);
@@ -126,9 +153,25 @@ Node::HistoryEntry::~HistoryEntry()
 	m_node->removeLink();
 }
 
+bool Node::HistoryEntry::isEqual(const Entry *entry) const
+{
+	return m_node == static_cast<const HistoryEntry *>(entry)->node();
+}
+
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
 {
 	addView(nodeView);
+	nodeView->setNode(this);
+
+	if (selected.isValid())
+		nodeView->select(selected);
+	else
+		nodeView->select(rootIndex());
+}
+
+void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links)
+{
+	addView(nodeView, links);
 	nodeView->setNode(this);
 
 	if (selected.isValid())
@@ -187,15 +230,16 @@ void Node::addView(INodeView *view)
 	addLink();
 }
 
+void Node::addView(INodeView *view, qint32 links)
+{
+	m_view.insert(view);
+	addLinks(links);
+}
+
 void Node::removeView(INodeView *view)
 {
 	if (m_view.remove(view))
 		removeLink();
-}
-
-void Node::removeViewWithoutLink(INodeView *view)
-{
-	m_view.remove(view);
 }
 
 FILE_SYSTEM_NS_END

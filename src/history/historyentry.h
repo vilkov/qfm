@@ -11,6 +11,8 @@ class Entry
 public:
 	virtual ~Entry();
 
+	virtual bool isEqual(const Entry *entry) const = 0;
+
 private:
 	friend class Navigation;
 	Entry *m_head;

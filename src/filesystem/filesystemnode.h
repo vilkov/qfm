@@ -33,6 +33,7 @@ public:
 	virtual ::History::Entry *viewParent(INodeView *nodeView);
 	virtual ::History::Entry *viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual ::History::Entry *viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins);
+	virtual void viewHistory(INodeView *nodeView, ::History::Entry *entry);
 
 	/* INode */
 	virtual int columnsCount() const;
@@ -56,6 +57,7 @@ private:
 	friend class TasksNode;
 	friend class HistoryEntry;
 	void addLink();
+	void addLinks(qint32 count);
 	void removeLink();
 
 private:
@@ -65,13 +67,15 @@ private:
 		HistoryEntry(::FileSystem::Node *node);
 		virtual ~HistoryEntry();
 
-		::FileSystem::Node *node() { return m_node; }
+		virtual bool isEqual(const Entry *entry) const;
+		::FileSystem::Node *node() const { return m_node; }
 
 	private:
 		::FileSystem::Node *m_node;
 	};
 
 	void viewThis(INodeView *nodeView, const QModelIndex &selected);
+	void viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links);
 	Node *viewChild(INodeView *nodeView, const Path::Iterator &path, QModelIndex &selected, PluginsManager *plugins);
 
 private:
@@ -80,8 +84,8 @@ private:
 	void allChildLinksRemoved(Node *child);
 
 	void addView(INodeView *view);
+	void addView(INodeView *view, qint32 links);
 	void removeView(INodeView *view);
-	void removeViewWithoutLink(INodeView *view);
 
 private:
 	typedef QSet<INodeView*> ViewSet;

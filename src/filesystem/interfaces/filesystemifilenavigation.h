@@ -20,6 +20,7 @@ public:
 	virtual ::History::Entry *viewParent(INodeView *nodeView) = 0;
 	virtual ::History::Entry *viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins) = 0;
 	virtual ::History::Entry *viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins) = 0;
+	virtual void viewHistory(INodeView *nodeView, ::History::Entry *entry) = 0;
 };
 
 FILE_SYSTEM_NS_END

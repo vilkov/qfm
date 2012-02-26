@@ -14,7 +14,7 @@ const QString &FolderPasteAction::lockReason() const
 	return m_lockReason;
 }
 
-PerformActionTask *FolderPasteAction::process(TasksNode *receiver, const FilesList &files) const
+PerformActionTask *FolderPasteAction::process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const
 {
 	return NULL;
 }

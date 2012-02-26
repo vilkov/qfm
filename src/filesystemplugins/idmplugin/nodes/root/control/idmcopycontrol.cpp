@@ -7,7 +7,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info) :
-	CopyInfo(info),
+	CopyControl(info),
 	m_container(container),
 	m_entity(entity)
 {}
@@ -30,7 +30,7 @@ bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
 		    		IdmEntityValue *localValue;
 
 					for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, absoluteFilePath(files.at(i)->fileName())))
+						if (localValue = m_container.addValue(path, info().absoluteFilePath(files.at(i)->fileName())))
 							list.push_back(localValue);
 						else
 						{

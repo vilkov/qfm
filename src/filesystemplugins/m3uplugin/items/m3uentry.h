@@ -32,7 +32,7 @@ public:
 	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool isLink() const { return false; }
 	virtual bool exists() const { return m_info.exists(); }
-	virtual IFile::size_type fileSize() const { return 0; }
+	virtual IFileInfo::size_type fileSize() const { return 0; }
 	virtual QString fileName() const { return m_info.fileName(); }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }

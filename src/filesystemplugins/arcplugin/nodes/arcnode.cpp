@@ -158,7 +158,7 @@ void ArcNode::refresh()
 
 ICopyControl *ArcNode::createControl(INodeView *view) const
 {
-	return 0;
+	return NULL;
 }
 
 void ArcNode::contextMenu(const QModelIndexList &list, INodeView *view)

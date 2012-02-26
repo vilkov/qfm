@@ -3,7 +3,7 @@
 #include "tasks/scan/scanfilestasks.h"
 #include "tasks/perform/performcopytask.h"
 #include "tasks/perform/performremovetask.h"
-#include "../../info/filesystemcopyinfo.h"
+#include "../../info/filesystemcopycontrol.h"
 #include "../../../application.h"
 
 
@@ -11,8 +11,8 @@ FILE_SYSTEM_NS_BEGIN
 
 FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent) :
 	TasksNode(conteiner, parent),
-	m_updating(false),
-	m_info(info)
+	FileContainer(info),
+	m_updating(false)
 {}
 
 bool FolderNodeBase::event(QEvent *e)
@@ -64,22 +64,22 @@ bool FolderNodeBase::event(QEvent *e)
 
 FileTypeId FolderNodeBase::id() const
 {
-	return m_info.id();
+	return info().id();
 }
 
 QIcon FolderNodeBase::icon() const
 {
-	return m_info.icon();
+	return info().icon();
 }
 
 QString FolderNodeBase::name() const
 {
-	return m_info.name();
+	return info().name();
 }
 
 QString FolderNodeBase::description() const
 {
-	return m_info.description();
+	return info().description();
 }
 
 bool FolderNodeBase::isDir() const
@@ -94,50 +94,50 @@ bool FolderNodeBase::isFile() const
 
 bool FolderNodeBase::isLink() const
 {
-	return m_info.isLink();
+	return info().isLink();
 }
 
 bool FolderNodeBase::exists() const
 {
-	return m_info.exists();
+	return info().exists();
 }
 
 IFile::size_type FolderNodeBase::fileSize() const
 {
-	return m_info.fileSize();
+	return info().fileSize();
 }
 
 QString FolderNodeBase::fileName() const
 {
-	if (m_info.isRoot())
-		return m_info.absoluteFilePath();
+	if (info().isRoot())
+		return info().absoluteFilePath();
 	else
-		return m_info.fileName();
+		return info().fileName();
 }
 
 QString FolderNodeBase::absolutePath() const
 {
-	return m_info.absolutePath();
+	return info().absolutePath();
 }
 
 QString FolderNodeBase::absoluteFilePath() const
 {
-	return m_info.absoluteFilePath();
+	return info().absoluteFilePath();
 }
 
 QString FolderNodeBase::absoluteFilePath(const QString &fileName) const
 {
-	return m_info.absoluteFilePath(fileName);
+	return info().absoluteFilePath(fileName);
 }
 
 QDateTime FolderNodeBase::lastModified() const
 {
-	return m_info.lastModified();
+	return info().lastModified();
 }
 
 int FolderNodeBase::permissions() const
 {
-	return m_info.permissions();
+	return info().permissions();
 }
 
 void FolderNodeBase::refresh()
@@ -145,7 +145,7 @@ void FolderNodeBase::refresh()
 	if (isUpdating())
 		return;
 
-	if (m_info.isRoot())
+	if (info().isRoot())
 		updateFiles();
 	else
 		if (exists())
@@ -156,7 +156,7 @@ void FolderNodeBase::refresh()
 
 ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 {
-	return new CopyInfo(m_info);
+	return new CopyControl(info());
 }
 
 void FolderNodeBase::scanForSize(const TasksItemList &entries)
@@ -193,7 +193,7 @@ void FolderNodeBase::updateFiles()
 {
 	if (isVisible())
 	{
-		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, m_info, updateFilesMap()));
+		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, info(), updateFilesMap()));
 		setUpdating(true);
 		handleTask(task.take());
 	}

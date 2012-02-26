@@ -6,7 +6,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info) :
-	CopyInfo(info),
+	CopyControl(info),
 	m_container(container),
 	m_value(value),
 	m_property(property),
@@ -23,7 +23,7 @@ bool IdmQueryResultsCopyControl::start(const ScanedFiles::Files &files, bool mov
 		list.reserve(files.size());
 
 		for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
-			if (localValue = m_container.addValue(m_property.entity, absoluteFilePath(files.at(i)->fileName())))
+			if (localValue = m_container.addValue(m_property.entity, info().absoluteFilePath(files.at(i)->fileName())))
 				list.push_back(localValue);
 			else
 			{

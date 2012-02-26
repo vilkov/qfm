@@ -14,7 +14,7 @@ class PackAction : public Action
 public:
 	PackAction();
 
-	virtual PerformActionTask *process(TasksNode *receiver, const FilesList &files) const;
+	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const;
 };
 
 ARC_PLUGIN_NS_END

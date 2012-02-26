@@ -43,8 +43,8 @@ public:
 	virtual void run(const volatile Flags &aborted);
 
 protected:
-	void copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
-	void copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void copyEntry(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void copyFile(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
 	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
 
@@ -60,9 +60,9 @@ private:
 	TaskProgress m_progress;
 
 private:
-	PScopedPointer<IFile> m_destFile;
-	PScopedPointer<IFile> m_sourceFile;
-	PScopedPointer<IFileControl> m_destEntry;
+	PScopedPointer<IFileAccessor> m_destFile;
+	PScopedPointer<IFileAccessor> m_sourceFile;
+	PScopedPointer<IFile> m_destEntry;
 	IFile::size_type m_readed;
 	IFile::size_type m_written;
 	IFile::value_type m_buffer[FileReadWriteGranularity];

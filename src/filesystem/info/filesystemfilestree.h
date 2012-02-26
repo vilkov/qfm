@@ -3,7 +3,7 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QString>
-#include "../interfaces/filesystemifilecontrol.h"
+#include "../interfaces/filesystemifilecontainer.h"
 #include "../../tools/pointers/pscopedpointer.h"
 
 
@@ -12,32 +12,32 @@ FILE_SYSTEM_NS_BEGIN
 class FilesTree
 {
 public:
-	FilesTree(const IFileControl *root) :
+	FilesTree(const IFileContainer *root) :
 		m_root(root)
 	{}
 	~FilesTree();
 
-	const IFileControl *open(char *pathAsUtf8, bool createSubfolders, QString &error);
+	bool open(char *pathAsUtf8, PScopedPointer<IFile> &file, bool createSubfolders, QString &error);
 
 private:
-	class File;
-	typedef QMap<QString, File *> Files;
+	class Directory;
+	typedef QMap<QString, Directory *> Directories;
 
-	class File
+	class Directory
 	{
 	public:
-		File(PScopedPointer<IFileControl> &control) :
+		Directory(PScopedPointer<IFileContainer> &control) :
 			control(control.take())
 		{}
-		~File();
+		~Directory();
 
-		IFileControl *control;
-		Files files;
+		IFileContainer *control;
+		Directories files;
 	};
 
 private:
-	const IFileControl *m_root;
-	Files m_files;
+	const IFileContainer *m_root;
+	Directories m_files;
 };
 
 FILE_SYSTEM_NS_END

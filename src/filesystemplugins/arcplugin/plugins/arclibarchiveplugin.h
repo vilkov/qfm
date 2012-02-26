@@ -1,8 +1,8 @@
 #ifndef ARCLIBARCHIVEPLUGIN_H_
 #define ARCLIBARCHIVEPLUGIN_H_
 
-#include "../archive/arcarchive.h"
 #include <QtCore/QCoreApplication>
+#include "../archive/arcarchive.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -16,15 +16,15 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const;
-	virtual void extract(State *state, const ArcNodeItem *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const;
-	virtual void extractAll(State *state, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const;
+	virtual void extract(State *state, const ArcNodeItem *entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const;
+	virtual void extractAll(State *state, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const;
 	virtual void endRead(State *state) const;
 
 private:
-	void extractEntry(State *state, const IFileControl *destination, const ArcNodeListItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
-	void extractFile(State *state, const IFileControl *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
-	void doExtractFile(State *state, const IFileControl *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
-	void doExtractFile(State *state, const IFileControl *control, volatile bool &tryAgain, const volatile Flags &aborted) const;
+	void extractEntry(State *state, const IFileContainer *destination, const ArcNodeListItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
+	void extractFile(State *state, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
+	void doExtractFile(State *state, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
+	void doExtractFile(State *state, const IFile *file, volatile bool &tryAgain, const volatile Flags &aborted) const;
 };
 
 ARC_PLUGIN_NS_END

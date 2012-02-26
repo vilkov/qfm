@@ -8,7 +8,7 @@ FolderPropertiesAction::FolderPropertiesAction() :
 	SyncFileAction(Application::desktopService()->propertiesActionIcon(16), tr("Properties..."))
 {}
 
-void FolderPropertiesAction::process(const FilesList &files) const
+void FolderPropertiesAction::process(const IFileContainer *container, const FilesList &files) const
 {
 	Application::desktopService()->test();
 }

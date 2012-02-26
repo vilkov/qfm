@@ -11,7 +11,7 @@ FILE_SYSTEM_NS_BEGIN
 class IPlugin
 {
 public:
-	virtual ~IPlugin() {}
+	virtual ~IPlugin();
 
 	virtual void registered() = 0;
 	virtual Node *node(const IFileInfo *info, Node *parent) const = 0;

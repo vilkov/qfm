@@ -15,7 +15,7 @@ public:
 	FolderPasteAction();
 
 	virtual const QString &lockReason() const;
-	virtual PerformActionTask *process(TasksNode *receiver, const FilesList &files) const;
+	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const;
 
 private:
 	QString m_lockReason;

@@ -13,7 +13,7 @@ class UnPackIntoSubdirActionTask : public PerformActionTask, public Archive::Cal
 	Q_DECLARE_TR_FUNCTIONS(UnPackIntoSubdirActionTask)
 
 public:
-	UnPackIntoSubdirActionTask(TasksNode *receiver, const AsyncFileAction::FilesList &files);
+	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files);
 
 	virtual IFile::value_type *buffer() const;
 	virtual IFile::size_type bufferSize() const;
@@ -40,6 +40,7 @@ private:
 	bool m_overwriteAll;
 	bool m_skipAllIfNotCopy;
 	TaskProgress m_progress;
+	const IFileContainer *m_container;
 	IFile::value_type m_buffer[FileReadWriteGranularity];
 };
 

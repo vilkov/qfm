@@ -9,7 +9,7 @@ FilesTree::~FilesTree()
 	qDeleteAll(m_files);
 }
 
-const IFileControl *FilesTree::open(char *pathAsUtf8, bool createSubfolders, QString &error)
+bool FilesTree::open(char *pathAsUtf8, PScopedPointer<IFile> &file, bool createSubfolders, QString &error)
 {
 	QString fileName;
     char *sep;
@@ -17,17 +17,17 @@ const IFileControl *FilesTree::open(char *pathAsUtf8, bool createSubfolders, QSt
 	if ((sep = strchr(pathAsUtf8, '/')) != NULL)
 	{
 		(*sep) = 0;
-		File *ptr;
-		File *&folder = m_files[fileName = QString::fromUtf8(pathAsUtf8)];
+		Directory *ptr;
+		Directory *&folder = m_files[fileName = QString::fromUtf8(pathAsUtf8)];
 
 		if (folder == NULL)
 		{
-			PScopedPointer<IFileControl> container(m_root->openFolder(fileName, createSubfolders, error));
+			PScopedPointer<IFileContainer> container(m_root->open(fileName, createSubfolders, error));
 
 			if (container)
-				folder = ptr = new File(container);
+				folder = ptr = new Directory(container);
 			else
-				return NULL;
+				return false;
 		}
 		else
 			ptr = folder;
@@ -37,16 +37,16 @@ const IFileControl *FilesTree::open(char *pathAsUtf8, bool createSubfolders, QSt
 		while ((sep = strchr(pathAsUtf8, '/')) != NULL)
 		{
 			(*sep) = 0;
-			File *&subfolder = ptr->files[fileName = QString::fromUtf8(pathAsUtf8)];
+			Directory *&subfolder = ptr->files[fileName = QString::fromUtf8(pathAsUtf8)];
 
 			if (subfolder == NULL)
 			{
-				PScopedPointer<IFileControl> container(ptr->control->openFolder(fileName, createSubfolders, error));
+				PScopedPointer<IFileContainer> container(ptr->control->open(fileName, createSubfolders, error));
 
 				if (container)
-					subfolder = ptr = new File(container);
+					subfolder = ptr = new Directory(container);
 				else
-					return NULL;
+					return false;
 			}
 			else
 				ptr = subfolder;
@@ -55,45 +55,16 @@ const IFileControl *FilesTree::open(char *pathAsUtf8, bool createSubfolders, QSt
 		}
 
 		if (!(fileName = QString::fromUtf8(pathAsUtf8)).isEmpty())
-		{
-			File *&file = ptr->files[fileName];
-
-			if (file == NULL)
-			{
-				PScopedPointer<IFileControl> container(ptr->control->openFile(fileName, error));
-
-				if (container)
-					file = ptr = new File(container);
-				else
-					return NULL;
-			}
-			else
-				ptr = file;
-		}
-
-		return ptr->control;
+			file = ptr->control->open(fileName);
 	}
 	else
-	{
-		File *&file = m_files[fileName = QString::fromUtf8(pathAsUtf8)];
+		if (!(fileName = QString::fromUtf8(pathAsUtf8)).isEmpty())
+			file = m_root->open(fileName);
 
-		if (file == NULL)
-		{
-			PScopedPointer<IFileControl> container(m_root->openFile(fileName, error));
-
-			if (container)
-				return (file = new File(container))->control;
-			else
-				return NULL;
-		}
-		else
-			return file->control;
-	}
-
-	return 0;
+	return true;
 }
 
-FilesTree::File::~File()
+FilesTree::Directory::~Directory()
 {
 	qDeleteAll(files);
 	delete control;

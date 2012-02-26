@@ -14,7 +14,7 @@ class PluginsManager;
 class IFileNavigation
 {
 public:
-	virtual ~IFileNavigation() {}
+	virtual ~IFileNavigation();
 
 	virtual void viewClosed(INodeView *nodeView) = 0;
 	virtual ::History::Entry *viewParent(INodeView *nodeView) = 0;

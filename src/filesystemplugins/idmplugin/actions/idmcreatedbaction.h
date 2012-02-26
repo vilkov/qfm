@@ -15,7 +15,7 @@ class CreateDbAction : public SyncFileAction
 public:
 	CreateDbAction();
 
-	virtual void process(const FilesList &files) const;
+	virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 IDM_PLUGIN_NS_END

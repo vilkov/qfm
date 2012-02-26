@@ -4,7 +4,7 @@
 #include <QtCore/QString>
 #include "../nodes/items/arcnodeitem.h"
 #include "../../../filesystem/tasks/filesystembasetask.h"
-#include "../../../filesystem/interfaces/filesystemifilecontrol.h"
+#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -55,8 +55,8 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const = 0;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const = 0;
-	virtual void extract(State *state, const ArcNodeItem *entry, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const = 0;
-	virtual void extractAll(State *state, const IFileControl *dest, Callback *callback, const volatile Flags &aborted) const = 0;
+	virtual void extract(State *state, const ArcNodeItem *entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const = 0;
+	virtual void extractAll(State *state, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const = 0;
 	virtual void endRead(State *state) const = 0;
 };
 

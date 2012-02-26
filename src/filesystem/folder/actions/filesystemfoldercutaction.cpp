@@ -8,7 +8,7 @@ FolderCutAction::FolderCutAction() :
 	SyncFileAction(Application::desktopService()->cutActionIcon(16), tr("Cut"))
 {}
 
-void FolderCutAction::process(const FilesList &files) const
+void FolderCutAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

@@ -8,7 +8,7 @@ FolderCopyAction::FolderCopyAction() :
 	SyncFileAction(Application::desktopService()->copyActionIcon(16), tr("Copy"))
 {}
 
-void FolderCopyAction::process(const FilesList &files) const
+void FolderCopyAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

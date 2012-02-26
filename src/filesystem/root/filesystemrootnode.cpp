@@ -92,12 +92,12 @@ void RootNode::refresh()
 
 IFileInfo *RootNode::info(const QModelIndex &idx) const
 {
-	return 0;
+	return NULL;
 }
 
 ICopyControl *RootNode::createControl(INodeView *view) const
 {
-	return 0;
+	return NULL;
 }
 
 void RootNode::contextMenu(const QModelIndexList &list, INodeView *view)
@@ -162,12 +162,12 @@ void RootNode::move(const INodeView *source, INodeView *destination)
 
 QAbstractItemModel *RootNode::model() const
 {
-	return 0;
+	return NULL;
 }
 
 QAbstractItemDelegate *RootNode::delegate() const
 {
-	return 0;
+	return NULL;
 }
 
 const INodeView::MenuActionList &RootNode::actions() const
@@ -182,7 +182,7 @@ QModelIndex RootNode::rootIndex() const
 
 Node *RootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	return 0;
+	return NULL;
 }
 
 Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
@@ -208,7 +208,7 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 			}
 	}
 
-	return 0;
+	return NULL;
 }
 
 void RootNode::nodeRemoved(Node *node)
@@ -224,7 +224,7 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 		if (info.isDir())
 			return new FolderNode(info, this);
 		else
-			return 0;
+			return NULL;
 }
 
 FileSystemBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)

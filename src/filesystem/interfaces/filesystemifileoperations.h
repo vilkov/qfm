@@ -14,7 +14,7 @@ class INode;
 class IFileOperations
 {
 public:
-	virtual ~IFileOperations() {}
+	virtual ~IFileOperations();
 
 	virtual IFileInfo *info(const QModelIndex &idx) const = 0;
 	virtual ICopyControl *createControl(INodeView *view) const = 0;

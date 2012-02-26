@@ -8,7 +8,7 @@ FolderPasteClipboardAction::FolderPasteClipboardAction() :
 	SyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste from clipboard"))
 {}
 
-void FolderPasteClipboardAction::process(const FilesList &files) const
+void FolderPasteClipboardAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

@@ -246,7 +246,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			PScopedPointer<PerformActionTask> task;
 
-			if (task = static_cast<AsyncFileAction *>(action)->process(this, files))
+			if (task = static_cast<AsyncFileAction *>(action)->process(this, this, files))
 			{
 				Union update;
 				TasksItemList list;
@@ -267,7 +267,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			}
 		}
 		else
-			static_cast<SyncFileAction *>(action)->process(files);
+			static_cast<SyncFileAction *>(action)->process(this, files);
 	}
 
 	menu.clear();
@@ -296,7 +296,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
-		PScopedPointer<IFileControl> folder(openFolder(dialog.value(), true, error));
+		PScopedPointer<IFileContainer> folder(open(dialog.value(), true, error));
 
 		if (!folder)
 			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);

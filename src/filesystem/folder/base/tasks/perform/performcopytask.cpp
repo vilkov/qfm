@@ -19,35 +19,28 @@ PerformCopyTask::PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
-	m_control->refresh();
+	bool tryAgain;
+	ScanedFiles::List list(m_entries);
 
-	if (m_control->exists())
+	for (ScanedFiles::List::size_type i = 0; i < list.size() && !aborted; ++i)
 	{
-		bool tryAgain;
-		ScanedFiles::List list(m_entries);
-
-		for (ScanedFiles::List::size_type i = 0; i < list.size() && !aborted; ++i)
-		{
-			m_progress.init(list.at(i).first);
-			copyEntry(m_control.data(), list.at(i).second, tryAgain = false, aborted);
-			m_progress.complete();
-		}
+		m_progress.init(list.at(i).first);
+		copyEntry(m_control.data(), list.at(i).second, tryAgain = false, aborted);
+		m_progress.complete();
 	}
-	else
-		cancel();
 
 	postEvent(new Event(this, aborted, m_entries, m_control, m_move));
 }
 
-void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyEntry(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (destination->contains(entry->fileName()))
 			if (entry->isDir())
 			{
-				PScopedPointer<IFileControl> dest;
+				PScopedPointer<IFileContainer> dest;
 
-				if (dest = destination->openFolder(entry->fileName(), false, m_lastError))
+				if (dest = destination->open(entry->fileName(), false, m_lastError))
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
@@ -58,8 +51,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 					else
 						askForSkipIfNotCopy(
 								tr("Failed to copy..."),
-								tr("Failed to open directory \"%1\". Skip it?").
-									arg(destination->absoluteFilePath(entry->fileName())),
+								tr("Failed to open directory \"%1\". Skip it?").arg(m_lastError),
 								tryAgain = false,
 								aborted);
 			}
@@ -72,15 +64,15 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 							tr("File \"%1\" from \"%2\" already exists in \"%3\". Overwrite it?").
 								arg(entry->fileName()).
 								arg(entry->absolutePath()).
-								arg(destination->absoluteFilePath()),
+								arg(destination->location()),
 							tryAgain = false,
 							aborted);
 		else
 			if (entry->isDir())
 			{
-				PScopedPointer<IFileControl> dest;
+				PScopedPointer<IFileContainer> dest;
 
-				if (dest = destination->openFolder(entry->fileName(), true, m_lastError))
+				if (dest = destination->open(entry->fileName(), true, m_lastError))
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
@@ -91,8 +83,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 					else
 						askForSkipIfNotCopy(
 								tr("Failed to copy..."),
-								tr("Failed to create directory \"%1\". Skip it?").
-									arg(destination->absoluteFilePath(entry->fileName())),
+								tr("Failed to create directory \"%1\". Skip it?").arg(m_lastError),
 								tryAgain = false,
 								aborted);
 			}
@@ -101,52 +92,42 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 	while (tryAgain && !aborted);
 }
 
-void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyFile(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
-		if (m_sourceFile = entry->file(IFile::ReadOnly, m_lastError))
-			if (m_destEntry = destination->openFile(entry->fileName(), m_lastError))
+		if (m_sourceFile = entry->open(IFileAccessor::ReadOnly, m_lastError))
+		{
+			m_destEntry = destination->open(entry->fileName());
+
+			if (m_destFile = m_destEntry->open(IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, m_lastError))
 			{
-				if (m_destFile = m_destEntry->file(IFile::ReadWrite, m_lastError))
-				{
-					m_written = 0;
+				m_written = 0;
 
-					while ((m_readed = m_sourceFile->read(m_buffer, FileReadWriteGranularity)) && !aborted)
-						if (m_destFile->write(m_buffer, m_readed) == m_readed)
-						{
-							m_written += m_readed;
-							m_progress.update(m_readed);
-						}
-						else
-						{
-							m_lastError = m_destFile->lastError();
+				while ((m_readed = m_sourceFile->read(m_buffer, FileReadWriteGranularity)) && !aborted)
+					if (m_destFile->write(m_buffer, m_readed) == m_readed)
+					{
+						m_written += m_readed;
+						m_progress.update(m_readed);
+					}
+					else
+					{
+						m_lastError = m_destFile->lastError();
 
-							askForSkipIfNotCopy(
-									tr("Failed to copy..."),
-									tr("Failed to write to file \"%1\" (%2). Skip it?").
-										arg(m_destEntry->absoluteFilePath()).
-										arg(m_lastError),
-									tryAgain = false,
-									aborted);
+						askForSkipIfNotCopy(
+								tr("Failed to copy..."),
+								tr("Failed to write to file \"%1\" (%2). Skip it?").
+									arg(m_destEntry->absoluteFilePath()).
+									arg(m_lastError),
+								tryAgain = false,
+								aborted);
 
-							break;
-						}
-
-					if (m_written == m_sourceFile->size())
 						break;
-				}
-			}
-			else
-				if (m_skipAllIfNotCopy || tryAgain)
+					}
+
+				if (m_written == m_sourceFile->size())
 					break;
-				else
-					askForSkipIfNotCopy(
-							tr("Failed to copy..."),
-							tr("Failed to create file \"%1\" (%2). Skip it?").
-								arg(destination->absoluteFilePath(entry->fileName())).
-								arg(m_lastError),
-							tryAgain = false,
-							aborted);
+			}
+		}
 		else
 			if (m_skipAllIfNotCopy || tryAgain)
 				break;

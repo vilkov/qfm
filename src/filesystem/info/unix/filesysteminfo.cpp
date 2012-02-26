@@ -1,10 +1,11 @@
 #include "../filesysteminfo.h"
-#include "../filesystemfile.h"
-#include "../../tools/filesystemcommontools.h"
+#include "../filesystemfileaccessor.h"
 #include "../../../application.h"
+
+#include <sys/stat.h>
+#include <string.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/stat.h>
 #include <errno.h>
 
 
@@ -128,7 +129,7 @@ bool Info::exists() const
 	return stat(m_filePath.toUtf8(), &st) == 0;
 }
 
-IFile::size_type Info::fileSize() const
+Info::size_type Info::fileSize() const
 {
 	return m_info.size;
 }
@@ -161,12 +162,14 @@ QString Info::absoluteFilePath(const QString &fileName) const
 		else
 			return str.append(QChar('/')).append(fileName);
 #else
-	QString str = m_info.isDir ? absoluteFilePath() : absolutePath();
 
 	if (fileName == root)
 		return fileName;
 	else
+	{
+		QString str = m_info.isDir ? absoluteFilePath() : absolutePath();
 		return str.append(QChar('/')).append(fileName);
+	}
 #endif
 }
 
@@ -186,109 +189,58 @@ void Info::refresh()
 	struct stat st;
 	QByteArray name = m_filePath.toUtf8();
 
-	if ((res = lstat(name, &st)) == 0)
+	if ((res = ::lstat(name, &st)) == 0)
 		if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
 		{
 			m_info.permissions = translatePermissions(st);
 			m_info.size = st.st_size;
 			m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
 		}
-		else if (m_info.isLink = S_ISLNK(st.st_mode))
-		{
-			char buff[PATH_MAX] = {};
+		else
+			if (m_info.isLink = S_ISLNK(st.st_mode))
+			{
+				char buff[PATH_MAX] = {};
 
-			if ((res = readlink(name, buff, PATH_MAX)) == 0)
-				if (char *realName = canonicalize_file_name(buff))
-				{
-					if ((res = stat(realName, &st)) == 0)
-						if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
-						{
-							m_info.permissions = translatePermissions(st);
-							m_info.size = st.st_size;
-							m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
-						}
+				if ((res = ::readlink(name, buff, PATH_MAX)) == 0)
+					if (char *realName = ::canonicalize_file_name(buff))
+					{
+						if ((res = stat(realName, &st)) == 0)
+							if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
+							{
+								m_info.permissions = translatePermissions(st);
+								m_info.size = st.st_size;
+								m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
+							}
 
-					free(realName);
-				}
-		}
+						free(realName);
+					}
+			}
 }
 
-bool Info::isPhysical() const
+bool Info::rename(const QString &newName, QString &error)
 {
-	return true;
-}
-
-IFile::size_type Info::freeSpace() const
-{
-	return Tools::freeSpace(m_info.isDir ? absoluteFilePath().toUtf8() : absolutePath().toUtf8());
-}
-
-bool Info::contains(const QString &fileName) const
-{
-	return QDir(absoluteFilePath()).exists(fileName);
-}
-
-bool Info::rename(const QString &newFileName, QString &error) const
-{
-	QFile file(absoluteFilePath());
-
-	if (file.rename(absoluteFilePath(newFileName)))
+	if (::rename(m_filePath.toUtf8(), absoluteFilePath(newName).toUtf8()) == 0)
 		return true;
 	else
 	{
-		error = file.errorString();
+		error = QString::fromUtf8(::strerror(errno));
 		return false;
 	}
 }
 
-IFile *Info::file(IFile::OpenMode mode, QString &error) const
+IFileAccessor *Info::open(int mode, QString &error) const
 {
-	QFile::OpenMode openMode;
-	PScopedPointer<FileSystem::File> file(new FileSystem::File(absoluteFilePath()));
+	PScopedPointer<FileAccesor> file(new FileAccesor(absoluteFilePath(), mode));
 
-	switch (mode)
-	{
-		case IFile::ReadOnly:
-			openMode = QFile::ReadOnly;
-			break;
-
-		case IFile::ReadWrite:
-			openMode = QFile::ReadWrite | QFile::Truncate;
-			break;
-	}
-
-	if (file->open(openMode))
-		return file.take();
+	if (file)
+		if (file->isValid())
+			return file.take();
+		else
+			error = file->lastError();
 	else
-		error = file->lastError();
+		error = QString::fromUtf8(::strerror(errno));
 
-	return 0;
-}
-
-IFileControl *Info::openFile(const QString &fileName, QString &error) const
-{
-	return new Info(absoluteFilePath(fileName));
-}
-
-IFileControl *Info::openFolder(const QString &fileName, bool create, QString &error) const
-{
-	QDir dir(isDir() ? absoluteFilePath() : absolutePath());
-
-	if (dir.exists(fileName))
-		return new Info(dir.absoluteFilePath(fileName));
-	else
-		if (create)
-			if (dir.mkdir(fileName))
-				return new Info(dir.absoluteFilePath(fileName));
-			else
-				error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
-
-	return 0;
-}
-
-void Info::rawCopy(const IFileInfo *source, QString &error) const
-{
-
+	return NULL;
 }
 
 FILE_SYSTEM_NS_END

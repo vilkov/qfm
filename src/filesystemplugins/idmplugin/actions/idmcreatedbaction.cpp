@@ -7,7 +7,7 @@ CreateDbAction::CreateDbAction() :
 	SyncFileAction(QIcon(), tr("Create database..."))
 {}
 
-void CreateDbAction::process(const FilesList &files) const
+void CreateDbAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

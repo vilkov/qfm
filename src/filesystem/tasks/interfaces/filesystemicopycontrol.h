@@ -2,12 +2,12 @@
 #define FILESYSTEMICOPYCONTROL_H_
 
 #include "../containers/filesystemscanedfiles.h"
-#include "../../interfaces/filesystemifilecontrol.h"
+#include "../../interfaces/filesystemifilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class ICopyControl : public IFileControl
+class ICopyControl : public IFileContainer
 {
 public:
 	virtual bool start(const ScanedFiles::Files &files, bool move) = 0;

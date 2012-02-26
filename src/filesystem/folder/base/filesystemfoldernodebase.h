@@ -2,6 +2,7 @@
 #define FILESYSTEMFOLDERNODEBASE_H_
 
 #include "containers/filesystemupdateslist.h"
+#include "../../info/filesystemfilecontainer.h"
 #include "../../tasks/filesystemtasksnode.h"
 #include "../../tasks/containers/filesystemscanedfiles.h"
 #include "../../../tools/pointers/pscopedpointer.h"
@@ -14,7 +15,7 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class FolderNodeBase : public TasksNode
+class FolderNodeBase : public TasksNode, public FileContainer
 {
 	Q_DISABLE_COPY(FolderNodeBase)
 
@@ -66,12 +67,12 @@ protected:
 	void performRemove(BaseTask *oldTask, const ScanedFiles &entries);
 
 protected:
-	bool isRoot() const { return m_info.isRoot(); }
+	using FileContainer::info;
+
+	bool isRoot() const { return info().isRoot(); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
-	void setInfo(const Info &info) { m_info = info; }
-
-	IFileControl *openFolder(const QString &fileName, bool create, QString &error) const { return m_info.openFolder(fileName, create, error); }
+	void setInfo(const Info &info) { FileContainer::info() = info; }
 
 private:
 	void updateFiles();
@@ -84,7 +85,6 @@ private:
 
 private:
 	bool m_updating;
-	Info m_info;
 };
 
 FILE_SYSTEM_NS_END

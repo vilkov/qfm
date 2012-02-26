@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class IFileType
 {
 public:
-	virtual ~IFileType() {}
+	virtual ~IFileType();
 
 	virtual FileTypeId id() const = 0;
 	virtual QIcon icon() const = 0;

@@ -5,11 +5,12 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const AsyncFileAction::FilesList &files) :
+UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
 	PerformActionTask(receiver, files),
 	m_overwriteAll(false),
 	m_skipAllIfNotCopy(false),
-	m_progress(receiver)
+	m_progress(receiver),
+	m_container(container)
 {}
 
 IFile::value_type *UnPackIntoSubdirActionTask::buffer() const
@@ -107,8 +108,8 @@ void UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &text, volati
 void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 {
 	QString error;
+	const IFile *file;
 	Archive::State *state;
-	const IFileControl *file;
 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 	{
@@ -116,7 +117,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 
 		if (const Archive *archive = Archive::archive(file->absoluteFilePath(), &state))
 		{
-			PScopedPointer<IFileControl> folder(file->openFolder(folderName(file->fileName()), true, error));
+			PScopedPointer<IFileContainer> folder(m_container->open(folderName(file->fileName()), true, error));
 
 			archive->extractAll(state, folder.data(), this, aborted);
 

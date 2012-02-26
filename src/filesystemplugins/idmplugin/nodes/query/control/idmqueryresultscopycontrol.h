@@ -6,12 +6,12 @@
 #include "../interface/idminodequeryresults.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../filesystem/info/filesystemcopyinfo.h"
+#include "../../../../../filesystem/info/filesystemcopycontrol.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmQueryResultsCopyControl : public CopyInfo
+class IdmQueryResultsCopyControl : public CopyControl
 {
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 

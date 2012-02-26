@@ -5,12 +5,12 @@
 #include <QtCore/QCoreApplication>
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/entities/idmentity.h"
-#include "../../../../../filesystem/info/filesystemcopyinfo.h"
+#include "../../../../../filesystem/info/filesystemcopycontrol.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmCopyControl : public CopyInfo
+class IdmCopyControl : public CopyControl
 {
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 

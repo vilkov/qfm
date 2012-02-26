@@ -14,7 +14,7 @@ class FolderPropertiesAction : public SyncFileAction
 public:
 	FolderPropertiesAction();
 
-	virtual void process(const FilesList &files) const;
+	virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 FILE_SYSTEM_NS_END

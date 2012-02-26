@@ -19,7 +19,7 @@ public:
 	typedef QList<QAction*> MenuActionList;
 
 public:
-	virtual ~INodeView() {}
+	virtual ~INodeView();
 
 	virtual INode *node() const = 0;
 	virtual QModelIndex currentIndex() const = 0;

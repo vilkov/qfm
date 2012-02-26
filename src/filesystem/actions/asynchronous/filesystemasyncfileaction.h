@@ -6,6 +6,7 @@
 
 
 FILE_SYSTEM_NS_BEGIN
+
 class TasksNode;
 class PerformActionTask;
 
@@ -24,7 +25,7 @@ public:
 	virtual bool isAsynchronous() const;
 
 	virtual const QString &lockReason() const = 0;
-	virtual PerformActionTask *process(TasksNode *receiver, const FilesList &files) const = 0;
+	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const = 0;
 };
 
 FILE_SYSTEM_NS_END

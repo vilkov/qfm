@@ -90,9 +90,9 @@ void CopyInfo::refresh()
 	m_info.refresh();
 }
 
-bool CopyInfo::isPhysicalFile() const
+bool CopyInfo::isPhysical() const
 {
-	return m_info.isPhysicalFile();
+	return m_info.isPhysical();
 }
 
 IFile::size_type CopyInfo::freeSpace() const
@@ -123,6 +123,11 @@ IFileControl *CopyInfo::openFile(const QString &fileName, QString &error) const
 IFileControl *CopyInfo::openFolder(const QString &fileName, bool create, QString &error) const
 {
 	return m_info.openFolder(fileName, create, error);
+}
+
+void CopyInfo::rawCopy(const IFileInfo *source, QString &error) const
+{
+	return m_info.rawCopy(source, error);
 }
 
 bool CopyInfo::start(const ScanedFiles::Files &files, bool move)

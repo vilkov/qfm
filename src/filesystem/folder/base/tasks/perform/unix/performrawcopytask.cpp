@@ -1,11 +1,11 @@
-#include "performcopytask.h"
-#include "../../../../tasks/containers/filesysteminfolistitem.h"
+#include "../performrawcopytask.h"
+#include "../../../../../tasks/containers/filesysteminfolistitem.h"
 #include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
+PerformRawCopyTask::PerformRawCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
 	BaseTask(receiver),
 	m_entries(entries),
 	m_control(control.take()),
@@ -17,7 +17,7 @@ PerformCopyTask::PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries
 	m_progress(receiver)
 {}
 
-void PerformCopyTask::run(const volatile Flags &aborted)
+void PerformRawCopyTask::run(const volatile Flags &aborted)
 {
 	m_control->refresh();
 
@@ -39,7 +39,7 @@ void PerformCopyTask::run(const volatile Flags &aborted)
 	postEvent(new Event(this, aborted, m_entries, m_control, m_move));
 }
 
-void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRawCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (destination->contains(entry->fileName()))
@@ -49,8 +49,8 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 
 				if (dest = destination->openFolder(entry->fileName(), false, m_lastError))
 					for (InfoListItem::size_type i = 0;
-							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
-							++i)
+						 i < static_cast<InfoListItem*>(entry)->size() && !aborted;
+						 ++i)
 						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
@@ -82,8 +82,8 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 
 				if (dest = destination->openFolder(entry->fileName(), true, m_lastError))
 					for (InfoListItem::size_type i = 0;
-							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
-							++i)
+						 i < static_cast<InfoListItem*>(entry)->size() && !aborted;
+						 ++i)
 						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
@@ -101,7 +101,7 @@ void PerformCopyTask::copyEntry(IFileControl *destination, InfoItem *entry, vola
 	while (tryAgain && !aborted);
 }
 
-void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRawCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (m_sourceFile = entry->file(IFile::ReadOnly, m_lastError))
@@ -161,7 +161,7 @@ void PerformCopyTask::copyFile(IFileControl *destination, InfoItem *entry, volat
 	while (tryAgain && !aborted);
 }
 
-void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRawCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
 						title,
@@ -197,7 +197,7 @@ void PerformCopyTask::askForOverwrite(const QString &title, const QString &text,
 	}
 }
 
-void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRawCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
 						title,

@@ -213,7 +213,7 @@ void Info::refresh()
 		}
 }
 
-bool Info::isPhysicalFile() const
+bool Info::isPhysical() const
 {
 	return true;
 }
@@ -284,6 +284,11 @@ IFileControl *Info::openFolder(const QString &fileName, bool create, QString &er
 				error = QString::fromLatin1("Failed to create directory \"%1\".").arg(absoluteFilePath(fileName));
 
 	return 0;
+}
+
+void Info::rawCopy(const IFileInfo *source, QString &error) const
+{
+
 }
 
 FILE_SYSTEM_NS_END

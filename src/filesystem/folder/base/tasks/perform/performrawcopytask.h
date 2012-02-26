@@ -1,5 +1,5 @@
-#ifndef PERFORMCOPYTASK_H_
-#define PERFORMCOPYTASK_H_
+#ifndef PERFORMRAWCOPYTASK_H_
+#define PERFORMRAWCOPYTASK_H_
 
 #include <QtCore/QCoreApplication>
 #include "../../events/filesystemmodelevent.h"
@@ -12,9 +12,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformCopyTask : public BaseTask
+class PerformRawCopyTask : public BaseTask
 {
-	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
+	Q_DECLARE_TR_FUNCTIONS(PerformRawCopyTask)
 
 public:
 	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
@@ -38,7 +38,7 @@ public:
 	};
 
 public:
-	PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformRawCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 
@@ -70,4 +70,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* PERFORMCOPYTASK_H_ */
+#endif /* PERFORMRAWCOPYTASK_H_ */

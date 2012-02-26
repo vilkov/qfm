@@ -150,7 +150,7 @@ void LibArchivePlugin::extractAll(State *s, const IFileContainer *dest, Callback
 						doExtractFile(state, file.data(), tryAgain = false, aborted);
 					else
 						state->callback->askForOverwrite(
-								tr("File \"%1\" already exists in \"%3\". Overwrite it?").
+								tr("File \"%1\" already exists in \"%2\". Overwrite it?").
 									arg(file->fileName()).
 									arg(file->absolutePath()),
 								tryAgain = false,
@@ -250,8 +250,9 @@ void LibArchivePlugin::extractFile(State *s, const IFileContainer *destination, 
 				doExtractFile(state, destination, entry, tryAgain = false, aborted);
 			else
 				state->callback->askForOverwrite(
-						tr("File \"%1\" already exists. Overwrite it?").
-							arg(entry->fileName()),
+						tr("File \"%1\" already exists in \"%2\". Overwrite it?").
+							arg(entry->fileName().
+							arg(destination->location())),
 						tryAgain = false,
 						aborted);
 		else

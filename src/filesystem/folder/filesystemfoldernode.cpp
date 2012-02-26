@@ -595,23 +595,22 @@ bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICo
 		control->canceled();
 	else
 		if (control->start(files, move))
-			if (control->physicalCopyIsNecessary())
+		{
+			QString lockReason = move ? tr("Moving...") : tr("Copying...");
+			const InfoItem *entry;
+
+			for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
 			{
-				QString lockReason = move ? tr("Moving...") : tr("Copying...");
-				const InfoItem *entry;
-
-				for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
-				{
-					index = m_items.indexOf((entry = files.at(i))->fileName());
-					static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason, entry->totalSize());
-					updateRange.add(index);
-				}
-
-				updateSecondColumn(updateRange);
-				return true;
+				index = m_items.indexOf((entry = files.at(i))->fileName());
+				static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason, entry->totalSize());
+				updateRange.add(index);
 			}
-			else
-				control->done(false);
+
+			updateSecondColumn(updateRange);
+			return true;
+		}
+		else
+			control->done(false);
 
 	for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
 	{

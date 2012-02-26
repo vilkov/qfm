@@ -18,6 +18,7 @@ public:
 	};
 
 public:
+	virtual bool isPhysicalFile() const = 0;
 	virtual IFile::size_type freeSpace() const = 0;
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual bool rename(const QString &newFileName, QString &error) const = 0;

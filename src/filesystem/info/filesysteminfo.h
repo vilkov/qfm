@@ -35,6 +35,7 @@ public:
 	virtual void refresh();
 
 	/* IFileControl */
+	virtual bool isPhysicalFile() const;
 	virtual IFile::size_type freeSpace() const;
 	virtual bool contains(const QString &fileName) const;
 	virtual bool rename(const QString &newFileName, QString &error) const;

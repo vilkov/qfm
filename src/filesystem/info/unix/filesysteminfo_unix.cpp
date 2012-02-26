@@ -213,6 +213,11 @@ void Info::refresh()
 		}
 }
 
+bool Info::isPhysicalFile() const
+{
+	return true;
+}
+
 IFile::size_type Info::freeSpace() const
 {
 	return Tools::freeSpace(m_info.isDir ? absoluteFilePath().toUtf8() : absolutePath().toUtf8());

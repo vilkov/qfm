@@ -36,6 +36,7 @@ public:
 	virtual void refresh();
 
 	/* IFileControl */
+	virtual bool isPhysicalFile() const;
 	virtual IFile::size_type freeSpace() const;
 	virtual bool contains(const QString &fileName) const;
 	virtual bool rename(const QString &newFileName, QString &error) const;
@@ -45,7 +46,6 @@ public:
 	virtual IFileControl *openFolder(const QString &fileName, bool create, QString &error) const;
 
 	/* ICopyControl */
-	virtual bool physicalCopyIsNecessary() const;
 	virtual bool start(const ScanedFiles::Files &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();

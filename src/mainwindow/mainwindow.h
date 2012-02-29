@@ -10,6 +10,8 @@
 #include "../de/mountpoints/mountpoints.h"
 #include "../filesystem/root/filesystemrootnode.h"
 
+#include "view/dolphinitemlistcontainer.h"
+
 
 class MainWindow : public QMainWindow
 {
@@ -98,6 +100,8 @@ private:
     FileMenuActions m_fileMenuActions;
     ToolsMenuActions m_toolsMenuActions;
     HelpMenuActions m_helpMenuActions;
+
+    DolphinItemListContainer m_test;
 };
 
 #endif // MAINWINDOW_H

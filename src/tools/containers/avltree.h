@@ -1,726 +1,484 @@
+/* avltree.h: Private file. Declaration of AVL trees.
+ *
+ * Copyright (C) 2011,2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+ *
+ * Licensed under the Academic Free License version 2.0
+ * Or under the following terms:
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #ifndef AVLTREE_H_
 #define AVLTREE_H_
 
+#include <stddef.h>
+#include <stdint.h>
+#include <new>
 
-/*
- * Declaration
- *
+
+/**
+ * Implementation of AVL tree.
  */
-
-template <typename Key, typename SizeType = unsigned int>
+template <typename Key, typename Value>
 class AvlTree
 {
 public:
-	typedef Key      key_type;
-	typedef SizeType size_type;
+	typedef Key   key_type;
+	typedef Value value_type;
 
-	//----------------------------------------------------------
-	// AvlNode
-	//----------------------------------------------------------
-	struct AvlNode
+	typedef int32_t (*CompareKeys)(const key_type &key1, const key_type &key2);
+
+public:
+	inline explicit AvlTree(CompareKeys compareKeys);
+	inline ~AvlTree();
+
+	inline value_type &operator[](const key_type &key);
+
+	bool contains(const key_type &key) const;
+	void insert(const key_type &key, const value_type &value);
+	value_type value(const key_type &key, const value_type &defaultValue = value_type()) const;
+
+private:
+	AvlTree(const AvlTree &other);
+	const AvlTree &operator=(const AvlTree &other);
+
+private:
+	enum Balanced
 	{
-		struct Links {AvlNode *left; AvlNode *right; AvlNode *parent;} links;
-		enum Balanced {BALANCED = 0, LEFT_IS_HEAVY = -1, RIGHT_IS_HEAVY = 1} balance;
-		key_type key;
-
-		//----------------------------------------------------------
-		AvlNode(const key_type &key, AvlNode *parent_node) :
-			key(key),
-			balance(BALANCED)
-		{
-			links.left = 0;
-			links.right = 0;
-			links.parent = parent_node;
-		}
-		virtual ~AvlNode() {}
-
-		//----------------------------------------------------------
-		static void destroy_parent_to_child_link(AvlNode *child);
-
-		//----------------------------------------------------------
-		void change_left(
-			AvlNode *child,
-			AvlNode *&out_child_old_parent, // бывший родитель child
-			AvlNode *&out_parent_left_node // бывший дочерний узел parent
-		);
-
-		//----------------------------------------------------------
-		void change_right(
-			AvlNode *child,
-			AvlNode *&out_child_old_parent, // бывший родитель child
-			AvlNode *&out_parent_right_node // бывший дочерний узел parent
-		);
-
-		//----------------------------------------------------------
-		// В результате работы функции new_node
-		// встает заместо node_to_replace в бинарном дереве.
-		//----------------------------------------------------------
-		static void replace_node(
-			AvlNode *node_to_replace,
-			AvlNode *new_node,
-			AvlNode *&root,
-			// Выходные значения
-			Links &new_node_old_links
-		);
-
-		//----------------------------------------------------------
-		static void rebalance_left_grew(
-			AvlNode *node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		static void rebalance_right_grew(
-			AvlNode *node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		static void rebalance_grew_routine(
-			typename AvlNode::Balanced grew,
-			AvlNode *node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		static bool rebalance_left_shrunk(
-			AvlNode *&node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		static bool rebalance_right_shrunk(
-			AvlNode *&node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		static bool rebalance_shrunk_routine(
-			typename AvlNode::Balanced shrunk,
-			AvlNode *&node_to_balance,
-			AvlNode *&root
-		);
-
-		//----------------------------------------------------------
-		// Перебалансировка при добавлении узла
-		//----------------------------------------------------------
-		static void rebalance_grew(
-			AvlNode *this_node,
-			AvlNode *&root );
-
-		//----------------------------------------------------------
-		// Перебалансировка при удалении узла
-		//----------------------------------------------------------
-		static void rebalance_shrunk(
-			AvlNode *this_node,
-			key_type previous_node_value,
-			AvlNode *&root
-		);
+		BALANCED = 0,
+		LEFT_IS_HEAVY = -1,
+		RIGHT_IS_HEAVY = 1
 	};
 
-	//----------------------------------------------------------
-	AvlTree() :
-		tree_root(0),
-		node_counter(0)
-	{}
-
-	//----------------------------------------------------------
-	virtual ~AvlTree()
+	enum Visit
 	{
-		destroy_subtree(tree_root);
-	}
+		NONE_IS_VISITED = 0,
+		LEFT_IS_VISITED = 1,
+		RIGHT_IS_VISITED = 2,
+		ALL_IS_VISITED = 3
+	};
 
-	//----------------------------------------------------------
-	inline AvlNode *search_or_create_node(const key_type &value)
+	struct Node;
+	struct Links
 	{
-		return search_or_create(value, tree_root);
-	}
+		Node *left;
+		Node *right;
+		Node *parent;
+	};
 
-	//----------------------------------------------------------
-	inline AvlNode *search_node(const key_type &value) const
+	struct Node
 	{
-		return search(value, (AvlNode*&)tree_root);
-	}
+		Node() :
+			visit(NONE_IS_VISITED),
+			balance(BALANCED),
+			key(key),
+			value()
+		{
+			links.left = NULL;
+			links.right = NULL;
+			links.parent = NULL;
+		}
+		Node(const key_type &key, const value_type &value, Node *parent) :
+			visit(NONE_IS_VISITED),
+			balance(BALANCED),
+			key(key),
+			value(value)
+		{
+			links.left = NULL;
+			links.right = NULL;
+			links.parent = parent;
+		}
+		Node(const key_type &key, Node *parent) :
+			visit(NONE_IS_VISITED),
+			balance(BALANCED),
+			key(key),
+			value()
+		{
+			links.left = NULL;
+			links.right = NULL;
+			links.parent = parent;
+		}
 
-	//----------------------------------------------------------
-	void delete_node(const key_type &value)
-	{
-		delete_routine(value, tree_root);
-	}
-
-	//----------------------------------------------------------
-	// Число узлов в дереве
-	//----------------------------------------------------------
-	size_type size() const
-	{
-		return node_counter;
-	}
-
-protected:
-	virtual AvlNode* create_node(const key_type &value, AvlNode *&parent) = 0;
+		uint32_t visit;
+		Links links;
+		Balanced balance;
+		key_type key;
+		value_type value;
+	};
 
 private:
-	//----------------------------------------------------------
-	// Очистка дерева
-	//----------------------------------------------------------
-	inline void destroy_tree()
-	{
-		destroy_subtree(tree_root);
-	}
-
-	//---------------------------------------------------
-	void destroy_subtree(AvlNode *&subtree_root);
-
-	//---------------------------------------------------
-	// Вспомогательная функция, которая только ищет узел,
-	// но больше ничего не делает
-	//---------------------------------------------------
-	static AvlNode **search_routine(
-		const key_type &value_to_search,
-		AvlNode *&root,
-		AvlNode *&out_parent_node
-	);
-
-	//---------------------------------------------------
-	// Механизм удаления узла
-	//---------------------------------------------------
-	void delete_routine(
-		const key_type &value_to_delete,
-		AvlNode *&root
-	);
-
-	//---------------------------------------------------
-	// Функция ищет узел и создает его в случае,
-	// если узла с заданным ключом нет
-	//---------------------------------------------------
-	AvlNode * __fastcall search_or_create(
-		const key_type &value_to_search,
-		AvlNode *&root
-	);
-
-	//---------------------------------------------------
-	// Функция ищет узел
-	//---------------------------------------------------
-	static AvlNode * __fastcall search(
-		const key_type &value_to_search,
-		AvlNode *&root
-	);
+	static void left_left_rotation(Node *parent, Node *child, Node **root);
+	static void right_left_rotation(Node *parent, Node *child, Node *grandchild, Node **root);
+	static void right_right_rotation(Node *parent, Node *child, Node **root);
+	static void left_right_rotation(Node *parent, Node *child, Node *grandchild, Node **root);
+	static void rebalance_grew(Node *this_node, Node **root);
+	static void rebalance_shrunk(Node *this_node, Node **root);
 
 private:
-	AvlNode *tree_root;
-	size_type node_counter;
+	void destroy_subtree(Node **subtree_root);
+	Node **search_routine(const key_type &key) const;
+	Node **search_routine(const key_type &key, Node **out_parent_node) const;
+	value_type &search_or_create_node(const key_type &key);
+	void search_or_create_node(const key_type &key, const value_type &value);
+	void delete_node(const key_type &key);
+
+private:
+	Node *m_root;
+	CompareKeys m_compareKeys;
 };
 
 
-/*
- * Implementation
- *
- */
+template <typename Key, typename Value>
+AvlTree<Key, Value>::AvlTree(CompareKeys compareKeys) :
+	m_root(NULL),
+	m_compareKeys(compareKeys)
+{}
 
-//----------------------------------------------------------
-// Функция разрывает связь между родительским
-// и дочерним узлом
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::destroy_parent_to_child_link(AvlNode *child)
+template <typename Key, typename Value>
+AvlTree<Key, Value>::~AvlTree()
 {
-	if (child)
-	{
-		AvlNode *this_parent = child->links.parent;
-		child->links.parent = 0;
-
-		if (this_parent)
-			if (this_parent->links.left == child)
-				this_parent->links.left = 0;
-			else
-				if (this_parent->links.right == child)
-					this_parent->links.right = 0;
-	}
+	destroy_subtree(&m_root);
 }
 
-//----------------------------------------------------------
-// Изменение левой связи узла
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::change_left(AvlNode *child, AvlNode *&out_child_old_parent, AvlNode *&out_parent_left_node)
+template <typename Key, typename Value>
+typename AvlTree<Key, Value>::value_type &AvlTree<Key, Value>::operator[](const key_type &key)
 {
-	// Разрыв старой связи
-	out_child_old_parent = 0;
-	out_parent_left_node = 0;
-
-	if (links.left)
-	{
-		out_parent_left_node = links.left;
-		links.left->links.parent = 0;
-	}
-
-	if (child)
-	{
-		out_child_old_parent = child->links.parent;
-		destroy_parent_to_child_link(child);
-	}
-
-	// Формируем новую связь
-	links.left = child;
-	if (child)
-		child->links.parent = this;
+	return search_or_create_node(key);
 }
 
-//----------------------------------------------------------
-// Изменение правой связи узла
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::change_right(AvlNode *child, AvlNode *&out_child_old_parent, AvlNode *&out_parent_right_node)
+template <typename Key, typename Value>
+bool AvlTree<Key, Value>::contains(const key_type &key) const
 {
-	// Разрыв старой связи
-	out_child_old_parent = 0;
-	out_parent_right_node = 0;
-
-	if (links.right)
-	{
-		out_parent_right_node = links.right;
-		links.right->links.parent = 0;
-	}
-
-	if (child)
-	{
-		out_child_old_parent = child->links.parent;
-		destroy_parent_to_child_link(child);
-	}
-
-	// Формируем новую связь
-	links.right = child;
-	if( child )
-		child->links.parent = this;
+	return *search_routine(key);
 }
 
-//----------------------------------------------------------
-// В результате работы функции new_node
-// встает заместо node_to_replace в бинарном дереве.
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::replace_node(AvlNode *node_to_replace, AvlNode *new_node, AvlNode *&root, Links &new_node_old_links)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::insert(const key_type &key, const value_type &value)
 {
-	// Сохраним старые связи
-	AvlNode *old_node_to_replace_parent = node_to_replace->links.parent;
-	AvlNode *old_node_to_replace_parent_left = 0;
-	AvlNode *old_node_to_replace_parent_right = 0;
+	search_or_create_node(key, value);
+}
 
-	if (old_node_to_replace_parent)
-	{
-		old_node_to_replace_parent_left = old_node_to_replace_parent->links.left;
-		old_node_to_replace_parent_right = old_node_to_replace_parent->links.right;
-	}
-
-	AvlNode *node_to_replace_tmp = 0; // node_to_replace
-
-	// Сохраним старые связи new_node
-	if (new_node)
-	{
-		// Изменяем связи
-		new_node->change_left(node_to_replace->links.left, node_to_replace_tmp, new_node_old_links.left);
-		new_node->change_right(node_to_replace->links.right, node_to_replace_tmp, new_node_old_links.right);
-	}
+template <typename Key, typename Value>
+typename AvlTree<Key, Value>::value_type AvlTree<Key, Value>::value(const key_type &key, const value_type &defaultValue) const
+{
+	if (Node *node = *search_routine(key))
+		return node->value;
 	else
-	{
-		new_node_old_links.left = 0;
-		new_node_old_links.right = 0;
-		new_node_old_links.parent = 0;
-	}
+		return defaultValue;
+}
 
-	if (old_node_to_replace_parent)
-		if (node_to_replace == old_node_to_replace_parent_left)
-			old_node_to_replace_parent->change_left(new_node, new_node_old_links.parent, old_node_to_replace_parent_left);
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::left_left_rotation(Node *parent, Node *child, Node **root)
+{
+	parent->balance = BALANCED;
+	child->balance = BALANCED;
+
+	if (child->links.parent = parent->links.parent)
+		if (child->links.parent->links.left == parent)
+			child->links.parent->links.left = child;
 		else
-			old_node_to_replace_parent->change_right(new_node, new_node_old_links.parent, old_node_to_replace_parent_right);
+			child->links.parent->links.right = child;
 	else
-	{
-		// если нет родительского узла, значит мы дошли до корня
-		root = new_node;
+		(*root) = child;
 
-		if (new_node)
-			destroy_parent_to_child_link(new_node);
-	}
+	if (parent->links.right = child->links.left)
+		parent->links.right->links.parent = parent;
+
+	child->links.left = parent;
+	parent->links.parent = child;
 }
 
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::rebalance_left_grew(AvlNode *node_to_balance, AvlNode *&root)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::right_left_rotation(Node *parent, Node *child, Node *grandchild, Node **root)
 {
-	rebalance_grew_routine(LEFT_IS_HEAVY, node_to_balance, root);
-}
+	parent->balance = BALANCED;
+	child->balance = BALANCED;
+	grandchild->balance = BALANCED;
 
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::rebalance_right_grew(AvlNode *node_to_balance, AvlNode *&root)
-{
-	rebalance_grew_routine(RIGHT_IS_HEAVY, node_to_balance, root);
-}
-
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::rebalance_grew_routine(typename AvlNode::Balanced grew, AvlNode *node_to_balance, AvlNode *&root)
-{
-	AvlNode *garbage = 0;
-	AvlNode *child = 0;
-
-	if (grew == LEFT_IS_HEAVY)
-		child = node_to_balance->links.left;
-	else
-		if (grew == RIGHT_IS_HEAVY)
-			child = node_to_balance->links.right;
+	if (grandchild->links.parent = parent->links.parent)
+		if (grandchild->links.parent->links.left == parent)
+			grandchild->links.parent->links.left = grandchild;
 		else
-			return;
-
-	if (child)
-		if (child->balance == grew)
-		{
-			Links old_node_to_balance_links = node_to_balance->links;
-
-			// Узел, который указывал на node_to_balance
-			// теперь должен указывать на child
-			AvlNode::Links old_child_links;
-			AvlNode::replace_node(node_to_balance, child, root, old_child_links);
-
-			// Вращение вправо
-			if (grew == LEFT_IS_HEAVY)
-			{
-				node_to_balance->change_left(old_child_links.right, garbage, garbage);
-				node_to_balance->change_right(old_node_to_balance_links.right, garbage, garbage);
-
-				child->change_right(node_to_balance, garbage, garbage);
-				child->change_left(old_child_links.left, garbage, garbage);
-			}
-			else
-			{
-				node_to_balance->change_right(old_child_links.left, garbage, garbage);
-				node_to_balance->change_left(old_node_to_balance_links.left, garbage, garbage);
-
-				child->change_left(node_to_balance, garbage, garbage);
-				child->change_right(old_child_links.right, garbage, garbage);
-			}
-
-			// Теперь дерево сбалансировано
-			node_to_balance->balance = BALANCED;
-			node_to_balance = child;
-		}
-		else //if( child->balance == LEFT_IS_HEAVY )
-		{
-			// Вращение вправо-влево
-			AvlTree::AvlNode *grandchild = 0;
-
-			if (grew == LEFT_IS_HEAVY)
-				grandchild = child->links.right;
-			else
-				grandchild = child->links.left;
-
-			if (grandchild)
-			{
-				Links old_node_to_balance_links = node_to_balance->links;
-
-				// Узел, который указывал на node_to_balance
-				// теперь должен указывать на grandchild
-				AvlNode::Links old_grandchild_links;
-				AvlNode::replace_node(node_to_balance, grandchild, root, old_grandchild_links);
-
-				if (grew == LEFT_IS_HEAVY)
-				{
-					// Вращение влево-вправо
-					child->change_right(old_grandchild_links.left, garbage, garbage);
-
-					node_to_balance->change_left(old_grandchild_links.right, garbage, garbage);
-					node_to_balance->change_right(old_node_to_balance_links.right, garbage, garbage);
-
-					grandchild->change_right(node_to_balance, garbage, garbage);
-				}
-				else
-				{
-					// Вращение вправо-влево
-					child->change_left(old_grandchild_links.right, garbage, garbage);
-
-					node_to_balance->change_right(old_grandchild_links.left, garbage, garbage);
-					node_to_balance->change_left(old_node_to_balance_links.left, garbage, garbage);
-
-					grandchild->change_left(node_to_balance, garbage, garbage);
-				}
-
-				if (grandchild->balance == grew)
-					node_to_balance->balance = (Balanced)((int)grew * (-1));
-				else
-					node_to_balance->balance = BALANCED;
-
-				if (grandchild->balance == (Balanced)((int)grew * (-1)))
-					child->balance = grew;
-				else
-					child->balance = BALANCED;
-
-				node_to_balance = grandchild;
-			}
-		}
-
-	node_to_balance->balance = AvlNode::BALANCED;
-}
-
-//----------------------------------------------------------
-// функция возвращает истину, если выше по дереву
-// продвигаться не нужно
-//----------------------------------------------------------
-template <typename T, typename S>
-bool AvlTree<T, S>::AvlNode::rebalance_left_shrunk(AvlNode *&node_to_balance, AvlNode *&root)
-{
-	return rebalance_shrunk_routine(LEFT_IS_HEAVY, node_to_balance, root);
-}
-
-//----------------------------------------------------------
-// функция возвращает истину, если выше по дереву
-// продвигаться не нужно
-//----------------------------------------------------------
-template <typename T, typename S>
-bool AvlTree<T, S>::AvlNode::rebalance_right_shrunk(AvlNode *&node_to_balance, AvlNode *&root)
-{
-	return rebalance_shrunk_routine(RIGHT_IS_HEAVY, node_to_balance, root);
-}
-
-//----------------------------------------------------------
-// функция возвращает истину, если выше по дереву
-// продвигаться не нужно
-//----------------------------------------------------------
-template <typename T, typename S>
-bool AvlTree<T, S>::AvlNode::rebalance_shrunk_routine(typename AvlNode::Balanced shrunk, AvlNode *&node_to_balance, AvlNode *&root)
-{
-	bool need_to_stop_balance = false;
-	AvlNode *garbage = 0;
-
-	// Левое дерево было длиннее
-	if (node_to_balance->balance == shrunk)
-		node_to_balance->balance = BALANCED; // Из поддерева удалили узел, теперь оно сбалансировано
+			grandchild->links.parent->links.right = grandchild;
 	else
-		if (node_to_balance->balance == BALANCED)
-		{
-			// Из левого поддерева удалили узел, теперь правое длиннее
-			node_to_balance->balance = (Balanced)((int)shrunk*(-1));
+		(*root) = grandchild;
 
-			// Выйдем и сообщим, что мы установили баланс
-			need_to_stop_balance = true;
-		}
-		else
-		{// Левое поддерево было длиннее, теперь дизбаланс
-			AvlTree::AvlNode *child = 0;
+	if (parent->links.right = grandchild->links.left)
+		parent->links.right->links.parent = parent;
 
-			if (shrunk == LEFT_IS_HEAVY)
-				child = node_to_balance->links.right;
-			else
-				child = node_to_balance->links.left;
+	if (child->links.left = grandchild->links.right)
+		child->links.left->links.parent = child;
 
-			Balanced child_balance = child->balance;
+	grandchild->links.left = parent;
+	grandchild->links.right = child;
 
-			if (child->balance != shrunk)
-			{
-				Links old_node_to_balance_links = node_to_balance->links;
-
-				// Узел, который указывал на node_to_balance
-				// теперь должен указывать на child
-				AvlNode::Links old_child_links;
-				AvlNode::replace_node(node_to_balance, child, root, old_child_links);
-
-				if (shrunk == LEFT_IS_HEAVY)
-				{
-					// Вращение вправо
-					node_to_balance->change_right(old_child_links.left, garbage, garbage);
-					node_to_balance->change_left(old_node_to_balance_links.left, garbage, garbage);
-
-					child->change_left(node_to_balance, garbage, garbage);
-					child->change_right(old_child_links.right, garbage, garbage);
-				}
-				else
-				{
-					// Вращение влево
-					node_to_balance->change_left(old_child_links.right, garbage, garbage);
-					node_to_balance->change_right(old_node_to_balance_links.right, garbage, garbage);
-
-					child->change_right(node_to_balance, garbage, garbage);
-					child->change_left(old_child_links.left, garbage, garbage);
-				}
-
-				if (child_balance == BALANCED)
-				{
-					node_to_balance->balance = (Balanced)((int)shrunk*(-1));
-					child->balance = shrunk;
-
-					// Прекратить подъем по дереву
-					need_to_stop_balance = true;
-				}
-				else
-				{
-					node_to_balance->balance = BALANCED;
-					child->balance = BALANCED;
-				}
-
-				// Пропускаем один узел, чтобы два раза не балансировать child
-				node_to_balance = child;
-			}
-			else // ( child_balance == LEFT_IS_HEAVY ) || ( child_balance == BALANCED )
-			{
-				AvlTree::AvlNode *grandchild = 0;
-
-				if (shrunk == LEFT_IS_HEAVY)
-					grandchild = child->links.left;
-				else
-					grandchild = child->links.right;
-
-				Balanced grandchild_balance = grandchild->balance;
-				Links old_node_to_balance_links = node_to_balance->links;
-
-				// Узел, который указывал на node_to_balance
-				// теперь должен указывать на grandchild
-				AvlNode::Links old_grandchild_links;
-				AvlNode::replace_node(node_to_balance, grandchild, root, old_grandchild_links);
-
-				if (shrunk == LEFT_IS_HEAVY)
-				{
-					// Вращение вправо-влево
-					child->change_left(old_grandchild_links.right, garbage, garbage);
-
-					node_to_balance->change_right(old_grandchild_links.left, garbage, garbage);
-					node_to_balance->change_left(old_node_to_balance_links.left, garbage, garbage);
-
-					grandchild->change_left(node_to_balance, garbage, garbage);
-				}
-				else
-				{
-					// Вращение влево-вправо
-					child->change_right(old_grandchild_links.left, garbage, garbage);
-
-					node_to_balance->change_left(old_grandchild_links.right, garbage, garbage);
-					node_to_balance->change_right(old_node_to_balance_links.right, garbage, garbage);
-
-					grandchild->change_right(node_to_balance, garbage, garbage);
-				}
-
-				if (grandchild_balance == (Balanced)((int)shrunk*(-1)))
-					node_to_balance->balance = shrunk;
-				else
-					node_to_balance->balance = BALANCED;
-
-				if (grandchild_balance == shrunk)
-					child->balance = (Balanced)((int)shrunk*(-1));
-				else
-					child->balance = BALANCED;
-
-				grandchild->balance = BALANCED;
-
-				// Пропускаем один узел, чтобы два раза не балансировать grandchild
-				node_to_balance = grandchild;
-			}
-		}
-
-	// Баланс еще не установлен, нужно продвинуться вверх по дереву
-	return need_to_stop_balance;
+	parent->links.parent = grandchild;
+	child->links.parent = grandchild;
 }
 
-//----------------------------------------------------------
-// Функция балансировки дерева, которая выполняется
-// при добавлении узла.
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::rebalance_grew(AvlNode *this_node, AvlNode *&root)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::right_right_rotation(Node *parent, Node *child, Node **root)
 {
-	// Чтобы определить, сбалансированно ли дерево,
-	// мы должны знать, какое именно поддерево
-	// стало длиннее
+	parent->balance = BALANCED;
+	child->balance = BALANCED;
 
-	// Если первый узел является листом, он, по определению,
-	// сбалансирован, так что просто игнорируем его
-	AvlNode *previous_node = this_node;
+	if (child->links.parent = parent->links.parent)
+		if (child->links.parent->links.left == parent)
+			child->links.parent->links.left = child;
+		else
+			child->links.parent->links.right = child;
+	else
+		(*root) = child;
+
+	if (parent->links.left = child->links.right)
+		parent->links.left->links.parent = parent;
+
+	child->links.right = parent;
+	parent->links.parent = child;
+}
+
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::left_right_rotation(Node *parent, Node *child, Node *grandchild, Node **root)
+{
+	parent->balance = BALANCED;
+	child->balance = BALANCED;
+	grandchild->balance = BALANCED;
+
+	if (grandchild->links.parent = parent->links.parent)
+		if (grandchild->links.parent->links.left == parent)
+			grandchild->links.parent->links.left = grandchild;
+		else
+			grandchild->links.parent->links.right = grandchild;
+	else
+		(*root) = grandchild;
+
+	if (parent->links.left = grandchild->links.right)
+		parent->links.left->links.parent = parent;
+
+	if (child->links.right = grandchild->links.left)
+		child->links.right->links.parent = child;
+
+	grandchild->links.right = parent;
+	grandchild->links.left = child;
+
+	parent->links.parent = grandchild;
+	child->links.parent = grandchild;
+}
+
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::rebalance_grew(Node *this_node, Node **root)
+{
+	Node *previous_node = this_node;
 	this_node = this_node->links.parent;
 
-	// Пока не достигли корня
-	while (this_node != 0)
+	while (this_node)
 	{
-		// Мы вернулись из левого поддерева
 		if (this_node->links.left == previous_node)
 			if (this_node->balance == RIGHT_IS_HEAVY)
 			{
-				// Правое дерево было тяжелее.
-				// Элемент добавили в левое поддерево,
-				// поэтому сейчас дерево сбалансировано.
 				this_node->balance = BALANCED;
 				return;
 			}
 			else
-				if (this_node->balance == BALANCED) // Текущее поддерево остается сбалансированным.
+				if (this_node->balance == BALANCED)
 					this_node->balance = LEFT_IS_HEAVY;
 				else
 				{
-					// Дерево разбалансировано слева
-					rebalance_left_grew(this_node, root);
-					return;
-				}
-		else // Мы вернулись из правого поддерева
-			if (this_node->links.right == previous_node)
-				if (this_node->balance == LEFT_IS_HEAVY)
-				{
-					// Левое дерево было тяжелее.
-					// Элемент добавили в правое поддерево,
-					// поэтому сейчас дерево сбалансировано.
-					this_node->balance = BALANCED;
-					return;
-				}
-				else
-					if (this_node->balance == BALANCED) // Текущее поддерево остается сбалансированным.
-						this_node->balance = RIGHT_IS_HEAVY;
+					if (previous_node->balance == LEFT_IS_HEAVY)
+						right_right_rotation(this_node, previous_node, root);
 					else
-					{
-						// Дерево разбалансировано справа
-						rebalance_right_grew(this_node, root);
-						return;
-					}
+						left_right_rotation(this_node, previous_node, previous_node->links.right, root);
 
-		// Двигаемся в сторону корня дерева
+					return;
+				}
+		else
+			if (this_node->balance == LEFT_IS_HEAVY)
+			{
+				this_node->balance = BALANCED;
+				return;
+			}
+			else
+				if (this_node->balance == BALANCED)
+					this_node->balance = RIGHT_IS_HEAVY;
+				else
+				{
+					if (previous_node->balance == RIGHT_IS_HEAVY)
+						left_left_rotation(this_node, previous_node, root);
+					else
+						right_left_rotation(this_node, previous_node, previous_node->links.left, root);
+
+					return;
+				}
+
 		previous_node = this_node;
 		this_node = this_node->links.parent;
 	}
 }
 
-//----------------------------------------------------------
-// Функция балансировки дерева, которая выполняется
-// при удалении узла.
-//----------------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::AvlNode::rebalance_shrunk(AvlNode *this_node, key_type previous_node_value, AvlNode *&root)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::rebalance_shrunk(Node *this_node, Node **root)
 {
-	// Пока не достигли корня
-	while (this_node != 0)
+	Links previous_node_links = {};
+	Node *previous_node = 0;
+	Node *node_to_remove = this_node;
+	this_node = this_node->links.left;
+
+	while (this_node)
 	{
-		// Чтобы определить, сбалансированно ли дерево,
-		// мы должны знать, какое именно поддерево
-		// стало короче
-
-		// Мы вернулись из левого поддерева
-		if (previous_node_value < this_node->key)
-		{
-			if (rebalance_left_shrunk(this_node, root))
-				return;
-		}
-		else // Мы вернулись из правого поддерева
-			if (this_node->key < previous_node_value)
-				if (rebalance_right_shrunk(this_node, root))
-					return;
-
-		// Двигаемся в сторону корня дерева
-		previous_node_value = this_node->key;
-		this_node = this_node->links.parent;
+		previous_node = this_node;
+		this_node = this_node->links.right;
 	}
+
+	if (previous_node == 0)
+		previous_node = node_to_remove->links.right;
+
+	if (previous_node)
+	{
+		if (previous_node->links.parent == node_to_remove)
+			this_node = previous_node;
+		else
+			this_node = previous_node->links.parent;
+
+		previous_node_links = previous_node->links;
+		previous_node->balance = node_to_remove->balance;
+		previous_node->links = node_to_remove->links;
+
+		if (previous_node->links.parent == 0)
+			(*root) = previous_node;
+		else
+			if (previous_node->links.parent->links.left == node_to_remove)
+				previous_node->links.parent->links.left = previous_node;
+			else
+				previous_node->links.parent->links.right = previous_node;
+	}
+	else
+	{
+		this_node = node_to_remove->links.parent;
+		previous_node = node_to_remove;
+	}
+
+	if (this_node)
+	{
+		if (this_node->links.left == previous_node)
+		{
+			this_node->links.left = previous_node_links.left;
+
+			if (this_node->balance == LEFT_IS_HEAVY)
+				this_node->balance = BALANCED;
+			else
+				if (this_node->balance == BALANCED)
+					this_node->balance = RIGHT_IS_HEAVY;
+				else
+					if (this_node->links.right->balance == RIGHT_IS_HEAVY)
+					{
+						node_to_remove = this_node->links.right;
+						left_left_rotation(this_node, this_node->links.right, root);
+						this_node = node_to_remove;
+					}
+					else
+					{
+						node_to_remove = this_node->links.right->links.left;
+						right_left_rotation(this_node, this_node->links.right, this_node->links.right->links.left, root);
+						this_node = node_to_remove;
+					}
+		}
+		else
+		{
+			this_node->links.right = previous_node_links.right;
+
+			if (this_node->balance == RIGHT_IS_HEAVY)
+				this_node->balance = BALANCED;
+			else
+				if (this_node->balance == BALANCED)
+					this_node->balance = LEFT_IS_HEAVY;
+				else
+					if (this_node->links.left->balance == LEFT_IS_HEAVY)
+					{
+						node_to_remove = this_node->links.left;
+						right_right_rotation(this_node, this_node->links.left, root);
+						this_node = node_to_remove;
+					}
+					else
+					{
+						node_to_remove = this_node->links.left->links.right;
+						left_right_rotation(this_node, this_node->links.left, this_node->links.left->links.right, root);
+						this_node = node_to_remove;
+					}
+		}
+
+		previous_node = this_node;
+		this_node = this_node->links.parent;
+
+		while (this_node)
+		{
+			if (this_node->links.left == previous_node)
+				if (this_node->balance == LEFT_IS_HEAVY)
+					this_node->balance = BALANCED;
+				else
+					if (this_node->balance == BALANCED)
+						this_node->balance = RIGHT_IS_HEAVY;
+					else
+						if (this_node->links.right->balance == RIGHT_IS_HEAVY)
+						{
+							node_to_remove = this_node->links.right;
+							left_left_rotation(this_node, this_node->links.right, root);
+							this_node = node_to_remove;
+						}
+						else
+						{
+							node_to_remove = this_node->links.right->links.left;
+							right_left_rotation(this_node, this_node->links.right, this_node->links.right->links.left, root);
+							this_node = node_to_remove;
+						}
+			else
+				if (this_node->balance == RIGHT_IS_HEAVY)
+					this_node->balance = BALANCED;
+				else
+					if (this_node->balance == BALANCED)
+						this_node->balance = LEFT_IS_HEAVY;
+					else
+						if (this_node->links.left->balance == LEFT_IS_HEAVY)
+						{
+							node_to_remove = this_node->links.left;
+							right_right_rotation(this_node, this_node->links.left, root);
+							this_node = node_to_remove;
+						}
+						else
+						{
+							node_to_remove = this_node->links.left->links.right;
+							left_right_rotation(this_node, this_node->links.left, this_node->links.left->links.right, root);
+							this_node = node_to_remove;
+						}
+
+			previous_node = this_node;
+			this_node = this_node->links.parent;
+		}
+	}
+	else
+		(*root) = 0;
 }
 
-//---------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::destroy_subtree(AvlNode *&subtree_root)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::destroy_subtree(Node **subtree_root)
 {
-	if (!subtree_root)
+	if ((*subtree_root) == 0)
 		return;
 
-	AvlNode *this_node = subtree_root;
+	Node *this_node = (*subtree_root);
+
 	while (true)
 		if (this_node->links.right)
 			this_node = this_node->links.right;
@@ -729,196 +487,99 @@ void AvlTree<T, S>::destroy_subtree(AvlNode *&subtree_root)
 				this_node = this_node->links.left;
 			else
 			{
-				AvlNode *node_to_delete = this_node;
-
-				// Переходим на уровень выше
+				Node *node_to_delete = this_node;
 				this_node = this_node->links.parent;
 
-				// Удаляем узел
 				delete node_to_delete;
-				--node_counter;
 
-				// Это был последний узел, выходим
-				if (node_to_delete == subtree_root || this_node == 0)
+				if (node_to_delete == (*subtree_root) || this_node == 0)
 					break;
 				else
-					// Мы пришли справа
 					if (node_to_delete == this_node->links.right)
 						this_node->links.right = 0;
 					else
 						this_node->links.left = 0;
 			}
 
-	subtree_root = 0;
+	(*subtree_root) = 0;
 }
 
-//---------------------------------------------------
-// Вспомогательная функция, которая только ищет узел,
-// но больше ничего не делает
-//---------------------------------------------------
-template <typename T, typename S>
-typename AvlTree<T, S>::AvlNode **AvlTree<T, S>::search_routine(const key_type &value_to_search, AvlNode *&root, AvlNode *&out_parent_node)
+template <typename Key, typename Value>
+typename AvlTree<Key, Value>::Node **AvlTree<Key, Value>::search_routine(const key_type &key) const
 {
-	AvlNode **this_node_pointer = &root;
-	AvlNode *this_parent_node = 0;
+	int32_t res;
+	Node **this_node_pointer = const_cast<Node **>(&m_root);
 
-	// Пока не дошли до конца ветви
-	while (*this_node_pointer && (*this_node_pointer)->key != value_to_search)
+	while ((*this_node_pointer) && (res = m_compareKeys((*this_node_pointer)->key, key)) != 0)
 	{
-		this_parent_node = *this_node_pointer;
-
-		if (value_to_search < (*this_node_pointer)->key)
-			this_node_pointer = &(*this_node_pointer)->links.left;
-		else
+		if (res < 0)
 			this_node_pointer = &(*this_node_pointer)->links.right;
+		else
+			this_node_pointer = &(*this_node_pointer)->links.left;
 	}
 
-	out_parent_node = this_parent_node;
-
-	// Не нашли, возвращаем адрес
-	// указателя, чтобы вызывающая функция могла создать узел,
-	// если это потребуется
 	return this_node_pointer;
 }
 
-//---------------------------------------------------
-// Механизм удаления узла
-//---------------------------------------------------
-template <typename T, typename S>
-void AvlTree<T, S>::delete_routine(const key_type &value_to_delete, AvlNode *&root)
+template <typename Key, typename Value>
+typename AvlTree<Key, Value>::Node **AvlTree<Key, Value>::search_routine(const key_type &key, Node **out_parent_node) const
 {
-	AvlNode *garbage = 0;
-	AvlNode *parent_node = 0;
-	AvlNode *this_node = *search_routine(value_to_delete, root, parent_node);
+	int32_t res;
+	Node *this_parent_node = 0;
+	Node **this_node_pointer = const_cast<Node **>(&m_root);
 
-	// Узел найден
-	if (this_node)
+	while ((*this_node_pointer) && (res = m_compareKeys((*this_node_pointer)->key, key)) != 0)
 	{
-		typename AvlNode::Links old_this_node_links = this_node->links;
-		AvlNode *node_to_balance = 0;
-		key_type previous_node_value = 0;
+		this_parent_node = (*this_node_pointer);
 
-		// Узел имеет только одного потомка
-		// Имеется только правый потомок
-		if (this_node->links.right && this_node->links.left == 0)
-		{
-			typename AvlNode::Links old_links;
-			AvlNode::replace_node(this_node, this_node->links.right, root, old_links);
-
-			// Восстанавливаем утерянные связи
-			old_this_node_links.right->change_right(old_links.right, garbage, garbage);
-			old_this_node_links.right->change_left(old_links.left, garbage, garbage);
-
-			node_to_balance = old_this_node_links.right;
-			previous_node_value = old_this_node_links.right->key;
-		}
+		if (res < 0)
+			this_node_pointer = &(*this_node_pointer)->links.right;
 		else
-			if (this_node->links.left && this_node->links.right == 0)
-			{
-				// Имеется только левый потомок
-				typename AvlNode::Links old_links;
-				AvlNode::replace_node(this_node, this_node -> links.left, root, old_links);
-
-				// Восстанавливаем утерянные связи
-				old_this_node_links.left->change_right(old_links.right, garbage, garbage);
-				old_this_node_links.left->change_left(old_links.left, garbage, garbage);
-
-				node_to_balance = old_this_node_links.left;
-				previous_node_value = old_this_node_links.left->key;
-			}
-			else
-				if (this_node->links.left && this_node->links.right)
-				{
-					// Узел, которым заменят искомый
-					AvlNode *this_replace_node = this_node->links.left;
-
-					// Левый дочерний узел не имеет правого потомка
-					if (this_node->links.left->links.right == 0)
-					{
-						// Баланс будем начинать с корня поддерева
-						node_to_balance = this_replace_node;
-						previous_node_value = (key_type)(((long)this_replace_node->key) - 1);
-					}
-					else
-						node_to_balance = 0;
-
-					// Дойдем до самого крайнего правого потомка левого узла
-					while (this_replace_node->links.right != 0)
-						this_replace_node = this_replace_node->links.right;
-
-					this_replace_node->balance = this_node->balance;
-					AvlNode *deep_right_parent = this_replace_node->links.parent;
-
-					typename AvlNode::Links old_replace_node_links;
-					AvlNode::replace_node(this_node, this_replace_node, root, old_replace_node_links);
-
-					// У левого узла был правый потомок. Если да, то заменим самый крайний правый узел его левым потомком
-					if (node_to_balance == 0)
-						deep_right_parent->change_right(old_replace_node_links.left, garbage, garbage);
-					else
-						this_replace_node->change_left(old_replace_node_links.left, garbage, garbage);
-
-					// У левого дочернего узла есть правый потомок
-					if (node_to_balance == 0)
-					{
-						// Баланс будем начинать с крайнего правого потомка левого узла
-						node_to_balance = deep_right_parent;
-						previous_node_value = (key_type)(((long)deep_right_parent->key) + 1);
-					}
-				}
-				else
-				{// Узел не имеет потомков
-					typename AvlNode::Links old_replace_node_links;
-					AvlNode::replace_node(this_node, 0, root, old_replace_node_links);
-
-					node_to_balance = old_this_node_links.parent;
-					previous_node_value = this_node->key;
-				}
-
-		if (node_to_balance)
-		{
-			AvlNode::rebalance_shrunk(node_to_balance, previous_node_value, root);
-			destroy_node(this_node);
-			--node_counter;
-		}
+			this_node_pointer = &(*this_node_pointer)->links.left;
 	}
+
+	(*out_parent_node) = this_parent_node;
+	return this_node_pointer;
 }
 
-//---------------------------------------------------
-// Функция ищет узел и создает его в случае,
-// если узла с заданным ключом нет
-//---------------------------------------------------
-template <typename T, typename S>
-typename AvlTree<T, S>::AvlNode *AvlTree<T, S>::search_or_create(const key_type &value_to_search, AvlNode *&root)
+template <typename Key, typename Value>
+typename AvlTree<Key, Value>::value_type &AvlTree<Key, Value>::search_or_create_node(const key_type &key)
 {
-	AvlNode *parent_node = 0;
-	AvlNode **this_node = search_routine(value_to_search, root, parent_node);
+	Node *parent_node = 0;
+	Node **this_node = search_routine(key, &parent_node);
 
-	// Нашли
-	if (*this_node)
-		return *this_node;
+	if ((*this_node))
+		return (*this_node)->value;
 	else
 	{
-		if ((*this_node = create_node(value_to_search, parent_node)))
-		{
-			++node_counter;
-			// Поскольку мы добавили новый узел, возможно в дереве
-			// возникнет дизбаланс, необходима перебалансировка
-			AvlNode::rebalance_grew(*this_node, root);
-		}
+		if (((*this_node) = parent_node = new Node(key, parent_node)))
+			rebalance_grew(parent_node, &m_root);
 
-		return *this_node;
+		return parent_node->value;
 	}
 }
 
-//---------------------------------------------------
-// Функция ищет узел
-//---------------------------------------------------
-template <typename T, typename S>
-typename AvlTree<T, S>::AvlNode *AvlTree<T, S>::search(const key_type &value_to_search, AvlNode *&root)
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::search_or_create_node(const key_type &key, const value_type &value)
 {
-	AvlNode *parent_node = 0;
-	return *search_routine(value_to_search, root, parent_node);
+	Node *parent_node = 0;
+	Node **this_node = search_routine(key, &parent_node);
+
+	if ((*this_node))
+		(*this_node)->value = value;
+	else
+		if (((*this_node) = parent_node = new Node(key, value, parent_node)))
+			rebalance_grew(parent_node, &m_root);
+}
+
+template <typename Key, typename Value>
+void AvlTree<Key, Value>::delete_node(const key_type &key)
+{
+	if (Node *this_node = *search_routine(key))
+	{
+		rebalance_shrunk(this_node, &m_root);
+		delete this_node;
+	}
 }
 
 #endif /* AVLTREE_H_ */

@@ -14,6 +14,7 @@ public:
 
 	virtual bool isPhysical() const = 0;
 	virtual QString location() const = 0;
+	virtual QString location(const QString &fileName) const = 0;
 	virtual IFileInfo::size_type freeSpace() const = 0;
 
 	virtual bool contains(const QString &fileName) const = 0;

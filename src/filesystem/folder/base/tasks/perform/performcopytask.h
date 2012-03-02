@@ -17,8 +17,8 @@ public:
 	class Event : public PerformCopyBaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, bool canceled, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control) :
-			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), canceled, entries, control, false)
+		Event(BaseTask *task, bool canceled, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
+			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), canceled, entries, control, move)
 		{}
 	};
 
@@ -29,6 +29,9 @@ public:
 
 protected:
 	virtual void copyFile(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+
+private:
+	bool m_move;
 
 private:
 	PScopedPointer<IFileAccessor> m_destFile;

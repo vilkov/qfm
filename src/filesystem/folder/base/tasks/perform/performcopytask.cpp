@@ -4,13 +4,14 @@
 FILE_SYSTEM_NS_BEGIN
 
 PerformCopyTask::PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
-	PerformCopyBaseTask(receiver, entries, control)
+	PerformCopyBaseTask(receiver, entries, control),
+	m_move(move)
 {}
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	PerformCopyBaseTask::run(aborted);
-	postEvent(new Event(this, isCanceled(), files(), control()));
+	postEvent(new Event(this, isCanceled(), files(), control(), m_move));
 }
 
 void PerformCopyTask::copyFile(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
@@ -64,7 +65,7 @@ void PerformCopyTask::copyFile(IFileContainer *destination, InfoItem *entry, vol
 					askForSkipIfNotCopy(
 							tr("Failed to copy..."),
 							tr("Failed to create file \"%1\" (%2). Skip it?").
-								arg(destination->location()).
+								arg(destination->location(entry->fileName())).
 								arg(m_lastError),
 							tryAgain = false,
 							aborted);

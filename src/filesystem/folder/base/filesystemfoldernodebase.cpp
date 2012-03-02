@@ -2,6 +2,7 @@
 #include "tasks/scan/updatefilestask.h"
 #include "tasks/scan/scanfilestasks.h"
 #include "tasks/perform/performcopytask.h"
+#include "tasks/perform/performmovetask.h"
 #include "tasks/perform/performremovetask.h"
 #include "../../info/filesystemcopycontrol.h"
 #include "../../../application.h"
@@ -179,8 +180,16 @@ void FolderNodeBase::scanForRemove(const TasksItemList &entries)
 
 void FolderNodeBase::performCopy(BaseTask *oldTask, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move)
 {
-	PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
-	resetTask(task.take(), oldTask);
+	if (control->isPhysical() && move)
+	{
+		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, entries, control));
+		resetTask(task.take(), oldTask);
+	}
+	else
+	{
+		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, entries, control, move));
+		resetTask(task.take(), oldTask);
+	}
 }
 
 void FolderNodeBase::performRemove(BaseTask *oldTask, const ScanedFiles &entries)

@@ -27,6 +27,11 @@ QString FileContainer::location() const
 	return m_info.absoluteFilePath();
 }
 
+QString FileContainer::location(const QString &fileName) const
+{
+	return m_info.absoluteFilePath(fileName);
+}
+
 IFileInfo::size_type FileContainer::freeSpace() const
 {
 	return Tools::freeSpace(m_info.isDir() ? m_info.absoluteFilePath().toUtf8() : m_info.absolutePath().toUtf8());

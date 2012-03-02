@@ -20,6 +20,11 @@ QString CopyControl::location() const
 	return m_container.location();
 }
 
+QString CopyControl::location(const QString &fileName) const
+{
+	return m_container.location(fileName);
+}
+
 IFileInfo::size_type CopyControl::freeSpace() const
 {
 	return m_container.freeSpace();

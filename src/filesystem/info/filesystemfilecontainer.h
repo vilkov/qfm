@@ -15,6 +15,7 @@ public:
 	/* IFileContainer */
 	virtual bool isPhysical() const;
 	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
 	virtual IFileInfo::size_type freeSpace() const;
 
 	virtual bool contains(const QString &fileName) const;

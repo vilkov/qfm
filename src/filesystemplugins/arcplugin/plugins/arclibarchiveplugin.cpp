@@ -281,42 +281,52 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileContainer *destination
 			do
 			{
 				PScopedPointer<IFileAccessor> destFile;
-				destEntry = destination->open(static_cast<const ArcNodeEntryItem *>(entry)->fileName());
 
-				if (destFile = destEntry->open(IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
-				{
-					int size;
-					IFile::value_type *buffer = state->callback->buffer();
-					IFile::size_type bufferSize = state->callback->bufferSize();
-
-					for (;!aborted;)
+				if (destEntry = destination->open(static_cast<const ArcNodeEntryItem *>(entry)->fileName()))
+					if (destFile = destEntry->open(IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
 					{
-						size = archive_read_data(state->a, buffer, bufferSize);
+						int size;
+						IFile::value_type *buffer = state->callback->buffer();
+						IFile::size_type bufferSize = state->callback->bufferSize();
 
-						if (size < 0)
+						for (;!aborted;)
 						{
-							state->error = QString::fromUtf8(archive_error_string(state->a));
-							break;
-						}
+							size = archive_read_data(state->a, buffer, bufferSize);
 
-						if (size == 0)
-							break;
+							if (size < 0)
+							{
+								state->error = QString::fromUtf8(archive_error_string(state->a));
+								break;
+							}
 
-						if (destFile->write(buffer, size) == (IFileAccessor::size_type)size)
-							state->callback->progressUpdate(size);
-						else
-						{
-							state->callback->askForSkipIfNotCopy(
-									tr("Failed to write to file \"%1\" (%2). Skip it?").
-										arg(destEntry->absoluteFilePath()).
-										arg(state->error = destFile->lastError()),
-									tryAgain = false,
-									aborted);
+							if (size == 0)
+								break;
 
-							break;
+							if (destFile->write(buffer, size) == (IFileAccessor::size_type)size)
+								state->callback->progressUpdate(size);
+							else
+							{
+								state->callback->askForSkipIfNotCopy(
+										tr("Failed to write to file \"%1\" (%2). Skip it?").
+											arg(destEntry->absoluteFilePath()).
+											arg(state->error = destFile->lastError()),
+										tryAgain = false,
+										aborted);
+
+								break;
+							}
 						}
 					}
-				}
+					else
+						if (state->callback->skipAllIfNotCopy() || tryAgain)
+							break;
+						else
+							state->callback->askForSkipIfNotCopy(
+									tr("Failed to create file \"%1\" (%2). Skip it?").
+										arg(static_cast<const ArcNodeEntryItem *>(entry)->fileName()).
+										arg(state->error),
+									tryAgain = false,
+									aborted);
 				else
 					if (state->callback->skipAllIfNotCopy() || tryAgain)
 						break;

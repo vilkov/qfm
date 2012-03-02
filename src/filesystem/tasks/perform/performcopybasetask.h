@@ -61,11 +61,6 @@ protected:
 private:
 	PScopedPointer<ICopyControl> m_control;
 	ScanedFiles m_files;
-
-private:
-	PScopedPointer<IFileAccessor> m_destFile;
-	PScopedPointer<IFileAccessor> m_sourceFile;
-	PScopedPointer<IFile> m_destEntry;
 };
 
 FILE_SYSTEM_NS_END

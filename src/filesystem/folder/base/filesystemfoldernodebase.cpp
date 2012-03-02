@@ -254,8 +254,8 @@ void FolderNodeBase::performCopy(const BaseTask::Event *e)
 	typedef const PerformCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
-	if (performCopyEvent(event->canceled, event->entries, event->move))
-		performRemove(event->task, const_cast<NotConstEvent>(event)->entries);
+	if (performCopyEvent(event->canceled, event->files, event->move))
+		performRemove(event->task, const_cast<NotConstEvent>(event)->files);
 	else
 		removeAllTaskLinks(event->task);
 }

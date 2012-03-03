@@ -2,7 +2,7 @@
 #define IDMNODEQUERYRESULTSREMOVETASK_H_
 
 #include "../../events/idmqueryresultsmodelevents.h"
-#include "../../../../../../filesystem/tasks/perform/performremovebasetask.h"
+#include "../../../../../../filesystem/tasks/concrete/perform/performremovebasetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -10,7 +10,9 @@ IDM_PLUGIN_NS_BEGIN
 class RemoveFilesTask : public PerformRemoveBaseTask
 {
 public:
-	RemoveFilesTask(TasksNode *receiver, const ScanedFiles &files);
+	RemoveFilesTask(TasksNode *receiver, const Snapshot &snapshot);
+
+	void run(const volatile Flags &aborted);
 };
 
 IDM_PLUGIN_NS_END

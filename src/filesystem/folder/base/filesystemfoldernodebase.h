@@ -4,8 +4,7 @@
 #include "containers/filesystemupdateslist.h"
 #include "../../info/filesystemfilecontainer.h"
 #include "../../tasks/filesystemtasksnode.h"
-#include "../../tasks/containers/filesystemscanedfiles.h"
-#include "../../../tools/pointers/pscopedpointer.h"
+#include "../../tasks/concrete/containers/filesystemsnapshot.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -36,7 +35,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual bool exists() const;
-	virtual IFile::size_type fileSize() const;
+	virtual size_type fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
@@ -52,19 +51,19 @@ protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;
-	virtual void scanForSizeEvent(bool canceled, const ScanedFiles &entries) = 0;
-	virtual bool scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move) = 0;
-	virtual bool scanForRemoveEvent(bool canceled, const ScanedFiles &entries) = 0;
-	virtual bool performCopyEvent(bool canceled, const ScanedFiles &entries, bool move) = 0;
-	virtual void performRemoveEvent(bool canceled, const ScanedFiles &entries) = 0;
+	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot) = 0;
+	virtual bool scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move) = 0;
+	virtual bool scanForRemoveEvent(bool canceled, const Snapshot &snapshot) = 0;
+	virtual bool performCopyEvent(bool canceled, const Snapshot &snapshot, bool move) = 0;
+	virtual void performRemoveEvent(bool canceled, const Snapshot &snapshot) = 0;
 
 protected:
 	/* Prepare tasks */
 	void scanForSize(const TasksItemList &entries);
-	void scanForCopy(const TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	void scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move);
 	void scanForRemove(const TasksItemList &entries);
-	void performCopy(BaseTask *oldTask, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
-	void performRemove(BaseTask *oldTask, const ScanedFiles &entries);
+	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, IFileContainer::Holder &destination, bool move);
+	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
 
 protected:
 	using FileContainer::info;

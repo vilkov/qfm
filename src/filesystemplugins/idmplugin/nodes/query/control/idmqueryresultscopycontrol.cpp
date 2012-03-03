@@ -14,7 +14,7 @@ IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &conta
 	m_index(index)
 {}
 
-bool IdmQueryResultsCopyControl::start(const ScanedFiles::Files &files, bool move)
+bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
@@ -22,7 +22,7 @@ bool IdmQueryResultsCopyControl::start(const ScanedFiles::Files &files, bool mov
 		IdmCompositeEntityValue::List list;
 		list.reserve(files.size());
 
-		for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+		for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
 			if (localValue = m_container.addValue(m_property.entity, info().absoluteFilePath(files.at(i)->fileName())))
 				list.push_back(localValue);
 			else

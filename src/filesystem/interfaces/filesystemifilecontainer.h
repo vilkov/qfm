@@ -2,13 +2,16 @@
 #define FILESYSTEMIFILECONTAINER_H_
 
 #include <QtCore/QString>
-#include "filesystemifile.h"
+#include "filesystemifileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
 class IFileContainer
 {
+public:
+	typedef PScopedPointer<IFileContainer> Holder;
+
 public:
 	virtual ~IFileContainer();
 
@@ -19,8 +22,9 @@ public:
 
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual bool remove(const QString &fileName, QString &error) const = 0;
+	virtual bool rename(const QString &oldName, const QString &newName, QString &error) = 0;
 
-	virtual IFile *open(const QString &fileName) const = 0;
+	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const = 0;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const = 0;
 
 	virtual bool copy(const IFileInfo *source, QString &error) const = 0;

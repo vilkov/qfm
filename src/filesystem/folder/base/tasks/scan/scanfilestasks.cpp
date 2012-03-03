@@ -3,50 +3,38 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, const TasksNode::TasksItemList &entries) :
-	ScanFilesTask(receiver, entries)
+ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+	ScanFilesTask(receiver, container, files)
 {}
 
 void ScanFilesForSizeTask::run(const volatile Flags &aborted)
 {
-	PScopedPointer<Event> event(new Event(this, ModelEvent::ScanFilesForSize));
-
-	event->files = scan(aborted);
-	event->canceled = aborted;
-
-	postEvent(event.take());
+	Snapshot snapshot = scan(aborted);
+	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::ScanFilesForSize), aborted, snapshot));
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, const TasksNode::TasksItemList &entries) :
-	ScanFilesTask(receiver, entries)
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+	ScanFilesTask(receiver, container, files)
 {}
 
 void ScanFilesForRemoveTask::run(const volatile Flags &aborted)
 {
-	PScopedPointer<Event> event(new Event(this, ModelEvent::ScanFilesForRemove));
-
-	event->files = scan(aborted);
-	event->canceled = aborted;
-
-	postEvent(event.take());
+	Snapshot snapshot = scan(aborted);
+	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::ScanFilesForRemove), aborted, snapshot));
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, const TasksNode::TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move) :
-	ScanFilesTask(receiver, entries),
-	m_control(control.take()),
+ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move) :
+	ScanFilesTask(receiver, container, files),
+	m_destination(destination.take()),
 	m_move(move)
 {}
 
 void ScanFilesForCopyTask::run(const volatile Flags &aborted)
 {
-	PScopedPointer<Event> event(new Event(this, ModelEvent::ScanFilesForCopy, m_control, m_move));
-
-	event->files = scan(aborted);
-	event->canceled = aborted;
-
-	postEvent(event.take());
+	Snapshot snapshot = scan(aborted);
+	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::ScanFilesForCopy), aborted, snapshot, m_destination, m_move));
 }
 
 FILE_SYSTEM_NS_END

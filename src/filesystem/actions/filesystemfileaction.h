@@ -12,8 +12,8 @@ FILE_SYSTEM_NS_BEGIN
 class FileAction
 {
 public:
-	typedef QPair<const FileSystemItem *, const IFile *> FileItem;
-	typedef QList<FileItem>                              FilesList;
+	typedef QPair<const FileSystemItem *, const IFileInfo *> FileItem;
+	typedef QList<FileItem>                                  FilesList;
 
 	class FilesListAdapter
 	{

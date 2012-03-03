@@ -116,7 +116,7 @@ bool ArcNode::exists() const
 	return m_info.exists();
 }
 
-IFile::size_type ArcNode::fileSize() const
+ArcNode::size_type ArcNode::fileSize() const
 {
 	return m_info.fileSize();
 }
@@ -229,7 +229,7 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 
 	if (index.isValid())
 	{
-		PScopedPointer<ICopyControl> control(destination->node()->createControl(destination));
+		ICopyControl::Holder control(destination->node()->createControl(destination));
 
 		if (control)
 		{

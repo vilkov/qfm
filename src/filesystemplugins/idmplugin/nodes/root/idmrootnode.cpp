@@ -129,7 +129,7 @@ bool IdmRootNode::exists() const
 	return m_info.exists();
 }
 
-IFile::size_type IdmRootNode::fileSize() const
+IdmRootNode::size_type IdmRootNode::fileSize() const
 {
 	return m_info.fileSize();
 }

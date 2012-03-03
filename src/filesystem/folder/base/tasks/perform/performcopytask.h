@@ -2,7 +2,7 @@
 #define PERFORMCOPYTASK_H_
 
 #include "../../events/filesystemmodelevent.h"
-#include "../../../../tasks/perform/performcopybasetask.h"
+#include "../../../../tasks/concrete/perform/performcopybasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,18 +17,18 @@ public:
 	class Event : public PerformCopyBaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, bool canceled, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move) :
-			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), canceled, entries, control, move)
+		Event(BaseTask *task, bool canceled, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move) :
+			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), canceled, snapshot, destination, move)
 		{}
 	};
 
 public:
-	PerformCopyTask(TasksNode *receiver, const ScanedFiles &entries, PScopedPointer<ICopyControl> &control, bool move);
+	PerformCopyTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 
 protected:
-	virtual void copyFile(IFileContainer *destination, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	virtual void copyFile(const IFileContainer *destination, const IFileContainer *source, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 
 private:
 	bool m_move;
@@ -36,10 +36,9 @@ private:
 private:
 	PScopedPointer<IFileAccessor> m_destFile;
 	PScopedPointer<IFileAccessor> m_sourceFile;
-	PScopedPointer<IFile> m_destEntry;
-	IFile::size_type m_readed;
-	IFile::size_type m_written;
-	IFile::value_type m_buffer[FileReadWriteGranularity];
+	IFileAccessor::size_type m_readed;
+	IFileAccessor::size_type m_written;
+	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];
 };
 
 FILE_SYSTEM_NS_END

@@ -9,7 +9,7 @@
 #include "actions/filesystemfolderpasteclipboardaction.h"
 #include "../filesystempluginsmanager.h"
 #include "../tools/filesystemcommontools.h"
-#include "../tasks/perform/performactiontask.h"
+#include "../tasks/concrete/perform/performactiontask.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 
@@ -558,15 +558,15 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 	}
 }
 
-void FolderNode::scanForSizeEvent(bool canceled, const ScanedFiles &entries)
+void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &entries)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	FileSystemEntryItem *entry;
-	ScanedFiles::List list(entries);
+	Snapshot::List list(entries);
 
 	if (canceled)
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
 			entry = static_cast<FileSystemEntryItem*>(m_items[index = m_items.indexOf(list.at(i).second->fileName())]);
 			entry->clearTotalSize();
@@ -574,7 +574,7 @@ void FolderNode::scanForSizeEvent(bool canceled, const ScanedFiles &entries)
 			updateRange.add(index);
 		}
 	else
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
 			entry = static_cast<FileSystemEntryItem*>(m_items[index = m_items.indexOf(list.at(i).second->fileName())]);
 			entry->setTotalSize(list.at(i).second->totalSize());
@@ -585,11 +585,11 @@ void FolderNode::scanForSizeEvent(bool canceled, const ScanedFiles &entries)
 	updateBothColumns(updateRange);
 }
 
-bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move)
+bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &entries, ICopyControl *control, bool move)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
-	ScanedFiles::Files files(entries);
+	Snapshot::Files files(entries);
 
 	if (canceled)
 		control->canceled();
@@ -599,7 +599,7 @@ bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICo
 			QString lockReason = move ? tr("Moving...") : tr("Copying...");
 			const InfoItem *entry;
 
-			for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+			for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
 			{
 				index = m_items.indexOf((entry = files.at(i))->fileName());
 				static_cast<FileSystemEntryItem*>(m_items[index])->lock(lockReason, entry->totalSize());
@@ -612,7 +612,7 @@ bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICo
 		else
 			control->done(false);
 
-	for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+	for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
 	{
 		index = m_items.indexOf(files.at(i)->fileName());
 		static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(files.at(i)->totalSize());
@@ -624,16 +624,16 @@ bool FolderNode::scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICo
 	return false;
 }
 
-bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
+bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &entries)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	QStringList folders;
 	QStringList files;
 	InfoItem *entry;
-	ScanedFiles::List list(entries);
+	Snapshot::List list(entries);
 
-	for (ScanedFiles::List::size_type i = 0; i < list.size(); ++i)
+	for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
 		if ((entry = list.at(i).second)->isDir())
 			folders.push_back(entry->fileName());
 		else
@@ -656,7 +656,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 	{
 		QString lockReason = tr("Removing...");
 
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 			if ((entry = list.at(i).second)->isDir())
 			{
 				index = m_items.indexOf(entry->fileName());
@@ -669,7 +669,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 	}
 	else
 	{
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
 			index = m_items.indexOf(list.at(i).second->fileName());
 			static_cast<FileSystemEntryItem*>(m_items[index])->setTotalSize(list.at(i).second->totalSize());
@@ -683,18 +683,18 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const ScanedFiles &entries)
 	return false;
 }
 
-bool FolderNode::performCopyEvent(bool canceled, const ScanedFiles &entries, bool move)
+bool FolderNode::performCopyEvent(bool canceled, const Snapshot &entries, bool move)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
-	ScanedFiles::List list(entries);
+	Snapshot::List list(entries);
 
 	if (!canceled && move)
 	{
 		QString lockReason = tr("Removing...");
 
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
 			index = m_items.indexOf((entry = list.at(i).second)->fileName());
 
@@ -712,7 +712,7 @@ bool FolderNode::performCopyEvent(bool canceled, const ScanedFiles &entries, boo
 	}
 	else
 	{
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
 			index = m_items.indexOf((entry = list.at(i).second)->fileName());
 			static_cast<FileSystemEntryItem*>(m_items[index])->unlock();
@@ -725,15 +725,15 @@ bool FolderNode::performCopyEvent(bool canceled, const ScanedFiles &entries, boo
 	return false;
 }
 
-void FolderNode::performRemoveEvent(bool canceled, const ScanedFiles &entries)
+void FolderNode::performRemoveEvent(bool canceled, const Snapshot &entries)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
-	ScanedFiles::List list(entries);
+	Snapshot::List list(entries);
 
-	for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
-		if ((entry = list.at(i).second)->shouldRemove())
+	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+		if ((entry = list.at(i).second)->isRemoved())
 			removeEntry(m_items.indexOf(entry->fileName()));
 		else
 		{
@@ -816,20 +816,20 @@ void FolderNode::RenameFunctor::call(ItemsContainer::size_type index, FileSystem
 	{
 		QString error;
 
-		if (entry->info().rename(dialog.value(), error))
-		{
-			Info info(m_info->absoluteFilePath(dialog.value()));
-
-			m_items.replace(index, entry->info().fileName(), info.fileName());
-			static_cast<FileSystemEntryItem*>(entry)->setInfo(info);
-
-			if (static_cast<FileSystemEntryItem*>(entry)->node())
-			{
-//				static_cast<FileSystemEntryItem*>(entry)->node()->viewCloseAll();
-				static_cast<FileSystemEntryItem*>(entry)->setNode(0);
-			}
-		}
-		else
+//		if (entry->info().rename(dialog.value(), error))
+//		{
+//			Info info(m_info->absoluteFilePath(dialog.value()));
+//
+//			m_items.replace(index, entry->info().fileName(), info.fileName());
+//			static_cast<FileSystemEntryItem*>(entry)->setInfo(info);
+//
+//			if (static_cast<FileSystemEntryItem*>(entry)->node())
+//			{
+////				static_cast<FileSystemEntryItem*>(entry)->node()->viewCloseAll();
+//				static_cast<FileSystemEntryItem*>(entry)->setNode(0);
+//			}
+//		}
+//		else
 			QMessageBox::critical(Application::mainWindow(),
 						entry->info().isDir() ?
 							tr("Failed to rename directory \"%1\"").arg(entry->info().fileName()) :
@@ -931,7 +931,7 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destination, bool move)
 {
-	PScopedPointer<ICopyControl> control(destination->node()->createControl(destination));
+	ICopyControl::Holder control(destination->node()->createControl(destination));
 
 	if (control)
 	{

@@ -41,7 +41,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual bool exists() const;
-	virtual IFile::size_type fileSize() const;
+	virtual size_type fileSize() const;
 	virtual QString fileName() const;
 	virtual QString absolutePath() const;
 	virtual QString absoluteFilePath() const;
@@ -102,8 +102,8 @@ private:
 
 private:
 	void lock(const TasksItemList &list, const QString &reason);
-	void lock(const ScanedFiles::List &list, const QString &reason);
-	void unlock(const ScanedFiles::List &list);
+	void lock(const Snapshot::List &list, const QString &reason);
+	void unlock(const Snapshot::List &list);
 
 private:
     enum { PrefetchLimit = 256 };

@@ -17,7 +17,7 @@ public:
 	{}
 	~FilesTree();
 
-	bool open(char *pathAsUtf8, PScopedPointer<IFile> &file, bool createSubfolders, QString &error);
+//	bool open(char *pathAsUtf8, PScopedPointer<IFile> &file, bool createSubfolders, QString &error);
 
 private:
 	class Directory;

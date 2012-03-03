@@ -30,8 +30,8 @@ public:
 	public:
 		virtual ~Callback();
 
-		virtual IFile::value_type *buffer() const = 0;
-		virtual IFile::size_type bufferSize() const = 0;
+		virtual IFileAccessor::value_type *buffer() const = 0;
+		virtual IFileAccessor::size_type bufferSize() const = 0;
 
 		virtual void progressInit(const FileSystemItem *item) = 0;
 		virtual void progressUpdate(quint64 progressIncrement) = 0;

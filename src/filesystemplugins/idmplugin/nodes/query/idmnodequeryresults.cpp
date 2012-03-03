@@ -147,7 +147,7 @@ bool IdmNodeQueryResults::exists() const
 	return true;
 }
 
-IFile::size_type IdmNodeQueryResults::fileSize() const
+IdmNodeQueryResults::size_type IdmNodeQueryResults::fileSize() const
 {
 	return 0;
 }
@@ -345,12 +345,12 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 					}
 			}
 
-		if (m_container.commit())
-		{
-			lock(files, tr("Scanning for remove..."));
-			addTask(new ScanFilesTask(this, files), files);
-		}
-		else
+//		if (m_container.commit())
+//		{
+//			lock(files, tr("Scanning for remove..."));
+//			addTask(new ScanFilesTask(this, files), files);
+//		}
+//		else
 		{
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			m_container.rollback();
@@ -502,7 +502,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 {
 	typedef const ScanFilesTask::Event *Event;
 	Event event = static_cast<Event>(e);
-	ScanedFiles::List list(event->files);
+	Snapshot::List list(event->snapshot);
 
 	if (!event->canceled)
 	{
@@ -510,7 +510,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 		QStringList files;
 		InfoItem *entry;
 
-		for (ScanedFiles::List::size_type i = 0; i < list.size(); ++i)
+		for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
 			if ((entry = list.at(i).second)->isDir())
 				folders.push_back(entry->fileName());
 			else
@@ -527,11 +527,11 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 					append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
 					append(files.join(QString::fromLatin1("\n\t\t"))).
 					append(QString::fromLatin1("\n")).
-					append(tr("it will free ").append(Tools::humanReadableSize(event->files.totalSize()))),
+					append(tr("it will free ").append(Tools::humanReadableSize(event->snapshot.totalSize()))),
 				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 		{
 			lock(list, tr("Removing..."));
-			resetTask(new RemoveFilesTask(this, event->files), event->task);
+//			resetTask(new RemoveFilesTask(this, event->files), event->task);
 			return;
 		}
 	}
@@ -545,7 +545,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	typedef const RemoveFilesTask::Event *Event;
 	QueryResultPropertyItem::size_type idx;
 	Event event = static_cast<Event>(e);
-	ScanedFiles::List list(event->files);
+	Snapshot::List list(event->snapshot);
 	QueryResultPropertyItem *property;
 	QModelIndex modelIdx;
 
@@ -553,8 +553,8 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	{
 		bool ok = true;
 
-		for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
-			if (list.at(i).second->shouldRemove())
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+			if (list.at(i).second->isRemoved())
 			{
 				property = static_cast<QueryResultPropertyItem*>(list.at(i).first->parent());
 
@@ -585,8 +585,8 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	else
 		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 
-	for (ScanedFiles::List::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!list.at(i).second->shouldRemove())
+	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+		if (!list.at(i).second->isRemoved())
 		{
 			static_cast<QueryResultValueItem*>(list.at(i).first)->unlock();
 			modelIdx = index(list.at(i).first);
@@ -616,7 +616,7 @@ void IdmNodeQueryResults::lock(const TasksItemList &list, const QString &reason)
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
-void IdmNodeQueryResults::lock(const ScanedFiles::List &list, const QString &reason)
+void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason)
 {
 	typedef QMap<QueryResultListItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
@@ -636,7 +636,7 @@ void IdmNodeQueryResults::lock(const ScanedFiles::List &list, const QString &rea
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
-void IdmNodeQueryResults::unlock(const ScanedFiles::List &list)
+void IdmNodeQueryResults::unlock(const Snapshot::List &list)
 {
 	typedef QMap<QueryResultListItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;

@@ -62,7 +62,7 @@ public:
     void cancel() { m_canceled = true; }
 
 protected:
-	bool isCanceled() const { return m_canceled; }
+//	bool isCanceled() const { return m_canceled; }
 
 	/* Posts event to receiver(). */
 	void postEvent(Event *event) const;

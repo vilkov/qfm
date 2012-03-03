@@ -2,6 +2,10 @@
 #include "../../tools/filesystemcommontools.h"
 #include "../../../application.h"
 
+#ifdef Q_OS_WIN32
+#	include <QtCore/qt_windows.h>
+#endif
+
 #include <sys/stat.h>
 #include <string.h>
 #include <dirent.h>
@@ -45,7 +49,24 @@ bool FileContainer::contains(const QString &fileName) const
 
 bool FileContainer::remove(const QString &fileName, QString &error) const
 {
+#ifdef Q_OS_WIN32
+	DWORD attr = GetFileAttributesW((const wchar_t*)filePath.utf16());
+	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
+		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
+#endif
+
 	if (::unlink(m_info.absoluteFilePath(fileName).toUtf8()) == 0)
+		return true;
+	else
+	{
+		error = QString::fromUtf8(::strerror(errno));
+		return false;
+	}
+}
+
+bool FileContainer::rename(const QString &oldName, const QString &newName, QString &error)
+{
+	if (::rename(m_info.absoluteFilePath(oldName).toUtf8(), m_info.absoluteFilePath(newName).toUtf8()) == 0)
 		return true;
 	else
 	{
@@ -57,6 +78,21 @@ bool FileContainer::remove(const QString &fileName, QString &error) const
 IFile *FileContainer::open(const QString &fileName) const
 {
 	return new Info(m_info.absoluteFilePath(fileName));
+}
+
+IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &error) const
+{
+	FileAccesor::Holder file(new FileAccesor(m_info.absoluteFilePath(fileName), mode));
+
+	if (file)
+		if (static_cast<FileAccesor *>(file.data())->isValid())
+			return file.take();
+		else
+			error = file->lastError();
+	else
+		error = QString::fromUtf8(::strerror(errno));
+
+	return NULL;
 }
 
 IFileContainer *FileContainer::open(const QString &fileName, bool create, QString &error) const

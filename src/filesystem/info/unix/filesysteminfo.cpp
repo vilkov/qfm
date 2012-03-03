@@ -217,30 +217,4 @@ void Info::refresh()
 			}
 }
 
-bool Info::rename(const QString &newName, QString &error)
-{
-	if (::rename(m_filePath.toUtf8(), absoluteFilePath(newName).toUtf8()) == 0)
-		return true;
-	else
-	{
-		error = QString::fromUtf8(::strerror(errno));
-		return false;
-	}
-}
-
-IFileAccessor *Info::open(int mode, QString &error) const
-{
-	PScopedPointer<FileAccesor> file(new FileAccesor(absoluteFilePath(), mode));
-
-	if (file)
-		if (file->isValid())
-			return file.take();
-		else
-			error = file->lastError();
-	else
-		error = QString::fromUtf8(::strerror(errno));
-
-	return NULL;
-}
-
 FILE_SYSTEM_NS_END

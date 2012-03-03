@@ -3,7 +3,7 @@
 
 #include <QtCore/QStringList>
 #include "../../events/filesystemmodelevent.h"
-#include "../../../../tasks/scan/scanfilesbasetask.h"
+#include "../../../../tasks/concrete/scan/scanfilesbasetask.h"
 #include "../../../../../tools/pointers/pscopedpointer.h"
 
 
@@ -12,23 +12,13 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public ScanFilesBaseTask
 {
 public:
-	class Event : public ScanFilesBaseTask::Event
-	{
-	public:
-		Event(BaseTask *task, ModelEvent::Type type) :
-			ScanFilesBaseTask::Event(task, static_cast<Type>(type))
-		{}
-
-		ScanedFiles files;
-	};
-
-public:
-	ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files);
+	ScanFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files);
 
 protected:
-	ScanedFiles scan(const volatile Flags &aborted) const;
+	Snapshot scan(const volatile Flags &aborted);
 
 private:
+	Snapshot m_snapshot;
 	TasksNode::TasksItemList m_files;
 };
 

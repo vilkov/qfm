@@ -12,7 +12,7 @@ IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity,
 	m_entity(entity)
 {}
 
-bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
+bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
@@ -29,7 +29,7 @@ bool IdmCopyControl::start(const ScanedFiles::Files &files, bool move)
 		    	{
 		    		IdmEntityValue *localValue;
 
-					for (ScanedFiles::Files::size_type i = 0, size = files.size(); i < size; ++i)
+					for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
 						if (localValue = m_container.addValue(path, info().absoluteFilePath(files.at(i)->fileName())))
 							list.push_back(localValue);
 						else

@@ -3,7 +3,7 @@
 
 #include "../../events/filesystemmodelevent.h"
 #include "../../containers/filesystemupdateslist.h"
-#include "../../../../tasks/scan/scanfilesbasetask.h"
+#include "../../../../tasks/concrete/scan/scanfilesbasetask.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -11,29 +11,27 @@ FILE_SYSTEM_NS_BEGIN
 class UpdateFilesTask : public ScanFilesBaseTask
 {
 public:
-	class Event : public ScanFilesBaseTask::Event
+	class Event : public BaseTask::Event
 	{
 	public:
 		Event(BaseTask *task, bool isLastEvent, const UpdatesList &updates, bool canceled = false) :
-			ScanFilesBaseTask::Event(task, static_cast<Type>(ModelEvent::UpdateFiles)),
+			BaseTask::Event(task, static_cast<Type>(ModelEvent::UpdateFiles), canceled),
 			isLastEvent(isLastEvent),
 			updates(updates)
-		{
-			this->canceled = canceled;
-		}
+		{}
 
 		bool isLastEvent;
 		UpdatesList updates;
 	};
 
 public:
-	UpdateFilesTask(TasksNode *receiver, const Info &info, const UpdatesList &updates);
+	UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const UpdatesList &updates);
 
 	virtual void run(const volatile Flags &aborted);
 
 private:
-	Info m_info;
 	UpdatesList m_updates;
+	IFileContainer::Holder m_container;
 };
 
 FILE_SYSTEM_NS_END

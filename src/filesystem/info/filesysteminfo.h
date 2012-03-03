@@ -2,12 +2,12 @@
 #define FILESYSTEMINFO_H_
 
 #include "../tools/filesystemfileinfo.h"
-#include "../interfaces/filesystemifile.h"
+#include "../interfaces/filesystemifileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class Info : public IFile
+class Info : public IFileInfo
 {
 public:
     Info();
@@ -33,10 +33,6 @@ public:
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
 	virtual void refresh();
-
-	/* IFile */
-	virtual bool rename(const QString &newName, QString &error);
-	virtual IFileAccessor *open(int mode, QString &error) const;
 
 public:
 	bool isRoot() const { return m_isRoot; }

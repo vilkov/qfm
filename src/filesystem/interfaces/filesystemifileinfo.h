@@ -12,11 +12,12 @@ FILE_SYSTEM_NS_BEGIN
 class IFileInfo : public IFileType
 {
 public:
+	typedef PScopedPointer<IFileInfo> Holder;
+	typedef IFileAccessor::size_type  size_type;
     enum Permissions
     {
         Read = 0x0004, Write = 0x0002, Exec = 0x0001
     };
-	typedef IFileAccessor::size_type size_type;
 
 public:
 	virtual bool isDir() const = 0;

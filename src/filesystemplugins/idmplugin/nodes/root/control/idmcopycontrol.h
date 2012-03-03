@@ -18,7 +18,7 @@ public:
 	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info);
 
 	/* ICopyControl */
-	virtual bool start(const ScanedFiles::Files &files, bool move);
+	virtual bool start(const Snapshot::Files &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 

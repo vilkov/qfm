@@ -13,12 +13,12 @@ UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, cons
 	m_container(container)
 {}
 
-IFile::value_type *UnPackIntoSubdirActionTask::buffer() const
+IFileAccessor::value_type *UnPackIntoSubdirActionTask::buffer() const
 {
-	return const_cast<IFile::value_type *>(m_buffer);
+	return const_cast<IFileAccessor::value_type *>(m_buffer);
 }
 
-IFile::size_type UnPackIntoSubdirActionTask::bufferSize() const
+IFileAccessor::size_type UnPackIntoSubdirActionTask::bufferSize() const
 {
 	return FileReadWriteGranularity;
 }
@@ -108,16 +108,16 @@ void UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &text, volati
 void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 {
 	QString error;
-	const IFile *file;
+	const IFileInfo *file;
 	Archive::State *state;
 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 	{
 		file = files().at(i).second;
 
-		if (const Archive *archive = Archive::archive(file->absoluteFilePath(), &state))
+		if (const Archive *archive = Archive::archive(m_container->location(file->fileName()), &state))
 		{
-			PScopedPointer<IFileContainer> folder(m_container->open(folderName(file->fileName()), true, error));
+			IFileContainer::Holder folder(m_container->open(folderName(file->fileName()), true, error));
 
 			archive->extractAll(state, folder.data(), this, aborted);
 

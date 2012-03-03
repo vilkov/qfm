@@ -181,26 +181,26 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 				QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(item);
 				QString fileName = file->info().fileName();
 
-				if (file->info().rename(value.toString(), error))
-					if (m_container.updateValue(file->value(), file->info().absoluteFilePath(value.toString())))
-						if (m_container.commit())
-							file->update();
-						else
-						{
-							m_container.rollback();
-							file->info().rename(fileName, error);
-							QMessageBox::critical(editor, tr("Error"), m_container.lastError());
-						}
-					else
-					{
-						m_container.rollback();
-						file->info().rename(fileName, error);
-						QMessageBox::critical(
-									editor,
-									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-									m_container.lastError());
-					}
-				else
+//				if (file->info().rename(value.toString(), error))
+//					if (m_container.updateValue(file->value(), file->info().absoluteFilePath(value.toString())))
+//						if (m_container.commit())
+//							file->update();
+//						else
+//						{
+//							m_container.rollback();
+//							file->info().rename(fileName, error);
+//							QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+//						}
+//					else
+//					{
+//						m_container.rollback();
+//						file->info().rename(fileName, error);
+//						QMessageBox::critical(
+//									editor,
+//									tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+//									m_container.lastError());
+//					}
+//				else
 				{
 					m_container.rollback();
 					QMessageBox::critical(

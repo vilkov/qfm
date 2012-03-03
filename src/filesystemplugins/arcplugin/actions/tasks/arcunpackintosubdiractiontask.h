@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "../../archive/arcarchive.h"
-#include "../../../../filesystem/tasks/perform/performactiontask.h"
+#include "../../../../filesystem/tasks/concrete/perform/performactiontask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -15,8 +15,8 @@ class UnPackIntoSubdirActionTask : public PerformActionTask, public Archive::Cal
 public:
 	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files);
 
-	virtual IFile::value_type *buffer() const;
-	virtual IFile::size_type bufferSize() const;
+	virtual IFileAccessor::value_type *buffer() const;
+	virtual IFileAccessor::size_type bufferSize() const;
 
 	virtual void progressInit(const FileSystemItem *item);
 	virtual void progressUpdate(quint64 progressIncrement);
@@ -41,7 +41,7 @@ private:
 	bool m_skipAllIfNotCopy;
 	TaskProgress m_progress;
 	const IFileContainer *m_container;
-	IFile::value_type m_buffer[FileReadWriteGranularity];
+	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];
 };
 
 ARC_PLUGIN_NS_END

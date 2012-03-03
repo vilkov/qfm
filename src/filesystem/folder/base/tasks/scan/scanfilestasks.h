@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	ScanFilesForSizeTask(TasksNode *receiver, const TasksNode::TasksItemList &entries);
+	ScanFilesForSizeTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile Flags &aborted);
 };
@@ -22,7 +22,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	ScanFilesForRemoveTask(TasksNode *receiver, const TasksNode::TasksItemList &entries);
+	ScanFilesForRemoveTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile Flags &aborted);
 };
@@ -35,24 +35,23 @@ public:
 	class Event : public ScanFilesTask::Event
 	{
 	public:
-		Event(BaseTask *task, ModelEvent::Type type, PScopedPointer<ICopyControl> &control, bool move) :
-			ScanFilesTask::Event(task, type),
-			control(control.take()),
+		Event(BaseTask *task, Type type, bool canceled, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move) :
+			ScanFilesTask::Event(task, type, canceled, snapshot),
+			destination(destination.take()),
 			move(move)
 		{}
 
-		PScopedPointer<ICopyControl> control;
+		ICopyControl::Holder destination;
 		bool move;
 	};
 
 public:
-	ScanFilesForCopyTask(TasksNode *receiver, const TasksNode::TasksItemList &entries, PScopedPointer<ICopyControl> &control, bool move);
+	ScanFilesForCopyTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 
 private:
-	INode *m_destination;
-	PScopedPointer<ICopyControl> m_control;
+	ICopyControl::Holder m_destination;
 	bool m_move;
 };
 

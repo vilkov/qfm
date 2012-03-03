@@ -3,6 +3,7 @@
 
 #include <QtCore/QString>
 #include "../filesystem_ns.h"
+#include "../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -10,8 +11,9 @@ FILE_SYSTEM_NS_BEGIN
 class IFileAccessor
 {
 public:
-	typedef uchar   value_type;
-	typedef quint64 size_type;
+	typedef PScopedPointer<IFileAccessor> Holder;
+	typedef uchar                         value_type;
+	typedef quint64                       size_type;
 	enum OpenMode
 	{
 		ReadOnly  = 0x00000001,

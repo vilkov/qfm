@@ -54,11 +54,11 @@ protected:
 	/* FolderNodeBase */
 	virtual UpdatesList::Map updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
-	virtual void scanForSizeEvent(bool canceled, const ScanedFiles &entries);
-	virtual bool scanForCopyEvent(bool canceled, const ScanedFiles &entries, ICopyControl *control, bool move);
-	virtual bool scanForRemoveEvent(bool canceled, const ScanedFiles &entries);
-	virtual bool performCopyEvent(bool canceled, const ScanedFiles &entries, bool move);
-	virtual void performRemoveEvent(bool canceled, const ScanedFiles &entries);
+	virtual void scanForSizeEvent(bool canceled, const Snapshot &entries);
+	virtual bool scanForCopyEvent(bool canceled, const Snapshot &entries, ICopyControl *control, bool move);
+	virtual bool scanForRemoveEvent(bool canceled, const Snapshot &entries);
+	virtual bool performCopyEvent(bool canceled, const Snapshot &entries, bool move);
+	virtual void performRemoveEvent(bool canceled, const Snapshot &entries);
 
 protected:
 	/* TasksNode */

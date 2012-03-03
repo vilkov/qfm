@@ -4,23 +4,18 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(TasksNode *receiver, const TasksNode::TasksItemList &files) :
+ScanFilesTask::ScanFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
 	ScanFilesBaseTask(receiver),
+	m_snapshot(createSnapshot(container, files.size())),
 	m_files(files)
 {}
 
-ScanedFiles ScanFilesTask::scan(const volatile Flags &aborted) const
+Snapshot ScanFilesTask::scan(const volatile Flags &aborted)
 {
-	InfoItem *item;
-	ScanedFiles res(m_files.size());
-
 	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size && !aborted; ++i)
-	{
-		item = ScanFilesBaseTask::scan(static_cast<FileSystemBaseItem*>(m_files.at(i))->info().absoluteFilePath(), aborted);
-		res.push_back(m_files.at(i), item);
-	}
+		ScanFilesBaseTask::scan(m_snapshot, m_files.at(i), &static_cast<FileSystemBaseItem*>(m_files.at(i))->info(), aborted);
 
-	return res;
+	return m_snapshot;
 }
 
 FILE_SYSTEM_NS_END

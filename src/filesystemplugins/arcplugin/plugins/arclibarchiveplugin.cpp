@@ -130,46 +130,46 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileCo
 
 void LibArchivePlugin::extractAll(State *s, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const
 {
-	Q_ASSERT(s && s->error.isEmpty());
-	LibArchiveState *state = static_cast<LibArchiveState *>(s);
-	PScopedPointer<IFile> file;
-    struct archive_entry *e;
-    bool tryAgain = false;
-	FilesTree tree(dest);
-    int res;
-
-    state->callback = callback;
-
-    while (!aborted && (res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK)
-    	do
-    	{
-			if (tree.open(const_cast<char *>(archive_entry_pathname(e)), file, true, state->error) && file)
-			{
-				if (file->exists())
-					if (tryAgain || state->callback->overwriteAll())
-						doExtractFile(state, file.data(), tryAgain = false, aborted);
-					else
-						state->callback->askForOverwrite(
-								tr("File \"%1\" already exists in \"%2\". Overwrite it?").
-									arg(file->fileName()).
-									arg(file->absolutePath()),
-								tryAgain = false,
-								aborted);
-				else
-					doExtractFile(state, file.data(), tryAgain = false, aborted);
-
-				file.reset();
-			}
-			else
-				state->callback->askForSkipIfNotCopy(
-						tr("Failed to open/create directory \"%1\". Skip it?").arg(state->error),
-						tryAgain = false,
-						aborted);
-    	}
-    	while (tryAgain && !aborted);
-
-    if (res != ARCHIVE_EOF && !aborted)
-		state->error = QString::fromUtf8(archive_error_string(state->a));
+//	Q_ASSERT(s && s->error.isEmpty());
+//	LibArchiveState *state = static_cast<LibArchiveState *>(s);
+//	PScopedPointer<IFile> file;
+//    struct archive_entry *e;
+//    bool tryAgain = false;
+//	FilesTree tree(dest);
+//    int res;
+//
+//    state->callback = callback;
+//
+//    while (!aborted && (res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK)
+//    	do
+//    	{
+//			if (tree.open(const_cast<char *>(archive_entry_pathname(e)), file, true, state->error) && file)
+//			{
+//				if (file->exists())
+//					if (tryAgain || state->callback->overwriteAll())
+//						doExtractFile2(state, file.data(), tryAgain = false, aborted);
+//					else
+//						state->callback->askForOverwrite(
+//								tr("File \"%1\" already exists in \"%2\". Overwrite it?").
+//									arg(file->fileName()).
+//									arg(file->absolutePath()),
+//								tryAgain = false,
+//								aborted);
+//				else
+//					doExtractFile2(state, file.data(), tryAgain = false, aborted);
+//
+//				file.reset();
+//			}
+//			else
+//				state->callback->askForSkipIfNotCopy(
+//						tr("Failed to open/create directory \"%1\". Skip it?").arg(state->error),
+//						tryAgain = false,
+//						aborted);
+//    	}
+//    	while (tryAgain && !aborted);
+//
+//    if (res != ARCHIVE_EOF && !aborted)
+//		state->error = QString::fromUtf8(archive_error_string(state->a));
 }
 
 void LibArchivePlugin::endRead(State *s) const
@@ -194,7 +194,7 @@ void LibArchivePlugin::extractEntry(State *s, const IFileContainer *destination,
 	do
 		if (destination->contains(entry->fileName()))
 		{
-			PScopedPointer<IFileContainer> dest;
+			IFileContainer::Holder dest;
 
 			if (dest = destination->open(entry->fileName(), false, state->error))
 				for (ArcNodeListItem::size_type i = 0;
@@ -216,7 +216,7 @@ void LibArchivePlugin::extractEntry(State *s, const IFileContainer *destination,
 		}
 		else
 		{
-			PScopedPointer<IFileContainer> dest;
+			IFileContainer::Holder dest;
 
 			if (dest = destination->open(entry->fileName(), true, state->error))
 				for (ArcNodeListItem::size_type i = 0;
@@ -276,57 +276,43 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileContainer *destination
 	while ((res = archive_read_next_header(state->a, &e)) == ARCHIVE_OK && !aborted)
 		if (strcmp(entryPathUtf8, archive_entry_pathname(e)) == 0)
 		{
-			PScopedPointer<IFile> destEntry;
+			IFileAccessor::Holder destFile;
 
 			do
-			{
-				PScopedPointer<IFileAccessor> destFile;
+				if (destFile = destination->open(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
+				{
+					int size;
+					IFileAccessor::value_type *buffer = state->callback->buffer();
+					IFileAccessor::size_type bufferSize = state->callback->bufferSize();
 
-				if (destEntry = destination->open(static_cast<const ArcNodeEntryItem *>(entry)->fileName()))
-					if (destFile = destEntry->open(IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
+					for (;!aborted;)
 					{
-						int size;
-						IFile::value_type *buffer = state->callback->buffer();
-						IFile::size_type bufferSize = state->callback->bufferSize();
+						size = archive_read_data(state->a, buffer, bufferSize);
 
-						for (;!aborted;)
+						if (size < 0)
 						{
-							size = archive_read_data(state->a, buffer, bufferSize);
-
-							if (size < 0)
-							{
-								state->error = QString::fromUtf8(archive_error_string(state->a));
-								break;
-							}
-
-							if (size == 0)
-								break;
-
-							if (destFile->write(buffer, size) == (IFileAccessor::size_type)size)
-								state->callback->progressUpdate(size);
-							else
-							{
-								state->callback->askForSkipIfNotCopy(
-										tr("Failed to write to file \"%1\" (%2). Skip it?").
-											arg(destEntry->absoluteFilePath()).
-											arg(state->error = destFile->lastError()),
-										tryAgain = false,
-										aborted);
-
-								break;
-							}
-						}
-					}
-					else
-						if (state->callback->skipAllIfNotCopy() || tryAgain)
+							state->error = QString::fromUtf8(archive_error_string(state->a));
 							break;
+						}
+
+						if (size == 0)
+							break;
+
+						if (destFile->write(buffer, size) == (IFileAccessor::size_type)size)
+							state->callback->progressUpdate(size);
 						else
+						{
 							state->callback->askForSkipIfNotCopy(
-									tr("Failed to create file \"%1\" (%2). Skip it?").
-										arg(static_cast<const ArcNodeEntryItem *>(entry)->fileName()).
-										arg(state->error),
+									tr("Failed to write to file \"%1\" (%2). Skip it?").
+										arg(destination->location(static_cast<const ArcNodeEntryItem *>(entry)->fileName())).
+										arg(state->error = destFile->lastError()),
 									tryAgain = false,
 									aborted);
+
+							break;
+						}
+					}
+				}
 				else
 					if (state->callback->skipAllIfNotCopy() || tryAgain)
 						break;
@@ -337,7 +323,6 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileContainer *destination
 									arg(state->error),
 								tryAgain = false,
 								aborted);
-			}
 			while (tryAgain && !aborted);
 
 			break;
@@ -349,17 +334,17 @@ void LibArchivePlugin::doExtractFile(State *s, const IFileContainer *destination
 		state->error = QString::fromUtf8(archive_error_string(state->a));
 }
 
-void LibArchivePlugin::doExtractFile(State *s, const IFile *file, volatile bool &tryAgain, const volatile Flags &aborted) const
+void LibArchivePlugin::doExtractFile2(State *s, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const
 {
 	LibArchiveState *state = static_cast<LibArchiveState *>(s);
-	PScopedPointer<IFileAccessor> accessor;
+	IFileAccessor::Holder accessor;
 
 	do
-		if (accessor = file->open(IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
+		if (accessor = destination->open(static_cast<const ArcNodeEntryItem *>(entry)->fileName(), IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, state->error))
 		{
 			int size;
-			IFile::value_type *buffer = state->callback->buffer();
-			IFile::size_type bufferSize = state->callback->bufferSize();
+			IFileAccessor::value_type *buffer = state->callback->buffer();
+			IFileAccessor::size_type bufferSize = state->callback->bufferSize();
 
 			for (;!aborted;)
 			{
@@ -384,7 +369,7 @@ void LibArchivePlugin::doExtractFile(State *s, const IFile *file, volatile bool 
 			else
 				state->callback->askForSkipIfNotCopy(
 						tr("Failed to create file \"%1\" (%2). Skip it?").
-							arg(file->absoluteFilePath()).
+							arg(destination->location(static_cast<const ArcNodeEntryItem *>(entry)->fileName())).
 							arg(state->error),
 						tryAgain = false,
 						aborted);

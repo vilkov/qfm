@@ -40,9 +40,14 @@ bool CopyControl::remove(const QString &fileName, QString &error) const
 	return m_container.remove(fileName, error);
 }
 
-IFile *CopyControl::open(const QString &fileName) const
+bool CopyControl::rename(const QString &oldName, const QString &newName, QString &error)
 {
-	return m_container.open(fileName);
+	return m_container.rename(oldName, newName, error);
+}
+
+IFileAccessor *CopyControl::open(const QString &fileName, int mode, QString &error) const
+{
+	return m_container.open(fileName, mode, error);
 }
 
 IFileContainer *CopyControl::open(const QString &fileName, bool create, QString &error) const
@@ -55,9 +60,9 @@ bool CopyControl::copy(const IFileInfo *source, QString &error) const
 	return m_container.copy(source, error);
 }
 
-bool CopyControl::start(const ScanedFiles::Files &files, bool move)
+bool CopyControl::start(const Snapshot::Files &files, bool move)
 {
-	IFile::size_type fs;
+	IFileInfo::size_type fs;
 
 	return (files.totalSize() <= (fs = freeSpace()) ||
 		QMessageBox::question(

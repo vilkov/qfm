@@ -379,12 +379,12 @@ void FolderNode::move(const INodeView *source, INodeView *destination)
 
 QAbstractItemModel *FolderNode::model() const
 {
-	return const_cast<FolderProxyModel*>(&m_proxy);
+	return const_cast<FolderProxyModel *>(&m_proxy);
 }
 
 QAbstractItemDelegate *FolderNode::delegate() const
 {
-	return const_cast<FolderDelegate*>(&m_delegate);
+	return const_cast<FolderDelegate *>(&m_delegate);
 }
 
 const INodeView::MenuActionList &FolderNode::actions() const

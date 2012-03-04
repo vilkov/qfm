@@ -24,7 +24,7 @@ private:
 	void extractEntry(State *state, const IFileContainer *destination, const ArcNodeListItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
 	void extractFile(State *state, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
 	void doExtractFile(State *state, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
-	void doExtractFile2(State *state, const IFileContainer *destination, const ArcNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted) const;
+	void doExtractFile(State *state, const IFileContainer *destination, const QString &fileName, volatile bool &tryAgain, const volatile Flags &aborted) const;
 };
 
 ARC_PLUGIN_NS_END

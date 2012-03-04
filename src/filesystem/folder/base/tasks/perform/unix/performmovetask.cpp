@@ -18,7 +18,10 @@ void PerformMoveTask::copyFile(const IFileContainer *destination, const IFileCon
 
 	do
 		if (::link(m_source, m_dest) == 0)
+		{
+			m_progress.update(entry->fileSize());
 			break;
+		}
 		else
 			if (errno == EEXIST)
 			{
@@ -30,23 +33,17 @@ void PerformMoveTask::copyFile(const IFileContainer *destination, const IFileCon
 					else
 						askForSkipIfNotCopy(
 								tr("Failed to copy..."),
-								tr("Failed to create file \"%1\" (%2). Skip it?").
+								tr("Failed to remove file \"%1\" (%2). Skip it?").
 									arg(destination->location(entry->fileName())).
-									arg(QString::fromUtf8(strerror(errno))),
+									arg(QString::fromUtf8(::strerror(errno))),
 								tryAgain = false,
 								aborted);
 			}
 			else
-				if (m_skipAllIfNotCopy)
-					break;
-				else
-					askForSkipIfNotCopy(
-							tr("Failed to copy..."),
-							tr("Failed to create file \"%1\" (%2). Skip it?").
-								arg(destination->location(entry->fileName())).
-								arg(QString::fromUtf8(strerror(errno))),
-							tryAgain = false,
-							aborted);
+			{
+				PerformCopyTask::copyFile(destination, source, entry, tryAgain, aborted);
+				break;
+			}
 	while (tryAgain && !aborted);
 }
 

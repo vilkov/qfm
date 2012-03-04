@@ -4,7 +4,6 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include "../interfaces/filesystemifilecontainer.h"
-#include "../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,7 +16,7 @@ public:
 	{}
 	~FilesTree();
 
-//	bool open(char *pathAsUtf8, PScopedPointer<IFile> &file, bool createSubfolders, QString &error);
+	bool open(char *pathAsUtf8, bool createSubfolders, const IFileContainer *&container, QString &fileName, QString &error);
 
 private:
 	class Directory;
@@ -26,12 +25,12 @@ private:
 	class Directory
 	{
 	public:
-		Directory(PScopedPointer<IFileContainer> &control) :
+		Directory(IFileContainer::Holder &control) :
 			control(control.take())
 		{}
 		~Directory();
 
-		IFileContainer *control;
+		IFileContainer::Holder control;
 		Directories files;
 	};
 

@@ -98,11 +98,13 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 	QByteArray absoluteFileNameAsUtf8 = absoluteFileName.toUtf8();
 
 	if (::stat(absoluteFileNameAsUtf8, &st) == 0)
+	{
 		if (DIR *dir = ::opendir(absoluteFileNameAsUtf8))
 		{
 			::closedir(dir);
 			return new FileContainer(absoluteFileName);
 		}
+	}
 	else
 		if (errno == ENOENT &&
 			create &&

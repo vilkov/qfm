@@ -244,7 +244,10 @@ void FolderNodeBase::scanForCopy(const BaseTask::Event *e)
 	Event event = static_cast<Event>(e);
 
 	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
-		performCopy(event->task, const_cast<NotConstEvent>(event)->files, const_cast<NotConstEvent>(event)->control, event->move);
+	{
+		IFileContainer::Holder destination(const_cast<NotConstEvent>(event)->destination.take());
+		performCopy(event->task, event->snapshot, destination, event->move);
+	}
 	else
 		removeAllTaskLinks(event->task);
 }
@@ -256,7 +259,7 @@ void FolderNodeBase::scanForRemove(const BaseTask::Event *e)
 	Event event = static_cast<Event>(e);
 
 	if (scanForRemoveEvent(event->canceled, event->snapshot))
-		performRemove(event->task, const_cast<NotConstEvent>(event)->files);
+		performRemove(event->task, event->snapshot);
 	else
 		removeAllTaskLinks(event->task);
 }
@@ -268,7 +271,7 @@ void FolderNodeBase::performCopy(const BaseTask::Event *e)
 	Event event = static_cast<Event>(e);
 
 	if (performCopyEvent(event->canceled, event->snapshot, event->move))
-		performRemove(event->task, const_cast<NotConstEvent>(event)->files);
+		performRemove(event->task, event->snapshot);
 	else
 		removeAllTaskLinks(event->task);
 }

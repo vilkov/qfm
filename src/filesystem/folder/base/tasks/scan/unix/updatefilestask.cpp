@@ -11,7 +11,7 @@ FILE_SYSTEM_NS_BEGIN
 UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const UpdatesList &updates) :
 	ScanFilesBaseTask(receiver),
 	m_updates(updates),
-	m_container(container)
+	m_container(container.take())
 {}
 
 void UpdateFilesTask::run(const volatile Flags &aborted)
@@ -26,7 +26,7 @@ void UpdateFilesTask::run(const volatile Flags &aborted)
 		struct dirent *entry;
 		UpdatesList localUpdates;
 
-		while ((entry = readdir(dir)) != NULL)
+		while ((entry = readdir(dir)) != NULL && !aborted)
 		{
 			current = QTime::currentTime();
 
@@ -51,7 +51,7 @@ void UpdateFilesTask::run(const volatile Flags &aborted)
 		closedir(dir);
 	}
 
-	postEvent(new Event(this, true, m_updates.takeUpdates(), isCanceled()));
+	postEvent(new Event(this, true, m_updates.takeUpdates(), aborted));
 }
 
 FILE_SYSTEM_NS_END

@@ -5,7 +5,7 @@
 
 #ifdef Q_OS_UNIX
 	typedef int FileDescriptor;
-#elif Q_OS_WIN
+#elif Q_OS_WIN32
 	#error Unknown OS!
 #else
 	#error Unknown OS!

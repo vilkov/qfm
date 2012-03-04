@@ -558,12 +558,12 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 	}
 }
 
-void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &entries)
+void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	FileSystemEntryItem *entry;
-	Snapshot::List list(entries);
+	Snapshot::List list(snapshot);
 
 	if (canceled)
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
@@ -585,11 +585,11 @@ void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &entries)
 	updateBothColumns(updateRange);
 }
 
-bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &entries, ICopyControl *control, bool move)
+bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
-	Snapshot::Files files(entries);
+	Snapshot::Files files(snapshot);
 
 	if (canceled)
 		control->canceled();
@@ -624,14 +624,14 @@ bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &entries, ICopyC
 	return false;
 }
 
-bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &entries)
+bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	QStringList folders;
 	QStringList files;
 	InfoItem *entry;
-	Snapshot::List list(entries);
+	Snapshot::List list(snapshot);
 
 	for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
 		if ((entry = list.at(i).second)->isDir())
@@ -651,7 +651,7 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &entries)
 				append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
 				append(files.join(QString::fromLatin1("\n\t\t"))).
 				append(QString::fromLatin1("\n")).
-				append(tr("it will free ").append(Tools::humanReadableSize(entries.totalSize()))),
+				append(tr("it will free ").append(Tools::humanReadableSize(snapshot.totalSize()))),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
 		QString lockReason = tr("Removing...");
@@ -683,12 +683,12 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &entries)
 	return false;
 }
 
-bool FolderNode::performCopyEvent(bool canceled, const Snapshot &entries, bool move)
+bool FolderNode::performCopyEvent(bool canceled, const Snapshot &snapshot, bool move)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
-	Snapshot::List list(entries);
+	Snapshot::List list(snapshot);
 
 	if (!canceled && move)
 	{
@@ -725,12 +725,12 @@ bool FolderNode::performCopyEvent(bool canceled, const Snapshot &entries, bool m
 	return false;
 }
 
-void FolderNode::performRemoveEvent(bool canceled, const Snapshot &entries)
+void FolderNode::performRemoveEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
 	ItemsContainer::size_type index;
 	InfoItem *entry;
-	Snapshot::List list(entries);
+	Snapshot::List list(snapshot);
 
 	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		if ((entry = list.at(i).second)->isRemoved())

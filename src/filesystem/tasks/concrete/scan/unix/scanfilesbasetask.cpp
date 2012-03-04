@@ -28,7 +28,7 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) 
 	{
 		struct dirent *entry;
 
-		while ((entry = readdir(dir)) != NULL)
+		while ((entry = readdir(dir)) != NULL && !aborted)
 			if (entry->d_type == DT_DIR)
 			{
 				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)

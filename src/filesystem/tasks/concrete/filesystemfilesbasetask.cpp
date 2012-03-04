@@ -3,7 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-FilesBaseTask::FilesBaseTask(TasksNode *receiver)
+FilesBaseTask::FilesBaseTask(TasksNode *receiver) :
+	BaseTask(receiver)
 {}
 
 FILE_SYSTEM_NS_END

@@ -10,6 +10,9 @@ FILE_SYSTEM_NS_BEGIN
 class ICopyControl : public IFileContainer
 {
 public:
+	typedef PScopedPointer<ICopyControl> Holder;
+
+public:
 	virtual bool start(const Snapshot::Files &files, bool move) = 0;
 	virtual void done(bool error) = 0;
 	virtual void canceled() = 0;

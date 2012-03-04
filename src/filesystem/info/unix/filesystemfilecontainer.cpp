@@ -1,4 +1,5 @@
 #include "../filesystemfilecontainer.h"
+#include "../filesystemfileaccessor.h"
 #include "../../tools/filesystemcommontools.h"
 #include "../../../application.h"
 
@@ -73,11 +74,6 @@ bool FileContainer::rename(const QString &oldName, const QString &newName, QStri
 		error = QString::fromUtf8(::strerror(errno));
 		return false;
 	}
-}
-
-IFile *FileContainer::open(const QString &fileName) const
-{
-	return new Info(m_info.absoluteFilePath(fileName));
 }
 
 IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &error) const

@@ -27,6 +27,7 @@ public:
 	const value_type &last() const { return m_container.last(); }
 	value_type &last() { return m_container.last(); }
 
+	bool isEmpty() const { return m_container.isEmpty(); }
 	size_type lastIndex() const { return m_container.size() - 1; }
 	size_type indexOf(Node *item) const
 	{
@@ -42,6 +43,17 @@ public:
 	void remove(size_type index) { delete m_container.take(index); }
 	value_type take(size_type index) { return m_container.take(index); }
 	void replace(size_type index, const QString &oldHash, const QString &newHash) { m_container.replace(index, oldHash, newHash); }
+	void clear()
+	{
+		List::ByIndex list(m_container);
+		value_type root = list.at(0);
+
+		for (List::size_type i = 1, size = list.size(); i < size; ++i)
+			delete list.at(i);
+
+		m_container.clear();
+		m_container.add(root->info().fileName(), root);
+	}
 
 private:
 	typedef ::Tools::Containers::HashedList<QString, value_type> List;

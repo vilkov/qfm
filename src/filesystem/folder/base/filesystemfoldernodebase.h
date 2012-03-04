@@ -48,6 +48,10 @@ public:
 	virtual ICopyControl *createControl(INodeView *view) const;
 
 protected:
+	/* We need to remove all items and show only ".." */
+	virtual void doesNotExistAnyMore() = 0;
+
+protected:
 	/* Tasks events */
 	virtual UpdatesList::Map updateFilesMap() const = 0;
 	virtual void updateFilesEvent(const UpdatesList &updates) = 0;

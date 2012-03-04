@@ -151,8 +151,8 @@ void FolderNodeBase::refresh()
 	else
 		if (exists())
 			updateFiles();
-//		else
-//			viewCloseAll();
+		else
+			doesNotExistAnyMore();
 }
 
 ICopyControl *FolderNodeBase::createControl(INodeView *view) const

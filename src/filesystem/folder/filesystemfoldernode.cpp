@@ -490,8 +490,20 @@ Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QM
 
 void FolderNode::nodeRemoved(Node *node)
 {
-	Q_ASSERT(m_items.indexOf(node) != ItemsContainer::InvalidIndex);
-	static_cast<FileSystemEntryItem*>(m_items[m_items.indexOf(node)])->setNode(0);
+	ItemsContainer::size_type index = m_items.indexOf(node);
+
+	if (index != ItemsContainer::InvalidIndex)
+		static_cast<FileSystemEntryItem*>(m_items[index])->setNode(NULL);
+}
+
+void FolderNode::doesNotExistAnyMore()
+{
+	if (m_items.size() > 1)
+	{
+		beginRemoveRows(QModelIndex(), 1, m_items.size() - 1);
+		m_items.clear();
+		endRemoveRows();
+	}
 }
 
 UpdatesList::Map FolderNode::updateFilesMap() const

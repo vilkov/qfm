@@ -52,6 +52,10 @@ protected:
 
 protected:
 	/* FolderNodeBase */
+	virtual void doesNotExistAnyMore();
+
+protected:
+	/* FolderNodeBase */
 	virtual UpdatesList::Map updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
 	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot);

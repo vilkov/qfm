@@ -1,4 +1,5 @@
 #include "navigationhistory.h"
+
 #include <stddef.h>
 #include <qglobal.h>
 
@@ -48,17 +49,31 @@ void Navigation::save(Entry *entry)
 			return;
 		}
 		else
-		{
-			Entry *next;
-			Entry *entry = m_current->m_next;
-
-			do
+			if (m_current->m_prev && m_current->m_prev->isEqual(entry))
 			{
-				next = entry->m_next;
+				m_current = m_current->m_prev;
 				delete entry;
-				entry = next;
+				return;
 			}
-			while (entry);
+			else
+			{
+				Entry *next;
+				Entry *entry = m_current->m_next;
+
+				do
+				{
+					next = entry->m_next;
+					delete entry;
+					entry = next;
+				}
+				while (entry);
+			}
+	else
+		if (m_current->m_prev && m_current->m_prev->isEqual(entry))
+		{
+			m_current = m_current->m_prev;
+			delete entry;
+			return;
 		}
 
 	m_current->m_next = entry;
@@ -81,7 +96,6 @@ Entry *Navigation::backward()
 
 	return NULL;
 }
-
 
 Entry *Navigation::forward()
 {

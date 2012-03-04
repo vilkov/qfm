@@ -423,13 +423,17 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 						node->setParentEntryIndex(idx);
 					}
 
-				return entry->node();
+				if (entry->node())
+					return entry->node();
+				else
+					if (entry->info().isFile())
+						Application::desktopService()->open(entry->info().id(), location(entry->info().fileName()));
 			}
 			else
 				removeEntry(index);
 		}
 
-	return 0;
+	return NULL;
 }
 
 Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

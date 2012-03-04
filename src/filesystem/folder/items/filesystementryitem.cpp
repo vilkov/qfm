@@ -67,12 +67,8 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 				case Qt::EditRole:
 				case Qt::DisplayRole:
 					return info().lastModified();
-//					case Qt::DecorationRole:
-//						return m_info.icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
-//					case Qt::ToolTipRole:
-//						return QDir::toNativeSeparators(QDir::cleanPath(m_info.fileInfo().absoluteDir().absolutePath()));
 			}
 			break;
 		}

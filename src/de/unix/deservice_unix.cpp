@@ -1,8 +1,6 @@
 #include "../deservice.h"
 #include "../../filesystem/interfaces/filesystemifileinfo.h"
 
-#include <QtCore/QDebug>
-
 #include <xdg/xdg.h>
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
@@ -13,8 +11,10 @@
 
 #include <QtCore/QCache>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QDebug>
 
 #include <sys/stat.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <cassert>
@@ -139,6 +139,45 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 	}
 
 	return 0;
+}
+
+inline static const char *findProgram(const char *mimeType)
+{
+	const XdgList *values;
+	const XdgAppGroup *group;
+	const XdgJointList *apps;
+
+	if (apps = xdg_joint_list_begin(xdg_added_apps_lookup(mimeType)))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+				return xdg_list_item_app_group_entry_value(values);
+		}
+		while (apps = xdg_joint_list_next(apps));
+
+	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup(mimeType)))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+				return xdg_list_item_app_group_entry_value(values);
+		}
+		while (apps = xdg_joint_list_next(apps));
+
+	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
+		do
+		{
+			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+
+			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+				return xdg_list_item_app_group_entry_value(values);
+		}
+		while (apps = xdg_joint_list_next(apps));
+
+	return NULL;
 }
 
 
@@ -308,6 +347,62 @@ QIcon Service::unpackActionIcon(int iconSize) const
 		return fileTypeInfo(iconSize);
 	else
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
+}
+
+void Service::open(const ::FileSystem::FileTypeId &type, const QString &absoluteFilePath) const
+{
+	if (const char *exec = findProgram(type.mime.toUtf8()))
+	{
+		static const char *url = "file://";
+		char *argv[3] = {NULL, NULL, NULL};
+		pid_t pid;
+
+		QByteArray program(exec);
+		QByteArray filePathUrl;
+		QByteArray filePath = absoluteFilePath.toUtf8();
+
+		filePath.replace('"', "\\\"");
+		filePath.replace('`', "\\`");
+		filePath.replace('$', "\\$");
+		filePath.replace('\\', "\\\\");
+
+		filePathUrl = QByteArray(filePath).prepend(url);
+
+		if (program.indexOf("%f") != -1 || program.indexOf("%F") != -1)
+			argv[1] = filePath.data();
+
+		if (program.indexOf("%u") != -1 || program.indexOf("%U") != -1)
+			argv[1] = filePathUrl.data();
+
+		program.replace("%f", QByteArray());
+		program.replace("%F", QByteArray());
+		program.replace("%u", QByteArray());
+		program.replace("%U", QByteArray());
+		program.replace("%d", QByteArray());
+		program.replace("%D", QByteArray());
+		program.replace("%n", QByteArray());
+		program.replace("%N", QByteArray());
+		program.replace("%i", QByteArray());
+		program.replace("%c", QByteArray());
+		program.replace("%k", QByteArray());
+		program.replace("%v", QByteArray());
+		program.replace("%m", QByteArray());
+		program = program.trimmed();
+
+		argv[0] = program.data();
+
+		pid = fork();
+		if (pid == 0)
+		{
+			execvp(argv[0], argv);
+			_exit(EXIT_FAILURE);
+		}
+		else
+			if (pid < 0)
+			{
+				/* The fork failed. */
+			}
+	}
 }
 
 void Service::test() const

@@ -45,6 +45,8 @@ public:
 	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
 
+	void open(const ::FileSystem::FileTypeId &type, const QString &absoluteFilePath) const;
+
 
 	void test() const;
 

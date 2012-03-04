@@ -11,7 +11,6 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-static QString root = QString::fromLatin1("/");
 static uint userId = getuid();
 static uint groupId = getgid();
 
@@ -46,9 +45,10 @@ static QString normalizeFilePath(const QString &filePath, bool &isRoot)
 	if (res.startsWith(QChar('/')))
 	{
 		if (res.size() == 1)
+		{
 			isRoot = true;
-
-		return res;
+			return res;
+		}
 	}
 	else
 	{
@@ -163,8 +163,8 @@ QString Info::absoluteFilePath(const QString &fileName) const
 			return str.append(QChar('/')).append(fileName);
 #else
 
-	if (fileName == root)
-		return fileName;
+	if (m_isRoot)
+		return QString(m_filePath).append(fileName);
 	else
 	{
 		QString str = m_info.isDir ? absoluteFilePath() : absolutePath();

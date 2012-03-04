@@ -355,6 +355,7 @@ void Service::open(const ::FileSystem::FileTypeId &type, const QString &absolute
 	{
 		static const char *url = "file://";
 		char *argv[3] = {NULL, NULL, NULL};
+		int index, index1, index2;
 		pid_t pid;
 
 		QByteArray program(exec);
@@ -373,6 +374,13 @@ void Service::open(const ::FileSystem::FileTypeId &type, const QString &absolute
 
 		if (program.indexOf("%u") != -1 || program.indexOf("%U") != -1)
 			argv[1] = filePathUrl.data();
+
+		while ((index = program.indexOf('=')) != -1)
+		{
+			index1 = qMin<unsigned int>(0, program.lastIndexOf(' ', index - 1));
+			index2 = program.indexOf(' ', index + 1);
+			program.remove(index1, index2 - index1);
+		}
 
 		program.replace("%f", QByteArray());
 		program.replace("%F", QByteArray());
@@ -394,8 +402,9 @@ void Service::open(const ::FileSystem::FileTypeId &type, const QString &absolute
 		pid = fork();
 		if (pid == 0)
 		{
+			setsid();
 			execvp(argv[0], argv);
-			_exit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);
 		}
 		else
 			if (pid < 0)

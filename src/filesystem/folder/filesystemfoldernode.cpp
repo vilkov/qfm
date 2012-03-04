@@ -404,12 +404,12 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (static_cast<FileSystemBaseItem*>(index.internalPointer())->isRootItem())
+	if (static_cast<FileSystemBaseItem *>(index.internalPointer())->isRootItem())
 		return parentNode();
 	else
-		if (!static_cast<FileSystemEntryItem*>(index.internalPointer())->isLocked())
+		if (!static_cast<FileSystemEntryItem *>(index.internalPointer())->isLocked())
 		{
-			FileSystemEntryItem *entry = static_cast<FileSystemEntryItem*>(index.internalPointer());
+			FileSystemEntryItem *entry = static_cast<FileSystemEntryItem *>(index.internalPointer());
 			entry->info().refresh();
 
 			if (entry->info().exists())
@@ -438,7 +438,7 @@ Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QM
 
 	if (index == ItemsContainer::InvalidIndex)
 	{
-		Info info(absoluteFilePath(fileName));
+		Info info(absoluteFilePath(fileName), true);
 
 		if (Node *node = createNode(info, plugins))
 		{
@@ -525,24 +525,25 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 	for (UpdatesList::iterator update = updatesLocal.begin(), end = updatesLocal.end(); update != end;)
 		switch (update.value().type())
 		{
+			case UpdatesList::Added:
 			case UpdatesList::Updated:
 			{
 				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
 				{
 					m_items[index]->setInfo(update.value().info());
 					updateRange.add(index);
-				}
 
-				update = updatesLocal.erase(update);
+					update = updatesLocal.erase(update);
+				}
+				else
+					++update;
+
 				break;
 			}
 			case UpdatesList::Deleted:
 			{
 				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
 				{
-//					if (m_items[index]->node())
-//						m_items[index]->node()->viewCloseAll();
-
 					if (!static_cast<FileSystemEntryItem*>(m_items[index])->isLocked())
 						removeEntry(index);
 				}
@@ -794,11 +795,11 @@ void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(&info, const_cast<FolderNode*>(this)))
+	if (Node *res = plugins->node(&info, const_cast<FolderNode *>(this)))
 		return res;
 	else
 		if (info.isDir())
-			return new FolderNode(info, const_cast<FolderNode*>(this));
+			return new FolderNode(info, const_cast<FolderNode *>(this));
 		else
 			return 0;
 }

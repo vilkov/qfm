@@ -196,7 +196,7 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 	}
 	else
 	{
-		FileSystemEntryItem *item = static_cast<FileSystemEntryItem*>(m_items[index]);
+		FileSystemEntryItem *item = static_cast<FileSystemEntryItem *>(m_items[index]);
 
 		if (item->node())
 			return item->node();
@@ -229,7 +229,7 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 
 FileSystemBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)
 {
-	Info info(fileName);
+	Info info(fileName, true);
 	return new FileSystemEntryItem(info, createNode(info, plugins));
 }
 

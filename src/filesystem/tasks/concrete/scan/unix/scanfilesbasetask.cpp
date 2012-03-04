@@ -33,14 +33,14 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) 
 			{
 				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
 				{
-					PScopedPointer<InfoListItem> subtree(new InfoListItem(root->container().location(QString::fromUtf8(entry->d_name))));
+					PScopedPointer<InfoListItem> subtree(new InfoListItem(root->container().location(QString::fromUtf8(entry->d_name)), true));
 
 					scan(subtree.data(), aborted);
 					root->add(subtree.take());
 				}
 			}
 			else
-				root->add(new InfoItem(root->container().location(QString::fromUtf8(entry->d_name))));
+				root->add(new InfoItem(root->container().location(QString::fromUtf8(entry->d_name)), true));
 
 		closedir(dir);
 	}
@@ -50,7 +50,7 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const QString &fileName, const 
 {
 	if (root->container().contains(fileName))
 	{
-		Info info(root->container().location(fileName));
+		Info info(root->container().location(fileName), true);
 
 		if (info.isDir())
 		{
@@ -63,21 +63,21 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const QString &fileName, const 
 			root->add(new InfoItem(info));
 	}
 	else
-		root->add(new InfoItem(root->container().location(fileName)));
+		root->add(new InfoItem(root->container().location(fileName), true));
 }
 
 void ScanFilesBaseTask::scan(Snapshot &snapshot, FileSystemItem *item, const IFileInfo *file, const volatile Flags &aborted) const
 {
 	if (file->isDir())
 	{
-		PScopedPointer<InfoListItem> subnode(new InfoListItem(snapshot.container()->location(file->fileName())));
+		PScopedPointer<InfoListItem> subnode(new InfoListItem(snapshot.container()->location(file->fileName()), true));
 
 		scan(subnode.data(), aborted);
 
 		snapshot.push_back(item, subnode.take());
 	}
 	else
-		snapshot.push_back(item, new InfoItem(snapshot.container()->location(file->fileName())));
+		snapshot.push_back(item, new InfoItem(snapshot.container()->location(file->fileName()), true));
 }
 
 FILE_SYSTEM_NS_END

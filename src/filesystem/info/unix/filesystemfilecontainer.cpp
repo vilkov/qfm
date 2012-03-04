@@ -55,14 +55,21 @@ bool FileContainer::remove(const QString &fileName, QString &error) const
 	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
 		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
 #endif
+	struct stat st;
+	QByteArray name = m_info.absoluteFilePath(fileName).toUtf8();
 
-	if (::unlink(m_info.absoluteFilePath(fileName).toUtf8()) == 0)
-		return true;
-	else
-	{
-		error = QString::fromUtf8(::strerror(errno));
-		return false;
-	}
+	if (::stat(name, &st) == 0)
+		if (S_ISDIR(st.st_mode))
+		{
+			if (::rmdir(name) == 0)
+				return true;
+		}
+		else
+			if (::unlink(name) == 0)
+				return true;
+
+	error = QString::fromUtf8(::strerror(errno));
+	return false;
 }
 
 bool FileContainer::rename(const QString &oldName, const QString &newName, QString &error)

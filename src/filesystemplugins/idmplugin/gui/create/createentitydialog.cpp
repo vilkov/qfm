@@ -26,20 +26,20 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QStr
     font.setBold(true);
     font.setWeight(75);
     m_label.setFont(font);
-    m_label.setText(tr("Entity name"));
+    m_label.setText(tr("Name"));
     m_label2.setFont(font);
     m_label2.setText(tr("Short format"));
     m_label3.setFont(font);
-    m_label3.setText(tr("Select type"));
+    m_label3.setText(tr("Type"));
 
     m_gridLayout.setMargin(3);
     m_gridLayout.setSpacing(1);
     m_gridLayout.addWidget(&m_label,       0, 0, 1, 1);
     m_gridLayout.addWidget(&m_lineEdit,    0, 1, 1, 1);
-    m_gridLayout.addWidget(&m_label2,      1, 0, 1, 1);
-    m_gridLayout.addWidget(&m_lineEdit2,   1, 1, 1, 1);
-    m_gridLayout.addWidget(&m_label3,      2, 0, 1, 1);
-    m_gridLayout.addWidget(&m_comboBox,    2, 1, 1, 1);
+    m_gridLayout.addWidget(&m_label3,      1, 0, 1, 1);
+    m_gridLayout.addWidget(&m_comboBox,    1, 1, 1, 1);
+    m_gridLayout.addWidget(&m_label2,      2, 0, 1, 1);
+    m_gridLayout.addWidget(&m_lineEdit2,   2, 1, 1, 1);
     m_gridLayout.addLayout(&m_gridLayout2, 3, 0, 1, 2);
     m_gridLayout.addWidget(&m_buttonBox,   4, 0, 1, 2);
 

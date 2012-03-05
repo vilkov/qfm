@@ -28,8 +28,6 @@ public:
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
-	virtual bool copy(const IFileInfo *source, QString &error) const;
-
 	/* ICopyControl */
 	virtual bool start(const Snapshot::Files &files, bool move);
 	virtual void done(bool error);

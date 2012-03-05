@@ -25,9 +25,9 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
 }
 
-Node *Plugin::node(const IFileInfo *info, Node *parent) const
+Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	return new ArcNode(Info(info->absoluteFilePath(), true), parent);
+	return new ArcNode(Info(container->location(file->fileName())), parent);
 }
 
 Plugin::FileTypeIdList Plugin::fileTypes() const

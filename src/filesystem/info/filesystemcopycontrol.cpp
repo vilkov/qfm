@@ -55,11 +55,6 @@ IFileContainer *CopyControl::open(const QString &fileName, bool create, QString 
 	return m_container.open(fileName, create, error);
 }
 
-bool CopyControl::copy(const IFileInfo *source, QString &error) const
-{
-	return m_container.copy(source, error);
-}
-
 bool CopyControl::start(const Snapshot::Files &files, bool move)
 {
 	IFileInfo::size_type fs;

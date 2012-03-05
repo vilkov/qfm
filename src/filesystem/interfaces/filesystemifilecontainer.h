@@ -26,8 +26,6 @@ public:
 
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const = 0;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const = 0;
-
-	virtual bool copy(const IFileInfo *source, QString &error) const = 0;
 };
 
 FILE_SYSTEM_NS_END

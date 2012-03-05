@@ -25,8 +25,6 @@ public:
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
-	virtual bool copy(const IFileInfo *source, QString &error) const;
-
 protected:
 	friend class CopyControl;
 

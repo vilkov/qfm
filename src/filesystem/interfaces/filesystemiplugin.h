@@ -14,7 +14,7 @@ public:
 	virtual ~IPlugin();
 
 	virtual void registered() = 0;
-	virtual Node *node(const IFileInfo *info, Node *parent) const = 0;
+	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const = 0;
 };
 
 

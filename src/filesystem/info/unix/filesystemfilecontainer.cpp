@@ -124,15 +124,4 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 	return NULL;
 }
 
-bool FileContainer::copy(const IFileInfo *source, QString &error) const
-{
-	if (::link(source->absoluteFilePath().toUtf8(), m_info.absoluteFilePath(source->fileName()).toUtf8()) == 0)
-		return true;
-	else
-	{
-		error = QString::fromUtf8(::strerror(errno));
-		return false;
-	}
-}
-
 FILE_SYSTEM_NS_END

@@ -17,7 +17,7 @@ public:
 	Plugin();
 
 	virtual void registered();
-	virtual Node *node(const IFileInfo *info, Node *parent) const;
+	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 	virtual FileTypeIdList fileTypes() const;
 
 	static const Archive **archivers();

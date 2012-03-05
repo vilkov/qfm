@@ -13,7 +13,7 @@ public:
 	Plugin();
 
 	virtual void registered();
-	virtual Node *node(const IFileInfo *info, Node *parent) const;
+	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
 	QString m_identity;

@@ -32,7 +32,7 @@ QString RootNode::description() const
 
 bool RootNode::isDir() const
 {
-	return true;
+	return false;
 }
 
 bool RootNode::isFile() const
@@ -175,6 +175,51 @@ const INodeView::MenuActionList &RootNode::actions() const
 	return m_menuActions;
 }
 
+bool RootNode::isPhysical() const
+{
+	return false;
+}
+
+QString RootNode::location() const
+{
+	return QString();
+}
+
+QString RootNode::location(const QString &fileName) const
+{
+	return fileName;
+}
+
+IFileInfo::size_type RootNode::freeSpace() const
+{
+	return 0;
+}
+
+bool RootNode::contains(const QString &fileName) const
+{
+	return false;
+}
+
+bool RootNode::remove(const QString &fileName, QString &error) const
+{
+	return false;
+}
+
+bool RootNode::rename(const QString &oldName, const QString &newName, QString &error)
+{
+	return false;
+}
+
+IFileAccessor *RootNode::open(const QString &fileName, int mode, QString &error) const
+{
+	return NULL;
+}
+
+IFileContainer *RootNode::open(const QString &fileName, bool create, QString &error) const
+{
+	return NULL;
+}
+
 QModelIndex RootNode::rootIndex() const
 {
 	return QModelIndex();
@@ -218,7 +263,7 @@ void RootNode::nodeRemoved(Node *node)
 
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 {
-	if (Node *res = plugins->node(&info, this))
+	if (Node *res = plugins->node(this, &info, this))
 		return res;
 	else
 		if (info.isDir())

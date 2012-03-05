@@ -12,21 +12,21 @@ PluginsManager::~PluginsManager()
 	qDeleteAll(m_dynamicPlugins);
 }
 
-Node *PluginsManager::node(const IFileInfo *info, Node *parent) const
+Node *PluginsManager::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
 	Node *res;
 
-	if (info->isFile())
+	if (file->isFile())
 	{
-		const PluginsList &list = m_filePlugins[info->id()];
+		const PluginsList &list = m_filePlugins[file->id()];
 
 		for (PluginsList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (res = list.at(i)->node(info, parent))
+			if (res = list.at(i)->node(container, file, parent))
 				return res;
 	}
 
 	for (PluginsList::size_type i = 0, size = m_otherPlugins.size(); i < size; ++i)
-		if (res = m_otherPlugins.at(i)->node(info, parent))
+		if (res = m_otherPlugins.at(i)->node(container, file, parent))
 			return res;
 
 	return 0;

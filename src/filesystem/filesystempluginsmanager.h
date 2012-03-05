@@ -19,7 +19,7 @@ public:
 	PluginsManager();
 	virtual ~PluginsManager();
 
-	Node *node(const IFileInfo *info, Node *parent) const;
+	Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 protected:
 	void registerStatic(IPlugin *plugin);

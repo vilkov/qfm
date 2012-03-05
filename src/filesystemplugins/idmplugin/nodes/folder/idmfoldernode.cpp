@@ -70,7 +70,7 @@ void IdmFolderNode::move(const INodeView *source, INodeView *destination)
 
 Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(&info, const_cast<IdmFolderNode*>(this)))
+	if (Node *res = plugins->node(this, &info, const_cast<IdmFolderNode*>(this)))
 		return res;
 	else
 		if (info.isDir())

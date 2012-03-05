@@ -13,12 +13,22 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_createDbAction, ::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 }
 
-Node *Plugin::node(const IFileInfo *info, Node *parent) const
+Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	if (info->absoluteFilePath() == QString::fromLatin1("/home/dav/idm"))
-		return new IdmRootNode(info->absoluteFilePath(QString::fromLatin1(".storage.idm")), parent);
-	else
-		return 0;
+	if (file->isDir())
+	{
+		IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
+
+		if (folder)
+		{
+			static QString fileName = QString::fromLatin1(".storage.idm");
+
+			if (folder->contains(fileName))
+				return new IdmRootNode(folder->location(), parent);
+		}
+	}
+
+	return NULL;
 }
 
 IDM_PLUGIN_NS_END

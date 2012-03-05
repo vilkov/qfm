@@ -2,12 +2,13 @@
 #define FILESYSTEMROOTNODE_H_
 
 #include "../filesystemnode.h"
+#include "../interfaces/filesystemifilecontainer.h"
 #include "../folder/containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class RootNode : public Node
+class RootNode : public Node, public IFileContainer
 {
 	Q_DISABLE_COPY(RootNode)
 
@@ -54,6 +55,19 @@ public:
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
+
+	/* IFileContainer */
+	virtual bool isPhysical() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+	virtual IFileInfo::size_type freeSpace() const;
+
+	virtual bool contains(const QString &fileName) const;
+	virtual bool remove(const QString &fileName, QString &error) const;
+	virtual bool rename(const QString &oldName, const QString &newName, QString &error);
+
+	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
+	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
 protected:
 	/* Node */

@@ -14,7 +14,7 @@ void Plugin::registered()
 
 }
 
-Node *Plugin::node(const IFileInfo *info, Node *parent) const
+Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
 	return 0;
 }

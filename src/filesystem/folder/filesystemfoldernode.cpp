@@ -799,7 +799,7 @@ void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 Node *FolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(&info, const_cast<FolderNode *>(this)))
+	if (Node *res = plugins->node(this, &info, const_cast<FolderNode *>(this)))
 		return res;
 	else
 		if (info.isDir())

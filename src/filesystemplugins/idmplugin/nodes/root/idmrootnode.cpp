@@ -39,12 +39,12 @@ template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *
 }
 
 
-IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
+IdmRootNode::IdmRootNode(const Info &storage, const QString &fileName, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
+	FileContainer(storage),
 	m_items(m_itemsContainer.m_container),
-	m_container(storage),
-	m_delegate(m_container),
-	m_info(storage.absolutePath())
+	m_container(location(fileName), false),
+	m_delegate(m_container)
 {
 	m_actions.push_back(new QAction(tr("Create"), 0));
 	m_actions.last()->setData(Create);
@@ -60,7 +60,6 @@ IdmRootNode::IdmRootNode(const Info &storage, Node *parent) :
 
 	m_actions.push_back(new QAction(tr("Find"), 0));
 	m_actions.last()->setData(Find);
-
 
 	m_items.push_back(new RootNodeRootItem());
 	m_items.push_back(new RootNodeFilesItem());

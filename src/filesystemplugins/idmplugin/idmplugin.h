@@ -16,6 +16,8 @@ public:
 	virtual void registered();
 	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
+	static const QString &fileName();
+
 private:
 	mutable QString m_error;
 	CreateDbAction m_createDbAction;

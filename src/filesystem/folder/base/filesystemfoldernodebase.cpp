@@ -65,22 +65,22 @@ bool FolderNodeBase::event(QEvent *e)
 
 FileTypeId FolderNodeBase::id() const
 {
-	return info().id();
+	return m_info.id();
 }
 
 QIcon FolderNodeBase::icon() const
 {
-	return info().icon();
+	return m_info.icon();
 }
 
 QString FolderNodeBase::name() const
 {
-	return info().name();
+	return m_info.name();
 }
 
 QString FolderNodeBase::description() const
 {
-	return info().description();
+	return m_info.description();
 }
 
 bool FolderNodeBase::isDir() const
@@ -95,50 +95,50 @@ bool FolderNodeBase::isFile() const
 
 bool FolderNodeBase::isLink() const
 {
-	return info().isLink();
+	return m_info.isLink();
 }
 
 bool FolderNodeBase::exists() const
 {
-	return info().exists();
+	return m_info.exists();
 }
 
 FolderNodeBase::size_type FolderNodeBase::fileSize() const
 {
-	return info().fileSize();
+	return m_info.fileSize();
 }
 
 QString FolderNodeBase::fileName() const
 {
-	if (info().isRoot())
-		return info().absoluteFilePath();
+	if (m_info.isRoot())
+		return m_info.absoluteFilePath();
 	else
-		return info().fileName();
+		return m_info.fileName();
 }
 
 QString FolderNodeBase::absolutePath() const
 {
-	return info().absolutePath();
+	return m_info.absolutePath();
 }
 
 QString FolderNodeBase::absoluteFilePath() const
 {
-	return info().absoluteFilePath();
+	return m_info.absoluteFilePath();
 }
 
 QString FolderNodeBase::absoluteFilePath(const QString &fileName) const
 {
-	return info().absoluteFilePath(fileName);
+	return m_info.absoluteFilePath(fileName);
 }
 
 QDateTime FolderNodeBase::lastModified() const
 {
-	return info().lastModified();
+	return m_info.lastModified();
 }
 
 int FolderNodeBase::permissions() const
 {
-	return info().permissions();
+	return m_info.permissions();
 }
 
 void FolderNodeBase::refresh()
@@ -146,7 +146,7 @@ void FolderNodeBase::refresh()
 	if (isUpdating())
 		return;
 
-	if (info().isRoot())
+	if (m_info.isRoot())
 		updateFiles();
 	else
 		if (exists())
@@ -157,7 +157,7 @@ void FolderNodeBase::refresh()
 
 ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 {
-	return new CopyControl(info());
+	return new CopyControl(m_info);
 }
 
 void FolderNodeBase::scanForSize(const TasksItemList &entries)

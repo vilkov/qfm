@@ -27,11 +27,6 @@ public:
 
 protected:
 	friend class CopyControl;
-
-	const Info &info() const { return m_info; }
-	Info &info() { return m_info; }
-
-private:
 	Info m_info;
 };
 

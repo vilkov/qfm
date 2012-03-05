@@ -34,8 +34,8 @@ public:
 	virtual void canceled();
 
 protected:
-	const Info &info() const { return m_container.info(); }
-	Info &info() { return m_container.info(); }
+	const Info &info() const { return m_container.m_info; }
+	Info &info() { return m_container.m_info; }
 
 private:
 	FileContainer m_container;

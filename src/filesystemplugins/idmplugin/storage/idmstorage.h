@@ -15,7 +15,6 @@
 #include "format/idmshortformat.h"
 #include "values/idmentityvalue.h"
 #include "../idmplugin_ns.h"
-#include "../../../filesystem/info/filesysteminfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -34,7 +33,7 @@ public:
 	enum { InvalidIndex = IdmEntity::InvalidIndex };
 
 public:
-	IdmStorage(const Info &storage);
+	IdmStorage(const QString &storage, bool create);
 	~IdmStorage();
 
 	bool isValid() const { return m_valid; }
@@ -107,7 +106,6 @@ private:
 
 private:
 	QMutex m_mutex;
-	Info m_info;
 	bool m_valid;
 	sqlite3 *m_db;
 	mutable UndoStack m_undo;

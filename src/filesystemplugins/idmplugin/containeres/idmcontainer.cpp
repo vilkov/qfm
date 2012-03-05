@@ -4,8 +4,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmContainer::IdmContainer(const Info &storage) :
-	m_data(new Data(storage))
+IdmContainer::IdmContainer(const QString &storage, bool create) :
+	m_data(new Data(storage, create))
 {
 	m_data->menuActions.push_back(new QAction(tr("Create"), 0));
 	m_data->menuActions.last()->setData(Create);

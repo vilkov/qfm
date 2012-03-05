@@ -70,12 +70,10 @@ protected:
 	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
 
 protected:
-	using FileContainer::info;
-
-	bool isRoot() const { return info().isRoot(); }
+	bool isRoot() const { return m_info.isRoot(); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
-	void setInfo(const Info &info) { FileContainer::info() = info; }
+	void setInfo(const Info &info) { m_info = info; }
 
 private:
 	void updateFiles();

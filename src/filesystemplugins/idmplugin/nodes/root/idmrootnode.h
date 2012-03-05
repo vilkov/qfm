@@ -4,16 +4,17 @@
 #include "idmrootnodedelegate.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../../filesystem/info/filesystemfilecontainer.h"
 #include "../../../../filesystem/model/filesystemmodelcontainer.h"
 #include "../../../../filesystem/interfaces/filesysteminodeview.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmRootNode : public TasksNode
+class IdmRootNode : public TasksNode, public FileContainer
 {
 public:
-	IdmRootNode(const Info &storage, Node *parent = 0);
+	IdmRootNode(const Info &storage, const QString &fileName, Node *parent = 0);
 	virtual ~IdmRootNode();
 
     /* FileSystemModel */
@@ -132,7 +133,6 @@ private:
 	EntitiesMap m_entities;
 	IdmContainer m_container;
 	IdmRootNodeDelegate m_delegate;
-	Info m_info;
 };
 
 IDM_PLUGIN_NS_END

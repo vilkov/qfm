@@ -32,7 +32,7 @@ public:
 	};
 
 public:
-	IdmContainer(const Info &storage);
+	IdmContainer(const QString &storage, bool create);
 
 	const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
 	const IdmEntityTypes &entityTypes() const { return m_data->entityTypes; }
@@ -73,8 +73,8 @@ public:
 private:
 	struct Data : public QSharedData
 	{
-		Data(const Info &storage) :
-			storage(storage)
+		Data(const QString &storage, bool create) :
+			storage(storage, create)
 		{}
 		~Data()
 		{

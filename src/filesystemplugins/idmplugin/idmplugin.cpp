@@ -19,16 +19,17 @@ Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node 
 	{
 		IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
 
-		if (folder)
-		{
-			static QString fileName = QString::fromLatin1(".storage.idm");
-
-			if (folder->contains(fileName))
-				return new IdmRootNode(folder->location(), parent);
-		}
+		if (folder && folder->contains(fileName()))
+			return new IdmRootNode(folder->location(), fileName(), parent);
 	}
 
 	return NULL;
+}
+
+const QString &Plugin::fileName()
+{
+	static const QString res = QString::fromLatin1(".storage.idm");
+	return res;
 }
 
 IDM_PLUGIN_NS_END

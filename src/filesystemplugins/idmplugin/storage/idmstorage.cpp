@@ -15,13 +15,31 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorage::IdmStorage(const Info &storage) :
-	m_info(storage),
+IdmStorage::IdmStorage(const QString &storage, bool create) :
 	m_valid(true),
 	m_db(0)
 {
-	if (m_info.exists())
-		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &m_db) == SQLITE_OK)
+	if (create)
+		if (sqlite3_open16(storage.unicode(), &m_db) == SQLITE_OK)
+		{
+			char *error;
+			QByteArray sqlQuery = Database::init();
+
+			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
+			{
+				m_valid = false;
+				setLastError(sqlQuery.data(), error);
+			}
+
+			sqlite3_free(error);
+		}
+		else
+		{
+			m_valid = false;
+			setLastError(QString::fromLatin1("Failed to open DB"));
+		}
+	else
+		if (sqlite3_open16(storage.unicode(), &m_db) == SQLITE_OK)
 		{
 			sqlite3_stmt *statement;
 			QByteArray sqlQuery = EntitiesTable::select();
@@ -41,25 +59,6 @@ IdmStorage::IdmStorage(const Info &storage) :
 				m_valid = false;
 				setLastError(sqlQuery.data());
 			}
-		}
-		else
-		{
-			m_valid = false;
-			setLastError(QString::fromLatin1("Failed to open DB"));
-		}
-	else
-		if (sqlite3_open16(m_info.absoluteFilePath().unicode(), &m_db) == SQLITE_OK)
-		{
-			char *error;
-			QByteArray sqlQuery = Database::init();
-
-			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
-			{
-				m_valid = false;
-				setLastError(sqlQuery.data(), error);
-			}
-
-			sqlite3_free(error);
 		}
 		else
 		{

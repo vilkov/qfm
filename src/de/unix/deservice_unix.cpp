@@ -443,7 +443,10 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 
 		for (List::size_type i = 0, size = arguments.size(); i < size;)
 			if (arguments.at(i).indexOf('=') != -1)
+			{
 				arguments.removeAt(i);
+				--size;
+			}
 			else
 			{
 				arguments[i] = arguments.at(i).trimmed();

@@ -438,13 +438,13 @@ void IdmRootNode::createEntity()
 						}
 				}
 				else
-				{
-					if (!m_container.commit())
+					if (m_container.commit())
+						add(entity);
+					else
 					{
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
-				}
 			else
 			{
 				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());

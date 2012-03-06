@@ -23,11 +23,6 @@ void IdmFolderNode::createFile(const QModelIndex &index, INodeView *view)
 
 }
 
-void IdmFolderNode::createDirectory(const QModelIndex &index, INodeView *view)
-{
-
-}
-
 void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)
 {
 

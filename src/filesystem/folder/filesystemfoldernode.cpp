@@ -296,7 +296,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
-		PScopedPointer<IFileContainer> folder(open(dialog.value(), true, error));
+		IFileContainer::Holder folder(open(dialog.value(), true, error));
 
 		if (!folder)
 			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);
@@ -427,7 +427,7 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 					return entry->node();
 				else
 					if (entry->info().isFile())
-						Application::desktopService()->open(entry->info().id(), location(entry->info().fileName()));
+						Application::desktopService()->open(this, &entry->info());
 			}
 			else
 				removeEntry(index);

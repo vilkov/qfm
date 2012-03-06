@@ -1,9 +1,10 @@
 #ifndef DESERVICE_H_
 #define DESERVICE_H_
 
+#include <QtCore/QLocale>
 #include "de_ns.h"
 #include "defiletypes.h"
-#include "../filesystem/tools/filesystemfileinfo.h"
+#include "../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 DE_NS_BEGIN
@@ -30,6 +31,7 @@ public:
 	~Service();
 
 	Type type() const { return m_type; }
+	const QLocale &locale() const { return m_locale; }
 
 	QIcon processingIcon(int iconSize) const;
 	QIcon cancelingIcon(int iconSize) const;
@@ -45,7 +47,7 @@ public:
 	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
 
-	void open(const ::FileSystem::FileTypeId &type, const QString &absoluteFilePath) const;
+	void open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const;
 
 
 	void test() const;
@@ -59,6 +61,7 @@ private:
 
 private:
 	Type m_type;
+	QLocale m_locale;
 };
 
 DE_NS_END

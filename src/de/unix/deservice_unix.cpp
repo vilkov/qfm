@@ -11,8 +11,10 @@
 
 #include <QtCore/QCache>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QVarLengthArray>
 #include <QtCore/QDebug>
 
+#include <paths.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -41,6 +43,20 @@ static const char *x11_atomnames[NAtoms] =
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 	static int kde_version = 0;
 #endif
+
+
+namespace LocaleCodes
+{
+	static QByteArray lang;
+	static QByteArray country;
+
+	static void initialize(const QByteArray &localeNameAsUtf8)
+	{
+		int index;
+		lang = localeNameAsUtf8.mid(0, index = localeNameAsUtf8.indexOf('_'));
+		country = localeNameAsUtf8.mid(index + 1);
+	}
+}
 
 
 struct IconIndex
@@ -141,41 +157,89 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 	return 0;
 }
 
-inline static const char *findProgram(const char *mimeType)
+inline static bool findProgram(const char *mimeType, const char *(&args)[3], const char *lang, const char *country, const char *modifier)
 {
+	const XdgApp *app;
 	const XdgList *values;
-	const XdgAppGroup *group;
+	const XdgAppGroupEntries *group;
 	const XdgJointList *apps;
+	const XdgJointList *removed = xdg_removed_apps_lookup(mimeType);
 
 	if (apps = xdg_joint_list_begin(xdg_added_apps_lookup(mimeType)))
 		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+			if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+				if (group = xdg_app_group_lookup(app, "Desktop Entry"))
+					if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+					{
+						args[0] = xdg_list_item_app_group_entry_value(values);
 
-			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
-				return xdg_list_item_app_group_entry_value(values);
-		}
+						if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Icon")))
+							args[1] = xdg_list_item_app_group_entry_value(values);
+
+						if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", lang, country, modifier)))
+							args[2] = xdg_list_item_app_group_entry_value(values);
+
+						return true;
+					}
 		while (apps = xdg_joint_list_next(apps));
 
 	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup(mimeType)))
 		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+			if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+				if (group = xdg_app_group_lookup(app, "Desktop Entry"))
+					if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+					{
+						args[0] = xdg_list_item_app_group_entry_value(values);
 
-			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
-				return xdg_list_item_app_group_entry_value(values);
-		}
+						if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Icon")))
+							args[1] = xdg_list_item_app_group_entry_value(values);
+
+						if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", lang, country, modifier)))
+							args[2] = xdg_list_item_app_group_entry_value(values);
+
+						return true;
+					}
 		while (apps = xdg_joint_list_next(apps));
 
 	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
 		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
+			if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+				if (group = xdg_app_group_lookup(app, "Desktop Entry"))
+					if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
+					{
+						args[0] = xdg_list_item_app_group_entry_value(values);
 
-			if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
-				return xdg_list_item_app_group_entry_value(values);
-		}
+						if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Icon")))
+							args[1] = xdg_list_item_app_group_entry_value(values);
+
+						if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", lang, country, modifier)))
+							args[2] = xdg_list_item_app_group_entry_value(values);
+
+						return true;
+					}
 		while (apps = xdg_joint_list_next(apps));
+
+	return false;
+}
+
+inline static const char *resolveProgram(const char *name)
+{
+//	realpath();
+	if (const char *path = getenv("PATH"))
+	{
+		struct stat st;
+
+		if (const char *sep = strchr(path, ':'))
+			do
+			{
+
+			}
+			while (sep = strchr(sep, ':'));
+		else
+		{
+
+		}
+	}
 
 	return NULL;
 }
@@ -184,8 +248,10 @@ inline static const char *findProgram(const char *mimeType)
 DE_NS_BEGIN
 
 Service::Service() :
-	m_type(DE_Unknown)
+	m_type(DE_Unknown),
+	m_locale(QString::fromUtf8(getenv("LANG")))
 {
+	LocaleCodes::initialize(m_locale.name().toUtf8());
 	iconCache = new IconCache();
 
 	if (Display *display = XOpenDisplay(NULL))
@@ -349,75 +415,89 @@ QIcon Service::unpackActionIcon(int iconSize) const
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
 }
 
-void Service::open(const ::FileSystem::FileTypeId &type, const QString &absoluteFilePath) const
+void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const
 {
-	if (const char *exec = findProgram(type.mime.toUtf8()))
+	typedef QList<QByteArray> List;
+	const char *args[3] = {NULL, NULL, NULL};
+
+	if (findProgram(file->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
 	{
-		static const char *url = "file://";
-		char *argv[3] = {NULL, NULL, NULL};
-		int index, index1, index2;
-		pid_t pid;
+		QByteArray workingDirectory = container->location().toUtf8();
 
-		QByteArray program(exec);
-		QByteArray filePathUrl;
-		QByteArray filePath = absoluteFilePath.toUtf8();
+		List arguments = QByteArray(args[0]).
+				replace("%d", QByteArray()).
+				replace("%D", QByteArray()).
+				replace("%n", QByteArray()).
+				replace("%N", QByteArray()).
+				replace("%k", QByteArray()).
+				replace("%v", QByteArray()).
+				replace("%m", QByteArray()).
+				trimmed().
+				split(' ');
 
-		filePath.replace('"', "\\\"");
-		filePath.replace('`', "\\`");
-		filePath.replace('$', "\\$");
-		filePath.replace('\\', "\\\\");
+		QByteArray fileName = file->fileName().toUtf8().
+				replace('"', "\\\"").
+				replace('`', "\\`").
+				replace('$', "\\$").
+				replace('\\', "\\\\");
 
-		filePathUrl = QByteArray(filePath).prepend(url);
+		for (List::size_type i = 0, size = arguments.size(); i < size;)
+			if (arguments.at(i).indexOf('=') != -1)
+				arguments.removeAt(i);
+			else
+			{
+				arguments[i] = arguments.at(i).trimmed();
 
-		if (program.indexOf("%f") != -1 || program.indexOf("%F") != -1)
-			argv[1] = filePath.data();
+				if (arguments.at(i).indexOf("%i") != -1)
+				{
+					arguments[i].replace("%i", args[1]);
+					arguments.insert(i, QByteArray("--icon"));
+					++i;
+				}
+				else
+				{
+					arguments[i].replace("%f", fileName);
+					arguments[i].replace("%F", fileName);
+					arguments[i].replace("%u", fileName);
+					arguments[i].replace("%U", fileName);
+					arguments[i].replace("%c", args[2]);
+				}
 
-		if (program.indexOf("%u") != -1 || program.indexOf("%U") != -1)
-			argv[1] = filePathUrl.data();
+				++i;
+			}
 
-		while ((index = program.indexOf('=')) != -1)
+		if (pid_t pid = fork())
 		{
-			index1 = qMin<unsigned int>(0, program.lastIndexOf(' ', index - 1));
-			index2 = program.indexOf(' ', index + 1);
-			program.remove(index1, index2 - index1);
-		}
-
-		program.replace("%f", QByteArray());
-		program.replace("%F", QByteArray());
-		program.replace("%u", QByteArray());
-		program.replace("%U", QByteArray());
-		program.replace("%d", QByteArray());
-		program.replace("%D", QByteArray());
-		program.replace("%n", QByteArray());
-		program.replace("%N", QByteArray());
-		program.replace("%i", QByteArray());
-		program.replace("%c", QByteArray());
-		program.replace("%k", QByteArray());
-		program.replace("%v", QByteArray());
-		program.replace("%m", QByteArray());
-		program = program.trimmed();
-
-		argv[0] = program.data();
-
-		pid = fork();
-		if (pid == 0)
-		{
-			setsid();
-			execvp(argv[0], argv);
-			exit(EXIT_FAILURE);
-		}
-		else
 			if (pid < 0)
 			{
 				/* The fork failed. */
 			}
+		}
+		else
+		{
+			QVarLengthArray<char *, 8> argv(arguments.size() + 1);
+
+			for (List::size_type i = 0, size = arguments.size(); i < size; ++i)
+				if (arguments.at(i).indexOf('=') == -1)
+				{
+					arguments[i] = arguments.at(i).trimmed();
+					argv.data()[i] = arguments[i].data();
+				}
+
+			argv.data()[arguments.size()] = NULL;
+
+			setsid();
+			chdir(workingDirectory);
+			execvp(argv.data()[0], argv.data());
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
 void Service::test() const
 {
 	const XdgList *values;
-	const XdgAppGroup *group;
+	const XdgAppGroupEntries *group;
 	const XdgJointList *apps;
 
 	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup("video/x-msvideo")))

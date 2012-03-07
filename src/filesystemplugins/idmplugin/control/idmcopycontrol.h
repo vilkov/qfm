@@ -3,9 +3,9 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
-#include "../../../containeres/idmcontainer.h"
-#include "../../../storage/entities/idmentity.h"
-#include "../../../../../filesystem/info/filesystemcopycontrol.h"
+#include "../containeres/idmcontainer.h"
+#include "../storage/entities/idmentity.h"
+#include "../../../filesystem/info/filesystemcopycontrol.h"
 
 
 IDM_PLUGIN_NS_BEGIN

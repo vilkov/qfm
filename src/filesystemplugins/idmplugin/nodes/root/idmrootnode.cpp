@@ -3,9 +3,9 @@
 #include "items/idmrootnodefilesitem.h"
 #include "items/idmrootnodeentityitem.h"
 #include "items/idmrootnodepropertyitem.h"
-#include "control/idmcopycontrol.h"
 #include "../query/idmnodequeryresults.h"
 #include "../folder/idmfoldernode.h"
+#include "../../control/idmcopycontrol.h"
 #include "../../gui/create/createentitydialog.h"
 #include "../../gui/choose/choosefileentitydialog.h"
 #include "../../gui/query/create/createquerydialog.h"
@@ -335,7 +335,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 						static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
 					else
 					{
-						Node *node = new IdmFolderNode(m_info, this);
+						Node *node = new IdmFolderNode(m_container, m_info, this);
 
 						node->setParentEntryIndex(idx);
 						static_cast<RootNodeFilesItem*>(item)->setNode(node);
@@ -357,7 +357,7 @@ Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, Q
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		else
 		{
-			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_info, this));
+			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, this));
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		}
 

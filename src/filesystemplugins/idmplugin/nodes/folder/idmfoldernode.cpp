@@ -1,16 +1,23 @@
 #include "idmfoldernode.h"
+#include "../../control/idmcopycontrol.h"
+#include "../../gui/choose/choosefileentitydialog.h"
+#include "../../../../application.h"
 #include "../../../../filesystem/filesystempluginsmanager.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmFolderNode::IdmFolderNode(const Info &info, Node *parent) :
-	FolderNode(info, parent)
+IdmFolderNode::IdmFolderNode(const IdmContainer &container, const Info &info, Node *parent) :
+	FolderNode(info, parent),
+	m_container(container)
 {}
 
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
-	return 0;
+	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
+		return new IdmCopyControl(m_container, entity, absoluteFilePath());
+	else
+		return 0;
 }
 
 void IdmFolderNode::menuAction(QAction *action, INodeView *view)
@@ -69,7 +76,7 @@ Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
 		return res;
 	else
 		if (info.isDir())
-			return new IdmFolderNode(info, const_cast<IdmFolderNode*>(this));
+			return new IdmFolderNode(m_container, info, const_cast<IdmFolderNode*>(this));
 		else
 			return 0;
 }

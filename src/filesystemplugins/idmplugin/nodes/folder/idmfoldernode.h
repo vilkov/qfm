@@ -2,6 +2,7 @@
 #define IDMFOLDERNODE_H_
 
 #include "../../idmplugin_ns.h"
+#include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/folder/filesystemfoldernode.h"
 
 
@@ -10,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmFolderNode : public FolderNode
 {
 public:
-	IdmFolderNode(const Info &info, Node *parent = 0);
+	IdmFolderNode(const IdmContainer &container, const Info &info, Node *parent = 0);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -31,6 +32,9 @@ protected:
 private:
 	friend class IdmRootNode;
 	Node *privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+
+private:
+	IdmContainer m_container;
 };
 
 IDM_PLUGIN_NS_END

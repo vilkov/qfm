@@ -1,4 +1,5 @@
 #include "idmentityvaluecreationtools.h"
+#include "dialogs/idmnewratingvaluedialog.h"
 #include "../value/new/composite/newcompositevaluedialog.h"
 #include "../value/list/selectable/selectablevaluelistdialog.h"
 #include "../../../../tools/pointers/pscopedpointer.h"
@@ -32,14 +33,14 @@ inline IdmEntityValue *processAddValue(const QString &title, const QString &labe
 	else
 		declined = true;
 
-	return 0;
+	return NULL;
 }
 
 template <>
 inline IdmEntityValue *processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	declined = false;
-	return 0;
+	return NULL;
 }
 
 template <>
@@ -68,21 +69,27 @@ inline IdmEntityValue *processAddValue<Database::Composite>(const QString &title
 		}
 	}
 
-	return 0;
+	return NULL;
 }
 
 template <>
 inline IdmEntityValue *processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
-	declined = false;
-	return 0;
+	NewRatingValueDialog dialog(title, parent);
+
+	if (dialog.exec() == NewRatingValueDialog::Accepted)
+		return container.addValue(entity, dialog.value());
+	else
+		declined = true;
+
+	return NULL;
 }
 
 template <>
 inline IdmEntityValue *processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	declined = false;
-	return 0;
+	return NULL;
 }
 
 
@@ -118,7 +125,7 @@ IdmEntityValue *CreationTools::createValue(const QString &title, const QString &
 			return processAddValue<Database::Path>(title, label, parent, container, entity, declined);
 
 		default:
-			return 0;
+			return NULL;
 	}
 }
 
@@ -131,7 +138,7 @@ IdmEntityValue *CreationTools::chooseOrCreateValue(QWidget *parent, IdmContainer
 	else
 		declined = true;
 
-	return 0;
+	return NULL;
 }
 
 IDM_PLUGIN_NS_END

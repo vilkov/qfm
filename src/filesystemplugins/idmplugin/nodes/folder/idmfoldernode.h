@@ -16,14 +16,9 @@ public:
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void menuAction(QAction *action, INodeView *view);
-	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndexList &list, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);
-	virtual void cancel(const QModelIndexList &list, INodeView *view);
-	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
-	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:

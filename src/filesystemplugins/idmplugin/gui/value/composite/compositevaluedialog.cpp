@@ -67,7 +67,7 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 	{
 		SelectableValueListDialog dialog(m_container, Select(entity), this);
 
-		if (dialog.exec() == EditableValueListDialog::Accepted)
+		if (dialog.exec() == SelectableValueListDialog::Accepted)
 		{
 			IdmEntityValue *value;
 

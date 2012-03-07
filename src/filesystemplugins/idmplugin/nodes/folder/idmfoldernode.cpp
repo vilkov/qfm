@@ -25,11 +25,6 @@ void IdmFolderNode::menuAction(QAction *action, INodeView *view)
 
 }
 
-void IdmFolderNode::createFile(const QModelIndex &index, INodeView *view)
-{
-
-}
-
 void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)
 {
 
@@ -41,26 +36,6 @@ void IdmFolderNode::rename(const QModelIndexList &list, INodeView *view)
 }
 
 void IdmFolderNode::remove(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void IdmFolderNode::cancel(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void IdmFolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void IdmFolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void IdmFolderNode::copy(const INodeView *source, INodeView *destination)
 {
 
 }

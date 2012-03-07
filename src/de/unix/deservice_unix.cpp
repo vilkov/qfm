@@ -222,28 +222,6 @@ inline static bool findProgram(const char *mimeType, const char *(&args)[3], con
 	return false;
 }
 
-inline static const char *resolveProgram(const char *name)
-{
-//	realpath();
-	if (const char *path = getenv("PATH"))
-	{
-		struct stat st;
-
-		if (const char *sep = strchr(path, ':'))
-			do
-			{
-
-			}
-			while (sep = strchr(sep, ':'));
-		else
-		{
-
-		}
-	}
-
-	return NULL;
-}
-
 
 DE_NS_BEGIN
 

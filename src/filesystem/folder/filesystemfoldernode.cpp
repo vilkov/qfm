@@ -273,11 +273,6 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	menu.clear();
 }
 
-void FolderNode::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void FolderNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
@@ -390,6 +385,11 @@ QAbstractItemDelegate *FolderNode::delegate() const
 const INodeView::MenuActionList &FolderNode::actions() const
 {
 	return m_menuActions;
+}
+
+::History::Entry *FolderNode::menuAction(QAction *action, INodeView *view)
+{
+	return NULL;
 }
 
 QModelIndex FolderNode::rootIndex() const
@@ -981,7 +981,7 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 
 QModelIndex FolderNode::index(int column, FileSystemBaseItem *item) const
 {
-	int index = m_items.indexOf(item);
+	ItemsContainer::size_type index = m_items.indexOf(item);
 
 	if (index != ItemsContainer::InvalidIndex)
 		return createIndex(index, column, item);

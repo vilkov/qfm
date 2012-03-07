@@ -186,31 +186,6 @@ void IdmRootNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void IdmRootNode::menuAction(QAction *action, INodeView *view)
-{
-	switch (static_cast<MenuId>(action->data().toInt()))
-	{
-		case Create:
-		{
-			createEntity();
-			break;
-		}
-
-		case Find:
-		{
-			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
-			{
-				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
-
-				if (dialog.exec() == CreateQueryDialog::Accepted)
-					switchTo(new IdmNodeQueryResults(m_container, dialog.query(), absoluteFilePath(), this), view);
-			}
-
-			break;
-		}
-	}
-}
-
 void IdmRootNode::createFile(const QModelIndex &index, INodeView *view)
 {
 //	RootNodeItem::Base *item;
@@ -289,6 +264,33 @@ QAbstractItemDelegate *IdmRootNode::delegate() const
 const INodeView::MenuActionList &IdmRootNode::actions() const
 {
 	return m_actions;
+}
+
+::History::Entry *IdmRootNode::menuAction(QAction *action, INodeView *view)
+{
+	switch (static_cast<MenuId>(action->data().toInt()))
+	{
+		case Create:
+		{
+			createEntity();
+			break;
+		}
+
+		case Find:
+		{
+			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
+			{
+				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
+
+				if (dialog.exec() == CreateQueryDialog::Accepted)
+					return switchTo(new IdmNodeQueryResults(m_container, dialog.query(), m_info, this), view);
+			}
+
+			break;
+		}
+	}
+
+	return NULL;
 }
 
 QModelIndex IdmRootNode::rootIndex() const

@@ -20,11 +20,6 @@ ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 		return 0;
 }
 
-void IdmFolderNode::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)
 {
 

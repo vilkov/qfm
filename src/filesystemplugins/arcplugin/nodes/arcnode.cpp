@@ -166,11 +166,6 @@ void ArcNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void ArcNode::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void ArcNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
@@ -265,6 +260,11 @@ const INodeView::MenuActionList &ArcNode::actions() const
 QAbstractItemView::SelectionMode ArcNode::selectionMode() const
 {
 	return QAbstractItemView::SingleSelection;
+}
+
+::History::Entry *ArcNode::menuAction(QAction *action, INodeView *view)
+{
+	return NULL;
 }
 
 QModelIndex ArcNode::rootIndex() const

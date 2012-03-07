@@ -7,6 +7,7 @@
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
+#include "../folder/idmfoldernode.h"
 #include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
@@ -239,11 +240,6 @@ void IdmNodeQueryResults::contextMenu(const QModelIndexList &list, INodeView *vi
 
 }
 
-void IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 {
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
@@ -317,7 +313,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		QueryResultPropertyItem::size_type idx;
 
 		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
+			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isValue())
 			{
 				item = static_cast<QueryResultValueItem *>(index.internalPointer());
 
@@ -387,17 +383,22 @@ void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
 
 QAbstractItemModel *IdmNodeQueryResults::model() const
 {
-	return const_cast<IdmNodeQueryResults*>(this);
+	return const_cast<IdmNodeQueryResults *>(this);
 }
 
 QAbstractItemDelegate *IdmNodeQueryResults::delegate() const
 {
-	return const_cast<IdmQueryResultsDelegate*>(&m_delegate);
+	return const_cast<IdmQueryResultsDelegate *>(&m_delegate);
 }
 
 const INodeView::MenuActionList &IdmNodeQueryResults::actions() const
 {
 	return m_actions;
+}
+
+::History::Entry *IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
+{
+	return NULL;
 }
 
 QModelIndex IdmNodeQueryResults::rootIndex() const
@@ -407,12 +408,32 @@ QModelIndex IdmNodeQueryResults::rootIndex() const
 
 Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	return 0;
+	QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
+
+	if (!item->isLocked() &&
+		item->isValue() &&
+		static_cast<QueryResultValueItem *>(item)->value()->entity()->type() == Database::Path)
+
+		if (Node *node = static_cast<QueryResultPathValueItem *>(item)->node())
+			return node;
+		else
+		{
+			Info info(static_cast<QueryResultValueItem *>(item)->value()->value().toString(), true);
+
+			if (info.exists())
+			{
+				node = new IdmFolderNode(m_container, info, this);
+				static_cast<QueryResultPathValueItem *>(item)->setNode(node);
+				return node;
+			}
+		}
+
+	return NULL;
 }
 
 Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	return 0;
+	return NULL;
 }
 
 void IdmNodeQueryResults::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)

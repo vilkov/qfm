@@ -48,7 +48,6 @@ public:
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
-	virtual void menuAction(QAction *action, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);
 	virtual void createDirectory(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndex &index, INodeView *view);
@@ -65,6 +64,7 @@ public:
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
 	virtual QAbstractItemView::SelectionMode selectionMode() const;
+	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
 
 protected:
 	/* Node */

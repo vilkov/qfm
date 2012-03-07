@@ -2,6 +2,7 @@
 #define IDMQUERYRESULTPATHVALUEITEM_H_
 
 #include "idmqueryresultvalueitem.h"
+#include "../../../../../filesystem/filesystemnode.h"
 #include "../../../../../filesystem/info/filesysteminfo.h"
 
 
@@ -17,8 +18,12 @@ public:
 
 	void update() { m_info = value()->value().toString(); }
 
+	Node *node() const { return m_node; }
+	void setNode(Node *node) { m_node = node; }
+
 private:
 	Info m_info;
+	Node *m_node;
 };
 
 IDM_PLUGIN_NS_END

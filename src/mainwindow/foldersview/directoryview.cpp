@@ -304,7 +304,8 @@ void DirectoryView::cancel()
 
 void DirectoryView::actionTriggered(QAction *action)
 {
-	m_node->menuAction(action, this);
+	if (::History::Entry *entry = m_node->menuAction(action, this))
+		m_navigation.save(entry);
 }
 
 void DirectoryView::openInNewTab()

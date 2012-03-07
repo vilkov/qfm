@@ -105,11 +105,6 @@ void RootNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void RootNode::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void RootNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
@@ -173,6 +168,11 @@ QAbstractItemDelegate *RootNode::delegate() const
 const INodeView::MenuActionList &RootNode::actions() const
 {
 	return m_menuActions;
+}
+
+::History::Entry *RootNode::menuAction(QAction *action, INodeView *view)
+{
+	return NULL;
 }
 
 bool RootNode::isPhysical() const

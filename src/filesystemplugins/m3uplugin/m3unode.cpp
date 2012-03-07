@@ -214,11 +214,6 @@ void M3uNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void M3uNode::menuAction(QAction *action, INodeView *view)
-{
-
-}
-
 void M3uNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
@@ -269,9 +264,9 @@ void M3uNode::move(const INodeView *source, INodeView *destination)
 
 }
 
-void M3uNode::switchViewsTo(Node *node, const QModelIndex &selected)
+::History::Entry *M3uNode::menuAction(QAction *action, INodeView *view)
 {
-
+	return NULL;
 }
 
 Node *M3uNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)

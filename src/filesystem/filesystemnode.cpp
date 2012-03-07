@@ -113,11 +113,15 @@ Node *Node::root() const
 		return const_cast<Node *>(this);
 }
 
-void Node::switchTo(Node *node, INodeView *view)
+::History::Entry *Node::switchTo(Node *node, INodeView *view)
 {
-	node->viewThis(view, QModelIndex());
+	/* XXX: Add 2 links because of HistoryEntry */
+
+	node->viewThis(view, QModelIndex(), 2);
 	node->refresh();
 	removeView(view);
+
+	return new HistoryEntry(node);
 }
 
 void Node::addLink()

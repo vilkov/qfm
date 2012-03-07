@@ -11,7 +11,7 @@ IdmValueReader::IdmValueReader(const IdmContainer &container, const Select &quer
 	m_beforeFirst(isValid())
 {}
 
-IdmEntityValue *IdmValueReader::next() const
+IdmEntityValue::Holder IdmValueReader::next() const
 {
 	if (m_beforeFirst)
 		if (m_context.next())
@@ -23,69 +23,69 @@ IdmEntityValue *IdmValueReader::next() const
 		{
 			m_beforeFirst = false;
 			m_afterLast = true;
-			return 0;
+			return IdmEntityValue::Holder();
 		}
 	else
 		if (m_afterLast)
-			return 0;
+			return IdmEntityValue::Holder();
 		else
 			return doNext();
 }
 
-void IdmValueReader::addValue(IdmEntityValue *value, IdmEntityValue *property)
+void IdmValueReader::addValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property)
 {
-	static_cast<IdmEntityCompositeValueImp*>(value)->add(property);
+	static_cast<IdmEntityCompositeValueImp*>(value.data())->add(property);
 }
 
-void IdmValueReader::addValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values)
+void IdmValueReader::addValue(const IdmEntityValue::Holder &value, const IdmCompositeEntityValue::List &values)
 {
-	static_cast<IdmEntityCompositeValueImp*>(value)->add(values);
+	static_cast<IdmEntityCompositeValueImp*>(value.data())->add(values);
 }
 
-void IdmValueReader::takeValue(IdmEntityValue *value, IdmEntityValue *property)
+void IdmValueReader::takeValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property)
 {
-	static_cast<IdmEntityCompositeValueImp*>(value)->take(property);
+	static_cast<IdmEntityCompositeValueImp*>(value.data())->take(property);
 }
 
-void IdmValueReader::updateValue(IdmEntityValue *value, const QVariant &newValue)
+void IdmValueReader::updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue)
 {
-	static_cast<IdmEntityValueImp*>(value)->setValue(newValue);
+	static_cast<IdmEntityValueImp*>(value.data())->setValue(newValue);
 }
 
-void IdmValueReader::removeValue(IdmEntityValue *value, IdmEntityValue *property)
+void IdmValueReader::removeValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property)
 {
-	static_cast<IdmEntityCompositeValueImp*>(value)->remove(property);
+	static_cast<IdmEntityCompositeValueImp*>(value.data())->remove(property);
 }
 
-void IdmValueReader::removeValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values)
+void IdmValueReader::removeValue(const IdmEntityValue::Holder &value, const IdmCompositeEntityValue::List &values)
 {
-	static_cast<IdmEntityCompositeValueImp*>(value)->remove(values);
+	static_cast<IdmEntityCompositeValueImp*>(value.data())->remove(values);
 }
 
-IdmCompositeEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id)
+IdmEntityValue::Holder IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id)
 {
-	return new IdmEntityCompositeValueImp(entity, id);
+	return IdmEntityValue::Holder(new IdmEntityCompositeValueImp(entity, id));
 }
 
-IdmEntityValue *IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value)
+IdmEntityValue::Holder IdmValueReader::createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value)
 {
-	return new IdmEntityValueImp(entity, id, value);
+	return IdmEntityValue::Holder(new IdmEntityValueImp(entity, id, value));
 }
 
-IdmEntityValue *IdmValueReader::doNext() const
+IdmEntityValue::Holder IdmValueReader::doNext() const
 {
 	int column = 0;
 
 	if (m_context.entity()->type() == Database::Composite)
 	{
-		PScopedPointer<IdmEntityValue> value(createValue(m_context.entity(), m_context.asInt(0)));
+		IdmEntityValue::Holder value(createValue(m_context.entity(), m_context.asInt(0)));
 
 		for (IdmEntityValue::id_type id = value->id(), nextId = id; id == nextId; nextId = m_context.asInt(0))
 		{
 			column = 1;
 
 			for (IdmEntity::size_type i = 0, size = m_context.entity()->size(); i < size; ++i)
-				property(value.data(), m_context.entity()->at(i).entity, column);
+				property(value, m_context.entity()->at(i).entity, column);
 
 			if (!m_context.next())
 			{
@@ -94,11 +94,11 @@ IdmEntityValue *IdmValueReader::doNext() const
 			}
 		}
 
-		return value.take();
+		return value;
 	}
 	else
 	{
-		IdmEntityValue *property = value(m_context.entity(), m_context.asInt(0), column);
+		IdmEntityValue::Holder property = value(m_context.entity(), m_context.asInt(0), column);
 
 		if (!m_context.next())
 			m_afterLast = true;
@@ -107,7 +107,7 @@ IdmEntityValue *IdmValueReader::doNext() const
 	}
 }
 
-IdmEntityValue *IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, int column) const
+IdmEntityValue::Holder IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, int column) const
 {
 	switch (entity->type())
 	{
@@ -128,19 +128,20 @@ IdmEntityValue *IdmValueReader::value(IdmEntity *entity, IdmEntity::id_type id, 
 		case Database::Path:
 			return createValue(entity, id, contextValue<Database::Path>(m_context, column + 1));
 		default:
-			return 0;
+			return IdmEntityValue::Holder();
 	}
 }
 
-void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &column) const
+void IdmValueReader::property(const IdmEntityValue::Holder &value, IdmEntity *property, int &column) const
 {
 	if (m_context.columnType(column) == QueryContext::Null)
 		skip(property, column);
 	else
 	{
 		IdmEntity::id_type id = m_context.asInt(column);
+		IdmEntityValue::Holder lastValue;
 
-		if (IdmEntityValue *lastValue = static_cast<IdmEntityCompositeValueImp*>(value)->value(property, id))
+		if (lastValue = static_cast<IdmEntityCompositeValueImp*>(value.data())->value(property, id))
 		{
 			if (property->type() == Database::Composite)
 			{
@@ -157,13 +158,13 @@ void IdmValueReader::property(IdmEntityValue *value, IdmEntity *property, int &c
 
 		if (property->type() == Database::Composite)
 		{
-			PScopedPointer<IdmEntityValue> localValue(createValue(property, id));
+			IdmEntityValue::Holder localValue(createValue(property, id));
 			column += 1;
 
 			for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
-				IdmValueReader::property(localValue.data(), property->at(i).entity, column);
+				IdmValueReader::property(localValue, property->at(i).entity, column);
 
-			addValue(value, localValue.take());
+			addValue(value, localValue);
 		}
 		else
 		{

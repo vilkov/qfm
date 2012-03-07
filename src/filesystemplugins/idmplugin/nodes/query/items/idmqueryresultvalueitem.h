@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultValueItem : public QueryResultItem
 {
 public:
-	QueryResultValueItem(IdmEntityValue *value, Base *parent);
+	QueryResultValueItem(const IdmEntityValue::Holder &value, Base *parent);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -19,10 +19,10 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 
-	IdmEntityValue *value() const { return m_value; }
+	const IdmEntityValue::Holder &value() const { return m_value; }
 
 private:
-	IdmEntityValue *m_value;
+	IdmEntityValue::Holder m_value;
 };
 
 IDM_PLUGIN_NS_END

@@ -5,7 +5,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent) :
+CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent) :
 	IdmModel(parent)
 {
 	ValueList list;
@@ -14,7 +14,7 @@ CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
 		m_items.push_back(item = new CompositeValuePropertyItem(value->entity()->at(i)));
-		list = value->values(value->entity()->at(i).entity);
+		list = value.as<IdmCompositeEntityValue>()->values(value->entity()->at(i).entity);
 
 		if (!list.isEmpty())
 			for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
@@ -22,7 +22,7 @@ CompositeValueModel::CompositeValueModel(IdmCompositeEntityValue *value, QObject
 	}
 }
 
-void CompositeValueModel::add(const QModelIndex &index, IdmEntityValue *value)
+void CompositeValueModel::add(const QModelIndex &index, const IdmEntityValue::Holder &value)
 {
 	CompositeValuePropertyItem *item = static_cast<CompositeValuePropertyItem*>(index.internalPointer());
 

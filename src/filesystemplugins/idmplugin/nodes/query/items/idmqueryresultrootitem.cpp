@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultRootItem::QueryResultRootItem(IdmEntityValue *value, Base *parent) :
+QueryResultRootItem::QueryResultRootItem(const IdmEntityValue::Holder &value, Base *parent) :
 	QueryResultListItem(parent),
 	m_value(value)
 {

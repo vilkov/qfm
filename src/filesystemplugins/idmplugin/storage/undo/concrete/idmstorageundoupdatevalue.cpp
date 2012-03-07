@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorageUndoUpdateValue::IdmStorageUndoUpdateValue(IdmEntityValue *value) :
+IdmStorageUndoUpdateValue::IdmStorageUndoUpdateValue(const IdmEntityValue::Holder &value) :
 	m_value(value),
 	m_oldValue(m_value->value())
 {}

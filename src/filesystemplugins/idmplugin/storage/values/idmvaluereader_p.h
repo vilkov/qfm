@@ -74,7 +74,7 @@ public:
 		}
 	}
 
-	void add(IdmEntityValue *value)
+	void add(const IdmEntityValue::Holder &value)
 	{
 		m_items[value->entity()].add(value->id(), value);
 		m_value.clear();
@@ -90,17 +90,17 @@ public:
 		m_value.clear();
 	}
 
-	void take(IdmEntityValue *value)
+	void take(const IdmEntityValue::Holder &value)
 	{
 		InternalList &list = m_items[value->entity()];
 		list.remove(value->id());
 		m_value.clear();
 	}
 
-	void remove(IdmEntityValue *value)
+	void remove(const IdmEntityValue::Holder &value)
 	{
 		InternalList &list = m_items[value->entity()];
-		delete list.take(value->id());
+		list.take(value->id());
 		m_value.clear();
 	}
 
@@ -109,18 +109,18 @@ public:
 		InternalList &list = m_items[values.at(0)->entity()];
 
 		for (List::size_type i = 0, size = values.size(); i < size; ++i)
-			delete list.take(values.at(i)->id());
+			list.take(values.at(i)->id());
 
 		m_value.clear();
 	}
 
-	IdmEntityValue *value(IdmEntity *property, id_type id)
+	IdmEntityValue::Holder value(IdmEntity *property, id_type id)
 	{
 		InternalList &list = m_items[property];
 		InternalList::size_type index = list.indexOf(id);
 
 		if (index == InternalList::InvalidIndex)
-			return 0;
+			return IdmEntityValue::Holder();
 		else
 			return list.at(index);
 	}

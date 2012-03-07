@@ -5,7 +5,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info) :
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info) :
 	CopyControl(info),
 	m_container(container),
 	m_value(value),
@@ -18,7 +18,7 @@ bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
-		IdmEntityValue *localValue;
+		IdmEntityValue::Holder localValue;
 		IdmCompositeEntityValue::List list;
 		list.reserve(files.size());
 
@@ -28,7 +28,6 @@ bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
 			else
 			{
 				m_container.rollback();
-				qDeleteAll(list);
 				return false;
 			}
 
@@ -47,7 +46,6 @@ bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
 		{
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			m_container.rollback();
-			qDeleteAll(list);
 		}
 	}
 	else

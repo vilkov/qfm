@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultRootItem : public QueryResultListItem
 {
 public:
-	QueryResultRootItem(IdmEntityValue *value, Base *parent = 0);
+	QueryResultRootItem(const IdmEntityValue::Holder &value, Base *parent = 0);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -19,10 +19,10 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 
-	IdmEntityValue *value() const { return m_value.data(); }
+	const IdmEntityValue::Holder &value() const { return m_value; }
 
 private:
-	PScopedPointer<IdmEntityValue> m_value;
+	IdmEntityValue::Holder m_value;
 };
 
 IDM_PLUGIN_NS_END

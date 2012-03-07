@@ -6,7 +6,7 @@ SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &contain
 	EditableValueListDialog(container, query, parent)
 {}
 
-IdmEntityValue *SelectableValueListDialog::takeValue()
+IdmEntityValue::Holder SelectableValueListDialog::takeValue()
 {
 	return EditableValueListDialog::takeValue();
 }

@@ -50,7 +50,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
-IdmEntityValue *StaticValueListDialog::takeValue()
+IdmEntityValue::Holder StaticValueListDialog::takeValue()
 {
 	return m_model.take(currentIndex());
 }

@@ -20,9 +20,9 @@ public:
 	virtual bool isValue();
 
 	const IdmEntity::Property &property() const { return m_property; }
-	IdmCompositeEntityValue *rootValue() const { return static_cast<IdmCompositeEntityValue*>(static_cast<QueryResultRootItem*>(parent())->value()); }
+	const IdmEntityValue::Holder &rootValue() const { return static_cast<QueryResultRootItem*>(parent())->value(); }
 
-	void add(IdmEntityValue *value);
+	void add(const IdmEntityValue::Holder &value);
 	void add(const IdmCompositeEntityValue::List &values);
 	void remove(size_type index);
 

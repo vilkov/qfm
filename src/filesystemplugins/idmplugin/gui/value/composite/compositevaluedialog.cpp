@@ -7,7 +7,7 @@
 #include <QtGui/QMessageBox>
 
 
-CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent) :
+CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
 	m_value(value),
@@ -69,7 +69,7 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 
 		if (dialog.exec() == SelectableValueListDialog::Accepted)
 		{
-			IdmEntityValue *value;
+			IdmEntityValue::Holder value;
 
 			if (m_container.addValue(m_value, value = dialog.takeValue()))
 				if (m_container.release(name))
@@ -81,7 +81,6 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 				}
 			else
 			{
-				delete value;
 				m_container.rollback(name);
 				QMessageBox::critical(this, windowTitle(), m_container.lastError());
 			}
@@ -95,7 +94,7 @@ void CompositeValueDialog::doAddValue(const QModelIndex &index)
 
 void CompositeValueDialog::doRemoveValue(const QModelIndex &index)
 {
-	IdmEntityValue *value = static_cast<CompositeValueValueItem*>(index.internalPointer())->value();
+	IdmEntityValue::Holder value(static_cast<CompositeValueValueItem*>(index.internalPointer())->value());
 	QByteArray name = Database::savepoint("CompositeValueDialog::doRemoveValue::");
 
 	if (m_container.savepoint(name))

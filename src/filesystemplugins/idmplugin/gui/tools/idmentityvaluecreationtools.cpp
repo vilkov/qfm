@@ -23,7 +23,7 @@ public:
 
 
 template <Database::EntityType EntityType>
-inline IdmEntityValue *processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline IdmEntityValue::Holder processAddValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	typedef NewValueDialog<EntityType> NewValueDialog;
 	NewValueDialog dialog(title, label, parent);
@@ -33,32 +33,32 @@ inline IdmEntityValue *processAddValue(const QString &title, const QString &labe
 	else
 		declined = true;
 
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue *processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline IdmEntityValue::Holder processAddValue<Database::Memo>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	declined = false;
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue *processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline IdmEntityValue::Holder processAddValue<Database::Composite>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	QByteArray name = Database::savepoint("processAddValue<Database::Composite>::");
 
 	if (container.savepoint(name))
 	{
-		PScopedPointer<IdmCompositeEntityValue> value(container.addValue(entity));
+		IdmEntityValue::Holder value(container.addValue(entity));
 
 		if (value)
 		{
-			NewCompositeValueDialog dialog(container, value.data(), parent);
+			NewCompositeValueDialog dialog(container, value, parent);
 
 			if (dialog.exec() == NewCompositeValueDialog::Accepted)
 				if (container.release(name))
-					return value.take();
+					return value;
 				else
 					container.rollback(name);
 			else
@@ -69,11 +69,11 @@ inline IdmEntityValue *processAddValue<Database::Composite>(const QString &title
 		}
 	}
 
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue *processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline IdmEntityValue::Holder processAddValue<Database::Rating>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	NewRatingValueDialog dialog(title, parent);
 
@@ -82,18 +82,18 @@ inline IdmEntityValue *processAddValue<Database::Rating>(const QString &title, c
 	else
 		declined = true;
 
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue *processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline IdmEntityValue::Holder processAddValue<Database::Path>(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	declined = false;
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 
-IdmEntityValue *CreationTools::createValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+IdmEntityValue::Holder CreationTools::createValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	switch (entity->type())
 	{
@@ -125,11 +125,11 @@ IdmEntityValue *CreationTools::createValue(const QString &title, const QString &
 			return processAddValue<Database::Path>(title, label, parent, container, entity, declined);
 
 		default:
-			return NULL;
+			return IdmEntityValue::Holder();
 	}
 }
 
-IdmEntityValue *CreationTools::chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
+IdmEntityValue::Holder CreationTools::chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined)
 {
 	SelectableValueListDialog dialog(container, Select(entity), parent);
 
@@ -138,7 +138,7 @@ IdmEntityValue *CreationTools::chooseOrCreateValue(QWidget *parent, IdmContainer
 	else
 		declined = true;
 
-	return NULL;
+	return IdmEntityValue::Holder();
 }
 
 IDM_PLUGIN_NS_END

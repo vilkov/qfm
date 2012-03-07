@@ -11,12 +11,11 @@ IDM_PLUGIN_NS_BEGIN
 class ValueListModel : public QAbstractItemModel
 {
 public:
-	typedef QList<IdmEntityValue*> List;
-	typedef List::size_type        size_type;
+	typedef QList<IdmEntityValue::Holder> List;
+	typedef List::size_type               size_type;
 
 public:
 	ValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
-	virtual ~ValueListModel();
 
     /* QAbstractItemModel */
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -33,8 +32,8 @@ public:
 	const QString &lastError() const { return m_reader.lastError(); }
 
 	size_type size() const { return m_items.size(); }
-	IdmEntityValue *at(size_type index) const { return m_items.at(index); }
-	IdmEntityValue *take(const QModelIndex &index);
+	const IdmEntityValue::Holder &at(size_type index) const { return m_items.at(index); }
+	IdmEntityValue::Holder take(const QModelIndex &index);
 
 protected:
     enum { PrefetchLimit = 256 };

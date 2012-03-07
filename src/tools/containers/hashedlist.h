@@ -172,7 +172,7 @@ public:
 	}
 	T take(size_type index)
 	{
-		T res = m_list.at(index);
+		T res(m_list.at(index));
 		remove(index);
 		return res;
 	}

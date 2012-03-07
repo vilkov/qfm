@@ -16,7 +16,7 @@ class IdmQueryResultsCopyControl : public CopyControl
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 
 public:
-	IdmQueryResultsCopyControl(const IdmContainer &container, IdmCompositeEntityValue *value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info);
+	IdmQueryResultsCopyControl(const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index, const Info &info);
 
 	/* ICopyControl */
 	virtual bool start(const Snapshot::Files &files, bool move);
@@ -25,7 +25,7 @@ public:
 
 private:
 	IdmContainer m_container;
-	IdmCompositeEntityValue *m_value;
+	IdmEntityValue::Holder m_value;
 	const IdmEntity::Property &m_property;
 	IQueryResultsUpdater *m_model;
 	QModelIndex m_index;

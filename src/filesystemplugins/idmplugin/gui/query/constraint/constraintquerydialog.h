@@ -21,7 +21,6 @@ class ConstraintQueryDialog : public QDialog
 
 public:
 	ConstraintQueryDialog(const IdmContainer &container, const IdmEntity::Property &property, QWidget *parent = 0);
-	virtual ~ConstraintQueryDialog();
 
 	Constraint *takeConstraint(BaseConstraint *parent);
     virtual void accept();
@@ -29,7 +28,7 @@ public:
 private Q_SLOTS:
 	void chooseValue();
     void updateValue(const QString &text);
-    void updateValue(IdmEntityValue *value);
+    void updateValue(const IdmEntityValue::Holder &value);
     void updateValue(int index);
 
 private:
@@ -38,7 +37,7 @@ private:
 private:
 	IdmContainer m_container;
 	const IdmEntity::Property &m_property;
-	IdmEntityValue *m_value;
+	IdmEntityValue::Holder m_value;
 	QLabel m_label;
 	QComboBox m_operator;
 	QLineEdit m_edit;

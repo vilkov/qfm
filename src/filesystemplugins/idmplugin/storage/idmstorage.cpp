@@ -348,7 +348,7 @@ bool IdmStorage::removeProperty(IdmEntity *entity, IdmEntity *property)
 	return false;
 }
 
-IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
+IdmEntityValue::Holder IdmStorage::addValue(IdmEntity *entity) const
 {
 	QString str;
 	id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
@@ -368,12 +368,12 @@ IdmCompositeEntityValue *IdmStorage::addValue(IdmEntity *entity) const
 	else
 		setLastError(failedToLoadId(str));
 
-	return 0;
+	return IdmEntityValue::Holder();
 }
 
-bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
+bool IdmStorage::addValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const
 {
-	if (entityValue->contains(propertyValue))
+	if (entityValue.as<IdmCompositeEntityValue>()->contains(propertyValue))
 		setLastError(tr("Entity \"%1\" [\"%2\"] already contains (\"%3\") value.").
 				arg(entityValue->entity()->name()).
 				arg(entityValue->value().toString()).
@@ -411,11 +411,11 @@ bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *
 	return false;
 }
 
-bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, const IdmCompositeEntityValue::List &propertyValues) const
+bool IdmStorage::addValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues) const
 {
-	IdmEntityValue *propertyValue;
+	IdmEntityValue::Holder propertyValue;
 
-	if (entityValue->contains(propertyValues, propertyValue))
+	if (entityValue.as<IdmCompositeEntityValue>()->contains(propertyValues, propertyValue))
 		setLastError(tr("Entity \"%1\" [\"%2\"] already contains (\"%3\") value.").
 				arg(entityValue->entity()->name()).
 				arg(entityValue->value().toString()).
@@ -491,7 +491,7 @@ bool IdmStorage::addValue(IdmCompositeEntityValue *entityValue, const IdmComposi
 	return false;
 }
 
-IdmEntityValue *IdmStorage::addValue(IdmEntity *entity, const QVariant &value) const
+IdmEntityValue::Holder IdmStorage::addValue(IdmEntity *entity, const QVariant &value) const
 {
 	QString str;
 	id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
@@ -511,10 +511,10 @@ IdmEntityValue *IdmStorage::addValue(IdmEntity *entity, const QVariant &value) c
 	else
 		setLastError(failedToLoadId(str));
 
-	return 0;
+	return IdmEntityValue::Holder();
 }
 
-bool IdmStorage::updateValue(IdmEntityValue *value, const QVariant &newValue) const
+bool IdmStorage::updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const
 {
 	char *errorMsg = 0;
 	QByteArray sqlQuery = EntitiesTable::updateValue(value->entity()->id(), value->entity()->type(), value->id(), newValue);
@@ -549,7 +549,7 @@ bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const
 	return false;
 }
 
-bool IdmStorage::removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const
+bool IdmStorage::removeValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const
 {
 	char *errorMsg = 0;
 	QString table =
@@ -945,7 +945,7 @@ void IdmStorage::clearUndoStack(const QByteArray &name)
 	UndoList &list = m_undo[(index = m_undo.indexOf(name)) - 1];
 
 	for (UndoStack::size_type i = index, size = m_undo.size(); i < size; ++i)
-		list.append(m_undo.take(index));
+		list += m_undo.take(index);
 }
 
 QString IdmStorage::failedToLoadId(const QString &tableName) const

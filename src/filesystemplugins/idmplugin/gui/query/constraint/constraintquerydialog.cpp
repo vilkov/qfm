@@ -66,11 +66,6 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     m_operator.setCurrentIndex(0);
 }
 
-ConstraintQueryDialog::~ConstraintQueryDialog()
-{
-	delete m_value;
-}
-
 Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 {
 	if (m_value)
@@ -106,13 +101,13 @@ void ConstraintQueryDialog::chooseValue()
 void ConstraintQueryDialog::updateValue(const QString &text)
 {
 	setEditFont(false);
-	Templates::Utils::nullify(m_value);
+	m_value.reset();
 }
 
-void ConstraintQueryDialog::updateValue(IdmEntityValue *value)
+void ConstraintQueryDialog::updateValue(const IdmEntityValue::Holder &value)
 {
 	if (m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt() == Constraint::Equal)
-		Templates::Utils::nullify(m_value);
+		m_value.reset();
 	else
 		for (int i = 0, size = m_operator.count(); i < size; ++i)
 			if (m_operator.itemData(i, Qt::UserRole).toInt() == Constraint::Equal)
@@ -128,7 +123,7 @@ void ConstraintQueryDialog::updateValue(IdmEntityValue *value)
 void ConstraintQueryDialog::updateValue(int index)
 {
 	setEditFont(false);
-	Templates::Utils::nullify(m_value);
+	m_value.reset();
 }
 
 void ConstraintQueryDialog::setEditFont(bool italic)

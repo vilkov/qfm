@@ -4,15 +4,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorageUndoRemoveValue::IdmStorageUndoRemoveValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) :
+IdmStorageUndoRemoveValue::IdmStorageUndoRemoveValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) :
 	m_entityValue(entityValue),
 	m_propertyValue(propertyValue)
 {}
-
-IdmStorageUndoRemoveValue::~IdmStorageUndoRemoveValue()
-{
-	delete m_propertyValue;
-}
 
 void IdmStorageUndoRemoveValue::undo(IdmEntityRoot &root)
 {

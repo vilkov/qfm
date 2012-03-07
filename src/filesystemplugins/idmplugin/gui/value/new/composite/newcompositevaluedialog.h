@@ -9,7 +9,7 @@ class NewCompositeValueDialog : public CompositeValueDialog
 	Q_OBJECT
 
 public:
-	NewCompositeValueDialog(const IdmContainer &container, IdmCompositeEntityValue *value, QWidget *parent = 0);
+	NewCompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent = 0);
 };
 
 #endif /* NEWCOMPOSITEVALUEDIALOG_H_ */

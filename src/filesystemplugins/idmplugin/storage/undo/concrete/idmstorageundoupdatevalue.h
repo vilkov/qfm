@@ -10,12 +10,12 @@ IDM_PLUGIN_NS_BEGIN
 class IdmStorageUndoUpdateValue : public IdmStorageUndoCommand
 {
 public:
-	IdmStorageUndoUpdateValue(IdmEntityValue *value);
+	IdmStorageUndoUpdateValue(const IdmEntityValue::Holder &value);
 
 	virtual void undo(IdmEntityRoot &root);
 
 private:
-	IdmEntityValue *m_value;
+	IdmEntityValue::Holder m_value;
 	QVariant m_oldValue;
 };
 

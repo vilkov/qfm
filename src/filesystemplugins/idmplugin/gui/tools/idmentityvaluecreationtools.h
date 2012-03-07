@@ -9,8 +9,8 @@ IDM_PLUGIN_NS_BEGIN
 
 struct CreationTools
 {
-	static IdmEntityValue *createValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
-	static IdmEntityValue *chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
+	static IdmEntityValue::Holder createValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
+	static IdmEntityValue::Holder chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
 };
 
 IDM_PLUGIN_NS_END

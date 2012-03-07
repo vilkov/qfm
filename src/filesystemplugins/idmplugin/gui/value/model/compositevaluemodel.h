@@ -14,12 +14,12 @@ public:
 	typedef Container::size_type          size_type;
 
 public:
-	CompositeValueModel(IdmCompositeEntityValue *value, QObject *parent = 0);
+	CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent = 0);
 
 	IdmItem *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 
-	void add(const QModelIndex &index, IdmEntityValue *value);
+	void add(const QModelIndex &index, const IdmEntityValue::Holder &value);
 	void add(const QModelIndex &index, const ValueList &values);
 	void remove(const QModelIndex &index);
 };

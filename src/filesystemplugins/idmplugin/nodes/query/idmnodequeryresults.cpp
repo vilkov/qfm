@@ -55,7 +55,7 @@ bool IdmNodeQueryResults::event(QEvent *e)
 
 void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
-	IdmEntityValue *item;
+	IdmEntityValue::Holder item;
 	ItemsContainer::List list;
 
 	list.reserve(PrefetchLimit);
@@ -253,7 +253,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		if (m_container.transaction())
 		{
 			bool declined = false;
-			PScopedPointer<IdmEntityValue> value(
+			IdmEntityValue::Holder value(
 					CreationTools::chooseOrCreateValue(
 					Application::mainWindow(),
 					m_container,
@@ -261,11 +261,11 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 					declined));
 
 			if (value)
-				if (m_container.addValue(item->rootValue(), value.data()))
+				if (m_container.addValue(item->rootValue(), value))
 					if (m_container.commit())
 					{
 						beginInsertRows(index, item->size(), item->size());
-						item->add(value.take());
+						item->add(value);
 						endInsertRows();
 					}
 					else

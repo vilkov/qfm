@@ -16,7 +16,7 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 {
 	if (m_container.transaction())
 	{
-		PScopedPointer<IdmCompositeEntityValue> value(m_container.addValue(m_entity));
+		IdmEntityValue::Holder value(m_container.addValue(m_entity));
 
 		if (value)
 		{
@@ -27,24 +27,23 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 			for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
 		    	if ((path = m_entity->at(i).entity)->type() == Database::Path)
 		    	{
-		    		IdmEntityValue *localValue;
+		    		IdmEntityValue::Holder localValue;
 
 					for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, info().absoluteFilePath(files.at(i)->fileName())))
+						if (localValue = m_container.addValue(path, location(files.at(i)->fileName())))
 							list.push_back(localValue);
 						else
 						{
 							m_container.rollback();
-							qDeleteAll(list);
 							return false;
 						}
 
 					break;
 		    	}
 
-			if (m_container.addValue(value.data(), list))
+			if (m_container.addValue(value, list))
 			{
-				NewFileValueDialog dialog(m_container, value.data(), Application::mainWindow());
+				NewFileValueDialog dialog(m_container, value, Application::mainWindow());
 
 				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();
@@ -61,7 +60,6 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 			{
 				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				m_container.rollback();
-				qDeleteAll(list);
 			}
 		}
 		else

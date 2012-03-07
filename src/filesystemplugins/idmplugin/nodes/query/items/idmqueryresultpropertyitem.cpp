@@ -35,7 +35,7 @@ bool QueryResultPropertyItem::isValue()
 	return false;
 }
 
-void QueryResultPropertyItem::add(IdmEntityValue *value)
+void QueryResultPropertyItem::add(const IdmEntityValue::Holder &value)
 {
 	if (value->entity()->type() == Database::Path)
 		m_items.push_back(new QueryResultPathValueItem(value, this));

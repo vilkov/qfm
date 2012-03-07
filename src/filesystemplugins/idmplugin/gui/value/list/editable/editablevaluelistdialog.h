@@ -22,7 +22,7 @@ public:
 	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
 protected:
-	IdmEntityValue *takeValue();
+	IdmEntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
 
 private:

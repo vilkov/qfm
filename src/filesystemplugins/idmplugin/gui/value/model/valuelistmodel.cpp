@@ -8,11 +8,6 @@ ValueListModel::ValueListModel(const IdmContainer &container, const Select &quer
 	m_reader(container, query)
 {}
 
-ValueListModel::~ValueListModel()
-{
-	qDeleteAll(m_items);
-}
-
 int ValueListModel::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
@@ -51,7 +46,7 @@ QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, in
 void ValueListModel::fetchMore(const QModelIndex &parent)
 {
 	List list;
-	IdmEntityValue *item;
+	IdmEntityValue::Holder item;
 
 	list.reserve(PrefetchLimit);
 
@@ -83,9 +78,9 @@ QModelIndex ValueListModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-IdmEntityValue *ValueListModel::take(const QModelIndex &index)
+IdmEntityValue::Holder ValueListModel::take(const QModelIndex &index)
 {
-	IdmEntityValue *res;
+	IdmEntityValue::Holder res;
 
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 	res = m_items.takeAt(index.row());
@@ -104,7 +99,7 @@ void ValueListModel::add(const List &list)
 void ValueListModel::remove(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	delete m_items.takeAt(index.row());
+	m_items.removeAt(index.row());
 	endRemoveRows();
 }
 

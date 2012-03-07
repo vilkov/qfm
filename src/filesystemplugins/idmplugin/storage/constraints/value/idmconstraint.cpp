@@ -3,17 +3,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Constraint::Constraint(const IdmEntity::Property &property, Operator op, IdmEntityValue *value, BaseConstraint *parent) :
+Constraint::Constraint(const IdmEntity::Property &property, Operator op, const IdmEntityValue::Holder &value, BaseConstraint *parent) :
 	BaseConstraint(parent),
 	m_property(property),
 	m_op(op),
 	m_value(value)
 {}
-
-Constraint::~Constraint()
-{
-	delete m_value;
-}
 
 bool Constraint::isGroup() const
 {
@@ -30,22 +25,22 @@ QString Constraint::operatorToString(Operator op)
 	switch (op)
 	{
 		case Less:
-			return tr("<");
+			return QString::fromLatin1("<");
 
 		case LessEqual:
-			return tr("<=");
+			return QString::fromLatin1("<=");
 
 		case Greater:
-			return tr(">");
+			return QString::fromLatin1(">");
 
 		case GreaterEqual:
-			return tr(">=");
+			return QString::fromLatin1(">=");
 
 		case Equal:
-			return tr("=");
+			return QString::fromLatin1("=");
 
 		case Like:
-			return tr("like");
+			return QString::fromLatin1("like");
 
 		default:
 			return QString();

@@ -34,7 +34,7 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 		QMessageBox::critical(this, windowTitle(), m_model.lastError());
 }
 
-IdmEntityValue *EditableValueListDialog::takeValue()
+IdmEntityValue::Holder EditableValueListDialog::takeValue()
 {
 	return m_model.take(currentIndex());
 }
@@ -47,14 +47,15 @@ QModelIndex EditableValueListDialog::currentIndex() const
 void EditableValueListDialog::addValue()
 {
 	bool declined = false;
-
-	if (IdmEntityValue *value = CreationTools::createValue(
+	IdmEntityValue::Holder value(CreationTools::createValue(
 			tr("New value for \"%1\"").arg(m_entity->name()),
 			tr("Value"),
 			this,
 			m_container,
 			m_entity,
-			declined))
+			declined));
+
+	if (value)
 		m_model.add(value);
 	else
 		if (!declined)

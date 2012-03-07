@@ -60,13 +60,13 @@ public:
 	bool renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
 	bool removeProperty(IdmEntity *entity, IdmEntity *property);
 
-	IdmCompositeEntityValue *addValue(IdmEntity *entity) const;
-	bool addValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const;
-	bool addValue(IdmCompositeEntityValue *entityValue, const IdmCompositeEntityValue::List &propertyValues) const;
-	IdmEntityValue *addValue(IdmEntity *entity, const QVariant &value) const;
-	bool updateValue(IdmEntityValue *value, const QVariant &newValue) const;
+	IdmEntityValue::Holder addValue(IdmEntity *entity) const;
+	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const;
+	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues) const;
+	IdmEntityValue::Holder addValue(IdmEntity *entity, const QVariant &value) const;
+	bool updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const;
 	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
-	bool removeValue(IdmCompositeEntityValue *entityValue, IdmEntityValue *propertyValue) const;
+	bool removeValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const;
 
 private:
 	id_type loadId(const QString &tableName) const;

@@ -4,6 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmEntityValue::IdmEntityValue(IdmEntity *entity, id_type id) :
+	QSharedData(),
 	m_entity(entity),
 	m_id(id)
 {}
@@ -15,13 +16,7 @@ IdmCompositeEntityValue::IdmCompositeEntityValue(IdmEntity *entity, id_type id) 
 	IdmEntityValue(entity, id)
 {}
 
-IdmCompositeEntityValue::~IdmCompositeEntityValue()
-{
-	for (Map::iterator it = m_items.begin(), end = m_items.end(); it != end; ++it)
-		it.value().deleteAll();
-}
-
-bool IdmCompositeEntityValue::contains(IdmEntityValue *value) const
+bool IdmCompositeEntityValue::contains(const IdmEntityValue::Holder &value) const
 {
 	const List list = values(value->entity());
 
@@ -32,7 +27,7 @@ bool IdmCompositeEntityValue::contains(IdmEntityValue *value) const
 	return false;
 }
 
-bool IdmCompositeEntityValue::contains(const List &values, IdmEntityValue *&propertyValue) const
+bool IdmCompositeEntityValue::contains(const List &values, IdmEntityValue::Holder &propertyValue) const
 {
 	if (!values.isEmpty())
 	{

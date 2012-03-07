@@ -3,6 +3,7 @@
 
 #include <QtCore/QVariant>
 #include <QtCore/QDateTime>
+#include <QtCore/QSharedData>
 #include "../entities/idmentity.h"
 #include "../queries/idmquerycontext.h"
 #include "../../../../tools/containers/hashedlist.h"
@@ -10,11 +11,44 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmEntityValue
+class IdmEntityValue : public QSharedData
 {
+private:
+	template <typename T>
+	class InternalHolder
+	{
+	public:
+		typedef InternalHolder<T> class_type;
+
+	public:
+	    inline InternalHolder() :
+	    	m_data()
+	    {}
+	    explicit InternalHolder(T *p) :
+	    	m_data(p)
+	    {}
+
+	    inline T &operator*() const { return m_data.operator *(); }
+	    inline T *operator->() const { return m_data.operator->(); }
+	    inline T *operator->() { return m_data.operator->(); }
+	    inline operator bool() const { return m_data.operator bool(); }
+
+	    inline class_type &operator=(T *p) { m_data.operator =(p); return *this; }
+	    inline void reset() { m_data.reset(); }
+
+	    inline T *data() const { return m_data.data(); }
+
+	    template <typename R> inline
+	    R *as() const { return static_cast<R *>(m_data.data()); }
+
+	private:
+	    QExplicitlySharedDataPointer<T> m_data;
+	};
+
 public:
 	typedef IdmEntity::id_type id_type;
 	enum { InvalidId = IdmEntity::InvalidId };
+	typedef InternalHolder<IdmEntityValue> Holder;
 
 public:
 	IdmEntityValue(IdmEntity *entity, id_type id);
@@ -34,18 +68,17 @@ private:
 class IdmCompositeEntityValue : public IdmEntityValue
 {
 public:
-	typedef QList<IdmEntityValue*> List;
+	typedef QList<IdmEntityValue::Holder> List;
 
 public:
 	IdmCompositeEntityValue(IdmEntity *entity, id_type id);
-	virtual ~IdmCompositeEntityValue();
 
 	List values(IdmEntity *property) const { return m_items.value(property).values(); }
-	bool contains(IdmEntityValue *value) const;
-	bool contains(const List &values, IdmEntityValue *&propertyValue) const;
+	bool contains(const IdmEntityValue::Holder &value) const;
+	bool contains(const List &values, IdmEntityValue::Holder &propertyValue) const;
 
 protected:
-	typedef ::Tools::Containers::HashedList<id_type, IdmEntityValue*> InternalList;
+	typedef ::Tools::Containers::HashedList<id_type, IdmEntityValue::Holder> InternalList;
 	typedef QMap<IdmEntity*, InternalList> Map;
 	Map m_items;
 };

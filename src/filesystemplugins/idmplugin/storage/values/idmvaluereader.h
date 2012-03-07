@@ -17,23 +17,23 @@ public:
 	IdmEntity *entity() const { return m_context.entity(); }
 	const QString &lastError() const { return m_lastError; }
 
-	IdmEntityValue *next() const;
+	IdmEntityValue::Holder next() const;
 	bool eof() const { return m_afterLast; }
 	bool bof() const { return m_beforeFirst; }
 
-	static void addValue(IdmEntityValue *value, IdmEntityValue *property);
-	static void addValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values);
-	static void takeValue(IdmEntityValue *value, IdmEntityValue *property);
-	static void updateValue(IdmEntityValue *value, const QVariant &newValue);
-	static void removeValue(IdmEntityValue *value, IdmEntityValue *property);
-	static void removeValue(IdmEntityValue *value, const IdmCompositeEntityValue::List &values);
-	static IdmCompositeEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id);
-	static IdmEntityValue *createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
+	static void addValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property);
+	static void addValue(const IdmEntityValue::Holder &value, const IdmCompositeEntityValue::List &values);
+	static void takeValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property);
+	static void updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue);
+	static void removeValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property);
+	static void removeValue(const IdmEntityValue::Holder &value, const IdmCompositeEntityValue::List &values);
+	static IdmEntityValue::Holder createValue(IdmEntity *entity, IdmEntityValue::id_type id);
+	static IdmEntityValue::Holder createValue(IdmEntity *entity, IdmEntityValue::id_type id, const QVariant &value);
 
 private:
-	IdmEntityValue *doNext() const;
-	IdmEntityValue *value(IdmEntity *entity, IdmEntity::id_type id, int column) const;
-	void property(IdmEntityValue *value, IdmEntity *property, int &column) const;
+	IdmEntityValue::Holder doNext() const;
+	IdmEntityValue::Holder value(IdmEntity *entity, IdmEntity::id_type id, int column) const;
+	void property(const IdmEntityValue::Holder &value, IdmEntity *property, int &column) const;
 	void skip(IdmEntity *property, int &column) const;
 
 private:

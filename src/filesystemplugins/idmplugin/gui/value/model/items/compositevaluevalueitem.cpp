@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueValueItem::CompositeValueValueItem(IdmEntityValue *value, IdmItem *parent) :
+CompositeValueValueItem::CompositeValueValueItem(const IdmEntityValue::Holder &value, IdmItem *parent) :
 	CompositeValueItem(parent),
 	m_value(value)
 {}

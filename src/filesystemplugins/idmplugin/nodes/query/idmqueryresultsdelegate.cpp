@@ -44,10 +44,7 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 			{
 				if (m_container.transaction())
 				{
-					EditCompositeValueDialog dialog(
-							m_container,
-							static_cast<IdmCompositeEntityValue*>(item->value()),
-							parent);
+					EditCompositeValueDialog dialog(m_container, item->value(), parent);
 
 					if (dialog.exec() != EditCompositeValueDialog::Accepted)
 						m_container.rollback();

@@ -408,25 +408,30 @@ QModelIndex IdmNodeQueryResults::rootIndex() const
 
 Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
 {
-	QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
+	if (idx.isValid())
+	{
+		QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
 
-	if (!item->isLocked() &&
-		item->isValue() &&
-		static_cast<QueryResultValueItem *>(item)->value()->entity()->type() == Database::Path)
+		if (!item->isLocked() &&
+			item->isValue() &&
+			static_cast<QueryResultValueItem *>(item)->value()->entity()->type() == Database::Path)
 
-		if (Node *node = static_cast<QueryResultPathValueItem *>(item)->node())
-			return node;
-		else
-		{
-			static_cast<QueryResultPathValueItem *>(item)->info().refresh();
-
-			if (static_cast<QueryResultPathValueItem *>(item)->info().exists())
-			{
-				node = new IdmFolderNode(m_container, static_cast<QueryResultPathValueItem *>(item)->info(), m_info, this);
-				static_cast<QueryResultPathValueItem *>(item)->setNode(node);
+			if (Node *node = static_cast<QueryResultPathValueItem *>(item)->node())
 				return node;
+			else
+			{
+				static_cast<QueryResultPathValueItem *>(item)->info().refresh();
+
+				if (static_cast<QueryResultPathValueItem *>(item)->info().exists())
+				{
+					node = new IdmFolderNode(m_container, static_cast<QueryResultPathValueItem *>(item)->info(), m_info, this);
+					static_cast<QueryResultPathValueItem *>(item)->setNode(node);
+					return node;
+				}
 			}
-		}
+	}
+	else
+		return parentNode();
 
 	return NULL;
 }

@@ -67,7 +67,7 @@ void EditableValueListDialog::removeValue()
 	QModelIndex index = m_view.selectionModel()->currentIndex();
 
 	if (index.isValid())
-		if (m_container.removeValue(m_entity, IdmStorage::IdsList() << static_cast<IdmEntityValue*>(index.internalPointer())->id()))
+		if (m_container.removeValue(m_entity, IdmStorage::IdsList() << m_model.at(index.row())->id()))
 			m_model.remove(index);
 		else
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());

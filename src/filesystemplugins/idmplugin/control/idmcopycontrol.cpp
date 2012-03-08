@@ -2,7 +2,6 @@
 #include "../gui/value/new/file/newfilevaluedialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
-#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,10 +10,8 @@ IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity,
 	CopyControl(info),
 	m_container(container),
 	m_entity(entity),
-	m_storage(info - storage)
-{
-	qDebug() << m_storage;
-}
+	m_storage(QString(info - storage).append(QChar('/')))
+{}
 
 bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 {
@@ -34,7 +31,7 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 		    		IdmEntityValue::Holder localValue;
 
 					for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, location(files.at(i)->fileName())))
+						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i)->fileName())))
 							list.push_back(localValue);
 						else
 						{

@@ -69,7 +69,15 @@ Info::Info() :
 	m_isRoot(false)
 {}
 
-Info::Info(const QString &filePath) :
+template <>
+Info::Info<0>(const QString &filePath, None) :
+	m_isRoot(false),
+	m_filePath(normalizeFilePath(filePath, m_isRoot)),
+	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
+{}
+
+template <>
+Info::Info<1>(const QString &filePath, Refresh) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
@@ -77,15 +85,14 @@ Info::Info(const QString &filePath) :
 	refresh();
 }
 
-Info::Info(const QString &filePath, bool identifyType) :
+template <>
+Info::Info<2>(const QString &filePath, Identify) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
 {
 	refresh();
-
-	if (identifyType)
-		m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
+	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
 }
 
 QString Info::operator-(const Info &o) const
@@ -143,8 +150,7 @@ bool Info::isLink() const
 
 bool Info::exists() const
 {
-	struct stat st;
-	return stat(m_filePath.toUtf8(), &st) == 0;
+	return m_info.exists;
 }
 
 Info::size_type Info::fileSize() const
@@ -203,15 +209,14 @@ int Info::permissions() const
 
 void Info::refresh()
 {
-	int res;
 	struct stat st;
 	QByteArray name = m_filePath.toUtf8();
 
-	if ((res = ::lstat(name, &st)) == 0)
+	if (m_info.exists = (::lstat(name, &st) == 0))
 		if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
 		{
-			m_info.permissions = translatePermissions(st);
 			m_info.size = st.st_size;
+			m_info.permissions = translatePermissions(st);
 			m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
 		}
 		else
@@ -219,14 +224,14 @@ void Info::refresh()
 			{
 				char buff[PATH_MAX] = {};
 
-				if ((res = ::readlink(name, buff, PATH_MAX)) == 0)
+				if (::readlink(name, buff, PATH_MAX) == 0)
 					if (char *realName = ::canonicalize_file_name(buff))
 					{
-						if ((res = stat(realName, &st)) == 0)
+						if (m_info.exists = (stat(realName, &st) == 0))
 							if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
 							{
-								m_info.permissions = translatePermissions(st);
 								m_info.size = st.st_size;
+								m_info.permissions = translatePermissions(st);
 								m_info.lastModified = QDateTime::fromTime_t(st.st_mtime);
 							}
 

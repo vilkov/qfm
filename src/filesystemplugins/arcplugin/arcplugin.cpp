@@ -27,7 +27,7 @@ void Plugin::registered()
 
 Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	return new ArcNode(Info(container->location(file->fileName())), parent);
+	return new ArcNode(Info(container->location(file->fileName()), Info::Refresh()), parent);
 }
 
 Plugin::FileTypeIdList Plugin::fileTypes() const

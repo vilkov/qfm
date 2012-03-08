@@ -442,7 +442,7 @@ Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QM
 
 	if (index == ItemsContainer::InvalidIndex)
 	{
-		Info info(absoluteFilePath(fileName), true);
+		Info info(location(fileName), Info::Refresh());
 
 		if (Node *node = createNode(info, plugins))
 		{

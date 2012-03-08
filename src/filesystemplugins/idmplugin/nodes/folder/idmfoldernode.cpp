@@ -16,7 +16,7 @@ IdmFolderNode::IdmFolderNode(const IdmContainer &container, const Info &info, co
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, entity, location(), m_storage);
+		return new IdmCopyControl(m_container, entity, m_info, m_storage);
 	else
 		return 0;
 }

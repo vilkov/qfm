@@ -16,6 +16,7 @@ struct FileInfo
     bool isDir;
     bool isFile;
     bool isLink;
+    bool exists;
     int permissions;
     qint64 size;
     QDateTime lastModified;

@@ -274,7 +274,7 @@ Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 
 FileSystemBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)
 {
-	Info info(fileName, true);
+	Info info(fileName, Info::Refresh());
 	return new FileSystemEntryItem(info, createNode(info, plugins));
 }
 

@@ -7,6 +7,7 @@ FileInfo::FileInfo() :
 	isDir(false),
 	isFile(false),
 	isLink(false),
+    exists(false),
 	permissions(0),
 	size(0)
 {}

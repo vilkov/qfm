@@ -13,13 +13,13 @@ UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &co
 void UpdateFilesTask::run(const volatile Flags &aborted)
 {
 	Snapshot snapshot = scan(aborted);
-	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::ScanFilesForRemove), aborted, snapshot));
+	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::UpdateFiles), aborted, snapshot));
 }
 
 Snapshot UpdateFilesTask::scan(const volatile Flags &aborted)
 {
 	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size && !aborted; ++i)
-		ScanFilesBaseTask::scan(m_snapshot, m_files.at(i), &static_cast<QueryResultPathValueItem*>(m_files.at(i))->info(), aborted);
+		ScanFilesBaseTask::scanSoft(m_snapshot, m_files.at(i), static_cast<QueryResultPathValueItem*>(m_files.at(i)), aborted);
 
 	return m_snapshot;
 }

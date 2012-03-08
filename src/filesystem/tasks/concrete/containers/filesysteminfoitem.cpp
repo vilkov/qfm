@@ -3,18 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-InfoItem::InfoItem(const Info &info) :
-	Info(info),
-	m_removed(true)
-{}
-
 InfoItem::InfoItem(const QString &filePath) :
-	Info(filePath),
-	m_removed(true)
-{}
-
-InfoItem::InfoItem(const QString &filePath, bool identifyType) :
-	Info(filePath, identifyType),
+	Info(filePath, Identify()),
 	m_removed(true)
 {}
 

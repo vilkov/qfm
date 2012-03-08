@@ -101,24 +101,17 @@ IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &e
 
 IFileContainer *FileContainer::open(const QString &fileName, bool create, QString &error) const
 {
-	struct stat st;
-	QString absoluteFileName = m_info.absoluteFilePath(fileName);
-	QByteArray absoluteFileNameAsUtf8 = absoluteFileName.toUtf8();
+	Info info(m_info.absoluteFilePath(fileName), Info::Refresh());
 
-	if (::stat(absoluteFileNameAsUtf8, &st) == 0)
-	{
-		if (DIR *dir = ::opendir(absoluteFileNameAsUtf8))
-		{
-			::closedir(dir);
-			return new FileContainer(absoluteFileName);
-		}
-	}
+	if (info.exists() && info.isDir())
+		return new FileContainer(info);
 	else
 		if (errno == ENOENT &&
 			create &&
-			::mkdir(absoluteFileNameAsUtf8, S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
+			::mkdir(info.absoluteFilePath().toUtf8(), S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
 		{
-			return new FileContainer(absoluteFileName);
+			info.refresh();
+			return new FileContainer(info);
 		}
 
 	error = QString::fromUtf8(::strerror(errno));

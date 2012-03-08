@@ -4,16 +4,22 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultRootItem::QueryResultRootItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
+QueryResultRootItem::QueryResultRootItem(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
 	QueryResultListItem(parent),
 	m_value(value)
 {
 	if (m_value->entity()->type() == Database::Composite)
+	{
+		PScopedPointer<QueryResultPropertyItem> item;
+
 		for (IdmEntity::size_type i = 0, size = m_value->entity()->size(); i < size; ++i)
 		{
 			const IdmEntity::Property &poperty = m_value->entity()->at(i);
-			m_items.push_back(new QueryResultPropertyItem(container, poperty, static_cast<IdmCompositeEntityValue*>(m_value.data())->values(poperty.entity), this));
+			item = new QueryResultPropertyItem(poperty, this);
+			item->add(files, container, static_cast<IdmCompositeEntityValue*>(m_value.data())->values(poperty.entity));
+			m_items.push_back(item.take());
 		}
+	}
 }
 
 QVariant QueryResultRootItem::data(qint32 column, qint32 role) const

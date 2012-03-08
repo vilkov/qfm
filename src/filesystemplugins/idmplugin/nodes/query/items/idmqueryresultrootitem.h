@@ -3,6 +3,7 @@
 
 #include "idmqueryresultitem.h"
 #include "../../../storage/values/idmentityvalue.h"
+#include "../../../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
@@ -11,7 +12,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultRootItem : public QueryResultListItem
 {
 public:
-	QueryResultRootItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent = 0);
+	QueryResultRootItem(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent = 0);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;

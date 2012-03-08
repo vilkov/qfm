@@ -10,9 +10,7 @@ FILE_SYSTEM_NS_BEGIN
 class InfoListItem : public InfoItem
 {
 public:
-	explicit InfoListItem(const Info &info);
-	InfoListItem(const QString &filePath);
-	InfoListItem(const QString &filePath, bool identifyType);
+	explicit InfoListItem(const QString &filePath);
 	virtual ~InfoListItem();
 
 	/* InfoItem */

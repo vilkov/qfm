@@ -3,6 +3,7 @@
 
 #include "../tools/filesystemfileinfo.h"
 #include "../interfaces/filesystemifileinfo.h"
+#include "../../tools/metatemplates.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -10,9 +11,16 @@ FILE_SYSTEM_NS_BEGIN
 class Info : public IFileInfo
 {
 public:
-    Info();
-    Info(const QString &filePath);
-    Info(const QString &filePath, bool identifyType);
+	template <int I> struct int_to_type {enum { value = I };};
+	typedef int_to_type<0> None;
+	typedef int_to_type<1> Refresh;
+	typedef int_to_type<2> Identify;
+
+public:
+    explicit Info();
+
+    template <int I>
+    explicit Info(const QString &filePath, int_to_type<I>);
 
     QString operator-(const Info &other) const;
 

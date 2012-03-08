@@ -16,9 +16,7 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	explicit InfoItem(const Info &info);
-	InfoItem(const QString &filePath);
-	InfoItem(const QString &filePath, bool identifyType);
+	explicit InfoItem(const QString &filePath);
 
 	bool isRemoved() const { return m_removed; }
 	virtual Info::size_type totalSize() const;

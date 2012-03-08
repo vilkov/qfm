@@ -5,12 +5,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultPropertyItem::QueryResultPropertyItem(const IFileContainer *container, const IdmEntity::Property &property, const IdmCompositeEntityValue::List &values, Base *parent) :
+QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent) :
 	QueryResultListItem(parent),
 	m_property(property)
-{
-	add(container, values);
-}
+{}
 
 QVariant QueryResultPropertyItem::data(qint32 column, qint32 role) const
 {
@@ -50,6 +48,20 @@ void QueryResultPropertyItem::add(const IFileContainer *container, const IdmComp
 			m_items.push_back(new QueryResultPathValueItem(container, values.at(i), this));
 		else
 			m_items.push_back(new QueryResultValueItem(values.at(i), this));
+}
+
+void QueryResultPropertyItem::add(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values)
+{
+	QueryResultItem *item;
+
+	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
+		if (values.at(i)->entity()->type() == Database::Path)
+		{
+			m_items.push_back(item = new QueryResultPathValueItem(container, values.at(i), this));
+			files.push_back(item);
+		}
+		else
+			m_items.push_back(item = new QueryResultValueItem(values.at(i), this));
 }
 
 void QueryResultPropertyItem::remove(size_type index)

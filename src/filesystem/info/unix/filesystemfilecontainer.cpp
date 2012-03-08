@@ -3,7 +3,7 @@
 #include "../../tools/filesystemcommontools.h"
 #include "../../../application.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #	include <QtCore/qt_windows.h>
 #endif
 
@@ -12,6 +12,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdio.h>
 
 #include <QtGui/QMessageBox>
 
@@ -50,7 +51,7 @@ bool FileContainer::contains(const QString &fileName) const
 
 bool FileContainer::remove(const QString &fileName, QString &error) const
 {
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 	DWORD attr = GetFileAttributesW((const wchar_t*)filePath.utf16());
 	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
 		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);

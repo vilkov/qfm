@@ -176,7 +176,7 @@ IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, entity, absoluteFilePath());
+		return new IdmCopyControl(m_container, entity, m_info, m_info);
 	else
 		return 0;
 }
@@ -337,7 +337,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 						static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
 					else
 					{
-						Node *node = new IdmFolderNode(m_container, m_info, this);
+						Node *node = new IdmFolderNode(m_container, m_info, m_info, this);
 
 						node->setParentEntryIndex(idx);
 						static_cast<RootNodeFilesItem*>(item)->setNode(node);
@@ -359,11 +359,11 @@ Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, Q
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		else
 		{
-			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, this));
+			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, m_info, this));
 			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 		}
 
-	return 0;
+	return NULL;
 }
 
 void IdmRootNode::nodeRemoved(Node *node)

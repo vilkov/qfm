@@ -14,6 +14,8 @@ public:
     Info(const QString &filePath);
     Info(const QString &filePath, bool identifyType);
 
+    QString operator-(const Info &other) const;
+
 	/* IFileType */
 	virtual FileTypeId id() const;
 	virtual QIcon icon() const;

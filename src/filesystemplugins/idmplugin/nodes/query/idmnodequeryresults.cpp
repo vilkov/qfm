@@ -20,11 +20,11 @@ IDM_PLUGIN_NS_BEGIN
 
 IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
+	FileContainer(info),
 	m_items(m_itemsContainer.m_container),
 	m_delegate(container),
 	m_container(container),
 	m_reader(m_container, query),
-	m_info(info),
 	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
 {}
 
@@ -63,7 +63,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 
 	for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 		if (item = m_reader.next())
-			list.push_back(new QueryResultRootItem(item));
+			list.push_back(new QueryResultRootItem(this, item));
 		else
 			break;
 
@@ -261,7 +261,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 					if (m_container.commit())
 					{
 						beginInsertRows(index, item->size(), item->size());
-						item->add(value);
+						item->add(this, value);
 						endInsertRows();
 					}
 					else
@@ -418,11 +418,11 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 			return node;
 		else
 		{
-			Info info(static_cast<QueryResultValueItem *>(item)->value()->value().toString(), true);
+			static_cast<QueryResultPathValueItem *>(item)->info().refresh();
 
-			if (info.exists())
+			if (static_cast<QueryResultPathValueItem *>(item)->info().exists())
 			{
-				node = new IdmFolderNode(m_container, info, this);
+				node = new IdmFolderNode(m_container, static_cast<QueryResultPathValueItem *>(item)->info(), m_info, this);
 				static_cast<QueryResultPathValueItem *>(item)->setNode(node);
 				return node;
 			}
@@ -458,7 +458,7 @@ void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntity
 		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
 
 		beginInsertRows(index, item->size(), item->size() + values.size() - 1);
-		item->add(values);
+		item->add(this, values);
 		endInsertRows();
 	}
 }

@@ -7,15 +7,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmFolderNode::IdmFolderNode(const IdmContainer &container, const Info &info, Node *parent) :
+IdmFolderNode::IdmFolderNode(const IdmContainer &container, const Info &info, const Info &storage, Node *parent) :
 	FolderNode(info, parent),
-	m_container(container)
+	m_container(container),
+	m_storage(storage)
 {}
 
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, entity, absoluteFilePath());
+		return new IdmCopyControl(m_container, entity, location(), m_storage);
 	else
 		return 0;
 }
@@ -46,7 +47,7 @@ Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
 		return res;
 	else
 		if (info.isDir())
-			return new IdmFolderNode(m_container, info, const_cast<IdmFolderNode*>(this));
+			return new IdmFolderNode(m_container, info, m_storage, const_cast<IdmFolderNode*>(this));
 		else
 			return 0;
 }

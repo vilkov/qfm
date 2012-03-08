@@ -4,7 +4,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
-#include "filesystempath.h"
+#include "tools/filesystempath.h"
 #include "model/filesystemmodel.h"
 #include "model/filesystemmodelcontainer.h"
 #include "interfaces/filesysteminode.h"

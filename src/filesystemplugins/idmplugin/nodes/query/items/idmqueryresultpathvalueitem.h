@@ -4,6 +4,7 @@
 #include "idmqueryresultvalueitem.h"
 #include "../../../../../filesystem/filesystemnode.h"
 #include "../../../../../filesystem/info/filesysteminfo.h"
+#include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,7 +12,10 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPathValueItem : public QueryResultValueItem
 {
 public:
-	QueryResultPathValueItem(const IdmEntityValue::Holder &value, Base *parent);
+	QueryResultPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent);
+
+	/* Base */
+	virtual QVariant data(qint32 column, qint32 role) const;
 
 	const Info &info() const { return m_info; }
 	Info &info() { return m_info; }

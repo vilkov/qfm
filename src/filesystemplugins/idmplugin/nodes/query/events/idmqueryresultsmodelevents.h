@@ -12,7 +12,8 @@ struct ModelEvent
 	enum Type
 	{
 		ScanFilesForRemove = BaseTask::Event::User,
-		RemoveFiles = BaseTask::Event::User + 1
+		RemoveFiles = BaseTask::Event::User + 1,
+		UpdateFiles = BaseTask::Event::User + 2
 	};
 };
 

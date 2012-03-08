@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultRootItem::QueryResultRootItem(const IdmEntityValue::Holder &value, Base *parent) :
+QueryResultRootItem::QueryResultRootItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
 	QueryResultListItem(parent),
 	m_value(value)
 {
@@ -12,7 +12,7 @@ QueryResultRootItem::QueryResultRootItem(const IdmEntityValue::Holder &value, Ba
 		for (IdmEntity::size_type i = 0, size = m_value->entity()->size(); i < size; ++i)
 		{
 			const IdmEntity::Property &poperty = m_value->entity()->at(i);
-			m_items.push_back(new QueryResultPropertyItem(poperty, static_cast<IdmCompositeEntityValue*>(m_value.data())->values(poperty.entity), this));
+			m_items.push_back(new QueryResultPropertyItem(container, poperty, static_cast<IdmCompositeEntityValue*>(m_value.data())->values(poperty.entity), this));
 		}
 }
 

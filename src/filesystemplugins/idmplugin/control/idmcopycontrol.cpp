@@ -2,15 +2,19 @@
 #include "../gui/value/new/file/newfilevaluedialog.h"
 #include "../../../application.h"
 #include <QtGui/QMessageBox>
+#include <QtCore/QDebug>
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info) :
+IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info, const Info &storage) :
 	CopyControl(info),
 	m_container(container),
-	m_entity(entity)
-{}
+	m_entity(entity),
+	m_storage(info - storage)
+{
+	qDebug() << m_storage;
+}
 
 bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 {

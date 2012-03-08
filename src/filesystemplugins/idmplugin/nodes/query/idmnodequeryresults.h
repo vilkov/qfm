@@ -6,6 +6,7 @@
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../../filesystem/info/filesystemfilecontainer.h"
 #include "../../../../tools/containers/union.h"
 
 
@@ -14,7 +15,7 @@ class Functor;
 class QueryResultValueItem;
 
 
-class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
+class IdmNodeQueryResults : public TasksNode, public FileContainer, public IQueryResultsUpdater
 {
 public:
 	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
@@ -134,7 +135,6 @@ private:
 	IdmQueryResultsDelegate m_delegate;
 	IdmContainer m_container;
 	IdmValueReader m_reader;
-	Info m_info;
 	QVariant m_label;
 };
 

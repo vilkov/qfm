@@ -15,7 +15,7 @@ class IdmCopyControl : public CopyControl
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 
 public:
-	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info);
+	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info, const Info &storage);
 
 	/* ICopyControl */
 	virtual bool start(const Snapshot::Files &files, bool move);
@@ -25,6 +25,7 @@ public:
 private:
 	IdmContainer m_container;
 	IdmEntity *m_entity;
+	QString m_storage;
 };
 
 IDM_PLUGIN_NS_END

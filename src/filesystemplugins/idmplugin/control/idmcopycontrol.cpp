@@ -35,6 +35,7 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 							list.push_back(localValue);
 						else
 						{
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 							m_container.rollback();
 							return false;
 						}

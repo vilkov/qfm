@@ -266,6 +266,11 @@ const INodeView::MenuActionList &IdmRootNode::actions() const
 	return m_actions;
 }
 
+QAbstractItemView::SelectionMode IdmRootNode::selectionMode() const
+{
+	return QAbstractItemView::SingleSelection;
+}
+
 ::History::Entry *IdmRootNode::menuAction(QAction *action, INodeView *view)
 {
 	switch (static_cast<MenuId>(action->data().toInt()))
@@ -289,6 +294,7 @@ const INodeView::MenuActionList &IdmRootNode::actions() const
 
 		case RemoveProperty:
 		{
+			removeProperty(view->currentIndex());
 			break;
 		}
 
@@ -475,6 +481,45 @@ void IdmRootNode::createEntity()
 void IdmRootNode::addProperty(const QModelIndex &index)
 {
 	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isEntity())
+	{
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
+
+		if (item->entity()->type() == Database::Composite)
+			if (m_container.transaction())
+			{
+				QString propertyName;
+
+				if (IdmEntity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
+					if (m_container.addProperty(item->entity(), property, propertyName))
+						if (m_container.commit())
+							doAdd(index, item, property);
+						else
+						{
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+						}
+					else
+					{
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+				else
+					m_container.rollback();
+			}
+			else
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+		else
+			QMessageBox::warning(
+					Application::mainWindow(),
+					tr("Wrong entity"),
+					tr("Entity \"%1\" is not composite.").
+						arg(item->entity()->name()));
+	}
+}
+
+void IdmRootNode::removeProperty(const QModelIndex &index)
+{
+	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isProperty())
 	{
 		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
 

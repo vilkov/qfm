@@ -61,6 +61,7 @@ public:
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
+	virtual QAbstractItemView::SelectionMode selectionMode() const;
 	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
 
 protected:
@@ -114,6 +115,7 @@ private:
 private:
 	void createEntity();
 	void addProperty(const QModelIndex &index);
+	void removeProperty(const QModelIndex &index);
 
 private:
 	void add(IdmEntity *entity);

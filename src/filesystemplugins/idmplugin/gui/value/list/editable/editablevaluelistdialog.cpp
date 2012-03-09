@@ -46,7 +46,7 @@ QModelIndex EditableValueListDialog::currentIndex() const
 
 void EditableValueListDialog::select(const QModelIndex &index)
 {
-	m_view.scrollTo(index, QAbstractItemView::EnsureVisible);
+	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
 	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
 	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 	m_view.setFocus();

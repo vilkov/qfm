@@ -23,17 +23,19 @@ public:
 public:
 	IdmEntity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }
 	static IdmEntity *chooseFile(const IdmContainer &container, QWidget *parent = 0);
-	static IdmEntity *chooseProperty(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+	static IdmEntity *chooseProperty(const IdmContainer &container, IdmEntity *entity, QString &propertyName, QWidget *parent = 0);
 
 protected:
 	ChooseEntityDialog(const QString &title, const IdmContainer &container, const List &list, QWidget *parent = 0);
 
-private:
+protected:
 	const IdmContainer &m_container;
+	QVBoxLayout m_verticatLayout;
+
+private:
 	QLabel m_label;
 	QComboBox m_comboBox;
 	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
 	QHBoxLayout m_horizontalLayout;
 };
 

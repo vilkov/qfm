@@ -479,9 +479,29 @@ void IdmRootNode::addProperty(const QModelIndex &index)
 		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
 
 		if (item->entity()->type() == Database::Composite)
-		{
+			if (m_container.transaction())
+			{
+				QString propertyName;
 
-		}
+				if (IdmEntity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
+					if (m_container.addProperty(item->entity(), property, propertyName))
+						if (m_container.commit())
+							doAdd(index, item, property);
+						else
+						{
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+						}
+					else
+					{
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+				else
+					m_container.rollback();
+			}
+			else
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 		else
 			QMessageBox::warning(
 					Application::mainWindow(),
@@ -515,7 +535,7 @@ void IdmRootNode::doAdd(IdmEntity *entity)
 	expand(item);
 }
 
-void IdmRootNode::doAdd(ItemsContainer::Item *item, IdmEntity *property)
+void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property)
 {
 	RootNodeEntityItem *child;
 

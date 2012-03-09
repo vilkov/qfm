@@ -539,9 +539,11 @@ void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, Id
 {
 	RootNodeEntityItem *child;
 
+	beginInsertRows(index, static_cast<RootNodeEntityItem*>(item)->size(), static_cast<RootNodeEntityItem*>(item)->size());
 	static_cast<RootNodeEntityItem*>(item)->add(child = new RootNodeEntityItem(property, item));
 	m_entities[property].push_back(child);
 	expand(child);
+	endInsertRows();
 }
 
 void IdmRootNode::doRemove(ItemsContainer::Item *item, ItemsContainer::size_type index)

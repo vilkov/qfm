@@ -15,7 +15,7 @@ public:
 		m_horizontalLayout.setMargin(3);
 		m_horizontalLayout.setSpacing(1);
 		m_horizontalLayout.addWidget(&m_label);
-		m_horizontalLayout.addWidget(&m_edit);
+		m_horizontalLayout.addWidget(&m_edit, 1);
 
 		m_verticatLayout.insertLayout(1, &m_horizontalLayout);
 	}
@@ -50,7 +50,7 @@ ChooseEntityDialog::ChooseEntityDialog(const QString &title, const IdmContainer 
 	m_horizontalLayout.setMargin(3);
 	m_horizontalLayout.setSpacing(1);
 	m_horizontalLayout.addWidget(&m_label);
-	m_horizontalLayout.addWidget(&m_comboBox);
+	m_horizontalLayout.addWidget(&m_comboBox, 1);
 
 	m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);

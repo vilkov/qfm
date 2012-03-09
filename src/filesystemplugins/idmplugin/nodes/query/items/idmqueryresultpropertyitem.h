@@ -30,7 +30,7 @@ public:
 	void remove(size_type index);
 
 private:
-	const IdmEntity::Property &m_property;
+	IdmEntity::Property m_property;
 };
 
 IDM_PLUGIN_NS_END

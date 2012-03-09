@@ -121,8 +121,8 @@ private:
 	void add(IdmEntity *entity);
 	void remove(const QModelIndex &index);
 	void doAdd(IdmEntity *entity);
-	void doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property);
-	void doRemove(ItemsContainer::Item *item, ItemsContainer::size_type index);
+	void doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName);
+	void doRemove(const QModelIndex &index, ItemsContainer::Item *item, ItemsContainer::Item *property);
 	void expand(ItemsContainer::Item *parent);
 
 private:

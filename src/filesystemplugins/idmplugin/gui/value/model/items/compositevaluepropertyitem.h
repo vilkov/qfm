@@ -32,7 +32,7 @@ protected:
 	void remove(size_type index) { delete m_items.takeAt(index); }
 
 private:
-	const IdmEntity::Property &m_property;
+	IdmEntity::Property m_property;
 	Container m_items;
 };
 

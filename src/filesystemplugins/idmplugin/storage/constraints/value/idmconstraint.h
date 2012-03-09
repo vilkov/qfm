@@ -34,7 +34,7 @@ public:
 	static QString operatorToString(Operator op);
 
 private:
-	const IdmEntity::Property &m_property;
+	IdmEntity::Property m_property;
 	Operator m_op;
 	IdmEntityValue::Holder m_value;
 };

@@ -9,6 +9,12 @@ RootNodePropertyItem::RootNodePropertyItem(const IdmEntity::Property &property, 
 	m_label(QString(m_property.name).append(QString::fromLatin1(" (")).append(m_property.entity->name()).append(QChar(')')))
 {}
 
+RootNodePropertyItem::RootNodePropertyItem(IdmEntity *property, const QString &name, Base *parent) :
+	RootNodeEntityItem(property, parent),
+	m_property(property, name),
+	m_label(QString(m_property.name).append(QString::fromLatin1(" (")).append(m_property.entity->name()).append(QChar(')')))
+{}
+
 QVariant RootNodePropertyItem::data(qint32 column, qint32 role) const
 {
 	if (role == Qt::DisplayRole)

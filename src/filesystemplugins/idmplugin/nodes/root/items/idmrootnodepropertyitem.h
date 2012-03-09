@@ -10,6 +10,7 @@ class RootNodePropertyItem : public RootNodeEntityItem
 {
 public:
 	RootNodePropertyItem(const IdmEntity::Property &property, Base *parent);
+	RootNodePropertyItem(IdmEntity *property, const QString &name, Base *parent);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -17,8 +18,10 @@ public:
 	/* RootNodeItem */
 	virtual bool isProperty();
 
+	const QString &name() const { return m_property.name; }
+
 private:
-	const IdmEntity::Property &m_property;
+	IdmEntity::Property m_property;
 	QVariant m_label;
 };
 

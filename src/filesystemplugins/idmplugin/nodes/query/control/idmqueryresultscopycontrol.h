@@ -26,7 +26,7 @@ public:
 private:
 	IdmContainer m_container;
 	IdmEntityValue::Holder m_value;
-	const IdmEntity::Property &m_property;
+	IdmEntity::Property m_property;
 	IQueryResultsUpdater *m_model;
 	QModelIndex m_index;
 };

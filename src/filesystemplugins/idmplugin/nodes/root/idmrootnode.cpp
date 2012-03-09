@@ -492,7 +492,7 @@ void IdmRootNode::addProperty(const QModelIndex &index)
 				if (IdmEntity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
 					if (m_container.addProperty(item->entity(), property, propertyName))
 						if (m_container.commit())
-							doAdd(index, item, property);
+							doAdd(index, item, property, propertyName);
 						else
 						{
 							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
@@ -521,38 +521,35 @@ void IdmRootNode::removeProperty(const QModelIndex &index)
 {
 	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isProperty())
 	{
-		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
+		RootNodePropertyItem *property = static_cast<RootNodePropertyItem*>(index.internalPointer());
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(property->parent());
 
-		if (item->entity()->type() == Database::Composite)
+		if (QMessageBox::question(
+				Application::mainWindow(),
+				tr("Remove property"),
+				tr("Would you like to remove property \"%1 (%2)\" from \"%3\" entity?").
+					arg(property->name()).
+					arg(property->entity()->name()).
+					arg(item->entity()->name()),
+				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		{
 			if (m_container.transaction())
-			{
-				QString propertyName;
-
-				if (IdmEntity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
-					if (m_container.addProperty(item->entity(), property, propertyName))
-						if (m_container.commit())
-							doAdd(index, item, property);
-						else
-						{
-							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-							m_container.rollback();
-						}
+				if (m_container.removeProperty(item->entity(), property->entity()))
+					if (m_container.commit())
+						doRemove(index, item, property);
 					else
 					{
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
 				else
+				{
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 					m_container.rollback();
-			}
+				}
 			else
 				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-		else
-			QMessageBox::warning(
-					Application::mainWindow(),
-					tr("Wrong entity"),
-					tr("Entity \"%1\" is not composite.").
-						arg(item->entity()->name()));
+		}
 	}
 }
 
@@ -580,22 +577,26 @@ void IdmRootNode::doAdd(IdmEntity *entity)
 	expand(item);
 }
 
-void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property)
+void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName)
 {
 	RootNodeEntityItem *child;
 
 	beginInsertRows(index, static_cast<RootNodeEntityItem*>(item)->size(), static_cast<RootNodeEntityItem*>(item)->size());
-	static_cast<RootNodeEntityItem*>(item)->add(child = new RootNodeEntityItem(property, item));
+	static_cast<RootNodeEntityItem*>(item)->add(child = new RootNodePropertyItem(property, propertyName, item));
 	m_entities[property].push_back(child);
 	expand(child);
 	endInsertRows();
 }
 
-void IdmRootNode::doRemove(ItemsContainer::Item *item, ItemsContainer::size_type index)
+void IdmRootNode::doRemove(const QModelIndex &index, ItemsContainer::Item *item, ItemsContainer::Item *property)
 {
+	ItemsContainer::Item::size_type idx = item->indexOf(property);
+
+	beginRemoveRows(parent(index), idx, idx);
 	ItemsContainer::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
 	items.removeAt(items.indexOf(item));
-	static_cast<RootNodeEntityItem*>(item->parent())->remove(index);
+	static_cast<RootNodeEntityItem*>(item)->remove(idx);
+	endRemoveRows();
 }
 
 void IdmRootNode::expand(ItemsContainer::Item *p)

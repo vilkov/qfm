@@ -24,6 +24,7 @@ public:
 protected:
 	IdmEntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
+	void select(const QModelIndex &index);
 
 private:
 	typedef KeyboardEventSource<

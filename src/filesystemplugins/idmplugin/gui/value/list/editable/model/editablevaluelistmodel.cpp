@@ -12,11 +12,9 @@ void EditableValueListModel::add(const List &list)
 	ValueListModel::add(list);
 }
 
-void EditableValueListModel::add(const IdmEntityValue::Holder &value)
+QModelIndex EditableValueListModel::add(const IdmEntityValue::Holder &value)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(value);
-	endInsertRows();
+	return ValueListModel::add(value);
 }
 
 void EditableValueListModel::remove(const QModelIndex &index)

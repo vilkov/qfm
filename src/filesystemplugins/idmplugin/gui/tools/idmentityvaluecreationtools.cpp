@@ -133,7 +133,7 @@ IdmEntityValue::Holder CreationTools::chooseOrCreateValue(QWidget *parent, IdmCo
 {
 	SelectableValueListDialog dialog(container, Select(entity), parent);
 
-	if (dialog.exec() == EditableValueListDialog::Accepted)
+	if (dialog.exec() == SelectableValueListDialog::Accepted)
 		return dialog.takeValue();
 	else
 		declined = true;

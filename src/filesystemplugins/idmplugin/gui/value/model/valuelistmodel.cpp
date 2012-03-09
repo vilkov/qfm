@@ -92,6 +92,15 @@ void ValueListModel::add(const List &list)
 	endInsertRows();
 }
 
+QModelIndex ValueListModel::add(const IdmEntityValue::Holder &value)
+{
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+	m_items.push_back(value);
+	endInsertRows();
+
+	return createIndex(m_items.size() - 1, 0);
+}
+
 void ValueListModel::remove(const QModelIndex &index)
 {
 	beginRemoveRows(QModelIndex(), index.row(), index.row());

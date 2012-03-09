@@ -44,6 +44,14 @@ QModelIndex EditableValueListDialog::currentIndex() const
 	return m_view.selectionModel()->currentIndex();
 }
 
+void EditableValueListDialog::select(const QModelIndex &index)
+{
+	m_view.scrollTo(index, QAbstractItemView::EnsureVisible);
+	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+	m_view.setFocus();
+}
+
 void EditableValueListDialog::addValue()
 {
 	bool declined = false;
@@ -56,7 +64,7 @@ void EditableValueListDialog::addValue()
 			declined));
 
 	if (value)
-		m_model.add(value);
+		select(m_model.add(value));
 	else
 		if (!declined)
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());

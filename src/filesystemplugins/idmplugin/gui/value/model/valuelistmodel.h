@@ -40,6 +40,7 @@ protected:
 
 protected:
     void add(const List &list);
+    QModelIndex add(const IdmEntityValue::Holder &value);
 	void remove(const QModelIndex &index);
 
 protected:

@@ -117,6 +117,8 @@ public:
 	KeyList keys() const { return m_map.keys(); }
 	const ValueList &values() const { return m_list; }
 
+	QSet<T> toSet() const { return m_list.toSet(); }
+
 	void add(const Hash &hash, const T &value)
 	{
 		m_list.push_back(value);

@@ -113,7 +113,7 @@ private:
 
 private:
 	void createEntity();
-	void addProperty(ItemsContainer::Item *item);
+	void addProperty(const QModelIndex &index);
 
 private:
 	void add(IdmEntity *entity);

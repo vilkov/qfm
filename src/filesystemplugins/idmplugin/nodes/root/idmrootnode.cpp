@@ -7,7 +7,7 @@
 #include "../folder/idmfoldernode.h"
 #include "../../control/idmcopycontrol.h"
 #include "../../gui/create/createentitydialog.h"
-#include "../../gui/choose/choosefileentitydialog.h"
+#include "../../gui/choose/chooseentitydialog.h"
 #include "../../gui/query/create/createquerydialog.h"
 #include "../../gui/value/list/editable/editablevaluelistdialog.h"
 #include "../../../../application.h"
@@ -175,7 +175,7 @@ IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
 
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
+	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 		return new IdmCopyControl(m_container, entity, m_info, m_info);
 	else
 		return 0;
@@ -276,9 +276,25 @@ const INodeView::MenuActionList &IdmRootNode::actions() const
 			break;
 		}
 
+		case Remove:
+		{
+			break;
+		}
+
+		case AddProperty:
+		{
+			addProperty(view->currentIndex());
+			break;
+		}
+
+		case RemoveProperty:
+		{
+			break;
+		}
+
 		case Find:
 		{
-			if (IdmEntity *entity = ChooseFileEntityDialog::choose(m_container, Application::mainWindow()))
+			if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 			{
 				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
 
@@ -456,9 +472,23 @@ void IdmRootNode::createEntity()
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
-void IdmRootNode::addProperty(ItemsContainer::Item *item)
+void IdmRootNode::addProperty(const QModelIndex &index)
 {
+	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isEntity())
+	{
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
 
+		if (item->entity()->type() == Database::Composite)
+		{
+
+		}
+		else
+			QMessageBox::warning(
+					Application::mainWindow(),
+					tr("Wrong entity"),
+					tr("Entity \"%1\" is not composite.").
+						arg(item->entity()->name()));
+	}
 }
 
 void IdmRootNode::add(IdmEntity *entity)

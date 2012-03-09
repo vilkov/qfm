@@ -1,5 +1,5 @@
-#ifndef CHOOSEFILEENTITYDIALOG_H_
-#define CHOOSEFILEENTITYDIALOG_H_
+#ifndef CHOOSEENTITYDIALOG_H_
+#define CHOOSEENTITYDIALOG_H_
 
 #include <QtCore/QList>
 #include <QtGui/QDialog>
@@ -13,7 +13,7 @@
 
 using namespace FileSystem::Plugins::Idm;
 
-class ChooseFileEntityDialog : public QDialog
+class ChooseEntityDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -21,10 +21,12 @@ public:
 	typedef QList<IdmEntity*> List;
 
 public:
-	ChooseFileEntityDialog(const IdmContainer &container, const List &list, QWidget *parent = 0);
-
 	IdmEntity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }
-	static IdmEntity *choose(const IdmContainer &container, QWidget *parent = 0);
+	static IdmEntity *chooseFile(const IdmContainer &container, QWidget *parent = 0);
+	static IdmEntity *chooseProperty(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+
+protected:
+	ChooseEntityDialog(const QString &title, const IdmContainer &container, const List &list, QWidget *parent = 0);
 
 private:
 	const IdmContainer &m_container;
@@ -35,4 +37,4 @@ private:
 	QHBoxLayout m_horizontalLayout;
 };
 
-#endif /* CHOOSEFILEENTITYDIALOG_H_ */
+#endif /* CHOOSEENTITYDIALOG_H_ */

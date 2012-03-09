@@ -283,6 +283,7 @@ QAbstractItemView::SelectionMode IdmRootNode::selectionMode() const
 
 		case Remove:
 		{
+			removeEntity(view->currentIndex());
 			break;
 		}
 
@@ -454,7 +455,7 @@ void IdmRootNode::createEntity()
 
 					if (ok)
 						if (m_container.commit())
-							add(entity);
+							doAdd(entity);
 						else
 						{
 							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
@@ -463,7 +464,7 @@ void IdmRootNode::createEntity()
 				}
 				else
 					if (m_container.commit())
-						add(entity);
+						doAdd(entity);
 					else
 					{
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
@@ -476,6 +477,41 @@ void IdmRootNode::createEntity()
 			}
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+}
+
+void IdmRootNode::removeEntity(const QModelIndex &index)
+{
+	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isEntity())
+	{
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
+
+		if (QMessageBox::question(
+				Application::mainWindow(),
+				tr("Remove entity"),
+				tr("Would you like to remove entity \"%1\"?").
+					arg(item->entity()->name()),
+				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+		{
+			if (m_container.transaction())
+				if (m_container.removeEntity(item->entity()))
+				{
+					doRemove(item->entity());
+
+					if (!m_container.commit())
+					{
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+				}
+				else
+				{
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+					m_container.rollback();
+				}
+			else
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+		}
+	}
 }
 
 void IdmRootNode::addProperty(const QModelIndex &index)
@@ -553,13 +589,6 @@ void IdmRootNode::removeProperty(const QModelIndex &index)
 	}
 }
 
-void IdmRootNode::add(IdmEntity *entity)
-{
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	doAdd(entity);
-	endInsertRows();
-}
-
 void IdmRootNode::remove(const QModelIndex &index)
 {
 //	beginRemoveRows(QModelIndex(), index.row(), index.row());
@@ -572,9 +601,32 @@ void IdmRootNode::doAdd(IdmEntity *entity)
 {
 	RootNodeEntityItem *item;
 
+	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 	m_items.push_back(item = new RootNodeEntityItem(entity));
 	m_entities[entity].push_back(item);
 	expand(item);
+	endInsertRows();
+}
+
+void IdmRootNode::doRemove(IdmEntity *entity)
+{
+	ItemsContainer::Item::size_type row;
+	ItemsContainer::Item *parent;
+	ItemsContainer::List list = m_entities.take(entity);
+	QModelIndex index;
+
+	for (ItemsContainer::List::size_type i = 0, size = list.size(); i < size; ++i)
+	{
+		index = IdmRootNode::parent(list.at(i), row);
+		beginRemoveRows(index, row, row);
+
+		if (parent = list.at(i)->parent())
+			static_cast<RootNodeEntityItem*>(parent)->remove(row);
+		else
+			delete m_items.takeAt(row);
+
+		endRemoveRows();
+	}
 }
 
 void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName)

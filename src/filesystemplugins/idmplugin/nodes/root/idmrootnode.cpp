@@ -589,14 +589,6 @@ void IdmRootNode::removeProperty(const QModelIndex &index)
 	}
 }
 
-void IdmRootNode::remove(const QModelIndex &index)
-{
-//	beginRemoveRows(QModelIndex(), index.row(), index.row());
-//	delete m_items.at(index.row());
-//	m_items.remove(index.row());
-//	endRemoveRows();
-}
-
 void IdmRootNode::doAdd(IdmEntity *entity)
 {
 	RootNodeEntityItem *item;

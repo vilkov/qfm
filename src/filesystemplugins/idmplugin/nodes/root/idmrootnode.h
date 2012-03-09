@@ -119,7 +119,6 @@ private:
 	void removeProperty(const QModelIndex &index);
 
 private:
-	void remove(const QModelIndex &index);
 	void doAdd(IdmEntity *entity);
 	void doRemove(IdmEntity *entity);
 	void doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName);

@@ -62,19 +62,18 @@ QByteArray EntitiesTable::selectValues(Database::id_type entity, Database::id_ty
 			arg(QString::number(property)).toUtf8();
 }
 
-QByteArray EntitiesTable::addValue(Database::id_type entity, Database::id_type id)
+QByteArray EntitiesTable::addCompositeValue(Database::id_type entity, Database::id_type id)
 {
 	return QString::fromLatin1("insert into ENTITY_%1 (ID) values (%2)").
 			arg(QString::number(entity)).
 			arg(QString::number(id)).toUtf8();
 }
 
-QByteArray EntitiesTable::addValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value)
+QByteArray EntitiesTable::addValue(Database::id_type entity, Database::id_type id)
 {
-	return QString::fromLatin1("insert into ENTITY_%1 (ID, VALUE) values (%2, %3)").
+	return QString::fromLatin1("insert into ENTITY_%1 (ID, VALUE) values (%2, ?1)").
 			arg(QString::number(entity)).
-			arg(QString::number(id)).
-			arg(Database::valueToString(type, value)).toUtf8();
+			arg(QString::number(id)).toUtf8();
 }
 
 QByteArray EntitiesTable::updateValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value)

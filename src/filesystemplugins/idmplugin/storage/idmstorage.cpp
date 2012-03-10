@@ -356,7 +356,7 @@ IdmEntityValue::Holder IdmStorage::addValue(IdmEntity *entity) const
 	if (id != IdmEntity::InvalidId)
 	{
 		char *errorMsg = 0;
-		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), id);
+		QByteArray sqlQuery = EntitiesTable::addCompositeValue(entity->id(), id);
 
 		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 			return IdmValueReader::createValue(entity, id);
@@ -439,18 +439,19 @@ bool IdmStorage::addValue(const IdmEntityValue::Holder &entityValue, const IdmCo
 				QByteArray sqlQuery = PropertiesTable::Incomplete::addValue(table, entityValue->id());
 
 				if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+				{
 					for (IdmCompositeEntityValue::List::size_type i = 0, size = propertyValues.size(); i < size; ++i)
 					{
 						if (sqlite3_bind_int(statement, 1, id) != SQLITE_OK)
 						{
-							setLastError(tr("Some error!"));
+							setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 							ok = false;
 							break;
 						}
 
 						if (sqlite3_bind_int(statement, 2, propertyValues.at(i)->id()) != SQLITE_OK)
 						{
-							setLastError(tr("Some error!"));
+							setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 							ok = false;
 							break;
 						}
@@ -460,19 +461,22 @@ bool IdmStorage::addValue(const IdmEntityValue::Holder &entityValue, const IdmCo
 								++id;
 							else
 							{
-								setLastError(tr("Some error!"));
+								setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 								ok = false;
 								break;
 							}
 						else
 						{
-							setLastError(tr("Some error!"));
+							setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 							ok = false;
 							break;
 						}
 					}
+
+					sqlite3_finalize(statement);
+				}
 				else
-					setLastError(sqlQuery.data());
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 
 				if (ok)
 				{
@@ -495,23 +499,34 @@ IdmEntityValue::Holder IdmStorage::addValue(IdmEntity *entity, const QVariant &v
 {
 	QString str;
 	id_type id = loadId(str = QString::fromLatin1("ENTITY_").append(QString::number(entity->id())));
+	IdmEntityValue::Holder res;
 
 	if (id != InvalidId)
 	{
-		char *errorMsg = 0;
-		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), entity->type(), id, value);
+		sqlite3_stmt *statement;
+		QByteArray sqlQuery = EntitiesTable::addValue(entity->id(), id);
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
-			return IdmValueReader::createValue(entity, id, value);
+		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		{
+			QByteArray valueString = Database::valueToString(entity->type(), value).toUtf8();
+
+			if (sqlite3_bind_text(statement, 1, valueString, valueString.size(), SQLITE_STATIC) != SQLITE_OK)
+				setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+			else
+				if (sqlite3_step(statement) == SQLITE_DONE)
+					res = IdmValueReader::createValue(entity, id, value);
+				else
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+
+			sqlite3_finalize(statement);
+		}
 		else
-			setLastError(sqlQuery, errorMsg);
-
-		sqlite3_free(errorMsg);
+			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 	}
 	else
 		setLastError(failedToLoadId(str));
 
-	return IdmEntityValue::Holder();
+	return res;
 }
 
 bool IdmStorage::updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const

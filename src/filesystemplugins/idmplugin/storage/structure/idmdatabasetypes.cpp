@@ -48,7 +48,7 @@ QString Database::valueToString(EntityType type, const QVariant &value)
 		case Int:      return QString::number(value.toInt());
 		case Memo:
 		case Path:
-		case String:   return QString::fromLatin1("'%1'").arg(value.toString());
+		case String:   return value.toString();
 		case Date:     return value.toDate().toString("'MM/dd/yyyy'");
 		case Time:     return value.toTime().toString("'hh:mm:ss'");
 		case DateTime: return value.toDateTime().toString("'hh:mm:ss MM/dd/yyyy'");

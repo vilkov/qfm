@@ -23,8 +23,8 @@ struct EntitiesTable
 	static QByteArray insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat);
 	static QByteArray remove(Database::id_type entity);
 	static QByteArray selectValues(Database::id_type entity, Database::id_type property);
+	static QByteArray addCompositeValue(Database::id_type entity, Database::id_type id);
 	static QByteArray addValue(Database::id_type entity, Database::id_type id);
-	static QByteArray addValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value);
 	static QByteArray updateValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value);
 	static QByteArray removeValue(Database::id_type entity, Database::id_type value);
 	static QByteArray removeValues(Database::id_type entity, const Database::IdsList &ids);

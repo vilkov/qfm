@@ -14,7 +14,7 @@ IdmEntityValue::Holder SelectableValueListDialog::takeValue()
 void SelectableValueListDialog::accept()
 {
 	if (currentIndex().isValid())
-		QDialog::accept();
+		EditableValueListDialog::accept();
 	else
 		QMessageBox::warning(this, windowTitle(), "You must choose one of the values.");
 }

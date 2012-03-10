@@ -24,7 +24,6 @@ public:
 protected:
 	IdmEntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
-	void select(const QModelIndex &index);
 
 private:
 	typedef KeyboardEventSource<
@@ -40,6 +39,8 @@ private:
 
 	void addValue();
 	void removeValue();
+    void setCurrentIndex(const QModelIndex &index) const;
+    void select(const QModelIndex &index);
 
 private:
 	IdmContainer m_container;

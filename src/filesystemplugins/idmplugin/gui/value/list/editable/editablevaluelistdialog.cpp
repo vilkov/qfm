@@ -44,14 +44,6 @@ QModelIndex EditableValueListDialog::currentIndex() const
 	return m_view.selectionModel()->currentIndex();
 }
 
-void EditableValueListDialog::select(const QModelIndex &index)
-{
-	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
-	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-	m_view.setFocus();
-}
-
 void EditableValueListDialog::addValue()
 {
 	bool declined = false;
@@ -64,7 +56,10 @@ void EditableValueListDialog::addValue()
 			declined));
 
 	if (value)
-		select(m_model.add(value));
+	{
+		setCurrentIndex(m_model.add(value));
+		accept();
+	}
 	else
 		if (!declined)
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());
@@ -79,4 +74,17 @@ void EditableValueListDialog::removeValue()
 			m_model.remove(index);
 		else
 			QMessageBox::critical(this, windowTitle(), m_container.lastError());
+}
+
+void EditableValueListDialog::setCurrentIndex(const QModelIndex &index) const
+{
+	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+}
+
+void EditableValueListDialog::select(const QModelIndex &index)
+{
+	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
+	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+	m_view.setFocus();
 }

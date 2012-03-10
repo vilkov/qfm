@@ -1,5 +1,7 @@
 #include "editablevaluelistdialog.h"
 #include "../../../tools/idmentityvaluecreationtools.h"
+
+#include <QtCore/QTimer>
 #include <QtGui/QMessageBox>
 
 
@@ -58,7 +60,7 @@ void EditableValueListDialog::addValue()
 	if (value)
 	{
 		setCurrentIndex(m_model.add(value));
-		accept();
+		QTimer::singleShot(50, this, SLOT(accept()));
 	}
 	else
 		if (!declined)

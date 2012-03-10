@@ -10,7 +10,7 @@ FolderPropertiesAction::FolderPropertiesAction() :
 
 void FolderPropertiesAction::process(const IFileContainer *container, const FilesList &files) const
 {
-	Application::desktopService()->test();
+	Application::desktopService()->test(container->location(files.at(0).second->fileName()));
 }
 
 FILE_SYSTEM_NS_END

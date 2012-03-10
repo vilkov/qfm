@@ -50,7 +50,7 @@ public:
 	void open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const;
 
 
-	void test() const;
+	void test(const QString &absoluteFilePath) const;
 
 private:
 	QByteArray themeName() const;

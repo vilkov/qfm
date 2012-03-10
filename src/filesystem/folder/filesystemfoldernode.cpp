@@ -240,7 +240,14 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	if (FileAction *action = FileAction::fromQAction(menu.exec(QCursor::pos())))
 	{
-		const FileAction::FilesList files = map.value(action);
+		FileAction::FilesList files = map.value(action);
+
+		if (files.isEmpty())
+			for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
+			{
+				item = items.at(i);
+				files.push_back(FileAction::FilesList::value_type(item, &item->info()));
+			}
 
 		if (action->isAsynchronous())
 		{

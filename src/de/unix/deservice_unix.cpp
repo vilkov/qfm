@@ -374,12 +374,11 @@ QIcon Service::unpackActionIcon(int iconSize) const
 		return fileTypeInfo(iconSize);
 	else
 	{
-		struct stat st;
 		QByteArray fileName = absoluteFilePath.toUtf8();
 		const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName);
 
 		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
-			mimeType = xdg_mime_get_mime_type_for_file(fileName, &st);
+			mimeType = xdg_mime_get_mime_type_for_file(fileName, NULL);
 
 		return fileTypeInfo(mimeType, iconSize);
 	}
@@ -475,95 +474,9 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 	}
 }
 
-void Service::test() const
+void Service::test(const QString &absoluteFilePath) const
 {
-	const XdgList *values;
-	const XdgAppGroupEntries *group;
-	const XdgJointList *apps;
-
-	if (apps = xdg_joint_list_begin(xdg_default_apps_lookup("video/x-msvideo")))
-		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-		}
-		while (apps = xdg_joint_list_next(apps));
-
-	if (apps = xdg_joint_list_begin(xdg_removed_apps_lookup("video/x-msvideo")))
-		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-		}
-		while (apps = xdg_joint_list_next(apps));
-
-	if (apps = xdg_joint_list_begin(xdg_added_apps_lookup("video/x-msvideo")))
-		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-		}
-		while (apps = xdg_joint_list_next(apps));
-
-	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup("video/x-msvideo")))
-		do
-		{
-			group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry");
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-
-			if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", "ru", "RU", NULL)))
-				do
-				{
-					qDebug() << QString::fromUtf8(xdg_list_item_app_group_entry_value(values));
-				}
-				while (values = xdg_list_next(values));
-		}
-		while (apps = xdg_joint_list_next(apps));
+	fileTypeInfo(absoluteFilePath, false, 16);
 }
 
 QByteArray Service::themeName() const

@@ -300,7 +300,17 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 		QString error;
 		IFileContainer::Holder folder(open(dialog.value(), true, error));
 
-		if (!folder)
+		if (folder)
+		{
+			FileSystemEntryItem *item;
+
+			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+			m_items.add(item = new FileSystemEntryItem(Info(folder->location(), Info::Refresh())));
+			endInsertRows();
+
+			view->select(indexForFile(item, m_items.size() - 1));
+		}
+		else
 			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);
 	}
 }

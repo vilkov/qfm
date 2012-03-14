@@ -7,6 +7,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "../model/compositevaluemodel.h"
+#include "../../tools/nestedplaindialog/nestedplaindialog.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
@@ -14,7 +15,7 @@
 
 using namespace FileSystem::Plugins::Idm;
 
-class CompositeValueDialog : public QDialog
+class CompositeValueDialog : public NestedPlainDialog
 {
 	Q_OBJECT
 
@@ -57,8 +58,8 @@ private:
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	CompositeValueModel m_model;
-	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
+//	QDialogButtonBox m_buttonBox;
+//	QVBoxLayout m_verticatLayout;
 };
 
 #endif /* COMPOSITEVALUEDIALOG_H_ */

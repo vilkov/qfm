@@ -1,13 +1,14 @@
 #include "nestedwidget.h"
+#include "nesteddialog.h"
 
 
-NestedWidget::NestedWidget(const QString &title) :
-	BaseNestedWidget(),
-	m_splitter(),
+NestedWidget::NestedWidget(const QString &title, NestedDialog *parent) :
+	QObject(),
 	m_groupbox(title),
 	m_hlayout(&m_groupbox),
-	m_ok(QString::fromLatin1("<OK"), this),
-	m_cancel(QString::fromLatin1("<Cancel"), this)
+	m_ok(QString::fromLatin1("<Y")),
+	m_cancel(QString::fromLatin1("<N")),
+	m_parent(parent)
 {
 	m_groupbox.setAlignment(Qt::AlignCenter);
 
@@ -19,4 +20,20 @@ NestedWidget::NestedWidget(const QString &title) :
 	m_vlayout.setSpacing(1);
 	m_vlayout.addWidget(&m_ok);
 	m_vlayout.addWidget(&m_cancel);
+
+	connect(&m_ok, SIGNAL(clicked()), this, SLOT(accept()));
+	connect(&m_cancel, SIGNAL(clicked()), this, SLOT(reject()));
+}
+
+NestedWidget::~NestedWidget()
+{}
+
+void NestedWidget::accept()
+{
+	m_parent->accepted();
+}
+
+void NestedWidget::reject()
+{
+	m_parent->rejected();
 }

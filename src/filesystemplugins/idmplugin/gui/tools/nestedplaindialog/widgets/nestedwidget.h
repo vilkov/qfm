@@ -1,32 +1,43 @@
 #ifndef NESTEDWIDGET_H_
 #define NESTEDWIDGET_H_
 
-#include <QtGui/QSplitter>
+#include <QtCore/QObject>
 #include <QtGui/QGroupBox>
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
-#include "basenestedwidget.h"
 
 
-class NestedWidget : public BaseNestedWidget
+class NestedDialog;
+
+class NestedWidget : public QObject
 {
-public:
-	NestedWidget(const QString &title);
+	Q_OBJECT
 
-	QSplitter *splitter() { return &m_splitter; }
+public:
+	NestedWidget(const QString &title, NestedDialog *parent);
+	virtual ~NestedWidget();
+
 	QWidget *centralWidget() { return &m_groupbox; }
 
+	void setReadOnly(bool value) { m_groupbox.setEnabled(!value); }
+	virtual void setFocus() = 0;
+
 protected:
-	void addWidget(QWidget *widget) { m_hlayout.addWidget(widget); }
+	void addWidget(QWidget *widget, int stretch = 0) { m_hlayout.addWidget(widget, stretch); }
+
+protected Q_SLOTS:
+	friend class BaseNestedDialog;
+	virtual void accept();
+	virtual void reject();
 
 private:
-	QSplitter m_splitter;
 	QGroupBox m_groupbox;
 	QHBoxLayout m_hlayout;
 	QVBoxLayout m_vlayout;
 	QPushButton m_ok;
 	QPushButton m_cancel;
+	NestedDialog *m_parent;
 };
 
 #endif /* NESTEDWIDGET_H_ */

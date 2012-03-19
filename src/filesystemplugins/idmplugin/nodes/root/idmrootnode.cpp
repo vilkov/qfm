@@ -328,20 +328,20 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 	if ((item = static_cast<RootNodeItem*>(idx.internalPointer()))->isEntity())
 		if (m_container.transaction())
 		{
-			EditableValueListDialog dialog(
-					m_container,
-					Select(static_cast<RootNodeEntityItem*>(item)->entity()),
-					Application::mainWindow());
-
-			if (dialog.exec() == EditableValueListDialog::Accepted)
-			{
-				if (!m_container.commit())
-				{
-					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-					m_container.rollback();
-				}
-			}
-			else
+//			EditableValueListDialog dialog(
+//					m_container,
+//					Select(static_cast<RootNodeEntityItem*>(item)->entity()),
+//					Application::mainWindow());
+//
+//			if (dialog.exec() == EditableValueListDialog::Accepted)
+//			{
+//				if (!m_container.commit())
+//				{
+//					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//					m_container.rollback();
+//				}
+//			}
+//			else
 				m_container.rollback();
 		}
 		else

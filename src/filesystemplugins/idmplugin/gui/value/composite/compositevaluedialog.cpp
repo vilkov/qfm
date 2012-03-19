@@ -1,10 +1,12 @@
 #include "compositevaluedialog.h"
+#include "../model/items/compositevaluevalueitem.h"
+#include "../model/items/compositevaluepropertyitem.h"
 
 
 CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent) :
 	NestedPlainDialog(parent),
 	m_handler(this),
-	m_mainWidget(&m_handler, container, value)
+	m_mainWidget(&m_handler, container, value, this)
 {
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueDialog::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);

@@ -5,6 +5,9 @@
 #include "../../../../storage/values/idmvaluereader.h"
 
 
+CompositeValueWidgetPrivate::ICallback::~ICallback()
+{}
+
 CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value) :
 	m_callback(callback),
 	m_container(container),
@@ -25,7 +28,7 @@ void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 	{
 		SelectableValueListDialog dialog(m_container, Select(entity), m_callback->parent());
 
-		if (m_callback->open(&dialog) == SelectableValueListDialog::Accepted)
+		if (dialog.exec() == SelectableValueListDialog::Accepted)
 		{
 			IdmEntityValue::Holder value;
 
@@ -98,18 +101,13 @@ NestedDialog *MainCompositeValueWidget::parent()
 	return BaseNestedWidget::parent();
 }
 
-int MainCompositeValueWidget::open(NestedWidget *widget)
-{
-	return BaseNestedWidget::open(widget);
-}
-
 void MainCompositeValueWidget::critical(const QString &text)
 {
 	BaseNestedWidget::critical(text);
 }
 
-CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, const QString &title, NestedDialog *parent) :
-	NestedWidget(title, parent),
+CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent, const QString &title) :
+	NestedWidget(parent, title),
 	m_handler(this),
 	m_private(this, &m_handler, container, value)
 {
@@ -130,11 +128,6 @@ NestedDialog *CompositeValueWidget::parent()
 void CompositeValueWidget::critical(const QString &text)
 {
 	BaseNestedWidget::critical(text);
-}
-
-int CompositeValueWidget::open(NestedWidget *widget)
-{
-	return BaseNestedWidget::open(widget);
 }
 
 void CompositeValueWidget::addValue()

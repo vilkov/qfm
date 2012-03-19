@@ -24,9 +24,13 @@ protected:
 	virtual void accepted();
 	virtual void rejected();
 
-	virtual int open(NestedWidget *widget);
+	/* Message box */
+	virtual void warning(const QString &text);
+	virtual void warning(const QString &title, const QString &text);
 	virtual void critical(const QString &text);
 	virtual void critical(const QString &title, const QString &text);
+
+	virtual int open(NestedWidget *widget);
 
 	void setCentralWidget(BaseNestedWidget *widget);
 

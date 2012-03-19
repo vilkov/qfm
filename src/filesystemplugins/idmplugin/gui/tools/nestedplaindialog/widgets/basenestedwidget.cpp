@@ -9,19 +9,24 @@ BaseNestedWidget::BaseNestedWidget(NestedDialog *parent) :
 BaseNestedWidget::~BaseNestedWidget()
 {}
 
-int BaseNestedWidget::open(NestedWidget *widget)
+void BaseNestedWidget::warning(const QString &text)
 {
-	return m_parent->open(widget);
+	m_parent->warning(text);
+}
+
+void BaseNestedWidget::warning(const QString &title, const QString &text)
+{
+	m_parent->warning(title, text);
 }
 
 void BaseNestedWidget::critical(const QString &text)
 {
-	return m_parent->critical(text);
+	m_parent->critical(text);
 }
 
 void BaseNestedWidget::critical(const QString &title, const QString &text)
 {
-	return m_parent->critical(title, text);
+	m_parent->critical(title, text);
 }
 
 void BaseNestedWidget::accept()

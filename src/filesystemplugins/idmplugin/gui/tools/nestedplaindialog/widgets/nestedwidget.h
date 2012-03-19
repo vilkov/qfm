@@ -18,12 +18,14 @@ public:
     };
 
 public:
-	NestedWidget(const QString &title, NestedDialog *parent);
+	NestedWidget(NestedDialog *parent, const QString &title);
 	virtual ~NestedWidget();
 
 	/* BaseNestedWidget */
 	virtual QWidget *centralWidget();
 	virtual void setReadOnly(bool value);
+
+	int exec();
 
 	QString title() const { return m_groupbox.title(); }
 

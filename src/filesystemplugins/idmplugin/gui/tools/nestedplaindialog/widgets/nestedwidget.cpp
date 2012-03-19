@@ -2,13 +2,12 @@
 #include "nesteddialog.h"
 
 
-NestedWidget::NestedWidget(const QString &title, NestedDialog *parent) :
+NestedWidget::NestedWidget(NestedDialog *parent, const QString &title) :
 	BaseNestedWidget(parent),
 	m_groupbox(title),
 	m_hlayout(&m_groupbox),
 	m_ok(QString::fromLatin1("<Y")),
-	m_cancel(QString::fromLatin1("<N")),
-	m_parent(parent)
+	m_cancel(QString::fromLatin1("<N"))
 {
 	m_groupbox.setAlignment(Qt::AlignCenter);
 
@@ -36,4 +35,9 @@ QWidget *NestedWidget::centralWidget()
 void NestedWidget::setReadOnly(bool value)
 {
 	m_groupbox.setEnabled(!value);
+}
+
+int NestedWidget::exec()
+{
+	return parent()->open(this);
 }

@@ -51,9 +51,24 @@ void NestedPlainDialog::rejected()
 	m_loop->exit(NestedWidget::Rejected);
 }
 
-QWidget *NestedPlainDialog::widget()
+void NestedPlainDialog::warning(const QString &text)
 {
-	return this;
+	QMessageBox::warning(this, windowTitle(), text);
+}
+
+void NestedPlainDialog::warning(const QString &title, const QString &text)
+{
+	QMessageBox::warning(this, title, text);
+}
+
+void NestedPlainDialog::critical(const QString &text)
+{
+	QMessageBox::critical(this, windowTitle(), text);
+}
+
+void NestedPlainDialog::critical(const QString &title, const QString &text)
+{
+	QMessageBox::critical(this, title, text);
 }
 
 int NestedPlainDialog::open(NestedWidget *widget)
@@ -91,16 +106,6 @@ int NestedPlainDialog::open(NestedWidget *widget)
 	}
 
 	return res;
-}
-
-void NestedPlainDialog::critical(const QString &text)
-{
-	QMessageBox::critical(this, windowTitle(), text);
-}
-
-void NestedPlainDialog::critical(const QString &title, const QString &text)
-{
-	QMessageBox::critical(this, title, text);
 }
 
 void NestedPlainDialog::setCentralWidget(BaseNestedWidget *widget)

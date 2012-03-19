@@ -6,7 +6,6 @@
 
 
 class NestedDialog;
-class NestedWidget;
 
 class BaseNestedWidget : public QObject
 {
@@ -22,7 +21,10 @@ public:
 
 protected:
 	NestedDialog *parent() { return m_parent; }
-	int open(NestedWidget *widget);
+
+	/* Message box */
+	void warning(const QString &text);
+	void warning(const QString &title, const QString &text);
 	void critical(const QString &text);
 	void critical(const QString &title, const QString &text);
 

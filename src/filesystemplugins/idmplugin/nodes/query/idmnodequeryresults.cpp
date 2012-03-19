@@ -9,7 +9,6 @@
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
 #include "../folder/idmfoldernode.h"
-#include "../../gui/tools/idmentityvaluecreationtools.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
@@ -263,12 +262,13 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		if (m_container.transaction())
 		{
 			bool declined = false;
-			IdmEntityValue::Holder value(
-					CreationTools::chooseOrCreateValue(
-					Application::mainWindow(),
-					m_container,
-					item->property().entity,
-					declined));
+			IdmEntityValue::Holder value;
+//					(
+//					CreationTools::chooseOrCreateValue(
+//					Application::mainWindow(),
+//					m_container,
+//					item->property().entity,
+//					declined));
 
 			if (value)
 				if (m_container.addValue(item->rootValue(), value))

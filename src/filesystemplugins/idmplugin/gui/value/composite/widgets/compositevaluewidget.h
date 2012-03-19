@@ -20,7 +20,6 @@ public:
 		virtual ~ICallback();
 
 		virtual NestedDialog *parent() = 0;
-		virtual int open(NestedWidget *widget) = 0;
 		virtual void critical(const QString &text) = 0;
 	};
 
@@ -66,7 +65,6 @@ public:
 
 	/* CompositeValueWidgetPrivate::ICallback */
 	virtual NestedDialog *parent();
-	virtual int open(NestedWidget *widget);
 	virtual void critical(const QString &text);
 
     QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
@@ -88,14 +86,13 @@ private:
 class CompositeValueWidget : public NestedWidget, public CompositeValueWidgetPrivate::ICallback
 {
 public:
-	CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, const QString &title, NestedDialog *parent);
+	CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent, const QString &title);
 
 	/* BaseNestedWidget */
 	virtual void setFocus();
 
 	/* CompositeValueWidgetPrivate::ICallback */
 	virtual NestedDialog *parent();
-	virtual int open(NestedWidget *widget);
 	virtual void critical(const QString &text);
 
     QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }

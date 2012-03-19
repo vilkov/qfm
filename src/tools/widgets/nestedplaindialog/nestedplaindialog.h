@@ -16,7 +16,7 @@ class NestedPlainDialog : public QDialog, public NestedDialog
 public:
 	NestedPlainDialog(QWidget *parent = 0);
 
-	virtual void accept();
+    virtual void accept();
 	virtual void reject();
 
 protected:

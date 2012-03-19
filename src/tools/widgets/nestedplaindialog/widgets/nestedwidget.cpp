@@ -41,3 +41,23 @@ int NestedWidget::exec()
 {
 	return parent()->open(this);
 }
+
+NestedWidget::Button::Button(const QString &text) :
+	QPushButton(text)
+{
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+}
+
+QSize NestedWidget::Button::sizeHint() const
+{
+	QSize res(QPushButton::sizeHint());
+	res.setWidth(20);
+	return res;
+}
+
+QSize NestedWidget::Button::minimumSizeHint() const
+{
+	QSize res(QPushButton::minimumSizeHint());
+	res.setWidth(20);
+	return res;
+}

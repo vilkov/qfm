@@ -12,6 +12,8 @@ NestedPlainDialog::NestedPlainDialog(QWidget *parent) :
 	m_splitter(Qt::Horizontal, this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
 	m_splitter.setChildrenCollapsible(false);
 
 	m_vlayout.setMargin(3);

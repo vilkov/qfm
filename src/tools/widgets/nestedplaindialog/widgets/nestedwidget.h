@@ -34,11 +34,21 @@ protected:
     void addLayout(QLayout *layout, int stretch = 0) { m_hlayout.addLayout(layout, stretch); }
 
 private:
+    class Button : public QPushButton
+    {
+    public:
+    	Button(const QString &text);
+
+        virtual QSize sizeHint() const;
+        virtual QSize minimumSizeHint() const;
+    };
+
+private:
 	QGroupBox m_groupbox;
 	QHBoxLayout m_hlayout;
 	QVBoxLayout m_vlayout;
-	QPushButton m_ok;
-	QPushButton m_cancel;
+	Button m_ok;
+	Button m_cancel;
 };
 
 #endif /* NESTEDWIDGET_H_ */

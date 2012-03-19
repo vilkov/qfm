@@ -114,4 +114,5 @@ void NestedPlainDialog::setCentralWidget(BaseNestedWidget *widget)
 {
 	Q_ASSERT(m_mainWidget == NULL);
 	m_splitter.addWidget((m_mainWidget = widget)->centralWidget());
+	m_mainWidget->setFocus();
 }

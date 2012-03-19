@@ -2,7 +2,7 @@
 #define COMPOSITEVALUEDIALOG_H_
 
 #include "widgets/compositevaluewidget.h"
-#include "../../tools/nestedplaindialog/nestedplaindialog.h"
+#include "../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 class CompositeValueDialog : public NestedPlainDialog

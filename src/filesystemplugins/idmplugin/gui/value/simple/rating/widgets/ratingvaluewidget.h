@@ -2,8 +2,8 @@
 #define RATINGVALUEWIDGET_H_
 
 #include <QtGui/QRadioButton>
-#include "../../../../tools/nestedplaindialog/widgets/nestedwidget.h"
 #include "../../../../../storage/values/idmentityvalue.h"
+#include "../../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 
 using namespace FileSystem::Plugins::Idm;

@@ -2,8 +2,8 @@
 #define SIMPLEVALUEDIALOG_H_
 
 #include "widgets/simplevaluewidget.h"
-#include "../../tools/nestedplaindialog/nestedplaindialog.h"
 #include "../../../storage/structure/idmdatabasetypes.h"
+#include "../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 using namespace FileSystem::Plugins::Idm;

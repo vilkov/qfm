@@ -2,7 +2,7 @@
 #define RATINGVALUEDIALOG_H_
 
 #include "widgets/ratingvaluewidget.h"
-#include "../../../tools/nestedplaindialog/nestedplaindialog.h"
+#include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 class RatingValueDialog : public NestedPlainDialog

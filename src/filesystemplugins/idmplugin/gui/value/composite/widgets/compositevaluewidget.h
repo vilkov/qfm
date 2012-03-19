@@ -3,10 +3,10 @@
 
 #include <QtGui/QTreeView>
 #include "../../model/compositevaluemodel.h"
-#include "../../../tools/nestedplaindialog/widgets/nestedwidget.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 
 using namespace FileSystem::Plugins::Idm;

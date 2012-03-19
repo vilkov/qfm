@@ -90,7 +90,7 @@ inline IdmEntityValue::Holder processAddValue<Database::Path>(NestedDialog *pare
 
 
 EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent) :
-	NestedWidget(parent, tr("Values of \"%1\"").arg(m_entity->name())),
+	NestedWidget(parent, tr("Values of \"%1\"").arg(query.entity()->name())),
 	m_container(container),
 	m_entity(query.entity()),
 	m_handler(this),
@@ -106,6 +106,8 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 		m_view.setModel(&m_model);
 	else
 		critical(title(), m_model.lastError());
+
+	addWidget(&m_view);
 }
 
 void EditableValueListDialog::setFocus()

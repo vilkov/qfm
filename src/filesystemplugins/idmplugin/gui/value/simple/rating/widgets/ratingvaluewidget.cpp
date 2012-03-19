@@ -27,6 +27,36 @@ RatingValueWidgetPrivate::RatingValueWidgetPrivate() :
     connect(&m_button5, SIGNAL(toggled(bool)), this, SLOT(button5Click(bool)));
 }
 
+void RatingValueWidgetPrivate::setFocus()
+{
+	switch (m_result)
+	{
+		case 1:
+			m_button1.setFocus();
+			break;
+
+		case 2:
+			m_button2.setFocus();
+			break;
+
+		case 3:
+			m_button3.setFocus();
+			break;
+
+		case 4:
+			m_button4.setFocus();
+			break;
+
+		case 5:
+			m_button5.setFocus();
+			break;
+
+		default:
+			QWidget::setFocus();
+			break;
+	}
+}
+
 void RatingValueWidgetPrivate::button1Click(bool checked)
 {
 	if (checked)

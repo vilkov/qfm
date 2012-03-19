@@ -16,6 +16,7 @@ public:
 	RatingValueWidgetPrivate();
 
     int value() const { return m_result; }
+    void setFocus();
 
 private Q_SLOTS:
 	void button1Click(bool checked);

@@ -88,7 +88,7 @@ QWidget *MainCompositeValueWidget::centralWidget()
 
 void MainCompositeValueWidget::setReadOnly(bool value)
 {
-	m_private.view().setEnabled(false);
+	m_private.view().setEnabled(!value);
 }
 
 void MainCompositeValueWidget::setFocus()
@@ -113,6 +113,8 @@ CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const 
 {
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueWidget::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueWidget::removeValue);
+
+	addWidget(&m_private.view());
 }
 
 void CompositeValueWidget::setFocus()

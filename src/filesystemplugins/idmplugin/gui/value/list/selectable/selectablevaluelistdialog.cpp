@@ -5,11 +5,6 @@ SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &contain
 	EditableValueListDialog(container, query, parent)
 {}
 
-IdmEntityValue::Holder SelectableValueListDialog::takeValue()
-{
-	return EditableValueListDialog::takeValue();
-}
-
 void SelectableValueListDialog::accept()
 {
 	if (currentIndex().isValid())

@@ -75,8 +75,6 @@ class SimpleValueWidget : public NestedWidget
 public:
 	SimpleValueWidget(NestedDialog *parent, const QString &title, const T &value = T());
 
-	virtual QWidget *centralWidget();
-	virtual void setReadOnly(bool value);
 	virtual void setFocus();
 
 	virtual void accept();
@@ -99,18 +97,6 @@ SimpleValueWidget<T>::SimpleValueWidget(NestedDialog *parent, const QString &tit
 	m_edit.selectAll();
 
 	addWidget(&m_edit);
-}
-
-template <typename T>
-QWidget *SimpleValueWidget<T>::centralWidget()
-{
-	return &m_edit;
-}
-
-template <typename T>
-void SimpleValueWidget<T>::setReadOnly(bool value)
-{
-	m_edit.setEnabled(!value);
 }
 
 template <typename T>

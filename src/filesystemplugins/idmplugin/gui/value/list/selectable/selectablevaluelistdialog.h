@@ -13,7 +13,7 @@ class SelectableValueListDialog : public EditableValueListDialog
 public:
 	SelectableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent);
 
-	IdmEntityValue::Holder takeValue();
+	IdmEntityValue::Holder takeValue() { return EditableValueListDialog::takeValue(); }
     virtual void accept();
 };
 

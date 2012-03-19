@@ -3,7 +3,7 @@
 
 
 NestedWidget::NestedWidget(const QString &title, NestedDialog *parent) :
-	QObject(),
+	BaseNestedWidget(parent),
 	m_groupbox(title),
 	m_hlayout(&m_groupbox),
 	m_ok(QString::fromLatin1("<Y")),
@@ -28,12 +28,12 @@ NestedWidget::NestedWidget(const QString &title, NestedDialog *parent) :
 NestedWidget::~NestedWidget()
 {}
 
-void NestedWidget::accept()
+QWidget *NestedWidget::centralWidget()
 {
-	m_parent->accepted();
+	return &m_groupbox;
 }
 
-void NestedWidget::reject()
+void NestedWidget::setReadOnly(bool value)
 {
-	m_parent->rejected();
+	m_groupbox.setEnabled(!value);
 }

@@ -2,7 +2,7 @@
 #include <QtGui/QMessageBox>
 
 
-SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
+SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent) :
 	EditableValueListDialog(container, query, parent)
 {}
 
@@ -16,5 +16,5 @@ void SelectableValueListDialog::accept()
 	if (currentIndex().isValid())
 		EditableValueListDialog::accept();
 	else
-		QMessageBox::warning(this, windowTitle(), "You must choose one of the values.");
+		QMessageBox::warning(widget(), title(), "You must choose one of the values.");
 }

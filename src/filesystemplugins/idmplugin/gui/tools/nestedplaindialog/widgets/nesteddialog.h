@@ -18,9 +18,13 @@ protected:
 class NestedDialog : public BaseNestedDialog
 {
 protected:
-	friend class NestedWidget;
+	friend class BaseNestedWidget;
 	virtual void accepted() = 0;
 	virtual void rejected() = 0;
+
+	virtual int open(NestedWidget *widget) = 0;
+	virtual void critical(const QString &text) = 0;
+	virtual void critical(const QString &title, const QString &text) = 0;
 };
 
 #endif /* NESTEDDIALOG_H_ */

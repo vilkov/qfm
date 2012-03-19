@@ -24,12 +24,15 @@ protected:
 	virtual void accepted();
 	virtual void rejected();
 
-	void setCentralWidget(QWidget *widget);
-	int open(NestedWidget *widget);
+	virtual int open(NestedWidget *widget);
+	virtual void critical(const QString &text);
+	virtual void critical(const QString &title, const QString &text);
+
+	void setCentralWidget(BaseNestedWidget *widget);
 
 private:
 	QEventLoop *m_loop;
-	QWidget *m_mainWidget;
+	BaseNestedWidget *m_mainWidget;
 	NestedWidget *m_currentWidget;
 
 private:

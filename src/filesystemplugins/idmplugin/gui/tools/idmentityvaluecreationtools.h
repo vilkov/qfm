@@ -1,6 +1,7 @@
 #ifndef IDMENTITYVALUECREATIONTOOLS_H_
 #define IDMENTITYVALUECREATIONTOOLS_H_
 
+#include "nestedplaindialog/widgets/nesteddialog.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmentityvalue.h"
 
@@ -9,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 
 struct CreationTools
 {
-	static IdmEntityValue::Holder createValue(const QString &title, const QString &label, QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
+	static IdmEntityValue::Holder createValue(NestedDialog *parent, const QString &title, const QString &label, IdmContainer &container, IdmEntity *entity, bool &declined);
 	static IdmEntityValue::Holder chooseOrCreateValue(QWidget *parent, IdmContainer &container, IdmEntity *entity, bool &declined);
 };
 

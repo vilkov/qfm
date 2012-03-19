@@ -117,10 +117,10 @@ void DirectoryView::edit(const QModelIndex &index)
 
 void DirectoryView::select(const QModelIndex &index)
 {
+	m_view.setFocus();
 	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
 	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
 	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-	m_view.setFocus();
 }
 
 void DirectoryView::setNode(FileSystem::INode *node)

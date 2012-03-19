@@ -1,5 +1,6 @@
 #include "nestedplaindialog.h"
 #include <QtCore/QEventLoop>
+#include <QtGui/QMessageBox>
 
 
 NestedPlainDialog::NestedPlainDialog(QWidget *parent) :
@@ -41,24 +42,23 @@ void NestedPlainDialog::reject()
 void NestedPlainDialog::accepted()
 {
 	Q_ASSERT(m_currentWidget);
-	m_loop->exit(Accepted);
+	m_loop->exit(NestedWidget::Accepted);
 }
 
 void NestedPlainDialog::rejected()
 {
 	Q_ASSERT(m_currentWidget);
-	m_loop->exit(Rejected);
+	m_loop->exit(NestedWidget::Rejected);
 }
 
-void NestedPlainDialog::setCentralWidget(QWidget *widget)
+QWidget *NestedPlainDialog::widget()
 {
-	Q_ASSERT(m_mainWidget == NULL);
-	m_splitter.addWidget(m_mainWidget = widget);
+	return this;
 }
 
 int NestedPlainDialog::open(NestedWidget *widget)
 {
-	int res = Rejected;
+	int res = NestedWidget::Rejected;
 	NestedWidget *currentWidget = m_currentWidget;
 	QEventLoop *currentLoop = m_loop;
 	QEventLoop loop;
@@ -66,7 +66,7 @@ int NestedPlainDialog::open(NestedWidget *widget)
 	if (currentWidget)
 		currentWidget->setReadOnly(true);
 	else
-		m_mainWidget->setEnabled(false);
+		m_mainWidget->setReadOnly(true);
 
 	m_loop = &loop;
 	m_currentWidget = widget;
@@ -86,9 +86,25 @@ int NestedPlainDialog::open(NestedWidget *widget)
 	}
 	else
 	{
-		m_mainWidget->setEnabled(true);
+		m_mainWidget->setReadOnly(false);
 		m_mainWidget->setFocus();
 	}
 
 	return res;
+}
+
+void NestedPlainDialog::critical(const QString &text)
+{
+	QMessageBox::critical(this, windowTitle(), text);
+}
+
+void NestedPlainDialog::critical(const QString &title, const QString &text)
+{
+	QMessageBox::critical(this, title, text);
+}
+
+void NestedPlainDialog::setCentralWidget(BaseNestedWidget *widget)
+{
+	Q_ASSERT(m_mainWidget == NULL);
+	m_splitter.addWidget((m_mainWidget = widget)->centralWidget());
 }

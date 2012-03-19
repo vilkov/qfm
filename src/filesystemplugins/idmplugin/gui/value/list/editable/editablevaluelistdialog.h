@@ -1,11 +1,9 @@
 #ifndef EDITABLEVALUELISTDIALOG_H_
 #define EDITABLEVALUELISTDIALOG_H_
 
-#include <QtGui/QDialog>
 #include <QtGui/QTreeView>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QDialogButtonBox>
 #include "model/editablevaluelistmodel.h"
+#include "../../../tools/nestedplaindialog/widgets/nestedwidget.h"
 #include "../../../../containeres/idmcontainer.h"
 #include "../../../../storage/queries/idmselectquery.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"
@@ -14,12 +12,15 @@
 
 using namespace FileSystem::Plugins::Idm;
 
-class EditableValueListDialog : public QDialog
+class EditableValueListDialog : public NestedWidget
 {
 	Q_OBJECT
 
 public:
-	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
+	EditableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent);
+
+	/* BaseNestedWidget */
+	virtual void setFocus();
 
 protected:
 	IdmEntityValue::Holder takeValue();
@@ -48,8 +49,6 @@ private:
 	TreeViewHandler m_handler;
 	TreeView m_view;
 	EditableValueListModel m_model;
-	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
 };
 
 #endif /* EDITABLEVALUELISTDIALOG_H_ */

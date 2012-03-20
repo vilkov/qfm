@@ -242,6 +242,11 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 QAbstractItemModel *ArcNode::model() const
 {
 	return const_cast<ArcNodeProxyModel*>(&m_proxy);

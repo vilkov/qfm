@@ -396,6 +396,11 @@ void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
 
 }
 
+void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 QAbstractItemModel *IdmNodeQueryResults::model() const
 {
 	return const_cast<IdmNodeQueryResults *>(this);

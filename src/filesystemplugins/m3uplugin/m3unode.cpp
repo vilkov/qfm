@@ -264,6 +264,11 @@ void M3uNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void M3uNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 ::History::Entry *M3uNode::menuAction(QAction *action, INodeView *view)
 {
 	return NULL;

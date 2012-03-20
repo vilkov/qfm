@@ -251,6 +251,11 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void IdmRootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 QAbstractItemModel *IdmRootNode::model() const
 {
 	return const_cast<IdmRootNode*>(this);

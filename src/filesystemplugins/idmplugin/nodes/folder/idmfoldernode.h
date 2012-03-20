@@ -19,6 +19,7 @@ public:
 	virtual void rename(const QModelIndexList &list, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);
 	virtual void move(const INodeView *source, INodeView *destination);
+	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 protected:
 	virtual Node *createNode(const Info &info, PluginsManager *plugins) const;

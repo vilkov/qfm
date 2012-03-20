@@ -389,6 +389,11 @@ void FolderNode::move(const INodeView *source, INodeView *destination)
 		scanForCopy(entries, destination, true);
 }
 
+void FolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 QAbstractItemModel *FolderNode::model() const
 {
 	return const_cast<FolderProxyModel *>(&m_proxy);

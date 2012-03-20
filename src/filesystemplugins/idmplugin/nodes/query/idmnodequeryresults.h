@@ -65,6 +65,7 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
 	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
+	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 	/* INode */
 	virtual QAbstractItemModel *model() const;

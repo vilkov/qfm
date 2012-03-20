@@ -41,6 +41,11 @@ void IdmFolderNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
 	if (Node *res = plugins->node(this, &info, const_cast<IdmFolderNode*>(this)))

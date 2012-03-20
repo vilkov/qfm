@@ -155,6 +155,11 @@ void RootNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void RootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
 QAbstractItemModel *RootNode::model() const
 {
 	return NULL;

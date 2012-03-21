@@ -49,6 +49,27 @@ QString Database::valueToString(EntityType type, const QVariant &value)
 		case Memo:
 		case Path:
 		case String:   return value.toString();
+		case Date:     return value.toDate().toString("MM/dd/yyyy");
+		case Time:     return value.toTime().toString("hh:mm:ss");
+		case DateTime: return value.toDateTime().toString("hh:mm:ss MM/dd/yyyy");
+		default:       return QString();
+	}
+}
+
+QString Database::valueToConstraintString(EntityType type, const QVariant &value)
+{
+	switch (type)
+	{
+		case Composite:
+		case Rating:
+		case Int:      return QString::number(value.toInt());
+		case Memo:
+		case Path:
+		case String:   return value.toString().
+								replace('%', QString::fromLatin1("\\%")).
+								replace('\'', QString::fromLatin1("\\'")).
+								prepend(QChar('\'')).
+								append(QChar('\''));
 		case Date:     return value.toDate().toString("'MM/dd/yyyy'");
 		case Time:     return value.toTime().toString("'hh:mm:ss'");
 		case DateTime: return value.toDateTime().toString("'hh:mm:ss MM/dd/yyyy'");

@@ -72,7 +72,7 @@ Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 		return new Constraint(
 				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
-				Templates::Utils::takeFrom(m_value),
+				m_value,
 				parent);
 	else
 		return new Constraint(

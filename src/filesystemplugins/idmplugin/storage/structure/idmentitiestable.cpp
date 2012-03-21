@@ -76,11 +76,10 @@ QByteArray EntitiesTable::addValue(Database::id_type entity, Database::id_type i
 			arg(QString::number(id)).toUtf8();
 }
 
-QByteArray EntitiesTable::updateValue(Database::id_type entity, Database::EntityType type, Database::id_type id, const QVariant &value)
+QByteArray EntitiesTable::updateValue(Database::id_type entity, Database::id_type id)
 {
-	return QString::fromLatin1("update ENTITY_%1 set VALUE = %2 where ID = %3").
+	return QString::fromLatin1("update ENTITY_%1 set VALUE = ?1 where ID = %2").
 			arg(QString::number(entity)).
-			arg(Database::valueToString(type, value)).
 			arg(QString::number(id)).toUtf8();
 }
 

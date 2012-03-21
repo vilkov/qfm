@@ -531,22 +531,32 @@ IdmEntityValue::Holder IdmStorage::addValue(IdmEntity *entity, const QVariant &v
 
 bool IdmStorage::updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const
 {
-	char *errorMsg = 0;
-	QByteArray sqlQuery = EntitiesTable::updateValue(value->entity()->id(), value->entity()->type(), value->id(), newValue);
+	bool res = false;
+	sqlite3_stmt *statement;
+	QByteArray sqlQuery = EntitiesTable::updateValue(value->entity()->id(), value->id());
 
-	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
+	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
 	{
-		m_undo.last().push_back(new IdmStorageUndoUpdateValue(value));
-		IdmValueReader::updateValue(value, newValue);
+		QByteArray valueString = Database::valueToString(value->entity()->type(), newValue).toUtf8();
 
-		return true;
+		if (sqlite3_bind_text(statement, 1, valueString, valueString.size(), SQLITE_STATIC) != SQLITE_OK)
+			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+		else
+			if (sqlite3_step(statement) == SQLITE_DONE)
+			{
+				m_undo.last().push_back(new IdmStorageUndoUpdateValue(value));
+				IdmValueReader::updateValue(value, newValue);
+				res = true;
+			}
+			else
+				setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+
+		sqlite3_finalize(statement);
 	}
 	else
-		setLastError(sqlQuery, errorMsg);
+		setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 
-	sqlite3_free(errorMsg);
-
-	return false;
+	return res;
 }
 
 bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const

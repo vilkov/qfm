@@ -22,7 +22,7 @@ private:
 
 		QString select(IdmEntity *entity) const;
 		QString join(Database::id_type entity, Database::id_type property) const;
-		QString complete(Database::id_type entity, QString &selectedFields, QString &joinedFields) const;
+		QString complete(Database::id_type entity, QString &selectedFields, QString &joinedFields, const QString &where) const;
 
 		QString format;
 		QString format2;

@@ -21,7 +21,10 @@ QByteArray Select::compile() const
 	for (IdmEntity::size_type i = 0, size = entity()->size(); i < size; ++i)
 		join(format, selectedFields, joinedFields, entity(), entity()->at(i).entity);
 
-	return format.complete(entity()->id(), selectedFields, joinedFields).toUtf8();
+	if (m_where)
+		return format.complete(entity()->id(), selectedFields, joinedFields, m_where->toString()).toUtf8();
+	else
+		return format.complete(entity()->id(), selectedFields, joinedFields, QString()).toUtf8();
 }
 
 Select::Format::Format() :
@@ -50,22 +53,36 @@ QString Select::Format::join(Database::id_type entity, Database::id_type propert
 			arg(QString::number(property));
 }
 
-QString Select::Format::complete(Database::id_type entity, QString &selectedFields, QString &joinedFields) const
+QString Select::Format::complete(Database::id_type entity, QString &selectedFields, QString &joinedFields, const QString &where) const
 {
 	selectedFields.chop(2);
 
 	if (joinedFields.isEmpty())
-		return QString::fromLatin1("select ").
-				append(selectedFields).
-				append(QString::fromLatin1(" from ENTITY_%1").arg(QString::number(entity)));
+		if (where.isEmpty())
+			return QString::fromLatin1("select ").
+					append(selectedFields).
+					append(QString::fromLatin1(" from ENTITY_%1").arg(QString::number(entity)));
+		else
+			return QString::fromLatin1("select ").
+					append(selectedFields).
+					append(QString::fromLatin1(" from ENTITY_%1 where ").arg(QString::number(entity))).
+					append(where);
 	else
 	{
 		joinedFields.chop(1);
 
-		return QString::fromLatin1("select ").
-				append(selectedFields).
-				append(QString::fromLatin1(" from ENTITY_%1 ").arg(QString::number(entity))).
-				append(joinedFields);
+		if (where.isEmpty())
+			return QString::fromLatin1("select ").
+					append(selectedFields).
+					append(QString::fromLatin1(" from ENTITY_%1 ").arg(QString::number(entity))).
+					append(joinedFields);
+		else
+			return QString::fromLatin1("select ").
+					append(selectedFields).
+					append(QString::fromLatin1(" from ENTITY_%1 ").arg(QString::number(entity))).
+					append(joinedFields).
+					append(QString::fromLatin1(" where ")).
+					append(where);
 	}
 }
 

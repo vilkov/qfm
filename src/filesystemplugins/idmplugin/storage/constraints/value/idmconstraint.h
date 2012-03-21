@@ -34,6 +34,9 @@ public:
 	static QString operatorToString(Operator op);
 
 private:
+	static QString operatorToString(Operator op, Database::EntityType type, const QVariant &value);
+
+private:
 	IdmEntity::Property m_property;
 	Operator m_op;
 	IdmEntityValue::Holder m_value;

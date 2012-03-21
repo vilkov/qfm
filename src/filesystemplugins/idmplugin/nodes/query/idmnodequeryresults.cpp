@@ -25,7 +25,7 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_delegate(container),
 	m_container(container),
 	m_reader(m_container, query),
-	m_label(tr("Found \"%1\" entities...").arg(m_reader.entity()->name()))
+	m_label(tr("Found \"%1\" entities...").arg(query.entity()->name()))
 {}
 
 IdmNodeQueryResults::~IdmNodeQueryResults()

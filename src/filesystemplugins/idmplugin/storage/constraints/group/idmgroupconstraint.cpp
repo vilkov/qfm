@@ -20,19 +20,24 @@ bool GroupConstraint::isGroup() const
 
 QString GroupConstraint::toString() const
 {
-	QString res(QChar('('));
-	QString constraint;
-
-	if (m_type == And)
-		constraint = QString::fromLatin1(" and ");
+	if (m_items.isEmpty())
+		return QString();
 	else
-		constraint = QString::fromLatin1(" or ");
+	{
+		QString res(QChar('('));
+		QString constraint;
 
-	for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
-		res += m_items.at(i)->toString().append(constraint);
+		if (m_type == And)
+			constraint = QString::fromLatin1(" and ");
+		else
+			constraint = QString::fromLatin1(" or ");
 
-	res.chop(constraint.size());
-	return res.append(QChar(')'));
+		for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
+			res += m_items.at(i)->toString().append(constraint);
+
+		res.chop(constraint.size());
+		return res.append(QChar(')'));
+	}
 }
 
 QString GroupConstraint::typeToString(Type type)

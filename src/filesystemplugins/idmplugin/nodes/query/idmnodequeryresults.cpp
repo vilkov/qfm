@@ -262,6 +262,9 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		if (m_container.transaction())
 		{
 			bool declined = false;
+			SelectableValueListDialog dialog(m_container, Select(item->property().entity));
+
+
 			IdmEntityValue::Holder value;
 //					(
 //					CreationTools::chooseOrCreateValue(

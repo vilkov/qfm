@@ -39,18 +39,21 @@ public:
 	const TreeView &view() const { return m_view; }
 	TreeView &view() { return m_view; }
 
-	const CompositeValueModel &model() const { return m_model; }
-	CompositeValueModel &model() { return m_model; }
+	const EditableValueListModel &model() const { return m_model; }
+	EditableValueListModel &model() { return m_model; }
 
-	void addValue(const QModelIndex &index);
-	void removeValue(const QModelIndex &index);
+private:
+	void addValue();
+	void removeValue();
+    void setCurrentIndex(const QModelIndex &index) const;
+    void select(const QModelIndex &index);
 
 private:
 	ICallback *m_callback;
 	IdmContainer m_container;
-	IdmEntityValue::Holder m_value;
+	IdmEntity *m_entity;
 	TreeView m_view;
-	CompositeValueModel m_model;
+	EditableValueListModel m_model;
 };
 
 
@@ -80,7 +83,7 @@ public:
 	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
 
 private:
-	CompositeValueWidgetPrivate m_private;
+	EditableValueListWidgetPrivate m_private;
 };
 
 
@@ -116,7 +119,7 @@ private:
 
 private:
 	TreeViewHandler m_handler;
-	CompositeValueWidgetPrivate m_private;
+	EditableValueListWidgetPrivate m_private;
 };
 
 #endif /* EDITABLEVALUELISTWIDGET_H_ */

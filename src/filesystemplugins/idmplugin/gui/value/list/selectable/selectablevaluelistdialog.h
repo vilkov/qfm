@@ -11,7 +11,7 @@ class SelectableValueListDialog : public EditableValueListDialog
 	Q_OBJECT
 
 public:
-	SelectableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent);
+	SelectableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
 	IdmEntityValue::Holder takeValue() { return EditableValueListDialog::takeValue(); }
     virtual void accept();

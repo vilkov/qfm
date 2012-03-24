@@ -1,37 +1,24 @@
 #ifndef EDITABLEVALUELISTDIALOG_H_
 #define EDITABLEVALUELISTDIALOG_H_
 
-#include <QtGui/QTreeView>
-#include "model/editablevaluelistmodel.h"
-#include "../../../../containeres/idmcontainer.h"
-#include "../../../../storage/queries/idmselectquery.h"
-#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../../tools/events/imp/keyboardeventsource.h"
-#include "../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
+#include "widgets/editablevaluelistwidget.h"
+#include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 using namespace FileSystem::Plugins::Idm;
 
-class EditableValueListDialog : public NestedWidget
+class EditableValueListDialog : public NestedPlainDialog
 {
 	Q_OBJECT
 
 public:
-	EditableValueListDialog(const IdmContainer &container, const Select &query, NestedDialog *parent);
-
-	/* BaseNestedWidget */
-	virtual void setFocus();
+	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
 protected:
 	IdmEntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
 
 private:
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QTreeView
-				>
-			> TreeView;
 	typedef KeyboardEventHandler<
 				EventHandlerBase<
 					EditableValueListDialog
@@ -40,15 +27,10 @@ private:
 
 	void addValue();
 	void removeValue();
-    void setCurrentIndex(const QModelIndex &index) const;
-    void select(const QModelIndex &index);
 
 private:
-	IdmContainer m_container;
-	IdmEntity *m_entity;
 	TreeViewHandler m_handler;
-	TreeView m_view;
-	EditableValueListModel m_model;
+	MainEditableValueListWidget m_widget;
 };
 
 #endif /* EDITABLEVALUELISTDIALOG_H_ */

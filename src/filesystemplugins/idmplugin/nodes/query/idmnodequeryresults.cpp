@@ -9,6 +9,7 @@
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
 #include "../folder/idmfoldernode.h"
+#include "../../gui/value/list/selectable/selectablevaluelistdialog.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
@@ -262,7 +263,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 		if (m_container.transaction())
 		{
 			bool declined = false;
-			SelectableValueListDialog dialog(m_container, Select(item->property().entity));
+			SelectableValueListDialog dialog(m_container, Select(item->property().entity), Application::mainWindow());
 
 
 			IdmEntityValue::Holder value;

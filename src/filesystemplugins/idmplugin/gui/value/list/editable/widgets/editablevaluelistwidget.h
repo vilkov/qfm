@@ -2,6 +2,7 @@
 #define EDITABLEVALUELISTWIDGET_H_
 
 #include <QtGui/QTreeView>
+#include <QtCore/QCoreApplication>
 #include "../model/editablevaluelistmodel.h"
 #include "../../../../../containeres/idmcontainer.h"
 #include "../../../../../storage/queries/idmselectquery.h"
@@ -14,12 +15,15 @@ using namespace FileSystem::Plugins::Idm;
 
 class EditableValueListWidgetPrivate
 {
+	Q_DECLARE_TR_FUNCTIONS(EditableValueListWidgetPrivate)
+
 public:
 	class ICallback
 	{
 	public:
 		virtual ~ICallback();
 
+		virtual void acceptAndClose() = 0;
 		virtual NestedDialog *parent() = 0;
 		virtual void critical(const QString &text) = 0;
 	};
@@ -31,7 +35,7 @@ public:
 			> TreeView;
 
 public:
-	EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value);
+	EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const Select &query);
 
 	const IdmContainer &container() const { return m_container; }
 	IdmContainer &container() { return m_container; }
@@ -42,11 +46,12 @@ public:
 	const EditableValueListModel &model() const { return m_model; }
 	EditableValueListModel &model() { return m_model; }
 
-private:
-	void addValue();
+    void addValue();
 	void removeValue();
-    void setCurrentIndex(const QModelIndex &index) const;
     void select(const QModelIndex &index);
+
+private:
+    void setCurrentIndex(const QModelIndex &index) const;
 
 private:
 	ICallback *m_callback;
@@ -57,63 +62,63 @@ private:
 };
 
 
-class MainEditableValueListWidget : public BaseNestedWidget, public CompositeValueWidgetPrivate::ICallback
+class MainEditableValueListWidget : public BaseNestedWidget, public EditableValueListWidgetPrivate::ICallback
 {
 public:
-	MainEditableValueListWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent);
+	MainEditableValueListWidget(EventHandler *handler, const IdmContainer &container, const Select &query, NestedDialog *parent);
 
 	/* BaseNestedWidget */
 	virtual QWidget *centralWidget();
 	virtual void setReadOnly(bool value);
 	virtual void setFocus();
 
-	/* CompositeValueWidgetPrivate::ICallback */
+	/* EditableValueListWidgetPrivate::ICallback */
+	virtual void acceptAndClose();
 	virtual NestedDialog *parent();
 	virtual void critical(const QString &text);
-
-    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
 
     const IdmContainer &container() const { return m_private.container(); }
 	IdmContainer &container() { return m_private.container(); }
 
-	const CompositeValueModel &model() const { return m_private.model(); }
-	CompositeValueModel &model() { return m_private.model(); }
+    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
+	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
-	void addValue(const QModelIndex &index) { m_private.addValue(index); }
-	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
+    void addValue() { m_private.addValue(); }
+	void removeValue() { m_private.removeValue(); }
+    void select(const QModelIndex &index) { m_private.select(index); }
 
 private:
 	EditableValueListWidgetPrivate m_private;
 };
 
 
-class EditableValueListWidget : public NestedWidget, public CompositeValueWidgetPrivate::ICallback
+class EditableValueListWidget : public NestedWidget, public EditableValueListWidgetPrivate::ICallback
 {
 public:
-	EditableValueListWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent, const QString &title);
+	EditableValueListWidget(const IdmContainer &container, const Select &query, NestedDialog *parent);
 
 	/* BaseNestedWidget */
 	virtual void setFocus();
 
-	/* CompositeValueWidgetPrivate::ICallback */
+	/* EditableValueListWidgetPrivate::ICallback */
+	virtual void acceptAndClose();
 	virtual NestedDialog *parent();
 	virtual void critical(const QString &text);
-
-    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
 
     const IdmContainer &container() const { return m_private.container(); }
 	IdmContainer &container() { return m_private.container(); }
 
-	const CompositeValueModel &model() const { return m_private.model(); }
-	CompositeValueModel &model() { return m_private.model(); }
+    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
+	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
-	void addValue();
+    void addValue();
 	void removeValue();
+    void select(const QModelIndex &index) { m_private.select(index); }
 
 private:
 	typedef KeyboardEventHandler<
 				EventHandlerBase<
-					CompositeValueWidget
+					EditableValueListWidget
 				>
 			> TreeViewHandler;
 

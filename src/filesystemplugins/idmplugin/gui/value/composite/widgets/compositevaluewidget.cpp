@@ -1,7 +1,7 @@
 #include "compositevaluewidget.h"
 #include "../../model/items/compositevaluevalueitem.h"
 #include "../../model/items/compositevaluepropertyitem.h"
-#include "../../list/selectable/selectablevaluelistdialog.h"
+#include "../../list/selectable/widgets/selectablevaluelistwidget.h"
 #include "../../../../storage/values/idmvaluereader.h"
 
 
@@ -26,9 +26,9 @@ void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 
 	if (m_container.savepoint(name))
 	{
-		SelectableValueListDialog dialog(m_container, Select(entity), m_callback->parent());
+		SelectableValueListWidget dialog(m_container, Select(entity), m_callback->parent());
 
-		if (dialog.exec() == SelectableValueListDialog::Accepted)
+		if (dialog.exec() == SelectableValueListWidget::Accepted)
 		{
 			IdmEntityValue::Holder value;
 

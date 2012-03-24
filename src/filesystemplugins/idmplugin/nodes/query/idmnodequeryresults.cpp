@@ -513,19 +513,17 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 		QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(value->parent());
 
 		if (m_container.removeValue(property->rootValue(), value->value()))
-		{
-			beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
-
 			if (m_container.commit())
+			{
+				beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
 				property->remove(index.row());
+				endRemoveRows();
+			}
 			else
 			{
 				m_container.rollback();
 				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			}
-
-			endRemoveRows();
-		}
 		else
 		{
 			m_container.rollback();

@@ -110,7 +110,7 @@ private:
 	void update(const Snapshot::List &list);
 
 private:
-    enum { PrefetchLimit = 256 };
+    enum { PrefetchLimit = 64 };
 
 private:
 	class ItemsContainer : public ModelContainer

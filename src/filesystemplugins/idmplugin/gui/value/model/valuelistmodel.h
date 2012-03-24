@@ -36,7 +36,7 @@ public:
 	IdmEntityValue::Holder take(const QModelIndex &index);
 
 protected:
-    enum { PrefetchLimit = 256 };
+    enum { PrefetchLimit = 64 };
 
 protected:
     void add(const List &list);

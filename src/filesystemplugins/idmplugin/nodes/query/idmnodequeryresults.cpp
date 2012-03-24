@@ -262,19 +262,12 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 
 		if (m_container.transaction())
 		{
-			bool declined = false;
 			SelectableValueListDialog dialog(m_container, Select(item->property().entity), Application::mainWindow());
 
+			if (dialog.exec() == SelectableValueListDialog::Accepted)
+			{
+				IdmEntityValue::Holder value = dialog.takeValue();
 
-			IdmEntityValue::Holder value;
-//					(
-//					CreationTools::chooseOrCreateValue(
-//					Application::mainWindow(),
-//					m_container,
-//					item->property().entity,
-//					declined));
-
-			if (value)
 				if (m_container.addValue(item->rootValue(), value))
 					if (m_container.commit())
 					{
@@ -292,12 +285,6 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 					m_container.rollback();
 					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				}
-			else
-			{
-				m_container.rollback();
-
-				if (!declined)
-					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 			}
 		}
 		else

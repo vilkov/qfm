@@ -68,6 +68,28 @@ IdmStorage::IdmStorage(const QString &storage, bool create) :
 		}
 }
 
+IdmStorage::IdmStorage(const QString &newStorage, const QString &oldStorage)
+{
+	if (sqlite3_open16(newStorage.unicode(), &m_db) == SQLITE_OK)
+	{
+		char *error;
+		QByteArray sqlQuery = Database::init();
+
+		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
+		{
+			m_valid = false;
+			setLastError(sqlQuery.data(), error);
+		}
+
+		sqlite3_free(error);
+	}
+	else
+	{
+		m_valid = false;
+		setLastError(QString::fromLatin1("Failed to open DB"));
+	}
+}
+
 IdmStorage::~IdmStorage()
 {
 	sqlite3_close(m_db);

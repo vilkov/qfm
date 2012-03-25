@@ -11,7 +11,9 @@ IdmEntity::IdmEntity(Type type, id_type id,
 	m_type(type),
 	m_id(id),
 	m_name(name),
-	m_shortFormat(shortFormat)
+	m_shortFormat(shortFormat),
+	m_editorGeometry(editorGeometry.isEmpty() ? QRect() : geometryFromByteArray(editorGeometry)),
+	m_listGeometry(listGeometry.isEmpty() ? QRect() : geometryFromByteArray(listGeometry))
 {}
 
 IdmEntity::~IdmEntity()
@@ -30,7 +32,7 @@ QByteArray IdmEntity::geometryToByteArray(const QRect &geometry)
 	return buffer;
 }
 
-QRect IdmEntity::geometryfromByteArray(const QByteArray &buffer)
+QRect IdmEntity::geometryFromByteArray(const QByteArray &buffer)
 {
 	const int *data = (const int *)buffer.data();
 	return QRect(QPoint(data[0], data[1]), QPoint(data[2], data[3]));

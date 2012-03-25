@@ -34,6 +34,7 @@ public:
 
 public:
 	IdmStorage(const QString &storage, bool create);
+	IdmStorage(const QString &newStorage, const QString &oldStorage);
 	~IdmStorage();
 
 	bool isValid() const { return m_valid; }

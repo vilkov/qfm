@@ -46,7 +46,7 @@ public:
 	virtual ~IdmEntity();
 
 	static QByteArray geometryToByteArray(const QRect &geometry);
-	static QRect geometryfromByteArray(const QByteArray &buffer);
+	static QRect geometryFromByteArray(const QByteArray &buffer);
 
 	const Property &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }

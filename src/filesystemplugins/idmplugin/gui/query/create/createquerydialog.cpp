@@ -49,6 +49,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
 
     m_view2.setItemDelegate(&m_delegate2);
     m_view2.setModel(&m_model2);
+    m_view2.selectionModel()->setCurrentIndex(m_model2.index(0, 0), QItemSelectionModel::ClearAndSelect);
 
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CreateQueryDialog::removeEntity);
 //    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::insertProperty);

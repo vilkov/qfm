@@ -442,7 +442,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 					}
 					else
 						if (static_cast<QueryResultPathValueItem *>(item)->info().isFile())
-							Application::desktopService()->open(this, &static_cast<QueryResultPathValueItem *>(item)->info());
+							Application::desktopService()->open(this, static_cast<QueryResultPathValueItem *>(item));
 			}
 	}
 	else

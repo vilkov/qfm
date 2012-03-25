@@ -12,6 +12,7 @@
 #include "undo/concrete/idmstorageundorenameproperty.h"
 #include "undo/concrete/idmstorageundoupdategeometry.h"
 #include "../../../tools/pointers/pscopedpointer.h"
+#include <sqlite3.h>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -70,23 +71,38 @@ IdmStorage::IdmStorage(const QString &storage, bool create) :
 
 IdmStorage::IdmStorage(const QString &newStorage, const QString &oldStorage)
 {
-	if (sqlite3_open16(newStorage.unicode(), &m_db) == SQLITE_OK)
-	{
-		char *error;
-		QByteArray sqlQuery = Database::init();
+	sqlite3 *oldDb;
 
-		if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) != SQLITE_OK)
+	if (sqlite3_open16(oldStorage.unicode(), &oldDb) == SQLITE_OK)
+	{
+		if (sqlite3_open16(newStorage.unicode(), &m_db) == SQLITE_OK)
+		{
+			char *error;
+			QByteArray sqlQuery = Database::init();
+
+			if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &error) == SQLITE_OK)
+			{
+				copyEntities(oldDb, sqlQuery);
+			}
+			else
+			{
+				m_valid = false;
+				setLastError(QString::fromUtf8(error));
+				sqlite3_free(error);
+			}
+		}
+		else
 		{
 			m_valid = false;
-			setLastError(sqlQuery.data(), error);
+			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 		}
 
-		sqlite3_free(error);
+		sqlite3_close(oldDb);
 	}
 	else
 	{
 		m_valid = false;
-		setLastError(QString::fromLatin1("Failed to open DB"));
+		setLastError(QString::fromUtf8(sqlite3_errmsg(oldDb)));
 	}
 }
 
@@ -1030,6 +1046,124 @@ void IdmStorage::loadEntities(sqlite3_stmt *statement, IdmEntity *parent)
 				break;
 			}
 		}
+}
+
+void IdmStorage::copyEntities(sqlite3 *oldDb, QByteArray &sqlQuery)
+{
+	sqlite3_stmt *statement;
+	sqlQuery = EntitiesTable::select();
+
+	if (sqlite3_prepare_v2(oldDb, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+	{
+		sqlite3_stmt *insert;
+		sqlQuery = EntitiesTable::insert();
+
+		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &insert, NULL) == SQLITE_OK)
+		{
+			IdmEntity::id_type id;
+			IdmEntity::Type type;
+			IdmEntity *entity;
+			QByteArray text1;
+			QByteArray text2;
+			QByteArray buffer1;
+			QByteArray buffer2;
+
+			for (int res = sqlite3_step(statement); res == SQLITE_ROW; res = sqlite3_step(statement))
+			{
+				if (sqlite3_bind_int(insert, 1, id = sqlite3_column_int(statement, 0)) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				if (sqlite3_bind_int(insert, 2, type = static_cast<IdmEntity::Type>(sqlite3_column_int(statement, 1))) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				text1 = (const char *)sqlite3_column_text(statement, 2);
+
+				if (sqlite3_bind_text(insert, 3, text1.data(), text1.size(), SQLITE_STATIC) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				text2 = (const char *)sqlite3_column_text(statement, 3);
+
+				if (sqlite3_bind_text(insert, 4, text2.data(), text2.size(), SQLITE_STATIC) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				buffer1 = QByteArray((const char *)sqlite3_column_blob(statement, 4), sqlite3_column_bytes(statement, 4));
+
+				if (sqlite3_bind_blob(insert, 5, buffer1.data(), buffer1.size(), SQLITE_STATIC) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				buffer2 = QByteArray((const char *)sqlite3_column_blob(statement, 5), sqlite3_column_bytes(statement, 5));
+
+				if (sqlite3_bind_blob(insert, 6, buffer1.data(), buffer1.size(), SQLITE_STATIC) != SQLITE_OK)
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+
+				if (sqlite3_step(insert) == SQLITE_DONE)
+					if (sqlite3_reset(insert) == SQLITE_OK)
+					{
+						entity = new IdmEntity(type, id, QString::fromUtf8(text1), QString::fromUtf8(text2), buffer1, buffer2);
+						m_entities.add(entity, entity->name());
+						++id;
+					}
+					else
+					{
+						setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+						m_valid = false;
+						break;
+					}
+				else
+				{
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+					m_valid = false;
+					break;
+				}
+			}
+
+			if (sqlite3_finalize(insert) != SQLITE_OK)
+			{
+				setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+				m_valid = false;
+			}
+		}
+		else
+		{
+			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+			m_valid = false;
+		}
+
+		if (sqlite3_finalize(statement) != SQLITE_OK)
+		{
+			setLastError(QString::fromUtf8(sqlite3_errmsg(oldDb)));
+			m_valid = false;
+		}
+	}
+	else
+	{
+		setLastError(QString::fromUtf8(sqlite3_errmsg(oldDb)));
+		m_valid = false;
+	}
 }
 
 void IdmStorage::performUndo()

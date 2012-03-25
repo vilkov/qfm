@@ -1,7 +1,6 @@
 #ifndef IDMSTORAGE_H_
 #define IDMSTORAGE_H_
 
-#include <sqlite3.h>
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QList>
@@ -18,6 +17,9 @@
 
 
 IDM_PLUGIN_NS_BEGIN
+typedef struct sqlite3 sqlite3;
+typedef struct sqlite3_stmt sqlite3_stmt;
+
 
 class IdmStorage
 {
@@ -84,6 +86,7 @@ private:
 	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) const;
 
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
+	void copyEntities(sqlite3 *oldDb, QByteArray &sqlQuery);
 
 private:
 	void performUndo();

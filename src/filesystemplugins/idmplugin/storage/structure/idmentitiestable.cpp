@@ -24,6 +24,14 @@ QByteArray EntitiesTable::select()
 	return "select * from ENTITY";
 }
 
+QByteArray EntitiesTable::insert()
+{
+	return QString::fromLatin1("insert into ENTITY"
+			"(ID, TYPE, NAME, SHORT_FORMAT, EDITOR_GEOMETRY, LIST_GEOMETRY)"
+			"values"
+			"(?1, ?2, ?3, ?4, ?5, ?6)").toUtf8();
+}
+
 QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat)
 {
 	if (type == Database::Composite)

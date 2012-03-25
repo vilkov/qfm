@@ -21,6 +21,8 @@ struct EntitiesTable
 	static QByteArray create();
 	static QByteArray select();
 	static QByteArray insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat);
+	static QByteArray updateEditorGeometry(Database::id_type entity);
+	static QByteArray updateListGeometry(Database::id_type entity);
 	static QByteArray remove(Database::id_type entity);
 	static QByteArray selectValues(Database::id_type entity, Database::id_type property);
 	static QByteArray addCompositeValue(Database::id_type entity, Database::id_type id);

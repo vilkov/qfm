@@ -54,6 +54,8 @@ public:
 	QueryContext prepare(const Query &query, QString &error) const;
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat);
+	bool updateEditorGeometry(IdmEntity *entity, const QRect &geometry);
+	bool updateListGeometry(IdmEntity *entity, const QRect &geometry);
 	bool removeEntity(IdmEntity *entity);
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);

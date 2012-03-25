@@ -10,7 +10,7 @@ class IdmEntityRoot : public IdmEntity
 {
 public:
 	IdmEntityRoot() :
-		IdmEntity(Database::Composite, 0, QString(), QString())
+		IdmEntity(Database::Composite, 0, QString(), QString(), QByteArray(), QByteArray())
 	{}
 	virtual ~IdmEntityRoot()
 	{

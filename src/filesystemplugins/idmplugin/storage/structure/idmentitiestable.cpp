@@ -10,7 +10,13 @@ QString EntitiesTable::tableName()
 
 QByteArray EntitiesTable::create()
 {
-	return "create table ENTITY (ID int primary key, TYPE int, NAME char(256), SHORT_FORMAT char(256))";
+	return "create table ENTITY ("
+			"ID int primary key,"
+			"TYPE int,"
+			"NAME char(256),"
+			"SHORT_FORMAT char(256),"
+			"EDITOR_GEOMETRY blob(16)," // sizeof(int) * 4
+			"LIST_GEOMETRY blob(16))";  // sizeof(int) * 4
 }
 
 QByteArray EntitiesTable::select()
@@ -45,6 +51,18 @@ QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id
 									   arg(name).
 									   arg(shortFormat).
 									   arg(Database::typeToString(type)).toUtf8();
+}
+
+QByteArray EntitiesTable::updateEditorGeometry(Database::id_type entity)
+{
+	return QString::fromLatin1("update ENTITY set EDITOR_GEOMETRY = ?1 where ID = ").
+			append(QString::number(entity)).toUtf8();
+}
+
+QByteArray EntitiesTable::updateListGeometry(Database::id_type entity)
+{
+	return QString::fromLatin1("update ENTITY set LIST_GEOMETRY = ?1 where ID = ").
+			append(QString::number(entity)).toUtf8();
 }
 
 QByteArray EntitiesTable::remove(Database::id_type entity)

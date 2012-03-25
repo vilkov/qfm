@@ -1,6 +1,7 @@
 #ifndef IDMENTITY_H_
 #define IDMENTITY_H_
 
+#include <QtCore/QRect>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
@@ -37,14 +38,15 @@ public:
 	enum { InvalidId = Database::InvalidId };
 
 public:
-	IdmEntity(Type type, id_type id, const QString &name, const IdmShortFormat &shortFormat) :
-		m_type(type),
-		m_id(id),
-		m_name(name),
-		m_shortFormat(shortFormat)
-	{}
-	virtual ~IdmEntity()
-	{}
+	IdmEntity(Type type, id_type id,
+			const QString &name,
+			const IdmShortFormat &shortFormat,
+			const QByteArray &editorGeometry,
+			const QByteArray &listGeometry);
+	virtual ~IdmEntity();
+
+	static QByteArray geometryToByteArray(const QRect &geometry);
+	static QRect geometryfromByteArray(const QByteArray &buffer);
 
 	const Property &at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
@@ -64,6 +66,8 @@ public:
 	const QString &name() const { return m_name; }
 	const Parents &parents() const { return m_parents; }
 	const IdmShortFormat &shortFormat() const { return m_shortFormat; }
+	const QRect &editorGeometry() const { return m_editorGeometry; }
+	const QRect &listGeometry() const { return m_listGeometry; }
 
 protected:
 	friend class IdmStorage;
@@ -81,6 +85,9 @@ protected:
 	void remove(IdmEntity *item) { m_items.remove(item->id()); }
 	IdmEntity *take(size_type index) { return m_items.take(index).entity; }
 
+	void setEditorGeometry(const QRect &value) { m_editorGeometry = value; }
+	void setListGeometry(const QRect &value) { m_listGeometry = value; }
+
 protected:
 	Container m_items;
 
@@ -90,6 +97,8 @@ private:
 	QString m_name;
 	Parents m_parents;
 	IdmShortFormat m_shortFormat;
+	QRect m_editorGeometry;
+	QRect m_listGeometry;
 };
 
 IDM_PLUGIN_NS_END

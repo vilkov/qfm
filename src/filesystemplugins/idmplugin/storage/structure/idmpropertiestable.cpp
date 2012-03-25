@@ -13,6 +13,18 @@ QByteArray PropertiesTable::create()
 	return "create table PROPERTIES (ID int primary key, ENTITY_ID int, ENTITY_PROPERTY_ID int, NAME char(256))";
 }
 
+QByteArray PropertiesTable::create(Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("create table ENTITY_%1_PROPERTY_%2 (ID int primary key, ENTITY_VALUE_ID int, PROPERTY_VALUE_ID int)").
+							   arg(QString::number(entity)).
+							   arg(QString::number(property)).toUtf8();
+}
+
+QByteArray PropertiesTable::select()
+{
+	return "select * from PROPERTIES";
+}
+
 QByteArray PropertiesTable::select(Database::id_type entity)
 {
 	return QString::fromLatin1(
@@ -20,6 +32,18 @@ QByteArray PropertiesTable::select(Database::id_type entity)
 			"	left join ENTITY on ENTITY.ID = PROPERTIES.ENTITY_PROPERTY_ID"
 			"	where PROPERTIES.ENTITY_ID = %1"
 			"").arg(QString::number(entity)).toUtf8();
+}
+
+QByteArray PropertiesTable::select(Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("select * from ENTITY_%1_PROPERTY_%2").
+							   arg(QString::number(entity)).
+							   arg(QString::number(property)).toUtf8();
+}
+
+QByteArray PropertiesTable::insert()
+{
+	return "insert into PROPERTIES (ID, ENTITY_ID, ENTITY_PROPERTY_ID, NAME) values (?1, ?2, ?3, ?4)";
 }
 
 QByteArray PropertiesTable::insert(Database::id_type id, Database::id_type entity, Database::id_type property, const QString &name)
@@ -30,6 +54,16 @@ QByteArray PropertiesTable::insert(Database::id_type id, Database::id_type entit
 							   arg(QString::number(entity)).
 							   arg(QString::number(property)).
 							   arg(name).toUtf8();
+}
+
+QByteArray PropertiesTable::insert(Database::id_type entity, Database::id_type property)
+{
+	return QString::fromLatin1("insert into ENTITY_%1_PROPERTY_%2"
+								"(ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID)"
+								"values"
+								"(?1, ?2, ?3)").
+							   arg(QString::number(entity)).
+							   arg(QString::number(property)).toUtf8();
 }
 
 QByteArray PropertiesTable::rename(Database::id_type entity, Database::id_type property, const QString &name)

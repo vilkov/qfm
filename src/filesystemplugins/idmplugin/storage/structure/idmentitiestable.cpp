@@ -24,12 +24,46 @@ QByteArray EntitiesTable::select()
 	return "select * from ENTITY";
 }
 
+QByteArray EntitiesTable::select(Database::id_type id)
+{
+	return QByteArray("select * from ENTITY_").append(QByteArray::number(id));
+}
+
 QByteArray EntitiesTable::insert()
 {
 	return QString::fromLatin1("insert into ENTITY"
 			"(ID, TYPE, NAME, SHORT_FORMAT, EDITOR_GEOMETRY, LIST_GEOMETRY)"
 			"values"
 			"(?1, ?2, ?3, ?4, ?5, ?6)").toUtf8();
+}
+
+QByteArray EntitiesTable::insertIntoSingle(Database::id_type id)
+{
+	return QString::fromLatin1("insert into ENTITY_%1 (ID, VALUE) values (?1, ?2)").
+			arg(QString::number(id)).toUtf8();
+}
+
+QByteArray EntitiesTable::insertIntoComposite(Database::id_type id)
+{
+	return QString::fromLatin1("insert into ENTITY_%1 (ID) values (?1)").
+			arg(QString::number(id)).toUtf8();
+}
+
+QByteArray EntitiesTable::create(Database::EntityType type, Database::id_type id)
+{
+	if (type == Database::Composite)
+		return QString::fromLatin1("create table ENTITY_%1 (ID int primary key)").
+								   arg(QString::number(id)).toUtf8();
+	else
+		if (type == Database::String || type == Database::Path)
+			return QString::fromLatin1("create table ENTITY_%1 (ID int primary key, VALUE %2);"
+									   "create index ENTITY_%1_INDEX on ENTITY_%1 (VALUE)").
+									   arg(QString::number(id)).
+									   arg(Database::typeToString(type)).toUtf8();
+		else
+			return QString::fromLatin1("create table ENTITY_%1 (ID int primary key, VALUE %2)").
+									   arg(QString::number(id)).
+									   arg(Database::typeToString(type)).toUtf8();
 }
 
 QByteArray EntitiesTable::insert(Database::EntityType type, Database::id_type id, const QString &name, const QString &shortFormat)

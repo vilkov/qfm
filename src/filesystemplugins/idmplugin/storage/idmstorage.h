@@ -87,6 +87,10 @@ private:
 
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 	void copyEntities(sqlite3 *oldDb, QByteArray &sqlQuery);
+	void copyProperties(sqlite3 *oldDb, QByteArray &sqlQuery);
+	void copySingleEntityValues(sqlite3 *oldDb, IdmEntity *entity, QByteArray &sqlQuery);
+	void copyCompositeEntityValues(sqlite3 *oldDb, IdmEntity *entity, QByteArray &sqlQuery);
+	void copyPropertyValues(sqlite3 *oldDb, IdmEntity *entity, IdmEntity *property, QByteArray &sqlQuery);
 
 private:
 	void performUndo();

@@ -85,6 +85,8 @@ private:
 	bool cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) const;
 	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) const;
 
+	void loadEntities();
+	void loadProperties();
 	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
 	void copyEntities(sqlite3 *oldDb, QByteArray &sqlQuery);
 	void copyProperties(sqlite3 *oldDb, QByteArray &sqlQuery);

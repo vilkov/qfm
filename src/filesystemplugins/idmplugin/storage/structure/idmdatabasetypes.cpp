@@ -107,9 +107,7 @@ bool Database::bind(EntityType type, sqlite3_stmt *source, int sCol, sqlite3_stm
 		case Composite:
 		case Rating:
 		case Int:
-		{
 			return sqlite3_bind_int(dest, dCol, sqlite3_column_int(source, sCol)) == SQLITE_OK;
-		}
 
 		case Path:
 		case Memo:

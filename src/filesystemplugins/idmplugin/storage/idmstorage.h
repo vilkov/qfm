@@ -16,10 +16,11 @@
 #include "../idmplugin_ns.h"
 
 
-IDM_PLUGIN_NS_BEGIN
 typedef struct sqlite3 sqlite3;
 typedef struct sqlite3_stmt sqlite3_stmt;
 
+
+IDM_PLUGIN_NS_BEGIN
 
 class IdmStorage
 {

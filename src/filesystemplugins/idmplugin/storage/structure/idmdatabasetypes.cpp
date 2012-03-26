@@ -2,6 +2,7 @@
 #include "idmentitiestable.h"
 #include "idmpropertiestable.h"
 #include <QtCore/QDateTime>
+#include <sqlite3.h>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -97,6 +98,32 @@ QString Database::idsToString(const IdsList &ids)
 
 	res.chop(1);
 	return res;
+}
+
+bool Database::bind(EntityType type, sqlite3_stmt *source, int sCol, sqlite3_stmt *dest, int dCol, QByteArray &buffer)
+{
+	switch (type)
+	{
+		case Composite:
+		case Rating:
+		case Int:
+		{
+			return sqlite3_bind_int(dest, dCol, sqlite3_column_int(source, sCol)) == SQLITE_OK;
+		}
+
+		case Path:
+		case Memo:
+		case String:
+		case Date:
+		case Time:
+		case DateTime:
+		{
+			buffer = (const char *)sqlite3_column_text(source, sCol);
+			return sqlite3_bind_text(dest, dCol, buffer, buffer.size(), SQLITE_STATIC) == SQLITE_OK;
+		}
+	}
+
+	return false;
 }
 
 IDM_PLUGIN_NS_END

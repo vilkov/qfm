@@ -8,6 +8,9 @@
 #include "../../idmplugin_ns.h"
 
 
+typedef struct sqlite3_stmt sqlite3_stmt;
+
+
 IDM_PLUGIN_NS_BEGIN
 
 struct Database
@@ -39,6 +42,7 @@ struct Database
 	static QString valueToConstraintString(EntityType type, const QVariant &value);
 	static QString idsToString(const IdsSet &ids);
 	static QString idsToString(const IdsList &ids);
+	static bool bind(EntityType type, sqlite3_stmt *source, int sCol, sqlite3_stmt *dest, int dCol, QByteArray &buffer);
 };
 
 IDM_PLUGIN_NS_END

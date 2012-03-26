@@ -1379,9 +1379,7 @@ void IdmStorage::copySingleEntityValues(sqlite3 *oldDb, IdmEntity *entity, QByte
 					break;
 				}
 
-				buffer = QByteArray((const char *)sqlite3_column_blob(statement, 1), sqlite3_column_bytes(statement, 1));
-
-				if (sqlite3_bind_blob(insert, 2, buffer.data(), buffer.size(), SQLITE_STATIC) != SQLITE_OK)
+				if (!Database::bind(entity->type(), statement, 1, insert, 2, buffer))
 				{
 					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 					m_valid = false;

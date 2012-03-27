@@ -56,6 +56,8 @@ public:
 	QueryContext prepare(const Query &query, QString &error) const { return m_data->storage.prepare(query, error); }
 
 	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat) { return m_data->storage.createEntity(name, type, shortFormat); }
+	bool updateEditorGeometry(IdmEntity *entity, const QRect &geometry) { return m_data->storage.updateEditorGeometry(entity, geometry); }
+	bool updateListGeometry(IdmEntity *entity, const QRect &geometry) { return m_data->storage.updateListGeometry(entity, geometry); }
 	bool removeEntity(IdmEntity *entity) { return m_data->storage.removeEntity(entity); }
 
 	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }

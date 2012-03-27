@@ -298,7 +298,7 @@ bool IdmStorage::updateEditorGeometry(IdmEntity *entity, const QRect &geometry)
 	{
 		QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
 
-		if (sqlite3_bind_blob(statement, 2, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
+		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
 			if (sqlite3_step(statement) == SQLITE_DONE)
 			{
 				m_undo.last().push_back(new IdmStorageUndoUpdateGeometry(entity, &IdmEntity::setEditorGeometry, entity->editorGeometry()));
@@ -328,7 +328,7 @@ bool IdmStorage::updateListGeometry(IdmEntity *entity, const QRect &geometry)
 	{
 		QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
 
-		if (sqlite3_bind_blob(statement, 2, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
+		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
 			if (sqlite3_step(statement) == SQLITE_DONE)
 			{
 				m_undo.last().push_back(new IdmStorageUndoUpdateGeometry(entity, &IdmEntity::setListGeometry, entity->listGeometry()));

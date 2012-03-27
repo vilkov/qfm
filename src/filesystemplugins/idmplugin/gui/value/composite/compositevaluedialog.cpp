@@ -8,6 +8,11 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	m_handler(this),
 	m_mainWidget(&m_handler, container, value, this)
 {
+	const QRect &geometry = value->entity()->editorGeometry();
+
+	if (geometry.isValid())
+		setGeometry(geometry);
+
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueDialog::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);
 

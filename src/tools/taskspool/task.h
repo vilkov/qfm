@@ -10,6 +10,7 @@ class Task
 {
 public:
 	class Bit;
+	class StaticFlag;
 
 
 	class Flags
@@ -34,6 +35,7 @@ public:
 
 	private:
 		friend class Bit;
+		friend class StaticFlag;
 		bool testBit(int i) const { return m_value & (01 << i); }
 		void setBit(int i) { m_value |= (01 << i); }
 		void clearBit(int i) { m_value &= ~(01 << i); }
@@ -67,6 +69,34 @@ public:
 		friend class Bit;
 		bool m_value;
 		Bit *m_bit;
+	};
+
+
+	class StaticFlag
+	{
+	public:
+		StaticFlag(int bit, Flags &flags) :
+			m_value(false),
+			m_bit(bit),
+			m_flags(flags)
+		{}
+
+		operator volatile bool() const volatile { return m_value; }
+		operator volatile bool() const { return m_value; }
+
+		volatile bool operator!() const volatile { return !m_value; }
+		volatile bool operator!() const { return !m_value; }
+
+		inline void operator=(bool value);
+
+	private:
+		StaticFlag(const Flag &other);
+		StaticFlag &operator=(const Flag &other);
+
+	private:
+		bool m_value;
+		int m_bit;
+		Flags &m_flags;
 	};
 
 
@@ -128,6 +158,15 @@ void Task::Flag::operator=(bool value)
 			m_bit->clear();
 	else
 		m_value = value;
+}
+
+
+void Task::StaticFlag::operator=(bool value)
+{
+	if (m_value = value)
+		m_flags.setBit(m_bit);
+	else
+		m_flags.clearBit(m_bit);
 }
 
 TASKSPOOL_NS_END

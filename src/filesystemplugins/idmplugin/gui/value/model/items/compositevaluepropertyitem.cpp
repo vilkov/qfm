@@ -25,7 +25,7 @@ CompositeValuePropertyItem::size_type CompositeValuePropertyItem::indexOf(Base *
 
 QVariant CompositeValuePropertyItem::data(qint32 column, qint32 role) const
 {
-	if (column == 0 && role == Qt::DisplayRole)
+	if (role == Qt::DisplayRole)
 		return m_property.name;
 	else
 		return QVariant();

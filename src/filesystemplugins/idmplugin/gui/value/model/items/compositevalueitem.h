@@ -12,6 +12,7 @@ class CompositeValueItem : public IdmItem
 public:
 	CompositeValueItem(IdmItem *parent = 0);
 
+	virtual bool isPath() const;
 	virtual bool isValue() const;
 	virtual bool isProperty() const;
 };

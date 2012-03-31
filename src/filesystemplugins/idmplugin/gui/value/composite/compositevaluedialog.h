@@ -11,6 +11,7 @@ class CompositeValueDialog : public NestedPlainDialog
 
 public:
 	CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent = 0);
+	CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
 
 protected:
 	virtual void addValue();

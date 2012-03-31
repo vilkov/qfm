@@ -22,6 +22,7 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 		if (value)
 		{
 			IdmEntity *path;
+    		CompositeValueModel::Files possibleFiles;
     		CompositeValueModel::ValueList list;
     		list.reserve(files.size());
 
@@ -32,7 +33,10 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 
 					for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
 						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i)->fileName())))
+						{
 							list.push_back(localValue);
+							possibleFiles[localValue->id()] = files.at(i);
+						}
 						else
 						{
 							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
@@ -45,7 +49,7 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 
 			if (m_container.addValue(value, list))
 			{
-				NewFileValueDialog dialog(m_container, value, Application::mainWindow());
+				NewFileValueDialog dialog(m_container, value, possibleFiles, Application::mainWindow());
 
 				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();

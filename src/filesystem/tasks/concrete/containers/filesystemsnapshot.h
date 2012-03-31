@@ -90,6 +90,7 @@ public:
 	{}
 
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
+	const IFileContainer *container() const { return m_data->m_container.data(); }
 
 	size_type size() const { return m_list.size(); }
 	const InfoItem *at(size_type index) const { return m_list.at(index).second; }

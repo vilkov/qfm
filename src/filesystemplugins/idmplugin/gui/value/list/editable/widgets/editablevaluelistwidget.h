@@ -4,6 +4,7 @@
 #include <QtGui/QTreeView>
 #include <QtCore/QCoreApplication>
 #include "../model/editablevaluelistmodel.h"
+#include "../../../model/valuelistproxymodel.h"
 #include "../../../../../containeres/idmcontainer.h"
 #include "../../../../../storage/queries/idmselectquery.h"
 #include "../../../../../../../tools/events/imp/keyboardeventhandler.h"
@@ -46,9 +47,14 @@ public:
 	const EditableValueListModel &model() const { return m_model; }
 	EditableValueListModel &model() { return m_model; }
 
+	const ValueListProxyModel &proxy() const { return m_proxy; }
+	ValueListProxyModel &proxy() { return m_proxy; }
+
+    QModelIndex currentIndex() const { return m_proxy.mapToSource(m_view.selectionModel()->currentIndex()); }
+
     void addValue();
 	void removeValue();
-    void select(const QModelIndex &index);
+//    void select(const QModelIndex &index);
 
 private:
     void setCurrentIndex(const QModelIndex &index) const;
@@ -59,6 +65,7 @@ private:
 	IdmEntity *m_entity;
 	TreeView m_view;
 	EditableValueListModel m_model;
+	ValueListProxyModel m_proxy;
 };
 
 
@@ -80,12 +87,12 @@ public:
     const IdmContainer &container() const { return m_private.container(); }
 	IdmContainer &container() { return m_private.container(); }
 
-    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
+    QModelIndex currentIndex() const { return m_private.currentIndex(); }
 	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
     void addValue() { m_private.addValue(); }
 	void removeValue() { m_private.removeValue(); }
-    void select(const QModelIndex &index) { m_private.select(index); }
+//    void select(const QModelIndex &index) { m_private.select(index); }
 
 private:
 	EditableValueListWidgetPrivate m_private;
@@ -108,12 +115,12 @@ public:
     const IdmContainer &container() const { return m_private.container(); }
 	IdmContainer &container() { return m_private.container(); }
 
-    QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
+    QModelIndex currentIndex() const { return m_private.currentIndex(); }
 	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
     void addValue();
 	void removeValue();
-    void select(const QModelIndex &index) { m_private.select(index); }
+//    void select(const QModelIndex &index) { m_private.select(index); }
 
 private:
 	typedef KeyboardEventHandler<

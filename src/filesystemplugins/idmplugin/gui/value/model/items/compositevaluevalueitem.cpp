@@ -10,7 +10,7 @@ CompositeValueValueItem::CompositeValueValueItem(const IdmEntityValue::Holder &v
 
 QVariant CompositeValueValueItem::data(qint32 column, qint32 role) const
 {
-	if (column == 0 && role == Qt::DisplayRole)
+	if (role == Qt::DisplayRole)
 		return m_value->value();
 	else
 		return QVariant();

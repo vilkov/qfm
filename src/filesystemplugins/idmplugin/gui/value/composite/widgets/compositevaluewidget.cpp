@@ -19,9 +19,31 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
 	m_view.setModel(&m_model);
 }
 
+CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files) :
+	m_callback(callback),
+	m_container(container),
+	m_value(value),
+	m_view(handler),
+	m_model(m_value, files)
+{
+	m_view.setHeaderHidden(true);
+	m_view.setModel(&m_model);
+}
+
+void CompositeValueWidgetPrivate::open(const QModelIndex &index)
+{
+	CompositeValueItem *item = static_cast<CompositeValueItem *>(index.internalPointer());
+
+	if (item->isValue() &&
+		static_cast<CompositeValueValueItem *>(item)->value()->entity()->type() == Database::Path)
+	{
+
+	}
+}
+
 void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 {
-	IdmEntity *entity = static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity();
+	IdmEntity *entity = static_cast<CompositeValuePropertyItem *>(index.internalPointer())->entity();
 	QByteArray name = Database::savepoint("CompositeValueDialog::doAddValue::");
 
 	if (m_container.savepoint(name))
@@ -55,7 +77,7 @@ void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 
 void CompositeValueWidgetPrivate::removeValue(const QModelIndex &index)
 {
-	IdmEntityValue::Holder value(static_cast<CompositeValueValueItem*>(index.internalPointer())->value());
+	IdmEntityValue::Holder value(static_cast<CompositeValueValueItem *>(index.internalPointer())->value());
 	QByteArray name = Database::savepoint("CompositeValueDialog::doRemoveValue::");
 
 	if (m_container.savepoint(name))
@@ -79,6 +101,11 @@ void CompositeValueWidgetPrivate::removeValue(const QModelIndex &index)
 MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent) :
 	BaseNestedWidget(parent),
 	m_private(this, handler, container, value)
+{}
+
+MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent) :
+	BaseNestedWidget(parent),
+	m_private(this, handler, container, value, files)
 {}
 
 QWidget *MainCompositeValueWidget::centralWidget()

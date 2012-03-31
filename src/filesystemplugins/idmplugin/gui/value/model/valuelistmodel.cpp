@@ -23,7 +23,7 @@ int ValueListModel::columnCount(const QModelIndex &parent) const
 
 QVariant ValueListModel::data(const QModelIndex &index, int role) const
 {
-	if (index.column() == 0 && role == Qt::DisplayRole)
+	if (role == Qt::DisplayRole)
 		return m_items.at(index.row())->value();
 	else
 		return QVariant();

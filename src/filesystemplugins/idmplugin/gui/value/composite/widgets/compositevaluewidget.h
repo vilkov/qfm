@@ -31,6 +31,7 @@ public:
 
 public:
 	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value);
+	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files);
 
 	const IdmContainer &container() const { return m_container; }
 	IdmContainer &container() { return m_container; }
@@ -41,6 +42,7 @@ public:
 	const CompositeValueModel &model() const { return m_model; }
 	CompositeValueModel &model() { return m_model; }
 
+	void open(const QModelIndex &index);
 	void addValue(const QModelIndex &index);
 	void removeValue(const QModelIndex &index);
 
@@ -57,6 +59,7 @@ class MainCompositeValueWidget : public BaseNestedWidget, public CompositeValueW
 {
 public:
 	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent);
+	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent);
 
 	/* BaseNestedWidget */
 	virtual QWidget *centralWidget();

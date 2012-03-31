@@ -1,6 +1,8 @@
 #include "compositevaluemodel.h"
 #include "items/compositevaluevalueitem.h"
 #include "items/compositevaluepropertyitem.h"
+#include "items/compositevaluepathitem.h"
+#include "items/compositevaluepossiblepathitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -16,8 +18,29 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QO
 		m_items.push_back(item = new CompositeValuePropertyItem(value->entity()->at(i)));
 		list = value.as<IdmCompositeEntityValue>()->values(value->entity()->at(i).entity);
 
-		if (!list.isEmpty())
-			for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
+		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
+			if (list.at(i)->entity()->type() == Database::Path)
+				item->add(new CompositeValuePathItem(list.at(i), item));
+			else
+				item->add(new CompositeValueValueItem(list.at(i), item));
+	}
+}
+
+CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, const Files &files, QObject *parent) :
+	IdmModel(parent)
+{
+	ValueList list;
+	CompositeValuePropertyItem *item;
+
+	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
+	{
+		m_items.push_back(item = new CompositeValuePropertyItem(value->entity()->at(i)));
+		list = value.as<IdmCompositeEntityValue>()->values(value->entity()->at(i).entity);
+
+		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
+			if (list.at(i)->entity()->type() == Database::Path)
+				item->add(new CompositeValuePossiblePathItem(list.at(i), files.value(list.at(i)->id()), item));
+			else
 				item->add(new CompositeValueValueItem(list.at(i), item));
 	}
 }

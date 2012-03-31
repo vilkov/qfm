@@ -2,8 +2,8 @@
 #include "../../model/items/compositevaluepropertyitem.h"
 
 
-NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent) :
-	NewCompositeValueDialog(container, value, parent)
+NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent) :
+	NewCompositeValueDialog(container, value, files, parent)
 {}
 
 void NewFileValueDialog::addValue()

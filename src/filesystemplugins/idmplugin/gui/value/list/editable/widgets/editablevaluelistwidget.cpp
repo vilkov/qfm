@@ -102,7 +102,13 @@ EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callba
 	m_view.setHeaderHidden(true);
 
 	if (m_model.isValid())
-		m_view.setModel(&m_model);
+	{
+		m_proxy.setDynamicSortFilter(true);
+		m_proxy.setSourceModel(&m_model);
+		m_view.setSortingEnabled(true);
+		m_view.sortByColumn(0, Qt::AscendingOrder);
+		m_view.setModel(&m_proxy);
+	}
 	else
 		callback->critical(m_model.lastError());
 }
@@ -176,17 +182,17 @@ void EditableValueListWidgetPrivate::removeValue()
 			m_callback->critical(m_container.lastError());
 }
 
-void EditableValueListWidgetPrivate::select(const QModelIndex &index)
-{
-	m_view.setFocus();
-	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
-	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-}
+//void EditableValueListWidgetPrivate::select(const QModelIndex &index)
+//{
+//	m_view.setFocus();
+//	m_view.scrollTo(index, QAbstractItemView::PositionAtCenter);
+//	m_view.selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+//	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+//}
 
 void EditableValueListWidgetPrivate::setCurrentIndex(const QModelIndex &index) const
 {
-	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+	m_view.selectionModel()->setCurrentIndex(m_proxy.mapFromSource(index), QItemSelectionModel::ClearAndSelect);
 }
 
 

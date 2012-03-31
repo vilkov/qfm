@@ -1,7 +1,7 @@
 #include "compositevaluemodel.h"
 #include "items/compositevaluevalueitem.h"
 #include "items/compositevaluepropertyitem.h"
-#include "items/compositevaluepathitem.h"
+#include "items/compositevaluerealpathitem.h"
 #include "items/compositevaluepossiblepathitem.h"
 
 
@@ -20,7 +20,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QO
 
 		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
 			if (list.at(i)->entity()->type() == Database::Path)
-				item->add(new CompositeValuePathItem(list.at(i), item));
+				item->add(new CompositeValueRealPathItem(list.at(i), item));
 			else
 				item->add(new CompositeValueValueItem(list.at(i), item));
 	}

@@ -4,8 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 CompositeValuePossiblePathItem::CompositeValuePossiblePathItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :
-	CompositeValueItem(parent),
-	m_value(value),
+	CompositeValuePathItem(value, parent),
 	m_source(source)
 {}
 
@@ -25,9 +24,9 @@ QVariant CompositeValuePossiblePathItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool CompositeValuePossiblePathItem::isPath() const
+void CompositeValuePossiblePathItem::open() const
 {
-	return true;
+
 }
 
 IDM_PLUGIN_NS_END

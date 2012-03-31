@@ -11,11 +11,10 @@ class CompositeValuePathItem : public CompositeValueItem
 public:
 	CompositeValuePathItem(const IdmEntityValue::Holder &value, IdmItem *parent = 0);
 
-	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const;
-
 	/* CompositeValueItem */
 	virtual bool isPath() const;
+
+	virtual void open() const = 0;
 
 	const IdmEntityValue::Holder &value() const { return m_value; }
 	IdmEntityValue::Holder take() { IdmEntityValue::Holder res(m_value); m_value.reset(); return res; }

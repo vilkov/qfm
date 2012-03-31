@@ -13,11 +13,11 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	if (geometry.isValid())
 		setGeometry(geometry);
 
-	m_handler.registerMouseDoubleClickEventHandler(&CompositeValueDialog::openFile);
+	m_handler.registerMouseDoubleClickEventHandler(&CompositeValueDialog::openFile1);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueDialog::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);
-	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile);
-	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile);
+	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile2);
+	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile2);
 
 	setCentralWidget(&m_mainWidget);
 }
@@ -32,21 +32,13 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	if (geometry.isValid())
 		setGeometry(geometry);
 
-	m_handler.registerMouseDoubleClickEventHandler(&CompositeValueDialog::openFile);
+	m_handler.registerMouseDoubleClickEventHandler(&CompositeValueDialog::openFile1);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueDialog::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);
-	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile);
-	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile);
+	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile2);
+	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile2);
 
 	setCentralWidget(&m_mainWidget);
-}
-
-void CompositeValueDialog::openFile()
-{
-	QModelIndex index = currentIndex();
-
-	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isPath())
-		doOpenFile(index);
 }
 
 void CompositeValueDialog::addValue()
@@ -63,4 +55,22 @@ void CompositeValueDialog::removeValue()
 
 	if (index.isValid() && !static_cast<CompositeValueItem *>(index.internalPointer())->isProperty())
 		doRemoveValue(index);
+}
+
+void CompositeValueDialog::openFile1()
+{
+	QModelIndex index = currentIndex();
+
+	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isPath())
+		doOpenFile(index);
+}
+
+void CompositeValueDialog::openFile2()
+{
+	QModelIndex index = currentIndex();
+
+	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isPath())
+		doOpenFile(index);
+	else
+		accept();
 }

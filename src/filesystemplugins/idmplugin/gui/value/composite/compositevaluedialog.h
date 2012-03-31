@@ -14,7 +14,6 @@ public:
 	CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
 
 protected:
-	virtual void openFile();
 	virtual void addValue();
 	virtual void removeValue();
 
@@ -30,6 +29,10 @@ protected:
 	void doOpenFile(const QModelIndex &index) { m_mainWidget.open(index); }
 	void doAddValue(const QModelIndex &index) { m_mainWidget.addValue(index); }
 	void doRemoveValue(const QModelIndex &index) { m_mainWidget.removeValue(index); }
+
+private:
+	void openFile1();
+	void openFile2();
 
 private:
 	typedef MouseDoubleClickEventHandler<

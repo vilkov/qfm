@@ -1,5 +1,6 @@
 #include "compositevaluewidget.h"
 #include "../../model/items/compositevaluevalueitem.h"
+#include "../../model/items/compositevaluepathitem.h"
 #include "../../model/items/compositevaluepropertyitem.h"
 #include "../../list/selectable/widgets/selectablevaluelistwidget.h"
 #include "../../../../storage/values/idmvaluereader.h"
@@ -32,13 +33,7 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
 
 void CompositeValueWidgetPrivate::open(const QModelIndex &index)
 {
-	CompositeValueItem *item = static_cast<CompositeValueItem *>(index.internalPointer());
-
-	if (item->isValue() &&
-		static_cast<CompositeValueValueItem *>(item)->value()->entity()->type() == Database::Path)
-	{
-
-	}
+	static_cast<CompositeValuePathItem *>(index.internalPointer())->open();
 }
 
 void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)

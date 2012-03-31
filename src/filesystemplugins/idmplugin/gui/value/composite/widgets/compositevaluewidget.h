@@ -4,6 +4,8 @@
 #include <QtGui/QTreeView>
 #include "../../model/compositevaluemodel.h"
 #include "../../../../containeres/idmcontainer.h"
+#include "../../../../../../tools/events/imp/mouseeventhandler.h"
+#include "../../../../../../tools/events/imp/mouseeventsource.h"
 #include "../../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../../tools/events/imp/keyboardeventsource.h"
 #include "../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
@@ -23,9 +25,11 @@ public:
 		virtual void critical(const QString &text) = 0;
 	};
 
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QTreeView
+	typedef MouseDoubleClickEventSource<
+				KeyboardEventSource<
+					EventSourceBase<
+						QTreeView
+					>
 				>
 			> TreeView;
 
@@ -78,6 +82,7 @@ public:
 	const CompositeValueModel &model() const { return m_private.model(); }
 	CompositeValueModel &model() { return m_private.model(); }
 
+	void open(const QModelIndex &index) { m_private.open(index); }
 	void addValue(const QModelIndex &index) { m_private.addValue(index); }
 	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
 

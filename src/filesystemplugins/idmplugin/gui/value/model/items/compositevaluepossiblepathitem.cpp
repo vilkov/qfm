@@ -1,4 +1,5 @@
 #include "compositevaluepossiblepathitem.h"
+#include "../../../../../../application.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -19,6 +20,8 @@ QVariant CompositeValuePossiblePathItem::data(qint32 column, qint32 role) const
 			return m_source->icon();
 		case Qt::TextAlignmentRole:
 			return Qt::AlignLeft;
+		case Qt::ToolTipRole:
+			return m_source->name();
 	}
 
 	return QVariant();
@@ -26,7 +29,7 @@ QVariant CompositeValuePossiblePathItem::data(qint32 column, qint32 role) const
 
 void CompositeValuePossiblePathItem::open() const
 {
-
+	Application::desktopService()->open(m_source->container(), m_source);
 }
 
 IDM_PLUGIN_NS_END

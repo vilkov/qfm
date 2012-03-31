@@ -3,8 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-InfoListItem::InfoListItem(const QString &filePath) :
-	InfoItem(filePath),
+InfoListItem::InfoListItem(const IFileContainer *container, const QString &file) :
+	InfoItem(container, file),
 	m_container(*this),
 	m_totalSize(0)
 {}

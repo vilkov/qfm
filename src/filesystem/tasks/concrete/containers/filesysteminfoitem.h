@@ -3,6 +3,7 @@
 
 #include <QtCore/QList>
 #include "../../../info/filesysteminfo.h"
+#include "../../../interfaces/filesystemifilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -16,8 +17,9 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	explicit InfoItem(const QString &filePath);
+	explicit InfoItem(const IFileContainer *container, const QString &file);
 
+	const IFileContainer *container() const { return m_container; }
 	bool isRemoved() const { return m_removed; }
 	virtual Info::size_type totalSize() const;
 
@@ -26,6 +28,7 @@ protected:
 	void setRemoved(bool value) { m_removed = value; }
 
 private:
+	const IFileContainer *m_container;
 	bool m_removed;
 };
 

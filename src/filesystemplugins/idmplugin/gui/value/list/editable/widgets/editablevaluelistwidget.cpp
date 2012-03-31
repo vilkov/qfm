@@ -173,7 +173,7 @@ void EditableValueListWidgetPrivate::addValue()
 
 void EditableValueListWidgetPrivate::removeValue()
 {
-	QModelIndex index = m_view.selectionModel()->currentIndex();
+	QModelIndex index = currentIndex();
 
 	if (index.isValid())
 		if (m_container.removeValue(m_entity, IdmStorage::IdsList() << m_model.at(index.row())->id()))

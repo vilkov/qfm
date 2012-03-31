@@ -826,6 +826,30 @@ bool IdmStorage::removeOverlappingIds(IdmEntity *entity, IdmEntity *property, Id
 	return true;
 }
 
+bool IdmStorage::removeSelfOverlappingIds(IdmEntity *entity, const IdsList &entityIds, IdmEntity *property, IdsSet &propertyIds) const
+{
+	if (!propertyIds.isEmpty())
+	{
+		sqlite3_stmt *statement;
+		QByteArray sqlQuery = PropertiesTable::selectValuesExcept(entity->id(), entityIds, property->id(), propertyIds);
+
+		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		{
+			for (int res = sqlite3_step(statement); res == SQLITE_ROW && !propertyIds.isEmpty(); res = sqlite3_step(statement))
+				propertyIds.remove(sqlite3_column_int(statement, 0));
+
+			sqlite3_finalize(statement);
+		}
+		else
+		{
+			setLastError(sqlQuery);
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool IdmStorage::cleanupParentsValues(IdmEntity *entity) const
 {
 	bool res = true;
@@ -925,7 +949,8 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) co
 
 			sqlite3_finalize(statement);
 
-			if (!removeOverlappingIds(entity, entity->at(i).entity, propertyIds) ||
+			if (!removeSelfOverlappingIds(entity, ids, entity->at(i).entity, propertyIds) ||
+				!removeOverlappingIds(entity, entity->at(i).entity, propertyIds) ||
 				!removeValue(entity->at(i).entity, propertyIds.toList()))
 				return false;
 		}

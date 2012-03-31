@@ -30,6 +30,7 @@ struct PropertiesTable
 	static QByteArray remove(Database::id_type entity, Database::id_type property);
 	static QByteArray addValue(const QString &tableName, Database::id_type id, Database::id_type entity, Database::id_type property);
 	static QByteArray removeValue(const QString &tableName, Database::id_type entity, Database::id_type property);
+	static QByteArray selectValuesExcept(Database::id_type entity, const Database::IdsList &entityIds, Database::id_type property, const Database::IdsSet &propertyIds);
 
 	struct Incomplete
 	{

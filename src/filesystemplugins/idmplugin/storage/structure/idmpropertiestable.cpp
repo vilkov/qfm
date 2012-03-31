@@ -106,6 +106,17 @@ QByteArray PropertiesTable::removeValue(const QString &tableName, Database::id_t
 			append(QString::number(property)).toUtf8();
 }
 
+QByteArray PropertiesTable::selectValuesExcept(Database::id_type entity, const Database::IdsList &entityIds, Database::id_type property, const Database::IdsSet &propertyIds)
+{
+	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_").
+			append(QString::number(entity)).
+			append(QString::fromLatin1("_PROPERTY_")).
+			append(QString::number(property)).
+			append(QString::fromLatin1(" where ENTITY_VALUE_ID not in (%1) and PROPERTY_VALUE_ID in (%2)")).
+			arg(Database::idsToString(entityIds)).
+			arg(Database::idsToString(propertyIds)).toUtf8();
+}
+
 QString PropertiesTable::Incomplete::selectValues(Database::id_type property)
 {
 	return QString::fromLatin1("select PROPERTY_VALUE_ID from ENTITY_%1_PROPERTY_").

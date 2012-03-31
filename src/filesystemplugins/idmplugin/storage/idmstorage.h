@@ -80,6 +80,7 @@ private:
 	bool removeEntityValue(IdmEntity *entity, id_type id) const;
 	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;
 	bool removeOverlappingIds(IdmEntity *entity, IdmEntity *property, IdsSet &ids) const;
+	bool removeSelfOverlappingIds(IdmEntity *entity, const IdsList &entityIds, IdmEntity *property, IdsSet &propertyIds) const;
 	bool cleanupParentsValues(IdmEntity *entity) const;
 	bool cleanupParentsValues(IdmEntity *entity, const IdsList &ids) const;
 	bool cleanupPropertyValues(IdmEntity *entity) const;

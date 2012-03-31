@@ -54,14 +54,15 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 				if (dialog.exec() != NewFileValueDialog::Accepted)
 					m_container.rollback();
 				else
-					if (m_container.updateEditorGeometry(m_entity, dialog.geometry()) &&
-						m_container.commit())
+					if (m_container.commit())
 						return true;
 					else
 					{
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 						m_container.rollback();
 					}
+
+				m_container.updateEditorGeometry(m_entity, dialog.geometry());
 			}
 			else
 			{

@@ -6,6 +6,11 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 	m_handler(this),
 	m_widget(&m_handler, container, query, this)
 {
+	const QRect &geometry = query.entity()->listGeometry();
+
+	if (geometry.isValid())
+		setGeometry(geometry);
+
 	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);

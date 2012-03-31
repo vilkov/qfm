@@ -10,7 +10,6 @@
 #include "undo/concrete/idmstorageundoaddvalue.h"
 #include "undo/concrete/idmstorageundoremovevalue.h"
 #include "undo/concrete/idmstorageundorenameproperty.h"
-#include "undo/concrete/idmstorageundoupdategeometry.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 #include <sqlite3.h>
 
@@ -301,7 +300,6 @@ bool IdmStorage::updateEditorGeometry(IdmEntity *entity, const QRect &geometry)
 		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
 			if (sqlite3_step(statement) == SQLITE_DONE)
 			{
-				m_undo.last().push_back(new IdmStorageUndoUpdateGeometry(entity, &IdmEntity::setEditorGeometry, entity->editorGeometry()));
 				entity->setEditorGeometry(geometry);
 				res = true;
 			}
@@ -331,7 +329,6 @@ bool IdmStorage::updateListGeometry(IdmEntity *entity, const QRect &geometry)
 		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
 			if (sqlite3_step(statement) == SQLITE_DONE)
 			{
-				m_undo.last().push_back(new IdmStorageUndoUpdateGeometry(entity, &IdmEntity::setListGeometry, entity->listGeometry()));
 				entity->setListGeometry(geometry);
 				res = true;
 			}

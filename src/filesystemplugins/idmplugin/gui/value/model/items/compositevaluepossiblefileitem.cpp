@@ -1,15 +1,15 @@
-#include "compositevaluepossiblepathitem.h"
+#include "compositevaluepossiblefileitem.h"
 #include "../../../../../../application.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValuePossiblePathItem::CompositeValuePossiblePathItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :
+CompositeValuePossibleFileItem::CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
 	m_source(source)
 {}
 
-QVariant CompositeValuePossiblePathItem::data(qint32 column, qint32 role) const
+QVariant CompositeValuePossibleFileItem::data(qint32 column, qint32 role) const
 {
 	switch (role)
 	{
@@ -27,7 +27,7 @@ QVariant CompositeValuePossiblePathItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-void CompositeValuePossiblePathItem::open() const
+void CompositeValuePossibleFileItem::open() const
 {
 	Application::desktopService()->open(m_source->container(), m_source);
 }

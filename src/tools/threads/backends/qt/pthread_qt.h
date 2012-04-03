@@ -12,7 +12,7 @@ public:
 		m_holder(this)
 	{}
 
-	virtual void start() { m_holder.start(Holder::LowPriority); }
+	virtual void start() { m_holder.start(Holder::InheritPriority); }
 	virtual void terminate() { m_holder.terminate(); }
 
 	void wait() { m_holder.wait(); }

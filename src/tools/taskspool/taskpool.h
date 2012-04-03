@@ -2,6 +2,7 @@
 #define TASKPOOL_H_
 
 #include <list>
+#include <stdint.h>
 #include "taskthread.h"
 #include "../threads/pmutex.h"
 

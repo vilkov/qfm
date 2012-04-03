@@ -2,7 +2,8 @@
 #include "items/compositevaluevalueitem.h"
 #include "items/compositevaluepropertyitem.h"
 #include "items/compositevaluerealpathitem.h"
-#include "items/compositevaluepossiblepathitem.h"
+#include "items/compositevaluepossiblediritem.h"
+#include "items/compositevaluepossiblefileitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -30,6 +31,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 	IdmModel(parent)
 {
 	ValueList list;
+	const InfoItem *file;
 	CompositeValuePropertyItem *item;
 
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
@@ -39,7 +41,14 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 
 		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
 			if (list.at(i)->entity()->type() == Database::Path)
-				item->add(new CompositeValuePossiblePathItem(list.at(i), files.value(list.at(i)->id()), item));
+			{
+				file = files.value(list.at(i)->id());
+
+				if (file->isFile())
+					item->add(new CompositeValuePossibleFileItem(list.at(i), file, item));
+				else
+					item->add(new CompositeValuePossibleDirItem(list.at(i), file, item));
+			}
 			else
 				item->add(new CompositeValueValueItem(list.at(i), item));
 	}

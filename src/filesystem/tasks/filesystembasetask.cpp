@@ -43,8 +43,8 @@ BaseTask::BaseTask(TasksNode *receiver) :
 	m_mutexHolder(new MutexHolder()),
 	m_receiver(receiver),
 	m_handler(new DeleteHandler(this, m_receiver)),
-	m_canceledBit(m_canceled, 1, flags()),
-	m_controllerDeadBit(m_controllerDead, 2, flags())
+	m_canceled(1, flags()),
+	m_controllerDead(2, flags())
 {
 	Q_ASSERT(m_receiver != 0);
 	Q_ASSERT(m_receiver->thread() == QThread::currentThread());

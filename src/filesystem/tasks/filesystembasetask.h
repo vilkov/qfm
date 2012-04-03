@@ -80,10 +80,8 @@ private:
     MutexHolderPointer m_mutexHolder;
     TasksNode *m_receiver;
     DeleteHandler *m_handler;
-	Flag m_canceled;
-	Bit m_canceledBit;
-	Flag m_controllerDead;
-	Bit m_controllerDeadBit;
+	StaticFlag m_canceled;
+	StaticFlag m_controllerDead;
 };
 
 FILE_SYSTEM_NS_END

@@ -10,7 +10,9 @@ TaskThread::TaskThread(TaskPool *pool, Task *task) :
 	PThread(),
 	m_task(task),
 	m_pool(pool)
-{}
+{
+	start();
+}
 
 TaskThread::~TaskThread()
 {

@@ -2,10 +2,7 @@
 #define TASKPOOL_H_
 
 #include <list>
-#include "taskspool_ns.h"
 #include "taskthread.h"
-#include "task.h"
-#include "../types/ptypes.h"
 #include "../threads/pmutex.h"
 
 
@@ -14,13 +11,12 @@ TASKSPOOL_NS_BEGIN
 class TaskPool
 {
 public:
-	typedef std::list<TaskThread*> ThreadList;
-
-public:
-	TaskPool(ThreadList::size_type maxThreads);
+	TaskPool(int32_t maxThreads);
 	~TaskPool();
 
+	bool handleImmediately(Task *task);
 	void handle(Task *task);
+	bool remove(Task *task);
 	void clear();
 
 protected:
@@ -29,11 +25,10 @@ protected:
 
 private:
 	PMutex m_mutex;
-    bool m_clearing;
-    ThreadList m_threads;
-    ThreadList m_freeThreads;
+    uint32_t m_maxThreads;
     std::list<Task*> m_tasks;
-    ThreadList::size_type m_maxThreads;
+	std::list<TaskThread*> m_threads;
+	std::list<TaskThread*> m_freeThreads;
 };
 
 TASKSPOOL_NS_END

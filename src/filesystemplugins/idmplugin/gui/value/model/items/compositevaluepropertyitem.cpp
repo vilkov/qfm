@@ -8,6 +8,11 @@ CompositeValuePropertyItem::CompositeValuePropertyItem(const IdmEntity::Property
 	m_property(property)
 {}
 
+CompositeValuePropertyItem::~CompositeValuePropertyItem()
+{
+	qDeleteAll(m_items);
+}
+
 CompositeValuePropertyItem::Base *CompositeValuePropertyItem::at(size_type index) const
 {
 	return m_items.at(index);

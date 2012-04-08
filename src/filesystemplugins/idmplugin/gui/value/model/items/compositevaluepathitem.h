@@ -14,6 +14,8 @@ public:
 	/* CompositeValueItem */
 	virtual bool isPath() const;
 
+	virtual QString fileName() const = 0;
+	virtual bool isFile() const = 0;
 	virtual void open() const = 0;
 
 	const IdmEntityValue::Holder &value() const { return m_value; }

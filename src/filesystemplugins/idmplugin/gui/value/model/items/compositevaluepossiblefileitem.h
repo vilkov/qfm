@@ -16,6 +16,8 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 	/* CompositeValuePathItem */
+	virtual QString fileName() const;
+	virtual bool isFile() const;
 	virtual void open() const;
 
 protected:

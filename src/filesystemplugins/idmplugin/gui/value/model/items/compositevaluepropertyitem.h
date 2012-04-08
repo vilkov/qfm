@@ -13,6 +13,7 @@ public:
 
 public:
 	CompositeValuePropertyItem(const IdmEntity::Property &property, IdmItem *parent = 0);
+	virtual ~CompositeValuePropertyItem();
 
 	/* Base */
 	virtual Base *at(size_type index) const;

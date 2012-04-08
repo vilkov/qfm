@@ -64,6 +64,19 @@ public:
 	}
 };
 
+static bool lessThan(CompositeValuePossibleDirItem::Container::value_type v1, CompositeValuePossibleDirItem::Container::value_type v2)
+{
+	if (static_cast<CompositeValuePathItem *>(v1)->isFile())
+		if (static_cast<CompositeValuePathItem *>(v2)->isFile())
+			return static_cast<CompositeValuePathItem *>(v1)->fileName() < static_cast<CompositeValuePathItem *>(v2)->fileName();
+		else
+			return true;
+	else
+		if (static_cast<CompositeValuePathItem *>(v2)->isFile())
+			return false;
+		else
+			return static_cast<CompositeValuePathItem *>(v1)->fileName() < static_cast<CompositeValuePathItem *>(v2)->fileName();
+}
 
 CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
@@ -80,6 +93,8 @@ CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValu
 		else
 			add(new CompositeValueFakePossibleDirItem(file, this));
 	}
+
+	qSort(m_items.begin(), m_items.end(), lessThan);
 }
 
 CompositeValuePossibleDirItem::~CompositeValuePossibleDirItem()
@@ -118,6 +133,16 @@ QVariant CompositeValuePossibleDirItem::data(qint32 column, qint32 role) const
 	}
 
 	return QVariant();
+}
+
+QString CompositeValuePossibleDirItem::fileName() const
+{
+	return m_source->fileName();
+}
+
+bool CompositeValuePossibleDirItem::isFile() const
+{
+	return false;
 }
 
 void CompositeValuePossibleDirItem::open() const

@@ -15,6 +15,16 @@ QVariant CompositeValueRealPathItem::data(qint32 column, qint32 role) const
 		return QVariant();
 }
 
+QString CompositeValueRealPathItem::fileName() const
+{
+	return QString();
+}
+
+bool CompositeValueRealPathItem::isFile() const
+{
+	return false;
+}
+
 void CompositeValueRealPathItem::open() const
 {
 

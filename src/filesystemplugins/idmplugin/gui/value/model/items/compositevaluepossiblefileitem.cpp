@@ -27,6 +27,16 @@ QVariant CompositeValuePossibleFileItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
+QString CompositeValuePossibleFileItem::fileName() const
+{
+	return m_source->fileName();
+}
+
+bool CompositeValuePossibleFileItem::isFile() const
+{
+	return true;
+}
+
 void CompositeValuePossibleFileItem::open() const
 {
 	Application::desktopService()->open(m_source->container(), m_source);

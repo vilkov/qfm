@@ -1,5 +1,6 @@
 #include "staticvaluelistdialog.h"
 #include "../../../../../../tools/pointers/pscopedpointer.h"
+#include "../../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
@@ -9,7 +10,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 	m_entity(query.entity()),
 	m_edit(&m_handler, this),
 	m_view(this),
-	m_accept(this),
+	m_accept(Application::desktopService()->searchIcon(16), QString(), this),
 	m_model(container, query, this),
 	m_proxy(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),

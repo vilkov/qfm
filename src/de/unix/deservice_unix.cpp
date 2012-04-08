@@ -368,6 +368,11 @@ QIcon Service::unpackActionIcon(int iconSize) const
 	return findIcon("archive-extract", iconSize, Actions);
 }
 
+QIcon Service::searchIcon(int iconSize) const
+{
+	return findIcon("system-search", iconSize, Actions);
+}
+
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)

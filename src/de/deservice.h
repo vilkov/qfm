@@ -45,6 +45,7 @@ public:
 	QIcon unpackActionIcon(int iconSize) const;
 
 	QIcon searchIcon(int iconSize) const;
+	QIcon openDataIcon(int iconSize) const;
 
 	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;

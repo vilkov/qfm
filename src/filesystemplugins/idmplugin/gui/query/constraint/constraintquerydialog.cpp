@@ -1,6 +1,7 @@
 #include "constraintquerydialog.h"
 #include "../../value/list/static/staticvaluelistdialog.h"
 #include "../../../../../tools/metatemplates.h"
+#include "../../../../../application.h"
 #include <QtGui/QMessageBox>
 
 
@@ -12,7 +13,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	m_label(m_property.name, this),
 	m_operator(this),
 	m_edit(this),
-	m_choose(this),
+	m_choose(Application::desktopService()->openDataIcon(16), QString(), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
@@ -62,6 +63,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     	case Database::Composite:
     	{
 	    	m_operator.addItem(Constraint::operatorToString(Constraint::Equal), Constraint::Equal);
+	    	m_edit.setReadOnly(true);
 
     		break;
     	}

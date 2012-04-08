@@ -373,6 +373,11 @@ QIcon Service::searchIcon(int iconSize) const
 	return findIcon("system-search", iconSize, Actions);
 }
 
+QIcon Service::openDataIcon(int iconSize) const
+{
+	return findIcon("document-open-data", iconSize, Actions);
+}
+
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)

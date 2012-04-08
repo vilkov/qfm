@@ -5,7 +5,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
 #include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
+#include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
@@ -41,7 +41,7 @@ private:
 	QLabel m_label;
 	QComboBox m_operator;
 	QLineEdit m_edit;
-	QToolButton m_choose;
+	QPushButton m_choose;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;
 	QHBoxLayout m_horizontalLayout;

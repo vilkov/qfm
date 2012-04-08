@@ -704,12 +704,7 @@ bool IdmStorage::removeValue(IdmEntity *entity, const IdsList &ids) const
 bool IdmStorage::removeValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const
 {
 	char *errorMsg = 0;
-	QString table =
-			QString::fromLatin1("ENTITY_").
-			append(QString::number(entityValue->entity()->id())).
-			append(QString::fromLatin1("_PROPERTY_")).
-			append(QString::number(propertyValue->entity()->id()));
-	QByteArray sqlQuery = PropertiesTable::removeValue(table, entityValue->id(), propertyValue->id());
+	QByteArray sqlQuery = PropertiesTable::removeValue(entityValue->entity()->id(), entityValue->id(), propertyValue->entity()->id(), propertyValue->id());
 
 	if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 	{

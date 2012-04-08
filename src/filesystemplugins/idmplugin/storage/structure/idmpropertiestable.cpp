@@ -96,14 +96,16 @@ QByteArray PropertiesTable::addValue(const QString &tableName, Database::id_type
 			append(QChar(')')).toUtf8();
 }
 
-QByteArray PropertiesTable::removeValue(const QString &tableName, Database::id_type entity, Database::id_type property)
+QByteArray PropertiesTable::removeValue(Database::id_type entity, Database::id_type entityValue, Database::id_type property, Database::id_type propertyValue)
 {
-	return QString::fromLatin1("delete from ").
-			append(tableName).
-			append(QString::fromLatin1(" where ENTITY_VALUE_ID = ")).
-			append(QString::number(entity)).
-			append(QString::fromLatin1(" and PROPERTY_VALUE_ID = ")).
-			append(QString::number(property)).toUtf8();
+	return QByteArray("delete from ENTITY_").
+			append(QByteArray::number(entity)).
+			append("_PROPERTY_").
+			append(QByteArray::number(property)).
+			append(" where ENTITY_VALUE_ID = ").
+			append(QByteArray::number(entityValue)).
+			append(" and PROPERTY_VALUE_ID = ").
+			append(QByteArray::number(propertyValue));
 }
 
 QByteArray PropertiesTable::selectValuesExcept(Database::id_type entity, const Database::IdsList &entityIds, Database::id_type property, const Database::IdsSet &propertyIds)

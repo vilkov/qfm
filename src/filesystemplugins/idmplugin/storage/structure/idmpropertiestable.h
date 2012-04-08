@@ -29,7 +29,7 @@ struct PropertiesTable
 	static QByteArray rename(Database::id_type entity, Database::id_type property, const QString &name);
 	static QByteArray remove(Database::id_type entity, Database::id_type property);
 	static QByteArray addValue(const QString &tableName, Database::id_type id, Database::id_type entity, Database::id_type property);
-	static QByteArray removeValue(const QString &tableName, Database::id_type entity, Database::id_type property);
+	static QByteArray removeValue(Database::id_type entity, Database::id_type entityValue, Database::id_type property, Database::id_type propertyValue);
 	static QByteArray selectValuesExcept(Database::id_type entity, const Database::IdsList &entityIds, Database::id_type property, const Database::IdsSet &propertyIds);
 
 	struct Incomplete

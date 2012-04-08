@@ -79,22 +79,19 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 			QModelIndex index1 = currentIndex1();
 
 			if (index1.isValid())
-				if (static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->entity()->type() != Database::Composite)
+			{
+				QModelIndex index2 = currentIndex2();
+
+				if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
 				{
-					QModelIndex index2 = currentIndex2();
+					ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->property(), this);
 
-					if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
-					{
-						ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->property(), this);
-
-						if (dialog.exec() == ConstraintQueryDialog::Accepted)
-							m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint*>(index2.internalPointer())), index2);
-					}
-					else
-						QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
+					if (dialog.exec() == ConstraintQueryDialog::Accepted)
+						m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint*>(index2.internalPointer())), index2);
 				}
 				else
-					QMessageBox::warning(this, windowTitle(), tr("You must select a not composite property!"));
+					QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
+			}
 			else
 				QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
 

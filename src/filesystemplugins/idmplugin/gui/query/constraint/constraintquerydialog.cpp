@@ -60,7 +60,11 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	    	break;
     	}
     	case Database::Composite:
+    	{
+	    	m_operator.addItem(Constraint::operatorToString(Constraint::Equal), Constraint::Equal);
+
     		break;
+    	}
     }
 
     m_operator.setCurrentIndex(0);

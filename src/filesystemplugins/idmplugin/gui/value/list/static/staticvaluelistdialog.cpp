@@ -15,6 +15,11 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {
+	const QRect &geometry = query.entity()->listGeometry();
+
+	if (geometry.isValid())
+		setGeometry(geometry);
+
 	setWindowTitle(tr("Values of \"%1\"").arg(m_entity->name()));
 
 	m_horizontalLayout.setMargin(3);
@@ -44,6 +49,8 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 	{
 		m_proxy.setDynamicSortFilter(true);
 		m_proxy.setSourceModel(&m_model);
+		m_view.setSortingEnabled(true);
+		m_view.sortByColumn(0, Qt::AscendingOrder);
 		m_view.setModel(&m_proxy);
 	}
 	else
@@ -81,6 +88,6 @@ void StaticValueListDialog::clearFilter()
 
 void StaticValueListDialog::selectValue(const QModelIndex &index)
 {
-	m_edit.setText(m_model.at(index.row())->value().toString());
+	m_edit.setText(m_model.at(m_proxy.mapToSource(index).row())->value().toString());
 	m_edit.setFocus();
 }

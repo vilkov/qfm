@@ -100,6 +100,8 @@ void ConstraintQueryDialog::chooseValue()
 
 	if (dialog.exec() == StaticValueListDialog::Accepted)
 		updateValue(dialog.takeValue());
+
+	m_container.updateListGeometry(m_property.entity, dialog.geometry());
 }
 
 void ConstraintQueryDialog::updateValue(const QString &text)

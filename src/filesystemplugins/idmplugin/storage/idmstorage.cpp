@@ -289,60 +289,70 @@ IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type, c
 
 bool IdmStorage::updateEditorGeometry(IdmEntity *entity, const QRect &geometry)
 {
-	bool res = false;
-	sqlite3_stmt *statement;
-	QByteArray sqlQuery = EntitiesTable::updateEditorGeometry(entity->id());
-
-	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+	if (entity->editorGeometry() == geometry)
+		return true;
+	else
 	{
-		QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
+		bool res = false;
+		sqlite3_stmt *statement;
+		QByteArray sqlQuery = EntitiesTable::updateEditorGeometry(entity->id());
 
-		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
-			if (sqlite3_step(statement) == SQLITE_DONE)
-			{
-				entity->setEditorGeometry(geometry);
-				res = true;
-			}
+		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		{
+			QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
+
+			if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
+				if (sqlite3_step(statement) == SQLITE_DONE)
+				{
+					entity->setEditorGeometry(geometry);
+					res = true;
+				}
+				else
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 			else
 				setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+
+			sqlite3_finalize(statement);
+		}
 		else
 			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 
-		sqlite3_finalize(statement);
+		return res;
 	}
-	else
-		setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
-
-	return res;
 }
 
 bool IdmStorage::updateListGeometry(IdmEntity *entity, const QRect &geometry)
 {
-	bool res = false;
-	sqlite3_stmt *statement;
-	QByteArray sqlQuery = EntitiesTable::updateListGeometry(entity->id());
-
-	if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+	if (entity->listGeometry() == geometry)
+		return true;
+	else
 	{
-		QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
+		bool res = false;
+		sqlite3_stmt *statement;
+		QByteArray sqlQuery = EntitiesTable::updateListGeometry(entity->id());
 
-		if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
-			if (sqlite3_step(statement) == SQLITE_DONE)
-			{
-				entity->setListGeometry(geometry);
-				res = true;
-			}
+		if (sqlite3_prepare_v2(m_db, sqlQuery.data(), sqlQuery.size(), &statement, NULL) == SQLITE_OK)
+		{
+			QByteArray buffer = IdmEntity::geometryToByteArray(geometry);
+
+			if (sqlite3_bind_blob(statement, 1, buffer.data(), buffer.size(), SQLITE_STATIC) == SQLITE_OK)
+				if (sqlite3_step(statement) == SQLITE_DONE)
+				{
+					entity->setListGeometry(geometry);
+					res = true;
+				}
+				else
+					setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 			else
 				setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
+
+			sqlite3_finalize(statement);
+		}
 		else
 			setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
 
-		sqlite3_finalize(statement);
+		return res;
 	}
-	else
-		setLastError(QString::fromUtf8(sqlite3_errmsg(m_db)));
-
-	return res;
 }
 
 bool IdmStorage::removeEntity(IdmEntity *entity)

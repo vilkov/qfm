@@ -2,6 +2,8 @@
 #define EDITABLEVALUELISTWIDGET_H_
 
 #include <QtGui/QTreeView>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
 #include <QtCore/QCoreApplication>
 #include "../model/editablevaluelistmodel.h"
 #include "../../../model/valuelistproxymodel.h"
@@ -14,9 +16,9 @@
 
 using namespace FileSystem::Plugins::Idm;
 
-class EditableValueListWidgetPrivate
+class EditableValueListWidgetPrivate : public QWidget
 {
-	Q_DECLARE_TR_FUNCTIONS(EditableValueListWidgetPrivate)
+	Q_OBJECT
 
 public:
 	class ICallback
@@ -34,6 +36,18 @@ public:
 					QTreeView
 				>
 			> TreeView;
+
+	typedef KeyboardEventSource<
+				EventSourceBase<
+					QLineEdit
+				>
+			> LineEdit;
+
+	typedef KeyboardEventHandler<
+				EventHandlerBase<
+					EditableValueListWidgetPrivate
+				>
+			> LineEditHandler;
 
 public:
 	EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const Select &query);
@@ -56,6 +70,11 @@ public:
 	void removeValue();
 //    void select(const QModelIndex &index);
 
+private Q_SLOTS:
+	void setFilter();
+	void clearFilter();
+	void selectValue(const QModelIndex &index);
+
 private:
     void setCurrentIndex(const QModelIndex &index) const;
 
@@ -63,6 +82,14 @@ private:
 	ICallback *m_callback;
 	IdmContainer m_container;
 	IdmEntity *m_entity;
+
+	QVBoxLayout m_vLayout;
+	QHBoxLayout m_hLayout;
+
+	LineEditHandler m_handler;
+	LineEdit m_filter;
+	QPushButton m_search;
+
 	TreeView m_view;
 	EditableValueListModel m_model;
 	ValueListProxyModel m_proxy;

@@ -30,8 +30,17 @@ public:
 	QString title() const { return m_groupbox.title(); }
 
 protected:
-	void addWidget(QWidget *widget, int stretch = 0) { m_hlayout.addWidget(widget, stretch); }
-    void addLayout(QLayout *layout, int stretch = 0) { m_hlayout.addLayout(layout, stretch); }
+	void setCentralWidget(QWidget *widget)
+	{
+		Q_ASSERT_X
+		(
+			m_hlayout.count() == 1,
+			"NestedWidget::setCentralWidget",
+			"Central widget already set!"
+		);
+
+		m_hlayout.addWidget(widget, 1);
+	}
 
 private:
     class Button : public QPushButton

@@ -1,24 +1,13 @@
 #ifndef STATICVALUELISTDIALOG_H_
 #define STATICVALUELISTDIALOG_H_
 
-#include <QtGui/QDialog>
-#include <QtGui/QTreeView>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QDialogButtonBox>
-#include "model/staticvaluelistmodel.h"
-#include "../../model/valuelistproxymodel.h"
-#include "../../../../containeres/idmcontainer.h"
-#include "../../../../storage/queries/idmselectquery.h"
-#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../editable/widgets/editablevaluelistwidget.h"
+#include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 using namespace FileSystem::Plugins::Idm;
 
-class StaticValueListDialog : public QDialog
+class StaticValueListDialog : public NestedPlainDialog
 {
 	Q_OBJECT
 
@@ -32,33 +21,15 @@ protected:
     QModelIndex currentIndex() const;
 
 private:
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QLineEdit
-				>
-			> LineEdit;
 	typedef KeyboardEventHandler<
 				EventHandlerBase<
 					StaticValueListDialog
 				>
-			> LineEditHandler;
-
-private Q_SLOTS:
-	void setFilter();
-	void clearFilter();
-	void selectValue(const QModelIndex &index);
+			> TreeViewHandler;
 
 private:
-	LineEditHandler m_handler;
-	IdmEntity *m_entity;
-	LineEdit m_edit;
-	QTreeView m_view;
-	QPushButton m_accept;
-	StaticValueListModel m_model;
-	ValueListProxyModel m_proxy;
-	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
-	QHBoxLayout m_horizontalLayout;
+	TreeViewHandler m_handler;
+	MainEditableValueListWidget m_widget;
 };
 
 #endif /* STATICVALUELISTDIALOG_H_ */

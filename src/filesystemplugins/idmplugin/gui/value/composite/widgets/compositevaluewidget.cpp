@@ -136,7 +136,7 @@ CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueWidget::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueWidget::removeValue);
 
-	addWidget(&m_private.view());
+	setCentralWidget(&m_private.view());
 }
 
 void CompositeValueWidget::setFocus()

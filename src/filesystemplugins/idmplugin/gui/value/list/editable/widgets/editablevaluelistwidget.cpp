@@ -2,6 +2,7 @@
 #include "../../../simple/widgets/simplevaluewidget.h"
 #include "../../../simple/rating/widgets/ratingvaluewidget.h"
 #include "../../../composite/widgets/compositevaluewidget.h"
+#include "../../../../../../../application.h"
 
 
 template <Database::EntityType EntityType>
@@ -93,13 +94,29 @@ EditableValueListWidgetPrivate::ICallback::~ICallback()
 {}
 
 EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const Select &query) :
+	QWidget(),
 	m_callback(callback),
 	m_container(container),
 	m_entity(query.entity()),
-	m_view(handler),
+	m_vLayout(this),
+	m_handler(this),
+	m_filter(&m_handler, this),
+	m_search(Application::desktopService()->searchIcon(16), QString(), this),
+	m_view(handler, this),
 	m_model(m_container, query)
 {
+	m_vLayout.setMargin(1);
+	m_vLayout.setSpacing(1);
+
+	m_hLayout.setMargin(1);
+	m_hLayout.setSpacing(1);
+	m_hLayout.addWidget(&m_filter);
+	m_hLayout.addWidget(&m_search);
+
 	m_view.setHeaderHidden(true);
+
+	m_vLayout.addLayout(&m_hLayout);
+	m_vLayout.addWidget(&m_view);
 
 	if (m_model.isValid())
 	{
@@ -111,6 +128,16 @@ EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callba
 	}
 	else
 		callback->critical(m_model.lastError());
+
+    connect(&m_search, SIGNAL(clicked()), this, SLOT(setFilter()));
+    connect(&m_view, SIGNAL(clicked(QModelIndex)), this, SLOT(selectValue(QModelIndex)));
+
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter, &EditableValueListWidgetPrivate::setFilter);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &EditableValueListWidgetPrivate::setFilter);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Escape, &EditableValueListWidgetPrivate::clearFilter);
+    m_filter.setToolTip(tr("ENTER - accept filter\nESC - clear filter"));
+
+    m_search.setToolTip(tr("Accept filter"));
 }
 
 void EditableValueListWidgetPrivate::addValue()
@@ -190,6 +217,22 @@ void EditableValueListWidgetPrivate::removeValue()
 //	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 //}
 
+void EditableValueListWidgetPrivate::setFilter()
+{
+	m_proxy.setFilter(m_filter.text());
+}
+
+void EditableValueListWidgetPrivate::clearFilter()
+{
+	m_filter.clear();
+	m_proxy.setFilter(QString());
+}
+
+void EditableValueListWidgetPrivate::selectValue(const QModelIndex &index)
+{
+	m_filter.setText(m_model.at(m_proxy.mapToSource(index).row())->value().toString());
+}
+
 void EditableValueListWidgetPrivate::setCurrentIndex(const QModelIndex &index) const
 {
 	m_view.selectionModel()->setCurrentIndex(m_proxy.mapFromSource(index), QItemSelectionModel::ClearAndSelect);
@@ -203,7 +246,7 @@ MainEditableValueListWidget::MainEditableValueListWidget(EventHandler *handler, 
 
 QWidget *MainEditableValueListWidget::centralWidget()
 {
-	return &m_private.view();
+	return &m_private;
 }
 
 void MainEditableValueListWidget::setReadOnly(bool value)
@@ -240,7 +283,7 @@ EditableValueListWidget::EditableValueListWidget(const IdmContainer &container, 
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListWidget::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListWidget::removeValue);
 
-    addWidget(&m_private.view());
+    setCentralWidget(&m_private);
 }
 
 void EditableValueListWidget::setFocus()

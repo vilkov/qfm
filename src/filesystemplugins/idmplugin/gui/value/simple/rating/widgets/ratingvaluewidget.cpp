@@ -109,7 +109,7 @@ void MainRatingValueWidget::setFocus()
 RatingValueWidget::RatingValueWidget(NestedDialog *parent, const QString &title) :
 	NestedWidget(parent, title)
 {
-	addWidget(&m_private);
+	setCentralWidget(&m_private);
 }
 
 void RatingValueWidget::setFocus()

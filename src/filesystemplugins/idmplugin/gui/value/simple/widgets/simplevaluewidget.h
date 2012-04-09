@@ -96,7 +96,7 @@ SimpleValueWidget<T>::SimpleValueWidget(NestedDialog *parent, const QString &tit
 	EditorValue<T>::setValue(&m_edit, value);
 	m_edit.selectAll();
 
-	addWidget(&m_edit);
+	setCentralWidget(&m_edit);
 }
 
 template <typename T>

@@ -220,12 +220,14 @@ void EditableValueListWidgetPrivate::removeValue()
 void EditableValueListWidgetPrivate::setFilter()
 {
 	m_proxy.setFilter(m_filter.text());
+	m_view.setFocus();
 }
 
 void EditableValueListWidgetPrivate::clearFilter()
 {
 	m_filter.clear();
 	m_proxy.setFilter(QString());
+	m_view.setFocus();
 }
 
 void EditableValueListWidgetPrivate::selectValue(const QModelIndex &index)
@@ -282,6 +284,8 @@ EditableValueListWidget::EditableValueListWidget(const IdmContainer &container, 
 {
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListWidget::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListWidget::removeValue);
+    m_handler.registerShortcut(Qt::CTRL, Qt::Key_S, &EditableValueListWidget::setFocusToFilter);
+    m_private.view().setToolTip(tr("INS - add value\nDEL - remove value\nCTRL+S - activate filter field"));
 
     setCentralWidget(&m_private);
 }
@@ -314,4 +318,9 @@ void EditableValueListWidget::addValue()
 void EditableValueListWidget::removeValue()
 {
 	m_private.removeValue();
+}
+
+void EditableValueListWidget::setFocusToFilter()
+{
+	m_private.setFocusToFilter();
 }

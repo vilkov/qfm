@@ -13,6 +13,9 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
 
+    m_handler.registerShortcut(Qt::CTRL, Qt::Key_S, &StaticValueListDialog::setFocusToFilter);
+    m_widget.setViewToolTip(tr("CTRL+S - activate filter field"));
+
     setCentralWidget(&m_widget);
 }
 
@@ -32,4 +35,9 @@ void StaticValueListDialog::accept()
 QModelIndex StaticValueListDialog::currentIndex() const
 {
 	return m_widget.currentIndex();
+}
+
+void StaticValueListDialog::setFocusToFilter()
+{
+	m_widget.setFocusToFilter();
 }

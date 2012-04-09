@@ -18,6 +18,7 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile2);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile2);
+	m_mainWidget.setViewToolTip(tr("INS - add value\nDEL - remove value\nENTER or double click on file to open it"));
 
 	setCentralWidget(&m_mainWidget);
 }
@@ -37,6 +38,7 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueDialog::removeValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &CompositeValueDialog::openFile2);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter,  &CompositeValueDialog::openFile2);
+	m_mainWidget.setViewToolTip(tr("INS - add value\nDEL - remove value\nENTER or double click on file to open it"));
 
 	setCentralWidget(&m_mainWidget);
 }

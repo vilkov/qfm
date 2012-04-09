@@ -69,6 +69,7 @@ public:
     void addValue();
 	void removeValue();
 //    void select(const QModelIndex &index);
+	void setFocusToFilter() { m_filter.setFocus(); }
 
 private Q_SLOTS:
 	void setFilter();
@@ -120,6 +121,8 @@ public:
     void addValue() { m_private.addValue(); }
 	void removeValue() { m_private.removeValue(); }
 //    void select(const QModelIndex &index) { m_private.select(index); }
+	void setFocusToFilter() { m_private.setFocusToFilter(); }
+	void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
 
 private:
 	EditableValueListWidgetPrivate m_private;
@@ -148,6 +151,7 @@ public:
     void addValue();
 	void removeValue();
 //    void select(const QModelIndex &index) { m_private.select(index); }
+	void setFocusToFilter();
 
 private:
 	typedef KeyboardEventHandler<

@@ -135,6 +135,7 @@ CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const 
 {
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CompositeValueWidget::addValue);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CompositeValueWidget::removeValue);
+    m_private.view().setToolTip(tr("INS - add value\nDEL - remove value"));
 
 	setCentralWidget(&m_private.view());
 }

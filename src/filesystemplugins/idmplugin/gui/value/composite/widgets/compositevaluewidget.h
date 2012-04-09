@@ -85,6 +85,7 @@ public:
 	void open(const QModelIndex &index) { m_private.open(index); }
 	void addValue(const QModelIndex &index) { m_private.addValue(index); }
 	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
+	void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
 
 private:
 	CompositeValueWidgetPrivate m_private;

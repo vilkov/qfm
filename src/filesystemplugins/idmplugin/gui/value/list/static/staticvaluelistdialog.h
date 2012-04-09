@@ -27,6 +27,8 @@ private:
 				>
 			> TreeViewHandler;
 
+	void setFocusToFilter();
+
 private:
 	TreeViewHandler m_handler;
 	MainEditableValueListWidget m_widget;

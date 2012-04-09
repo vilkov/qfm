@@ -27,6 +27,7 @@ private:
 
 	void addValue();
 	void removeValue();
+	void setFocusToFilter();
 
 private:
 	TreeViewHandler m_handler;

@@ -220,14 +220,12 @@ void EditableValueListWidgetPrivate::removeValue()
 void EditableValueListWidgetPrivate::setFilter()
 {
 	m_proxy.setFilter(m_filter.text());
-	m_view.setFocus();
 }
 
 void EditableValueListWidgetPrivate::clearFilter()
 {
 	m_filter.clear();
 	m_proxy.setFilter(QString());
-	m_view.setFocus();
 }
 
 void EditableValueListWidgetPrivate::selectValue(const QModelIndex &index)

@@ -294,7 +294,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 
 void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)
 {
-
+	createFile(index, view);
 }
 
 void IdmNodeQueryResults::rename(const QModelIndex &index, INodeView *view)
@@ -348,9 +348,12 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 
 		if (m_container.commit())
 		{
-			IFileContainer::Holder container(new FileContainer(*this));
-			lock(files, tr("Scanning for remove..."));
-			addTask(new ScanFilesTask(this, container, files), files);
+			if (!files.isEmpty())
+			{
+				IFileContainer::Holder container(new FileContainer(*this));
+				lock(files, tr("Scanning for remove..."));
+				addTask(new ScanFilesTask(this, container, files), files);
+			}
 		}
 		else
 		{

@@ -9,6 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 PerformRemoveBaseTask::PerformRemoveBaseTask(TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_snapshot(snapshot),
+	m_skipAllIfNotRemove(false),
 	m_progress(receiver)
 {}
 
@@ -19,22 +20,27 @@ Snapshot PerformRemoveBaseTask::remove(const volatile Flags &aborted)
 	Snapshot::List list(m_snapshot);
 
 	for (Snapshot::List::size_type i = 0; i < list.size() && !aborted; ++i)
-		if ((entry = list.at(i).second)->isDir())
-		{
-			m_progress.init(list.at(i).first);
-			removeEntry(m_snapshot.container(), entry, tryAgain = false, aborted);
-			m_progress.complete();
-		}
-		else
-		{
-			m_progress.clear();
-			removeEntry(m_snapshot.container(), entry, tryAgain = false, aborted);
-		}
+	{
+		entry = list.at(i).second;
+
+		if (entry->container()->contains(entry->fileName()))
+			if (entry->isDir())
+			{
+				m_progress.init(list.at(i).first);
+				removeEntry(entry, tryAgain = false, aborted);
+				m_progress.complete();
+			}
+			else
+			{
+				m_progress.clear();
+				removeEntry(entry, tryAgain = false, aborted);
+			}
+	}
 
 	return m_snapshot;
 }
 
-void PerformRemoveBaseTask::removeEntry(const IFileContainer *root, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveBaseTask::removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (entry->isDir())
 	{
@@ -42,26 +48,31 @@ void PerformRemoveBaseTask::removeEntry(const IFileContainer *root, InfoItem *en
 
 		for (InfoListItem::size_type i = 0, size = static_cast<InfoListItem*>(entry)->size(); i < size; ++i)
 		{
-			removeEntry(&static_cast<InfoListItem*>(entry)->container(), localEntry = static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
+			localEntry = static_cast<InfoListItem*>(entry)->at(i);
 
-			if (!localEntry->isRemoved())
-				entry->setRemoved(false);
+			if (localEntry->container()->contains(localEntry->fileName()))
+			{
+				removeEntry(localEntry, tryAgain = false, aborted);
+
+				if (!localEntry->isRemoved())
+					entry->setRemoved(false);
+			}
 		}
 
 		if (entry->isRemoved())
 			do
-				doRemove(root, entry, tryAgain = false, aborted);
+				doRemove(entry, tryAgain = false, aborted);
 			while (tryAgain && !aborted);
 	}
 	else
 		do
-			doRemove(root, entry, tryAgain = false, aborted);
+			doRemove(entry, tryAgain = false, aborted);
 		while (tryAgain && !aborted);
 }
 
-void PerformRemoveBaseTask::doRemove(const IFileContainer *root, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveBaseTask::doRemove(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
-	if (!root->remove(entry->fileName(), m_error))
+	if (!entry->container()->remove(entry->fileName(), m_error))
 		if (m_skipAllIfNotRemove)
 			entry->setRemoved(false);
 		else
@@ -69,7 +80,7 @@ void PerformRemoveBaseTask::doRemove(const IFileContainer *root, InfoItem *entry
 			qint32 answer = askUser(
 								tr("Failed to remove"),
 								tr("\"%1\" (%2). Skip it?").
-									arg(root->location(entry->fileName())).
+									arg(entry->container()->location(entry->fileName())).
 									arg(m_error),
 								QMessageBox::Yes |
 								QMessageBox::YesToAll |

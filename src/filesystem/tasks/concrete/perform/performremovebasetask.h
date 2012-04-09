@@ -20,8 +20,8 @@ protected:
 	Snapshot remove(const volatile Flags &aborted);
 
 private:
-	void removeEntry(const IFileContainer *root, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
-	void doRemove(const IFileContainer *root, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void removeEntry(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void doRemove(InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 
 private:
 	Snapshot m_snapshot;

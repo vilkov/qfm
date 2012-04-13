@@ -57,7 +57,7 @@ protected:
 
 protected:
 	/* FolderNodeBase */
-	virtual UpdatesList::Map updateFilesMap() const;
+	virtual UpdatesList::Changes updateFilesMap() const;
 	virtual void updateFilesEvent(const UpdatesList &updates);
 	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot);
 	virtual bool scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move);

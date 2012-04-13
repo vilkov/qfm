@@ -13,7 +13,7 @@ ScanFilesTask::ScanFilesTask(TasksNode *receiver, IFileContainer::Holder &contai
 Snapshot ScanFilesTask::scan(const volatile Flags &aborted)
 {
 	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size && !aborted; ++i)
-		ScanFilesBaseTask::scan(m_snapshot, m_files.at(i), &static_cast<FileSystemBaseItem*>(m_files.at(i))->info(), aborted);
+		ScanFilesBaseTask::scan(m_snapshot, m_files.at(i), static_cast<FileSystemBaseItem*>(m_files.at(i))->info().fileName(), aborted);
 
 	return m_snapshot;
 }

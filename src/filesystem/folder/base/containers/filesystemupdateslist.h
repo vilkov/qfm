@@ -41,18 +41,24 @@ public:
 		Info m_info;
 		Type m_type;
 	};
-	typedef QMap<QString, Change> Map;
-	typedef Map::iterator         iterator;
+	typedef QSet<QString>         Locked;
+	typedef QMap<QString, Change> Changes;
+	typedef Changes::iterator     iterator;
 	typedef QList<Change>         Values;
 
 public:
 	UpdatesList()
 	{}
-	UpdatesList(const Map &changes) :
+	UpdatesList(const Changes &changes) :
+		m_changes(changes)
+	{}
+	UpdatesList(const Locked &locked, const Changes &changes) :
+		m_locked(locked),
 		m_changes(changes)
 	{}
 
 	bool isEmpty() const { return m_changes.isEmpty(); }
+	bool isLocked(const QString &fileName) const { return m_locked.contains(fileName); }
 
 	iterator begin() { return m_changes.begin(); }
 	iterator end() { return m_changes.end(); }
@@ -66,33 +72,32 @@ public:
 		if (change.type() == Added)
 			change.update(info);
 		else
-			if (change.type() == Deleted)
-				if (change.info().shouldBeUpdatedBy(info))
-					change.update(info, Updated);
-				else
-					change.update(NoChange);
+			if (change.info().shouldBeUpdatedBy(info))
+				change.update(info, Updated);
+			else
+				change.update(NoChange);
 	}
 	UpdatesList takeUpdates()
 	{
-		Map changes;
+		Changes changes;
 
-		for (Map::iterator it = m_changes.begin(), end = m_changes.end(); it != end;)
-			if (it.value().type() == NoChange)
-				it = m_changes.erase(it);
+		for (Changes::iterator it = m_changes.begin(), end = m_changes.end(); it != end;)
+			if (it.value().type() == Deleted)
+				++it;
 			else
-				if (it.value().type() != Deleted)
-				{
+			{
+				if (it.value().type() != NoChange)
 					changes.insert(it.key(), it.value());
-					it = m_changes.erase(it);
-				}
-				else
-					++it;
+
+				it = m_changes.erase(it);
+			}
 
 		return UpdatesList(changes);
 	}
 
 private:
-	Map m_changes;
+	Locked m_locked;
+	Changes m_changes;
 };
 
 FILE_SYSTEM_NS_END

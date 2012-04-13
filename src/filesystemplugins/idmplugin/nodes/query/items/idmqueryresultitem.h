@@ -15,24 +15,7 @@ public:
 	virtual bool isRoot() = 0;
 	virtual bool isProperty() = 0;
 	virtual bool isValue() = 0;
-};
-
-
-class QueryResultListItem : public QueryResultItem
-{
-public:
-	typedef QList<QueryResultItem *> Container;
-
-public:
-	QueryResultListItem(Base *parent);
-
-	/* Base */
-	virtual Base *at(size_type index) const;
-	virtual size_type size() const;
-	virtual size_type indexOf(Base *item) const;
-
-protected:
-	Container m_items;
+	virtual bool isPath() = 0;
 };
 
 IDM_PLUGIN_NS_END

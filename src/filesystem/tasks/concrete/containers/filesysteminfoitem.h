@@ -17,6 +17,7 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
+	explicit InfoItem(const IFileContainer *container, const Info &file);
 	explicit InfoItem(const IFileContainer *container, const QString &file);
 
 	const IFileContainer *container() const { return m_container; }

@@ -18,6 +18,7 @@ public:
 	virtual bool isRoot();
 	virtual bool isProperty();
 	virtual bool isValue();
+	virtual bool isPath();
 
 	const IdmEntityValue::Holder &value() const { return m_value; }
 

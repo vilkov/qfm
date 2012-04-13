@@ -3,8 +3,14 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+InfoItem::InfoItem(const IFileContainer *container, const Info &file) :
+	Info(file),
+	m_container(container),
+	m_removed(true)
+{}
+
 InfoItem::InfoItem(const IFileContainer *container, const QString &file) :
-	Info(container->location(file), Identify()),
+	Info(container->location(file), Info::Identify()),
 	m_container(container),
 	m_removed(true)
 {}

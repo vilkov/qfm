@@ -6,9 +6,29 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent) :
-	QueryResultListItem(parent),
+	QueryResultItem(parent),
 	m_property(property)
 {}
+
+QueryResultPropertyItem::~QueryResultPropertyItem()
+{
+	qDeleteAll(m_items);
+}
+
+QueryResultPropertyItem::Base *QueryResultPropertyItem::at(size_type index) const
+{
+	return m_items.at(index);
+}
+
+QueryResultPropertyItem::size_type QueryResultPropertyItem::size() const
+{
+	return m_items.size();
+}
+
+QueryResultPropertyItem::size_type QueryResultPropertyItem::indexOf(Base *item) const
+{
+	return m_items.indexOf(static_cast<QueryResultItem *>(item));
+}
 
 QVariant QueryResultPropertyItem::data(qint32 column, qint32 role) const
 {
@@ -29,6 +49,11 @@ bool QueryResultPropertyItem::isProperty()
 }
 
 bool QueryResultPropertyItem::isValue()
+{
+	return false;
+}
+
+bool QueryResultPropertyItem::isPath()
 {
 	return false;
 }

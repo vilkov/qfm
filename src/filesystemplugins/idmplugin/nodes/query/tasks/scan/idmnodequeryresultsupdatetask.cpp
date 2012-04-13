@@ -1,5 +1,5 @@
 #include "idmnodequeryresultsupdatetask.h"
-#include "../../items/idmqueryresultpathvalueitem.h"
+#include "../../items/idmqueryresultpathitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -12,14 +12,13 @@ UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &co
 
 void UpdateFilesTask::run(const volatile Flags &aborted)
 {
-	Snapshot snapshot = scan(aborted);
-	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::UpdateFiles), aborted, snapshot));
+	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::UpdateFiles), aborted, scan(aborted)));
 }
 
 Snapshot UpdateFilesTask::scan(const volatile Flags &aborted)
 {
 	for (TasksNode::TasksItemList::size_type i = 0, size = m_files.size(); i < size && !aborted; ++i)
-		ScanFilesBaseTask::scanSoft(m_snapshot, m_files.at(i), static_cast<QueryResultPathValueItem*>(m_files.at(i)), aborted);
+		ScanFilesBaseTask::scan(m_snapshot, m_files.at(i), static_cast<QueryResultPathItem *>(m_files.at(i))->fileName(), aborted);
 
 	return m_snapshot;
 }

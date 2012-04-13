@@ -2,7 +2,6 @@
 #define IDMQUERYRESULTPROPERTYITEM_H_
 
 #include "idmqueryresultitem.h"
-#include "idmqueryresultrootitem.h"
 #include "../../../storage/values/idmentityvalue.h"
 #include "../../../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
@@ -10,19 +9,28 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class QueryResultPropertyItem : public QueryResultListItem
+class QueryResultPropertyItem : public QueryResultItem
 {
 public:
+	typedef QList<QueryResultItem *> Container;
+
+public:
 	QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent);
+	virtual ~QueryResultPropertyItem();
 
 	/* Base */
+	virtual Base *at(size_type index) const;
+	virtual size_type size() const;
+	virtual size_type indexOf(Base *item) const;
 	virtual QVariant data(qint32 column, qint32 role) const;
+
+	/* QueryResultItem */
 	virtual bool isRoot();
 	virtual bool isProperty();
 	virtual bool isValue();
+	virtual bool isPath();
 
 	const IdmEntity::Property &property() const { return m_property; }
-	const IdmEntityValue::Holder &rootValue() const { return static_cast<QueryResultRootItem*>(parent())->value(); }
 
 	void add(const IFileContainer *container, const IdmEntityValue::Holder &value);
 	void add(const IFileContainer *container, const IdmCompositeEntityValue::List &values);
@@ -31,6 +39,7 @@ public:
 
 private:
 	IdmEntity::Property m_property;
+	Container m_items;
 };
 
 IDM_PLUGIN_NS_END

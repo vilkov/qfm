@@ -532,9 +532,9 @@ void FolderNode::doesNotExistAnyMore()
 	}
 }
 
-UpdatesList::Map FolderNode::updateFilesMap() const
+UpdatesList::Changes FolderNode::updateFilesMap() const
 {
-	UpdatesList::Map changes;
+	UpdatesList::Changes changes;
 
 	for (ItemsContainer::size_type i = isRoot() ? 0 : 1, size = m_items.size(); i < size; ++i)
 		changes.insert(m_items[i]->info().fileName(), m_items[i]->info());

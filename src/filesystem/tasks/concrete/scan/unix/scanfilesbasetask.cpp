@@ -46,23 +46,30 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) 
 	}
 }
 
-void ScanFilesBaseTask::scan(Snapshot &snapshot, FileSystemItem *item, const IFileInfo *file, const volatile Flags &aborted) const
+void ScanFilesBaseTask::scan(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const
 {
-	if (file->isDir())
+	Info info(snapshot.container()->location(file), Info::Identify());
+
+	if (info.isDir())
 	{
-		PScopedPointer<InfoListItem> subnode(new InfoListItem(snapshot.container(), file->fileName()));
+		PScopedPointer<InfoListItem> subnode(new InfoListItem(snapshot.container(), info));
 
 		scan(subnode.data(), aborted);
 
 		snapshot.push_back(item, subnode.take());
 	}
 	else
-		snapshot.push_back(item, new InfoItem(snapshot.container(), file->fileName()));
+		snapshot.push_back(item, new InfoItem(snapshot.container(), info));
 }
 
-void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, FileSystemItem *item, const IFileInfo *file, const volatile Flags &aborted) const
+void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const
 {
-	snapshot.push_back(item, new InfoItem(snapshot.container(), file->fileName()));
+	Info info(snapshot.container()->location(file), Info::Identify());
+
+	if (info.isDir())
+		snapshot.push_back(item, new InfoListItem(snapshot.container(), info));
+	else
+		snapshot.push_back(item, new InfoItem(snapshot.container(), info));
 }
 
 FILE_SYSTEM_NS_END

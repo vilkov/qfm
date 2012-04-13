@@ -23,6 +23,7 @@ void UpdateFilesTask::run(const volatile Flags &aborted)
 		QTime base = QTime::currentTime();
 		QTime current;
 
+		QString fileName;
 		struct dirent *entry;
 		UpdatesList localUpdates;
 
@@ -32,11 +33,16 @@ void UpdateFilesTask::run(const volatile Flags &aborted)
 
 			if (entry->d_type == DT_DIR)
 			{
-				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-					m_updates.update(Info(m_container->location(QString::fromUtf8(entry->d_name)), Info::Identify()));
+				if (strcmp(entry->d_name, ".") != 0 &&
+					strcmp(entry->d_name, "..") != 0 &&
+					!m_updates.isLocked(fileName = QString::fromUtf8(entry->d_name)))
+				{
+					m_updates.update(Info(m_container->location(fileName), Info::Identify()));
+				}
 			}
 			else
-				m_updates.update(Info(m_container->location(QString::fromUtf8(entry->d_name)), Info::Identify()));
+				if (!m_updates.isLocked(fileName = QString::fromUtf8(entry->d_name)))
+					m_updates.update(Info(m_container->location(fileName), Info::Identify()));
 
 			if (base.msecsTo(current) > 300)
 			{

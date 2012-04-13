@@ -2,6 +2,7 @@
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
+#include "items/idmqueryresultcompositerootitem.h"
 #include "../../gui/value/edit/editcompositevaluedialog.h"
 #include "../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
 #include <QtGui/QMessageBox>
@@ -114,9 +115,9 @@ void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &
 				EditorValue<typename EntityValueType<Database::Rating>::type>::setValue(editor, index.data(Qt::DisplayRole));
 				break;
 
-			case Database::Path:
-				EditorValue<typename EntityValueType<Database::Path>::type>::setValue(editor, static_cast<QueryResultPathValueItem*>(item)->info().fileName());
-				break;
+//			case Database::Path:
+//				EditorValue<typename EntityValueType<Database::Path>::type>::setValue(editor, static_cast<QueryResultPathValueItem*>(item)->info().fileName());
+//				break;
 
 			default:
 				break;
@@ -174,10 +175,10 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 		if (m_container.transaction())
 			if (item->value()->entity()->type() == Database::Path)
 			{
-				QString error;
-				QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(item);
-				QString fileName = file->info().fileName();
-
+//				QString error;
+//				QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(item);
+//				QString fileName = file->info().fileName();
+//
 //				if (file->info().rename(value.toString(), error))
 //					if (m_container.updateValue(file->value(), file->info().absoluteFilePath(value.toString())))
 //						if (m_container.commit())
@@ -198,14 +199,14 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 //									m_container.lastError());
 //					}
 //				else
-				{
-					m_container.rollback();
-					QMessageBox::critical(
-							editor,
-							tr("Failed to rename file \"%1\"").
-							arg(file->info().fileName()),
-							error);
-				}
+//				{
+//					m_container.rollback();
+//					QMessageBox::critical(
+//							editor,
+//							tr("Failed to rename file \"%1\"").
+//							arg(file->info().fileName()),
+//							error);
+//				}
 			}
 			else
 				if (m_container.updateValue(item->value(), value))
@@ -229,7 +230,10 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 		{
 			QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(index.internalPointer());
 
-			if (m_container.renameProperty(property->rootValue()->entity(), property->property().entity, EditorValue<QString>::value(editor)))
+			if (m_container.renameProperty(
+					static_cast<QueryResultRootItem *>(property->parent())->value()->entity(),
+					property->property().entity,
+					EditorValue<QString>::value(editor)))
 			{
 				if (!m_container.commit())
 				{

@@ -282,8 +282,8 @@ EditableValueListWidget::EditableValueListWidget(const IdmContainer &container, 
 {
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListWidget::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListWidget::removeValue);
-    m_handler.registerShortcut(Qt::CTRL, Qt::Key_S, &EditableValueListWidget::setFocusToFilter);
-    m_private.view().setToolTip(tr("INS - add value\nDEL - remove value\nCTRL+S - activate filter field"));
+    m_handler.registerShortcut(Qt::CTRL, Qt::Key_F, &EditableValueListWidget::setFocusToFilter);
+    m_private.view().setToolTip(tr("INS - add value\nDEL - remove value\nCTRL+F - activate filter field"));
 
     setCentralWidget(&m_private);
 }

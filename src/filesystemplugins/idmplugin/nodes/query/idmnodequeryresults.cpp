@@ -8,6 +8,7 @@
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
+#include "items/idmqueryresultcompositerootitem.h"
 #include "../folder/idmfoldernode.h"
 #include "../../gui/value/list/selectable/selectablevaluelistdialog.h"
 #include "../../../../tools/containers/union.h"
@@ -69,11 +70,18 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 
 	list.reserve(PrefetchLimit);
 
-	for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
-		if (item = m_reader.next())
-			list.push_back(new QueryResultRootItem(files, this, item));
-		else
-			break;
+	if (m_reader.entity()->type() == Database::Composite)
+		for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
+			if (item = m_reader.next())
+				list.push_back(new QueryResultCompositeRootItem(files, this, item));
+			else
+				break;
+	else
+		for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
+			if (item = m_reader.next())
+				list.push_back(new QueryResultRootItem(item));
+			else
+				break;
 
 	if (!list.isEmpty())
 	{
@@ -222,7 +230,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 			if (item->size() == 0)
 				return new IdmQueryResultsCopyControl(
 						m_container,
-						item->rootValue(),
+						static_cast<QueryResultRootItem *>(item->parent())->value(),
 						item->property(),
 						const_cast<IdmNodeQueryResults*>(this),
 						index,
@@ -268,7 +276,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 			{
 				IdmEntityValue::Holder value = dialog.takeValue();
 
-				if (m_container.addValue(item->rootValue(), value))
+				if (m_container.addValue(static_cast<QueryResultRootItem *>(item->parent())->value(), value))
 					if (m_container.commit())
 					{
 						beginInsertRows(index, item->size(), item->size());
@@ -329,7 +337,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 					{
 						property = static_cast<QueryResultPropertyItem*>(item->parent());
 
-						if (m_container.removeValue(property->rootValue(), item->value()))
+						if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), item->value()))
 						{
 							idx = property->indexOf(item);
 
@@ -515,7 +523,7 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 	{
 		QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(value->parent());
 
-		if (m_container.removeValue(property->rootValue(), value->value()))
+		if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), value->value()))
 			if (m_container.commit())
 			{
 				beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
@@ -610,7 +618,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 			{
 				property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
 
-				if (m_container.removeValue(property->rootValue(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
+				if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
 				{
 					idx = property->indexOf(list.at(i).first);
 
@@ -650,7 +658,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 
 void IdmNodeQueryResults::lock(const TasksItemList &list, const QString &reason)
 {
-	typedef QMap<QueryResultListItem*, Union> Map;
+	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	Map map;
@@ -670,7 +678,7 @@ void IdmNodeQueryResults::lock(const TasksItemList &list, const QString &reason)
 
 void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason)
 {
-	typedef QMap<QueryResultListItem*, Union> Map;
+	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	Map map;
@@ -690,7 +698,7 @@ void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason
 
 void IdmNodeQueryResults::unlock(const Snapshot::List &list)
 {
-	typedef QMap<QueryResultListItem*, Union> Map;
+	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	Map map;
@@ -710,17 +718,19 @@ void IdmNodeQueryResults::unlock(const Snapshot::List &list)
 
 void IdmNodeQueryResults::update(const Snapshot::List &list)
 {
-	typedef QMap<QueryResultListItem*, Union> Map;
+	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
+	QueryResultItem *item;
 	Map map;
 
 	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
 	{
-		property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
-		map[property].add(property->indexOf(list.at(i).first));
-		static_cast<QueryResultPathValueItem *>(list.at(i).first)->update(*list.at(i).second);
-		static_cast<QueryResultValueItem *>(list.at(i).first)->unlock();
+		item = static_cast<QueryResultItem *>(list.at(i).first);
+		property = static_cast<QueryResultPropertyItem *>(item->parent());
+		map[property].add(property->indexOf(item));
+		static_cast<QueryResultPathValueItem *>(item)->update(list.at(i).second);
+		static_cast<QueryResultValueItem *>(item)->unlock();
 	}
 
 	for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)

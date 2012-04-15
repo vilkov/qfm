@@ -1,5 +1,6 @@
 #include "idmqueryresultcompositerootitem.h"
 #include "idmqueryresultpropertyitem.h"
+#include "idmqueryresultpathpropertyitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -13,8 +14,19 @@ QueryResultCompositeRootItem::QueryResultCompositeRootItem(TasksNode::TasksItemL
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
 		const IdmEntity::Property &poperty = value->entity()->at(i);
-		m_items[i] = item = new QueryResultPropertyItem(poperty, this);
-		item->add(files, container, value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+
+		if (poperty.entity->type() == Database::Path)
+		{
+			item = new QueryResultPathPropertyItem(poperty, this);
+			static_cast<QueryResultPathPropertyItem *>(item)->add(files, container, value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+		}
+		else
+		{
+			item = new QueryResultPropertyItem(poperty, this);
+			item->add(value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+		}
+
+		m_items[i] = item;
 	}
 }
 

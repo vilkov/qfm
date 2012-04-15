@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPathItem : public QueryResultItem, public IFileInfo
 {
 public:
-	typedef QList<QueryResultItem *> Container;
+	typedef QList<QueryResultPathItem *> Container;
 
 public:
 	QueryResultPathItem(const InfoItem *item, Base *parent);
@@ -50,11 +50,12 @@ public:
 	virtual int permissions() const;
 	virtual void refresh();
 
-	const Info &info() const { return m_info; }
-	Info &info() { return m_info; }
+	Node *node() const { return m_node; }
+	void setNode(Node *node) { m_node = node; }
 
 protected:
 	Info m_info;
+	Node *m_node;
 	Container m_items;
 };
 

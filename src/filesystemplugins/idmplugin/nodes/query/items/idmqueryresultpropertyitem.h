@@ -3,8 +3,6 @@
 
 #include "idmqueryresultitem.h"
 #include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -32,12 +30,11 @@ public:
 
 	const IdmEntity::Property &property() const { return m_property; }
 
-	void add(const IFileContainer *container, const IdmEntityValue::Holder &value);
-	void add(const IFileContainer *container, const IdmCompositeEntityValue::List &values);
-	void add(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values);
+	void add(const IdmEntityValue::Holder &value);
+	void add(const IdmCompositeEntityValue::List &values);
 	void remove(size_type index);
 
-private:
+protected:
 	IdmEntity::Property m_property;
 	Container m_items;
 };

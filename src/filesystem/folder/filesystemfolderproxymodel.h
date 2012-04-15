@@ -1,13 +1,12 @@
 #ifndef FILESYSTEMFOLDERPROXYMODEL_H_
 #define FILESYSTEMFOLDERPROXYMODEL_H_
 
-#include <QtGui/QSortFilterProxyModel>
-#include "../filesystem_ns.h"
+#include "../filesystemproxymodel.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FolderProxyModel : public QSortFilterProxyModel
+class FolderProxyModel : public ProxyModel
 {
 	Q_DISABLE_COPY(FolderProxyModel)
 

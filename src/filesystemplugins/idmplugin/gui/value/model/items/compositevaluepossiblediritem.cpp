@@ -1,5 +1,6 @@
 #include "compositevaluepossiblediritem.h"
 #include "compositevaluepossiblefileitem.h"
+#include "../../../../../../filesystem/filesystemproxymodel.h"
 #include "../../../../../../filesystem/tasks/concrete/containers/filesysteminfolistitem.h"
 #include "../../../../../../application.h"
 
@@ -68,14 +69,14 @@ static bool lessThan(CompositeValuePossibleDirItem::Container::value_type v1, Co
 {
 	if (static_cast<CompositeValuePathItem *>(v1)->isFile())
 		if (static_cast<CompositeValuePathItem *>(v2)->isFile())
-			return static_cast<CompositeValuePathItem *>(v1)->fileName() < static_cast<CompositeValuePathItem *>(v2)->fileName();
+			return ProxyModel::compareFileNames(static_cast<CompositeValuePathItem *>(v1)->fileName(), static_cast<CompositeValuePathItem *>(v2)->fileName());
 		else
 			return true;
 	else
 		if (static_cast<CompositeValuePathItem *>(v2)->isFile())
 			return false;
 		else
-			return static_cast<CompositeValuePathItem *>(v1)->fileName() < static_cast<CompositeValuePathItem *>(v2)->fileName();
+			return ProxyModel::compareFileNames(static_cast<CompositeValuePathItem *>(v1)->fileName(), static_cast<CompositeValuePathItem *>(v2)->fileName());
 }
 
 CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :

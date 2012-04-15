@@ -20,11 +20,7 @@ public:
 
 	void update(const InfoItem *item);
 
-	Node *node() const { return m_node; }
-	void setNode(Node *node) { m_node = node; }
-
 private:
-	Node *m_node;
 	IdmEntityValue::Holder m_value;
 };
 

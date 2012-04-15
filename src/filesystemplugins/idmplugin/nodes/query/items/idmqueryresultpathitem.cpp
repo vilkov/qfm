@@ -6,7 +6,8 @@ IDM_PLUGIN_NS_BEGIN
 
 QueryResultPathItem::QueryResultPathItem(const InfoItem *item, Base *parent) :
 	QueryResultItem(parent),
-	m_info(*item)
+	m_info(*item),
+	m_node(NULL)
 {
 	if (item->isDir())
 		for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(item)->size(); i < size; ++i)
@@ -15,7 +16,8 @@ QueryResultPathItem::QueryResultPathItem(const InfoItem *item, Base *parent) :
 
 QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent) :
 	QueryResultItem(parent),
-	m_info(container->location(fileName), Info::None())
+	m_info(container->location(fileName), Info::None()),
+	m_node(NULL)
 {}
 
 QueryResultPathItem::~QueryResultPathItem()
@@ -35,7 +37,7 @@ QueryResultPathItem::Base::size_type QueryResultPathItem::size() const
 
 QueryResultPathItem::Base::size_type QueryResultPathItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(static_cast<QueryResultItem *>(item));
+	return m_items.indexOf(static_cast<QueryResultPathItem *>(item));
 }
 
 QVariant QueryResultPathItem::data(qint32 column, qint32 role) const

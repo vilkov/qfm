@@ -8,6 +8,7 @@
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultpathvalueitem.h"
+#include "items/idmqueryresultpathpropertyitem.h"
 #include "items/idmqueryresultcompositerootitem.h"
 #include "../folder/idmfoldernode.h"
 #include "../../gui/value/list/selectable/selectablevaluelistdialog.h"
@@ -212,8 +213,8 @@ void IdmNodeQueryResults::refresh()
 
 IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 {
-	if (static_cast<QueryResultItem *>(idx.internalPointer())->isValue())
-		return &static_cast<QueryResultPathValueItem *>(idx.internalPointer())->info();
+	if (static_cast<QueryResultItem *>(idx.internalPointer())->isPath())
+		return static_cast<QueryResultPathItem *>(idx.internalPointer());
 	else
 		return NULL;
 }
@@ -254,7 +255,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 			}
 	}
 
-	return 0;
+	return NULL;
 }
 
 void IdmNodeQueryResults::contextMenu(const QModelIndexList &list, INodeView *view)
@@ -278,11 +279,18 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 
 				if (m_container.addValue(static_cast<QueryResultRootItem *>(item->parent())->value(), value))
 					if (m_container.commit())
-					{
-						beginInsertRows(index, item->size(), item->size());
-						item->add(this, value);
-						endInsertRows();
-					}
+						if (item->property().entity->type() == Database::Path)
+						{
+							beginInsertRows(index, item->size(), item->size());
+							static_cast<QueryResultPathPropertyItem *>(item)->add(this, value);
+							endInsertRows();
+						}
+						else
+						{
+							beginInsertRows(index, item->size(), item->size());
+							item->add(value);
+							endInsertRows();
+						}
 					else
 					{
 						m_container.rollback();
@@ -434,26 +442,24 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 	{
 		QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
 
-		if (!item->isLocked() &&
-			item->isValue() &&
-			static_cast<QueryResultValueItem *>(item)->value()->entity()->type() == Database::Path)
+		if (!item->isLocked() && item->isPath())
 
-			if (Node *node = static_cast<QueryResultPathValueItem *>(item)->node())
+			if (Node *node = static_cast<QueryResultPathItem *>(item)->node())
 				return node;
 			else
 			{
-				static_cast<QueryResultPathValueItem *>(item)->info().refresh();
+				static_cast<QueryResultPathItem *>(item)->refresh();
 
-				if (static_cast<QueryResultPathValueItem *>(item)->info().exists())
-					if (static_cast<QueryResultPathValueItem *>(item)->info().isDir())
+				if (static_cast<QueryResultPathItem *>(item)->exists())
+					if (static_cast<QueryResultPathItem *>(item)->isDir())
 					{
-						node = new IdmFolderNode(m_container, static_cast<QueryResultPathValueItem *>(item)->info(), m_info, this);
-						static_cast<QueryResultPathValueItem *>(item)->setNode(node);
-						return node;
+//						node = new IdmFolderNode(m_container, static_cast<QueryResultPathItem *>(item), m_info, this);
+//						static_cast<QueryResultPathItem *>(item)->setNode(node);
+//						return node;
 					}
 					else
-						if (static_cast<QueryResultPathValueItem *>(item)->info().isFile())
-							Application::desktopService()->open(this, static_cast<QueryResultPathValueItem *>(item));
+						if (static_cast<QueryResultPathItem *>(item)->isFile())
+							Application::desktopService()->open(this, static_cast<QueryResultPathItem *>(item));
 			}
 	}
 	else
@@ -484,14 +490,11 @@ void IdmNodeQueryResults::performActionEvent(const AsyncFileAction::FilesList &f
 
 void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
-	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
-	{
-		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+	QueryResultPathPropertyItem *item = static_cast<QueryResultPathPropertyItem *>(index.internalPointer());
 
-		beginInsertRows(index, item->size(), item->size() + values.size() - 1);
-		item->add(this, values);
-		endInsertRows();
-	}
+	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
+	item->add(this, values);
+	endInsertRows();
 }
 
 void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)

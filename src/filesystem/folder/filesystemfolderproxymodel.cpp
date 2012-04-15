@@ -6,7 +6,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 FolderProxyModel::FolderProxyModel(QObject *parent) :
-	QSortFilterProxyModel(parent)
+	ProxyModel(parent)
 {}
 
 bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -26,14 +26,14 @@ bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
 				case 0:
 					if (leftItem->info().isDir())
 						if (rightItem->info().isDir())
-							return leftItem->info().fileName() < rightItem->info().fileName();
+							return compareFileNames(leftItem->info().fileName(), rightItem->info().fileName());
 						else
 							return true;
 					else
 						if (rightItem->info().isDir())
 							return false;
 						else
-							return leftItem->info().fileName() < rightItem->info().fileName();
+							return compareFileNames(leftItem->info().fileName(), rightItem->info().fileName());
 				case 1:
 					if (leftItem->info().isDir())
 						if (rightItem->info().isDir())

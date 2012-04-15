@@ -222,6 +222,11 @@ bool RootNode::Container::rename(const QString &oldName, const QString &newName,
 	return false;
 }
 
+IFileContainer *RootNode::Container::open(QString &error) const
+{
+	return NULL;
+}
+
 IFileAccessor *RootNode::Container::open(const QString &fileName, int mode, QString &error) const
 {
 	return NULL;

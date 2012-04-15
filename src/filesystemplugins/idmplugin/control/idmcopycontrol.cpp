@@ -6,11 +6,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info) :
+IdmCopyControl::IdmCopyControl(const IdmContainer &container, const IFileContainer *folder, IdmEntity *entity) :
 	CopyControl(container.container()->location()),
 	m_container(container),
-	m_entity(entity)
-//	m_storage(QString(info - storage).append(QChar('/')))
+	m_entity(entity),
+	m_storage(difference(folder->location(), m_container.container()->location()).append(QChar('/')))
 {}
 
 bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
@@ -87,6 +87,24 @@ void IdmCopyControl::done(bool error)
 void IdmCopyControl::canceled()
 {
 
+}
+
+QString IdmCopyControl::difference(const QString &path1, const QString &path2)
+{
+	Path current(path1);
+	Path other(path2);
+
+	for (Path::Iterator otherIt = other.begin(), currentIt = current.begin();
+		!otherIt.atEnd() && !currentIt.atEnd();
+		++otherIt)
+	{
+		if (*currentIt == *otherIt)
+			currentIt = current.erase(currentIt);
+		else
+			break;
+	}
+
+	return current.toString();
 }
 
 IDM_PLUGIN_NS_END

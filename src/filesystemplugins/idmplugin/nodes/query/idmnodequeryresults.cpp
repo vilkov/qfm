@@ -346,6 +346,11 @@ QString IdmNodeQueryResults::location(const QString &fileName) const
 	return QString();
 }
 
+QString IdmNodeQueryResults::location(const QModelIndex &index) const
+{
+	return QString();
+}
+
 QAbstractItemModel *IdmNodeQueryResults::model() const
 {
 	return const_cast<IdmNodeQueryResults *>(this);
@@ -385,9 +390,17 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 			{
 				if (static_cast<QueryResultPathItem *>(item)->isDir())
 				{
-//						node = new IdmFolderNode(m_container, static_cast<QueryResultPathItem *>(item), m_info, this);
-//						static_cast<QueryResultPathItem *>(item)->setNode(node);
-//						return node;
+					QString error;
+					IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->fileName(), false, error));
+
+					if (folder)
+					{
+						node = new IdmFolderNode(folder, m_container, this);
+						static_cast<QueryResultPathItem *>(item)->setNode(node);
+						return node;
+					}
+					else
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 				}
 				else
 					if (static_cast<QueryResultPathItem *>(item)->isFile())

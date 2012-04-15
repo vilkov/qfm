@@ -50,6 +50,7 @@ public:
 	virtual QString title() const;
 	virtual QString location() const;
 	virtual QString location(const QString &fileName) const;
+	virtual QString location(const QModelIndex &index) const;
 
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;

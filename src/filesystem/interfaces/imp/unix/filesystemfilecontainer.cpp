@@ -77,6 +77,11 @@ bool FileContainer::rename(const QString &oldName, const QString &newName, QStri
 	}
 }
 
+IFileContainer *FileContainer::open(QString &error) const
+{
+	return new FileContainer(*this);
+}
+
 IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &error) const
 {
 	FileAccesor::Holder file(new FileAccesor(QString(m_path).append(QChar('/')).append(fileName), mode));

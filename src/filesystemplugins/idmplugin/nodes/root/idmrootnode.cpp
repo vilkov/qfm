@@ -16,29 +16,6 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-template <typename T> inline T *value_cast(void *item, T *to = 0);
-
-template <> inline RootNodeRootItem *value_cast(void *item, RootNodeRootItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<RootNodeItem*>(item)->isRoot())
-		return static_cast<RootNodeRootItem*>(item);
-
-	return 0;
-}
-
-template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *to)
-{
-	Q_UNUSED(to);
-
-	if (static_cast<RootNodeItem*>(item)->isFiles())
-		return static_cast<RootNodeFilesItem*>(item);
-
-	return 0;
-}
-
-
 IdmRootNode::IdmRootNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
@@ -94,9 +71,9 @@ IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
 
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
-//	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-//		return new IdmCopyControl(m_container, entity, m_info, m_info);
-//	else
+	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+		return new IdmCopyControl(m_container, m_container.container(), entity);
+	else
 		return NULL;
 }
 
@@ -253,10 +230,10 @@ QAbstractItemView::SelectionMode IdmRootNode::selectionMode() const
 		{
 			if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 			{
-//				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
-//
-//				if (dialog.exec() == CreateQueryDialog::Accepted)
-//					return switchTo(new IdmNodeQueryResults(m_container, dialog.query(), m_info, this), view);
+				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
+
+				if (dialog.exec() == CreateQueryDialog::Accepted)
+					return switchTo(new IdmNodeQueryResults(m_container, dialog.query(), this), view);
 			}
 
 			break;
@@ -275,7 +252,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 {
 	RootNodeItem *item;
 
-	if ((item = static_cast<RootNodeItem*>(idx.internalPointer()))->isEntity())
+	if ((item = static_cast<RootNodeItem *>(idx.internalPointer()))->isEntity())
 		if (m_container.transaction())
 		{
 			EditableValueListDialog dialog(
@@ -294,7 +271,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 			else
 				m_container.rollback();
 
-			m_container.updateListGeometry(static_cast<RootNodeEntityItem*>(item)->entity(), dialog.geometry());
+			m_container.updateListGeometry(static_cast<RootNodeEntityItem *>(item)->entity(), dialog.geometry());
 		}
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
@@ -304,14 +281,16 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 		else
 			if (item->isFiles())
 			{
-				if (static_cast<RootNodeFilesItem*>(item)->node())
-					static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
+				if (static_cast<RootNodeFilesItem *>(item)->node())
+					static_cast<RootNodeFilesItem *>(item)->node()->setParentEntryIndex(idx);
 				else
 				{
-//					Node *node = new IdmFolderNode(m_container, m_info, m_info, this);
-//
-//					node->setParentEntryIndex(idx);
-//					static_cast<RootNodeFilesItem*>(item)->setNode(node);
+					QString error;
+					IFileContainer::Holder folder(m_container.container()->open(error));
+					Node *node = new IdmFolderNode(folder, m_container, this);
+
+					node->setParentEntryIndex(idx);
+					static_cast<RootNodeFilesItem*>(item)->setNode(node);
 				}
 
 				return static_cast<RootNodeFilesItem*>(item)->node();
@@ -322,13 +301,16 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 
 Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-//	if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->node())
-//		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
-//	else
-//	{
-//		static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, m_info, this));
-//		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
-//	}
+	if (Node *node = static_cast<RootNodeFilesItem* >(m_items.at(FilesItemIndex))->node())
+		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+	else
+	{
+		QString error;
+		IFileContainer::Holder folder(m_container.container()->open(error));
+
+		static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(folder, m_container, this));
+		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, plugins, selected);
+	}
 
 	return NULL;
 }

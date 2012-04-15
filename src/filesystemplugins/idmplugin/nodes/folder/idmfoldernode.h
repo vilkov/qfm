@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmFolderNode : public FolderNode
 {
 public:
-	IdmFolderNode(const IdmContainer &container, const Info &info, const Info &storage, Node *parent = 0);
+	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, Node *parent = 0);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -30,7 +30,6 @@ private:
 
 private:
 	IdmContainer m_container;
-	const Info &m_storage;
 };
 
 IDM_PLUGIN_NS_END

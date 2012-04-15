@@ -6,11 +6,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info, const Info &storage) :
-	CopyControl(info),
+IdmCopyControl::IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info) :
+	CopyControl(container.container()->location()),
 	m_container(container),
-	m_entity(entity),
-	m_storage(QString(info - storage).append(QChar('/')))
+	m_entity(entity)
+//	m_storage(QString(info - storage).append(QChar('/')))
 {}
 
 bool IdmCopyControl::start(const Snapshot::Files &files, bool move)

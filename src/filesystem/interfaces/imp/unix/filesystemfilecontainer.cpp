@@ -1,11 +1,6 @@
 #include "../filesystemfilecontainer.h"
 #include "../filesystemfileaccessor.h"
-#include "../../tools/filesystemcommontools.h"
-#include "../../../application.h"
-
-#ifdef Q_OS_WIN
-#	include <QtCore/qt_windows.h>
-#endif
+#include "../../../tools/filesystemcommontools.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -14,13 +9,11 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include <QtGui/QMessageBox>
-
 
 FILE_SYSTEM_NS_BEGIN
 
-FileContainer::FileContainer(const Info &info) :
-	m_info(info)
+FileContainer::FileContainer(const QString &path) :
+	m_path(path)
 {}
 
 bool FileContainer::isPhysical() const
@@ -30,23 +23,23 @@ bool FileContainer::isPhysical() const
 
 QString FileContainer::location() const
 {
-	return m_info.absoluteFilePath();
+	return m_path;
 }
 
 QString FileContainer::location(const QString &fileName) const
 {
-	return m_info.absoluteFilePath(fileName);
+	return QString(m_path).append(QChar('/')).append(fileName);
 }
 
 IFileInfo::size_type FileContainer::freeSpace() const
 {
-	return Tools::freeSpace(m_info.isDir() ? m_info.absoluteFilePath().toUtf8() : m_info.absolutePath().toUtf8());
+	return Tools::freeSpace(m_path.toUtf8());
 }
 
 bool FileContainer::contains(const QString &fileName) const
 {
 	struct stat st;
-	return ::stat(m_info.absoluteFilePath(fileName).toUtf8(), &st) == 0;
+	return ::stat(QString(m_path).append(QChar('/')).append(fileName).toUtf8(), &st) == 0;
 }
 
 bool FileContainer::remove(const QString &fileName, QString &error) const
@@ -57,7 +50,7 @@ bool FileContainer::remove(const QString &fileName, QString &error) const
 		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
 #endif
 	struct stat st;
-	QByteArray name = m_info.absoluteFilePath(fileName).toUtf8();
+	QByteArray name = QString(m_path).append(QChar('/')).append(fileName).toUtf8();
 
 	if (::stat(name, &st) == 0)
 		if (S_ISDIR(st.st_mode))
@@ -73,9 +66,9 @@ bool FileContainer::remove(const QString &fileName, QString &error) const
 	return false;
 }
 
-bool FileContainer::rename(const QString &oldName, const QString &newName, QString &error)
+bool FileContainer::rename(const QString &oldName, const QString &newName, QString &error) const
 {
-	if (::rename(m_info.absoluteFilePath(oldName).toUtf8(), m_info.absoluteFilePath(newName).toUtf8()) == 0)
+	if (::rename(QString(m_path).append(QChar('/')).append(oldName).toUtf8(), QString(m_path).append(QChar('/')).append(newName).toUtf8()) == 0)
 		return true;
 	else
 	{
@@ -86,7 +79,7 @@ bool FileContainer::rename(const QString &oldName, const QString &newName, QStri
 
 IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &error) const
 {
-	FileAccesor::Holder file(new FileAccesor(m_info.absoluteFilePath(fileName), mode));
+	FileAccesor::Holder file(new FileAccesor(QString(m_path).append(QChar('/')).append(fileName), mode));
 
 	if (file)
 		if (static_cast<FileAccesor *>(file.data())->isValid())
@@ -101,17 +94,22 @@ IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &e
 
 IFileContainer *FileContainer::open(const QString &fileName, bool create, QString &error) const
 {
-	Info info(m_info.absoluteFilePath(fileName), Info::Refresh());
+	struct stat st;
+	QByteArray name = QString(m_path).append(QChar('/')).append(fileName).toUtf8();
 
-	if (info.exists() && info.isDir())
-		return new FileContainer(info);
+	if (::stat(name, &st) == 0)
+	{
+		if (S_ISDIR(st.st_mode))
+			return new FileContainer(QString::fromUtf8(name));
+		else
+			errno = ENOTDIR;
+	}
 	else
 		if (errno == ENOENT &&
 			create &&
-			::mkdir(info.absoluteFilePath().toUtf8(), S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
+			::mkdir(name, S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
 		{
-			info.refresh();
-			return new FileContainer(info);
+			return new FileContainer(QString::fromUtf8(name));
 		}
 
 	error = QString::fromUtf8(::strerror(errno));

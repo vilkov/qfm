@@ -19,14 +19,14 @@ public:
 	typedef TasksMap::List TasksItemList;
 
 public:
-	TasksNode(const ModelContainer &conteiner, Node *parent = 0);
+	TasksNode(const NodeModelContainer &conteiner, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
 
 protected:
-	virtual void updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed) = 0;
-	virtual void completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed) = 0;
+	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed) = 0;
+	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed) = 0;
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
 
 protected:
@@ -34,9 +34,9 @@ protected:
 	void resetTask(BaseTask *task, BaseTask *oldTask);
 	void handleTask(BaseTask *task);
 	void taskHandled();
-	void cancelTask(FileSystemItem *item);
+	void cancelTask(NodeItem *item);
 	void removeAllTaskLinks(BaseTask *task);
-	TasksMap::List cancelTaskAndTakeItems(FileSystemItem *item);
+	TasksMap::List cancelTaskAndTakeItems(NodeItem *item);
 
 private:
 	TasksMap m_tasks;

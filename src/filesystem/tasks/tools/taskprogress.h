@@ -2,7 +2,7 @@
 #define TASKPROGRESS_H_
 
 #include <QtCore/QDateTime>
-#include "../../model/items/filesystemitem.h"
+#include "../../model/items/filesystemnodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -14,7 +14,7 @@ class TaskProgress
 public:
 	TaskProgress(TasksNode *receiver);
 
-	void init(const FileSystemItem *item);
+	void init(const NodeItem *item);
 	void update(quint64 progressIncrement);
 	void complete();
 	void clear();
@@ -23,7 +23,7 @@ private:
 	void postEvent();
 
 private:
-	const FileSystemItem *m_item;
+	const NodeItem *m_item;
 	quint64 m_progress;
 	TasksNode *m_receiver;
 	QDateTime m_baseTime;

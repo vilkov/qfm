@@ -6,7 +6,6 @@
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../filesystem/info/filesystemfilecontainer.h"
 #include "../../../../tools/containers/union.h"
 
 
@@ -15,11 +14,10 @@ class Functor;
 class QueryResultValueItem;
 
 
-class IdmNodeQueryResults : public TasksNode, public FileContainer, public IQueryResultsUpdater
+class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
 {
 public:
-	IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent = 0);
-	virtual ~IdmNodeQueryResults();
+	IdmNodeQueryResults(const IdmContainer &container, const Select &query, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -30,26 +28,6 @@ public:
     virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
-
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual bool exists() const;
-	virtual size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
-	virtual void refresh();
 
 	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
@@ -68,6 +46,11 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 	/* INode */
+    virtual void refresh();
+	virtual QString title() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
@@ -81,8 +64,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 protected:
@@ -113,7 +96,7 @@ private:
     enum { PrefetchLimit = 64 };
 
 private:
-	class ItemsContainer : public ModelContainer
+	class ItemsContainer : public NodeModelContainer
 	{
 	public:
 		typedef QList<Item*> List;

@@ -27,7 +27,7 @@ IFileAccessor::size_type PerformCopyTask::bufferSize() const
 	return FileReadWriteGranularity;
 }
 
-void PerformCopyTask::progressInit(const FileSystemItem *item)
+void PerformCopyTask::progressInit(const NodeItem *item)
 {
 	m_progress.init(item);
 }

@@ -7,10 +7,16 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class INode : public IFileInfo, public IFileOperations, public IFileNavigation
+class INode : public IFileOperations, public IFileNavigation
 {
 public:
 	virtual ~INode();
+
+    virtual void refresh() = 0;
+	virtual QString title() const = 0;
+	virtual QString location() const = 0;
+	virtual QString location(const QString &fileName) const = 0;
+	virtual QString location(const QModelIndex &index) const = 0;
 
 	virtual int columnsCount() const = 0;
 	virtual QAbstractItemModel *model() const = 0;

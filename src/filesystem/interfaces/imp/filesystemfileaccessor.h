@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMFILEACCESSOR_H_
 #define FILESYSTEMFILEACCESSOR_H_
 
-#include "../interfaces/filesystemifileaccessor.h"
+#include "../filesystemifileaccessor.h"
 
 #ifdef Q_OS_UNIX
 	typedef int FileDescriptor;

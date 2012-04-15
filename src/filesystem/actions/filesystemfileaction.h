@@ -3,7 +3,7 @@
 
 #include <QtCore/QList>
 #include <QtGui/QAction>
-#include "../model/items/filesystemitem.h"
+#include "../model/items/filesystemnodeitem.h"
 #include "../interfaces/filesystemifilecontainer.h"
 
 
@@ -12,14 +12,14 @@ FILE_SYSTEM_NS_BEGIN
 class FileAction
 {
 public:
-	typedef QPair<const FileSystemItem *, const IFileInfo *> FileItem;
+	typedef QPair<const NodeItem *, const IFileInfo *> FileItem;
 	typedef QList<FileItem>                                  FilesList;
 
 	class FilesListAdapter
 	{
 	public:
 		typedef FilesList              base_class;
-		typedef const FileSystemItem * value_type;
+		typedef const NodeItem *       value_type;
 		typedef base_class::size_type  size_type;
 
 	public:

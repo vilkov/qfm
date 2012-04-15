@@ -6,7 +6,7 @@
 #include "../model/arcdelegate.h"
 #include "../archive/arcarchive.h"
 #include "../tasks/arctaskevent.h"
-#include "../../../filesystem/info/filesysteminfo.h"
+#include "../../../filesystem/interfaces/imp/filesystemfileinfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
 
@@ -25,26 +25,6 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
-
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual bool exists() const;
-	virtual size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
-	virtual void refresh();
-
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
@@ -61,6 +41,12 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 	/* INode */
+    virtual void refresh();
+	virtual QString title() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+	virtual QString location(const QModelIndex &index) const;
+
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
@@ -75,8 +61,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 	void scanCompleteEvent(TaskEvent *event);
@@ -85,7 +71,7 @@ protected:
 private:
 	enum { RootItemIndex = 0 };
 
-	class ItemsContainer : public ModelContainer
+	class ItemsContainer : public NodeModelContainer
 	{
 	public:
 		typedef QList<ArcNodeItem *> List;

@@ -8,32 +8,12 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class RootNode : public Node, public IFileContainer
+class RootNode : public Node
 {
 	Q_DISABLE_COPY(RootNode)
 
 public:
 	RootNode();
-
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
-
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual bool exists() const;
-	virtual size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
-	virtual void refresh();
 
 	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
@@ -52,23 +32,16 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 	/* INode */
+    virtual void refresh();
+	virtual QString title() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+	virtual QString location(const QModelIndex &index) const;
+
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
 	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
-
-	/* IFileContainer */
-	virtual bool isPhysical() const;
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-	virtual IFileInfo::size_type freeSpace() const;
-
-	virtual bool contains(const QString &fileName) const;
-	virtual bool remove(const QString &fileName, QString &error) const;
-	virtual bool rename(const QString &oldName, const QString &newName, QString &error);
-
-	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
-	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
 protected:
 	/* Node */
@@ -79,9 +52,27 @@ protected:
 
 private:
 	Node *createNode(const Info &info, PluginsManager *plugins);
-	FileSystemBaseItem *createItem(const QString &fileName, PluginsManager *plugins);
+	FolderBaseItem *createItem(const QString &fileName, PluginsManager *plugins);
+
+	class Container : public IFileContainer
+	{
+	public:
+		virtual bool isPhysical() const;
+
+		virtual QString location() const;
+		virtual QString location(const QString &fileName) const;
+		virtual IFileInfo::size_type freeSpace() const;
+
+		virtual bool contains(const QString &fileName) const;
+		virtual bool remove(const QString &fileName, QString &error) const;
+		virtual bool rename(const QString &oldName, const QString &newName, QString &error) const;
+
+		virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
+		virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
+	};
 
 private:
+	Container m_container;
 	ItemsContainer m_items;
 	INodeView::MenuActionList m_menuActions;
 };

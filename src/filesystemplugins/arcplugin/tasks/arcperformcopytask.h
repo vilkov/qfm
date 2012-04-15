@@ -33,7 +33,7 @@ public:
 	virtual IFileAccessor::value_type *buffer() const;
 	virtual IFileAccessor::size_type bufferSize() const;
 
-	virtual void progressInit(const FileSystemItem *item);
+	virtual void progressInit(const NodeItem *item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 

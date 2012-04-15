@@ -129,8 +129,8 @@ void DirectoryView::setNode(FileSystem::INode *node)
 	m_view.setModel(node->model());
 	m_view.setItemDelegate(node->delegate());
 	m_view.setSelectionMode(node->selectionMode());
-	m_header.pathEdit.setText(m_node->absoluteFilePath());
-	m_parent->updateTitle(this, m_node->fileName());
+	m_header.pathEdit.setText(m_node->location());
+	m_parent->updateTitle(this, m_node->title());
 
 	if (node->actions().isEmpty())
 	{
@@ -163,14 +163,14 @@ QPoint DirectoryView::listPos() const
 	return mapToGlobal(m_view.pos());
 }
 
-QString DirectoryView::currentDirectoryName() const
-{
-	return m_node->fileName();
-}
+//QString DirectoryView::currentDirectoryName() const
+//{
+//	return m_node->fileName();
+//}
 
 void DirectoryView::save(QXmlStreamWriter &stream) const
 {
-	stream.writeTextElement(QString::fromLatin1("Path"), m_node->absoluteFilePath());
+	stream.writeTextElement(QString::fromLatin1("Path"), m_node->location());
 
 	stream.writeStartElement(QString::fromLatin1("Sort"));
 	stream.writeTextElement(QString::fromLatin1("Column"), QString::number(m_view.header()->sortIndicatorSection()));
@@ -310,10 +310,7 @@ void DirectoryView::actionTriggered(QAction *action)
 
 void DirectoryView::openInNewTab()
 {
-	QModelIndex index = currentIndex();
-
-	if (index.isValid())
-		m_parent->openInNewTab(m_node, m_node->info(index)->absoluteFilePath(), geometry());
+	m_parent->openInNewTab(m_node, m_node->location(currentIndex()), geometry());
 }
 
 void DirectoryView::closeTab()

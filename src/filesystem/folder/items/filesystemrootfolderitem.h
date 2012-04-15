@@ -1,15 +1,15 @@
-#ifndef FILESYSTEMROOTITEM_H_
-#define FILESYSTEMROOTITEM_H_
+#ifndef FILESYSTEMROOTFOLDERITEM_H_
+#define FILESYSTEMROOTFOLDERITEM_H_
 
-#include "../base/items/filesystembaseitem.h"
+#include "../base/items/filesystemfolderbaseitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FilesystemRootItem : public FileSystemBaseItem
+class RootFolderItem : public FolderBaseItem
 {
 public:
-	explicit FilesystemRootItem();
+	explicit RootFolderItem();
 
 	/* IFileInfo */
 	virtual QString fileName() const;
@@ -26,4 +26,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMROOTITEM_H_ */
+#endif /* FILESYSTEMROOTFOLDERITEM_H_ */

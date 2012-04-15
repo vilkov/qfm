@@ -39,11 +39,10 @@ template <> inline RootNodeFilesItem *value_cast(void *item, RootNodeFilesItem *
 }
 
 
-IdmRootNode::IdmRootNode(const Info &storage, const QString &fileName, Node *parent) :
+IdmRootNode::IdmRootNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
-	FileContainer(storage),
 	m_items(m_itemsContainer.m_container),
-	m_container(location(fileName), false),
+	m_container(container, false),
 	m_delegate(m_container)
 {
 	m_actions.push_back(new QAction(tr("Create"), 0));
@@ -88,97 +87,17 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 	return QVariant();
 }
 
-FileTypeId IdmRootNode::id() const
-{
-	return m_info.id();
-}
-
-QIcon IdmRootNode::icon() const
-{
-	return m_info.icon();
-}
-
-QString IdmRootNode::name() const
-{
-	return m_info.name();
-}
-
-QString IdmRootNode::description() const
-{
-	return m_info.description();
-}
-
-bool IdmRootNode::isDir() const
-{
-	return true;
-}
-
-bool IdmRootNode::isFile() const
-{
-	return false;
-}
-
-bool IdmRootNode::isLink() const
-{
-	return false;
-}
-
-bool IdmRootNode::exists() const
-{
-	return m_info.exists();
-}
-
-IdmRootNode::size_type IdmRootNode::fileSize() const
-{
-	return m_info.fileSize();
-}
-
-QString IdmRootNode::fileName() const
-{
-	return m_info.fileName();
-}
-
-QString IdmRootNode::absolutePath() const
-{
-	return m_info.absolutePath();
-}
-
-QString IdmRootNode::absoluteFilePath() const
-{
-	return m_info.absoluteFilePath();
-}
-
-QString IdmRootNode::absoluteFilePath(const QString &fileName) const
-{
-	return m_info.absoluteFilePath(fileName);
-}
-
-QDateTime IdmRootNode::lastModified() const
-{
-	return m_info.lastModified();
-}
-
-int IdmRootNode::permissions() const
-{
-	return m_info.permissions();
-}
-
-void IdmRootNode::refresh()
-{
-
-}
-
 IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
 {
-	return 0;
+	return NULL;
 }
 
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, entity, m_info, m_info);
-	else
-		return 0;
+//	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+//		return new IdmCopyControl(m_container, entity, m_info, m_info);
+//	else
+		return NULL;
 }
 
 void IdmRootNode::contextMenu(const QModelIndexList &list, INodeView *view)
@@ -256,6 +175,32 @@ void IdmRootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
+void IdmRootNode::refresh()
+{
+
+}
+
+QString IdmRootNode::title() const
+{
+	QString res = m_container.container()->location();
+	return res.mid(res.lastIndexOf(QChar('/')));
+}
+
+QString IdmRootNode::location() const
+{
+	return m_container.container()->location();
+}
+
+QString IdmRootNode::location(const QString &fileName) const
+{
+	return m_container.container()->location(fileName);
+}
+
+QString IdmRootNode::location(const QModelIndex &index) const
+{
+	return m_container.container()->location();
+}
+
 QAbstractItemModel *IdmRootNode::model() const
 {
 	return const_cast<IdmRootNode*>(this);
@@ -308,10 +253,10 @@ QAbstractItemView::SelectionMode IdmRootNode::selectionMode() const
 		{
 			if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 			{
-				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
-
-				if (dialog.exec() == CreateQueryDialog::Accepted)
-					return switchTo(new IdmNodeQueryResults(m_container, dialog.query(), m_info, this), view);
+//				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
+//
+//				if (dialog.exec() == CreateQueryDialog::Accepted)
+//					return switchTo(new IdmNodeQueryResults(m_container, dialog.query(), m_info, this), view);
 			}
 
 			break;
@@ -359,39 +304,31 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 		else
 			if (item->isFiles())
 			{
-				m_info.refresh();
-
-				if (m_info.exists())
+				if (static_cast<RootNodeFilesItem*>(item)->node())
+					static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
+				else
 				{
-					if (static_cast<RootNodeFilesItem*>(item)->node())
-						static_cast<RootNodeFilesItem*>(item)->node()->setParentEntryIndex(idx);
-					else
-					{
-						Node *node = new IdmFolderNode(m_container, m_info, m_info, this);
-
-						node->setParentEntryIndex(idx);
-						static_cast<RootNodeFilesItem*>(item)->setNode(node);
-					}
-
-					return static_cast<RootNodeFilesItem*>(item)->node();
+//					Node *node = new IdmFolderNode(m_container, m_info, m_info, this);
+//
+//					node->setParentEntryIndex(idx);
+//					static_cast<RootNodeFilesItem*>(item)->setNode(node);
 				}
+
+				return static_cast<RootNodeFilesItem*>(item)->node();
 			}
 
-	return 0;
+	return NULL;
 }
 
 Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	m_info.refresh();
-
-	if (m_info.exists())
-		if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->node())
-			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
-		else
-		{
-			static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, m_info, this));
-			return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
-		}
+//	if (Node *node = static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->node())
+//		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+//	else
+//	{
+//		static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(m_container, m_info, m_info, this));
+//		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+//	}
 
 	return NULL;
 }
@@ -401,12 +338,12 @@ void IdmRootNode::nodeRemoved(Node *node)
 	static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(0);
 }
 
-void IdmRootNode::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)
+void IdmRootNode::updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmRootNode::completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed)
+void IdmRootNode::completedProgressEvent(const NodeItem *item, quint64 timeElapsed)
 {
 
 }
@@ -417,7 +354,7 @@ void IdmRootNode::performActionEvent(const AsyncFileAction::FilesList &files)
 }
 
 IdmRootNode::ItemsContainer::ItemsContainer() :
-	ModelContainer()
+	NodeModelContainer()
 {}
 
 IdmRootNode::ItemsContainer::~ItemsContainer()

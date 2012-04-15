@@ -2,7 +2,7 @@
 #define FILESYSTEMINFOITEM_H_
 
 #include <QtCore/QList>
-#include "../../../info/filesysteminfo.h"
+#include "../../../interfaces/imp/filesystemfileinfo.h"
 #include "../../../interfaces/filesystemifilecontainer.h"
 
 

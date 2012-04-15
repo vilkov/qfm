@@ -1,4 +1,4 @@
-#include "filesysteminvalidinfo.h"
+#include "filesysteminvalidfileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -41,32 +41,12 @@ bool InvalidInfo::isLink() const
 	return false;
 }
 
-bool InvalidInfo::exists() const
-{
-	return false;
-}
-
 InvalidInfo::size_type InvalidInfo::fileSize() const
 {
 	return 0;
 }
 
 QString InvalidInfo::fileName() const
-{
-	return QString();
-}
-
-QString InvalidInfo::absolutePath() const
-{
-	return QString();
-}
-
-QString InvalidInfo::absoluteFilePath() const
-{
-	return QString();
-}
-
-QString InvalidInfo::absoluteFilePath(const QString &fileName) const
 {
 	return QString();
 }
@@ -80,8 +60,5 @@ int InvalidInfo::permissions() const
 {
 	return 0;
 }
-
-void InvalidInfo::refresh()
-{}
 
 FILE_SYSTEM_NS_END

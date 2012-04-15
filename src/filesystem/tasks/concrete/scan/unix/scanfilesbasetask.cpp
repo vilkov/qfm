@@ -46,7 +46,7 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) 
 	}
 }
 
-void ScanFilesBaseTask::scan(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const
+void ScanFilesBaseTask::scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Identify());
 
@@ -62,7 +62,7 @@ void ScanFilesBaseTask::scan(Snapshot &snapshot, FileSystemItem *item, const QSt
 		snapshot.push_back(item, new InfoItem(snapshot.container(), info));
 }
 
-void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const
+void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Identify());
 

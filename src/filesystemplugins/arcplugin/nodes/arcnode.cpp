@@ -16,7 +16,7 @@ ArcNode::ArcNode(const Info &info, Node *parent) :
 	m_items.push_back(new ArcNodeRootItem());
 
 	static_cast<ArcNodeItem *>(m_items.at(RootItemIndex))->lock(tr("Scanning archive..."));
-	addTask(new ReadArchiveTask(m_info.absoluteFilePath(), this), TasksItemList() << m_items.at(RootItemIndex));
+//	addTask(new ReadArchiveTask(m_info.absoluteFilePath(), this), TasksItemList() << m_items.at(RootItemIndex));
 }
 
 bool ArcNode::event(QEvent *e)
@@ -74,86 +74,6 @@ QVariant ArcNode::headerData(int section, Qt::Orientation orientation, int role)
 		}
 
 	return QVariant();
-}
-
-FileTypeId ArcNode::id() const
-{
-	return m_info.id();
-}
-
-QIcon ArcNode::icon() const
-{
-	return m_info.icon();
-}
-
-QString ArcNode::name() const
-{
-	return m_info.name();
-}
-
-QString ArcNode::description() const
-{
-	return m_info.description();
-}
-
-bool ArcNode::isDir() const
-{
-	return m_info.isDir();
-}
-
-bool ArcNode::isFile() const
-{
-	return m_info.isFile();
-}
-
-bool ArcNode::isLink() const
-{
-	return m_info.isLink();
-}
-
-bool ArcNode::exists() const
-{
-	return m_info.exists();
-}
-
-ArcNode::size_type ArcNode::fileSize() const
-{
-	return m_info.fileSize();
-}
-
-QString ArcNode::fileName() const
-{
-	return m_info.fileName();
-}
-
-QString ArcNode::absolutePath() const
-{
-	return m_info.absolutePath();
-}
-
-QString ArcNode::absoluteFilePath() const
-{
-	return m_info.absoluteFilePath();
-}
-
-QString ArcNode::absoluteFilePath(const QString &fileName) const
-{
-	return m_info.absoluteFilePath(fileName);
-}
-
-QDateTime ArcNode::lastModified() const
-{
-	return m_info.lastModified();
-}
-
-int ArcNode::permissions() const
-{
-	return m_info.permissions();
-}
-
-void ArcNode::refresh()
-{
-
 }
 
 ICopyControl *ArcNode::createControl(INodeView *view) const
@@ -232,7 +152,7 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 
 			item->lock(tr("Extracting..."));
 			updateFirstColumn(item);
-			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
+//			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
 		}
 	}
 }
@@ -245,6 +165,31 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
+}
+
+void ArcNode::refresh()
+{
+
+}
+
+QString ArcNode::title() const
+{
+	return m_info.fileName();
+}
+
+QString ArcNode::location() const
+{
+	return QString();
+}
+
+QString ArcNode::location(const QString &fileName) const
+{
+	return QString();
+}
+
+QString ArcNode::location(const QModelIndex &index) const
+{
+	return QString();
 }
 
 QAbstractItemModel *ArcNode::model() const
@@ -293,16 +238,16 @@ Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QMode
 	return 0;
 }
 
-void ArcNode::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)
+void ArcNode::updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item))->updateProgress(progress, timeElapsed);
-	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item)));
+	static_cast<ArcNodeItem *>(const_cast<NodeItem *>(item))->updateProgress(progress, timeElapsed);
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<NodeItem *>(item)));
 }
 
-void ArcNode::completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed)
+void ArcNode::completedProgressEvent(const NodeItem *item, quint64 timeElapsed)
 {
-	static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
-	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<FileSystemItem *>(item)));
+	static_cast<ArcNodeItem *>(const_cast<NodeItem *>(item))->updateProgress(static_cast<const ArcNodeItem *>(item)->total(), timeElapsed);
+	updateSecondColumn(static_cast<ArcNodeItem *>(const_cast<NodeItem *>(item)));
 }
 
 void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)

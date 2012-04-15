@@ -21,17 +21,13 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, const Info &info, Node *parent) :
+IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
-	FileContainer(info),
 	m_items(m_itemsContainer.m_container),
 	m_delegate(container),
 	m_container(container),
 	m_reader(m_container, query),
 	m_label(tr("Found \"%1\" entities...").arg(query.entity()->name()))
-{}
-
-IdmNodeQueryResults::~IdmNodeQueryResults()
 {}
 
 bool IdmNodeQueryResults::event(QEvent *e)
@@ -63,6 +59,11 @@ bool IdmNodeQueryResults::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
+int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
+{
+	return 1;
+}
+
 void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue::Holder item;
@@ -74,7 +75,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	if (m_reader.entity()->type() == Database::Composite)
 		for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 			if (item = m_reader.next())
-				list.push_back(new QueryResultCompositeRootItem(files, this, item));
+				list.push_back(new QueryResultCompositeRootItem(files, m_container.container(), item));
 			else
 				break;
 	else
@@ -88,7 +89,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	{
 		if (!files.isEmpty())
 		{
-			IFileContainer::Holder container(new FileContainer(*this));
+			IFileContainer::Holder container(new FileContainer(m_container.container()->location()));
 			handleTask(new UpdateFilesTask(this, container, files));
 		}
 
@@ -126,91 +127,6 @@ QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
-FileTypeId IdmNodeQueryResults::id() const
-{
-	return m_info.id();
-}
-
-QIcon IdmNodeQueryResults::icon() const
-{
-	return m_info.icon();
-}
-
-QString IdmNodeQueryResults::name() const
-{
-	return m_info.name();
-}
-
-QString IdmNodeQueryResults::description() const
-{
-	return m_info.description();
-}
-
-int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
-{
-	return 1;
-}
-
-bool IdmNodeQueryResults::isDir() const
-{
-	return false;
-}
-
-bool IdmNodeQueryResults::isFile() const
-{
-	return false;
-}
-
-bool IdmNodeQueryResults::isLink() const
-{
-	return false;
-}
-
-bool IdmNodeQueryResults::exists() const
-{
-	return true;
-}
-
-IdmNodeQueryResults::size_type IdmNodeQueryResults::fileSize() const
-{
-	return 0;
-}
-
-QString IdmNodeQueryResults::fileName() const
-{
-	return m_info.fileName();
-}
-
-QString IdmNodeQueryResults::absolutePath() const
-{
-	return m_info.absolutePath();
-}
-
-QString IdmNodeQueryResults::absoluteFilePath() const
-{
-	return m_info.absoluteFilePath();
-}
-
-QString IdmNodeQueryResults::absoluteFilePath(const QString &fileName) const
-{
-	return m_info.absoluteFilePath(fileName);
-}
-
-QDateTime IdmNodeQueryResults::lastModified() const
-{
-	return m_info.lastModified();
-}
-
-int IdmNodeQueryResults::permissions() const
-{
-	return 0;
-}
-
-void IdmNodeQueryResults::refresh()
-{
-
-}
-
 IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
 {
 	if (static_cast<QueryResultItem *>(idx.internalPointer())->isPath())
@@ -234,8 +150,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 						static_cast<QueryResultRootItem *>(item->parent())->value(),
 						item->property(),
 						const_cast<IdmNodeQueryResults*>(this),
-						index,
-						m_info);
+						index);
 			else
 			{
 				QString destination;
@@ -282,7 +197,7 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 						if (item->property().entity->type() == Database::Path)
 						{
 							beginInsertRows(index, item->size(), item->size());
-							static_cast<QueryResultPathPropertyItem *>(item)->add(this, value);
+							static_cast<QueryResultPathPropertyItem *>(item)->add(m_container.container(), value);
 							endInsertRows();
 						}
 						else
@@ -349,7 +264,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 						{
 							idx = property->indexOf(item);
 
-							beginRemoveRows(FileSystemModel::parent(index), idx, idx);
+							beginRemoveRows(NodeModel::parent(index), idx, idx);
 							property->remove(idx);
 							endRemoveRows();
 						}
@@ -366,7 +281,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		{
 			if (!files.isEmpty())
 			{
-				IFileContainer::Holder container(new FileContainer(*this));
+				IFileContainer::Holder container(new FileContainer(m_container.container()->location()));
 				lock(files, tr("Scanning for remove..."));
 				addTask(new ScanFilesTask(this, container, files), files);
 			}
@@ -411,6 +326,26 @@ void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *
 
 }
 
+void IdmNodeQueryResults::refresh()
+{
+
+}
+
+QString IdmNodeQueryResults::title() const
+{
+	return QString();
+}
+
+QString IdmNodeQueryResults::location() const
+{
+	return QString();
+}
+
+QString IdmNodeQueryResults::location(const QString &fileName) const
+{
+	return QString();
+}
+
 QAbstractItemModel *IdmNodeQueryResults::model() const
 {
 	return const_cast<IdmNodeQueryResults *>(this);
@@ -448,18 +383,15 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 				return node;
 			else
 			{
-				static_cast<QueryResultPathItem *>(item)->refresh();
-
-				if (static_cast<QueryResultPathItem *>(item)->exists())
-					if (static_cast<QueryResultPathItem *>(item)->isDir())
-					{
+				if (static_cast<QueryResultPathItem *>(item)->isDir())
+				{
 //						node = new IdmFolderNode(m_container, static_cast<QueryResultPathItem *>(item), m_info, this);
 //						static_cast<QueryResultPathItem *>(item)->setNode(node);
 //						return node;
-					}
-					else
-						if (static_cast<QueryResultPathItem *>(item)->isFile())
-							Application::desktopService()->open(this, static_cast<QueryResultPathItem *>(item));
+				}
+				else
+					if (static_cast<QueryResultPathItem *>(item)->isFile())
+						Application::desktopService()->open(m_container.container(), static_cast<QueryResultPathItem *>(item));
 			}
 	}
 	else
@@ -473,12 +405,12 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *pl
 	return NULL;
 }
 
-void IdmNodeQueryResults::updateProgressEvent(const FileSystemItem *item, quint64 progress, quint64 timeElapsed)
+void IdmNodeQueryResults::updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::completedProgressEvent(const FileSystemItem *item, quint64 timeElapsed)
+void IdmNodeQueryResults::completedProgressEvent(const NodeItem *item, quint64 timeElapsed)
 {
 
 }
@@ -493,7 +425,7 @@ void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntity
 	QueryResultPathPropertyItem *item = static_cast<QueryResultPathPropertyItem *>(index.internalPointer());
 
 	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
-	item->add(this, values);
+	item->add(m_container.container(), values);
 	endInsertRows();
 }
 
@@ -529,7 +461,7 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 		if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), value->value()))
 			if (m_container.commit())
 			{
-				beginRemoveRows(FileSystemModel::parent(index), index.row(), index.row());
+				beginRemoveRows(NodeModel::parent(index), index.row(), index.row());
 				property->remove(index.row());
 				endRemoveRows();
 			}
@@ -743,7 +675,7 @@ void IdmNodeQueryResults::update(const Snapshot::List &list)
 }
 
 IdmNodeQueryResults::ItemsContainer::ItemsContainer() :
-	ModelContainer()
+	NodeModelContainer()
 {}
 
 IdmNodeQueryResults::ItemsContainer::~ItemsContainer()

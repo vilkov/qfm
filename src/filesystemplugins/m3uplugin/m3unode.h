@@ -26,26 +26,6 @@ public:
 	virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
-
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual bool exists() const;
-	virtual size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
-	virtual void refresh();
-
 	/* IFileOperations */
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -63,6 +43,11 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 	/* INode */
+    virtual void refresh();
+	virtual QString title() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+
 	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
 
 protected:

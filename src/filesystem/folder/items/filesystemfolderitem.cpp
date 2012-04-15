@@ -1,20 +1,20 @@
-#include "filesystementryitem.h"
+#include "filesystemfolderitem.h"
 #include "../../tools/filesystemcommontools.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-FileSystemEntryItem::FileSystemEntryItem(const Info &info, Base *parent) :
-	FileSystemBaseItem(info, parent)
+FolderItem::FolderItem(const Info &info, Base *parent) :
+	FolderBaseItem(info, parent)
 {}
 
-FileSystemEntryItem::FileSystemEntryItem(const Info &info, Node *node, Base *parent) :
-	FileSystemBaseItem(info, parent)
+FolderItem::FolderItem(const Info &info, Node *node, Base *parent) :
+	FolderBaseItem(info, parent)
 {
 	setNode(node);
 }
 
-QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
+QVariant FolderItem::data(qint32 column, qint32 role) const
 {
 	switch (column)
 	{
@@ -77,27 +77,27 @@ QVariant FileSystemEntryItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool FileSystemEntryItem::isRootItem() const
+bool FolderItem::isRootItem() const
 {
 	return false;
 }
 
-void FileSystemEntryItem::lock(const QString &reason, quint64 totalSize)
+void FolderItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_totalSize = totalSize;
-	FileSystemBaseItem::lock(reason);
+	FolderBaseItem::lock(reason);
 	start(totalSize);
 }
 
-void FileSystemEntryItem::lock(const QString &reason)
+void FolderItem::lock(const QString &reason)
 {
-	FileSystemBaseItem::lock(reason);
+	FolderBaseItem::lock(reason);
 }
 
-void FileSystemEntryItem::unlock()
+void FolderItem::unlock()
 {
 	stop();
-	FileSystemBaseItem::unlock();
+	FolderBaseItem::unlock();
 }
 
 FILE_SYSTEM_NS_END

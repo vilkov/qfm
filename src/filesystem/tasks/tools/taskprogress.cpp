@@ -12,7 +12,7 @@ TaskProgress::TaskProgress(TasksNode *receiver) :
 {}
 
 
-void TaskProgress::init(const FileSystemItem *item)
+void TaskProgress::init(const NodeItem *item)
 {
 	Q_ASSERT(item);
 	m_item = item;

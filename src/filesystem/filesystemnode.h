@@ -5,8 +5,8 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtGui/QAbstractItemDelegate>
 #include "tools/filesystempath.h"
-#include "model/filesystemmodel.h"
-#include "model/filesystemmodelcontainer.h"
+#include "model/filesystemnodemodel.h"
+#include "model/filesystemnodemodelcontainer.h"
 #include "interfaces/filesysteminode.h"
 #include "../history/historyentry.h"
 
@@ -18,15 +18,12 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class Node : public FileSystemModel, public INode
+class Node : public NodeModel, public INode
 {
 	Q_DISABLE_COPY(Node)
 
 public:
-	Node(const ModelContainer &conteiner, Node *parent = 0);
-
-	/* IFileOperations */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
+	Node(const NodeModelContainer &conteiner, Node *parent = 0);
 
 	/* IFileNavigation */
 	virtual void viewClosed(INodeView *nodeView);

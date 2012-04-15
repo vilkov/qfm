@@ -4,16 +4,16 @@
 #include "tasks/perform/performcopytask.h"
 #include "tasks/perform/performmovetask.h"
 #include "tasks/perform/performremovetask.h"
-#include "../../info/filesystemcopycontrol.h"
+#include "../../interfaces/imp/filesystemcopycontrol.h"
 #include "../../../application.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-FolderNodeBase::FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent) :
-	TasksNode(conteiner, parent),
-	FileContainer(info),
-	m_updating(false)
+FolderNodeBase::FolderNodeBase(IFileContainer::Holder &container, const NodeModelContainer &items, Node *parent) :
+	TasksNode(items, parent),
+	m_updating(false),
+	m_container(container.take())
 {}
 
 bool FolderNodeBase::event(QEvent *e)
@@ -63,120 +63,50 @@ bool FolderNodeBase::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
-FileTypeId FolderNodeBase::id() const
-{
-	return m_info.id();
-}
-
-QIcon FolderNodeBase::icon() const
-{
-	return m_info.icon();
-}
-
-QString FolderNodeBase::name() const
-{
-	return m_info.name();
-}
-
-QString FolderNodeBase::description() const
-{
-	return m_info.description();
-}
-
-bool FolderNodeBase::isDir() const
-{
-	return true;
-}
-
-bool FolderNodeBase::isFile() const
-{
-	return false;
-}
-
-bool FolderNodeBase::isLink() const
-{
-	return m_info.isLink();
-}
-
-bool FolderNodeBase::exists() const
-{
-	return m_info.exists();
-}
-
-FolderNodeBase::size_type FolderNodeBase::fileSize() const
-{
-	return m_info.fileSize();
-}
-
-QString FolderNodeBase::fileName() const
-{
-	if (m_info.isRoot())
-		return m_info.absoluteFilePath();
-	else
-		return m_info.fileName();
-}
-
-QString FolderNodeBase::absolutePath() const
-{
-	return m_info.absolutePath();
-}
-
-QString FolderNodeBase::absoluteFilePath() const
-{
-	return m_info.absoluteFilePath();
-}
-
-QString FolderNodeBase::absoluteFilePath(const QString &fileName) const
-{
-	return m_info.absoluteFilePath(fileName);
-}
-
-QDateTime FolderNodeBase::lastModified() const
-{
-	return m_info.lastModified();
-}
-
-int FolderNodeBase::permissions() const
-{
-	return m_info.permissions();
-}
-
 void FolderNodeBase::refresh()
 {
-	if (isUpdating())
-		return;
-
-	if (m_info.isRoot())
+	if (!isUpdating())
 		updateFiles();
-	else
-		if (exists())
-			updateFiles();
-		else
-			doesNotExistAnyMore();
+}
+
+QString FolderNodeBase::title() const
+{
+	QString res = m_container->location();
+	return res.mid(res.lastIndexOf(QChar('/')) + 1);
+}
+
+QString FolderNodeBase::location() const
+{
+	return m_container->location();
+}
+
+QString FolderNodeBase::location(const QString &fileName) const
+{
+	return m_container->location(fileName);
 }
 
 ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 {
-	return new CopyControl(m_info);
+	return new CopyControl(m_container->location());
 }
 
 void FolderNodeBase::scanForSize(const TasksItemList &entries)
 {
-	IFileContainer::Holder container(new FileContainer(*this));
+	IFileContainer::Holder container(new FileContainer(m_container->location()));
 	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, container, entries));
 	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
 {
-	IFileContainer::Holder container(new FileContainer(*this));
+	IFileContainer::Holder container(new FileContainer(m_container->location()));
 	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, container, entries, destination, move));
 	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const TasksItemList &entries)
 {
-	IFileContainer::Holder container(new FileContainer(*this));
+	IFileContainer::Holder container(new FileContainer(m_container->location()));
 	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, container, entries));
 	addTask(task.take(), entries);
 }
@@ -205,7 +135,7 @@ void FolderNodeBase::updateFiles()
 {
 	if (isVisible())
 	{
-		IFileContainer::Holder container(new FileContainer(*this));
+		IFileContainer::Holder container(new FileContainer(m_container->location()));
 		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, container, updateFilesMap()));
 		setUpdating(true);
 		handleTask(task.take());

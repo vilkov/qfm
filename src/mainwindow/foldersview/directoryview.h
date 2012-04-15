@@ -66,7 +66,7 @@ public:
 
     bool hasFocus() const;
 	QPoint listPos() const;
-	QString currentDirectoryName() const;
+//	QString currentDirectoryName() const;
 	void save(QXmlStreamWriter &stream) const;
 	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
 

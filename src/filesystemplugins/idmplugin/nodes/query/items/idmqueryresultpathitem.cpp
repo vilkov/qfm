@@ -119,11 +119,6 @@ bool QueryResultPathItem::isLink() const
 	return m_info.isLink();
 }
 
-bool QueryResultPathItem::exists() const
-{
-	return m_info.exists();
-}
-
 IFileInfo::size_type QueryResultPathItem::fileSize() const
 {
 	return m_info.fileSize();
@@ -134,21 +129,6 @@ QString QueryResultPathItem::fileName() const
 	return m_info.fileName();
 }
 
-QString QueryResultPathItem::absolutePath() const
-{
-	return m_info.absolutePath();
-}
-
-QString QueryResultPathItem::absoluteFilePath() const
-{
-	return m_info.absoluteFilePath();
-}
-
-QString QueryResultPathItem::absoluteFilePath(const QString &fileName) const
-{
-	return m_info.absoluteFilePath(fileName);
-}
-
 QDateTime QueryResultPathItem::lastModified() const
 {
 	return m_info.lastModified();
@@ -157,11 +137,6 @@ QDateTime QueryResultPathItem::lastModified() const
 int QueryResultPathItem::permissions() const
 {
 	return m_info.permissions();
-}
-
-void QueryResultPathItem::refresh()
-{
-	m_info.refresh();
 }
 
 IDM_PLUGIN_NS_END

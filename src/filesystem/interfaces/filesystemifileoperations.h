@@ -16,7 +16,6 @@ class IFileOperations
 public:
 	virtual ~IFileOperations();
 
-	virtual IFileInfo *info(const QModelIndex &idx) const = 0;
 	virtual ICopyControl *createControl(INodeView *view) const = 0;
 
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view) = 0;

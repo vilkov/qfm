@@ -1,7 +1,6 @@
 #include "filesystemfolderdelegate.h"
-#include "items/filesystementryitem.h"
+#include "items/filesystemfolderitem.h"
 #include "../tools/filesystemcommontools.h"
-#include <QtGui/QApplication>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,7 +16,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 {
 	if (index.column() == 1)
 	{
-		FileSystemBaseItem *entry = static_cast<FileSystemBaseItem*>(m_proxy->mapToSource(index).internalPointer());
+		FolderBaseItem *entry = static_cast<FolderBaseItem*>(m_proxy->mapToSource(index).internalPointer());
 
 		if (!entry->isRootItem() && entry->isInProgress())
 		{

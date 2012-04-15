@@ -1,13 +1,13 @@
 #include "filesystemcopycontrol.h"
-#include "../tools/filesystemcommontools.h"
-#include "../../application.h"
+#include "../../tools/filesystemcommontools.h"
+#include "../../../application.h"
 #include <QtGui/QMessageBox>
 
 
 FILE_SYSTEM_NS_BEGIN
 
-CopyControl::CopyControl(const Info &info) :
-	m_container(info)
+CopyControl::CopyControl(const QString &path) :
+	m_container(path)
 {}
 
 bool CopyControl::isPhysical() const
@@ -40,7 +40,7 @@ bool CopyControl::remove(const QString &fileName, QString &error) const
 	return m_container.remove(fileName, error);
 }
 
-bool CopyControl::rename(const QString &oldName, const QString &newName, QString &error)
+bool CopyControl::rename(const QString &oldName, const QString &newName, QString &error) const
 {
 	return m_container.rename(oldName, newName, error);
 }
@@ -64,7 +64,7 @@ bool CopyControl::start(const Snapshot::Files &files, bool move)
 							Application::mainWindow(),
 							tr("Insufficient space on device"),
 							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
-								arg(info().absoluteFilePath()).
+								arg(m_container.location()).
 								arg(Tools::humanReadableShortSize(fs)).
 								arg(Tools::humanReadableShortSize(files.totalSize())),
 							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);

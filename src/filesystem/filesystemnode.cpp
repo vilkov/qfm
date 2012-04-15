@@ -1,20 +1,12 @@
 #include "filesystemnode.h"
-#include "info/filesysteminvalidinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
-static InvalidInfo invalidInfo;
 
-
-Node::Node(const ModelContainer &conteiner, Node *parent) :
-	FileSystemModel(conteiner, parent),
+Node::Node(const NodeModelContainer &conteiner, Node *parent) :
+	NodeModel(conteiner, parent),
 	m_links(0)
 {}
-
-IFileInfo *Node::info(const QModelIndex &idx) const
-{
-	return &invalidInfo;
-}
 
 void Node::viewClosed(INodeView *nodeView)
 {

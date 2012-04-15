@@ -1,6 +1,6 @@
-#include "../filesysteminfo.h"
+#include "../filesystemfileinfo.h"
 #include "../filesystemfileaccessor.h"
-#include "../../../application.h"
+#include "../../../../application.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -148,11 +148,6 @@ bool Info::isLink() const
 	return m_info.isLink;
 }
 
-bool Info::exists() const
-{
-	return m_info.exists;
-}
-
 Info::size_type Info::fileSize() const
 {
 	return m_info.size;
@@ -163,39 +158,39 @@ QString Info::fileName() const
 	return m_fileName;
 }
 
-QString Info::absolutePath() const
-{
-	return m_filePath.mid(0, m_filePath.lastIndexOf(QChar('/')));
-}
-
-QString Info::absoluteFilePath() const
-{
-	return m_filePath;
-}
-
-QString Info::absoluteFilePath(const QString &fileName) const
-{
-#ifdef Q_OS_WIN
-	QString str = m_info.isDir() ? absoluteFilePath() : absolutePath();
-
-	if (str.isEmpty())
-		return fileName;
-	else
-		if (str.endsWith(QChar('/')))
-			return str.append(fileName);
-		else
-			return str.append(QChar('/')).append(fileName);
-#else
-
-	if (m_isRoot)
-		return QString(m_filePath).append(fileName);
-	else
-	{
-		QString str = m_info.isDir ? absoluteFilePath() : absolutePath();
-		return str.append(QChar('/')).append(fileName);
-	}
-#endif
-}
+//QString Info::absolutePath() const
+//{
+//	return m_filePath.mid(0, m_filePath.lastIndexOf(QChar('/')));
+//}
+//
+//QString Info::absoluteFilePath() const
+//{
+//	return m_filePath;
+//}
+//
+//QString Info::absoluteFilePath(const QString &fileName) const
+//{
+//#ifdef Q_OS_WIN
+//	QString str = m_info.isDir() ? absoluteFilePath() : absolutePath();
+//
+//	if (str.isEmpty())
+//		return fileName;
+//	else
+//		if (str.endsWith(QChar('/')))
+//			return str.append(fileName);
+//		else
+//			return str.append(QChar('/')).append(fileName);
+//#else
+//
+//	if (m_isRoot)
+//		return QString(m_filePath).append(fileName);
+//	else
+//	{
+//		QString str = m_info.isDir ? absoluteFilePath() : absolutePath();
+//		return str.append(QChar('/')).append(fileName);
+//	}
+//#endif
+//}
 
 QDateTime Info::lastModified() const
 {

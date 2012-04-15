@@ -2,7 +2,7 @@
 #define FILESYSTEMINFOLISTITEM_H_
 
 #include "filesysteminfoitem.h"
-#include "../../../info/filesystemfilecontainer.h"
+#include "../../../interfaces/imp/filesystemfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN

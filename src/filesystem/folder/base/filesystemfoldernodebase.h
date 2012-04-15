@@ -2,7 +2,7 @@
 #define FILESYSTEMFOLDERNODEBASE_H_
 
 #include "containers/filesystemupdateslist.h"
-#include "../../info/filesystemfilecontainer.h"
+#include "../../interfaces/filesystemifilecontainer.h"
 #include "../../tasks/filesystemtasksnode.h"
 #include "../../tasks/concrete/containers/filesystemsnapshot.h"
 
@@ -14,42 +14,24 @@ FILE_SYSTEM_NS_BEGIN
  *
  */
 
-class FolderNodeBase : public TasksNode, public FileContainer
+class FolderNodeBase : public TasksNode
 {
 	Q_DISABLE_COPY(FolderNodeBase)
 
 public:
-	FolderNodeBase(const Info &info, const ModelContainer &conteiner, Node *parent = 0);
+	FolderNodeBase(IFileContainer::Holder &container, const NodeModelContainer &items, Node *parent = 0);
 
 	/* TasksNode */
     virtual bool event(QEvent *event);
 
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
-
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual bool exists() const;
-	virtual size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
-	virtual void refresh();
+    /* INode */
+    virtual void refresh();
+	virtual QString title() const;
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
 
     /* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
-
-protected:
-	/* We need to remove all items and show only ".." */
-	virtual void doesNotExistAnyMore() = 0;
 
 protected:
 	/* Tasks events */
@@ -70,10 +52,12 @@ protected:
 	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
 
 protected:
-	bool isRoot() const { return m_info.isRoot(); }
+	const IFileContainer *container() const { return m_container.data(); }
+
+	//	bool isRoot() const { return m_info.isRoot(); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
-	void setInfo(const Info &info) { m_info = info; }
+//	void setInfo(const Info &info) { m_info = info; }
 
 private:
 	void updateFiles();
@@ -86,6 +70,7 @@ private:
 
 private:
 	bool m_updating;
+	IFileContainer::Holder m_container;
 };
 
 FILE_SYSTEM_NS_END

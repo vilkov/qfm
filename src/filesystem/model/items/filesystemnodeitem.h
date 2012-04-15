@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMLISTITEM_ITEM_H_
-#define FILESYSTEMLISTITEM_ITEM_H_
+#ifndef FILESYSTEMNODEITEM_H_
+#define FILESYSTEMNODEITEM_H_
 
 #include <QtGui/QIcon>
 #include <QtCore/QString>
@@ -9,10 +9,10 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileSystemItem : public ::Tools::Models::Tree::Item
+class NodeItem : public ::Tools::Models::Tree::Item
 {
 public:
-	FileSystemItem(Base *parent);
+	NodeItem(Base *parent);
 
 	bool isLocked() const { return m_locked; }
 	const QString &lockReason() const { return m_reason; }
@@ -30,4 +30,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMLISTITEM_ITEM_H_ */
+#endif /* FILESYSTEMNODEITEM_H_ */

@@ -5,7 +5,7 @@
 #include <QtCore/QCoreApplication>
 #include "../containeres/idmcontainer.h"
 #include "../storage/entities/idmentity.h"
-#include "../../../filesystem/info/filesystemcopycontrol.h"
+#include "../../../filesystem/interfaces/imp/filesystemcopycontrol.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -15,7 +15,7 @@ class IdmCopyControl : public CopyControl
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 
 public:
-	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info, const Info &storage);
+	IdmCopyControl(const IdmContainer &container, IdmEntity *entity, const Info &info);
 
 	/* ICopyControl */
 	virtual bool start(const Snapshot::Files &files, bool move);

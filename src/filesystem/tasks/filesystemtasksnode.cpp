@@ -7,7 +7,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-TasksNode::TasksNode(const ModelContainer &conteiner, Node *parent) :
+TasksNode::TasksNode(const NodeModelContainer &conteiner, Node *parent) :
 	Node(conteiner, parent)
 {}
 
@@ -91,7 +91,7 @@ void TasksNode::taskHandled()
 	removeLink();
 }
 
-void TasksNode::cancelTask(FileSystemItem *item)
+void TasksNode::cancelTask(NodeItem *item)
 {
 	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();
@@ -103,7 +103,7 @@ void TasksNode::removeAllTaskLinks(BaseTask *task)
 	removeLink();
 }
 
-TasksMap::List TasksNode::cancelTaskAndTakeItems(FileSystemItem *item)
+TasksMap::List TasksNode::cancelTaskAndTakeItems(NodeItem *item)
 {
 	TasksMap::List res;
 

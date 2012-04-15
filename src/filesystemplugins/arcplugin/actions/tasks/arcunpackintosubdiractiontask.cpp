@@ -23,7 +23,7 @@ IFileAccessor::size_type UnPackIntoSubdirActionTask::bufferSize() const
 	return FileReadWriteGranularity;
 }
 
-void UnPackIntoSubdirActionTask::progressInit(const FileSystemItem *item)
+void UnPackIntoSubdirActionTask::progressInit(const NodeItem *item)
 {
 	m_progress.init(item);
 }

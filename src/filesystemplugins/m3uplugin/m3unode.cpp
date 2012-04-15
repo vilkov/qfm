@@ -80,125 +80,6 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-FileTypeId M3uNode::id() const
-{
-	return FileTypeId();
-}
-
-QIcon M3uNode::icon() const
-{
-	return QIcon();
-}
-
-QString M3uNode::name() const
-{
-	return QString();
-}
-
-QString M3uNode::description() const
-{
-	return QString();
-}
-
-bool M3uNode::isDir() const
-{
-	return false;
-}
-
-bool M3uNode::isFile() const
-{
-	return false;
-}
-
-bool M3uNode::isLink() const
-{
-	return false;
-}
-
-bool M3uNode::exists() const
-{
-	return rootItem()->exists();
-}
-
-M3uNode::size_type M3uNode::fileSize() const
-{
-	return rootItem()->fileSize();
-}
-
-QString M3uNode::fileName() const
-{
-	return rootItem()->fileName();
-}
-
-QString M3uNode::absolutePath() const
-{
-	return rootItem()->absolutePath();
-}
-
-QString M3uNode::absoluteFilePath() const
-{
-	return rootItem()->absoluteFilePath();
-}
-
-QString M3uNode::absoluteFilePath(const QString &fileName) const
-{
-	return rootItem()->absoluteFilePath(fileName);
-}
-
-QDateTime M3uNode::lastModified() const
-{
-	return rootItem()->lastModified();
-}
-
-int M3uNode::permissions() const
-{
-	return rootItem()->permissions();
-}
-
-void M3uNode::refresh()
-{
-	if (isUpdating())
-		return;
-	else
-		setUpdating(true);
-
-	QFile file(rootItem()->absoluteFilePath());
-
-	if (file.open(QFile::ReadOnly))
-	{
-		QString line;
-		QStringList list;
-		QTextStream stream(&file);
-		M3uContainer::Container items;
-
-		stream.setCodec(QTextCodec::codecForName("UTF-8"));
-		qDeleteAll(m_items.container());
-		m_items.container().clear();
-
-		while (!(line = stream.readLine()).isEmpty())
-			if (line.startsWith(m_tag))
-			{
-				list = line.mid(m_tag.size()).split(QChar(','));
-
-				if (list.size() == 2)
-				{
-					QFileInfo info(line = stream.readLine());
-
-					if (!info.isAbsolute())
-						info = QFileInfo(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
-
-					items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
-				}
-			}
-
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + items.size() - 1);
-		m_items.container().append(items);
-		endInsertRows();
-	}
-
-	setUpdating(false);
-}
-
 IFileInfo *M3uNode::info(const QModelIndex &idx) const
 {
 	return 0;
@@ -267,6 +148,65 @@ void M3uNode::move(const INodeView *source, INodeView *destination)
 void M3uNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
+}
+
+void M3uNode::refresh()
+{
+//	if (isUpdating())
+//		return;
+//	else
+//		setUpdating(true);
+//
+//	QFile file(rootItem()->absoluteFilePath());
+//
+//	if (file.open(QFile::ReadOnly))
+//	{
+//		QString line;
+//		QStringList list;
+//		QTextStream stream(&file);
+//		M3uContainer::Container items;
+//
+//		stream.setCodec(QTextCodec::codecForName("UTF-8"));
+//		qDeleteAll(m_items.container());
+//		m_items.container().clear();
+//
+//		while (!(line = stream.readLine()).isEmpty())
+//			if (line.startsWith(m_tag))
+//			{
+//				list = line.mid(m_tag.size()).split(QChar(','));
+//
+//				if (list.size() == 2)
+//				{
+//					QFileInfo info(line = stream.readLine());
+//
+//					if (!info.isAbsolute())
+//						info = QFileInfo(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
+//
+//					items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
+//				}
+//			}
+//
+//		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + items.size() - 1);
+//		m_items.container().append(items);
+//		endInsertRows();
+//	}
+//
+//	setUpdating(false);
+}
+
+QString M3uNode::title() const
+{
+	return QString();
+}
+
+QString M3uNode::location() const
+{
+	return QString();
+}
+
+QString M3uNode::location(const QString &fileName) const
+{
+	return QString();
 }
 
 ::History::Entry *M3uNode::menuAction(QAction *action, INodeView *view)

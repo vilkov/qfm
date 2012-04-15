@@ -1,12 +1,12 @@
 #ifndef FILESYSTEMTASKNODEITEM_H_
 #define FILESYSTEMTASKNODEITEM_H_
 
-#include "../../model/items/filesystemitem.h"
+#include "../../model/items/filesystemnodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class TaskNodeItem : public FileSystemItem
+class TaskNodeItem : public NodeItem
 {
 public:
 	TaskNodeItem(Base *parent);

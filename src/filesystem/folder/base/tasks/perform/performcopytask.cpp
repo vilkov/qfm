@@ -64,7 +64,7 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, const IFileCon
 				askForSkipIfNotCopy(
 						tr("Failed to copy..."),
 						tr("Failed to open file \"%1\" (%2). Skip it?").
-							arg(entry->absoluteFilePath()).
+							arg(source->location(entry->fileName())).
 							arg(m_lastError),
 						tryAgain = false,
 						aborted);

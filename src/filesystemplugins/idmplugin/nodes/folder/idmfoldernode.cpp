@@ -7,18 +7,17 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmFolderNode::IdmFolderNode(const IdmContainer &container, const Info &info, const Info &storage, Node *parent) :
-	FolderNode(info, parent),
-	m_container(container),
-	m_storage(storage)
+IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, Node *parent) :
+	FolderNode(container, parent),
+	m_container(storage)
 {}
 
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, entity, m_info, m_storage);
-	else
-		return 0;
+//	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+//		return new IdmCopyControl(m_container, entity, m_info, m_storage);
+//	else
+		return NULL;
 }
 
 void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)
@@ -48,13 +47,13 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(this, &info, const_cast<IdmFolderNode*>(this)))
-		return res;
-	else
-		if (info.isDir())
-			return new IdmFolderNode(m_container, info, m_storage, const_cast<IdmFolderNode*>(this));
-		else
-			return 0;
+//	if (Node *res = plugins->node(&container(), &info, const_cast<IdmFolderNode *>(this)))
+//		return res;
+//	else
+//		if (info.isDir())
+//			return new IdmFolderNode(m_container, container().location(info.fileName()), m_storage, const_cast<IdmFolderNode *>(this));
+//		else
+			return NULL;
 }
 
 Node *IdmFolderNode::privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

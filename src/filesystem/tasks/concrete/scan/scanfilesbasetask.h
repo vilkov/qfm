@@ -18,8 +18,8 @@ protected:
 	Snapshot createSnapshot(IFileContainer::Holder &container, Snapshot::Container::size_type reserver);
 
 	void scan(InfoListItem *root, const volatile Flags &aborted) const;
-	void scan(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const;
-	void scanSoft(Snapshot &snapshot, FileSystemItem *item, const QString &file, const volatile Flags &aborted) const;
+	void scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const;
+	void scanSoft(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const;
 };
 
 FILE_SYSTEM_NS_END

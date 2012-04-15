@@ -4,7 +4,7 @@
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QList>
-#include "../../../info/filesysteminfo.h"
+#include "../../../interfaces/imp/filesystemfileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN

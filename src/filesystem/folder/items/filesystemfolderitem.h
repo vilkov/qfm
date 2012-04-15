@@ -1,18 +1,18 @@
-#ifndef FILESYSTEMENTRYITEM_H_
-#define FILESYSTEMENTRYITEM_H_
+#ifndef FILESYSTEMFOLDERITEM_H_
+#define FILESYSTEMFOLDERITEM_H_
 
-#include "../base/items/filesystembaseitem.h"
+#include "../base/items/filesystemfolderbaseitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileSystemEntryItem : public FileSystemBaseItem
+class FolderItem : public FolderBaseItem
 {
 public:
-	explicit FileSystemEntryItem(const Info &info, Base *parent = 0);
-	explicit FileSystemEntryItem(const Info &info, Node *node, Base *parent = 0);
+	explicit FolderItem(const Info &info, Base *parent = 0);
+	explicit FolderItem(const Info &info, Node *node, Base *parent = 0);
 
-	void setNode(Node *node) { FileSystemBaseItem::setNode(node); }
+	void setNode(Node *node) { FolderBaseItem::setNode(node); }
 
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -37,4 +37,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMENTRYITEM_H_ */
+#endif /* FILESYSTEMFOLDERITEM_H_ */

@@ -1,9 +1,8 @@
-#ifndef FILESYSTEMINFO_H_
-#define FILESYSTEMINFO_H_
+#ifndef FILESYSTEMFILEINFO_H_
+#define FILESYSTEMFILEINFO_H_
 
-#include "../tools/filesystemfileinfo.h"
-#include "../interfaces/filesystemifileinfo.h"
-#include "../../tools/metatemplates.h"
+#include "../filesystemifileinfo.h"
+#include "../../filetypeinfo/filetypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -34,15 +33,10 @@ public:
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
-	virtual bool exists() const;
 	virtual size_type fileSize() const;
 	virtual QString fileName() const;
-	virtual QString absolutePath() const;
-	virtual QString absoluteFilePath() const;
-	virtual QString absoluteFilePath(const QString &fileName) const;
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
-	virtual void refresh();
 
 public:
 	bool isRoot() const { return m_isRoot; }
@@ -55,6 +49,31 @@ public:
 	}
 
 private:
+	void refresh();
+
+private:
+	struct FileInfo
+	{
+		FileInfo() :
+			isDir(false),
+			isFile(false),
+			isLink(false),
+			exists(false),
+			permissions(0),
+			size(0)
+		{}
+
+	    bool isDir;
+	    bool isFile;
+	    bool isLink;
+	    bool exists;
+	    int permissions;
+	    qint64 size;
+	    QDateTime lastModified;
+	    FileTypeInfo type;
+	};
+
+private:
     bool m_isRoot;
     QString m_filePath;
     QString m_fileName;
@@ -63,4 +82,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMINFO_H_ */
+#endif /* FILESYSTEMFILEINFO_H_ */

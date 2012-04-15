@@ -1,7 +1,8 @@
 #include "filesystemrootnode.h"
 #include "../filesystempluginsmanager.h"
-#include "../folder/filesystemfoldernode.h"
-#include "../folder/items/filesystementryitem.h"
+#include "../folder/filesystemrootfoldernode.h"
+#include "../folder/items/filesystemfolderitem.h"
+#include "../interfaces/imp/filesystemfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -9,86 +10,6 @@ FILE_SYSTEM_NS_BEGIN
 RootNode::RootNode() :
 	Node(m_items)
 {}
-
-FileTypeId RootNode::id() const
-{
-	return FileTypeId();
-}
-
-QIcon RootNode::icon() const
-{
-	return QIcon();
-}
-
-QString RootNode::name() const
-{
-	return QString();
-}
-
-QString RootNode::description() const
-{
-	return QString();
-}
-
-bool RootNode::isDir() const
-{
-	return false;
-}
-
-bool RootNode::isFile() const
-{
-	return false;
-}
-
-bool RootNode::isLink() const
-{
-	return false;
-}
-
-bool RootNode::exists() const
-{
-	return true;
-}
-
-RootNode::size_type RootNode::fileSize() const
-{
-	return 0;
-}
-
-QString RootNode::fileName() const
-{
-	return QString();
-}
-
-QString RootNode::absolutePath() const
-{
-	return QString();
-}
-
-QString RootNode::absoluteFilePath() const
-{
-	return QString();
-}
-
-QString RootNode::absoluteFilePath(const QString &fileName) const
-{
-	return QString();
-}
-
-QDateTime RootNode::lastModified() const
-{
-	return QDateTime();
-}
-
-int RootNode::permissions() const
-{
-	return 0;
-}
-
-void RootNode::refresh()
-{
-
-}
 
 IFileInfo *RootNode::info(const QModelIndex &idx) const
 {
@@ -160,6 +81,31 @@ void RootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
+void RootNode::refresh()
+{
+
+}
+
+QString RootNode::title() const
+{
+	return QString();
+}
+
+QString RootNode::location() const
+{
+	return QString();
+}
+
+QString RootNode::location(const QString &fileName) const
+{
+	return QString();
+}
+
+QString RootNode::location(const QModelIndex &index) const
+{
+	return QString();
+}
+
 QAbstractItemModel *RootNode::model() const
 {
 	return NULL;
@@ -176,51 +122,6 @@ const INodeView::MenuActionList &RootNode::actions() const
 }
 
 ::History::Entry *RootNode::menuAction(QAction *action, INodeView *view)
-{
-	return NULL;
-}
-
-bool RootNode::isPhysical() const
-{
-	return false;
-}
-
-QString RootNode::location() const
-{
-	return QString();
-}
-
-QString RootNode::location(const QString &fileName) const
-{
-	return fileName;
-}
-
-IFileInfo::size_type RootNode::freeSpace() const
-{
-	return 0;
-}
-
-bool RootNode::contains(const QString &fileName) const
-{
-	return false;
-}
-
-bool RootNode::remove(const QString &fileName, QString &error) const
-{
-	return false;
-}
-
-bool RootNode::rename(const QString &oldName, const QString &newName, QString &error)
-{
-	return false;
-}
-
-IFileAccessor *RootNode::open(const QString &fileName, int mode, QString &error) const
-{
-	return NULL;
-}
-
-IFileContainer *RootNode::open(const QString &fileName, bool create, QString &error) const
 {
 	return NULL;
 }
@@ -246,7 +147,7 @@ Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QMod
 	}
 	else
 	{
-		FileSystemEntryItem *item = static_cast<FileSystemEntryItem *>(m_items[index]);
+		FolderItem *item = static_cast<FolderItem *>(m_items[index]);
 
 		if (item->node())
 			return item->node();
@@ -268,19 +169,67 @@ void RootNode::nodeRemoved(Node *node)
 
 Node *RootNode::createNode(const Info &info, PluginsManager *plugins)
 {
-	if (Node *res = plugins->node(this, &info, this))
+	if (Node *res = plugins->node(&m_container, &info, this))
 		return res;
 	else
 		if (info.isDir())
-			return new FolderNode(info, this);
-		else
-			return NULL;
+		{
+			IFileContainer::Holder container(new FileContainer(info.fileName()));
+			return new RootFolderNode(container, this);
+		}
+
+	return NULL;
 }
 
-FileSystemBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)
+FolderBaseItem *RootNode::createItem(const QString &fileName, PluginsManager *plugins)
 {
 	Info info(fileName, Info::Refresh());
-	return new FileSystemEntryItem(info, createNode(info, plugins));
+	return new FolderItem(info, createNode(info, plugins));
+}
+
+bool RootNode::Container::isPhysical() const
+{
+	return false;
+}
+
+QString RootNode::Container::location() const
+{
+	return QString();
+}
+
+QString RootNode::Container::location(const QString &fileName) const
+{
+	return QString();
+}
+
+IFileInfo::size_type RootNode::Container::freeSpace() const
+{
+	return 0;
+}
+
+bool RootNode::Container::contains(const QString &fileName) const
+{
+	return false;
+}
+
+bool RootNode::Container::remove(const QString &fileName, QString &error) const
+{
+	return false;
+}
+
+bool RootNode::Container::rename(const QString &oldName, const QString &newName, QString &error) const
+{
+	return false;
+}
+
+IFileAccessor *RootNode::Container::open(const QString &fileName, int mode, QString &error) const
+{
+	return NULL;
+}
+
+IFileContainer *RootNode::Container::open(const QString &fileName, bool create, QString &error) const
+{
+	return NULL;
 }
 
 FILE_SYSTEM_NS_END

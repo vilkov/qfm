@@ -8,6 +8,7 @@
 #include "idmentitytypes.h"
 #include "../storage/idmstorage.h"
 #include "../../../filesystem/interfaces/filesysteminodeview.h"
+#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -32,8 +33,9 @@ public:
 	};
 
 public:
-	IdmContainer(const QString &storage, bool create);
+	IdmContainer(IFileContainer::Holder &container, bool create);
 
+	const IFileContainer *container() const { return m_data->container.data(); }
 	const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
 	const IdmEntityTypes &entityTypes() const { return m_data->entityTypes; }
 
@@ -75,16 +77,12 @@ public:
 private:
 	struct Data : public QSharedData
 	{
-		Data(const QString &storage, bool create) :
-			storage(storage, create)
-		{}
-		~Data()
-		{
-			qDeleteAll(menuActions);
-		}
+		Data(IFileContainer::Holder &container, bool create);
+		~Data();
 
 		IdmStorage storage;
 		IdmEntityTypes entityTypes;
+		IFileContainer::Holder container;
 		INodeView::MenuActionList menuActions;
 	};
 

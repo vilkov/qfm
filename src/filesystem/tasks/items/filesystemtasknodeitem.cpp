@@ -4,7 +4,7 @@
 FILE_SYSTEM_NS_BEGIN
 
 TaskNodeItem::TaskNodeItem(Base *parent) :
-	FileSystemItem(parent),
+	NodeItem(parent),
 	m_total(0),
 	m_timeElapsed(0)
 {}

@@ -1,5 +1,5 @@
 #include "filesystemfolderproxymodel.h"
-#include "items/filesystementryitem.h"
+#include "items/filesystemfolderitem.h"
 #include <QtCore/QDateTime>
 
 
@@ -11,15 +11,15 @@ FolderProxyModel::FolderProxyModel(QObject *parent) :
 
 bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-	if (static_cast<FileSystemBaseItem*>(left.internalPointer())->isRootItem())
+	if (static_cast<FolderBaseItem *>(left.internalPointer())->isRootItem())
 		return true;
 	else
-		if (static_cast<FileSystemBaseItem*>(right.internalPointer())->isRootItem())
+		if (static_cast<FolderBaseItem*>(right.internalPointer())->isRootItem())
 			return false;
 		else
 		{
-			FileSystemEntryItem *leftItem = static_cast<FileSystemEntryItem*>(left.internalPointer());
-			FileSystemEntryItem *rightItem = static_cast<FileSystemEntryItem*>(right.internalPointer());
+			FolderItem *leftItem = static_cast<FolderItem *>(left.internalPointer());
+			FolderItem *rightItem = static_cast<FolderItem *>(right.internalPointer());
 
 			switch (left.column())
 			{

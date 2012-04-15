@@ -19,11 +19,8 @@ Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node 
 	{
 		IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
 
-		/**
-		 * FIXME: Idm plugin supports only "Info" container.
-		 */
 		if (folder && folder->contains(fileName()))
-			return new IdmRootNode(Info(folder->location(), Info::Refresh()), fileName(), parent);
+			return new IdmRootNode(folder, parent);
 	}
 
 	return NULL;

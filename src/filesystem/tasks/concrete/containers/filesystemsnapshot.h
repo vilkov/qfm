@@ -5,7 +5,7 @@
 #include <QtCore/QSharedData>
 #include "filesysteminfoitem.h"
 #include "../../filesystembasetask.h"
-#include "../../../model/items/filesystemitem.h"
+#include "../../../model/items/filesystemnodeitem.h"
 #include "../../../interfaces/filesystemifilecontainer.h"
 
 
@@ -16,8 +16,8 @@ class Snapshot
 public:
 	class List;
 	class Files;
-	typedef BaseTask::Flags                             Flags;
-	typedef QList<QPair<FileSystemItem *, InfoItem *> > Container;
+	typedef BaseTask::Flags                       Flags;
+	typedef QList<QPair<NodeItem *, InfoItem *> > Container;
 
 public:
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
@@ -30,7 +30,7 @@ protected:
 	Snapshot(IFileContainer::Holder &container);
 	Snapshot(IFileContainer::Holder &container, Container::size_type reserver);
 
-	void push_back(FileSystemItem *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
+	void push_back(NodeItem *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
 	void remove(Container::size_type index) { InfoItem *info = m_data->list.takeAt(index).second; m_data->totalSize -= info->totalSize(); delete info; }
 
 private:

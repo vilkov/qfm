@@ -62,7 +62,7 @@ void PerformCopyBaseTask::copyEntry(const IFileContainer *destination, const IFi
 							tr("Failed to copy..."),
 							tr("File \"%1\" from \"%2\" already exists in \"%3\". Overwrite it?").
 								arg(entry->fileName()).
-								arg(entry->absolutePath()).
+								arg(source->location()).
 								arg(destination->location()),
 							tryAgain = false,
 							aborted);

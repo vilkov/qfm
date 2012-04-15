@@ -1,7 +1,7 @@
 #include "arclibarchiveplugin.h"
 #include "../nodes/items/arcnodeentryitem.h"
 #include "../nodes/items/arcnodedirentryitem.h"
-#include "../../../filesystem/info/filesystemfilestree.h"
+#include "../../../filesystem/tools/filesystemfilestree.h"
 #include <string.h>
 #include <archive.h>
 #include <archive_entry.h>

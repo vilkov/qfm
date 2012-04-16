@@ -25,7 +25,7 @@ public:
 	virtual bool remove(const QString &fileName, QString &error) const = 0;
 	virtual bool rename(const QString &oldName, const QString &newName, QString &error) const = 0;
 
-	virtual IFileContainer *open(QString &error) const = 0;
+	virtual IFileContainer *open() const = 0;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const = 0;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const = 0;
 };

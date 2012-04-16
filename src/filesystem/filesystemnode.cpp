@@ -1,5 +1,6 @@
 #include "filesystemnode.h"
 
+#include <QtCore/QDebug>
 
 FILE_SYSTEM_NS_BEGIN
 
@@ -45,6 +46,7 @@ void Node::viewClosed(INodeView *nodeView)
 
 ::History::Entry *Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
 {
+	qDebug() << filePath;
 	Path path(filePath);
 	Path::Iterator it = path.begin();
 
@@ -99,10 +101,13 @@ void Node::nodeRemoved(Node *node)
 
 Node *Node::root() const
 {
-	if (Node *res = parentNode())
-		return res->root();
-	else
-		return const_cast<Node *>(this);
+	Node *res;
+	Node *prev = const_cast<Node *>(this);
+
+	while (res = prev->parentNode())
+		prev = res;
+
+	return prev;
 }
 
 ::History::Entry *Node::switchTo(Node *node, INodeView *view)

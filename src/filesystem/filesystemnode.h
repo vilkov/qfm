@@ -2,8 +2,6 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
-#include <QtCore/QAbstractItemModel>
-#include <QtGui/QAbstractItemDelegate>
 #include "tools/filesystempath.h"
 #include "model/filesystemnodemodel.h"
 #include "model/filesystemnodemodelcontainer.h"

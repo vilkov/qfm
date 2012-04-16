@@ -29,7 +29,7 @@ Node *PluginsManager::node(const IFileContainer *container, const IFileInfo *fil
 		if (res = m_otherPlugins.at(i)->node(container, file, parent))
 			return res;
 
-	return 0;
+	return NULL;
 }
 
 void PluginsManager::registerStatic(IPlugin *plugin)

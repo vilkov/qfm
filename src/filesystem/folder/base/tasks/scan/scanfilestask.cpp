@@ -4,7 +4,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+ScanFilesTask::ScanFilesTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files) :
 	ScanFilesBaseTask(receiver),
 	m_snapshot(createSnapshot(container, files.size())),
 	m_files(files)

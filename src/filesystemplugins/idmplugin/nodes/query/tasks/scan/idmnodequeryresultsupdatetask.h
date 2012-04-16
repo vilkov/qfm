@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class UpdateFilesTask : public ScanFilesBaseTask
 {
 public:
-	UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files);
+	UpdateFilesTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files);
 
 	virtual void run(const volatile Flags &aborted);
 

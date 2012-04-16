@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesForSizeTask : public ScanFilesTask
 {
 public:
-	ScanFilesForSizeTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &entries);
+	ScanFilesForSizeTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile Flags &aborted);
 };
@@ -22,7 +22,7 @@ public:
 class ScanFilesForRemoveTask : public ScanFilesTask
 {
 public:
-	ScanFilesForRemoveTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &entries);
+	ScanFilesForRemoveTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &entries);
 
 	virtual void run(const volatile Flags &aborted);
 };
@@ -46,7 +46,7 @@ public:
 	};
 
 public:
-	ScanFilesForCopyTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move);
+	ScanFilesForCopyTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 

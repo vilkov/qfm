@@ -45,9 +45,9 @@ bool CopyControl::rename(const QString &oldName, const QString &newName, QString
 	return m_container.rename(oldName, newName, error);
 }
 
-IFileContainer *CopyControl::open(QString &error) const
+IFileContainer *CopyControl::open() const
 {
-	return m_container.open(error);
+	return m_container.open();
 }
 
 IFileAccessor *CopyControl::open(const QString &fileName, int mode, QString &error) const

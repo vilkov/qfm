@@ -92,22 +92,19 @@ ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 
 void FolderNodeBase::scanForSize(const TasksItemList &entries)
 {
-	IFileContainer::Holder container(new FileContainer(m_container->location()));
-	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, container, entries));
+	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_container.data(), entries));
 	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
 {
-	IFileContainer::Holder container(new FileContainer(m_container->location()));
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, container, entries, destination, move));
+	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_container.data(), entries, destination, move));
 	addTask(task.take(), entries);
 }
 
 void FolderNodeBase::scanForRemove(const TasksItemList &entries)
 {
-	IFileContainer::Holder container(new FileContainer(m_container->location()));
-	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, container, entries));
+	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_container.data(), entries));
 	addTask(task.take(), entries);
 }
 

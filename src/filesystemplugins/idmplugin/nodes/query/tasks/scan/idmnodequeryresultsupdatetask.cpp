@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+UpdateFilesTask::UpdateFilesTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files) :
 	ScanFilesBaseTask(receiver),
 	m_snapshot(createSnapshot(container, files.size())),
 	m_files(files)

@@ -14,8 +14,8 @@ public:
 	ScanFilesBaseTask(TasksNode *receiver);
 
 protected:
-	Snapshot createSnapshot(IFileContainer::Holder &container);
-	Snapshot createSnapshot(IFileContainer::Holder &container, Snapshot::Container::size_type reserver);
+	Snapshot createSnapshot(const IFileContainer *container);
+	Snapshot createSnapshot(const IFileContainer *container, Snapshot::Container::size_type reserver);
 
 	void scan(InfoListItem *root, const volatile Flags &aborted) const;
 	void scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const;

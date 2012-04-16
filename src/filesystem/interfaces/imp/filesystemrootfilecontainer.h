@@ -1,17 +1,16 @@
-#ifndef FILESYSTEMFILECONTAINER_H_
-#define FILESYSTEMFILECONTAINER_H_
+#ifndef FILESYSTEMROOTFILECONTAINER_H_
+#define FILESYSTEMROOTFILECONTAINER_H_
 
 #include "../filesystemifilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileContainer : public IFileContainer
+class RootFileContainer : public IFileContainer
 {
 public:
-	FileContainer(const QString &path);
+	RootFileContainer();
 
-	/* IFileContainer */
 	virtual bool isPhysical() const;
 
 	virtual QString location() const;
@@ -26,11 +25,10 @@ public:
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
-protected:
-	friend class CopyControl;
+private:
 	QString m_path;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFILECONTAINER_H_ */
+#endif /* FILESYSTEMROOTFILECONTAINER_H_ */

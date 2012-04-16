@@ -285,8 +285,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 					static_cast<RootNodeFilesItem *>(item)->node()->setParentEntryIndex(idx);
 				else
 				{
-					QString error;
-					IFileContainer::Holder folder(m_container.container()->open(error));
+					IFileContainer::Holder folder(m_container.container()->open());
 					Node *node = new IdmFolderNode(folder, m_container, this);
 
 					node->setParentEntryIndex(idx);
@@ -305,8 +304,7 @@ Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, Q
 		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
 	else
 	{
-		QString error;
-		IFileContainer::Holder folder(m_container.container()->open(error));
+		IFileContainer::Holder folder(m_container.container()->open());
 
 		static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(folder, m_container, this));
 		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, plugins, selected);

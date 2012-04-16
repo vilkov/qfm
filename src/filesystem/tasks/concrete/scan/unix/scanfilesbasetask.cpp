@@ -10,12 +10,12 @@ ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
 	FilesBaseTask(receiver)
 {}
 
-Snapshot ScanFilesBaseTask::createSnapshot(IFileContainer::Holder &container)
+Snapshot ScanFilesBaseTask::createSnapshot(const IFileContainer *container)
 {
 	return Snapshot(container);
 }
 
-Snapshot ScanFilesBaseTask::createSnapshot(IFileContainer::Holder &container, Snapshot::Container::size_type reserver)
+Snapshot ScanFilesBaseTask::createSnapshot(const IFileContainer *container, Snapshot::Container::size_type reserver)
 {
 	return Snapshot(container, reserver);
 }

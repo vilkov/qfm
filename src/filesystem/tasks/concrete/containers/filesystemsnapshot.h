@@ -21,14 +21,14 @@ public:
 
 public:
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
-	const IFileContainer *container() const { return m_data->m_container.data(); }
+	const IFileContainer *container() const { return m_data->m_container; }
 
 protected:
 	friend class ScanFilesBaseTask;
 
 	Snapshot();
-	Snapshot(IFileContainer::Holder &container);
-	Snapshot(IFileContainer::Holder &container, Container::size_type reserver);
+	Snapshot(const IFileContainer *container);
+	Snapshot(const IFileContainer *container, Container::size_type reserver);
 
 	void push_back(NodeItem *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
 	void remove(Container::size_type index) { InfoItem *info = m_data->list.takeAt(index).second; m_data->totalSize -= info->totalSize(); delete info; }
@@ -36,13 +36,13 @@ protected:
 private:
 	struct Data : public QSharedData
 	{
-		Data(IFileContainer::Holder &container);
-		Data(IFileContainer::Holder &container, Container::size_type reserver);
+		Data(const IFileContainer *container);
+		Data(const IFileContainer *container, Container::size_type reserver);
 		~Data();
 
 		Container list;
 		IFileInfo::size_type totalSize;
-		IFileContainer::Holder m_container;
+		const IFileContainer *m_container;
 	};
 
 private:
@@ -90,7 +90,7 @@ public:
 	{}
 
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
-	const IFileContainer *container() const { return m_data->m_container.data(); }
+	const IFileContainer *container() const { return m_data->m_container; }
 
 	size_type size() const { return m_list.size(); }
 	const InfoItem *at(size_type index) const { return m_list.at(index).second; }

@@ -7,22 +7,22 @@ Snapshot::Snapshot() :
 	m_data()
 {}
 
-Snapshot::Snapshot(IFileContainer::Holder &container) :
+Snapshot::Snapshot(const IFileContainer *container) :
 	m_data(new Data(container))
 {}
 
-Snapshot::Snapshot(IFileContainer::Holder &container, Container::size_type reserver) :
+Snapshot::Snapshot(const IFileContainer *container, Container::size_type reserver) :
 	m_data(new Data(container, reserver))
 {}
 
-Snapshot::Data::Data(IFileContainer::Holder &container) :
+Snapshot::Data::Data(const IFileContainer *container) :
 	totalSize(0),
-	m_container(container.take())
+	m_container(container)
 {}
 
-Snapshot::Data::Data(IFileContainer::Holder &container, Container::size_type reserver) :
+Snapshot::Data::Data(const IFileContainer *container, Container::size_type reserver) :
 	totalSize(0),
-	m_container(container.take())
+	m_container(container)
 {
 	list.reserve(reserver);
 }

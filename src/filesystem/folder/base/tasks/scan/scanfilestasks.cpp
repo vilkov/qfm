@@ -3,7 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+ScanFilesForSizeTask::ScanFilesForSizeTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files) :
 	ScanFilesTask(receiver, container, files)
 {}
 
@@ -14,7 +14,7 @@ void ScanFilesForSizeTask::run(const volatile Flags &aborted)
 }
 
 
-ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files) :
+ScanFilesForRemoveTask::ScanFilesForRemoveTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files) :
 	ScanFilesTask(receiver, container, files)
 {}
 
@@ -25,7 +25,7 @@ void ScanFilesForRemoveTask::run(const volatile Flags &aborted)
 }
 
 
-ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move) :
+ScanFilesForCopyTask::ScanFilesForCopyTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move) :
 	ScanFilesTask(receiver, container, files),
 	m_destination(destination.take()),
 	m_move(move)

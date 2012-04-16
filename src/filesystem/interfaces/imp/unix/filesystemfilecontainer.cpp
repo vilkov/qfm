@@ -77,7 +77,7 @@ bool FileContainer::rename(const QString &oldName, const QString &newName, QStri
 	}
 }
 
-IFileContainer *FileContainer::open(QString &error) const
+IFileContainer *FileContainer::open() const
 {
 	return new FileContainer(*this);
 }

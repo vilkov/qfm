@@ -12,7 +12,7 @@ FILE_SYSTEM_NS_BEGIN
 class ScanFilesTask : public ScanFilesBaseTask
 {
 public:
-	ScanFilesTask(TasksNode *receiver, IFileContainer::Holder &container, const TasksNode::TasksItemList &files);
+	ScanFilesTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files);
 
 protected:
 	Snapshot scan(const volatile Flags &aborted);

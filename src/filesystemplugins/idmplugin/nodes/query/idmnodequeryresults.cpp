@@ -88,10 +88,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	if (!list.isEmpty())
 	{
 		if (!files.isEmpty())
-		{
-			IFileContainer::Holder container(new FileContainer(m_container.container()->location()));
-			handleTask(new UpdateFilesTask(this, container, files));
-		}
+			handleTask(new UpdateFilesTask(this, m_container.container(), files));
 
 		beginInsertRows(parent, m_items.size(), m_items.size() + list.size() - 1);
 		m_items.append(list);
@@ -281,9 +278,8 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		{
 			if (!files.isEmpty())
 			{
-				IFileContainer::Holder container(new FileContainer(m_container.container()->location()));
 				lock(files, tr("Scanning for remove..."));
-				addTask(new ScanFilesTask(this, container, files), files);
+				addTask(new ScanFilesTask(this, m_container.container(), files), files);
 			}
 		}
 		else

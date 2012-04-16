@@ -5,14 +5,14 @@ FILE_SYSTEM_NS_BEGIN
 
 InfoListItem::InfoListItem(const IFileContainer *container, const Info &file) :
 	InfoItem(container, file),
-	m_container(container->location(file.fileName())),
-	m_totalSize(0)
+	m_totalSize(0),
+	m_container(container->open(file.fileName(), false, m_lastError))
 {}
 
 InfoListItem::InfoListItem(const IFileContainer *container, const QString &file) :
 	InfoItem(container, file),
-	m_container(container->location(file)),
-	m_totalSize(0)
+	m_totalSize(0),
+	m_container(container->open(file, false, m_lastError))
 {}
 
 InfoListItem::~InfoListItem()

@@ -2,7 +2,6 @@
 #define FILESYSTEMINFOLISTITEM_H_
 
 #include "filesysteminfoitem.h"
-#include "../../../interfaces/imp/filesystemfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,7 +16,7 @@ public:
 	/* InfoItem */
 	virtual Info::size_type totalSize() const;
 
-	const FileContainer &container() const { return m_container; }
+	const IFileContainer *container() const { return m_container.data(); }
 
 	value_type &operator[](size_type index) { return m_items[index]; }
 	const value_type &operator[](size_type index) const { return m_items[index]; }
@@ -38,8 +37,9 @@ protected:
 
 private:
 	List m_items;
-	FileContainer m_container;
+	QString m_lastError;
 	Info::size_type m_totalSize;
+	IFileContainer::Holder m_container;
 };
 
 FILE_SYSTEM_NS_END

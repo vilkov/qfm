@@ -43,7 +43,7 @@ void PerformCopyBaseTask::copyEntry(const IFileContainer *destination, const IFi
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
-						copyEntry(dest.data(), &static_cast<InfoListItem*>(entry)->container(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
+						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->container(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;
@@ -75,7 +75,7 @@ void PerformCopyBaseTask::copyEntry(const IFileContainer *destination, const IFi
 					for (InfoListItem::size_type i = 0;
 							i < static_cast<InfoListItem*>(entry)->size() && !aborted;
 							++i)
-						copyEntry(dest.data(), &static_cast<InfoListItem*>(entry)->container(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
+						copyEntry(dest.data(), static_cast<InfoListItem*>(entry)->container(), static_cast<InfoListItem*>(entry)->at(i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;

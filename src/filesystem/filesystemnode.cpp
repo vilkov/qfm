@@ -1,6 +1,5 @@
 #include "filesystemnode.h"
 
-#include <QtCore/QDebug>
 
 FILE_SYSTEM_NS_BEGIN
 
@@ -46,7 +45,6 @@ void Node::viewClosed(INodeView *nodeView)
 
 ::History::Entry *Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
 {
-	qDebug() << filePath;
 	Path path(filePath);
 	Path::Iterator it = path.begin();
 

@@ -12,7 +12,6 @@
 #include <QtCore/QCache>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QVarLengthArray>
-#include <QtCore/QDebug>
 
 #include <paths.h>
 #include <sys/stat.h>

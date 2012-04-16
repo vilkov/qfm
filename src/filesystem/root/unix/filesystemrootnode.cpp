@@ -4,8 +4,6 @@
 #include "../../interfaces/imp/filesystemrootfilecontainer.h"
 
 
-#include <QtCore/QDebug>
-
 FILE_SYSTEM_NS_BEGIN
 
 class LocalRootFolderNode;

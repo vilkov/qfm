@@ -329,22 +329,23 @@ void IdmNodeQueryResults::refresh()
 
 QString IdmNodeQueryResults::title() const
 {
-	return QString();
+	QString res = m_container.container()->location();
+	return res.mid(res.lastIndexOf(QChar('/')));
 }
 
 QString IdmNodeQueryResults::location() const
 {
-	return QString();
+	return m_container.container()->location();
 }
 
 QString IdmNodeQueryResults::location(const QString &fileName) const
 {
-	return QString();
+	return m_container.container()->location(fileName);
 }
 
 QString IdmNodeQueryResults::location(const QModelIndex &index) const
 {
-	return QString();
+	return m_container.container()->location();
 }
 
 QAbstractItemModel *IdmNodeQueryResults::model() const

@@ -160,7 +160,7 @@ inline static bool findProgram(const char *mimeType, const char *(&args)[3], con
 {
 	const XdgApp *app;
 	const XdgList *values;
-	const XdgAppGroupEntries *group;
+	const XdgAppGroup *group;
 	const XdgJointList *apps;
 	const XdgJointList *removed = xdg_removed_apps_lookup(mimeType);
 

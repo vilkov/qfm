@@ -13,15 +13,14 @@ class QueryResultPathValueItem : public QueryResultPathItem
 	Q_DECLARE_TR_FUNCTIONS(QueryResultPathValueItem)
 
 public:
-	QueryResultPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent);
+	QueryResultPathValueItem(const IFileContainer *container, const InfoItem *item, Base *parent);
 
-	/* IFileInfo */
-	virtual QString fileName() const;
-
-	void update(const InfoItem *item);
+	/* QueryResultPathItem */
+	virtual void open() const;
 
 private:
-	IdmEntityValue::Holder m_value;
+	const IFileContainer *m_container;
+	IFileContainer::Holder m_thisContainer;
 };
 
 IDM_PLUGIN_NS_END

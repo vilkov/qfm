@@ -7,7 +7,7 @@
 #include "tasks/perform/idmnodequeryresultsremovefilestask.h"
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
-#include "items/idmqueryresultpathvalueitem.h"
+#include "items/idmqueryresultrootpathvalueitem.h"
 #include "items/idmqueryresultpathpropertyitem.h"
 #include "items/idmqueryresultcompositerootitem.h"
 #include "../folder/idmfoldernode.h"
@@ -401,7 +401,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 				}
 				else
 					if (static_cast<QueryResultPathItem *>(item)->isFile())
-						Application::desktopService()->open(m_container.container(), static_cast<QueryResultPathItem *>(item));
+						static_cast<QueryResultPathItem *>(item)->open();
 			}
 	}
 	else
@@ -674,7 +674,7 @@ void IdmNodeQueryResults::update(const Snapshot::List &list)
 		item = static_cast<QueryResultItem *>(list.at(i).first);
 		property = static_cast<QueryResultPropertyItem *>(item->parent());
 		map[property].add(property->indexOf(item));
-		static_cast<QueryResultPathValueItem *>(item)->update(list.at(i).second);
+		static_cast<QueryResultRootPathValueItem *>(item)->update(list.at(i).second);
 		static_cast<QueryResultValueItem *>(item)->unlock();
 	}
 

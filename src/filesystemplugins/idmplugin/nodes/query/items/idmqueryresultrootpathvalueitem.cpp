@@ -1,3 +1,4 @@
+#include "idmqueryresultrootpathvalueitem.h"
 #include "idmqueryresultpathvalueitem.h"
 #include "../../../../../filesystem/filesystemproxymodel.h"
 #include "../../../../../filesystem/tasks/concrete/containers/filesysteminfolistitem.h"
@@ -6,10 +7,28 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *container, const InfoItem *item, Base *parent) :
-	QueryResultPathItem(item, parent),
+QueryResultRootPathValueItem::QueryResultRootPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
+	QueryResultPathItem(container, value->value().toString(), parent),
+	m_value(value),
 	m_container(container)
 {
+	lock(tr("Updating..."));
+}
+
+QString QueryResultRootPathValueItem::fileName() const
+{
+	return m_value->value().toString();
+}
+
+void QueryResultRootPathValueItem::open() const
+{
+	Application::desktopService()->open(m_container, this);
+}
+
+void QueryResultRootPathValueItem::update(const InfoItem *item)
+{
+	m_info = *item;
+
 	if (item->isDir())
 	{
 		m_thisContainer = static_cast<const InfoListItem *>(item)->container()->open();
@@ -19,11 +38,6 @@ QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *contain
 	}
 
 	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);
-}
-
-void QueryResultPathValueItem::open() const
-{
-	Application::desktopService()->open(m_container, this);
 }
 
 IDM_PLUGIN_NS_END

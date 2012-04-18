@@ -8,11 +8,7 @@ QueryResultPathItem::QueryResultPathItem(const InfoItem *item, Base *parent) :
 	QueryResultItem(parent),
 	m_info(*item),
 	m_node(NULL)
-{
-	if (item->isDir())
-		for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(item)->size(); i < size; ++i)
-			m_items.push_back(new QueryResultPathItem(static_cast<const InfoListItem *>(item)->at(i), this));
-}
+{}
 
 QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent) :
 	QueryResultItem(parent),

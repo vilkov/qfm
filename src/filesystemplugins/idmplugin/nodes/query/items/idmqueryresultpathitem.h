@@ -45,6 +45,8 @@ public:
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
 
+	virtual void open() const = 0;
+
 	Node *node() const { return m_node; }
 	void setNode(Node *node) { m_node = node; }
 

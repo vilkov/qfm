@@ -8,7 +8,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 IdmCopyControl::IdmCopyControl(const IdmContainer &container, const IFileContainer *folder, IdmEntity *entity) :
-	CopyControl(container.container()->location()),
+	CopyControl(folder->location()),
 	m_container(container),
 	m_entity(entity),
 	m_storage(difference(folder->location(), m_container.container()->location()).append(QChar('/')))

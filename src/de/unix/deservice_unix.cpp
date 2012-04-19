@@ -443,15 +443,15 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 					arguments[i].replace("%i", args[1]);
 					arguments.insert(i, QByteArray("--icon"));
 					++i;
+					++size;
 				}
 				else
-				{
-					arguments[i].replace("%f", fileName);
-					arguments[i].replace("%F", fileName);
-					arguments[i].replace("%u", fileName);
-					arguments[i].replace("%U", fileName);
-					arguments[i].replace("%c", args[2]);
-				}
+					arguments[i].
+						replace("%f", fileName).
+						replace("%F", fileName).
+						replace("%u", fileName).
+						replace("%U", fileName).
+						replace("%c", args[2]);
 
 				++i;
 			}

@@ -132,24 +132,29 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 		return icon_path;
 	else
 	{
+		const XdgApp *app;
 		const XdgJointList *apps;
+		const XdgJointList *removed = xdg_removed_apps_lookup(mimeType);
 
 		if (apps = xdg_joint_list_begin(xdg_added_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
-					return icon_path;
+				if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+					if (icon_path = xdg_app_icon_lookup(app, theme, size))
+						return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 
 		if (apps = xdg_joint_list_begin(xdg_default_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
-					return icon_path;
+				if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+					if (icon_path = xdg_app_icon_lookup(app, theme, size))
+						return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 
 		if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
 			do
-				if (icon_path = xdg_app_icon_lookup(xdg_joint_list_item_app(apps), theme, size))
-					return icon_path;
+				if (!xdg_joint_list_contains_app(removed, app = xdg_joint_list_item_app(apps)))
+					if (icon_path = xdg_app_icon_lookup(app, theme, size))
+						return icon_path;
 			while (apps = xdg_joint_list_next(apps));
 	}
 

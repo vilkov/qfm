@@ -308,15 +308,15 @@ void RootFolderNode::rename(const QModelIndex &index, INodeView *view)
 
 	if (!entry->isRootItem() && !static_cast<FolderItem*>(entry)->isLocked())
 	{
-//		RenameFunctor functor(this, m_items);
-//		functor(index.row(), entry);
+		RenameFunctor functor(container(), m_items);
+		functor(index.row(), entry);
 	}
 }
 
 void RootFolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
-//	RenameFunctor functor(this, m_items);
-//	processIndexList(list, functor);
+	RenameFunctor functor(container(), m_items);
+	processIndexList(list, functor);
 }
 
 void RootFolderNode::remove(const QModelIndexList &list, INodeView *view)
@@ -842,8 +842,8 @@ void RootFolderNode::RenameFunctor::call(ItemsContainer::size_type index, Folder
 
 	if (dialog.exec() == QDialog::Accepted)
 	{
-		QString error;
-
+//		QString error;
+//
 //		if (entry->info().rename(dialog.value(), error))
 //		{
 //			Info info(m_info->absoluteFilePath(dialog.value()));
@@ -858,11 +858,11 @@ void RootFolderNode::RenameFunctor::call(ItemsContainer::size_type index, Folder
 //			}
 //		}
 //		else
-			QMessageBox::critical(Application::mainWindow(),
-						entry->info().isDir() ?
-							tr("Failed to rename directory \"%1\"").arg(entry->info().fileName()) :
-							tr("Failed to rename file \"%1\"").arg(entry->info().fileName()),
-						error);
+//			QMessageBox::critical(Application::mainWindow(),
+//						entry->info().isDir() ?
+//							tr("Failed to rename directory \"%1\"").arg(entry->info().fileName()) :
+//							tr("Failed to rename file \"%1\"").arg(entry->info().fileName()),
+//						error);
 	}
 }
 

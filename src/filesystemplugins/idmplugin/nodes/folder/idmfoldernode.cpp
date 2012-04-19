@@ -1,8 +1,10 @@
 #include "idmfoldernode.h"
 #include "../../control/idmcopycontrol.h"
 #include "../../gui/choose/chooseentitydialog.h"
-#include "../../../../application.h"
 #include "../../../../filesystem/filesystempluginsmanager.h"
+#include "../../../../application.h"
+
+#include <QtGui/QMessageBox>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -14,9 +16,9 @@ IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContain
 
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
-//	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-//		return new IdmCopyControl(m_container, entity, m_info, m_storage);
-//	else
+	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+		return new IdmCopyControl(m_container, container(), entity);
+	else
 		return NULL;
 }
 
@@ -45,15 +47,23 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-Node *IdmFolderNode::createNode(const Info &info, PluginsManager *plugins) const
+Node *IdmFolderNode::createNode(const IFileInfo *file, PluginsManager *plugins) const
 {
-//	if (Node *res = plugins->node(&container(), &info, const_cast<IdmFolderNode *>(this)))
-//		return res;
-//	else
-//		if (info.isDir())
-//			return new IdmFolderNode(m_container, container().location(info.fileName()), m_storage, const_cast<IdmFolderNode *>(this));
-//		else
-			return NULL;
+	if (Node *res = plugins->node(container(), file, const_cast<IdmFolderNode *>(this)))
+		return res;
+	else
+		if (file->isDir())
+		{
+			QString error;
+			IFileContainer::Holder folder(container()->open(file->fileName(), false, error));
+
+			if (folder)
+				return new IdmFolderNode(folder, m_container, const_cast<IdmFolderNode *>(this));
+			else
+				QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+		}
+
+	return NULL;
 }
 
 Node *IdmFolderNode::privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)

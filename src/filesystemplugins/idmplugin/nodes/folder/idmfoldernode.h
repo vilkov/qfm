@@ -22,7 +22,7 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 protected:
-	virtual Node *createNode(const Info &info, PluginsManager *plugins) const;
+	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
 
 private:
 	friend class IdmRootNode;

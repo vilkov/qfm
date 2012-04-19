@@ -128,8 +128,8 @@ protected:
 	class RenameFunctor : public Functors::Functor
 	{
 	public:
-		RenameFunctor(IFileInfo *info, ItemsContainer &items) :
-			m_info(info),
+		RenameFunctor(const IFileContainer *container, ItemsContainer &items) :
+			m_container(container),
 			m_items(items)
 		{}
 
@@ -137,7 +137,7 @@ protected:
 		virtual void call(ItemsContainer::size_type index, FolderBaseItem *entry);
 
 	private:
-		IFileInfo *m_info;
+		const IFileContainer *m_container;
 		ItemsContainer &m_items;
 	};
 

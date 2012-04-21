@@ -3,21 +3,13 @@
 
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
-#include <QtCore/QSharedData>
 #include "../filesystem_ns.h"
 #include "../../tools/taskspool/task.h"
-#include "../../tools/threads/pmutex.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 class TasksNode;
 
-
-/*
- * This class and subclasses of this class should be created only
- * in the same thread as "receiver" because of DeleteHandler!
- *
- */
 
 class BaseTask : public ::Tools::TasksPool::Task
 {
@@ -57,7 +49,6 @@ public:
 
 public:
 	BaseTask(TasksNode *receiver);
-	virtual ~BaseTask();
 
     void cancel() { m_canceled = true; }
 
@@ -69,19 +60,8 @@ protected:
 	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const;
 
 private:
-	struct MutexHolder : public QSharedData
-	{
-		PMutex mutex;
-	};
-	typedef QExplicitlySharedDataPointer<MutexHolder> MutexHolderPointer;
-	class DeleteHandler;
-
-private:
-    MutexHolderPointer m_mutexHolder;
     TasksNode *m_receiver;
-    DeleteHandler *m_handler;
 	StaticFlag m_canceled;
-	StaticFlag m_controllerDead;
 };
 
 FILE_SYSTEM_NS_END

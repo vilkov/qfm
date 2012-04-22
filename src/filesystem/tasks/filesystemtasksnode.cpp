@@ -7,7 +7,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-TasksNode::TasksNode(const NodeModelContainer &conteiner, Node *parent) :
+TasksNode::TasksNode(const Container &conteiner, Node *parent) :
 	Node(conteiner, parent)
 {}
 
@@ -26,6 +26,7 @@ bool TasksNode::event(QEvent *e)
 
 			return true;
 		}
+
 		case BaseTask::Event::Progress:
 		{
 			typedef UpdateProgressEvent * NotConstEvent;
@@ -37,6 +38,7 @@ bool TasksNode::event(QEvent *e)
 
 			return true;
 		}
+
 		case BaseTask::Event::Completed:
 		{
 			typedef CompletedProgressEvent * NotConstEvent;
@@ -48,6 +50,7 @@ bool TasksNode::event(QEvent *e)
 
 			return true;
 		}
+
 		case BaseTask::Event::Action:
 		{
 			typedef PerformActionTask::Event * NotConstEvent;
@@ -60,6 +63,7 @@ bool TasksNode::event(QEvent *e)
 
 			return true;
 		}
+
 		default:
 			break;
 	}

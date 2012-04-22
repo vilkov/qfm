@@ -8,7 +8,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmModelContainer : public NodeModelContainer
+class IdmModelContainer : public ModelContainer
 {
 public:
 	typedef QList<IdmItem*> Container;

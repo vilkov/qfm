@@ -2,9 +2,7 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
-#include "tools/filesystempath.h"
 #include "model/filesystemnodemodel.h"
-#include "model/filesystemnodemodelcontainer.h"
 #include "interfaces/filesysteminode.h"
 #include "../history/historyentry.h"
 
@@ -21,7 +19,7 @@ class Node : public NodeModel, public INode
 	Q_DISABLE_COPY(Node)
 
 public:
-	Node(const NodeModelContainer &conteiner, Node *parent = 0);
+	Node(const Container &conteiner, Node *parent = 0);
 
 	/* IFileNavigation */
 	virtual void viewClosed(INodeView *nodeView);

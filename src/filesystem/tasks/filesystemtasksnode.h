@@ -16,11 +16,13 @@ FILE_SYSTEM_NS_BEGIN
 
 class TasksNode : public Node
 {
+	Q_DISABLE_COPY(TasksNode)
+
 public:
 	typedef TasksMap::List TasksItemList;
 
 public:
-	TasksNode(const NodeModelContainer &conteiner, Node *parent = 0);
+	TasksNode(const Container &conteiner, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);

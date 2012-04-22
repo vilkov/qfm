@@ -7,6 +7,9 @@
 
 
 FILE_SYSTEM_NS_BEGIN
+class ICopyControl;
+class INodeView;
+
 
 class IFileContainer : public IFileLocation
 {
@@ -16,6 +19,7 @@ public:
 public:
 	virtual bool isPhysical() const = 0;
 	virtual IFileInfo::size_type freeSpace() const = 0;
+	virtual ICopyControl *createControl(INodeView *view) const = 0;
 
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual bool remove(const QString &fileName, QString &error) const = 0;

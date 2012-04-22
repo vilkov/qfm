@@ -19,7 +19,7 @@ Snapshot ScanFilesImplementation::createSnapshot(const IFileContainer *container
 	return Snapshot(container, reserver);
 }
 
-void ScanFilesImplementation::scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile BaseTask::Flags &aborted) const
+void ScanFilesImplementation::scan(Snapshot &snapshot, Item *item, const QString &file, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());
 
@@ -35,7 +35,7 @@ void ScanFilesImplementation::scan(Snapshot &snapshot, NodeItem *item, const QSt
 		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
 }
 
-void ScanFilesImplementation::scanSoft(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile BaseTask::Flags &aborted) const
+void ScanFilesImplementation::scanSoft(Snapshot &snapshot, Item *item, const QString &file, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());
 

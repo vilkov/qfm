@@ -3,7 +3,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-Node::Node(const NodeModelContainer &conteiner, Node *parent) :
+Node::Node(const Container &conteiner, Node *parent) :
 	NodeModel(conteiner, parent),
 	m_links(0)
 {}

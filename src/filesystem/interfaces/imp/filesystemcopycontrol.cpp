@@ -11,11 +11,6 @@ CopyControl::CopyControl(INode *node, const QString &path) :
 	m_container(path)
 {}
 
-bool CopyControl::isPhysical() const
-{
-	return m_container.isPhysical();
-}
-
 QString CopyControl::location() const
 {
 	return m_container.location();
@@ -26,9 +21,19 @@ QString CopyControl::location(const QString &fileName) const
 	return m_container.location(fileName);
 }
 
+bool CopyControl::isPhysical() const
+{
+	return m_container.isPhysical();
+}
+
 IFileInfo::size_type CopyControl::freeSpace() const
 {
 	return m_container.freeSpace();
+}
+
+ICopyControl *CopyControl::createControl(INodeView *view) const
+{
+	return new CopyControl(*this);
 }
 
 bool CopyControl::contains(const QString &fileName) const

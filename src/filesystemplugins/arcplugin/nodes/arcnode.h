@@ -71,7 +71,7 @@ protected:
 private:
 	enum { RootItemIndex = 0 };
 
-	class ItemsContainer : public NodeModelContainer
+	class ItemsContainer : public ModelContainer
 	{
 	public:
 		typedef QList<ArcNodeItem *> List;

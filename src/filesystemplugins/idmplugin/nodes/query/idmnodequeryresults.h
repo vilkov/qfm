@@ -96,7 +96,7 @@ private:
     enum { PrefetchLimit = 64 };
 
 private:
-	class ItemsContainer : public NodeModelContainer
+	class ItemsContainer : public ModelContainer
 	{
 	public:
 		typedef QList<Item*> List;

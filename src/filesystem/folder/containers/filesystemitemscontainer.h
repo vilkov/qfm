@@ -9,7 +9,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class ItemsContainer : public NodeModelContainer
+class ItemsContainer : public ModelContainer
 {
 public:
 	typedef FolderBaseItem * value_type;

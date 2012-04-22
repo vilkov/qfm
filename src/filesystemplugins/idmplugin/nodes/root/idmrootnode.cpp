@@ -342,12 +342,12 @@ IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::size() const
 	return m_container.size();
 }
 
-IdmRootNode::ItemsContainer::Item *IdmRootNode::ItemsContainer::at(size_type index) const
+IdmRootNode::ItemsContainer::NodeItem *IdmRootNode::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(Item *item) const
+IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(NodeItem *item) const
 {
 	return m_container.indexOf(item);
 }
@@ -521,8 +521,8 @@ void IdmRootNode::doAdd(IdmEntity *entity)
 
 void IdmRootNode::doRemove(IdmEntity *entity)
 {
-	ItemsContainer::Item::size_type row;
-	ItemsContainer::Item *parent;
+	ItemsContainer::NodeItem::size_type row;
+	ItemsContainer::NodeItem *parent;
 	ItemsContainer::List list = m_entities.take(entity);
 	QModelIndex index;
 
@@ -540,7 +540,7 @@ void IdmRootNode::doRemove(IdmEntity *entity)
 	}
 }
 
-void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName)
+void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::NodeItem *item, IdmEntity *property, const QString &propertyName)
 {
 	RootNodeEntityItem *child;
 
@@ -551,9 +551,9 @@ void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::Item *item, Id
 	endInsertRows();
 }
 
-void IdmRootNode::doRemove(const QModelIndex &index, ItemsContainer::Item *item, ItemsContainer::Item *property)
+void IdmRootNode::doRemove(const QModelIndex &index, ItemsContainer::NodeItem *item, ItemsContainer::NodeItem *property)
 {
-	ItemsContainer::Item::size_type idx = item->indexOf(property);
+	ItemsContainer::NodeItem::size_type idx = item->indexOf(property);
 
 	beginRemoveRows(parent(index), idx, idx);
 	ItemsContainer::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
@@ -562,7 +562,7 @@ void IdmRootNode::doRemove(const QModelIndex &index, ItemsContainer::Item *item,
 	endRemoveRows();
 }
 
-void IdmRootNode::expand(ItemsContainer::Item *p)
+void IdmRootNode::expand(ItemsContainer::NodeItem *p)
 {
 	RootNodeEntityItem *item;
 	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem*>(p);

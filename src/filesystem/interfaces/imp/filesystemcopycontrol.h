@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "filesystemfilecontainer.h"
-#include "../../tasks/interfaces/filesystemicopycontrol.h"
+#include "../filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -15,11 +15,14 @@ class CopyControl : public ICopyControl
 public:
 	CopyControl(INode *node, const QString &path);
 
-	/* IFileContainer */
-	virtual bool isPhysical() const;
+	/* IFileLocation */
 	virtual QString location() const;
 	virtual QString location(const QString &fileName) const;
+
+	/* IFileContainer */
+	virtual bool isPhysical() const;
 	virtual IFileInfo::size_type freeSpace() const;
+	virtual ICopyControl *createControl(INodeView *view) const;
 
 	virtual bool contains(const QString &fileName) const;
 	virtual bool remove(const QString &fileName, QString &error) const;

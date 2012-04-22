@@ -16,17 +16,7 @@ class RootFolderNode : public FolderNodeBase
 	Q_DISABLE_COPY(RootFolderNode)
 
 public:
-	RootFolderNode(IFileContainer::Holder &container, Node *parent = 0);
-	virtual ~RootFolderNode();
-
-    /* FileSystemModel */
-	virtual int columnCount(const QModelIndex &parent) const;
-	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-
 	/* IFileOperations */
-	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
-	virtual void createFile(const QModelIndex &index, INodeView *view);
-	virtual void createDirectory(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndexList &list, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);

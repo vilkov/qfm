@@ -1,5 +1,7 @@
 #include "../filesystemfilecontainer.h"
 #include "../filesystemfileaccessor.h"
+#include "../filesystemcopycontrol.h"
+#include "../../filesysteminodeview.h"
 #include "../../../tools/filesystemcommontools.h"
 
 #include <sys/stat.h>
@@ -16,11 +18,6 @@ FileContainer::FileContainer(const QString &path) :
 	m_path(path)
 {}
 
-bool FileContainer::isPhysical() const
-{
-	return true;
-}
-
 QString FileContainer::location() const
 {
 	return m_path;
@@ -31,9 +28,19 @@ QString FileContainer::location(const QString &fileName) const
 	return QString(m_path).append(QChar('/')).append(fileName);
 }
 
+bool FileContainer::isPhysical() const
+{
+	return true;
+}
+
 IFileInfo::size_type FileContainer::freeSpace() const
 {
 	return Tools::freeSpace(m_path.toUtf8());
+}
+
+ICopyControl *FileContainer::createControl(INodeView *view) const
+{
+	return new CopyControl(view->node(), m_path);
 }
 
 bool FileContainer::contains(const QString &fileName) const

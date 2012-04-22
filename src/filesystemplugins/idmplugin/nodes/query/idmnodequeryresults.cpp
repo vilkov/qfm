@@ -254,7 +254,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 						{
 							idx = property->indexOf(item);
 
-							beginRemoveRows(NodeModel::parent(index), idx, idx);
+							beginRemoveRows(Model::parent(index), idx, idx);
 							property->remove(idx);
 							endRemoveRows();
 						}
@@ -464,7 +464,7 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 		if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), value->value()))
 			if (m_container.commit())
 			{
-				beginRemoveRows(NodeModel::parent(index), index.row(), index.row());
+				beginRemoveRows(Model::parent(index), index.row(), index.row());
 				property->remove(index.row());
 				endRemoveRows();
 			}
@@ -691,12 +691,12 @@ IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContain
 	return m_container.size();
 }
 
-IdmNodeQueryResults::ItemsContainer::Item *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
+IdmNodeQueryResults::ItemsContainer::NodeItem *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(Item *item) const
+IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(NodeItem *item) const
 {
 	return m_container.indexOf(item);
 }

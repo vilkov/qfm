@@ -298,12 +298,12 @@ ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::size() const
 	return m_container.size();
 }
 
-ArcNode::ItemsContainer::Item *ArcNode::ItemsContainer::at(size_type index) const
+ArcNode::ItemsContainer::NodeItem *ArcNode::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) const
+ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(NodeItem *item) const
 {
 	return m_container.indexOf(static_cast<ArcNodeItem *>(item));
 }

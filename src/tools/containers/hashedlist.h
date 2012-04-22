@@ -112,6 +112,7 @@ public:
 	bool isEmpty() const { return m_list.isEmpty(); }
 	size_type size() const { return m_list.size(); }
 	size_type indexOf(const Hash &hash) const { return m_map.value(hash, InvalidIndex); }
+	size_type indexOf(const T &value) const { return m_list.indexOf(value); }
 	bool contains(const Hash &hash) const { return m_map.contains(hash); }
 
 	KeyList keys() const { return m_map.keys(); }

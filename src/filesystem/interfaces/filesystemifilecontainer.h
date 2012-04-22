@@ -3,22 +3,18 @@
 
 #include <QtCore/QString>
 #include "filesystemifileinfo.h"
+#include "filesystemifilelocation.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IFileContainer
+class IFileContainer : public IFileLocation
 {
 public:
 	typedef PScopedPointer<IFileContainer> Holder;
 
 public:
-	virtual ~IFileContainer();
-
 	virtual bool isPhysical() const = 0;
-
-	virtual QString location() const = 0;
-	virtual QString location(const QString &fileName) const = 0;
 	virtual IFileInfo::size_type freeSpace() const = 0;
 
 	virtual bool contains(const QString &fileName) const = 0;

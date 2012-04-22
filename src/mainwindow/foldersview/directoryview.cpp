@@ -59,12 +59,12 @@ DirectoryView::~DirectoryView()
 		m_node->viewClosed(this);
 }
 
-void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
+void DirectoryView::setupModel(FileSystem::INode *node, const Tab &tab)
 {
-	if (::History::Entry *entry = root->viewAbsolute(this, tab.path, Application::plugins()))
+	if (::History::Entry *entry = node->viewAbsolute(this, tab.path, Application::plugins()))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), tab.geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, tab.geometry.at(i));
@@ -72,22 +72,22 @@ void DirectoryView::setupModel(FileSystem::INode *root, const Tab &tab)
 	m_view.sortByColumn(tab.sort.column, tab.sort.order);
 }
 
-void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath)
+void DirectoryView::setupModel(FileSystem::INode *node, const QString &absoluteFilePath)
 {
-	if (::History::Entry *entry = root->viewAbsolute(this, absoluteFilePath, Application::plugins()))
+	if (::History::Entry *entry = node->viewAbsolute(this, absoluteFilePath, Application::plugins()))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
 
 	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
-void DirectoryView::setupModel(FileSystem::INode *root, const QString &absoluteFilePath, const Geometry &geometry)
+void DirectoryView::setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry)
 {
-	if (::History::Entry *entry = root->viewAbsolute(this, absoluteFilePath, Application::plugins()))
+	if (::History::Entry *entry = node->viewInNewTab(this, index, Application::plugins()))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(root->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
 
 	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), geometry.size()); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
@@ -310,7 +310,7 @@ void DirectoryView::actionTriggered(QAction *action)
 
 void DirectoryView::openInNewTab()
 {
-	m_parent->openInNewTab(m_node, m_node->location(currentIndex()), geometry());
+	m_parent->openInNewTab(m_node, currentIndex(), geometry());
 }
 
 void DirectoryView::closeTab()

@@ -16,7 +16,6 @@ public:
 	virtual ~RootNode();
 
 	/* IFileOperations */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);

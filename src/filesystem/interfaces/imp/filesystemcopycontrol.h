@@ -13,7 +13,7 @@ class CopyControl : public ICopyControl
 	Q_DECLARE_TR_FUNCTIONS(CopyControl)
 
 public:
-	CopyControl(const QString &path);
+	CopyControl(INode *node, const QString &path);
 
 	/* IFileContainer */
 	virtual bool isPhysical() const;
@@ -30,11 +30,13 @@ public:
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
 	/* ICopyControl */
+	virtual INode *node() const;
 	virtual bool start(const Snapshot::Files &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 
 private:
+	INode *m_node;
 	FileContainer m_container;
 };
 

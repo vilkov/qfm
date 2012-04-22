@@ -17,13 +17,13 @@ public:
 	class Event : public PerformCopyBaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, bool canceled, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move) :
-			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), canceled, snapshot, destination, move)
+		Event(BaseTask *task, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
+			PerformCopyBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), destination, canceled, snapshot, move)
 		{}
 	};
 
 public:
-	PerformCopyTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move);
+	PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 

@@ -5,15 +5,14 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyBaseTask::PerformCopyBaseTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination) :
-	FilesBaseTask(receiver),
+PerformCopyBaseTask::PerformCopyBaseTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot) :
+	FilesExtendedBaseTask(receiver, destination),
 	m_skipAllIfNotCreate(false),
 	m_skipAllIfNotCopy(false),
 	m_doNotOverwriteAll(false),
 	m_overwriteAll(false),
 	m_progress(receiver),
-	m_snapshot(snapshot),
-	m_destination(destination.take())
+	m_snapshot(snapshot)
 {}
 
 Snapshot PerformCopyBaseTask::copy(const volatile Flags &aborted)
@@ -24,7 +23,7 @@ Snapshot PerformCopyBaseTask::copy(const volatile Flags &aborted)
 	for (Snapshot::List::size_type i = 0; i < list.size() && !aborted; ++i)
 	{
 		m_progress.init(list.at(i).first);
-		copyEntry(m_destination.data(), m_snapshot.container(), list.at(i).second, tryAgain = false, aborted);
+		copyEntry(destination().data(), m_snapshot.container(), list.at(i).second, tryAgain = false, aborted);
 		m_progress.complete();
 	}
 

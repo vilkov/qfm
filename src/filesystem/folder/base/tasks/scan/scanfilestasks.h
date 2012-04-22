@@ -29,29 +29,26 @@ public:
 
 
 /********************************************************************************************************/
-class ScanFilesForCopyTask : public ScanFilesTask
+class ScanFilesForCopyTask : public ScanFilesExtendedTask
 {
 public:
-	class Event : public ScanFilesTask::Event
+	class Event : public ScanFilesExtendedTask::Event
 	{
 	public:
-		Event(BaseTask *task, Type type, bool canceled, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move) :
-			ScanFilesTask::Event(task, type, canceled, snapshot),
-			destination(destination.take()),
+		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
+			ScanFilesExtendedTask::Event(task, type, destination, canceled, snapshot),
 			move(move)
 		{}
 
-		ICopyControl::Holder destination;
 		bool move;
 	};
 
 public:
-	ScanFilesForCopyTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files, ICopyControl::Holder &destination, bool move);
+	ScanFilesForCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const TasksNode::TasksItemList &files, bool move);
 
 	virtual void run(const volatile Flags &aborted);
 
 private:
-	ICopyControl::Holder m_destination;
 	bool m_move;
 };
 

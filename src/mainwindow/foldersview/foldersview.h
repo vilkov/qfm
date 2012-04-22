@@ -33,7 +33,7 @@ public:
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);
-    void openInNewTab(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry);
+    void openInNewTab(FileSystem::INode *node, const QModelIndex &index, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);

@@ -6,21 +6,20 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
-	FilesBaseTask(receiver)
+ScanFilesImplementation::ScanFilesImplementation()
 {}
 
-Snapshot ScanFilesBaseTask::createSnapshot(const IFileContainer *container)
+Snapshot ScanFilesImplementation::createSnapshot(const IFileContainer *container)
 {
 	return Snapshot(container);
 }
 
-Snapshot ScanFilesBaseTask::createSnapshot(const IFileContainer *container, Snapshot::Container::size_type reserver)
+Snapshot ScanFilesImplementation::createSnapshot(const IFileContainer *container, Snapshot::Container::size_type reserver)
 {
 	return Snapshot(container, reserver);
 }
 
-void ScanFilesBaseTask::scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const
+void ScanFilesImplementation::scan(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());
 
@@ -36,7 +35,7 @@ void ScanFilesBaseTask::scan(Snapshot &snapshot, NodeItem *item, const QString &
 		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
 }
 
-void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile Flags &aborted) const
+void ScanFilesImplementation::scanSoft(Snapshot &snapshot, NodeItem *item, const QString &file, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());
 
@@ -46,7 +45,7 @@ void ScanFilesBaseTask::scanSoft(Snapshot &snapshot, NodeItem *item, const QStri
 		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
 }
 
-void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) const
+void ScanFilesImplementation::scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const
 {
 	DIR *dir;
 
@@ -71,5 +70,15 @@ void ScanFilesBaseTask::scan(InfoListItem *root, const volatile Flags &aborted) 
 		closedir(dir);
 	}
 }
+
+
+ScanFilesBaseTask::ScanFilesBaseTask(TasksNode *receiver) :
+	FilesBaseTask(receiver)
+{}
+
+
+ScanFilesExtendedBaseTask::ScanFilesExtendedBaseTask(TasksNode *receiver, ICopyControl::Holder &destination) :
+	FilesExtendedBaseTask(receiver, destination)
+{}
 
 FILE_SYSTEM_NS_END

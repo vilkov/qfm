@@ -87,7 +87,7 @@ QString FolderNodeBase::location(const QString &fileName) const
 
 ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 {
-	return new CopyControl(m_container->location());
+	return new CopyControl(const_cast<FolderNodeBase *>(this), m_container->location());
 }
 
 void FolderNodeBase::scanForSize(const TasksItemList &entries)
@@ -98,7 +98,7 @@ void FolderNodeBase::scanForSize(const TasksItemList &entries)
 
 void FolderNodeBase::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
 {
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, m_container.data(), entries, destination, move));
+	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, destination, entries, move));
 	addTask(task.take(), entries);
 }
 
@@ -108,16 +108,16 @@ void FolderNodeBase::scanForRemove(const TasksItemList &entries)
 	addTask(task.take(), entries);
 }
 
-void FolderNodeBase::performCopy(BaseTask *oldTask, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move)
+void FolderNodeBase::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
 	if (destination->isPhysical() && move)
 	{
-		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, snapshot, destination));
+		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
 		resetTask(task.take(), oldTask);
 	}
 	else
 	{
-		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, snapshot, destination, move));
+		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
 		resetTask(task.take(), oldTask);
 	}
 }
@@ -171,10 +171,7 @@ void FolderNodeBase::scanForCopy(const BaseTask::Event *e)
 	Event event = static_cast<Event>(e);
 
 	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
-	{
-		IFileContainer::Holder destination(const_cast<NotConstEvent>(event)->destination.take());
-		performCopy(event->task, event->snapshot, destination, event->move);
-	}
+		performCopy(event->task, event->snapshot, const_cast<NotConstEvent>(event)->destination, event->move);
 	else
 		removeAllTaskLinks(event->task);
 }

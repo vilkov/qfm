@@ -7,8 +7,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformMoveTask::PerformMoveTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination) :
-	PerformCopyTask(receiver, snapshot, destination, true)
+PerformMoveTask::PerformMoveTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot) :
+	PerformCopyTask(receiver, destination, snapshot, true)
 {}
 
 void PerformMoveTask::copyFile(const IFileContainer *destination, const IFileContainer *source, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)

@@ -54,12 +54,12 @@ void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 	m_tabWidget.setTabText(m_tabWidget.indexOf(widget), fileName);
 }
 
-void FoldersView::openInNewTab(FileSystem::INode *root, const QString &absoluteFilePath, const QList<qint32> &geometry)
+void FoldersView::openInNewTab(FileSystem::INode *node, const QModelIndex &index, const QList<qint32> &geometry)
 {
 	DirectoryView *widget;
 	m_doNotRefreshTab = true;
 	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget = new DirectoryView(this), QString()));
-	widget->setupModel(root, absoluteFilePath, geometry);
+	widget->setupModel(node, index, geometry);
 	widget->refresh();
 	widget->setFocus();
 }

@@ -124,14 +124,6 @@ QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
-IFileInfo *IdmNodeQueryResults::info(const QModelIndex &idx) const
-{
-	if (static_cast<QueryResultItem *>(idx.internalPointer())->isPath())
-		return static_cast<QueryResultPathItem *>(idx.internalPointer());
-	else
-		return NULL;
-}
-
 ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 {
 	QModelIndex index = view->currentIndex();
@@ -143,10 +135,11 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 		if (item->property().entity->type() == Database::Path)
 			if (item->size() == 0)
 				return new IdmQueryResultsCopyControl(
+						const_cast<IdmNodeQueryResults *>(this),
 						m_container,
 						static_cast<QueryResultRootItem *>(item->parent())->value(),
 						item->property(),
-						const_cast<IdmNodeQueryResults*>(this),
+						const_cast<IdmNodeQueryResults *>(this),
 						index);
 			else
 			{

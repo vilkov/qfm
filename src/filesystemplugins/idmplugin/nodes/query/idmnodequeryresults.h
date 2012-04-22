@@ -30,7 +30,6 @@ public:
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 	/* IFileOperations */
-	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
 	virtual void createFile(const QModelIndex &index, INodeView *view);

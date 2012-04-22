@@ -64,15 +64,10 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 	return QVariant();
 }
 
-IFileInfo *IdmRootNode::info(const QModelIndex &idx) const
-{
-	return NULL;
-}
-
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-		return new IdmCopyControl(m_container, m_container.container(), entity);
+		return new IdmCopyControl(const_cast<IdmRootNode *>(this), m_container, m_container.container(), entity);
 	else
 		return NULL;
 }

@@ -24,7 +24,7 @@ public:
 	const IFileContainer *container() const { return m_data->m_container; }
 
 protected:
-	friend class ScanFilesBaseTask;
+	friend class ScanFilesImplementation;
 
 	Snapshot();
 	Snapshot(const IFileContainer *container);

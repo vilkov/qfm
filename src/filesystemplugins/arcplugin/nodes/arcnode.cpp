@@ -144,16 +144,16 @@ void ArcNode::copy(const INodeView *source, INodeView *destination)
 
 	if (index.isValid())
 	{
-		ICopyControl::Holder control(destination->node()->createControl(destination));
-
-		if (control)
-		{
-			ArcNodeItem *item = static_cast<ArcNodeItem *>(index.internalPointer());
-
-			item->lock(tr("Extracting..."));
-			updateFirstColumn(item);
+//		ICopyControl::Holder control(destination->node()->createControl(destination));
+//
+//		if (control)
+//		{
+//			ArcNodeItem *item = static_cast<ArcNodeItem *>(index.internalPointer());
+//
+//			item->lock(tr("Extracting..."));
+//			updateFirstColumn(item);
 //			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
-		}
+//		}
 	}
 }
 

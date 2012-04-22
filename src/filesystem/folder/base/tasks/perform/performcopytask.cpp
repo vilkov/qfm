@@ -3,15 +3,15 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move) :
-	PerformCopyBaseTask(receiver, snapshot, destination),
+PerformCopyTask::PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
+	PerformCopyBaseTask(receiver, destination, snapshot),
 	m_move(move)
 {}
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	Snapshot snapshot = copy(aborted);
-	postEvent(new Event(this, aborted, snapshot, destination(), m_move));
+	postEvent(new Event(this, destination(), aborted, snapshot, m_move));
 }
 
 void PerformCopyTask::copyFile(const IFileContainer *destination, const IFileContainer *source, InfoItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)

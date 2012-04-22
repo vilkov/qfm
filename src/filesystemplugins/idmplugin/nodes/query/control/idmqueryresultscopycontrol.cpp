@@ -5,8 +5,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
-	CopyControl(container.container()->location()),
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(INode *node, const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
+	CopyControl(node, container.container()->location()),
 	m_container(container),
 	m_value(value),
 	m_property(property),

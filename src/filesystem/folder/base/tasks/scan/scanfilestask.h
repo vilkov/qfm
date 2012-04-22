@@ -22,6 +22,20 @@ private:
 	TasksNode::TasksItemList m_files;
 };
 
+
+class ScanFilesExtendedTask : public ScanFilesExtendedBaseTask
+{
+public:
+	ScanFilesExtendedTask(TasksNode *receiver, ICopyControl::Holder &destination, const TasksNode::TasksItemList &files);
+
+protected:
+	Snapshot scan(const volatile Flags &aborted);
+
+private:
+	Snapshot m_snapshot;
+	TasksNode::TasksItemList m_files;
+};
+
 FILE_SYSTEM_NS_END
 
 #endif /* SCANFILESTASK_H_ */

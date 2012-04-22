@@ -74,6 +74,14 @@ void TasksNode::addTask(BaseTask *task, const TasksItemList &items)
 	Application::taskPool()->handle(task);
 }
 
+void TasksNode::addTask(ExtendedBaseTask *task, const TasksItemList &items)
+{
+	m_tasks.add(task, items);
+	addLink();
+//	static_cast<const ExtendedBaseTask *>(task)->destination()->node()->addLink();
+	Application::taskPool()->handle(task);
+}
+
 void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask)
 {
 	m_tasks.resetTask(task, oldTask);
@@ -83,6 +91,13 @@ void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask)
 void TasksNode::handleTask(BaseTask *task)
 {
 	addLink();
+	Application::taskPool()->handle(task);
+}
+
+void TasksNode::handleTask(ExtendedBaseTask *task)
+{
+	addLink();
+//	static_cast<const ExtendedBaseTask *>(task)->destination()->node()->addLink();
 	Application::taskPool()->handle(task);
 }
 

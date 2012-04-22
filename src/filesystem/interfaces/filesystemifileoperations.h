@@ -8,8 +8,8 @@
 
 
 FILE_SYSTEM_NS_BEGIN
-
 class INode;
+
 
 class IFileOperations
 {
@@ -17,7 +17,6 @@ public:
 	virtual ~IFileOperations();
 
 	virtual ICopyControl *createControl(INodeView *view) const = 0;
-
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void createFile(const QModelIndex &index, INodeView *view) = 0;
 	virtual void createDirectory(const QModelIndex &index, INodeView *view) = 0;

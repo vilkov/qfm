@@ -27,6 +27,8 @@ public:
     /* INode */
     virtual void refresh();
 	virtual QString title() const;
+
+	/* IFileLocation */
 	virtual QString location() const;
 	virtual QString location(const QString &fileName) const;
 
@@ -48,7 +50,7 @@ protected:
 	void scanForSize(const TasksItemList &entries);
 	void scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move);
 	void scanForRemove(const TasksItemList &entries);
-	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, IFileContainer::Holder &destination, bool move);
+	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, ICopyControl::Holder &destination, bool move);
 	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
 
 protected:

@@ -27,7 +27,7 @@ public:
 	size_type indexOf(value_type item) const { return m_items.indexOf(item); }
 
 protected:
-	friend class ScanFilesBaseTask;
+	friend class ScanFilesImplementation;
 
 	const value_type &last() const { return m_items.last(); }
 	value_type &last() { return m_items.last(); }

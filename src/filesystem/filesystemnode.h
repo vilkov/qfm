@@ -27,6 +27,7 @@ public:
 	virtual void viewClosed(INodeView *nodeView);
 	virtual ::History::Entry *viewParent(INodeView *nodeView);
 	virtual ::History::Entry *viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
+	virtual ::History::Entry *viewInNewTab(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
 	virtual ::History::Entry *viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins);
 	virtual void viewHistory(INodeView *nodeView, ::History::Entry *entry);
 
@@ -51,9 +52,9 @@ protected:
 private:
 	friend class TasksNode;
 	friend class HistoryEntry;
-	void addLink();
-	void addLinks(qint32 count);
-	void removeLink();
+	virtual void addLink();
+	virtual void addLinks(qint32 count);
+	virtual void removeLink();
 
 private:
 	class HistoryEntry : public ::History::Entry

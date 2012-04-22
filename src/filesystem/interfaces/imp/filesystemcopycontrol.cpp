@@ -6,7 +6,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-CopyControl::CopyControl(const QString &path) :
+CopyControl::CopyControl(INode *node, const QString &path) :
+	m_node(node),
 	m_container(path)
 {}
 
@@ -58,6 +59,11 @@ IFileAccessor *CopyControl::open(const QString &fileName, int mode, QString &err
 IFileContainer *CopyControl::open(const QString &fileName, bool create, QString &error) const
 {
 	return m_container.open(fileName, create, error);
+}
+
+INode *CopyControl::node() const
+{
+	return m_node;
 }
 
 bool CopyControl::start(const Snapshot::Files &files, bool move)

@@ -37,11 +37,6 @@ RootNode::~RootNode()
 	Q_ASSERT_X(rootNode == NULL, "RootNode::~RootNode", "Bad links counting!");
 }
 
-IFileInfo *RootNode::info(const QModelIndex &idx) const
-{
-	return NULL;
-}
-
 ICopyControl *RootNode::createControl(INodeView *view) const
 {
 	return NULL;

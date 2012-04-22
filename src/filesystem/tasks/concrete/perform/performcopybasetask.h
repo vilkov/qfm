@@ -2,32 +2,30 @@
 #define PERFORMCOPYBASETASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "../filesystemfilesbasetask.h"
+#include "../filesystemfilesextendedbasetask.h"
 #include "../../tools/taskprogress.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class PerformCopyBaseTask : public FilesBaseTask
+class PerformCopyBaseTask : public FilesExtendedBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
-	class Event : public FilesBaseTask::Event
+	class Event : public FilesExtendedBaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, Type type, bool canceled, const Snapshot &snapshot, IFileContainer::Holder &destination, bool move) :
-			FilesBaseTask::Event(task, type, canceled, snapshot),
-			destination(destination.take()),
+		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
+			FilesExtendedBaseTask::Event(task, type, destination, canceled, snapshot),
 			move(move)
 		{}
 
-		IFileContainer::Holder destination;
 		bool move;
 	};
 
 public:
-	PerformCopyBaseTask(TasksNode *receiver, const Snapshot &snapshot, IFileContainer::Holder &destination);
+	PerformCopyBaseTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
 
 protected:
 	Snapshot copy(const volatile Flags &aborted);
@@ -40,9 +38,6 @@ protected:
 	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
 
 protected:
-	IFileContainer::Holder &destination() { return m_destination; }
-
-protected:
 	bool m_skipAllIfNotCreate;
 	bool m_skipAllIfNotCopy;
 	bool m_doNotOverwriteAll;
@@ -52,7 +47,6 @@ protected:
 
 private:
 	Snapshot m_snapshot;
-	IFileContainer::Holder m_destination;
 };
 
 FILE_SYSTEM_NS_END

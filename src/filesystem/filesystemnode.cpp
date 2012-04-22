@@ -43,6 +43,28 @@ void Node::viewClosed(INodeView *nodeView)
 	return NULL;
 }
 
+::History::Entry *Node::viewInNewTab(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
+{
+	Q_ASSERT(nodeView->node() == NULL);
+	QModelIndex selected;
+
+	if (Node *node = viewChild(idx, plugins, selected))
+	{
+		/* XXX: Add 2 links because of HistoryEntry */
+
+		if (node == parentNode())
+			node->viewThis(nodeView, m_parentEntryIndex, 2);
+		else
+			node->viewThis(nodeView, selected, 2);
+
+		node->refresh();
+
+		return new HistoryEntry(node);
+	}
+
+	return new HistoryEntry(this);
+}
+
 ::History::Entry *Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
 {
 	Path path(filePath);

@@ -4,11 +4,6 @@
 
 MODELS_TREE_NS_BEGIN
 
-Model::Model(const Container &conteiner, QObject *parent) :
-	QAbstractItemModel(parent),
-	m_conteiner(conteiner)
-{}
-
 int Model::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
@@ -62,6 +57,14 @@ QModelIndex Model::parent(const QModelIndex &child) const
 
     return QModelIndex();
 }
+
+Model::Container::~Container()
+{}
+
+Model::Model(const Container &conteiner, QObject *parent) :
+	QAbstractItemModel(parent),
+	m_conteiner(conteiner)
+{}
 
 QModelIndex Model::index(Item *item) const
 {

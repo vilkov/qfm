@@ -113,26 +113,6 @@ QString Info::operator-(const Info &o) const
 	return current.toString();
 }
 
-FileTypeId Info::id() const
-{
-	return m_info.type.id;
-}
-
-QIcon Info::icon() const
-{
-	return m_info.type.icon;
-}
-
-QString Info::name() const
-{
-	return m_info.type.name;
-}
-
-QString Info::description() const
-{
-	return m_info.type.descritpion;
-}
-
 bool Info::isDir() const
 {
 	return m_info.isDir;
@@ -192,6 +172,11 @@ QString Info::fileName() const
 //#endif
 //}
 
+const IFileType *Info::fileType() const
+{
+	return this;
+}
+
 QDateTime Info::lastModified() const
 {
 	return m_info.lastModified;
@@ -200,6 +185,26 @@ QDateTime Info::lastModified() const
 int Info::permissions() const
 {
 	return m_info.permissions;
+}
+
+FileTypeId Info::id() const
+{
+	return m_info.type.id;
+}
+
+QIcon Info::icon() const
+{
+	return m_info.type.icon;
+}
+
+QString Info::name() const
+{
+	return m_info.type.name;
+}
+
+QString Info::description() const
+{
+	return m_info.type.descritpion;
 }
 
 void Info::refresh()

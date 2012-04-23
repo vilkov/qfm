@@ -9,7 +9,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class IFileInfo : public IFileType
+class IFileInfo
 {
 public:
 	typedef PScopedPointer<IFileInfo> Holder;
@@ -25,6 +25,7 @@ public:
 	virtual bool isLink() const = 0;
 	virtual size_type fileSize() const = 0;
 	virtual QString fileName() const = 0;
+	virtual const IFileType *fileType() const = 0;
 	virtual QDateTime lastModified() const = 0;
 	virtual int permissions() const = 0;
 };

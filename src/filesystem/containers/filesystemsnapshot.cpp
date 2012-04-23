@@ -3,6 +3,9 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+Snapshot::Snapshot()
+{}
+
 Snapshot::Snapshot(const Files &files) :
 	m_data(files.m_data)
 {}

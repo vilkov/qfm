@@ -18,6 +18,7 @@ public:
 	typedef QMap<QString, Pair>                  Container;
 
 public:
+	Snapshot();
 	Snapshot(const Files &files);
 
 	List list() const;

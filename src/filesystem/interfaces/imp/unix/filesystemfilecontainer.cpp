@@ -128,4 +128,24 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 	return NULL;
 }
 
+const IFileContainerScanner *FileContainer::scanner() const
+{
+	return this;
+}
+
+void FileContainer::scan(Snapshot &snapshot) const
+{
+
+}
+
+void FileContainer::update(Snapshot &snapshot) const
+{
+
+}
+
+void FileContainer::refresh(Snapshot &snapshot) const
+{
+
+}
+
 FILE_SYSTEM_NS_END

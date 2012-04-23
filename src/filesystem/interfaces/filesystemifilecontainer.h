@@ -4,6 +4,7 @@
 #include <QtCore/QString>
 #include "filesystemifileinfo.h"
 #include "filesystemifilelocation.h"
+#include "filesystemifilecontainerscanner.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -28,6 +29,8 @@ public:
 	virtual IFileContainer *open() const = 0;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const = 0;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const = 0;
+
+	virtual const IFileContainerScanner *scanner() const = 0;
 };
 
 FILE_SYSTEM_NS_END

@@ -6,7 +6,7 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileContainer : public IFileContainer
+class FileContainer : public IFileContainer, public IFileContainerScanner
 {
 public:
 	FileContainer(const QString &path);
@@ -27,6 +27,13 @@ public:
 	virtual IFileContainer *open() const;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
+
+	virtual const IFileContainerScanner *scanner() const;
+
+	/* IFileContainerScanner */
+	virtual void scan(Snapshot &snapshot) const;
+	virtual void update(Snapshot &snapshot) const;
+	virtual void refresh(Snapshot &snapshot) const;
 
 protected:
 	friend class CopyControl;

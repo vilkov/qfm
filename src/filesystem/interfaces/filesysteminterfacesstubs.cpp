@@ -7,6 +7,7 @@
 #include "filesystemifilelocation.h"
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
+#include "filesystemifilecontainerscanner.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -36,6 +37,9 @@ IFileOperations::~IFileOperations()
 {}
 
 IFileNavigation::~IFileNavigation()
+{}
+
+IFileContainerScanner::~IFileContainerScanner()
 {}
 
 FILE_SYSTEM_NS_END

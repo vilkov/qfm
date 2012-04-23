@@ -1,6 +1,7 @@
 #include "filesysteminode.h"
 #include "filesystemiplugin.h"
 #include "filesysteminodeview.h"
+#include "filesystemifileinfo.h"
 #include "filesystemifiletype.h"
 #include "filesystemifileaccessor.h"
 #include "filesystemifilelocation.h"
@@ -17,6 +18,9 @@ IPlugin::~IPlugin()
 {}
 
 INodeView::~INodeView()
+{}
+
+IFileInfo::~IFileInfo()
 {}
 
 IFileType::~IFileType()

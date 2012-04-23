@@ -20,6 +20,8 @@ public:
     };
 
 public:
+    virtual ~IFileInfo();
+
 	virtual bool isDir() const = 0;
 	virtual bool isFile() const = 0;
 	virtual bool isLink() const = 0;

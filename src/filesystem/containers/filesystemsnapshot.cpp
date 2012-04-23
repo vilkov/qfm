@@ -3,16 +3,8 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-Snapshot::Snapshot() :
-	m_data()
-{}
-
-Snapshot::Snapshot(const IFileContainer *container) :
-	m_data(new Data(container))
-{}
-
-Snapshot::Snapshot(const IFileContainer *container, Container::size_type reserver) :
-	m_data(new Data(container, reserver))
+Snapshot::Snapshot(const Files &files) :
+	m_data(files.m_data)
 {}
 
 Snapshot::Data::Data(const IFileContainer *container) :
@@ -20,17 +12,10 @@ Snapshot::Data::Data(const IFileContainer *container) :
 	m_container(container)
 {}
 
-Snapshot::Data::Data(const IFileContainer *container, Container::size_type reserver) :
-	totalSize(0),
-	m_container(container)
-{
-	list.reserve(reserver);
-}
-
 Snapshot::Data::~Data()
 {
-	for (List::size_type i = 0, size = list.size(); i < size; ++i)
-		delete list.at(i).second;
+	for (Container::iterator it = map.begin(), end = map.end(); it != end; it = map.erase(it))
+		delete (*it).second;
 }
 
 FILE_SYSTEM_NS_END

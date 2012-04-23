@@ -11,33 +11,95 @@ FILE_SYSTEM_NS_BEGIN
 class Snapshot
 {
 public:
+	class List;
+	class Files;
+
 	typedef QPair<NodeItem *, WrappedNodeItem *> Pair;
 	typedef QMap<QString, Pair>                  Container;
 
 public:
-	Snapshot(const IFileContainer *container);
+	Snapshot(const Files &files);
 
-	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
-	const IFileContainer *container() const { return m_data->m_container; }
+	NodeItem *exists(const QString &fileName) const
+	{
+		return m_data->map.value(fileName).first;
+	}
 
-	NodeItem *exists(const QString &fileName) const { return m_data->list.value(fileName).first; }
+	void insert(const QString &fileName, WrappedNodeItem *item) const
+	{
+		Pair &pair = m_data->map[fileName];
+		delete pair.second;
+		pair.second = item;
+		m_data->totalSize += item->totalSize();
+	}
 
-//	void push_back(NodeItem *item, InfoItem *info) { m_data->list.push_back(Container::value_type(item, info)); m_data->totalSize += info->totalSize(); }
-//	void remove(Container::size_type index) { InfoItem *info = m_data->list.takeAt(index).second; m_data->totalSize -= info->totalSize(); delete info; }
+	void remove(const QString &fileName)
+	{
+		Q_ASSERT(m_data->map.value(fileName).second);
+		Pair pair = m_data->map.take(fileName);
+		m_data->totalSize -= pair.second->totalSize();
+		delete pair.second;
+	}
 
 private:
+	friend class Files;
+	friend class Update;
+
 	struct Data : public QSharedData
 	{
 		Data(const IFileContainer *container);
-		Data(const IFileContainer *container, Container::size_type reserver);
 		~Data();
 
-		Container list;
+		Container map;
 		IFileInfo::size_type totalSize;
 		const IFileContainer *m_container;
 	};
 
 private:
+	QExplicitlySharedDataPointer<Data> m_data;
+};
+
+
+class Snapshot::List
+{
+public:
+	typedef QList<Pair>         Container;
+	typedef Container::iterator iterator;
+
+protected:
+	List(const QExplicitlySharedDataPointer<Data> &data) :
+		m_data(data),
+		m_list(data->map.values())
+	{}
+
+	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
+	const IFileContainer *container() const { return m_data->m_container; }
+
+	bool isAdded(iterator i) const { return (*i).first == NULL; }
+	bool isUpdated(iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
+	bool isRemoved(iterator i) const { return (*i).second == NULL; }
+
+	iterator begin() { return m_list.begin(); }
+	iterator end() { return m_list.end(); }
+	iterator erase(iterator i) { return m_list.erase(i); }
+
+private:
+	QExplicitlySharedDataPointer<Data> m_data;
+	Container m_list;
+};
+
+
+class Snapshot::Files
+{
+public:
+	Files(const IFileContainer *container) :
+		m_data(new Data(container))
+	{}
+
+	void add(const QString &fileName, NodeItem *item) { m_data->map[fileName].first = item; }
+
+private:
+	friend class Snapshot;
 	QExplicitlySharedDataPointer<Data> m_data;
 };
 

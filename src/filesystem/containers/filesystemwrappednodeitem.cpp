@@ -3,6 +3,13 @@
 
 FILE_SYSTEM_NS_BEGIN
 
+WrappedNodeItem::WrappedNodeItem() :
+	m_container(NULL),
+	m_totalSize(0),
+	m_item(NULL),
+	m_removed(false)
+{}
+
 WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, NodeItem *item) :
 	m_container(container),
 	m_totalSize(0),

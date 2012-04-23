@@ -16,8 +16,11 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
+	WrappedNodeItem();
 	WrappedNodeItem(const IFileContainer *container, NodeItem *item);
 	~WrappedNodeItem();
+
+	bool isValid() const { return m_container != NULL; }
 
 	size_type size() const { return m_items.size(); }
 	WrappedNodeItem *at(size_type index) const { return m_items.at(index); }
@@ -26,6 +29,8 @@ public:
 	IFileInfo::size_type totalSize() const { return m_totalSize; }
 	NodeItem *item() const { return m_item; }
 	bool isRemoved() const { return m_removed; }
+
+	NodeItem *take() { NodeItem *res = m_item; m_item = NULL; return res; }
 
 private:
 	const IFileContainer *m_container;

@@ -1,12 +1,12 @@
 #ifndef FILESYSTEMINVALIDINFO_H_
 #define FILESYSTEMINVALIDINFO_H_
 
-#include "../filesystemifileinfo.h"
+#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class InvalidInfo : public IFileInfo
+class InvalidInfo : public IFileInfo, public IFileType
 {
 public:
 	InvalidInfo();

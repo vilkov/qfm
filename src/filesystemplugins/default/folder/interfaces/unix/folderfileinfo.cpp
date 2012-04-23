@@ -1,6 +1,6 @@
-#include "../filesystemfileinfo.h"
-#include "../filesystemfileaccessor.h"
-#include "../../../../application.h"
+#include "../folderfileinfo.h"
+#include "../folderfileaccessor.h"
+#include "../../../../../application.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -9,7 +9,7 @@
 #include <errno.h>
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 static uint userId = getuid();
 static uint groupId = getgid();
@@ -240,4 +240,4 @@ void Info::refresh()
 			}
 }
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

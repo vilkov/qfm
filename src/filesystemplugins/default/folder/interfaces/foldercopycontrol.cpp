@@ -1,6 +1,7 @@
-#include "filesystemcopycontrol.h"
-#include "../../tools/filesystemcommontools.h"
-#include "../../../application.h"
+#include "foldercopycontrol.h"
+#include "../../../../filesystem/tools/filesystemcommontools.h"
+#include "../../../../application.h"
+
 #include <QtGui/QMessageBox>
 
 

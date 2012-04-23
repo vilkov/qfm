@@ -1,11 +1,12 @@
-#ifndef FILESYSTEMFILEINFO_H_
-#define FILESYSTEMFILEINFO_H_
+#ifndef FOLDERFILEINFO_H_
+#define FOLDERFILEINFO_H_
 
-#include "../filesystemifileinfo.h"
-#include "../../filetypeinfo/filetypeinfo.h"
+#include "../../default_ns.h"
+#include "../../../../filesystem/filetypeinfo/filetypeinfo.h"
+#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class Info : public IFileInfo, public IFileType
 {
@@ -81,6 +82,6 @@ private:
     FileInfo m_info;
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMFILEINFO_H_ */
+#endif /* FOLDERFILEINFO_H_ */

@@ -1,15 +1,19 @@
-#ifndef FILESYSTEMFILECONTAINER_H_
-#define FILESYSTEMFILECONTAINER_H_
+#ifndef FOLDERCOPYINFO_H_
+#define FOLDERCOPYINFO_H_
 
-#include "../filesystemifilecontainer.h"
+#include <QtCore/QCoreApplication>
+#include "folderfilecontainer.h"
+#include "../../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class FileContainer : public IFileContainer, public IFileContainerScanner
+class CopyControl : public ICopyControl
 {
+	Q_DECLARE_TR_FUNCTIONS(CopyControl)
+
 public:
-	FileContainer(const QString &path);
+	CopyControl(INode *node, const QString &path);
 
 	/* IFileLocation */
 	virtual QString location() const;
@@ -28,18 +32,17 @@ public:
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
-	virtual const IFileContainerScanner *scanner() const;
+	/* ICopyControl */
+	virtual INode *node() const;
+	virtual bool start(const Snapshot::Files &files, bool move);
+	virtual void done(bool error);
+	virtual void canceled();
 
-	/* IFileContainerScanner */
-	virtual void scan(Snapshot &snapshot) const;
-	virtual void update(Snapshot &snapshot) const;
-	virtual void refresh(Snapshot &snapshot) const;
-
-protected:
-	friend class CopyControl;
-	QString m_path;
+private:
+	INode *m_node;
+	FileContainer m_container;
 };
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMFILECONTAINER_H_ */
+#endif /* FOLDERCOPYINFO_H_ */

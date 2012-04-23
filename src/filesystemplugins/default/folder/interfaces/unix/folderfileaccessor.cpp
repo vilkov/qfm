@@ -1,4 +1,5 @@
-#include "../filesystemfileaccessor.h"
+#include "../folderfileaccessor.h"
+
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
@@ -8,7 +9,7 @@
 #define UNDEFINED 0
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 static const int open_flags[FileAccesor::Truncate + 1] =
 {
@@ -70,4 +71,4 @@ FileAccesor::size_type FileAccesor::write(const value_type *data, size_type size
 	return ::write(m_file, data, size);
 }
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

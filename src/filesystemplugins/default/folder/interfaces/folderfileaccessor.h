@@ -1,7 +1,8 @@
-#ifndef FILESYSTEMFILEACCESSOR_H_
-#define FILESYSTEMFILEACCESSOR_H_
+#ifndef FOLDERFILEACCESSOR_H_
+#define FOLDERFILEACCESSOR_H_
 
-#include "../filesystemifileaccessor.h"
+#include "../../default_ns.h"
+#include "../../../../filesystem/interfaces/filesystemifileaccessor.h"
 
 #ifdef Q_OS_UNIX
 	typedef int FileDescriptor;
@@ -12,7 +13,7 @@
 #endif
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class FileAccesor : public IFileAccessor
 {
@@ -35,6 +36,6 @@ private:
 	mutable QString m_lastError;
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMFILEACCESSOR_H_ */
+#endif /* FOLDERFILEACCESSOR_H_ */

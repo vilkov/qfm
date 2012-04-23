@@ -7,6 +7,11 @@ Snapshot::Snapshot(const Files &files) :
 	m_data(files.m_data)
 {}
 
+Snapshot::List Snapshot::list() const
+{
+	return List(m_data);
+}
+
 Snapshot::Data::Data(const IFileContainer *container) :
 	totalSize(0),
 	m_container(container)

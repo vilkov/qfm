@@ -20,6 +20,8 @@ public:
 public:
 	Snapshot(const Files &files);
 
+	List list() const;
+
 	NodeItem *exists(const QString &fileName) const
 	{
 		return m_data->map.value(fileName).first;
@@ -63,15 +65,11 @@ private:
 class Snapshot::List
 {
 public:
-	typedef QList<Pair>         Container;
-	typedef Container::iterator iterator;
+	typedef QList<Pair>               Container;
+	typedef Container::iterator       iterator;
+	typedef Container::const_iterator const_iterator;
 
-protected:
-	List(const QExplicitlySharedDataPointer<Data> &data) :
-		m_data(data),
-		m_list(data->map.values())
-	{}
-
+public:
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
 	const IFileContainer *container() const { return m_data->m_container; }
 
@@ -80,8 +78,20 @@ protected:
 	bool isRemoved(iterator i) const { return (*i).second == NULL; }
 
 	iterator begin() { return m_list.begin(); }
+	const_iterator begin() const { return m_list.begin(); }
+
 	iterator end() { return m_list.end(); }
+	const_iterator end() const { return m_list.end(); }
+
 	iterator erase(iterator i) { return m_list.erase(i); }
+
+protected:
+	friend class Snapshot;
+
+	List(const QExplicitlySharedDataPointer<Data> &data) :
+		m_data(data),
+		m_list(data->map.values())
+	{}
 
 private:
 	QExplicitlySharedDataPointer<Data> m_data;

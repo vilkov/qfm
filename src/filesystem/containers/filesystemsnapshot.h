@@ -22,6 +22,7 @@ public:
 	Snapshot(const Files &files);
 
 	List list() const;
+	const IFileContainer *container() const { return m_data->m_container; }
 
 	NodeItem *exists(const QString &fileName) const
 	{

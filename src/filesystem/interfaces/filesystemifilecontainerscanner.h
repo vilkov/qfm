@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMIFILECONTAINERSCANNER_H_
 #define FILESYSTEMIFILECONTAINERSCANNER_H_
 
+#include "../tasks/filesystembasetask.h"
 #include "../containers/filesystemsnapshot.h"
 
 
@@ -11,9 +12,9 @@ class IFileContainerScanner
 public:
 	virtual ~IFileContainerScanner();
 
-	virtual void scan(Snapshot &snapshot) const = 0;
-	virtual void update(Snapshot &snapshot) const = 0;
-	virtual void refresh(Snapshot &snapshot) const = 0;
+	virtual void scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const = 0;
+	virtual void update(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const = 0;
+	virtual void refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const = 0;
 };
 
 FILE_SYSTEM_NS_END

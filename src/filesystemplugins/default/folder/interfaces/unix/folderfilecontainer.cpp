@@ -150,6 +150,19 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 }
 
 void FileContainer::update(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+{}
+
+void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+{
+	Info info(snapshot.container()->location(file), Info::Refresh());
+
+	if (info.isDir())
+		snapshot.push_back(item, new InfoListItem(snapshot.container(), file));
+	else
+		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
+}
+
+void FileContainer::scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const
 {
 	DIR *dir;
 
@@ -173,21 +186,6 @@ void FileContainer::update(Snapshot &snapshot, const volatile BaseTask::Flags &a
 
 		closedir(dir);
 	}
-}
-
-void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
-{
-	Info info(snapshot.container()->location(file), Info::Refresh());
-
-	if (info.isDir())
-		snapshot.push_back(item, new InfoListItem(snapshot.container(), file));
-	else
-		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
-}
-
-void FileContainer::scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const
-{
-
 }
 
 DEFAULT_PLUGIN_NS_END

@@ -1,10 +1,10 @@
-#ifndef FILESYSTEMMODELEVENT_H_
-#define FILESYSTEMMODELEVENT_H_
+#ifndef DEFAULTMODELEVENT_H_
+#define DEFAULTMODELEVENT_H_
 
-#include "../../../tasks/filesystembasetask.h"
+#include "../tasks/defaultfilesbasetask.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 struct ModelEvent
 {
@@ -19,6 +19,6 @@ struct ModelEvent
 	};
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMMODELEVENT_H_ */
+#endif /* DEFAULTMODELEVENT_H_ */

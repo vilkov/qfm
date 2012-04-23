@@ -1,11 +1,12 @@
-#ifndef FILESYSTEMFILESBASETASK_H_
-#define FILESYSTEMFILESBASETASK_H_
+#ifndef DEFAULTFILESBASETASK_H_
+#define DEFAULTFILESBASETASK_H_
 
-#include "containers/filesystemsnapshot.h"
-#include "../filesystembasetask.h"
+#include "../default_ns.h"
+#include "../../../filesystem/tasks/filesystembasetask.h"
+#include "../../../filesystem/containers/filesystemsnapshot.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class FilesBaseTask : public BaseTask
 {
@@ -25,6 +26,6 @@ public:
 	FilesBaseTask(TasksNode *receiver);
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMFILESBASETASK_H_ */
+#endif /* DEFAULTFILESBASETASK_H_ */

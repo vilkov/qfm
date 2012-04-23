@@ -1,8 +1,8 @@
 #ifndef SCANFILESBASETASK_H_
 #define SCANFILESBASETASK_H_
 
-#include "../filesystemfilesbasetask.h"
-#include "../filesystemfilesextendedbasetask.h"
+#include "../defaultfilesbasetask.h"
+#include "../defaultfilesextendedbasetask.h"
 #include "../containers/filesysteminfolistitem.h"
 #include "../../filesystemtasksnode.h"
 

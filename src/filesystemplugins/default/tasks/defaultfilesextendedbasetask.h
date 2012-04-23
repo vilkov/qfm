@@ -1,11 +1,12 @@
-#ifndef FILESYSTEMFILESEXTENDEDBASETASK_H_
-#define FILESYSTEMFILESEXTENDEDBASETASK_H_
+#ifndef DEFAULTFILESEXTENDEDBASETASK_H_
+#define DEFAULTFILESEXTENDEDBASETASK_H_
 
-#include "containers/filesystemsnapshot.h"
-#include "../filesystemextendedbasetask.h"
+#include "../default_ns.h"
+#include "../../../filesystem/tasks/filesystemextendedbasetask.h"
+#include "../../../filesystem/containers/filesystemsnapshot.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class FilesExtendedBaseTask : public ExtendedBaseTask
 {
@@ -29,6 +30,6 @@ public:
 	FilesExtendedBaseTask(TasksNode *receiver, ICopyControl::Holder &destination);
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMFILESEXTENDEDBASETASK_H_ */
+#endif /* DEFAULTFILESEXTENDEDBASETASK_H_ */

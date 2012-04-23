@@ -1,10 +1,10 @@
-#include "filesystemfilesextendedbasetask.h"
+#include "defaultfilesextendedbasetask.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 FilesExtendedBaseTask::FilesExtendedBaseTask(TasksNode *receiver, ICopyControl::Holder &destination) :
 	ExtendedBaseTask(receiver, destination)
 {}
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

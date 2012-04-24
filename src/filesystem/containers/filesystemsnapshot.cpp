@@ -22,7 +22,11 @@ Snapshot::Updates Snapshot::updates()
 	for (Container::iterator it = m_data->map.begin(), end = m_data->map.end(); it != end;)
 		if ((*it).second)
 		{
-			res.push_back((*it));
+			if ((*it).second->isValid())
+				res.push_back((*it));
+			else
+				delete (*it).second;
+
 			it = m_data->map.erase(it);
 		}
 		else

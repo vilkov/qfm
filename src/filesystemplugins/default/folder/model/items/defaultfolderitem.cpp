@@ -1,103 +1,54 @@
-#include "filesystemfolderitem.h"
-#include "../../tools/filesystemcommontools.h"
+#include "defaultfolderitem.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
-FolderItem::FolderItem(const Info &info, Base *parent) :
-	FolderBaseItem(info, parent)
+DefaultFolderItem::DefaultFolderItem(const Info &info, Base *parent) :
+	DefaultNodeItem(parent)
 {}
 
-FolderItem::FolderItem(const Info &info, Node *node, Base *parent) :
-	FolderBaseItem(info, parent)
+DefaultFolderItem::DefaultFolderItem(const Info &info, Node *node, Base *parent) :
+	DefaultNodeItem(node, parent)
+{}
+
+bool DefaultFolderItem::isDir() const
 {
-	setNode(node);
+	return m_info.isDir();
 }
 
-QVariant FolderItem::data(qint32 column, qint32 role) const
+bool DefaultFolderItem::isFile() const
 {
-	switch (column)
-	{
-		case 0:
-		{
-			switch (role)
-			{
-				case Qt::EditRole:
-				case Qt::DisplayRole:
-					return info().fileName();
-				case Qt::DecorationRole:
-					if (isLocked())
-						return lockIcon();
-					else
-						return info().icon();
-				case Qt::TextAlignmentRole:
-					return Qt::AlignLeft;
-				case Qt::ToolTipRole:
-					if (isLocked())
-						return lockReason();
-					else
-						break;
-			}
-			break;
-		}
-		case 1:
-		{
-			switch (role)
-			{
-				case Qt::EditRole:
-				case Qt::DisplayRole:
-					if (info().isFile())
-						return Tools::humanReadableSize(info().fileSize());
-					else
-						if (m_totalSize.isNull())
-							return info().name();
-						else
-							return Tools::humanReadableSize(m_totalSize.toULongLong());
-				case Qt::TextAlignmentRole:
-					return Qt::AlignLeft;
-				case Qt::ToolTipRole:
-					return info().name();
-			}
-			break;
-		}
-		case 2:
-		{
-			switch (role)
-			{
-				case Qt::EditRole:
-				case Qt::DisplayRole:
-					return info().lastModified();
-				case Qt::TextAlignmentRole:
-					return Qt::AlignLeft;
-			}
-			break;
-		}
-	}
-
-	return QVariant();
+	return m_info.isFile();
 }
 
-bool FolderItem::isRootItem() const
+bool DefaultFolderItem::isLink() const
 {
-	return false;
+	return m_info.isLink();
 }
 
-void FolderItem::lock(const QString &reason, quint64 totalSize)
+IFileInfo::size_type DefaultFolderItem::fileSize() const
 {
-	m_totalSize = totalSize;
-	FolderBaseItem::lock(reason);
-	start(totalSize);
+	return m_info.fileSize();
 }
 
-void FolderItem::lock(const QString &reason)
+QString DefaultFolderItem::fileName() const
 {
-	FolderBaseItem::lock(reason);
+	return m_info.fileName();
 }
 
-void FolderItem::unlock()
+const IFileType *DefaultFolderItem::fileType() const
 {
-	stop();
-	FolderBaseItem::unlock();
+	return m_info.fileType();
 }
 
-FILE_SYSTEM_NS_END
+QDateTime DefaultFolderItem::lastModified() const
+{
+	return m_info.lastModified();
+}
+
+int DefaultFolderItem::permissions() const
+{
+	return m_info.permissions();
+}
+
+DEFAULT_PLUGIN_NS_END

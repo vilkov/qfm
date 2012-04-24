@@ -17,7 +17,7 @@ public:
 public:
 	virtual INode *node() const = 0;
 
-	virtual bool start(const Snapshot::Files &files, bool move) = 0;
+	virtual bool start(const Snapshot::List &files, bool move) = 0;
 	virtual void done(bool error) = 0;
 	virtual void canceled() = 0;
 };

@@ -28,7 +28,9 @@ public:
 
 	const IFileContainer *container() const { return m_container; }
 	IFileInfo::size_type totalSize() const { return m_totalSize; }
+
 	bool isRemoved() const { return m_removed; }
+	void setRemoved(bool value) { m_removed = value; }
 
 	const IFileInfo::Holder &info() const { return m_info; }
 	IFileInfo::Holder &info() { return m_info; }

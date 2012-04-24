@@ -76,6 +76,8 @@ public:
 	typedef Container::const_iterator const_iterator;
 
 public:
+	bool isEmpty() const { return m_list.isEmpty(); }
+
 	bool isAdded(iterator i) const { return (*i).first == NULL; }
 	bool isUpdated(iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
 	bool isRemoved(iterator i) const { return (*i).second == NULL; }

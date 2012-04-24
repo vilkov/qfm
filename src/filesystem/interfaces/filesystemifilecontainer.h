@@ -2,7 +2,6 @@
 #define FILESYSTEMIFILECONTAINER_H_
 
 #include <QtCore/QString>
-#include "filesystemifileinfo.h"
 #include "filesystemifilelocation.h"
 #include "filesystemifilecontainerscanner.h"
 

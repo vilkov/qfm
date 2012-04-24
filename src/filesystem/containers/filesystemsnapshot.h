@@ -4,6 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QSharedData>
 #include "filesystemwrappednodeitem.h"
+#include "../model/items/filesystemnodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN

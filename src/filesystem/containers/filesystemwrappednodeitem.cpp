@@ -6,11 +6,10 @@ FILE_SYSTEM_NS_BEGIN
 WrappedNodeItem::WrappedNodeItem() :
 	m_container(NULL),
 	m_totalSize(0),
-	m_item(NULL),
 	m_removed(false)
 {}
 
-WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, NodeItem *item) :
+WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, IFileInfo *item) :
 	m_container(container),
 	m_totalSize(0),
 	m_item(item),
@@ -20,7 +19,6 @@ WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, NodeItem *item
 WrappedNodeItem::~WrappedNodeItem()
 {
 	qDeleteAll(m_items);
-	delete m_item;
 }
 
 FILE_SYSTEM_NS_END

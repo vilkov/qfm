@@ -1,10 +1,9 @@
 #ifndef FILESYSTEMIFILECONTAINERSCANNER_H_
 #define FILESYSTEMIFILECONTAINERSCANNER_H_
 
+#include "filesystemifileinfo.h"
 #include "../tasks/filesystembasetask.h"
-#include "../model/items/filesystemnodeitem.h"
 #include "../containers/filesystemsnapshot.h"
-#include "../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -22,8 +21,8 @@ public:
 
 		virtual bool next() = 0;
 		virtual QString fileName() const = 0;
-		virtual NodeItem *create() const = 0;
-		virtual bool isObsolete(const NodeItem *item) const = 0;
+		virtual IFileInfo *create() const = 0;
+		virtual bool isObsolete(const IFileInfo *item) const = 0;
 	};
 
 public:

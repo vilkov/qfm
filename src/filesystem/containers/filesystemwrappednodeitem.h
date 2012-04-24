@@ -2,7 +2,7 @@
 #define FILESYSTEMWRAPPEDNODEITEM_H_
 
 #include <QtCore/QList>
-#include "../model/items/filesystemnodeitem.h"
+#include "../interfaces/filesystemifileinfo.h"
 #include "../interfaces/filesystemifilecontainer.h"
 
 
@@ -18,7 +18,7 @@ public:
 
 public:
 	WrappedNodeItem();
-	WrappedNodeItem(const IFileContainer *container, NodeItem *item);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo *item);
 	~WrappedNodeItem();
 
 	bool isValid() const { return m_container != NULL; }
@@ -28,15 +28,15 @@ public:
 
 	const IFileContainer *container() const { return m_container; }
 	IFileInfo::size_type totalSize() const { return m_totalSize; }
-	NodeItem *item() const { return m_item; }
 	bool isRemoved() const { return m_removed; }
 
-	NodeItem *take() { NodeItem *res = m_item; m_item = NULL; return res; }
+	const IFileInfo::Holder &item() const { return m_item; }
+	IFileInfo::Holder &item() { return m_item; }
 
 private:
 	const IFileContainer *m_container;
 	IFileInfo::size_type m_totalSize;
-	NodeItem *m_item;
+	IFileInfo::Holder m_item;
 	bool m_removed;
 	List m_items;
 };

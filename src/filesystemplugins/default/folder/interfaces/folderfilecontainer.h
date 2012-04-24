@@ -32,8 +32,8 @@ public:
 	virtual const IFileContainerScanner *scanner() const;
 
 	/* IFileContainerScanner */
+	virtual void enumerate(IEnumerator::Holder &enumerator) const;
 	virtual void scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
-	virtual void update(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 	virtual void refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 
 private:

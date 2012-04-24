@@ -42,13 +42,6 @@ public:
 
 public:
 	bool isRoot() const { return m_isRoot; }
-	bool shouldBeUpdatedBy(const Info &other) const
-	{
-		return
-			m_info.lastModified != other.m_info.lastModified ||
-			m_info.size != other.m_info.size ||
-			m_info.type.name.isEmpty();
-	}
 
 private:
 	void refresh();

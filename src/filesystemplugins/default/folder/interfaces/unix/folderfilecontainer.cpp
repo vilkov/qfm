@@ -1,8 +1,11 @@
 #include "../folderfilecontainer.h"
 #include "../folderfileaccessor.h"
 #include "../foldercopycontrol.h"
-#include "../../filesysteminodeview.h"
-#include "../../../tools/filesystemcommontools.h"
+#include "../folderfileinfo.h"
+#include "../../model/items/defaultfolderitem.h"
+
+#include "../../../../../filesystem/interfaces/filesysteminodeview.h"
+#include "../../../../../filesystem/tools/filesystemcommontools.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -13,6 +16,67 @@
 
 
 DEFAULT_PLUGIN_NS_BEGIN
+
+class Enumerator : public IFileContainerScanner::IEnumerator
+{
+public:
+	Enumerator(const QByteArray &path) :
+		m_dir(opendir(path)),
+		m_path(QByteArray(path).append('/'))
+	{}
+
+	virtual ~Enumerator()
+	{
+		closedir(m_dir);
+	}
+
+	virtual bool next()
+	{
+		if (m_dir)
+			while (m_entry = readdir(m_dir))
+				if (m_entry->d_type == DT_DIR)
+				{
+					if (strcmp(m_entry->d_name, ".") != 0 && strcmp(m_entry->d_name, "..") != 0)
+					{
+						m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
+						return true;
+					}
+				}
+				else
+				{
+					m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
+					return true;
+				}
+
+		return false;
+	}
+
+	virtual QString fileName() const
+	{
+		return m_info.fileName();
+	}
+
+	virtual NodeItem *create() const
+	{
+		return new DefaultFolderItem(m_info);
+	}
+
+	virtual bool isObsolete(const NodeItem *item) const
+	{
+		const DefaultNodeItem * item2 = static_cast<const DefaultNodeItem *>(item);
+		return
+			item2->lastModified() != m_info.lastModified() ||
+			item2->fileSize() != m_info.fileSize() ||
+			item2->fileType()->name().isEmpty();
+	}
+
+private:
+	DIR *m_dir;
+	Info m_info;
+	QByteArray m_path;
+	struct dirent *m_entry;
+};
+
 
 FileContainer::FileContainer(const QString &path) :
 	m_path(path)
@@ -133,6 +197,11 @@ const IFileContainerScanner *FileContainer::scanner() const
 	return this;
 }
 
+void FileContainer::enumerate(IEnumerator::Holder &enumerator) const
+{
+	enumerator = new Enumerator(m_path.toUtf8());
+}
+
 void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());
@@ -148,9 +217,6 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 	else
 		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
 }
-
-void FileContainer::update(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
-{}
 
 void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {

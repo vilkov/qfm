@@ -42,4 +42,7 @@ IFileNavigation::~IFileNavigation()
 IFileContainerScanner::~IFileContainerScanner()
 {}
 
+IFileContainerScanner::Enumerator::~Enumerator()
+{}
+
 FILE_SYSTEM_NS_END

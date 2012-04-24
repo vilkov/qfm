@@ -1,5 +1,5 @@
-#ifndef FOLDERFILEINFO_H_
-#define FOLDERFILEINFO_H_
+#ifndef DEFAULTFILEINFO_H_
+#define DEFAULTFILEINFO_H_
 
 #include "../../default_ns.h"
 #include "../../../../filesystem/filetypeinfo/filetypeinfo.h"
@@ -77,4 +77,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* FOLDERFILEINFO_H_ */
+#endif /* DEFAULTFILEINFO_H_ */

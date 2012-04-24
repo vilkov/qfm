@@ -61,6 +61,7 @@ set (PROJECT_GENERATED_FILES_DIR "${PROJECT_BINARY_DIR}/generated")
 
 # Custom modules
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/home/dav/xdg/share/cmake/Modules")
 
 
 # Fix path delimeters

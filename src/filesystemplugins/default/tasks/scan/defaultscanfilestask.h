@@ -8,7 +8,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultScanFilesTask : public FilesBaseTask
+class ScanFilesTask : public FilesBaseTask
 {
 public:
 	class UpdatesEvent : public BaseTask::Event
@@ -25,7 +25,7 @@ public:
 	};
 
 public:
-	DefaultScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
+	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
@@ -36,10 +36,10 @@ private:
 };
 
 
-class DefaultScanFilesExtendedTask : public FilesExtendedBaseTask
+class ScanFilesExtendedTask : public FilesExtendedBaseTask
 {
 public:
-	DefaultScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
+	ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
 
 protected:
 	virtual void run(const volatile Flags &aborted);

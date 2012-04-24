@@ -1,11 +1,10 @@
-#include "../folderfilecontainer.h"
-#include "../folderfileaccessor.h"
-#include "../foldercopycontrol.h"
-#include "../folderfileinfo.h"
-#include "../../model/items/defaultfolderitem.h"
+#include "../defaultfilecontainer.h"
+#include "../defaultfileaccessor.h"
+#include "../defaultcopycontrol.h"
+#include "../defaultfileinfo.h"
 
-#include "../../../../../filesystem/interfaces/filesysteminodeview.h"
-#include "../../../../../filesystem/tools/filesystemcommontools.h"
+#include "../../../../filesystem/interfaces/filesysteminodeview.h"
+#include "../../../../filesystem/tools/filesystemcommontools.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -146,6 +145,21 @@ bool FileContainer::rename(const QString &oldName, const QString &newName, QStri
 		error = QString::fromUtf8(::strerror(errno));
 		return false;
 	}
+}
+
+bool FileContainer::move(const IFileContainer *source, const QString &fileName, QString &error) const
+{
+	QByteArray destFileName = location(fileName).toUtf8();
+	QByteArray sourceFileName = source->location(fileName).toUtf8();
+
+	if (::link(sourceFileName, destFileName) == 0)
+		return true;
+	else
+		if (errno == EEXIST && ::unlink(destFileName) == 0 && ::link(sourceFileName, destFileName) == 0)
+			return true;
+
+	error = QString::fromUtf8(::strerror(errno));
+	return false;
 }
 
 IFileContainer *FileContainer::open() const

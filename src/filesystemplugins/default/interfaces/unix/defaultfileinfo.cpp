@@ -1,6 +1,6 @@
-#include "../folderfileinfo.h"
-#include "../folderfileaccessor.h"
-#include "../../../../../application.h"
+#include "../defaultfileinfo.h"
+#include "../defaultfileaccessor.h"
+#include "../../../../application.h"
 
 #include <sys/stat.h>
 #include <string.h>

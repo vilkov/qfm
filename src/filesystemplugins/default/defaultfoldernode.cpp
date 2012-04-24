@@ -71,7 +71,7 @@ private:
 static GlobalActions globalActions;
 
 
-DefaultFolderNode::DefaultFolderNode(IFileContainer::Holder &container, Node *parent) :
+FolderNode::FolderNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_container(container.take()),
 	m_items(m_itemsContainer.m_list),
@@ -85,17 +85,17 @@ DefaultFolderNode::DefaultFolderNode(IFileContainer::Holder &container, Node *pa
 	m_proxy.setSourceModel(this);
 }
 
-DefaultFolderNode::~DefaultFolderNode()
+FolderNode::~FolderNode()
 {
 	globalActions.release();
 }
 
-int DefaultFolderNode::columnCount(const QModelIndex &parent) const
+int FolderNode::columnCount(const QModelIndex &parent) const
 {
 	return 3;
 }
 
-QVariant DefaultFolderNode::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant FolderNode::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 		switch (section)
@@ -120,7 +120,7 @@ QVariant DefaultFolderNode::headerData(int section, Qt::Orientation orientation,
 	return QVariant();
 }
 
-bool DefaultFolderNode::event(QEvent *e)
+bool FolderNode::event(QEvent *e)
 {
 	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
@@ -167,54 +167,54 @@ bool DefaultFolderNode::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
-void DefaultFolderNode::refresh()
+void FolderNode::refresh()
 {
 	if (!isUpdating())
 		updateFiles();
 }
 
-QString DefaultFolderNode::title() const
+QString FolderNode::title() const
 {
 	QString res = m_container->location();
 	return res.mid(res.lastIndexOf(QChar('/')) + 1);
 }
 
-QAbstractItemModel *DefaultFolderNode::model() const
+QAbstractItemModel *FolderNode::model() const
 {
-	return const_cast<DefaultFolderNode *>(&m_proxy);
+	return const_cast<FolderNode *>(&m_proxy);
 }
 
-QAbstractItemDelegate *DefaultFolderNode::delegate() const
+QAbstractItemDelegate *FolderNode::delegate() const
 {
-	return const_cast<DefaultFolderNode *>(&m_delegate);
+	return const_cast<FolderNode *>(&m_delegate);
 }
 
-const INodeView::MenuActionList &DefaultFolderNode::actions() const
+const INodeView::MenuActionList &FolderNode::actions() const
 {
 	return m_menuActions;
 }
 
-::History::Entry *DefaultFolderNode::menuAction(QAction *action, INodeView *view)
+::History::Entry *FolderNode::menuAction(QAction *action, INodeView *view)
 {
 	return NULL;
 }
 
-QString DefaultFolderNode::location() const
+QString FolderNode::location() const
 {
 	return m_container->location();
 }
 
-QString DefaultFolderNode::location(const QString &fileName) const
+QString FolderNode::location(const QString &fileName) const
 {
 	return m_container->location(fileName);
 }
 
-ICopyControl *DefaultFolderNode::createControl(INodeView *view) const
+ICopyControl *FolderNode::createControl(INodeView *view) const
 {
-	return new CopyControl(const_cast<DefaultFolderNode *>(this), m_container->location());
+	return new CopyControl(const_cast<FolderNode *>(this), m_container->location());
 }
 
-void DefaultFolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
+void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
 	typedef QSet<FolderBaseItem *>                                ItemsSet;
 	typedef QList<FolderBaseItem *>                               ItemsList;
@@ -364,12 +364,12 @@ void DefaultFolderNode::contextMenu(const QModelIndexList &list, INodeView *view
 	menu.clear();
 }
 
-void DefaultFolderNode::createFile(const QModelIndex &index, INodeView *view)
+void FolderNode::createFile(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::createDirectory(const QModelIndex &index, INodeView *view)
+void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 {
 	QModelIndex idx = m_proxy.mapToSource(index);
 
@@ -399,52 +399,52 @@ void DefaultFolderNode::createDirectory(const QModelIndex &index, INodeView *vie
 	}
 }
 
-void DefaultFolderNode::rename(const QModelIndex &index, INodeView *view)
+void FolderNode::rename(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::rename(const QModelIndexList &list, INodeView *view)
+void FolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::remove(const QModelIndexList &list, INodeView *view)
+void FolderNode::remove(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::cancel(const QModelIndexList &list, INodeView *view)
+void FolderNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
+void FolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
+void FolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::copy(const INodeView *source, INodeView *destination)
+void FolderNode::copy(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void DefaultFolderNode::move(const INodeView *source, INodeView *destination)
+void FolderNode::move(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void DefaultFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+void FolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void DefaultFolderNode::updateFiles()
+void FolderNode::updateFiles()
 {
 	if (isVisible())
 	{
@@ -455,7 +455,7 @@ void DefaultFolderNode::updateFiles()
 	}
 }
 
-void DefaultFolderNode::updateFiles(const BaseTask::Event *e)
+void FolderNode::updateFiles(const BaseTask::Event *e)
 {
 	typedef const UpdateFilesTask::Event * Event;
 	Event event = static_cast<Event>(e);
@@ -470,7 +470,7 @@ void DefaultFolderNode::updateFiles(const BaseTask::Event *e)
 	}
 }
 
-void DefaultFolderNode::scanForSize(const BaseTask::Event *e)
+void FolderNode::scanForSize(const BaseTask::Event *e)
 {
 	typedef ScanFilesForSizeTask::Event * NotConstEvent;
 	typedef const ScanFilesForSizeTask::Event * Event;
@@ -480,7 +480,7 @@ void DefaultFolderNode::scanForSize(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-void DefaultFolderNode::scanForCopy(const BaseTask::Event *e)
+void FolderNode::scanForCopy(const BaseTask::Event *e)
 {
 	typedef ScanFilesForCopyTask::Event * NotConstEvent;
 	typedef const ScanFilesForCopyTask::Event * Event;
@@ -492,7 +492,7 @@ void DefaultFolderNode::scanForCopy(const BaseTask::Event *e)
 		removeAllTaskLinks(event->task);
 }
 
-void DefaultFolderNode::scanForRemove(const BaseTask::Event *e)
+void FolderNode::scanForRemove(const BaseTask::Event *e)
 {
 	typedef ScanFilesForRemoveTask::Event * NotConstEvent;
 	typedef const ScanFilesForRemoveTask::Event * Event;
@@ -504,7 +504,7 @@ void DefaultFolderNode::scanForRemove(const BaseTask::Event *e)
 		removeAllTaskLinks(event->task);
 }
 
-void DefaultFolderNode::performCopy(const BaseTask::Event *e)
+void FolderNode::performCopy(const BaseTask::Event *e)
 {
 	typedef PerformCopyTask::Event * NotConstEvent;
 	typedef const PerformCopyTask::Event * Event;
@@ -516,7 +516,7 @@ void DefaultFolderNode::performCopy(const BaseTask::Event *e)
 		removeAllTaskLinks(event->task);
 }
 
-void DefaultFolderNode::performRemove(const BaseTask::Event *e)
+void FolderNode::performRemove(const BaseTask::Event *e)
 {
 	typedef PerformRemoveTask::Event * NotConstEvent;
 	typedef const PerformRemoveTask::Event * Event;
@@ -526,48 +526,48 @@ void DefaultFolderNode::performRemove(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-DefaultFolderNode::Container::Container()
+FolderNode::Container::Container()
 {}
 
-DefaultFolderNode::Container::~Container()
+FolderNode::Container::~Container()
 {
 	m_list.deleteAll();
 }
 
-DefaultFolderNode::Container::size_type DefaultFolderNode::Container::size() const
+FolderNode::Container::size_type FolderNode::Container::size() const
 {
 	return m_list.size();
 }
 
-DefaultFolderNode::Container::Item *DefaultFolderNode::Container::at(size_type index) const
+FolderNode::Container::Item *FolderNode::Container::at(size_type index) const
 {
 	return m_list.at(index);
 }
 
-DefaultFolderNode::Container::size_type DefaultFolderNode::Container::indexOf(Item *item) const
+FolderNode::Container::size_type FolderNode::Container::indexOf(Item *item) const
 {
 	return m_list.indexOf(static_cast<DefaultFolderItem *>(item));
 }
 
-void DefaultFolderNode::scanForSize(const TasksItemList &entries)
+void FolderNode::scanForSize(const TasksItemList &entries)
 {
 	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_container.data(), entries));
 	addTask(task.take(), entries);
 }
 
-void DefaultFolderNode::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
+void FolderNode::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
 {
 	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, destination, entries, move));
 	addTask(task.take(), entries);
 }
 
-void DefaultFolderNode::scanForRemove(const TasksItemList &entries)
+void FolderNode::scanForRemove(const TasksItemList &entries)
 {
 	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_container.data(), entries));
 	addTask(task.take(), entries);
 }
 
-void DefaultFolderNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
+void FolderNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
 	if (destination->isPhysical() && move)
 	{
@@ -581,7 +581,7 @@ void DefaultFolderNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot,
 	}
 }
 
-void DefaultFolderNode::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
+void FolderNode::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
 {
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
 	resetTask(task.take(), oldTask);

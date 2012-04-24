@@ -1,11 +1,11 @@
-#include "foldercopycontrol.h"
-#include "../../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../../application.h"
+#include "defaultcopycontrol.h"
+#include "../../../filesystem/tools/filesystemcommontools.h"
+#include "../../../application.h"
 
 #include <QtGui/QMessageBox>
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 CopyControl::CopyControl(INode *node, const QString &path) :
 	m_node(node),
@@ -52,6 +52,11 @@ bool CopyControl::rename(const QString &oldName, const QString &newName, QString
 	return m_container.rename(oldName, newName, error);
 }
 
+bool CopyControl::move(const IFileContainer *source, const QString &fileName, QString &error) const
+{
+	return m_container.move(source, fileName, error);
+}
+
 IFileContainer *CopyControl::open() const
 {
 	return m_container.open();
@@ -72,7 +77,7 @@ INode *CopyControl::node() const
 	return m_node;
 }
 
-bool CopyControl::start(const Snapshot::Files &files, bool move)
+bool CopyControl::start(const Snapshot::List &files, bool move)
 {
 	IFileInfo::size_type fs;
 
@@ -93,4 +98,4 @@ void CopyControl::done(bool error)
 void CopyControl::canceled()
 {}
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

@@ -17,13 +17,13 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultFolderNode : public TasksNode
+class FolderNode : public TasksNode
 {
-	Q_DISABLE_COPY(DefaultFolderNode)
+	Q_DISABLE_COPY(FolderNode)
 
 public:
-	DefaultFolderNode(IFileContainer::Holder &container, Node *parent = 0);
-	virtual ~DefaultFolderNode();
+	FolderNode(IFileContainer::Holder &container, Node *parent = 0);
+	virtual ~FolderNode();
 
     /* Model */
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -92,7 +92,7 @@ private:
 		virtual size_type indexOf(Item *item) const;
 
 	private:
-		friend class DefaultFolderNode;
+		friend class FolderNode;
 		typedef ::Tools::Containers::HashedList<QString, DefaultFolderItem *> List;
 		List m_list;
 	};

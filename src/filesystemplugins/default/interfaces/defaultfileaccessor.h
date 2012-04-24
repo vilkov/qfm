@@ -1,8 +1,8 @@
-#ifndef FOLDERFILEACCESSOR_H_
-#define FOLDERFILEACCESSOR_H_
+#ifndef DEFAULTFILEACCESSOR_H_
+#define DEFAULTFILEACCESSOR_H_
 
-#include "../../default_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifileaccessor.h"
+#include "../default_ns.h"
+#include "../../../filesystem/interfaces/filesystemifileaccessor.h"
 
 #ifdef Q_OS_UNIX
 	typedef int FileDescriptor;
@@ -38,4 +38,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* FOLDERFILEACCESSOR_H_ */
+#endif /* DEFAULTFILEACCESSOR_H_ */

@@ -1,10 +1,11 @@
-#ifndef FILESYSTEMINVALIDINFO_H_
-#define FILESYSTEMINVALIDINFO_H_
+#ifndef DEFAULTINVALIDINFO_H_
+#define DEFAULTINVALIDINFO_H_
 
-#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
+#include "../default_ns.h"
+#include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class InvalidInfo : public IFileInfo, public IFileType
 {
@@ -27,6 +28,6 @@ public:
 	virtual int permissions() const;
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FILESYSTEMINVALIDINFO_H_ */
+#endif /* DEFAULTINVALIDINFO_H_ */

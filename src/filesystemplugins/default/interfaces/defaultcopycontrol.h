@@ -1,12 +1,12 @@
-#ifndef FOLDERCOPYINFO_H_
-#define FOLDERCOPYINFO_H_
+#ifndef DEFAULTCOPYINFO_H_
+#define DEFAULTCOPYINFO_H_
 
 #include <QtCore/QCoreApplication>
-#include "folderfilecontainer.h"
-#include "../../../../filesystem/interfaces/filesystemicopycontrol.h"
+#include "defaultfilecontainer.h"
+#include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class CopyControl : public ICopyControl
 {
@@ -27,6 +27,7 @@ public:
 	virtual bool contains(const QString &fileName) const;
 	virtual bool remove(const QString &fileName, QString &error) const;
 	virtual bool rename(const QString &oldName, const QString &newName, QString &error) const;
+	virtual bool move(const IFileContainer *source, const QString &fileName, QString &error) const;
 
 	virtual IFileContainer *open() const;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
@@ -34,7 +35,7 @@ public:
 
 	/* ICopyControl */
 	virtual INode *node() const;
-	virtual bool start(const Snapshot::Files &files, bool move);
+	virtual bool start(const Snapshot::List &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 
@@ -43,6 +44,6 @@ private:
 	FileContainer m_container;
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
-#endif /* FOLDERCOPYINFO_H_ */
+#endif /* DEFAULTCOPYINFO_H_ */

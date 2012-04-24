@@ -1,8 +1,8 @@
-#ifndef FOLDERFILECONTAINER_H_
-#define FOLDERFILECONTAINER_H_
+#ifndef DEFAULTFILECONTAINER_H_
+#define DEFAULTFILECONTAINER_H_
 
-#include "../../default_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
+#include "../default_ns.h"
+#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -24,6 +24,7 @@ public:
 	virtual bool contains(const QString &fileName) const;
 	virtual bool remove(const QString &fileName, QString &error) const;
 	virtual bool rename(const QString &oldName, const QString &newName, QString &error) const;
+	virtual bool move(const IFileContainer *source, const QString &fileName, QString &error) const;
 
 	virtual IFileContainer *open() const;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
@@ -46,4 +47,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* FOLDERFILECONTAINER_H_ */
+#endif /* DEFAULTFILECONTAINER_H_ */

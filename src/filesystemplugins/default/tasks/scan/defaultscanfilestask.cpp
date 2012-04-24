@@ -6,13 +6,13 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultScanFilesTask::DefaultScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot) :
+ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_type(type),
 	m_snapshot(snapshot)
 {}
 
-void DefaultScanFilesTask::run(const volatile Flags &aborted)
+void ScanFilesTask::run(const volatile Flags &aborted)
 {
 	switch (m_type)
 	{
@@ -72,13 +72,13 @@ void DefaultScanFilesTask::run(const volatile Flags &aborted)
 }
 
 
-DefaultScanFilesExtendedTask::DefaultScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot) :
+ScanFilesExtendedTask::ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot) :
 	FilesExtendedBaseTask(receiver, destination),
 	m_type(type),
 	m_snapshot(snapshot)
 {}
 
-void DefaultScanFilesExtendedTask::run(const volatile Flags &aborted)
+void ScanFilesExtendedTask::run(const volatile Flags &aborted)
 {
 
 }

@@ -1,7 +1,7 @@
-#include "folderinvalidfileinfo.h"
+#include "defaultinvalidfileinfo.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo()
 {}
@@ -61,4 +61,4 @@ int InvalidInfo::permissions() const
 	return 0;
 }
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

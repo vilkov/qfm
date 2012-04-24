@@ -18,7 +18,7 @@ public:
 
 public:
 	WrappedNodeItem();
-	WrappedNodeItem(const IFileContainer *container, IFileInfo *item);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo *info);
 	~WrappedNodeItem();
 
 	bool isValid() const { return m_container != NULL; }
@@ -30,13 +30,13 @@ public:
 	IFileInfo::size_type totalSize() const { return m_totalSize; }
 	bool isRemoved() const { return m_removed; }
 
-	const IFileInfo::Holder &item() const { return m_item; }
-	IFileInfo::Holder &item() { return m_item; }
+	const IFileInfo::Holder &info() const { return m_info; }
+	IFileInfo::Holder &info() { return m_info; }
 
 private:
 	const IFileContainer *m_container;
 	IFileInfo::size_type m_totalSize;
-	IFileInfo::Holder m_item;
+	IFileInfo::Holder m_info;
 	bool m_removed;
 	List m_items;
 };

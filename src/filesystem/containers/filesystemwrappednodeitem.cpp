@@ -9,10 +9,10 @@ WrappedNodeItem::WrappedNodeItem() :
 	m_removed(false)
 {}
 
-WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, IFileInfo *item) :
+WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, IFileInfo *info) :
 	m_container(container),
 	m_totalSize(0),
-	m_item(item),
+	m_info(info),
 	m_removed(false)
 {}
 

@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMTASKSNODEDELEGATE_H_
 #define FILESYSTEMTASKSNODEDELEGATE_H_
 
-#include "items/filesystemtasknodeitem.h"
+#include "model/items/filesystemtasksnodeitem.h"
 #include "../filesystemdelegate.h"
 
 

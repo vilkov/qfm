@@ -11,8 +11,9 @@ FILE_SYSTEM_NS_BEGIN
 class WrappedNodeItem
 {
 public:
-	typedef QList<WrappedNodeItem *> List;
-	typedef List::size_type          size_type;
+	typedef PScopedPointer<WrappedNodeItem> Holder;
+	typedef QList<WrappedNodeItem *>        List;
+	typedef List::size_type                 size_type;
 	enum { InvalidIndex = (size_type)-1 };
 
 public:

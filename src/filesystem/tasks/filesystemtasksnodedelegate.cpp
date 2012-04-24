@@ -9,7 +9,7 @@ TasksNodeDelegate::TasksNodeDelegate(QObject *parent) :
 	Delegate(parent)
 {}
 
-void TasksNodeDelegate::paintProgressInMb(const TaskNodeItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const
+void TasksNodeDelegate::paintProgressInMb(const TasksNodeItem *entry, QPainter *painter, const QStyleOptionViewItem &option) const
 {
 	if (entry->isCompleted())
 	{

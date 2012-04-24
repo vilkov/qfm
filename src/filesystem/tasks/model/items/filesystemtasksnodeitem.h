@@ -1,15 +1,15 @@
-#ifndef FILESYSTEMTASKNODEITEM_H_
-#define FILESYSTEMTASKNODEITEM_H_
+#ifndef FILESYSTEMTASKSNODEITEM_H_
+#define FILESYSTEMTASKSNODEITEM_H_
 
 #include "../../../model/items/filesystemnodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class TaskNodeItem : public NodeItem
+class TasksNodeItem : public NodeItem
 {
 public:
-	TaskNodeItem(Base *parent);
+	TasksNodeItem(Base *parent);
 
 	bool isInProgress() const { return !m_done.isNull(); }
 	bool isCompleted() const { return m_done == m_total; }
@@ -33,4 +33,4 @@ private:
 
 FILE_SYSTEM_NS_END
 
-#endif /* FILESYSTEMTASKNODEITEM_H_ */
+#endif /* FILESYSTEMTASKSNODEITEM_H_ */

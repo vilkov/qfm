@@ -1,9 +1,9 @@
-#include "filesystemtasknodeitem.h"
+#include "filesystemtasksnodeitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-TaskNodeItem::TaskNodeItem(Base *parent) :
+TasksNodeItem::TasksNodeItem(Base *parent) :
 	NodeItem(parent),
 	m_total(0),
 	m_timeElapsed(0)

@@ -79,15 +79,15 @@ public:
 public:
 	bool isEmpty() const { return m_list.isEmpty(); }
 
-	bool isAdded(iterator i) const { return (*i).first == NULL; }
-	bool isUpdated(iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
-	bool isRemoved(iterator i) const { return (*i).second == NULL; }
+	bool isAdded(const_iterator i) const { return (*i).first == NULL; }
+	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
+	bool isRemoved(const_iterator i) const { return (*i).second == NULL; }
 
-	iterator begin() { return m_list.begin(); }
 	const_iterator begin() const { return m_list.begin(); }
+	iterator begin() { return m_list.begin(); }
 
-	iterator end() { return m_list.end(); }
 	const_iterator end() const { return m_list.end(); }
+	iterator end() { return m_list.end(); }
 
 	iterator erase(iterator i) { return m_list.erase(i); }
 

@@ -15,9 +15,25 @@ Snapshot::List Snapshot::list() const
 	return List(m_data);
 }
 
+Snapshot::Updates Snapshot::updates()
+{
+	BaseList::Container res;
+
+	for (Container::iterator it = m_data->map.begin(), end = m_data->map.end(); it != end;)
+		if ((*it).second)
+		{
+			res.push_back((*it));
+			it = m_data->map.erase(it);
+		}
+		else
+			++it;
+
+	return Snapshot::Updates(res);
+}
+
 Snapshot::Data::Data(const IFileContainer *container) :
 	totalSize(0),
-	m_container(container)
+	container(container)
 {}
 
 Snapshot::Data::~Data()

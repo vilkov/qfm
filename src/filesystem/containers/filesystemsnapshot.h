@@ -11,8 +11,10 @@ FILE_SYSTEM_NS_BEGIN
 class Snapshot
 {
 public:
+	class BaseList;
 	class List;
 	class Files;
+	class Updates;
 
 	typedef QPair<NodeItem *, WrappedNodeItem *> Pair;
 	typedef QMap<QString, Pair>                  Container;
@@ -22,7 +24,9 @@ public:
 	Snapshot(const Files &files);
 
 	List list() const;
-	const IFileContainer *container() const { return m_data->m_container; }
+	Updates updates();
+
+	const IFileContainer *container() const { return m_data->container; }
 
 	NodeItem *exists(const QString &fileName) const
 	{
@@ -56,7 +60,7 @@ private:
 
 		Container map;
 		IFileInfo::size_type totalSize;
-		const IFileContainer *m_container;
+		const IFileContainer *container;
 	};
 
 private:
@@ -64,7 +68,7 @@ private:
 };
 
 
-class Snapshot::List
+class Snapshot::BaseList
 {
 public:
 	typedef QList<Pair>               Container;
@@ -72,9 +76,6 @@ public:
 	typedef Container::const_iterator const_iterator;
 
 public:
-	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
-	const IFileContainer *container() const { return m_data->m_container; }
-
 	bool isAdded(iterator i) const { return (*i).first == NULL; }
 	bool isUpdated(iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
 	bool isRemoved(iterator i) const { return (*i).second == NULL; }
@@ -90,14 +91,30 @@ public:
 protected:
 	friend class Snapshot;
 
+	BaseList(const Container &list) :
+		m_list(list)
+	{}
+
+protected:
+	Container m_list;
+};
+
+class Snapshot::List : public Snapshot::BaseList
+{
+public:
+	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
+	const IFileContainer *container() const { return m_data->container; }
+
+protected:
+	friend class Snapshot;
+
 	List(const QExplicitlySharedDataPointer<Data> &data) :
-		m_data(data),
-		m_list(data->map.values())
+		Snapshot::BaseList(data->map.values()),
+		m_data(data)
 	{}
 
 private:
 	QExplicitlySharedDataPointer<Data> m_data;
-	Container m_list;
 };
 
 
@@ -113,6 +130,17 @@ public:
 private:
 	friend class Snapshot;
 	QExplicitlySharedDataPointer<Data> m_data;
+};
+
+
+class Snapshot::Updates : public Snapshot::BaseList
+{
+protected:
+	friend class Snapshot;
+
+	Updates(const Container &list) :
+		Snapshot::BaseList(list)
+	{}
 };
 
 FILE_SYSTEM_NS_END

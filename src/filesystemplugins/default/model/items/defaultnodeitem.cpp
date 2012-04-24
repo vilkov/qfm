@@ -4,13 +4,16 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultNodeItem::DefaultNodeItem(Base *parent) :
-	TasksNodeItem(parent)
+DefaultNodeItem::DefaultNodeItem(IFileInfo *info, Base *parent) :
+	TasksNodeItem(parent),
+	m_node(NULL),
+	m_info(info)
 {}
 
-DefaultNodeItem::DefaultNodeItem(Node *node, Base *parent) :
+DefaultNodeItem::DefaultNodeItem(IFileInfo *info, Node *node, Base *parent) :
 	TasksNodeItem(parent),
-	m_node(node)
+	m_node(node),
+	m_info(info)
 {}
 
 QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
@@ -23,12 +26,12 @@ QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return fileName();
+					return m_info->fileName();
 				case Qt::DecorationRole:
 					if (isLocked())
 						return lockIcon();
 					else
-						return fileType()->icon();
+						return m_info->fileType()->icon();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 				case Qt::ToolTipRole:
@@ -45,17 +48,17 @@ QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					if (isFile())
-						return Tools::humanReadableSize(fileSize());
+					if (m_info->isFile())
+						return Tools::humanReadableSize(m_info->fileSize());
 					else
 						if (m_totalSize.isNull())
-							return fileType()->name();
+							return m_info->fileType()->name();
 						else
 							return Tools::humanReadableSize(m_totalSize.toULongLong());
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 				case Qt::ToolTipRole:
-					return fileType()->name();
+					return m_info->fileType()->name();
 			}
 			break;
 		}
@@ -65,7 +68,7 @@ QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return lastModified();
+					return m_info->lastModified();
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 			}

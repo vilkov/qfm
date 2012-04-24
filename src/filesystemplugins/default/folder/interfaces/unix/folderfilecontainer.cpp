@@ -56,18 +56,18 @@ public:
 		return m_info.fileName();
 	}
 
-	virtual NodeItem *create() const
+	virtual IFileInfo *create() const
 	{
-		return new DefaultFolderItem(m_info);
+		return new Info(m_info);
 	}
 
-	virtual bool isObsolete(const NodeItem *item) const
+	virtual bool isObsolete(const IFileInfo *item) const
 	{
-		const DefaultNodeItem * item2 = static_cast<const DefaultNodeItem *>(item);
 		return
-			item2->lastModified() != m_info.lastModified() ||
-			item2->fileSize() != m_info.fileSize() ||
-			item2->fileType()->name().isEmpty();
+			item->lastModified() != m_info.lastModified() ||
+			item->fileSize() != m_info.fileSize() ||
+			item->permissions() != m_info.permissions() ||
+			item->fileType()->name().isEmpty();
 	}
 
 private:

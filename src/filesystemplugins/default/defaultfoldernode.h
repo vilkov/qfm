@@ -3,7 +3,7 @@
 
 #include "defaultfolderdelegate.h"
 #include "defaultfolderproxymodel.h"
-#include "model/items/defaultfolderitem.h"
+#include "model/items/defaultnodeitem.h"
 #include "../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../filesystem/interfaces/filesystemifilecontainer.h"
 #include "../../tools/containers/hashedlist.h"

@@ -8,17 +8,21 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultNodeItem : public TasksNodeItem, public IFileInfo
+class DefaultNodeItem : public TasksNodeItem
 {
 public:
-	DefaultNodeItem(Base *parent = 0);
-	DefaultNodeItem(Node *node, Base *parent = 0);
+	DefaultNodeItem(IFileInfo *info, Base *parent = 0);
+	DefaultNodeItem(IFileInfo *info, Node *node, Base *parent = 0);
 
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
+	const IFileInfo::Holder &info() const { return m_info; }
+
 	Node *node() const { return m_node; }
 	void setNode(Node *node) { m_node = node; }
+
+	void update(IFileInfo *info) { m_info = info; }
 
 	void lock(const QString &reason, quint64 totalSize);
 	void lock(const QString &reason);
@@ -34,6 +38,7 @@ public:
 private:
 	Node *m_node;
 	QVariant m_totalSize;
+	IFileInfo::Holder m_info;
 };
 
 DEFAULT_PLUGIN_NS_END

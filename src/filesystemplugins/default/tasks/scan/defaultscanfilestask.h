@@ -11,6 +11,20 @@ DEFAULT_PLUGIN_NS_BEGIN
 class DefaultScanFilesTask : public FilesBaseTask
 {
 public:
+	class UpdatesEvent : public BaseTask::Event
+	{
+	public:
+		UpdatesEvent(BaseTask *task, bool isLastEvent, const Snapshot::Updates &updates, bool canceled = false) :
+			BaseTask::Event(task, static_cast<Type>(ModelEvent::UpdateFiles), canceled),
+			isLastEvent(isLastEvent),
+			updates(updates)
+		{}
+
+		bool isLastEvent;
+		Snapshot::Updates updates;
+	};
+
+public:
 	DefaultScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
 
 protected:

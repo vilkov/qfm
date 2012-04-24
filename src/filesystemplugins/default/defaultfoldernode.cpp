@@ -219,7 +219,7 @@ void DefaultFolderNode::contextMenu(const QModelIndexList &list, INodeView *view
 	typedef QSet<FolderBaseItem *>                                ItemsSet;
 	typedef QList<FolderBaseItem *>                               ItemsList;
 	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
-	typedef QMap<const TaskNodeItem *, ::Tools::Containers::Dot>      ItemsIndexMap;
+	typedef QMap<const TasksNodeItem *, ::Tools::Containers::Dot>      ItemsIndexMap;
 	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
 
 	QMenu menu;
@@ -341,12 +341,12 @@ void DefaultFolderNode::contextMenu(const QModelIndexList &list, INodeView *view
 			{
 				Union update;
 				TasksItemList list;
-				TaskNodeItem *item;
+				TasksNodeItem *item;
 				list.reserve(files.size());
 
 				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 				{
-					item = const_cast<TaskNodeItem *>(static_cast<const TaskNodeItem *>(files.at(i).first));
+					item = const_cast<TasksNodeItem *>(static_cast<const TasksNodeItem *>(files.at(i).first));
 
 					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
 					update.add(itemsIndex.value(item));

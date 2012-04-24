@@ -12,8 +12,28 @@ class DefaultNodeItem : public TasksNodeItem, public IFileInfo
 {
 public:
 	DefaultNodeItem(Base *parent = 0);
+	DefaultNodeItem(Node *node, Base *parent = 0);
 
-	virtual bool isRootItem() const = 0;
+	/* ::Tools::Models::Tree::Item */
+	virtual QVariant data(qint32 column, qint32 role) const;
+
+	Node *node() const { return m_node; }
+	void setNode(Node *node) { m_node = node; }
+
+	void lock(const QString &reason, quint64 totalSize);
+	void lock(const QString &reason);
+	void unlock();
+
+public:
+	const QVariant &totalSize() const { return m_totalSize; }
+	void setTotalSize(quint64 value) { m_totalSize = value; }
+	void clearTotalSize() { m_totalSize.clear(); }
+
+	void updateProgress(quint64 value, quint64 timeElapsed) { progress(value, timeElapsed); }
+
+private:
+	Node *m_node;
+	QVariant m_totalSize;
 };
 
 DEFAULT_PLUGIN_NS_END

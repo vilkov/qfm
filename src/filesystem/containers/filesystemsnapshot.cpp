@@ -15,7 +15,7 @@ Snapshot::List Snapshot::list() const
 	return List(m_data);
 }
 
-Snapshot::Updates Snapshot::updates()
+Snapshot::Updates Snapshot::takeUpdates()
 {
 	BaseList::Container res;
 

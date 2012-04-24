@@ -24,7 +24,7 @@ public:
 	Snapshot(const Files &files);
 
 	List list() const;
-	Updates updates();
+	Updates takeUpdates();
 
 	const IFileContainer *container() const { return m_data->container; }
 

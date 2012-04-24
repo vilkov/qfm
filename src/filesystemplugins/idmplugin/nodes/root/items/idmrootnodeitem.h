@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class RootNodeItem : public TaskNodeItem
+class RootNodeItem : public TasksNodeItem
 {
 public:
 	RootNodeItem(Base *parent);

@@ -79,7 +79,7 @@ QVariant ArcNodeDirEntryItem::data(qint32 column, qint32 role) const
 void ArcNodeDirEntryItem::lock(const QString &reason)
 {
 	start(m_extractedSize);
-	TaskNodeItem::lock(reason);
+	TasksNodeItem::lock(reason);
 }
 
 bool ArcNodeDirEntryItem::isDir() const

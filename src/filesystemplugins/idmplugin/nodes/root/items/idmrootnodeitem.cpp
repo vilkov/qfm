@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 RootNodeItem::RootNodeItem(Base *parent) :
-	TaskNodeItem(parent)
+	TasksNodeItem(parent)
 {}
 
 bool RootNodeItem::isRoot()

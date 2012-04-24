@@ -4,12 +4,12 @@
 ARC_PLUGIN_NS_BEGIN
 
 ArcNodeItem::ArcNodeItem(Base *parent) :
-	TaskNodeItem(parent)
+	TasksNodeItem(parent)
 {}
 
 void ArcNodeItem::lock(const QString &reason)
 {
-	TaskNodeItem::lock(reason);
+	TasksNodeItem::lock(reason);
 }
 
 bool ArcNodeItem::isRoot() const

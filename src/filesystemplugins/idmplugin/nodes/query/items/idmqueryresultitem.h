@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class QueryResultItem : public TaskNodeItem
+class QueryResultItem : public TasksNodeItem
 {
 public:
 	QueryResultItem(Base *parent);

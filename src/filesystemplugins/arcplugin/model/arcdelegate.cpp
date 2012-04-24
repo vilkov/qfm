@@ -14,7 +14,7 @@ void ArcDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, c
 {
 	if (index.column() == 1)
 	{
-		TaskNodeItem *entry = static_cast<TaskNodeItem *>(m_proxy->mapToSource(index).internalPointer());
+		TasksNodeItem *entry = static_cast<TasksNodeItem *>(m_proxy->mapToSource(index).internalPointer());
 
 		if (entry->isInProgress())
 		{

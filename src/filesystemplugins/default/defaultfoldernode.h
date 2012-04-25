@@ -63,8 +63,8 @@ protected:
 
 protected:
 	/* Task event handlers */
-	virtual UpdatesList::Changes updateFilesMap() const;
-	virtual void updateFilesEvent(const UpdatesList &updates);
+	virtual Snapshot::Files updateFilesList() const;
+	virtual void updateFilesEvent(Snapshot::Updates &updates);
 	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot);
 	virtual bool scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move);
 	virtual bool scanForRemoveEvent(bool canceled, const Snapshot &snapshot);

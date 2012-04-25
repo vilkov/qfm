@@ -216,6 +216,16 @@ void FileContainer::enumerate(IEnumerator::Holder &enumerator) const
 	enumerator = new Enumerator(m_path.toUtf8());
 }
 
+IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
+{
+	if (contains(fileName))
+		return new Info(fileName, Info::Identify());
+	else
+		error = QString::fromUtf8(::strerror(ENOENT));
+
+	return NULL;
+}
+
 void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {
 	Info info(snapshot.container()->location(file), Info::Refresh());

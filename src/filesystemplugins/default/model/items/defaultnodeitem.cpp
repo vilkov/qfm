@@ -4,16 +4,16 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultNodeItem::DefaultNodeItem(IFileInfo *info, Base *parent) :
+DefaultNodeItem::DefaultNodeItem(IFileInfo::Holder &info, Base *parent) :
 	TasksNodeItem(parent),
 	m_node(NULL),
-	m_info(info)
+	m_info(info.take())
 {}
 
-DefaultNodeItem::DefaultNodeItem(IFileInfo *info, Node *node, Base *parent) :
+DefaultNodeItem::DefaultNodeItem(IFileInfo::Holder &info, Node *node, Base *parent) :
 	TasksNodeItem(parent),
 	m_node(node),
-	m_info(info)
+	m_info(info.take())
 {}
 
 QVariant DefaultNodeItem::data(qint32 column, qint32 role) const

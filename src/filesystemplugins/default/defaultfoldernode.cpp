@@ -10,6 +10,7 @@
 #include "actions/defaultfolderpropertiesaction.h"
 #include "actions/defaultfolderpasteclipboardaction.h"
 #include "interfaces/defaultcopycontrol.h"
+#include "../../filesystem/tools/filesystemcommontools.h"
 #include "../../application.h"
 
 #include <QtGui/QClipboard>
@@ -374,7 +375,7 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	StringDialog dialog(
 			tr("Enter name for new directory"),
 			tr("Name"),
-			idx.isValid() ? m_items[idx.row()]->fileName() : QString(),
+			idx.isValid() ? m_items[idx.row()]->info()->fileName() : QString(),
 			Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
@@ -384,10 +385,11 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 		if (folder)
 		{
-			FolderItem *item;
+			DefaultNodeItem *item;
+			IFileInfo::Holder info(container()->scanner()->info(dialog.value(), error));
 
 			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-			m_items.add(item = new FolderItem(Info(folder->location(), Info::Refresh())));
+			m_items.add(item = new DefaultNodeItem(info));
 			endInsertRows();
 
 			view->select(indexForFile(item, m_items.size() - 1));
@@ -399,9 +401,9 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 void FolderNode::rename(const QModelIndex &index, INodeView *view)
 {
-	FolderBaseItem *entry = static_cast<FolderBaseItem*>(m_proxy.mapToSource(index).internalPointer());
+	DefaultNodeItem *entry = static_cast<DefaultNodeItem *>(m_proxy.mapToSource(index).internalPointer());
 
-	if (!entry->isRootItem() && !static_cast<FolderItem*>(entry)->isLocked())
+	if (!entry->isRootItem() && !static_cast<DefaultNodeItem *>(entry)->isLocked())
 	{
 		RenameFunctor functor(container(), m_items);
 		functor(index.row(), entry);
@@ -478,17 +480,17 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (static_cast<FolderBaseItem *>(index.internalPointer())->isRootItem())
+	if (static_cast<DefaultNodeItem *>(index.internalPointer())->isRootItem())
 		return parentNode();
 	else
-		if (!static_cast<FolderItem *>(index.internalPointer())->isLocked())
+		if (!static_cast<DefaultNodeItem *>(index.internalPointer())->isLocked())
 		{
-			FolderItem *entry = static_cast<FolderItem *>(index.internalPointer());
+			DefaultNodeItem *entry = static_cast<DefaultNodeItem *>(index.internalPointer());
 
 			if (entry->node())
 				entry->node()->setParentEntryIndex(idx);
 			else
-				if (Node *node = createNode(&entry->info(), plugins))
+				if (Node *node = createNode(entry->info().data(), plugins))
 				{
 					entry->setNode(node);
 					node->setParentEntryIndex(idx);
@@ -497,8 +499,8 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 			if (entry->node())
 				return entry->node();
 			else
-				if (entry->info().isFile())
-					Application::desktopService()->open(container(), &entry->info());
+				if (entry->info()->isFile())
+					Application::desktopService()->open(container(), entry->info().data());
 		}
 
 	return NULL;
@@ -506,129 +508,121 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 
 Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	ItemsContainer::size_type index = m_items.indexOf(fileName);
+	Container::size_type index = m_items.indexOf(fileName);
 
-	if (index == ItemsContainer::InvalidIndex)
+	if (index == Container::InvalidIndex)
 	{
-		Info info(location(fileName), Info::Refresh());
+		QString error;
+		IFileInfo::Holder info;
 
-		if (Node *node = createNode(&info, plugins))
-		{
-			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-			m_items.add(new FolderItem(info, node));
-			endInsertRows();
-
-			return node;
-		}
-		else
-		{
-			if (info.isFile())
+		if (info = container()->scanner()->info(fileName, error))
+			if (Node *node = createNode(info.data(), plugins))
 			{
-				FolderBaseItem *item;
-
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-				m_items.add(item = new FolderItem(info));
+				m_items.add(new DefaultNodeItem(info, node));
 				endInsertRows();
 
-				selected = indexForFile(item, m_items.lastIndex());
+				return node;
 			}
+			else
+			{
+				if (info->isFile())
+				{
+					DefaultNodeItem *item;
 
-			return this;
-		}
+					beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+					m_items.add(item = new DefaultNodeItem(info));
+					endInsertRows();
+
+					selected = indexForFile(item, m_items.lastIndex());
+				}
+
+				return this;
+			}
 	}
 	else
 	{
-		FolderItem *item = static_cast<FolderItem*>(m_items[index]);
+		DefaultNodeItem *item = static_cast<DefaultNodeItem*>(m_items[index]);
 
 		if (item->node())
 			return item->node();
 		else
-			if (Node *node = createNode(&item->info(), plugins))
+			if (Node *node = createNode(item->info().data(), plugins))
 			{
 				item->setNode(node);
 				return node;
 			}
 			else
 			{
-				if (item->info().isFile())
+				if (item->info()->isFile())
 					selected = indexForFile(item, index);
 
 				return this;
 			}
 	}
 
-	return 0;
+	return NULL;
 }
 
 void FolderNode::nodeRemoved(Node *node)
 {
-	ItemsContainer::size_type index = m_items.indexOf(node);
+	Container::size_type index = m_items.indexOf(node);
 
-	if (index != ItemsContainer::InvalidIndex)
-		static_cast<FolderItem*>(m_items[index])->setNode(NULL);
+	if (index != Container::InvalidIndex)
+		static_cast<DefaultNodeItem*>(m_items[index])->setNode(NULL);
 }
 
-UpdatesList::Changes FolderNode::updateFilesMap() const
+Snapshot::Files FolderNode::updateFilesList() const
 {
-	UpdatesList::Changes changes;
+	Snapshot::Files files(container());
 
-	for (ItemsContainer::size_type i = 0, size = m_items.size(); i < size; ++i)
-		changes.insert(m_items[i]->info().fileName(), m_items[i]->info());
+	for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
+		files.add(m_items[i]->info()->fileName(), m_items[i]);
 
-	return changes;
+	return files;
 }
 
-void FolderNode::updateFilesEvent(const UpdatesList &updates)
+void FolderNode::updateFilesEvent(Snapshot::Updates &updates)
 {
 	Union updateRange;
-	UpdatesList updatesLocal(updates);
-	ItemsContainer::size_type index;
+	Container::size_type index;
 
-	for (UpdatesList::iterator update = updatesLocal.begin(), end = updatesLocal.end(); update != end;)
-		switch (update.value().type())
+	for (Snapshot::List::iterator update = updates.begin(), end = updates.end(); update != end;)
+		if (updates.isAdded(update) || updates.isUpdated(update))
 		{
-			case UpdatesList::Added:
-			case UpdatesList::Updated:
+			if ((index = m_items.indexOf((*update).second->info()->fileName())) != Container::InvalidIndex)
 			{
-				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
-				{
-					m_items[index]->setInfo(update.value().info());
-					updateRange.add(index);
+				m_items[index]->update((*update).second->info());
+				updateRange.add(index);
 
-					update = updatesLocal.erase(update);
-				}
-				else
-					++update;
-
-				break;
+				update = updates.erase(update);
 			}
-			case UpdatesList::Deleted:
+			else
+				++update;
+
+			break;
+		}
+		else
+			if (updates.isRemoved(update))
 			{
-				if ((index = m_items.indexOf(update.key())) != ItemsContainer::InvalidIndex)
+				if ((index = m_items.indexOf(static_cast<DefaultNodeItem *>((*update).first)->info()->fileName())) != Container::InvalidIndex)
 				{
-					if (!static_cast<FolderItem*>(m_items[index])->isLocked())
+					if (!static_cast<DefaultNodeItem*>(m_items[index])->isLocked())
 						removeEntry(index);
 				}
 
-				update = updatesLocal.erase(update);
-				break;
+				update = updates.erase(update);
 			}
-			default:
-			{
+			else
 				++update;
-				break;
-			}
-		}
 
 	updateColumns(updateRange, columnCount(QModelIndex()) - 1);
 
-	if (!updatesLocal.isEmpty())
+	if (!updates.isEmpty())
 	{
-		UpdatesList::Values added = updatesLocal.values();
-
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + added.size() - 1);
-		for (UpdatesList::Values::size_type i = 0, size = added.size(); i < size; ++i)
-			m_items.add(new FolderItem(added.at(i).info()));
+		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + updates.size() - 1);
+		for (Snapshot::List::const_iterator update = updates.begin(), end = updates.end(); update != end; ++update)
+			m_items.add(new DefaultNodeItem((*update).second->info()));
 		endInsertRows();
 	}
 }
@@ -636,14 +630,14 @@ void FolderNode::updateFilesEvent(const UpdatesList &updates)
 void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
-	ItemsContainer::size_type index;
-	FolderItem *entry;
-	Snapshot::List list(snapshot);
+	Container::size_type index;
+	DefaultNodeItem *entry;
+	Snapshot::List list = snapshot.list();
 
 	if (canceled)
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
-			entry = static_cast<FolderItem*>(m_items[index = m_items.indexOf(list.at(i).second->fileName())]);
+			entry = m_items[index = m_items.indexOf(static_cast<DefaultNodeItem *>(list.at(i).first)->info()->fileName())];
 			entry->clearTotalSize();
 			entry->unlock();
 			updateRange.add(index);
@@ -651,7 +645,7 @@ void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &snapshot)
 	else
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
-			entry = static_cast<FolderItem*>(m_items[index = m_items.indexOf(list.at(i).second->fileName())]);
+			entry = m_items[index = m_items.indexOf(static_cast<DefaultNodeItem *>(list.at(i).first)->info()->fileName())];
 			entry->setTotalSize(list.at(i).second->totalSize());
 			entry->unlock();
 			updateRange.add(index);
@@ -663,8 +657,8 @@ void FolderNode::scanForSizeEvent(bool canceled, const Snapshot &snapshot)
 bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move)
 {
 	Union updateRange;
-	ItemsContainer::size_type index;
-	Snapshot::Files files(snapshot);
+	Container::size_type index;
+	Snapshot::List files = snapshot.list();
 
 	if (canceled)
 		control->canceled();
@@ -672,12 +666,12 @@ bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopy
 		if (control->start(files, move))
 		{
 			QString lockReason = move ? tr("Moving...") : tr("Copying...");
-			const InfoItem *entry;
+			const WrappedNodeItem *entry;
 
-			for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
+			for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
 			{
-				index = m_items.indexOf((entry = files.at(i))->fileName());
-				static_cast<FolderItem*>(m_items[index])->lock(lockReason, entry->totalSize());
+				index = m_items.indexOf((entry = files.at(i).second)->info()->fileName());
+				static_cast<DefaultNodeItem *>(m_items[index])->lock(lockReason, entry->totalSize());
 				updateRange.add(index);
 			}
 
@@ -687,11 +681,11 @@ bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopy
 		else
 			control->done(false);
 
-	for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
+	for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
 	{
-		index = m_items.indexOf(files.at(i)->fileName());
-		static_cast<FolderItem*>(m_items[index])->setTotalSize(files.at(i)->totalSize());
-		static_cast<FolderItem*>(m_items[index])->unlock();
+		index = m_items.indexOf(files.at(i).second->info()->fileName());
+		static_cast<DefaultNodeItem*>(m_items[index])->setTotalSize(files.at(i).second->totalSize());
+		static_cast<DefaultNodeItem*>(m_items[index])->unlock();
 		updateRange.add(index);
 	}
 
@@ -702,17 +696,17 @@ bool FolderNode::scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopy
 bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
-	ItemsContainer::size_type index;
+	Container::size_type index;
 	QStringList folders;
 	QStringList files;
-	InfoItem *entry;
-	Snapshot::List list(snapshot);
+	WrappedNodeItem *entry;
+	Snapshot::List list = snapshot.list();
 
 	for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
-		if ((entry = list.at(i).second)->isDir())
-			folders.push_back(entry->fileName());
+		if ((entry = list.at(i).second)->info()->isDir())
+			folders.push_back(entry->info()->fileName());
 		else
-			files.push_back(entry->fileName());
+			files.push_back(entry->info()->fileName());
 
 	if (!canceled &&
 		QMessageBox::question(
@@ -726,16 +720,16 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &snapshot)
 				append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
 				append(files.join(QString::fromLatin1("\n\t\t"))).
 				append(QString::fromLatin1("\n")).
-				append(tr("it will free ").append(Tools::humanReadableSize(snapshot.totalSize()))),
+				append(tr("it will free ").append(Tools::humanReadableSize(list.totalSize()))),
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
 	{
 		QString lockReason = tr("Removing...");
 
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
-			if ((entry = list.at(i).second)->isDir())
+			if ((entry = list.at(i).second)->info()->isDir())
 			{
-				index = m_items.indexOf(entry->fileName());
-				static_cast<FolderItem*>(m_items[index])->lock(lockReason, entry->totalSize());
+				index = m_items.indexOf(entry->info()->fileName());
+				static_cast<DefaultNodeItem*>(m_items[index])->lock(lockReason, entry->totalSize());
 				updateRange.add(index);
 			}
 
@@ -746,9 +740,9 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &snapshot)
 	{
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
-			index = m_items.indexOf(list.at(i).second->fileName());
-			static_cast<FolderItem*>(m_items[index])->setTotalSize(list.at(i).second->totalSize());
-			static_cast<FolderItem*>(m_items[index])->unlock();
+			index = m_items.indexOf(list.at(i).second->info()->fileName());
+			static_cast<DefaultNodeItem*>(m_items[index])->setTotalSize(list.at(i).second->totalSize());
+			static_cast<DefaultNodeItem*>(m_items[index])->unlock();
 			updateRange.add(index);
 		}
 
@@ -761,8 +755,8 @@ bool FolderNode::scanForRemoveEvent(bool canceled, const Snapshot &snapshot)
 bool FolderNode::performCopyEvent(bool canceled, const Snapshot &snapshot, bool move)
 {
 	Union updateRange;
-	ItemsContainer::size_type index;
-	InfoItem *entry;
+	Container::size_type index;
+	WrappedNodeItem *entry;
 	Snapshot::List list(snapshot);
 
 	if (!canceled && move)
@@ -771,12 +765,12 @@ bool FolderNode::performCopyEvent(bool canceled, const Snapshot &snapshot, bool 
 
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
-			index = m_items.indexOf((entry = list.at(i).second)->fileName());
+			index = m_items.indexOf((entry = list.at(i).second)->info()->fileName());
 
-			if (entry->isDir())
-				static_cast<FolderItem*>(m_items[index])->lock(lockReason, entry->totalSize());
+			if (entry->info()->isDir())
+				static_cast<DefaultNodeItem*>(m_items[index])->lock(lockReason, entry->totalSize());
 			else
-				static_cast<FolderItem*>(m_items[index])->lock(lockReason);
+				static_cast<DefaultNodeItem*>(m_items[index])->lock(lockReason);
 
 			updateRange.add(index);
 		}
@@ -789,8 +783,8 @@ bool FolderNode::performCopyEvent(bool canceled, const Snapshot &snapshot, bool 
 	{
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		{
-			index = m_items.indexOf((entry = list.at(i).second)->fileName());
-			static_cast<FolderItem*>(m_items[index])->unlock();
+			index = m_items.indexOf((entry = list.at(i).second)->info()->fileName());
+			static_cast<DefaultNodeItem*>(m_items[index])->unlock();
 			updateRange.add(index);
 		}
 
@@ -803,18 +797,18 @@ bool FolderNode::performCopyEvent(bool canceled, const Snapshot &snapshot, bool 
 void FolderNode::performRemoveEvent(bool canceled, const Snapshot &snapshot)
 {
 	Union updateRange;
-	ItemsContainer::size_type index;
-	InfoItem *entry;
+	Container::size_type index;
+	WrappedNodeItem *entry;
 	Snapshot::List list(snapshot);
 
 	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 		if ((entry = list.at(i).second)->isRemoved())
-			removeEntry(m_items.indexOf(entry->fileName()));
+			removeEntry(m_items.indexOf(entry->info()->fileName()));
 		else
 		{
-			index = m_items.indexOf(entry->fileName());
-			static_cast<FolderItem*>(m_items[index])->clearTotalSize();
-			static_cast<FolderItem*>(m_items[index])->unlock();
+			index = m_items.indexOf(entry->info()->fileName());
+			static_cast<DefaultNodeItem*>(m_items[index])->clearTotalSize();
+			static_cast<DefaultNodeItem*>(m_items[index])->unlock();
 			updateRange.add(index);
 		}
 
@@ -823,8 +817,8 @@ void FolderNode::performRemoveEvent(bool canceled, const Snapshot &snapshot)
 
 void FolderNode::updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<NodeItem *>(item))->info().fileName());
-	FolderItem *entry = static_cast<FolderItem*>(m_items[index]);
+	Container::size_type index = m_items.indexOf(static_cast<DefaultNodeItem *>(const_cast<NodeItem *>(item))->info()->fileName());
+	DefaultNodeItem *entry = static_cast<DefaultNodeItem*>(m_items[index]);
 
 	entry->updateProgress(progress, timeElapsed);
 	updateSecondColumn(index, entry);
@@ -832,8 +826,8 @@ void FolderNode::updateProgressEvent(const NodeItem *item, quint64 progress, qui
 
 void FolderNode::completedProgressEvent(const NodeItem *item, quint64 timeElapsed)
 {
-	ItemsContainer::size_type index = m_items.indexOf(static_cast<ItemsContainer::value_type>(const_cast<NodeItem *>(item))->info().fileName());
-	FolderItem *entry = static_cast<FolderItem*>(m_items[index]);
+	Container::size_type index = m_items.indexOf(static_cast<DefaultNodeItem *>(const_cast<NodeItem *>(item))->info()->fileName());
+	DefaultNodeItem *entry = static_cast<DefaultNodeItem*>(m_items[index]);
 
 	entry->updateProgress(entry->total(), timeElapsed);
 	updateSecondColumn(index, entry);
@@ -842,11 +836,11 @@ void FolderNode::completedProgressEvent(const NodeItem *item, quint64 timeElapse
 void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
 {
 	Union update;
-	TaskNodeItem *item;
+	TasksNodeItem *item;
 
 	for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 	{
-		item = const_cast<TaskNodeItem *>(static_cast<const TaskNodeItem *>(files.at(i).first));
+		item = const_cast<TasksNodeItem *>(static_cast<const TasksNodeItem *>(files.at(i).first));
 
 		item->unlock();
 		update.add(m_items.indexOf(item));
@@ -878,8 +872,7 @@ void FolderNode::updateFiles()
 {
 	if (isVisible())
 	{
-		IFileContainer::Holder container(new FileContainer(m_container->location()));
-		PScopedPointer<UpdateFilesTask> task(new UpdateFilesTask(this, container, updateFilesMap()));
+		PScopedPointer<ScanFilesTask> task(new ScanFilesTask(static_cast<ScanFilesTask::Event::Type>(ModelEvent::UpdateFiles), this, updateFilesList()));
 		setUpdating(true);
 		handleTask(task.take());
 	}
@@ -887,8 +880,8 @@ void FolderNode::updateFiles()
 
 void FolderNode::updateFiles(const BaseTask::Event *e)
 {
-	typedef const UpdateFilesTask::Event * Event;
-	Event event = static_cast<Event>(e);
+	typedef ScanFilesTask::UpdatesEvent * NotConstEvent;
+	NotConstEvent event = static_cast<NotConstEvent>(const_cast<BaseTask::Event *>(e));
 
 	if (!event->canceled)
 		updateFilesEvent(event->updates);
@@ -902,8 +895,8 @@ void FolderNode::updateFiles(const BaseTask::Event *e)
 
 void FolderNode::scanForSize(const BaseTask::Event *e)
 {
-	typedef ScanFilesForSizeTask::Event * NotConstEvent;
-	typedef const ScanFilesForSizeTask::Event * Event;
+	typedef ScanFilesTask::Event * NotConstEvent;
+	typedef const ScanFilesTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
 	scanForSizeEvent(event->canceled, event->snapshot);
@@ -912,8 +905,8 @@ void FolderNode::scanForSize(const BaseTask::Event *e)
 
 void FolderNode::scanForCopy(const BaseTask::Event *e)
 {
-	typedef ScanFilesForCopyTask::Event * NotConstEvent;
-	typedef const ScanFilesForCopyTask::Event * Event;
+	typedef ScanFilesExtendedTask::Event * NotConstEvent;
+	typedef const ScanFilesExtendedTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
 	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
@@ -1068,8 +1061,8 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 {
 	Union updateRange;
 	TasksItemList list;
-	FolderItem *entry;
-	ItemsContainer::size_type index;
+	DefaultNodeItem *entry;
+	Container::size_type index;
 
 	list.reserve(entries.size());
 
@@ -1077,7 +1070,7 @@ void FolderNode::scanForRemove(const ProcessedList &entries)
 	{
 		index = entries.at(i).first;
 
-		if ((entry = static_cast<FolderItem*>(entries.at(i).second))->info().isDir())
+		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
 			entry->lock(tr("Scanning folder for remove..."));
 		else
 			entry->lock(tr("Removing..."));
@@ -1094,13 +1087,13 @@ void FolderNode::scanForSize(const ProcessedList &entries)
 {
 	Union updateRange;
 	TasksItemList list;
-	FolderItem *entry;
-	ItemsContainer::size_type index;
+	DefaultNodeItem *entry;
+	Container::size_type index;
 
 	list.reserve(entries.size());
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
-		if ((entry = static_cast<FolderItem*>(entries.at(i).second))->info().isDir())
+		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
 		{
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
@@ -1123,8 +1116,8 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 	{
 		Union updateRange;
 		TasksItemList list;
-		FolderItem *entry;
-		ItemsContainer::size_type index;
+		DefaultNodeItem *entry;
+		Container::size_type index;
 		QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 		QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
 
@@ -1134,7 +1127,7 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 		{
 			index = entries.at(i).first;
 
-			if ((entry = static_cast<FolderItem*>(entries.at(i).second))->info().isDir())
+			if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
 				entry->lock(folderLockReason);
 			else
 				entry->lock(fileLockReason);
@@ -1148,24 +1141,24 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 	}
 }
 
-QModelIndex FolderNode::index(int column, FolderBaseItem *item) const
+QModelIndex FolderNode::index(int column, DefaultNodeItem *item) const
 {
-	ItemsContainer::size_type index = m_items.indexOf(item);
+	Container::size_type index = m_items.indexOf(item);
 
-	if (index != ItemsContainer::InvalidIndex)
+	if (index != Container::InvalidIndex)
 		return createIndex(index, column, item);
 	else
 		return QModelIndex();
 }
 
-QModelIndex FolderNode::indexForFile(FolderBaseItem *item) const
+QModelIndex FolderNode::indexForFile(DefaultNodeItem *item) const
 {
-	Q_ASSERT(m_items.indexOf(item) != ItemsContainer::InvalidIndex);
-	ItemsContainer::size_type index = m_items.indexOf(item);
+	Q_ASSERT(m_items.indexOf(item) != Container::InvalidIndex);
+	Container::size_type index = m_items.indexOf(item);
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }
 
-QModelIndex FolderNode::indexForFile(FolderBaseItem *item, ItemsContainer::size_type index) const
+QModelIndex FolderNode::indexForFile(DefaultNodeItem *item, Container::size_type index) const
 {
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }

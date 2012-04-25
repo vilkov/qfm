@@ -75,9 +75,13 @@ public:
 	typedef QList<Pair>               Container;
 	typedef Container::iterator       iterator;
 	typedef Container::const_iterator const_iterator;
+	typedef Container::size_type      size_type;
 
 public:
 	bool isEmpty() const { return m_list.isEmpty(); }
+	size_type size() const { return m_list.size(); }
+
+	const Container::value_type &at(size_type index) const { return m_list.at(index); }
 
 	bool isAdded(const_iterator i) const { return (*i).first == NULL; }
 	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
@@ -89,7 +93,7 @@ public:
 	const_iterator end() const { return m_list.end(); }
 	iterator end() { return m_list.end(); }
 
-	iterator erase(iterator i) { return m_list.erase(i); }
+	iterator erase(iterator i) { delete (*i).second; return m_list.erase(i); }
 
 protected:
 	friend class Snapshot;

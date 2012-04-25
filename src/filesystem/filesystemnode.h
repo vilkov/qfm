@@ -2,6 +2,7 @@
 #define FILESYSTEMNODE_H_
 
 #include <QtCore/QSet>
+#include "tools/filesystempath.h"
 #include "model/filesystemnodemodel.h"
 #include "interfaces/filesysteminode.h"
 #include "../history/historyentry.h"

@@ -79,6 +79,11 @@ QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
+bool DefaultNodeItem::isRootItem() const
+{
+	return false;
+}
+
 void DefaultNodeItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_totalSize = totalSize;

@@ -8,7 +8,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultPerformCopyTask : public FilesExtendedBaseTask
+class PerformCopyTask : public FilesExtendedBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
@@ -28,7 +28,7 @@ public:
 	};
 
 public:
-	DefaultPerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
+	PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
 
 protected:
 	virtual void run(const volatile Flags &aborted);

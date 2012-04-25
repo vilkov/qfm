@@ -5,7 +5,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultPerformCopyTask::DefaultPerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
+PerformCopyTask::PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
 	FilesExtendedBaseTask(receiver, destination),
 	m_progress(receiver),
 	m_snapshot(snapshot),
@@ -16,7 +16,7 @@ DefaultPerformCopyTask::DefaultPerformCopyTask(TasksNode *receiver, ICopyControl
 	m_overwriteAll(false)
 {}
 
-void DefaultPerformCopyTask::run(const volatile Flags &aborted)
+void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
 	const Snapshot::List list = m_snapshot.list();
@@ -31,7 +31,7 @@ void DefaultPerformCopyTask::run(const volatile Flags &aborted)
 	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::CopyFiles), destination(), aborted, m_snapshot, m_move));
 }
 
-void DefaultPerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (destination->contains(entry->info()->fileName()))
@@ -87,7 +87,7 @@ void DefaultPerformCopyTask::copyEntry(const IFileContainer *destination, Wrappe
 	while (tryAgain && !aborted);
 }
 
-void DefaultPerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (m_sourceFile = entry->container()->open(entry->info()->fileName(), IFileAccessor::ReadOnly, m_lastError))
@@ -144,7 +144,7 @@ void DefaultPerformCopyTask::copyFile(const IFileContainer *destination, Wrapped
 	while (tryAgain && !aborted);
 }
 
-void DefaultPerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
 						title,
@@ -180,7 +180,7 @@ void DefaultPerformCopyTask::askForOverwrite(const QString &title, const QString
 	}
 }
 
-void DefaultPerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
 						title,

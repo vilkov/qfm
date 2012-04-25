@@ -17,6 +17,8 @@ public:
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
+	virtual bool isRootItem() const;
+
 	const IFileInfo::Holder &info() const { return m_info; }
 
 	Node *node() const { return m_node; }

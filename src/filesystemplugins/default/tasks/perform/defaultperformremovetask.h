@@ -8,12 +8,12 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultPerformRemoveTask : public FilesBaseTask
+class PerformRemoveTask : public FilesBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformRemoveBaseTask)
 
 public:
-	DefaultPerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
+	PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
 
 protected:
 	virtual void run(const volatile Flags &aborted);

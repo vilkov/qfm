@@ -6,12 +6,12 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultPerformMoveTask : public DefaultPerformCopyTask
+class PerformMoveTask : public PerformCopyTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformMoveTask)
 
 public:
-	DefaultPerformMoveTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
+	PerformMoveTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
 
 protected:
 	virtual void copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);

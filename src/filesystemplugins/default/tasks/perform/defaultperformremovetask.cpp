@@ -6,14 +6,14 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultPerformRemoveTask::DefaultPerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot) :
+PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_snapshot(snapshot),
 	m_skipAllIfNotRemove(false),
 	m_progress(receiver)
 {}
 
-void DefaultPerformRemoveTask::run(const volatile Flags &aborted)
+void PerformRemoveTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
 	WrappedNodeItem *entry;
@@ -39,7 +39,7 @@ void DefaultPerformRemoveTask::run(const volatile Flags &aborted)
 	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::RemoveFiles), aborted, m_snapshot));
 }
 
-void DefaultPerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (entry->info()->isDir())
 	{
@@ -64,7 +64,7 @@ void DefaultPerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool
 		while (tryAgain && !aborted);
 }
 
-void DefaultPerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (!entry->container()->remove(entry->info()->fileName(), m_error))
 		if (m_skipAllIfNotRemove)

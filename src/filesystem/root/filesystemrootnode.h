@@ -1,8 +1,8 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
+#include "filesystemrootfilecontainer.h"
 #include "../filesystemnode.h"
-#include "../folder/containers/filesystemitemscontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -30,12 +30,13 @@ public:
 	virtual void move(const INodeView *source, INodeView *destination);
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
+	/* IFileLocation */
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-	virtual QString location(const QModelIndex &index) const;
 
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
@@ -49,7 +50,17 @@ protected:
 	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
 
 private:
-	ItemsContainer m_items;
+	class Container : public Node::Container
+	{
+	public:
+		virtual size_type size() const;
+		virtual Item *at(size_type index) const;
+		virtual size_type indexOf(Item *item) const;
+	};
+
+private:
+	Container m_items;
+	RootFileContainer m_container;
 	INodeView::MenuActionList m_menuActions;
 };
 

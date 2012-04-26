@@ -1,14 +1,5 @@
 #include "filesystemrootfilecontainer.h"
-#include "../filesystemfilecontainer.h"
-#include "../filesystemfileaccessor.h"
-#include "../../../tools/filesystemcommontools.h"
-
-#include <sys/stat.h>
-#include <string.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
+#include "../../../filesystemplugins/default/interfaces/defaultfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,104 +8,152 @@ RootFileContainer::RootFileContainer() :
 	m_path(QString::fromLatin1("/"))
 {}
 
-bool RootFileContainer::isPhysical() const
-{
-	return true;
-}
-
 QString RootFileContainer::location() const
 {
-	return m_path;
+	return QString();
 }
 
 QString RootFileContainer::location(const QString &fileName) const
 {
-	return QString(m_path).append(fileName);
+	return QString();
+}
+
+bool RootFileContainer::isPhysical() const
+{
+	return false;
 }
 
 IFileInfo::size_type RootFileContainer::freeSpace() const
 {
-	return Tools::freeSpace(m_path.toUtf8());
+	return 0;
+}
+
+ICopyControl *RootFileContainer::createControl(INodeView *view) const
+{
+	return NULL;
 }
 
 bool RootFileContainer::contains(const QString &fileName) const
 {
-	struct stat st;
-	return ::stat(QString(m_path).append(fileName).toUtf8(), &st) == 0;
+	return fileName == m_path;
 }
 
 bool RootFileContainer::remove(const QString &fileName, QString &error) const
 {
-	struct stat st;
-	QByteArray name = QString(m_path).append(fileName).toUtf8();
-
-	if (::stat(name, &st) == 0)
-		if (S_ISDIR(st.st_mode))
-		{
-			if (::rmdir(name) == 0)
-				return true;
-		}
-		else
-			if (::unlink(name) == 0)
-				return true;
-
-	error = QString::fromUtf8(::strerror(errno));
 	return false;
 }
 
 bool RootFileContainer::rename(const QString &oldName, const QString &newName, QString &error) const
 {
-	if (::rename(QString(m_path).append(oldName).toUtf8(), QString(m_path).append(newName).toUtf8()) == 0)
-		return true;
-	else
-	{
-		error = QString::fromUtf8(::strerror(errno));
-		return false;
-	}
+	return false;
+}
+
+bool RootFileContainer::move(const IFileContainer *source, const QString &fileName, QString &error) const
+{
+	return false;
 }
 
 IFileContainer *RootFileContainer::open() const
 {
-	return new RootFileContainer(*this);
+	return NULL;
 }
 
 IFileAccessor *RootFileContainer::open(const QString &fileName, int mode, QString &error) const
 {
-	FileAccesor::Holder file(new FileAccesor(QString(m_path).append(fileName), mode));
-
-	if (file)
-		if (static_cast<FileAccesor *>(file.data())->isValid())
-			return file.take();
-		else
-			error = file->lastError();
-	else
-		error = QString::fromUtf8(::strerror(errno));
-
 	return NULL;
 }
 
 IFileContainer *RootFileContainer::open(const QString &fileName, bool create, QString &error) const
 {
-	struct stat st;
-	QByteArray name = QString(m_path).append(fileName).toUtf8();
-
-	if (::stat(name, &st) == 0)
-	{
-		if (S_ISDIR(st.st_mode))
-			return new FileContainer(QString::fromUtf8(name));
-		else
-			errno = ENOTDIR;
-	}
+	if (fileName == m_path)
+		return new Plugins::Default::FileContainer(m_path);
 	else
-		if (errno == ENOENT &&
-			create &&
-			::mkdir(name, S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
-		{
-			return new FileContainer(QString::fromUtf8(name));
-		}
+		return NULL;
+}
 
-	error = QString::fromUtf8(::strerror(errno));
+const IFileContainerScanner *RootFileContainer::scanner() const
+{
+	return this;
+}
+
+virtual void RootFileContainer::enumerate(IEnumerator::Holder &enumerator) const
+{
+
+}
+
+IFileInfo *RootFileContainer::info(const QString &fileName, QString &error) const
+{
 	return NULL;
+}
+
+void RootFileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+{
+
+}
+
+void RootFileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+{
+
+}
+
+bool RootFileContainer::isDir() const
+{
+	return true;
+}
+
+bool RootFileContainer::isFile() const
+{
+	return false;
+}
+
+bool isLink() const
+{
+	return false;
+}
+
+RootFileContainer::size_type RootFileContainer::fileSize() const
+{
+	return 0;
+}
+
+QString RootFileContainer::fileName() const
+{
+	return m_path;
+}
+
+const IFileType *RootFileContainer::fileType() const
+{
+	return this;
+}
+
+QDateTime RootFileContainer::lastModified() const
+{
+	return QDateTime();
+}
+
+int RootFileContainer::permissions() const
+{
+	return Read;
+}
+
+FileTypeId RootFileContainer::id() const
+{
+	return FileTypeId();
+}
+
+QIcon RootFileContainer::icon() const
+{
+	return QIcon();
+}
+
+QString RootFileContainer::name() const
+{
+	return QString();
+}
+
+QString RootFileContainer::description() const
+{
+	return QString();
 }
 
 FILE_SYSTEM_NS_END

@@ -1,41 +1,15 @@
 #include "../filesystemrootnode.h"
 #include "../../filesystempluginsmanager.h"
-#include "../../folder/filesystemrootfoldernode.h"
-#include "../../interfaces/imp/filesystemrootfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class LocalRootFolderNode;
-static LocalRootFolderNode *rootNode = NULL;
-
-
-class LocalRootFolderNode : public RootFolderNode
-{
-public:
-	LocalRootFolderNode(IFileContainer::Holder &container, Node *parent = 0) :
-		RootFolderNode(container, parent)
-	{}
-	virtual ~LocalRootFolderNode()
-	{
-		rootNode = NULL;
-	}
-};
-
-
 RootNode::RootNode() :
 	Node(m_items)
-{
-	Q_ASSERT(rootNode == NULL);
-
-	IFileContainer::Holder container(new RootFileContainer());
-	rootNode = new LocalRootFolderNode(container, this);
-}
+{}
 
 RootNode::~RootNode()
-{
-	Q_ASSERT_X(rootNode == NULL, "RootNode::~RootNode", "Bad links counting!");
-}
+{}
 
 ICopyControl *RootNode::createControl(INodeView *view) const
 {
@@ -102,16 +76,6 @@ void RootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-void RootNode::refresh()
-{
-
-}
-
-QString RootNode::title() const
-{
-	return QString();
-}
-
 QString RootNode::location() const
 {
 	return QString();
@@ -122,7 +86,12 @@ QString RootNode::location(const QString &fileName) const
 	return QString();
 }
 
-QString RootNode::location(const QModelIndex &index) const
+void RootNode::refresh()
+{
+
+}
+
+QString RootNode::title() const
 {
 	return QString();
 }
@@ -159,10 +128,22 @@ Node *RootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMode
 
 Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	if (fileName == QLatin1String("/"))
-		return rootNode;
-	else
-		return NULL;
+	return plugins->node(&m_container, &m_container, this);
+}
+
+RootNode::Container::size_type RootNode::Container::size() const
+{
+	return 0;
+}
+
+RootNode::Container::Item *RootNode::Container::at(size_type index) const
+{
+	return NULL;
+}
+
+RootNode::Container::size_type RootNode::Container::indexOf(Item *item) const
+{
+	return InvalidIndex;
 }
 
 FILE_SYSTEM_NS_END

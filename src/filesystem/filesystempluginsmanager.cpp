@@ -18,7 +18,7 @@ Node *PluginsManager::node(const IFileContainer *container, const IFileInfo *fil
 
 	if (file->isFile())
 	{
-		const PluginsList &list = m_filePlugins[file->id()];
+		const PluginsList &list = m_filePlugins[file->fileType()->id()];
 
 		for (PluginsList::size_type i = 0, size = list.size(); i < size; ++i)
 			if (res = list.at(i)->node(container, file, parent))

@@ -72,10 +72,11 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 }
 
 
-ScanFilesExtendedTask::ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot) :
+ScanFilesExtendedTask::ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
 	FilesExtendedBaseTask(receiver, destination),
 	m_type(type),
-	m_snapshot(snapshot)
+	m_snapshot(snapshot),
+	m_move(move)
 {}
 
 void ScanFilesExtendedTask::run(const volatile Flags &aborted)

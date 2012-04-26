@@ -9,7 +9,6 @@
 #include "actions/defaultfolderpasteintofolderaction.h"
 #include "actions/defaultfolderpropertiesaction.h"
 #include "actions/defaultfolderpasteclipboardaction.h"
-#include "interfaces/defaultcopycontrol.h"
 #include "../../filesystem/tools/filesystemcommontools.h"
 #include "../../application.h"
 
@@ -210,15 +209,15 @@ QString FolderNode::location(const QString &fileName) const
 
 ICopyControl *FolderNode::createControl(INodeView *view) const
 {
-	return new CopyControl(const_cast<FolderNode *>(this), m_container->location());
+	return m_container->createControl(view);
 }
 
 void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
-	typedef QSet<DefaultNodeItem *>                                ItemsSet;
-	typedef QList<DefaultNodeItem *>                               ItemsList;
+	typedef QSet<DefaultNodeItem *>                                   ItemsSet;
+	typedef QList<DefaultNodeItem *>                                  ItemsList;
 	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
-	typedef QMap<const TasksNodeItem *, ::Tools::Containers::Dot>      ItemsIndexMap;
+	typedef QMap<const TasksNodeItem *, ::Tools::Containers::Dot>     ItemsIndexMap;
 	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
 
 	QMenu menu;
@@ -336,20 +335,19 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			PScopedPointer<PerformActionTask> task;
 
-			if (task = static_cast<AsyncFileAction *>(action)->process(this, container(), files))
+			if (task = static_cast<AsyncFileAction *>(action)->process(this, m_container.data(), files))
 			{
 				Union update;
-				TasksItemList list;
-				TasksNodeItem *item;
-				list.reserve(files.size());
+				Snapshot::Files list;
+				DefaultNodeItem *item;
 
 				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 				{
-					item = const_cast<TasksNodeItem *>(static_cast<const TasksNodeItem *>(files.at(i).first));
+					item = const_cast<DefaultNodeItem *>(static_cast<const DefaultNodeItem *>(files.at(i).first));
 
 					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
 					update.add(itemsIndex.value(item));
-					list.push_back(item);
+					list.add(item->info()->fileName(), item);
 				}
 
 				addTask(task.take(), list);
@@ -357,7 +355,7 @@ void FolderNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			}
 		}
 		else
-			static_cast<SyncFileAction *>(action)->process(container(), files);
+			static_cast<SyncFileAction *>(action)->process(m_container.data(), files);
 	}
 
 	menu.clear();
@@ -381,12 +379,12 @@ void FolderNode::createDirectory(const QModelIndex &index, INodeView *view)
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
-		IFileContainer::Holder folder(container()->open(dialog.value(), true, error));
+		IFileContainer::Holder folder(m_container->open(dialog.value(), true, error));
 
 		if (folder)
 		{
 			DefaultNodeItem *item;
-			IFileInfo::Holder info(container()->scanner()->info(dialog.value(), error));
+			IFileInfo::Holder info(m_container->scanner()->info(dialog.value(), error));
 
 			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 			m_items.add(item = new DefaultNodeItem(info));
@@ -405,14 +403,14 @@ void FolderNode::rename(const QModelIndex &index, INodeView *view)
 
 	if (!entry->isRootItem() && !static_cast<DefaultNodeItem *>(entry)->isLocked())
 	{
-		RenameFunctor functor(container(), m_items);
+		RenameFunctor functor(m_container, m_items);
 		functor(index.row(), entry);
 	}
 }
 
 void FolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
-	RenameFunctor functor(container(), m_items);
+	RenameFunctor functor(m_container, m_items);
 	processIndexList(list, functor);
 }
 
@@ -443,7 +441,7 @@ void FolderNode::calculateSize(const QModelIndexList &list, INodeView *view)
 
 void FolderNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
-	AbsoluteFilePathList pathList(container());
+	AbsoluteFilePathList pathList(m_container);
 	processIndexList(list, pathList);
 	Application::instance()->clipboard()->setText(pathList.join(QChar('\r')));
 }
@@ -500,7 +498,7 @@ Node *FolderNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMo
 				return entry->node();
 			else
 				if (entry->info()->isFile())
-					Application::desktopService()->open(container(), entry->info().data());
+					Application::desktopService()->open(m_container.data(), entry->info().data());
 		}
 
 	return NULL;
@@ -515,7 +513,7 @@ Node *FolderNode::viewChild(const QString &fileName, PluginsManager *plugins, QM
 		QString error;
 		IFileInfo::Holder info;
 
-		if (info = container()->scanner()->info(fileName, error))
+		if (info = m_container->scanner()->info(fileName, error))
 			if (Node *node = createNode(info.data(), plugins))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
@@ -574,7 +572,7 @@ void FolderNode::nodeRemoved(Node *node)
 
 Snapshot::Files FolderNode::updateFilesList() const
 {
-	Snapshot::Files files(container());
+	Snapshot::Files files(m_container);
 
 	for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
 		files.add(m_items[i]->info()->fileName(), m_items[i]);
@@ -851,13 +849,13 @@ void FolderNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 Node *FolderNode::createNode(const IFileInfo *file, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(container(), file, const_cast<FolderNode *>(this)))
+	if (Node *res = plugins->node(m_container.data(), file, const_cast<FolderNode *>(this)))
 		return res;
 	else
 		if (file->isDir())
 		{
 			QString error;
-			IFileContainer::Holder folder(container()->open(file->fileName(), false, error));
+			IFileContainer::Holder folder(m_container->open(file->fileName(), false, error));
 
 			if (folder)
 				return new FolderNode(folder, const_cast<FolderNode *>(this));
@@ -876,6 +874,44 @@ void FolderNode::updateFiles()
 		setUpdating(true);
 		handleTask(task.take());
 	}
+}
+
+void FolderNode::scanForSize(const Snapshot &snapshot)
+{
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(static_cast<ScanFilesTask::Event::Type>(ModelEvent::ScanFilesForSize), this, snapshot));
+	addTask(task.take(), snapshot);
+}
+
+void FolderNode::scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
+{
+	PScopedPointer<ScanFilesExtendedTask> task(new ScanFilesExtendedTask(static_cast<ScanFilesExtendedTask::Event::Type>(ModelEvent::ScanFilesForCopy), this, snapshot, move));
+	addTask(task.take(), snapshot);
+}
+
+void FolderNode::scanForRemove(const Snapshot &snapshot)
+{
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(static_cast<ScanFilesTask::Event::Type>(ModelEvent::UpdateFiles), this, entries));
+	addTask(task.take(), snapshot);
+}
+
+void FolderNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
+{
+	if (destination->isPhysical() && move)
+	{
+		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
+		resetTask(task.take(), oldTask);
+	}
+	else
+	{
+		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
+		resetTask(task.take(), oldTask);
+	}
+}
+
+void FolderNode::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
+{
+	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
+	resetTask(task.take(), oldTask);
 }
 
 void FolderNode::updateFiles(const BaseTask::Event *e)
@@ -905,8 +941,8 @@ void FolderNode::scanForSize(const BaseTask::Event *e)
 
 void FolderNode::scanForCopy(const BaseTask::Event *e)
 {
-	typedef ScanFilesExtendedTask::Event * NotConstEvent;
-	typedef const ScanFilesExtendedTask::Event * Event;
+	typedef ScanFilesExtendedTask::CopyEvent * NotConstEvent;
+	typedef const ScanFilesExtendedTask::CopyEvent * Event;
 	Event event = static_cast<Event>(e);
 
 	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
@@ -917,8 +953,8 @@ void FolderNode::scanForCopy(const BaseTask::Event *e)
 
 void FolderNode::scanForRemove(const BaseTask::Event *e)
 {
-	typedef ScanFilesForRemoveTask::Event * NotConstEvent;
-	typedef const ScanFilesForRemoveTask::Event * Event;
+	typedef ScanFilesExtendedTask::Event * NotConstEvent;
+	typedef const ScanFilesExtendedTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
 	if (scanForRemoveEvent(event->canceled, event->snapshot))
@@ -980,22 +1016,20 @@ FolderNode::Container::size_type FolderNode::Container::indexOf(Item *item) cons
 void FolderNode::CancelFunctor::call(Container::size_type index, DefaultNodeItem *entry)
 {
 	m_items = m_node->cancelTaskAndTakeItems(entry);
+	m_union.add(index);
 
-	for (TasksItemList::size_type i = 0, size = m_items.size(); i < size; ++i)
-	{
-		m_union.add(index);
-		static_cast<TaskNodeItem *>(m_items.at(i))->cancel(m_reason);
-	}
+	for (Snapshot::List::size_type i = 0, size = m_items.size(); i < size; ++i)
+		static_cast<TasksNodeItem *>(m_items.at(i).first)->cancel(m_reason);
 }
 
 void FolderNode::RenameFunctor::call(Container::size_type index, DefaultNodeItem *entry)
 {
 	StringDialog dialog(
-			entry->info().isDir() ?
-					tr("Enter new name for directory \"%1\"").arg(entry->info().fileName()) :
-					tr("Enter new name for file \"%1\"").arg(entry->info().fileName()),
+			entry->info()->isDir() ?
+					tr("Enter new name for directory \"%1\"").arg(entry->info()->fileName()) :
+					tr("Enter new name for file \"%1\"").arg(entry->info()->fileName()),
 			tr("Name"),
-			entry->info().fileName(),
+			entry->info()->fileName(),
 			Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
@@ -1060,52 +1094,45 @@ void FolderNode::processLockedIndexList(const QModelIndexList &list, Functor &fu
 void FolderNode::scanForRemove(const ProcessedList &entries)
 {
 	Union updateRange;
-	TasksItemList list;
 	DefaultNodeItem *entry;
 	Container::size_type index;
-
-	list.reserve(entries.size());
+	Snapshot::Files files(m_container);
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
 	{
 		index = entries.at(i).first;
 
-		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
+		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info()->isDir())
 			entry->lock(tr("Scanning folder for remove..."));
 		else
 			entry->lock(tr("Removing..."));
 
 		updateRange.add(index);
-		list.push_back(entry);
+		files.add(entry->info()->fileName(), entry);
 	}
 
 	updateFirstColumn(updateRange);
-	FolderNodeBase::scanForRemove(list);
+	scanForRemove(files);
 }
 
 void FolderNode::scanForSize(const ProcessedList &entries)
 {
 	Union updateRange;
-	TasksItemList list;
 	DefaultNodeItem *entry;
 	Container::size_type index;
-
-	list.reserve(entries.size());
+	Snapshot::Files files(m_container);
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
-		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
+		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info()->isDir())
 		{
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
 			updateRange.add(index);
-			list.push_back(entry);
+			files.add(entry->info()->fileName(), entry);
 		}
 
-	if (!list.isEmpty())
-	{
-		updateFirstColumn(updateRange);
-		FolderNodeBase::scanForSize(list);
-	}
+	updateFirstColumn(updateRange);
+	scanForSize(files);
 }
 
 void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destination, bool move)
@@ -1115,29 +1142,27 @@ void FolderNode::scanForCopy(const ProcessedList &entries, INodeView *destinatio
 	if (control)
 	{
 		Union updateRange;
-		TasksItemList list;
 		DefaultNodeItem *entry;
 		Container::size_type index;
+		Snapshot::Files files(m_container);
 		QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
 		QString folderLockReason = move ? tr("Scanning folder for move...") : tr("Scanning folder for copy...");
-
-		list.reserve(entries.size());
 
 		for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
 		{
 			index = entries.at(i).first;
 
-			if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info().isDir())
+			if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info()->isDir())
 				entry->lock(folderLockReason);
 			else
 				entry->lock(fileLockReason);
 
 			updateRange.add(index);
-			list.push_back(entry);
+			files.add(entry->info()->fileName(), entry);
 		}
 
 		updateFirstColumn(updateRange);
-		FolderNodeBase::scanForCopy(list, control, move);
+		scanForCopy(files, control, move);
 	}
 }
 
@@ -1235,44 +1260,6 @@ void FolderNode::removeEntry(const QModelIndex &index)
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 	m_items.remove(index.row());
 	endRemoveRows();
-}
-
-void FolderNode::scanForSize(const TasksItemList &entries)
-{
-	PScopedPointer<ScanFilesForSizeTask> task(new ScanFilesForSizeTask(this, m_container.data(), entries));
-	addTask(task.take(), entries);
-}
-
-void FolderNode::scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move)
-{
-	PScopedPointer<ScanFilesForCopyTask> task(new ScanFilesForCopyTask(this, destination, entries, move));
-	addTask(task.take(), entries);
-}
-
-void FolderNode::scanForRemove(const TasksItemList &entries)
-{
-	PScopedPointer<ScanFilesForRemoveTask> task(new ScanFilesForRemoveTask(this, m_container.data(), entries));
-	addTask(task.take(), entries);
-}
-
-void FolderNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
-{
-	if (destination->isPhysical() && move)
-	{
-		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
-		resetTask(task.take(), oldTask);
-	}
-	else
-	{
-		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
-		resetTask(task.take(), oldTask);
-	}
-}
-
-void FolderNode::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
-{
-	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
-	resetTask(task.take(), oldTask);
 }
 
 DEFAULT_PLUGIN_NS_END

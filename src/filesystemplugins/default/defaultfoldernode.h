@@ -81,7 +81,13 @@ protected:
 	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
 
 private:
+	/* Prepare tasks */
 	void updateFiles();
+	void scanForSize(const Snapshot &snapshot);
+	void scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move);
+	void scanForRemove(const Snapshot &snapshot);
+	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, ICopyControl::Holder &destination, bool move);
+	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
 
 	/* Tasks events */
 	void updateFiles(const BaseTask::Event *event);
@@ -200,7 +206,7 @@ private:
 	private:
 		FolderNode *m_node;
 		QString m_reason;
-		TasksItemList m_items;
+		Snapshot::List m_items;
 		::Tools::Containers::Union m_union;
 	};
 	friend class CancelFunctor;
@@ -268,16 +274,6 @@ private:
 
 
 protected:
-	/* Prepare tasks */
-	void scanForSize(const TasksItemList &entries);
-	void scanForCopy(const TasksItemList &entries, ICopyControl::Holder &destination, bool move);
-	void scanForRemove(const TasksItemList &entries);
-	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, ICopyControl::Holder &destination, bool move);
-	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
-
-protected:
-	const IFileContainer *container() const { return m_container.data(); }
-
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 };

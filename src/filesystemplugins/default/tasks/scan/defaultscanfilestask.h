@@ -39,7 +39,19 @@ private:
 class ScanFilesExtendedTask : public FilesExtendedBaseTask
 {
 public:
-	ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
+	class CopyEvent : public FilesExtendedBaseTask::Event
+	{
+	public:
+		CopyEvent(BaseTask *task, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
+			FilesExtendedBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), destination, snapshot),
+			move(move)
+		{}
+
+		bool move;
+	};
+
+public:
+	ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
@@ -47,6 +59,7 @@ protected:
 private:
 	ModelEvent::Type m_type;
 	Snapshot m_snapshot;
+	bool m_move;
 };
 
 DEFAULT_PLUGIN_NS_END

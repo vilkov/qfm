@@ -4,8 +4,6 @@
 #include "idmrootnodedelegate.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../filesystem/model/filesystemnodemodelcontainer.h"
-#include "../../../../filesystem/interfaces/filesysteminodeview.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -36,12 +34,13 @@ public:
 	virtual void move(const INodeView *source, INodeView *destination);
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
+	/* IFileLocation */
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-	virtual QString location(const QModelIndex &index) const;
 
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
@@ -58,8 +57,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const Item *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const Item *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 private:
@@ -79,7 +78,7 @@ private:
 	};
 
 private:
-	class ItemsContainer : public ModelContainer
+	class ItemsContainer : public Container
 	{
 	public:
 		typedef QList<Item*> List;

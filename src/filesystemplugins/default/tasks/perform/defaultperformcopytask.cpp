@@ -1,4 +1,5 @@
 #include "defaultperformcopytask.h"
+#include "../../events/defaultmodelevent.h"
 
 #include <QtGui/QMessageBox>
 

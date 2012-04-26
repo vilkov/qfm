@@ -2,6 +2,7 @@
 #define DEFAULTNODEITEM_H_
 
 #include "../../default_ns.h"
+#include "../../../../filesystem/filesystemnode.h"
 #include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 #include "../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 

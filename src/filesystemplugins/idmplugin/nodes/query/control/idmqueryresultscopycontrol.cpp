@@ -5,8 +5,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(INode *node, const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
-	CopyControl(node, container.container()->location()),
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
+	m_dest(dest.take()),
 	m_container(container),
 	m_value(value),
 	m_property(property),
@@ -14,16 +14,86 @@ IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(INode *node, const IdmCon
 	m_index(index)
 {}
 
-bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
+QString IdmQueryResultsCopyControl::location() const
 {
-	if (m_container.transaction())
+	return m_dest->location();
+}
+
+QString IdmQueryResultsCopyControl::location(const QString &fileName) const
+{
+	return m_dest->location(fileName);
+}
+
+bool IdmQueryResultsCopyControl::isPhysical() const
+{
+	return m_dest->isPhysical();
+}
+
+IFileInfo::size_type IdmQueryResultsCopyControl::freeSpace() const
+{
+	return m_dest->freeSpace();
+}
+
+ICopyControl *IdmQueryResultsCopyControl::createControl(INodeView *view) const
+{
+	return NULL;
+}
+
+bool IdmQueryResultsCopyControl::contains(const QString &fileName) const
+{
+	return m_dest->contains(fileName);
+}
+
+bool IdmQueryResultsCopyControl::remove(const QString &fileName, QString &error) const
+{
+	return m_dest->remove(fileName, error);
+}
+
+bool IdmQueryResultsCopyControl::rename(const QString &oldName, const QString &newName, QString &error) const
+{
+	return m_dest->rename(oldName, newName, error);
+}
+
+bool IdmQueryResultsCopyControl::move(const IFileContainer *source, const QString &fileName, QString &error) const
+{
+	return m_dest->move(source, fileName, error);
+}
+
+IFileContainer *IdmQueryResultsCopyControl::open() const
+{
+	return m_dest->open();
+}
+
+IFileAccessor *IdmQueryResultsCopyControl::open(const QString &fileName, int mode, QString &error) const
+{
+	return m_dest->open(fileName, mode, error);
+}
+
+IFileContainer *IdmQueryResultsCopyControl::open(const QString &fileName, bool create, QString &error) const
+{
+	return m_dest->open(fileName, create, error);
+}
+
+const IFileContainerScanner *IdmQueryResultsCopyControl::scanner() const
+{
+	return m_dest->scanner();
+}
+
+INode *IdmQueryResultsCopyControl::node() const
+{
+	return m_dest->node();
+}
+
+bool IdmQueryResultsCopyControl::start(const Snapshot::List &files, bool move)
+{
+	if (m_dest->start(files, move) && m_container.transaction())
 	{
 		IdmEntityValue::Holder localValue;
 		IdmCompositeEntityValue::List list;
 		list.reserve(files.size());
 
-		for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
-			if (localValue = m_container.addValue(m_property.entity, m_container.container()->location(files.at(i)->fileName())))
+		for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
+			if (localValue = m_container.addValue(m_property.entity, m_container.container()->location(files.at(i).second->info()->fileName())))
 				list.push_back(localValue);
 			else
 			{
@@ -56,12 +126,12 @@ bool IdmQueryResultsCopyControl::start(const Snapshot::Files &files, bool move)
 
 void IdmQueryResultsCopyControl::done(bool error)
 {
-
+	m_dest->done(error);
 }
 
 void IdmQueryResultsCopyControl::canceled()
 {
-
+	m_dest->canceled();
 }
 
 IDM_PLUGIN_NS_END

@@ -2,18 +2,18 @@
 #define ARCNODEITEM_H_
 
 #include "../../arcplugin_ns.h"
-#include "../../../../filesystem/tasks/items/filesystemtasknodeitem.h"
+#include "../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcNodeItem : public TaskNodeItem
+class ArcNodeItem : public TasksNodeItem
 {
 public:
 	ArcNodeItem(Base *parent);
 
 	virtual void lock(const QString &reason);
-	void unlock() { TaskNodeItem::unlock(); stop(); }
+	void unlock() { TasksNodeItem::unlock(); stop(); }
 
 	virtual bool isRoot() const;
 	virtual bool isDir() const;

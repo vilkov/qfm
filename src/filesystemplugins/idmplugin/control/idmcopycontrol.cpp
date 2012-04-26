@@ -7,16 +7,86 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmCopyControl::IdmCopyControl(INode *node, const IdmContainer &container, const IFileContainer *folder, IdmEntity *entity) :
-	CopyControl(node, folder->location()),
+IdmCopyControl::IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const IFileContainer *folder, IdmEntity *entity) :
+	m_dest(dest.take()),
 	m_container(container),
 	m_entity(entity),
 	m_storage(difference(folder->location(), m_container.container()->location()).append(QChar('/')))
 {}
 
-bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
+QString IdmCopyControl::location() const
 {
-	if (m_container.transaction())
+	return m_dest->location();
+}
+
+QString IdmCopyControl::location(const QString &fileName) const
+{
+	return m_dest->location(fileName);
+}
+
+bool IdmCopyControl::isPhysical() const
+{
+	return m_dest->isPhysical();
+}
+
+IFileInfo::size_type IdmCopyControl::freeSpace() const
+{
+	return m_dest->freeSpace();
+}
+
+ICopyControl *IdmCopyControl::createControl(INodeView *view) const
+{
+	return NULL;
+}
+
+bool IdmCopyControl::contains(const QString &fileName) const
+{
+	return m_dest->contains(fileName);
+}
+
+bool IdmCopyControl::remove(const QString &fileName, QString &error) const
+{
+	return m_dest->remove(fileName, error);
+}
+
+bool IdmCopyControl::rename(const QString &oldName, const QString &newName, QString &error) const
+{
+	return m_dest->rename(oldName, newName, error);
+}
+
+bool IdmCopyControl::move(const IFileContainer *source, const QString &fileName, QString &error) const
+{
+	return m_dest->move(source, fileName, error);
+}
+
+IFileContainer *IdmCopyControl::open() const
+{
+	return m_dest->open();
+}
+
+IFileAccessor *IdmCopyControl::open(const QString &fileName, int mode, QString &error) const
+{
+	return m_dest->open(fileName, mode, error);
+}
+
+IFileContainer *IdmCopyControl::open(const QString &fileName, bool create, QString &error) const
+{
+	return m_dest->open(fileName, create, error);
+}
+
+const IFileContainerScanner *IdmCopyControl::scanner() const
+{
+	return m_dest->scanner();
+}
+
+INode *IdmCopyControl::node() const
+{
+	return m_dest->node();
+}
+
+bool IdmCopyControl::start(const Snapshot::List &files, bool move)
+{
+	if (m_dest->start(files, move) && m_container.transaction())
 	{
 		IdmEntityValue::Holder value(m_container.addValue(m_entity));
 
@@ -32,8 +102,8 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 		    	{
 		    		IdmEntityValue::Holder localValue;
 
-					for (Snapshot::Files::size_type i = 0, size = files.size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i)->fileName())))
+					for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
+						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i).second->info()->fileName())))
 						{
 							list.push_back(localValue);
 							possibleFiles[localValue->id()] = files.at(i);
@@ -82,12 +152,12 @@ bool IdmCopyControl::start(const Snapshot::Files &files, bool move)
 
 void IdmCopyControl::done(bool error)
 {
-
+	m_dest->done(error);
 }
 
 void IdmCopyControl::canceled()
 {
-
+	m_dest->canceled();
 }
 
 QString IdmCopyControl::difference(const QString &path1, const QString &path2)

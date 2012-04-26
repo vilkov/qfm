@@ -411,7 +411,7 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 	typedef QList<QByteArray> List;
 	const char *args[3] = {NULL, NULL, NULL};
 
-	if (findProgram(file->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
+	if (findProgram(file->fileType()->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
 	{
 		QString absoluteFilePath = container->location(file->fileName());
 		QByteArray workingDirectory = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar('/'))).toUtf8();

@@ -1,18 +1,17 @@
 #include "idmqueryresultpathitem.h"
-#include "../../../../../filesystem/tasks/concrete/containers/filesysteminfolistitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultPathItem::QueryResultPathItem(const InfoItem *item, Base *parent) :
+QueryResultPathItem::QueryResultPathItem(IFileInfo::Holder &info, Base *parent) :
 	QueryResultItem(parent),
-	m_info(*item),
+	m_info(info.take()),
 	m_node(NULL)
 {}
 
 QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent) :
 	QueryResultItem(parent),
-	m_info(container->location(fileName), Info::None()),
+	m_info(),
 	m_node(NULL)
 {}
 
@@ -42,12 +41,12 @@ QVariant QueryResultPathItem::data(qint32 column, qint32 role) const
 	{
 		case Qt::EditRole:
 		case Qt::DisplayRole:
-			return m_info.fileName();
+			return m_info->fileName();
 		case Qt::DecorationRole:
 			if (isLocked())
 				return lockIcon();
 			else
-				return m_info.icon();
+				return m_info->fileType()->icon();
 		case Qt::TextAlignmentRole:
 			return Qt::AlignLeft;
 		case Qt::ToolTipRole:
@@ -80,59 +79,39 @@ bool QueryResultPathItem::isPath()
 	return true;
 }
 
-FileTypeId QueryResultPathItem::id() const
-{
-	return m_info.id();
-}
-
-QIcon QueryResultPathItem::icon() const
-{
-	return m_info.icon();
-}
-
-QString QueryResultPathItem::name() const
-{
-	return m_info.name();
-}
-
-QString QueryResultPathItem::description() const
-{
-	return m_info.description();
-}
-
 bool QueryResultPathItem::isDir() const
 {
-	return m_info.isDir();
+	return m_info->isDir();
 }
 
 bool QueryResultPathItem::isFile() const
 {
-	return m_info.isFile();
+	return m_info->isFile();
 }
 
 bool QueryResultPathItem::isLink() const
 {
-	return m_info.isLink();
+	return m_info->isLink();
 }
 
 IFileInfo::size_type QueryResultPathItem::fileSize() const
 {
-	return m_info.fileSize();
+	return m_info->fileSize();
 }
 
 QString QueryResultPathItem::fileName() const
 {
-	return m_info.fileName();
+	return m_info->fileName();
 }
 
 QDateTime QueryResultPathItem::lastModified() const
 {
-	return m_info.lastModified();
+	return m_info->lastModified();
 }
 
 int QueryResultPathItem::permissions() const
 {
-	return m_info.permissions();
+	return m_info->permissions();
 }
 
 IDM_PLUGIN_NS_END

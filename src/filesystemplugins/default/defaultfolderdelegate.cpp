@@ -1,9 +1,9 @@
 #include "defaultfolderdelegate.h"
-#include "items/filesystemfolderitem.h"
-#include "../tools/filesystemcommontools.h"
+#include "model/items/defaultnodeitem.h"
+#include "../../filesystem/tools/filesystemcommontools.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 FolderDelegate::FolderDelegate(QAbstractProxyModel *proxy, QObject *parent) :
 	TasksNodeDelegate(parent),
@@ -16,7 +16,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 {
 	if (index.column() == 1)
 	{
-		FolderBaseItem *entry = static_cast<FolderBaseItem*>(m_proxy->mapToSource(index).internalPointer());
+		DefaultNodeItem *entry = static_cast<DefaultNodeItem*>(m_proxy->mapToSource(index).internalPointer());
 
 		if (!entry->isRootItem() && entry->isInProgress())
 		{
@@ -28,4 +28,4 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 	Delegate::paintBackgroundLines(painter, option, index);
 }
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END

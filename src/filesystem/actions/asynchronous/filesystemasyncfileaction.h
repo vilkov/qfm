@@ -6,7 +6,6 @@
 
 
 FILE_SYSTEM_NS_BEGIN
-
 class TasksNode;
 class PerformActionTask;
 

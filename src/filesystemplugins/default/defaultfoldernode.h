@@ -63,7 +63,7 @@ protected:
 
 protected:
 	/* Task event handlers */
-	virtual Snapshot::Files updateFilesList() const;
+	virtual Snapshot updateFilesList() const;
 	virtual void updateFilesEvent(Snapshot::Updates &updates);
 	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot);
 	virtual bool scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move);
@@ -79,6 +79,9 @@ protected:
 
 protected:
 	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
+
+protected:
+	const IFileContainer::Holder &container() const { return m_container; }
 
 private:
 	/* Prepare tasks */
@@ -96,6 +99,10 @@ private:
 	void scanForRemove(const BaseTask::Event *event);
 	void performCopy(const BaseTask::Event *event);
 	void performRemove(const BaseTask::Event *event);
+
+private:
+	bool isUpdating() const { return m_updating; }
+	void setUpdating(bool value) { m_updating = value; }
 
 private:
 	class Container : public TasksNode::Container
@@ -266,16 +273,6 @@ private:
 	FolderProxyModel m_proxy;
 	FolderDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;
-
-
-
-
-
-
-
-protected:
-	bool isUpdating() const { return m_updating; }
-	void setUpdating(bool value) { m_updating = value; }
 };
 
 DEFAULT_PLUGIN_NS_END

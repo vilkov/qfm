@@ -38,8 +38,8 @@ public:
 	virtual void scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 	virtual void refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 
-private:
-	void scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const;
+//private:
+//	void scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const;
 
 private:
 	friend class CopyControl;

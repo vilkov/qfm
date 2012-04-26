@@ -33,6 +33,8 @@ public:
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
+	virtual const IFileContainerScanner *scanner() const;
+
 	/* ICopyControl */
 	virtual INode *node() const;
 	virtual bool start(const Snapshot::List &files, bool move);

@@ -9,7 +9,7 @@ FILE_SYSTEM_NS_BEGIN
 class RootFileContainer : public IFileContainer, public IFileContainerScanner, public IFileInfo, public IFileType
 {
 public:
-	virtual RootFileContainer();
+	RootFileContainer();
 
 	/* IFileLocation */
 	virtual QString location() const;

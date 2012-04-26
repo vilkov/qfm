@@ -2,15 +2,15 @@
 #define IDMNODEQUERYRESULTSUPDATETASK_H_
 
 #include "../../events/idmqueryresultsmodelevents.h"
-#include "../../../../../../filesystem/tasks/concrete/scan/scanfilesbasetask.h"
+#include "../../../../../../filesystem/tasks/filesystembasetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class UpdateFilesTask : public ScanFilesBaseTask
+class UpdateFilesTask : public BaseTask
 {
 public:
-	UpdateFilesTask(TasksNode *receiver, const IFileContainer *container, const TasksNode::TasksItemList &files);
+	UpdateFilesTask(TasksNode *receiver, const Snapshot &snapshot);
 
 	virtual void run(const volatile Flags &aborted);
 
@@ -19,7 +19,6 @@ protected:
 
 private:
 	Snapshot m_snapshot;
-	TasksNode::TasksItemList m_files;
 };
 
 IDM_PLUGIN_NS_END

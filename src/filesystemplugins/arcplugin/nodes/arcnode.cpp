@@ -6,11 +6,11 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNode::ArcNode(const Info &info, Node *parent) :
+ArcNode::ArcNode(const QString &filePath, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
     m_delegate(&m_proxy),
-	m_info(info)
+    m_filePath(filePath)
 {
 	m_proxy.setSourceModel(this);
 	m_items.push_back(new ArcNodeRootItem());
@@ -118,12 +118,12 @@ void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 	if (!list.isEmpty() && !(item = static_cast<ArcNodeItem *>(m_proxy.mapToSource(list.at(0)).internalPointer()))->isRoot())
 	{
 		QString reason = tr("Canceling...");
-		TasksItemList items = cancelTaskAndTakeItems(item);
+		Snapshot::List items = cancelTaskAndTakeItems(item);
 
-		for (TasksItemList::size_type i = 0, size = items.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = items.size(); i < size; ++i)
 		{
-			static_cast<ArcNodeItem *>(items.at(i))->cancel(reason);
-			updateFirstColumn(static_cast<ArcNodeItem *>(items.at(i)));
+			static_cast<ArcNodeItem *>(items.at(i).first)->cancel(reason);
+			updateFirstColumn(static_cast<ArcNodeItem *>(items.at(i).first));
 		}
 	}
 }
@@ -174,7 +174,7 @@ void ArcNode::refresh()
 
 QString ArcNode::title() const
 {
-	return m_info.fileName();
+	return m_filePath.mid(m_filePath.lastIndexOf(QChar('/')) + 1);
 }
 
 QString ArcNode::location() const
@@ -298,12 +298,12 @@ ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::size() const
 	return m_container.size();
 }
 
-ArcNode::ItemsContainer::NodeItem *ArcNode::ItemsContainer::at(size_type index) const
+ArcNode::ItemsContainer::Item *ArcNode::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(NodeItem *item) const
+ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) const
 {
 	return m_container.indexOf(static_cast<ArcNodeItem *>(item));
 }

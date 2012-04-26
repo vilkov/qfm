@@ -11,6 +11,7 @@
 #include "../../gui/query/create/createquerydialog.h"
 #include "../../gui/value/list/editable/editablevaluelistdialog.h"
 #include "../../../../application.h"
+
 #include <QtGui/QMessageBox>
 
 
@@ -147,17 +148,6 @@ void IdmRootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-void IdmRootNode::refresh()
-{
-
-}
-
-QString IdmRootNode::title() const
-{
-	QString res = m_container.container()->location();
-	return res.mid(res.lastIndexOf(QChar('/')));
-}
-
 QString IdmRootNode::location() const
 {
 	return m_container.container()->location();
@@ -168,9 +158,15 @@ QString IdmRootNode::location(const QString &fileName) const
 	return m_container.container()->location(fileName);
 }
 
-QString IdmRootNode::location(const QModelIndex &index) const
+void IdmRootNode::refresh()
 {
-	return m_container.container()->location();
+
+}
+
+QString IdmRootNode::title() const
+{
+	QString res = m_container.container()->location();
+	return res.mid(res.lastIndexOf(QChar('/')));
 }
 
 QAbstractItemModel *IdmRootNode::model() const

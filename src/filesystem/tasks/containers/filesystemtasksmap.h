@@ -83,7 +83,7 @@ public:
 		const Snapshot::List &list = (m_tasks[task] = m_tasks.take(oldTask));
 
 		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
-			m_items[list.at(i)] = task;
+			m_items[list.at(i).first] = task;
 	}
 
 private:

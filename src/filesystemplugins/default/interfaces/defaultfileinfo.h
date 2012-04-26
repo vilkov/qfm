@@ -1,9 +1,9 @@
 #ifndef DEFAULTFILEINFO_H_
 #define DEFAULTFILEINFO_H_
 
-#include "../../default_ns.h"
-#include "../../../../filesystem/filetypeinfo/filetypeinfo.h"
-#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
+#include "../default_ns.h"
+#include "../../../filesystem/filetypeinfo/filetypeinfo.h"
+#include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

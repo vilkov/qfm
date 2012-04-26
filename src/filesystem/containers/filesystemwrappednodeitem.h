@@ -2,7 +2,6 @@
 #define FILESYSTEMWRAPPEDNODEITEM_H_
 
 #include <QtCore/QList>
-#include "../interfaces/filesystemifileinfo.h"
 #include "../interfaces/filesystemifilecontainer.h"
 
 

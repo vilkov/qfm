@@ -24,7 +24,6 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			if (enumerator)
 			{
 				WrappedNodeItem::Holder wrappedItem;
-				Snapshot::Updates localUpdates;
 				DefaultNodeItem *item;
 				QTime base = QTime::currentTime();
 				QTime current;
@@ -43,7 +42,7 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 					if (base.msecsTo(current) > 300)
 					{
-						localUpdates = m_snapshot.takeUpdates();
+						Snapshot::Updates localUpdates = m_snapshot.takeUpdates();
 						base = current;
 
 						if (!localUpdates.isEmpty())

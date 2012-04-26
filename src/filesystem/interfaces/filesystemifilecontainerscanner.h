@@ -3,10 +3,11 @@
 
 #include "filesystemifileinfo.h"
 #include "../tasks/filesystembasetask.h"
-#include "../containers/filesystemsnapshot.h"
 
 
 FILE_SYSTEM_NS_BEGIN
+class Snapshot;
+
 
 class IFileContainerScanner
 {
@@ -17,7 +18,7 @@ public:
 		typedef PScopedPointer<IEnumerator> Holder;
 
 	public:
-		virtual ~Enumerator();
+		virtual ~IEnumerator();
 
 		virtual bool next() = 0;
 		virtual QString fileName() const = 0;

@@ -6,7 +6,6 @@
 #include "../model/arcdelegate.h"
 #include "../archive/arcarchive.h"
 #include "../tasks/arctaskevent.h"
-#include "../../../filesystem/interfaces/imp/filesystemfileinfo.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
 
@@ -16,7 +15,7 @@ ARC_PLUGIN_NS_BEGIN
 class ArcNode : public TasksNode
 {
 public:
-	ArcNode(const Info &info, Node *parent = 0);
+	ArcNode(const QString &filePath, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -71,7 +70,7 @@ protected:
 private:
 	enum { RootItemIndex = 0 };
 
-	class ItemsContainer : public ModelContainer
+	class ItemsContainer : public Container
 	{
 	public:
 		typedef QList<ArcNodeItem *> List;
@@ -99,7 +98,7 @@ private:
     ItemsContainer::List &m_items;
     ArcNodeProxyModel m_proxy;
     ArcDelegate m_delegate;
-    Info m_info;
+    QString m_filePath;
     INodeView::MenuActionList m_actions;
 };
 

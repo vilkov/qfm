@@ -5,7 +5,7 @@
 #include "arctaskevent.h"
 #include "../archive/arcarchive.h"
 #include "../../../filesystem/tasks/tools/taskprogress.h"
-#include "../../../filesystem/tasks/interfaces/filesystemicopycontrol.h"
+#include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 ARC_PLUGIN_NS_BEGIN

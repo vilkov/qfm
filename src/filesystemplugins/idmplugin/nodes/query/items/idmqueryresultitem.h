@@ -2,7 +2,7 @@
 #define IDMQUERYRESULTITEM_H_
 
 #include "../../../idmplugin_ns.h"
-#include "../../../../../filesystem/tasks/items/filesystemtasknodeitem.h"
+#include "../../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

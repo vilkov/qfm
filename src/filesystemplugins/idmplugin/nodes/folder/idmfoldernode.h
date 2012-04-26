@@ -3,12 +3,12 @@
 
 #include "../../idmplugin_ns.h"
 #include "../../containeres/idmcontainer.h"
-#include "../../../../filesystem/folder/filesystemfoldernode.h"
+#include "../../../default/defaultfoldernode.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmFolderNode : public FolderNode
+class IdmFolderNode : public ::FileSystem::Plugins::Default::FolderNode
 {
 public:
 	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, Node *parent = 0);

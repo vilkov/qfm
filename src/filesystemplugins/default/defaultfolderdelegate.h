@@ -2,10 +2,11 @@
 #define DEFAULTFOLDERDELEGATE_H_
 
 #include <QtGui/QAbstractProxyModel>
-#include "../tasks/filesystemtasksnodedelegate.h"
+#include "default_ns.h"
+#include "../../filesystem/tasks/filesystemtasksnodedelegate.h"
 
 
-FILE_SYSTEM_NS_BEGIN
+DEFAULT_PLUGIN_NS_BEGIN
 
 class FolderDelegate : public TasksNodeDelegate
 {
@@ -20,6 +21,6 @@ private:
     QAbstractProxyModel *m_proxy;
 };
 
-FILE_SYSTEM_NS_END
+DEFAULT_PLUGIN_NS_END
 
 #endif /* DEFAULTFOLDERDELEGATE_H_ */

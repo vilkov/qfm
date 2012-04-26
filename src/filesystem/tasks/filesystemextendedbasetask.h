@@ -2,7 +2,7 @@
 #define FILESYSTEMEXTENDEDBASETASK_H_
 
 #include "filesystembasetask.h"
-#include "interfaces/filesystemicopycontrol.h"
+#include "../interfaces/filesystemicopycontrol.h"
 
 
 FILE_SYSTEM_NS_BEGIN

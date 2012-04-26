@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "../../archive/arcarchive.h"
-#include "../../../../filesystem/tasks/concrete/perform/performactiontask.h"
+#include "../../../../filesystem/tasks/filesystemperformactiontask.h"
 
 
 ARC_PLUGIN_NS_BEGIN

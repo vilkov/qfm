@@ -594,26 +594,6 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-void IdmNodeQueryResults::lock(const TasksItemList &list, const QString &reason)
-{
-	typedef QMap<QueryResultItem*, Union> Map;
-	qint32 lastColumn = columnCount(QModelIndex()) - 1;
-	QueryResultPropertyItem *property;
-	Map map;
-
-	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
-	{
-		property = static_cast<QueryResultPropertyItem *>(list.at(i)->parent());
-		map[property].add(property->indexOf(list.at(i)));
-		static_cast<QueryResultValueItem *>(list.at(i))->lock(reason);
-	}
-
-	for (Map::const_iterator i = map.constBegin(), end = map.constEnd(); i != end; ++i)
-		for (Union::List::size_type q = 0, size = (*i).size(); q < size; ++q)
-			emit dataChanged(createIndex((*i).at(q).top(), 0, i.key()->at((*i).at(q).top())),
-							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
-}
-
 void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason)
 {
 	typedef QMap<QueryResultItem*, Union> Map;
@@ -621,7 +601,7 @@ void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason
 	QueryResultPropertyItem *property;
 	Map map;
 
-	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 	{
 		property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
 		map[property].add(property->indexOf(list.at(i).first));
@@ -641,7 +621,7 @@ void IdmNodeQueryResults::unlock(const Snapshot::List &list)
 	QueryResultPropertyItem *property;
 	Map map;
 
-	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 	{
 		property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
 		map[property].add(property->indexOf(list.at(i).first));
@@ -662,7 +642,7 @@ void IdmNodeQueryResults::update(const Snapshot::List &list)
 	QueryResultItem *item;
 	Map map;
 
-	for (TasksItemList::size_type i = 0, size = list.size(); i < size; ++i)
+	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 	{
 		item = static_cast<QueryResultItem *>(list.at(i).first);
 		property = static_cast<QueryResultPropertyItem *>(item->parent());
@@ -678,7 +658,7 @@ void IdmNodeQueryResults::update(const Snapshot::List &list)
 }
 
 IdmNodeQueryResults::ItemsContainer::ItemsContainer() :
-	NodeModelContainer()
+	TasksNode::Container()
 {}
 
 IdmNodeQueryResults::ItemsContainer::~ItemsContainer()
@@ -691,12 +671,12 @@ IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContain
 	return m_container.size();
 }
 
-IdmNodeQueryResults::ItemsContainer::NodeItem *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
+IdmNodeQueryResults::ItemsContainer::Item *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(NodeItem *item) const
+IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(Item *item) const
 {
 	return m_container.indexOf(item);
 }

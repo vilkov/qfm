@@ -3,7 +3,6 @@
 
 #include "idmqueryresultitem.h"
 #include "../../../../../filesystem/filesystemnode.h"
-#include "../../../../../filesystem/tasks/concrete/containers/filesysteminfoitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -14,7 +13,7 @@ public:
 	typedef QList<QueryResultPathItem *> Container;
 
 public:
-	QueryResultPathItem(const InfoItem *item, Base *parent);
+	QueryResultPathItem(IFileInfo::Holder &info, Base *parent);
 	QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent);
 	virtual ~QueryResultPathItem();
 
@@ -29,12 +28,6 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 	virtual bool isPath();
-
-	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
 
 	/* IFileInfo */
 	virtual bool isDir() const;
@@ -51,7 +44,7 @@ public:
 	void setNode(Node *node) { m_node = node; }
 
 protected:
-	Info m_info;
+	IFileInfo::Holder m_info;
 	Node *m_node;
 	Container m_items;
 };

@@ -87,7 +87,6 @@ private:
 	void performRemove(const BaseTask::Event *e);
 
 private:
-	void lock(const TasksItemList &list, const QString &reason);
 	void lock(const Snapshot::List &list, const QString &reason);
 	void unlock(const Snapshot::List &list);
 	void update(const Snapshot::List &list);
@@ -96,7 +95,7 @@ private:
     enum { PrefetchLimit = 64 };
 
 private:
-	class ItemsContainer : public ModelContainer
+	class ItemsContainer : public Container
 	{
 	public:
 		typedef QList<Item*> List;

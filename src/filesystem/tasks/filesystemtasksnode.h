@@ -19,9 +19,6 @@ class TasksNode : public Node
 	Q_DISABLE_COPY(TasksNode)
 
 public:
-	typedef TasksMap::List TasksItemList;
-
-public:
 	TasksNode(const Container &conteiner, Node *parent = 0);
 
 	/* QObject */
@@ -33,15 +30,15 @@ protected:
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
 
 protected:
-	void addTask(BaseTask *task, const TasksItemList &items);
-	void addTask(ExtendedBaseTask *task, const TasksItemList &items);
+	void addTask(BaseTask *task, const Snapshot &snapshot);
+	void addTask(ExtendedBaseTask *task, const Snapshot &snapshot);
 	void resetTask(BaseTask *task, BaseTask *oldTask);
 	void handleTask(BaseTask *task);
 	void handleTask(ExtendedBaseTask *task);
 	void taskHandled();
 	void cancelTask(NodeItem *item);
 	void removeAllTaskLinks(BaseTask *task);
-	TasksMap::List cancelTaskAndTakeItems(NodeItem *item);
+	Snapshot::List cancelTaskAndTakeItems(NodeItem *item);
 
 private:
 	TasksMap m_tasks;

@@ -13,7 +13,7 @@ class FileAction
 {
 public:
 	typedef QPair<const NodeItem *, const IFileInfo *> FileItem;
-	typedef QList<FileItem>                                  FilesList;
+	typedef QList<FileItem>                            FilesList;
 
 	class FilesListAdapter
 	{

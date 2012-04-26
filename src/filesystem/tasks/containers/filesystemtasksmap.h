@@ -4,7 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include "../filesystembasetask.h"
-#include "../../model/items/filesystemnodeitem.h"
+#include "../../containers/filesystemsnapshot.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -12,30 +12,23 @@ FILE_SYSTEM_NS_BEGIN
 class TasksMap
 {
 public:
-	typedef QList<NodeItem *> List;
-
-public:
 	TasksMap()
 	{}
 
-	void add(BaseTask *task, NodeItem *item)
+	void add(BaseTask *task, const Snapshot &snapshot)
 	{
-		m_tasks[task].push_back(item);
-		m_items[item] = task;
-	}
-	void add(BaseTask *task, const List &items)
-	{
-		m_tasks[task] = items;
+		const Snapshot::List &items = (m_tasks[task] = snapshot.list());
 
-		for (List::size_type i = 0, size = items.size(); i < size; ++i)
-			m_items[items.at(i)] = task;
+		for (Snapshot::List::size_type i = 0, size = items.size(); i < size; ++i)
+			m_items[items.at(i).first] = task;
 	}
+
 	void remove(NodeItem *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
-			List &list = m_tasks[task];
-			List::size_type index;
+			Snapshot::List &list = m_tasks[task];
+			Snapshot::List::size_type index;
 
 			if ((index = list.indexOf(item)) != -1)
 				list.removeAt(index);
@@ -46,52 +39,56 @@ public:
 				m_tasks.remove(task);
 		}
 	}
+
 	void removeAll(BaseTask *task)
 	{
-		List list = m_tasks.take(task);
+		Snapshot::List list = m_tasks.take(task);
 
-		for (List::size_type i = 0, size = list.size(); i < size; ++i)
-			m_items.remove(list.at(i));
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+			m_items.remove(list.at(i).first);
 	}
+
 	BaseTask *take(NodeItem *item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
-			List list = m_tasks.take(task);
+			Snapshot::List list = m_tasks.take(task);
 
-			for (List::size_type i = 0, size = list.size(); i < size; ++i)
-				m_items.remove(list.at(i));
+			for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+				m_items.remove(list.at(i).first);
 
 			return task;
 		}
 
-		return 0;
+		return NULL;
 	}
-	BaseTask *take(NodeItem *item, List &list)
+
+	BaseTask *take(NodeItem *item, Snapshot::List &list)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
 			list = m_tasks.take(task);
 
-			for (List::size_type i = 0, size = list.size(); i < size; ++i)
-				m_items.remove(list.at(i));
+			for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+				m_items.remove(list.at(i).first);
 
 			return task;
 		}
 
-		return 0;
+		return NULL;
 	}
+
 	void resetTask(BaseTask *task, BaseTask *oldTask)
 	{
-		const List &list = (m_tasks[task] = m_tasks.take(oldTask));
+		const Snapshot::List &list = (m_tasks[task] = m_tasks.take(oldTask));
 
-		for (List::size_type i = 0, size = list.size(); i < size; ++i)
+		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
 			m_items[list.at(i)] = task;
 	}
 
 private:
-	typedef QMap<BaseTask *, List>       Tasks;
-	typedef QMap<NodeItem *, BaseTask *> Items;
+	typedef QMap<BaseTask *, Snapshot::List> Tasks;
+	typedef QMap<NodeItem *, BaseTask *>     Items;
 
 private:
 	Tasks m_tasks;

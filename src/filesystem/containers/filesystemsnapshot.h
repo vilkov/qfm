@@ -76,12 +76,23 @@ public:
 	typedef Container::iterator       iterator;
 	typedef Container::const_iterator const_iterator;
 	typedef Container::size_type      size_type;
+	enum { InvalidIndex = (size_type)-1 };
 
 public:
 	bool isEmpty() const { return m_list.isEmpty(); }
 	size_type size() const { return m_list.size(); }
-
 	const Container::value_type &at(size_type index) const { return m_list.at(index); }
+
+	size_type indexOf(NodeItem *item) const
+	{
+		for (size_type i = 0; i < size(); ++i)
+			if (at(i).first == item)
+				return i;
+
+		return InvalidIndex;
+	}
+
+	void removeAt(size_type index) { m_list.removeAt(index); }
 
 	bool isAdded(const_iterator i) const { return (*i).first == NULL; }
 	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
@@ -96,7 +107,8 @@ public:
 	iterator erase(iterator i) { delete (*i).second; return m_list.erase(i); }
 
 protected:
-	friend class Snapshot;
+	BaseList()
+	{}
 
 	BaseList(const Container &list) :
 		m_list(list)
@@ -109,6 +121,9 @@ protected:
 class Snapshot::List : public Snapshot::BaseList
 {
 public:
+	List()
+	{}
+
 	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
 	const IFileContainer *container() const { return m_data->container; }
 

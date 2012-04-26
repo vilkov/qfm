@@ -1,5 +1,5 @@
 #include "filesystemtasksnode.h"
-#include "concrete/perform/performactiontask.h"
+#include "filesystemperformactiontask.h"
 #include "tools/filesystemtaskdialog.h"
 #include "tools/filesystemtaskprogressevents.h"
 #include "../../application.h"
@@ -71,16 +71,16 @@ bool TasksNode::event(QEvent *e)
 	return Node::event(e);
 }
 
-void TasksNode::addTask(BaseTask *task, const TasksItemList &items)
+void TasksNode::addTask(BaseTask *task, const Snapshot &snapshot)
 {
-	m_tasks.add(task, items);
+	m_tasks.add(task, snapshot);
 	addLink();
 	Application::taskPool()->handle(task);
 }
 
-void TasksNode::addTask(ExtendedBaseTask *task, const TasksItemList &items)
+void TasksNode::addTask(ExtendedBaseTask *task, const Snapshot &snapshot)
 {
-	m_tasks.add(task, items);
+	m_tasks.add(task, snapshot);
 	addLink();
 //	static_cast<const ExtendedBaseTask *>(task)->destination()->node()->addLink();
 	Application::taskPool()->handle(task);
@@ -122,9 +122,9 @@ void TasksNode::removeAllTaskLinks(BaseTask *task)
 	removeLink();
 }
 
-TasksMap::List TasksNode::cancelTaskAndTakeItems(NodeItem *item)
+Snapshot::List TasksNode::cancelTaskAndTakeItems(NodeItem *item)
 {
-	TasksMap::List res;
+	Snapshot::List res;
 
 	if (BaseTask *task = m_tasks.take(item, res))
 		task->cancel();

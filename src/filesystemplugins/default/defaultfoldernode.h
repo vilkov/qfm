@@ -78,9 +78,6 @@ protected:
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 protected:
-	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
-
-protected:
 	const IFileContainer::Holder &container() const { return m_container; }
 
 private:

@@ -1,15 +1,41 @@
 #include "../filesystemrootnode.h"
 #include "../../filesystempluginsmanager.h"
+#include "../../../filesystemplugins/default/defaultfoldernode.h"
+#include "../../../filesystemplugins/default/interfaces/defaultfilecontainer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
+class LocalRootFolderNode;
+static LocalRootFolderNode *rootNode = NULL;
+
+
+class LocalRootFolderNode : public Plugins::Default::FolderNode
+{
+public:
+	LocalRootFolderNode(IFileContainer::Holder &container, Node *parent = 0) :
+		FolderNode(container, parent)
+	{}
+	virtual ~LocalRootFolderNode()
+	{
+		rootNode = NULL;
+	}
+};
+
+
 RootNode::RootNode() :
 	Node(m_items)
-{}
+{
+	Q_ASSERT(rootNode == NULL);
+
+	IFileContainer::Holder container(new Plugins::Default::FileContainer(QString()));
+	rootNode = new LocalRootFolderNode(container, this);
+}
 
 RootNode::~RootNode()
-{}
+{
+	Q_ASSERT_X(rootNode == NULL, "RootNode::~RootNode", "Bad links counting!");
+}
 
 ICopyControl *RootNode::createControl(INodeView *view) const
 {
@@ -128,7 +154,10 @@ Node *RootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QMode
 
 Node *RootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
-	return plugins->node(&m_container, &m_container, this);
+	if (fileName == QLatin1String("/"))
+		return rootNode;
+	else
+		return NULL;
 }
 
 RootNode::Container::size_type RootNode::Container::size() const

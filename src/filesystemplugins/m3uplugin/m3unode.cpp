@@ -164,7 +164,7 @@ void M3uNode::refresh()
 //		QString line;
 //		QStringList list;
 //		QTextStream stream(&file);
-//		M3uContainer::Container items;
+//		M3uNode::Container::Container items;
 //
 //		stream.setCodec(QTextCodec::codecForName("UTF-8"));
 //		qDeleteAll(m_items.container());
@@ -222,6 +222,29 @@ Node *M3uNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModel
 Node *M3uNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
 {
 	return 0;
+}
+
+M3uNode::Container::Container()
+{}
+
+M3uNode::Container::~Container()
+{
+	qDeleteAll(m_container);
+}
+
+M3uNode::Container::size_type M3uNode::Container::size() const
+{
+	return m_container.size();
+}
+
+M3uNode::Container::Item *M3uNode::Container::at(size_type index) const
+{
+	return m_container.at(index);
+}
+
+M3uNode::Container::size_type M3uNode::Container::indexOf(Item *item) const
+{
+	return -1;//m_items.indexOf(item);
 }
 
 M3U_PLUGIN_NS_END

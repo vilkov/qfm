@@ -1,4 +1,4 @@
-#include "filesystemrootfilecontainer.h"
+#include "../filesystemrootfilecontainer.h"
 #include "../../../filesystemplugins/default/interfaces/defaultfilecontainer.h"
 
 
@@ -76,7 +76,7 @@ const IFileContainerScanner *RootFileContainer::scanner() const
 	return this;
 }
 
-virtual void RootFileContainer::enumerate(IEnumerator::Holder &enumerator) const
+void RootFileContainer::enumerate(IEnumerator::Holder &enumerator) const
 {
 
 }
@@ -106,7 +106,7 @@ bool RootFileContainer::isFile() const
 	return false;
 }
 
-bool isLink() const
+bool RootFileContainer::isLink() const
 {
 	return false;
 }

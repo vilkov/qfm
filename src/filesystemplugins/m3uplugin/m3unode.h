@@ -5,7 +5,7 @@
 #include "m3uplugin_ns.h"
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
-#include "containers/m3ucontainer.h"
+#include "items/m3uitem.h"
 #include "../../filesystem/filesystemnode.h"
 #include "../../filesystem/filesystempluginsmanager.h"
 
@@ -63,6 +63,27 @@ protected:
 	M3uItem *rootItem() const { return m_items.container().at(0); }
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
+
+private:
+	class M3uContainer : public Container
+	{
+	public:
+		typedef QList<M3uItem *> Container;
+
+	public:
+		M3uContainer();
+		virtual ~M3uContainer();
+
+		virtual size_type size() const;
+		virtual Item *at(size_type index) const;
+		virtual size_type indexOf(Item *item) const;
+
+		const Container &container() const { return m_container; }
+		Container &container() { return m_container; }
+
+	private:
+		Container m_container;
+	};
 
 private:
 	QString m_tag;

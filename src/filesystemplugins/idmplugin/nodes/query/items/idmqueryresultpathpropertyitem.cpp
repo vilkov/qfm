@@ -29,14 +29,14 @@ void QueryResultPathPropertyItem::add(const IFileContainer *container, const Idm
 	qSort(m_items.begin(), m_items.end(), lessThan);
 }
 
-void QueryResultPathPropertyItem::add(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values)
+void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values)
 {
-	QueryResultItem *item;
+	QueryResultRootPathValueItem *item;
 
 	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 	{
 		m_items.push_back(item = new QueryResultRootPathValueItem(container, values.at(i), this));
-		files.push_back(item);
+		files.add(item->fileName(), item);
 	}
 
 	qSort(m_items.begin(), m_items.end(), lessThan);

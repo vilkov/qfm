@@ -5,7 +5,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultCompositeRootItem::QueryResultCompositeRootItem(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
+QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
 	QueryResultRootItem(value, parent),
 	m_items(value->entity()->size())
 {

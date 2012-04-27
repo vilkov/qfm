@@ -2,7 +2,7 @@
 #define COMPOSITEVALUEPOSSIBLEDIRITEM_H_
 
 #include "compositevaluepathitem.h"
-#include "../../../../../../filesystem/tasks/concrete/containers/filesysteminfoitem.h"
+#include "../../../../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -13,7 +13,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent = 0);
 	virtual ~CompositeValuePossibleDirItem();
 
 	/* Base */
@@ -33,10 +33,10 @@ protected:
 	friend class CompositeValueModel;
 	void add(IdmItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
-	const InfoItem *source() const { return m_source; }
+	const WrappedNodeItem *source() const { return m_source; }
 
 private:
-	const InfoItem *m_source;
+	const WrappedNodeItem *m_source;
 	Container m_items;
 };
 

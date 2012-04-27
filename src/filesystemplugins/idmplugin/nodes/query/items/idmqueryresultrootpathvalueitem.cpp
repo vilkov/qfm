@@ -1,7 +1,6 @@
 #include "idmqueryresultrootpathvalueitem.h"
 #include "idmqueryresultpathvalueitem.h"
 #include "../../../../../filesystem/filesystemproxymodel.h"
-#include "../../../../../filesystem/tasks/concrete/containers/filesysteminfolistitem.h"
 #include "../../../../../application.h"
 
 
@@ -25,16 +24,16 @@ void QueryResultRootPathValueItem::open() const
 	Application::desktopService()->open(m_container, this);
 }
 
-void QueryResultRootPathValueItem::update(const InfoItem *item)
+void QueryResultRootPathValueItem::update(IFileInfo::Holder &item)
 {
-	m_info = *item;
+	m_info = item.take();
 
 	if (item->isDir())
 	{
-		m_thisContainer = static_cast<const InfoListItem *>(item)->container()->open();
-
-		for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(item)->size(); i < size; ++i)
-			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), static_cast<const InfoListItem *>(item)->at(i), this));
+//		m_thisContainer = static_cast<const InfoListItem *>(item)->container()->open();
+//
+//		for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(item)->size(); i < size; ++i)
+//			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), static_cast<const InfoListItem *>(item)->at(i), this));
 	}
 
 	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);

@@ -2,7 +2,7 @@
 #define COMPOSITEVALUEPOSSIBLEFILEITEM_H_
 
 #include "compositevaluepathitem.h"
-#include "../../../../../../filesystem/tasks/concrete/containers/filesysteminfoitem.h"
+#include "../../../../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValuePossibleFileItem : public CompositeValuePathItem
 {
 public:
-	CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -21,10 +21,10 @@ public:
 	virtual void open() const;
 
 protected:
-	const InfoItem *source() const { return m_source; }
+	const WrappedNodeItem *source() const { return m_source; }
 
 private:
-	const InfoItem *m_source;
+	const WrappedNodeItem *m_source;
 };
 
 IDM_PLUGIN_NS_END

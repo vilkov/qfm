@@ -1,7 +1,6 @@
 #include "compositevaluepossiblediritem.h"
 #include "compositevaluepossiblefileitem.h"
 #include "../../../../../../filesystem/filesystemproxymodel.h"
-#include "../../../../../../filesystem/tasks/concrete/containers/filesysteminfolistitem.h"
 #include "../../../../../../application.h"
 
 
@@ -13,7 +12,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValueFakePossibleDirItem(const InfoItem *source, IdmItem *parent = 0) :
+	CompositeValueFakePossibleDirItem(const WrappedNodeItem *source, IdmItem *parent = 0) :
 		CompositeValuePossibleDirItem(IdmEntityValue::Holder(), source, parent)
 	{}
 
@@ -24,13 +23,13 @@ public:
 		{
 			case Qt::EditRole:
 			case Qt::DisplayRole:
-				return source()->fileName();
+				return source()->info()->fileName();
 			case Qt::DecorationRole:
-				return source()->icon();
+				return source()->info()->fileType()->icon();
 			case Qt::TextAlignmentRole:
 				return Qt::AlignLeft;
 			case Qt::ToolTipRole:
-				return source()->name();
+				return source()->info()->fileType()->name();
 		}
 
 		return QVariant();
@@ -41,7 +40,7 @@ public:
 class CompositeValueFakePossibleFileItem : public CompositeValuePossibleFileItem
 {
 public:
-	CompositeValueFakePossibleFileItem(const InfoItem *source, IdmItem *parent = 0) :
+	CompositeValueFakePossibleFileItem(const WrappedNodeItem *source, IdmItem *parent = 0) :
 		CompositeValuePossibleFileItem(IdmEntityValue::Holder(), source, parent)
 	{}
 
@@ -52,13 +51,13 @@ public:
 		{
 			case Qt::EditRole:
 			case Qt::DisplayRole:
-				return source()->fileName();
+				return source()->info()->fileName();
 			case Qt::DecorationRole:
-				return source()->icon();
+				return source()->info()->fileType()->icon();
 			case Qt::TextAlignmentRole:
 				return Qt::AlignLeft;
 			case Qt::ToolTipRole:
-				return source()->name();
+				return source()->info()->fileType()->name();
 		}
 
 		return QVariant();
@@ -79,17 +78,17 @@ static bool lessThan(CompositeValuePossibleDirItem::Container::value_type v1, Co
 			return ProxyModel::compareFileNames(static_cast<CompositeValuePathItem *>(v1)->fileName(), static_cast<CompositeValuePathItem *>(v2)->fileName());
 }
 
-CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const InfoItem *source, IdmItem *parent) :
+CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
 	m_source(source)
 {
-	const InfoItem *file;
+	const WrappedNodeItem *file;
 
-	for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(source)->size(); i < size; ++i)
+	for (WrappedNodeItem::size_type i = 0, size = source->size(); i < size; ++i)
 	{
-		file = static_cast<const InfoListItem *>(source)->at(i);
+		file = source->at(i);
 
-		if (file->isFile())
+		if (file->info()->isFile())
 			add(new CompositeValueFakePossibleFileItem(file, this));
 		else
 			add(new CompositeValueFakePossibleDirItem(file, this));
@@ -126,11 +125,11 @@ QVariant CompositeValuePossibleDirItem::data(qint32 column, qint32 role) const
 		case Qt::DisplayRole:
 			return m_value->value();
 		case Qt::DecorationRole:
-			return m_source->icon();
+			return m_source->info()->fileType()->icon();
 		case Qt::TextAlignmentRole:
 			return Qt::AlignLeft;
 		case Qt::ToolTipRole:
-			return m_source->name();
+			return m_source->info()->fileType()->name();
 	}
 
 	return QVariant();
@@ -138,7 +137,7 @@ QVariant CompositeValuePossibleDirItem::data(qint32 column, qint32 role) const
 
 QString CompositeValuePossibleDirItem::fileName() const
 {
-	return m_source->fileName();
+	return m_source->info()->fileName();
 }
 
 bool CompositeValuePossibleDirItem::isFile() const

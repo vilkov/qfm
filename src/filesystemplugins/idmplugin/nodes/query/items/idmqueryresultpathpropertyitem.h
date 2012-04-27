@@ -15,7 +15,7 @@ public:
 
 	void add(const IFileContainer *container, const IdmEntityValue::Holder &value);
 	void add(const IFileContainer *container, const IdmCompositeEntityValue::List &values);
-	void add(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values);
+	void add(Snapshot::Files &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values);
 };
 
 IDM_PLUGIN_NS_END

@@ -106,7 +106,7 @@ bool IdmCopyControl::start(const Snapshot::List &files, bool move)
 						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i).second->info()->fileName())))
 						{
 							list.push_back(localValue);
-							possibleFiles[localValue->id()] = files.at(i);
+							possibleFiles[localValue->id()] = files.at(i).second;
 						}
 						else
 						{

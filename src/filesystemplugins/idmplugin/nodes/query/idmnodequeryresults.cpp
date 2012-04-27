@@ -68,7 +68,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue::Holder item;
 	ItemsContainer::List list;
-	TasksItemList files;
+	Snapshot::Files files(m_container.container());
 
 	list.reserve(PrefetchLimit);
 
@@ -88,7 +88,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	if (!list.isEmpty())
 	{
 		if (!files.isEmpty())
-			handleTask(new UpdateFilesTask(this, m_container.container(), files));
+			handleTask(new UpdateFilesTask(this, files));
 
 		beginInsertRows(parent, m_items.size(), m_items.size() + list.size() - 1);
 		m_items.append(list);
@@ -132,23 +132,23 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 	{
 		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
 
-		if (item->property().entity->type() == Database::Path)
-			if (item->size() == 0)
-				return new IdmQueryResultsCopyControl(
-						const_cast<IdmNodeQueryResults *>(this),
-						m_container,
-						static_cast<QueryResultRootItem *>(item->parent())->value(),
-						item->property(),
-						const_cast<IdmNodeQueryResults *>(this),
-						index);
-			else
-			{
-				QString destination;
-				Tools::DestinationFromPathList tree;
-
-				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
-					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
-
+//		if (item->property().entity->type() == Database::Path)
+//			if (item->size() == 0)
+//				return new IdmQueryResultsCopyControl(
+//						const_cast<IdmNodeQueryResults *>(this),
+//						m_container,
+//						static_cast<QueryResultRootItem *>(item->parent())->value(),
+//						item->property(),
+//						const_cast<IdmNodeQueryResults *>(this),
+//						index);
+//			else
+//			{
+//				QString destination;
+//				Tools::DestinationFromPathList tree;
+//
+//				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
+//					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
+//
 //				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 //					return new IdmQueryResultsCopyControl(
 //							m_container,
@@ -157,7 +157,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 //							const_cast<IdmNodeQueryResults*>(this),
 //							index,
 //							destination);
-			}
+//			}
 	}
 
 	return NULL;
@@ -230,59 +230,59 @@ void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
 
 void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 {
-	if (m_container.transaction())
-	{
-		QModelIndex index;
-		TasksItemList files;
-		QueryResultValueItem *item;
-		QueryResultPropertyItem *property;
-		QueryResultPropertyItem::size_type idx;
-
-		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isValue())
-			{
-				item = static_cast<QueryResultValueItem *>(index.internalPointer());
-
-				if (!item->isLocked())
-					if (item->value()->entity()->type() == Database::Path)
-						files.push_back(item);
-					else
-					{
-						property = static_cast<QueryResultPropertyItem*>(item->parent());
-
-						if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), item->value()))
-						{
-							idx = property->indexOf(item);
-
-							beginRemoveRows(Model::parent(index), idx, idx);
-							property->remove(idx);
-							endRemoveRows();
-						}
-						else
-						{
-							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-							m_container.rollback();
-							return;
-						}
-					}
-			}
-
-		if (m_container.commit())
-		{
-			if (!files.isEmpty())
-			{
-				lock(files, tr("Scanning for remove..."));
-				addTask(new ScanFilesTask(this, m_container.container(), files), files);
-			}
-		}
-		else
-		{
-			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-			m_container.rollback();
-		}
-	}
-	else
-		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//	if (m_container.transaction())
+//	{
+//		QModelIndex index;
+//		Snapshot::Files files;
+//		QueryResultValueItem *item;
+//		QueryResultPropertyItem *property;
+//		QueryResultPropertyItem::size_type idx;
+//
+//		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+//			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isValue())
+//			{
+//				item = static_cast<QueryResultValueItem *>(index.internalPointer());
+//
+//				if (!item->isLocked())
+//					if (item->value()->entity()->type() == Database::Path)
+//						files.add(item);
+//					else
+//					{
+//						property = static_cast<QueryResultPropertyItem*>(item->parent());
+//
+//						if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), item->value()))
+//						{
+//							idx = property->indexOf(item);
+//
+//							beginRemoveRows(Model::parent(index), idx, idx);
+//							property->remove(idx);
+//							endRemoveRows();
+//						}
+//						else
+//						{
+//							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//							m_container.rollback();
+//							return;
+//						}
+//					}
+//			}
+//
+//		if (m_container.commit())
+//		{
+//			if (!files.isEmpty())
+//			{
+//				lock(files, tr("Scanning for remove..."));
+//				addTask(new ScanFilesTask(this, m_container.container(), files), files);
+//			}
+//		}
+//		else
+//		{
+//			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//			m_container.rollback();
+//		}
+//	}
+//	else
+//		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
@@ -488,110 +488,110 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 
 void IdmNodeQueryResults::scanUpdates(const BaseTask::Event *e)
 {
-	typedef const UpdateFilesTask::Event *Event;
-	Event event = static_cast<Event>(e);
-	Snapshot::List list(event->snapshot);
-
-	update(list);
-	taskHandled();
+//	typedef const UpdateFilesTask::Event *Event;
+//	Event event = static_cast<Event>(e);
+//	Snapshot::List list(event->snapshot);
+//
+//	update(list);
+//	taskHandled();
 }
 
 void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 {
-	typedef const ScanFilesTask::Event *Event;
-	Event event = static_cast<Event>(e);
-	Snapshot::List list(event->snapshot);
-
-	if (!event->canceled)
-	{
-		QStringList folders;
-		QStringList files;
-		InfoItem *entry;
-
-		for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
-			if ((entry = list.at(i).second)->isDir())
-				folders.push_back(entry->fileName());
-			else
-				files.push_back(entry->fileName());
-
-		if (QMessageBox::question(
-				Application::mainWindow(),
-				tr("Remove..."),
-				tr("Would you like to remove").
-					append(QString::fromLatin1("\n\t")).
-					append(tr("directories:")).append(QString::fromLatin1("\n\t\t")).
-					append(folders.join(QString::fromLatin1("\n\t\t"))).
-					append(QString::fromLatin1("\n\t")).
-					append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
-					append(files.join(QString::fromLatin1("\n\t\t"))).
-					append(QString::fromLatin1("\n")).
-					append(tr("it will free ").append(Tools::humanReadableSize(event->snapshot.totalSize()))),
-				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-		{
-			lock(list, tr("Removing..."));
-			resetTask(new RemoveFilesTask(this, event->snapshot), event->task);
-			return;
-		}
-	}
-
-	unlock(list);
-	removeAllTaskLinks(event->task);
+//	typedef const ScanFilesTask::Event *Event;
+//	Event event = static_cast<Event>(e);
+//	Snapshot::List list = event->snapshot;
+//
+//	if (!event->canceled)
+//	{
+//		QStringList folders;
+//		QStringList files;
+//		InfoItem *entry;
+//
+//		for (Snapshot::List::size_type i = 0; i < list.size(); ++i)
+//			if ((entry = list.at(i).second)->isDir())
+//				folders.push_back(entry->fileName());
+//			else
+//				files.push_back(entry->fileName());
+//
+//		if (QMessageBox::question(
+//				Application::mainWindow(),
+//				tr("Remove..."),
+//				tr("Would you like to remove").
+//					append(QString::fromLatin1("\n\t")).
+//					append(tr("directories:")).append(QString::fromLatin1("\n\t\t")).
+//					append(folders.join(QString::fromLatin1("\n\t\t"))).
+//					append(QString::fromLatin1("\n\t")).
+//					append(tr("files:")).append(QString::fromLatin1("\n\t\t")).
+//					append(files.join(QString::fromLatin1("\n\t\t"))).
+//					append(QString::fromLatin1("\n")).
+//					append(tr("it will free ").append(Tools::humanReadableSize(event->snapshot.totalSize()))),
+//				QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+//		{
+//			lock(list, tr("Removing..."));
+//			resetTask(new RemoveFilesTask(this, event->snapshot), event->task);
+//			return;
+//		}
+//	}
+//
+//	unlock(list);
+//	removeAllTaskLinks(event->task);
 }
 
 void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 {
-	typedef const RemoveFilesTask::Event *Event;
-	QueryResultPropertyItem::size_type idx;
-	Event event = static_cast<Event>(e);
-	Snapshot::List list(event->snapshot);
-	QueryResultPropertyItem *property;
-	QModelIndex modelIdx;
-
-	if (m_container.transaction())
-	{
-		bool ok = true;
-
-		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
-			if (list.at(i).second->isRemoved())
-			{
-				property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
-
-				if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
-				{
-					idx = property->indexOf(list.at(i).first);
-
-					beginRemoveRows(index(property), idx, idx);
-					property->remove(idx);
-					endRemoveRows();
-				}
-				else
-				{
-					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-					m_container.rollback();
-					ok = false;
-					break;
-				}
-			}
-
-		if (ok)
-			if (!m_container.commit())
-			{
-				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-				m_container.rollback();
-			}
-	}
-	else
-		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-
-	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!list.at(i).second->isRemoved())
-		{
-			static_cast<QueryResultValueItem*>(list.at(i).first)->unlock();
-			modelIdx = index(list.at(i).first);
-			emit dataChanged(modelIdx, modelIdx);
-		}
-
-	removeAllTaskLinks(event->task);
+//	typedef const RemoveFilesTask::Event *Event;
+//	QueryResultPropertyItem::size_type idx;
+//	Event event = static_cast<Event>(e);
+//	Snapshot::List list(event->snapshot);
+//	QueryResultPropertyItem *property;
+//	QModelIndex modelIdx;
+//
+//	if (m_container.transaction())
+//	{
+//		bool ok = true;
+//
+//		for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+//			if (list.at(i).second->isRemoved())
+//			{
+//				property = static_cast<QueryResultPropertyItem *>(list.at(i).first->parent());
+//
+//				if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), static_cast<QueryResultValueItem*>(list.at(i).first)->value()))
+//				{
+//					idx = property->indexOf(list.at(i).first);
+//
+//					beginRemoveRows(index(property), idx, idx);
+//					property->remove(idx);
+//					endRemoveRows();
+//				}
+//				else
+//				{
+//					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//					m_container.rollback();
+//					ok = false;
+//					break;
+//				}
+//			}
+//
+//		if (ok)
+//			if (!m_container.commit())
+//			{
+//				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//				m_container.rollback();
+//			}
+//	}
+//	else
+//		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//
+//	for (Snapshot::List::size_type i = 0, size = list.size(); i < size; ++i)
+//		if (!list.at(i).second->isRemoved())
+//		{
+//			static_cast<QueryResultValueItem*>(list.at(i).first)->unlock();
+//			modelIdx = index(list.at(i).first);
+//			emit dataChanged(modelIdx, modelIdx);
+//		}
+//
+//	removeAllTaskLinks(event->task);
 }
 
 void IdmNodeQueryResults::lock(const Snapshot::List &list, const QString &reason)
@@ -647,7 +647,7 @@ void IdmNodeQueryResults::update(const Snapshot::List &list)
 		item = static_cast<QueryResultItem *>(list.at(i).first);
 		property = static_cast<QueryResultPropertyItem *>(item->parent());
 		map[property].add(property->indexOf(item));
-		static_cast<QueryResultRootPathValueItem *>(item)->update(list.at(i).second);
+		static_cast<QueryResultRootPathValueItem *>(item)->update(list.at(i).second->info());
 		static_cast<QueryResultValueItem *>(item)->unlock();
 	}
 

@@ -4,7 +4,7 @@
 #include <QtCore/QMap>
 #include "../../../model/idmmodel.h"
 #include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../filesystem/tasks/concrete/containers/filesystemsnapshot.h"
+#include "../../../../../filesystem/containers/filesystemsnapshot.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -12,9 +12,9 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValueModel : public IdmModel
 {
 public:
-	typedef IdmCompositeEntityValue::List             ValueList;
-	typedef Container::size_type                      size_type;
-	typedef QMap<Database::id_type, const InfoItem *> Files;
+	typedef IdmCompositeEntityValue::List                    ValueList;
+	typedef Container::size_type                             size_type;
+	typedef QMap<Database::id_type, const WrappedNodeItem *> Files;
 
 public:
 	CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent = 0);

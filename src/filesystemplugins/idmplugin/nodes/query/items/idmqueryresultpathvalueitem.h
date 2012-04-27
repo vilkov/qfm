@@ -13,7 +13,7 @@ class QueryResultPathValueItem : public QueryResultPathItem
 	Q_DECLARE_TR_FUNCTIONS(QueryResultPathValueItem)
 
 public:
-	QueryResultPathValueItem(const IFileContainer *container, const InfoItem *item, Base *parent);
+	QueryResultPathValueItem(const IFileContainer *container, WrappedNodeItem *item, Base *parent);
 
 	/* QueryResultPathItem */
 	virtual void open() const;

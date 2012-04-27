@@ -31,7 +31,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 	IdmModel(parent)
 {
 	ValueList list;
-	const InfoItem *file;
+	const WrappedNodeItem *file;
 	CompositeValuePropertyItem *item;
 
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
@@ -44,7 +44,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 			{
 				file = files.value(list.at(i)->id());
 
-				if (file->isFile())
+				if (file->info()->isFile())
 					item->add(new CompositeValuePossibleFileItem(list.at(i), file, item));
 				else
 					item->add(new CompositeValuePossibleDirItem(list.at(i), file, item));

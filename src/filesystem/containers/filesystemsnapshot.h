@@ -147,6 +147,7 @@ public:
 		m_data(new Data(container))
 	{}
 
+	bool isEmpty() const { return m_data->map.isEmpty(); }
 	void add(const QString &fileName, NodeItem *item) { m_data->map[fileName].first = item; }
 
 private:

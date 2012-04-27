@@ -65,30 +65,30 @@ protected:
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
-	class M3uContainer : public Container
+	class Container : public Node::Container
 	{
 	public:
-		typedef QList<M3uItem *> Container;
+		typedef QList<M3uItem *> List;
 
 	public:
-		M3uContainer();
-		virtual ~M3uContainer();
+		Container();
+		virtual ~Container();
 
 		virtual size_type size() const;
 		virtual Item *at(size_type index) const;
 		virtual size_type indexOf(Item *item) const;
 
-		const Container &container() const { return m_container; }
-		Container &container() { return m_container; }
+		const List &container() const { return m_container; }
+		List &container() { return m_container; }
 
 	private:
-		Container m_container;
+		List m_container;
 	};
 
 private:
 	QString m_tag;
 	bool m_updating;
-	M3uContainer m_items;
+	Container m_items;
 	M3uProxyModel m_proxy;
 	M3uDelegate m_delegate;
 	INodeView::MenuActionList m_menuActions;

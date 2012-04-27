@@ -68,9 +68,14 @@ QVariant IdmRootNode::headerData(int section, Qt::Orientation orientation, int r
 ICopyControl *IdmRootNode::createControl(INodeView *view) const
 {
 	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-		return new IdmCopyControl(const_cast<IdmRootNode *>(this), m_container, m_container.container(), entity);
-	else
-		return NULL;
+	{
+		ICopyControl::Holder dest(m_container.container()->createControl(view));
+
+		if (dest)
+			return new IdmCopyControl(dest, m_container, m_container.container(), entity);
+	}
+
+	return NULL;
 }
 
 void IdmRootNode::contextMenu(const QModelIndexList &list, INodeView *view)
@@ -324,26 +329,25 @@ void IdmRootNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 }
 
-IdmRootNode::ItemsContainer::ItemsContainer() :
-	NodeModelContainer()
+IdmRootNode::Container::Container()
 {}
 
-IdmRootNode::ItemsContainer::~ItemsContainer()
+IdmRootNode::Container::~Container()
 {
 	qDeleteAll(m_container);
 }
 
-IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::size() const
+IdmRootNode::Container::size_type IdmRootNode::Container::size() const
 {
 	return m_container.size();
 }
 
-IdmRootNode::ItemsContainer::NodeItem *IdmRootNode::ItemsContainer::at(size_type index) const
+IdmRootNode::Container::Item *IdmRootNode::Container::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-IdmRootNode::ItemsContainer::size_type IdmRootNode::ItemsContainer::indexOf(NodeItem *item) const
+IdmRootNode::Container::size_type IdmRootNode::Container::indexOf(Item *item) const
 {
 	return m_container.indexOf(item);
 }
@@ -517,12 +521,12 @@ void IdmRootNode::doAdd(IdmEntity *entity)
 
 void IdmRootNode::doRemove(IdmEntity *entity)
 {
-	ItemsContainer::NodeItem::size_type row;
-	ItemsContainer::NodeItem *parent;
-	ItemsContainer::List list = m_entities.take(entity);
+	Container::size_type row;
+	Container::Item *parent;
+	Container::List list = m_entities.take(entity);
 	QModelIndex index;
 
-	for (ItemsContainer::List::size_type i = 0, size = list.size(); i < size; ++i)
+	for (Container::List::size_type i = 0, size = list.size(); i < size; ++i)
 	{
 		index = IdmRootNode::parent(list.at(i), row);
 		beginRemoveRows(index, row, row);
@@ -536,7 +540,7 @@ void IdmRootNode::doRemove(IdmEntity *entity)
 	}
 }
 
-void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::NodeItem *item, IdmEntity *property, const QString &propertyName)
+void IdmRootNode::doAdd(const QModelIndex &index, Container::Item *item, IdmEntity *property, const QString &propertyName)
 {
 	RootNodeEntityItem *child;
 
@@ -547,18 +551,18 @@ void IdmRootNode::doAdd(const QModelIndex &index, ItemsContainer::NodeItem *item
 	endInsertRows();
 }
 
-void IdmRootNode::doRemove(const QModelIndex &index, ItemsContainer::NodeItem *item, ItemsContainer::NodeItem *property)
+void IdmRootNode::doRemove(const QModelIndex &index, Container::Item *item, Container::Item *property)
 {
-	ItemsContainer::NodeItem::size_type idx = item->indexOf(property);
+	Container::Item::size_type idx = item->indexOf(property);
 
 	beginRemoveRows(parent(index), idx, idx);
-	ItemsContainer::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
+	Container::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
 	items.removeAt(items.indexOf(item));
 	static_cast<RootNodeEntityItem*>(item)->remove(idx);
 	endRemoveRows();
 }
 
-void IdmRootNode::expand(ItemsContainer::NodeItem *p)
+void IdmRootNode::expand(Container::Item *p)
 {
 	RootNodeEntityItem *item;
 	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem*>(p);

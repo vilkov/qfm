@@ -22,7 +22,7 @@ private:
 	void expand(IdmItem *parent);
 
 private:
-	typedef QMap<IdmEntity*, Container> Map;
+	typedef QMap<IdmEntity*, Container::List> Map;
 	Map m_entities;
 };
 

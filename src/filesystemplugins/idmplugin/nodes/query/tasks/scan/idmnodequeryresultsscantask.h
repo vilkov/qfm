@@ -3,6 +3,7 @@
 
 #include "../../events/idmqueryresultsmodelevents.h"
 #include "../../../../../../filesystem/tasks/filesystembasetask.h"
+#include "../../../../../../filesystem/containers/filesystemsnapshot.h"
 
 
 IDM_PLUGIN_NS_BEGIN

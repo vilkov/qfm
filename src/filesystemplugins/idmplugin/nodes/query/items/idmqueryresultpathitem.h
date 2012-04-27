@@ -35,6 +35,7 @@ public:
 	virtual bool isLink() const;
 	virtual IFileInfo::size_type fileSize() const;
 	virtual QString fileName() const;
+	virtual const IFileType *fileType() const;
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
 

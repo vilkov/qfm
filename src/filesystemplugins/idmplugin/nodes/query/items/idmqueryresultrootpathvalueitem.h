@@ -21,7 +21,7 @@ public:
 	/* QueryResultPathItem */
 	virtual void open() const;
 
-	void update(const InfoItem *item);
+	void update(IFileInfo::Holder &item);
 
 private:
 	IdmEntityValue::Holder m_value;

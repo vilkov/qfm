@@ -15,7 +15,7 @@ public:
 	typedef QVector<QueryResultItem *> Container;
 
 public:
-	QueryResultCompositeRootItem(TasksNode::TasksItemList &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent = 0);
+	QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent = 0);
 	virtual ~QueryResultCompositeRootItem();
 
 	/* Base */

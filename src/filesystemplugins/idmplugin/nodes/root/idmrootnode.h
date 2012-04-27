@@ -78,14 +78,14 @@ private:
 	};
 
 private:
-	class ItemsContainer : public Container
+	class Container : public TasksNode::Container
 	{
 	public:
 		typedef QList<Item*> List;
 
 	public:
-		ItemsContainer();
-		virtual ~ItemsContainer();
+		Container();
+		virtual ~Container();
 
 		virtual size_type size() const;
 		virtual Item *at(size_type index) const;
@@ -105,17 +105,17 @@ private:
 private:
 	void doAdd(IdmEntity *entity);
 	void doRemove(IdmEntity *entity);
-	void doAdd(const QModelIndex &index, ItemsContainer::Item *item, IdmEntity *property, const QString &propertyName);
-	void doRemove(const QModelIndex &index, ItemsContainer::Item *item, ItemsContainer::Item *property);
-	void expand(ItemsContainer::Item *parent);
+	void doAdd(const QModelIndex &index, Container::Item *item, IdmEntity *property, const QString &propertyName);
+	void doRemove(const QModelIndex &index, Container::Item *item, Container::Item *property);
+	void expand(Container::Item *parent);
 
 private:
-	typedef QMap<IdmEntity*, ItemsContainer::List> EntitiesMap;
+	typedef QMap<IdmEntity*, Container::List> EntitiesMap;
 
 private:
 	INodeView::MenuActionList m_actions;
-	ItemsContainer m_itemsContainer;
-	ItemsContainer::List &m_items;
+	Container m_itemsContainer;
+	Container::List &m_items;
 	EntitiesMap m_entities;
 	IdmContainer m_container;
 	IdmRootNodeDelegate m_delegate;

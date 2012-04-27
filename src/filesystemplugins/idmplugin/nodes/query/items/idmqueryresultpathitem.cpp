@@ -104,6 +104,11 @@ QString QueryResultPathItem::fileName() const
 	return m_info->fileName();
 }
 
+const IFileType *QueryResultPathItem::fileType() const
+{
+	return m_info->fileType();
+}
+
 QDateTime QueryResultPathItem::lastModified() const
 {
 	return m_info->lastModified();

@@ -3,6 +3,7 @@
 
 #include "../default_ns.h"
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
+#include "../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -38,8 +39,8 @@ public:
 	virtual void scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 	virtual void refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const;
 
-//private:
-//	void scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const;
+private:
+	void scan(WrappedNodeItem *root, const volatile BaseTask::Flags &aborted) const;
 
 private:
 	friend class CopyControl;

@@ -3,8 +3,9 @@
 #include "../defaultcopycontrol.h"
 #include "../defaultfileinfo.h"
 
-#include "../../../../filesystem/interfaces/filesysteminodeview.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
+#include "../../../../filesystem/containers/filesystemsnapshot.h"
+#include "../../../../filesystem/interfaces/filesysteminodeview.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -228,18 +229,23 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 
 void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {
-//	Info info(snapshot.container()->location(file), Info::Refresh());
-//
-//	if (info.isDir())
-//	{
-//		PScopedPointer<InfoListItem> subnode(new InfoListItem(snapshot.container(), file));
-//
-//		scan(subnode.data(), aborted);
-//
-//		snapshot.push_back(item, subnode.take());
-//	}
-//	else
-//		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
+	QString error;
+	IFileInfo::Holder info;
+	PScopedPointer<WrappedNodeItem> subnode;
+
+	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
+	{
+		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
+		subnode = new WrappedNodeItem(snapshot.container(), info);
+
+		if (subnode->info()->isDir() &&
+			(subnode->thisContainer() = subnode->container()->open(subnode->info()->fileName(), false, error)))
+		{
+			scan(subnode.data(), aborted);
+		}
+
+		(*it).second = subnode.take();
+	}
 }
 
 void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
@@ -252,30 +258,39 @@ void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &
 //		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
 }
 
-//void FileContainer::scan(InfoListItem *root, const volatile BaseTask::Flags &aborted) const
-//{
-//	DIR *dir;
-//
-//	if (dir = opendir(root->container()->location().toUtf8()))
-//	{
-//		struct dirent *entry;
-//
-//		while ((entry = readdir(dir)) != NULL && !aborted)
-//			if (entry->d_type == DT_DIR)
-//			{
-//				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-//				{
-//					PScopedPointer<InfoListItem> subtree(new InfoListItem(root->container(), QString::fromUtf8(entry->d_name)));
-//
-//					scan(subtree.data(), aborted);
-//					root->add(subtree.take());
-//				}
-//			}
-//			else
-//				root->add(new InfoItem(root->container(), QString::fromUtf8(entry->d_name)));
-//
-//		closedir(dir);
-//	}
-//}
+void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &aborted) const
+{
+	DIR *dir;
+
+	if (dir = opendir(root->container()->location().toUtf8()))
+	{
+		QString error;
+		struct dirent *entry;
+		IFileInfo::Holder info;
+		PScopedPointer<WrappedNodeItem> subtree;
+
+		while ((entry = readdir(dir)) != NULL && !aborted)
+			if (entry->d_type == DT_DIR)
+			{
+				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
+				{
+					info = new Info(root->thisContainer()->location(QString::fromUtf8(entry->d_name)), Info::Identify());
+					subtree = new WrappedNodeItem(root->thisContainer().data(), info);
+
+					if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
+						scan(subtree.data(), aborted);
+
+					root->add(subtree.take());
+				}
+			}
+			else
+			{
+				info = new Info(root->thisContainer()->location(QString::fromUtf8(entry->d_name)), Info::Identify());
+				root->add(new WrappedNodeItem(root->thisContainer().data(), info));
+			}
+
+		closedir(dir);
+	}
+}
 
 DEFAULT_PLUGIN_NS_END

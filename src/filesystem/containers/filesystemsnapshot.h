@@ -19,6 +19,8 @@ public:
 
 	typedef QPair<NodeItem *, WrappedNodeItem *> Pair;
 	typedef QMap<QString, Pair>                  Container;
+	typedef Container::iterator                  iterator;
+	typedef Container::const_iterator            const_iterator;
 
 public:
 	Snapshot();
@@ -26,6 +28,12 @@ public:
 
 	List list() const;
 	Updates takeUpdates();
+
+	const_iterator begin() const { return m_data->map.begin(); }
+	iterator begin() { return m_data->map.begin(); }
+
+	const_iterator end() const { return m_data->map.end(); }
+	iterator end() { return m_data->map.end(); }
 
 	const IFileContainer *container() const { return m_data->container; }
 

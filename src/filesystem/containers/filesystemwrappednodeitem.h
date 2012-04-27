@@ -18,12 +18,18 @@ public:
 public:
 	WrappedNodeItem();
 	WrappedNodeItem(const IFileContainer *container, IFileInfo *info);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info);
 	~WrappedNodeItem();
 
 	bool isValid() const { return m_container != NULL; }
 
 	size_type size() const { return m_items.size(); }
 	WrappedNodeItem *at(size_type index) const { return m_items.at(index); }
+
+	void add(WrappedNodeItem *item) { m_items.push_back(item); }
+
+	const IFileContainer::Holder &thisContainer() const { return m_thisContainer; }
+	IFileContainer::Holder &thisContainer() { return m_thisContainer; }
 
 	const IFileContainer *container() const { return m_container; }
 	IFileInfo::size_type totalSize() const { return m_totalSize; }
@@ -35,6 +41,7 @@ public:
 	IFileInfo::Holder &info() { return m_info; }
 
 private:
+	IFileContainer::Holder m_thisContainer;
 	const IFileContainer *m_container;
 	IFileInfo::size_type m_totalSize;
 	IFileInfo::Holder m_info;

@@ -112,7 +112,7 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &text, volatile bool &tr
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	Archive::State *state;
-	PScopedPointer<Event> event(new Event(this, m_move));
+	PScopedPointer<Event> event(new Event(this, m_move, false));
 
 	if (const Archive *archive = Archive::archive(m_fileName, &state))
 	{

@@ -18,10 +18,6 @@ public:
 		ICopyControl::Holder destination;
 
 	protected:
-		Event(BaseTask *task, Type type, ICopyControl::Holder &destination) :
-			BaseTask::Event(task, type),
-			destination(destination.take())
-		{}
 		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled) :
 			BaseTask::Event(task, type, canceled),
 			destination(destination.take())

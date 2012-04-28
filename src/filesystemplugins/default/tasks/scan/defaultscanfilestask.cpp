@@ -57,8 +57,9 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 		case ModelEvent::ScanFilesForSize:
 		case ModelEvent::ScanFilesForRemove:
-		case ModelEvent::ScanFilesForCopy:
 		{
+			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
+			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, m_snapshot));
 			break;
 		}
 
@@ -80,7 +81,21 @@ ScanFilesExtendedTask::ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *r
 
 void ScanFilesExtendedTask::run(const volatile Flags &aborted)
 {
+	switch (m_type)
+	{
+		case ModelEvent::ScanFilesForCopy:
+		{
+			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
+			postEvent(new CopyEvent(this, static_cast<CopyEvent::Type>(m_type), destination(), aborted, m_snapshot, m_move));
+			break;
+		}
 
+		default:
+		{
+			postEvent(new CopyEvent(this, static_cast<CopyEvent::Type>(m_type), destination(), aborted, Snapshot(), m_move));
+			break;
+		}
+	}
 }
 
 DEFAULT_PLUGIN_NS_END

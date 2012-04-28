@@ -17,8 +17,8 @@ public:
 	};
 
 public:
-	TaskEvent(BaseTask *task, Type type) :
-		BaseTask::Event(task, static_cast<BaseTask::Event::Type>(type))
+	TaskEvent(BaseTask *task, Type type, bool canceled) :
+		BaseTask::Event(task, static_cast<BaseTask::Event::Type>(type), canceled)
 	{}
 };
 

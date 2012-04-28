@@ -35,11 +35,6 @@ public:
 		bool canceled;
 
 	protected:
-		Event(BaseTask *task, Type type) :
-			QEvent(static_cast<QEvent::Type>(type)),
-			task(task),
-			canceled(false)
-		{}
 		Event(BaseTask *task, Type type, bool canceled) :
 			QEvent(static_cast<QEvent::Type>(type)),
 			task(task),

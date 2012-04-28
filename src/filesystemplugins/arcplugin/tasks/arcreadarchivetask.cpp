@@ -13,7 +13,7 @@ ReadArchiveTask::ReadArchiveTask(const QString &fileName, TasksNode *receiver) :
 void ReadArchiveTask::run(const volatile Flags &aborted)
 {
 	Archive::State *state;
-	PScopedPointer<Event> event(new Event(this));
+	PScopedPointer<Event> event(new Event(this, false));
 
 	if (const Archive *archive = Archive::archive(m_fileName, &state))
 	{

@@ -42,8 +42,8 @@ public:
 	class CopyEvent : public FilesExtendedBaseTask::Event
 	{
 	public:
-		CopyEvent(BaseTask *task, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
-			FilesExtendedBaseTask::Event(task, static_cast<Type>(ModelEvent::CopyFiles), destination, snapshot),
+		CopyEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
+			FilesExtendedBaseTask::Event(task, type, destination, canceled, snapshot),
 			move(move)
 		{}
 

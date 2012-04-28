@@ -47,7 +47,7 @@ public:
 
 public:
 	QuestionEvent(const QString &title, const QString &question, qint32 buttons, Result *result) :
-		Event(NULL, Question),
+		Event(NULL, Question, false),
 		m_title(title),
 		m_question(question),
 		m_buttons(buttons),

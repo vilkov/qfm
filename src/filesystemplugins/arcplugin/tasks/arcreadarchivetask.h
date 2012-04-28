@@ -13,8 +13,8 @@ public:
 	class Event : public TaskEvent
 	{
 	public:
-		Event(BaseTask *task) :
-			TaskEvent(task, ScanComplete)
+		Event(BaseTask *task, bool canceled) :
+			TaskEvent(task, ScanComplete, canceled)
 		{}
 
 		Archive::Contents contents;

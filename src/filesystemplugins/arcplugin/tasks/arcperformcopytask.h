@@ -18,8 +18,8 @@ public:
 	class Event : public TaskEvent
 	{
 	public:
-		Event(BaseTask *task, bool move) :
-			TaskEvent(task, CopyComplete),
+		Event(BaseTask *task, bool canceled, bool move) :
+			TaskEvent(task, CopyComplete, canceled),
 			move(move)
 		{}
 

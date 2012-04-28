@@ -14,10 +14,6 @@ public:
 	class Event : public ExtendedBaseTask::Event
 	{
 	public:
-		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, const Snapshot &snapshot) :
-			ExtendedBaseTask::Event(task, type, destination),
-			snapshot(snapshot)
-		{}
 		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot) :
 			ExtendedBaseTask::Event(task, type, destination, canceled),
 			snapshot(snapshot)

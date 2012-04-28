@@ -11,7 +11,7 @@ class UpdateProgressEvent : public BaseTask::Event
 {
 public:
 	UpdateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed) :
-		BaseTask::Event(NULL, BaseTask::Event::Progress),
+		BaseTask::Event(NULL, BaseTask::Event::Progress, false),
 		item(item),
 		progress(progress),
 		timeElapsed(timeElapsed)
@@ -27,7 +27,7 @@ class CompletedProgressEvent : public BaseTask::Event
 {
 public:
 	CompletedProgressEvent(const NodeItem *item, quint64 timeElapsed) :
-		BaseTask::Event(NULL, BaseTask::Event::Completed),
+		BaseTask::Event(NULL, BaseTask::Event::Completed, false),
 		item(item),
 		timeElapsed(timeElapsed)
 	{}

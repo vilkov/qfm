@@ -250,12 +250,16 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 
 void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {
-//	Info info(snapshot.container()->location(file), Info::Refresh());
-//
-//	if (info.isDir())
-//		snapshot.push_back(item, new InfoListItem(snapshot.container(), file));
-//	else
-//		snapshot.push_back(item, new InfoItem(snapshot.container(), file));
+	QString error;
+	IFileInfo::Holder info;
+	PScopedPointer<WrappedNodeItem> subnode;
+
+	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
+	{
+		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
+		subnode = new WrappedNodeItem(snapshot.container(), info);
+		(*it).second = subnode.take();
+	}
 }
 
 void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &aborted) const

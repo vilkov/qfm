@@ -49,19 +49,19 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 Node *IdmFolderNode::createNode(const IFileInfo *file, PluginsManager *plugins) const
 {
-	if (Node *res = plugins->node(container().data(), file, const_cast<IdmFolderNode *>(this)))
-		return res;
-	else
-		if (file->isDir())
-		{
-			QString error;
-			IFileContainer::Holder folder(container()->open(file->fileName(), false, error));
+	if (file->isDir())
+	{
+		QString error;
+		IFileContainer::Holder folder(container()->open(file->fileName(), false, error));
 
-			if (folder)
-				return new IdmFolderNode(folder, m_container, const_cast<IdmFolderNode *>(this));
-			else
-				QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
-		}
+		if (folder)
+			return new IdmFolderNode(folder, m_container, const_cast<IdmFolderNode *>(this));
+		else
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+	}
+	else
+		if (Node *res = plugins->node(container().data(), file, const_cast<IdmFolderNode *>(this)))
+			return res;
 
 	return NULL;
 }

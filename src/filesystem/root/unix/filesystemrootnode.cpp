@@ -14,12 +14,29 @@ class LocalRootFolderNode : public Plugins::Default::FolderNodeBase
 {
 public:
 	LocalRootFolderNode(IFileContainer::Holder &container, Node *parent = 0) :
-		FolderNodeBase(container, parent)
+		FolderNodeBase(container, parent),
+		m_path(QString::fromLatin1("/"))
 	{}
+
 	virtual ~LocalRootFolderNode()
 	{
 		rootNode = NULL;
 	}
+
+    /* INode */
+	virtual QString title() const
+	{
+		return m_path;
+	}
+
+	/* IFileLocation */
+	virtual QString location() const
+	{
+		return m_path;
+	}
+
+private:
+	QString m_path;
 };
 
 

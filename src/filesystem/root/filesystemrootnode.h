@@ -1,7 +1,6 @@
 #ifndef FILESYSTEMROOTNODE_H_
 #define FILESYSTEMROOTNODE_H_
 
-#include "filesystemrootfilecontainer.h"
 #include "../filesystemnode.h"
 
 
@@ -60,7 +59,6 @@ private:
 
 private:
 	Container m_items;
-	RootFileContainer m_container;
 	INodeView::MenuActionList m_menuActions;
 };
 

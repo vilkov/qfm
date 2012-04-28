@@ -21,8 +21,8 @@ class Enumerator : public IFileContainerScanner::IEnumerator
 {
 public:
 	Enumerator(const QByteArray &path) :
-		m_dir(opendir(path)),
-		m_path(QByteArray(path).append('/'))
+		m_path(QByteArray(path).append('/')),
+		m_dir(opendir(m_path))
 	{}
 
 	virtual ~Enumerator()
@@ -71,10 +71,10 @@ public:
 	}
 
 private:
-	DIR *m_dir;
-	Info m_info;
-	QByteArray m_path;
 	struct dirent *m_entry;
+	QByteArray m_path;
+	Info m_info;
+	DIR *m_dir;
 };
 
 

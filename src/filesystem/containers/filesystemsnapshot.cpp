@@ -32,7 +32,7 @@ Snapshot::Updates Snapshot::takeUpdates()
 		else
 			++it;
 
-	return Snapshot::Updates(res);
+	return res;
 }
 
 Snapshot::Data::Data(const IFileContainer *container) :

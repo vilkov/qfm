@@ -9,6 +9,8 @@ FILE_SYSTEM_NS_BEGIN
 
 class WrappedNodeItem
 {
+	Q_DISABLE_COPY(WrappedNodeItem)
+
 public:
 	typedef PScopedPointer<WrappedNodeItem> Holder;
 	typedef QList<WrappedNodeItem *>        List;

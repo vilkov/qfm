@@ -587,7 +587,7 @@ void FolderNodeBase::updateFilesEvent(Snapshot::Updates &updates)
 	Union updateRange;
 	Container::size_type index;
 
-	for (Snapshot::List::iterator update = updates.begin(), end = updates.end(); update != end;)
+	for (Snapshot::Updates::iterator update = updates.begin(), end = updates.end(); update != end;)
 		if (updates.isAdded(update) || updates.isUpdated(update))
 		{
 			if ((index = m_items.indexOf((*update).second->info()->fileName())) != Container::InvalidIndex)
@@ -599,8 +599,6 @@ void FolderNodeBase::updateFilesEvent(Snapshot::Updates &updates)
 			}
 			else
 				++update;
-
-			break;
 		}
 		else
 			if (updates.isRemoved(update))
@@ -621,7 +619,7 @@ void FolderNodeBase::updateFilesEvent(Snapshot::Updates &updates)
 	if (!updates.isEmpty())
 	{
 		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + updates.size() - 1);
-		for (Snapshot::List::const_iterator update = updates.begin(), end = updates.end(); update != end; ++update)
+		for (Snapshot::Updates::const_iterator update = updates.begin(), end = updates.end(); update != end; ++update)
 			m_items.add(new DefaultNodeItem((*update).second->info()));
 		endInsertRows();
 	}

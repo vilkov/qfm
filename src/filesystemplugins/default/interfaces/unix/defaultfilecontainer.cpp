@@ -250,7 +250,6 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 
 void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
 {
-	QString error;
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 

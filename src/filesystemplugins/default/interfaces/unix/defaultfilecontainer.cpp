@@ -220,7 +220,7 @@ void FileContainer::enumerate(IEnumerator::Holder &enumerator) const
 IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 {
 	if (contains(fileName))
-		return new Info(fileName, Info::Identify());
+		return new Info(location(fileName), Info::Identify());
 	else
 		error = QString::fromUtf8(::strerror(ENOENT));
 

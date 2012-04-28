@@ -1,6 +1,6 @@
 #include "../filesystemrootnode.h"
 #include "../../filesystempluginsmanager.h"
-#include "../../../filesystemplugins/default/defaultfoldernode.h"
+#include "../../../filesystemplugins/default/base/defaultfoldernodebase.h"
 #include "../../../filesystemplugins/default/interfaces/defaultfilecontainer.h"
 
 
@@ -10,11 +10,11 @@ class LocalRootFolderNode;
 static LocalRootFolderNode *rootNode = NULL;
 
 
-class LocalRootFolderNode : public Plugins::Default::FolderNode
+class LocalRootFolderNode : public Plugins::Default::FolderNodeBase
 {
 public:
 	LocalRootFolderNode(IFileContainer::Holder &container, Node *parent = 0) :
-		FolderNode(container, parent)
+		FolderNodeBase(container, parent)
 	{}
 	virtual ~LocalRootFolderNode()
 	{

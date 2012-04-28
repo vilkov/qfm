@@ -136,6 +136,9 @@ protected:
 	const Container &items() const { return m_items; }
 	Container &items() { return m_items; }
 
+	const FolderProxyModel &proxy() const { return m_proxy; }
+	FolderProxyModel &proxy() { return m_proxy; }
+
 private:
 	/* Prepare tasks */
 	void updateFiles();

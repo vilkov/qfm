@@ -14,6 +14,10 @@ public:
 	FolderNode(IFileContainer::Holder &container, Node *parent = 0);
 
 protected:
+	/* Node */
+	virtual QModelIndex rootIndex() const;
+
+protected:
 	virtual Snapshot updateFilesList() const;
 };
 

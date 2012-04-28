@@ -11,6 +11,11 @@ FolderNode::FolderNode(IFileContainer::Holder &container, Node *parent) :
 	items().add(item->label().toString(), item);
 }
 
+QModelIndex FolderNode::rootIndex() const
+{
+	return proxy().mapFromSource(createIndex(0, 0, items()[0]));
+}
+
 Snapshot FolderNode::updateFilesList() const
 {
 	Snapshot::Files files(container().data());

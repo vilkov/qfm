@@ -2,7 +2,7 @@
 #define FILESYSTEMIFILECONTAINERSCANNER_H_
 
 #include "filesystemifileinfo.h"
-#include "../tasks/filesystembasetask.h"
+#include "../../tools/taskspool/task.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -11,6 +11,9 @@ class Snapshot;
 
 class IFileContainerScanner
 {
+public:
+	typedef ::Tools::TasksPool::Task::Flags Flags;
+
 public:
 	class IEnumerator
 	{
@@ -31,8 +34,8 @@ public:
 
 	virtual void enumerate(IEnumerator::Holder &enumerator) const = 0;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const = 0;
-	virtual void scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const = 0;
-	virtual void refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const = 0;
+	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted) const = 0;
+	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted) const = 0;
 };
 
 FILE_SYSTEM_NS_END

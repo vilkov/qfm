@@ -12,6 +12,13 @@ ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const S
 	m_snapshot(snapshot)
 {}
 
+ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
+	FilesBaseTask(receiver, destination),
+	m_type(type),
+	m_snapshot(snapshot),
+	m_move(move)
+{}
+
 void ScanFilesTask::run(const volatile Flags &aborted)
 {
 	switch (m_type)
@@ -63,26 +70,6 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			break;
 		}
 
-		default:
-		{
-			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, Snapshot()));
-			break;
-		}
-	}
-}
-
-
-ScanFilesExtendedTask::ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
-	FilesExtendedBaseTask(receiver, destination),
-	m_type(type),
-	m_snapshot(snapshot),
-	m_move(move)
-{}
-
-void ScanFilesExtendedTask::run(const volatile Flags &aborted)
-{
-	switch (m_type)
-	{
 		case ModelEvent::ScanFilesForCopy:
 		{
 			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
@@ -92,7 +79,7 @@ void ScanFilesExtendedTask::run(const volatile Flags &aborted)
 
 		default:
 		{
-			postEvent(new CopyEvent(this, static_cast<CopyEvent::Type>(m_type), destination(), aborted, Snapshot(), m_move));
+			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, Snapshot()));
 			break;
 		}
 	}

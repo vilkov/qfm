@@ -227,7 +227,7 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 	return NULL;
 }
 
-void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) const
 {
 	QString error;
 	IFileInfo::Holder info;
@@ -248,7 +248,7 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 	}
 }
 
-void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &aborted) const
+void FileContainer::refresh(Snapshot &snapshot, const volatile Flags &aborted) const
 {
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
@@ -261,7 +261,7 @@ void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &
 	}
 }
 
-void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &aborted) const
+void FileContainer::scan(WrappedNodeItem *root, const volatile Flags &aborted) const
 {
 	DIR *dir;
 

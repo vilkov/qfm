@@ -78,11 +78,11 @@ void TasksNode::addTask(BaseTask *task, const Snapshot &snapshot)
 	Application::taskPool()->handle(task);
 }
 
-void TasksNode::addTask(ExtendedBaseTask *task, const Snapshot &snapshot)
+void TasksNode::addTask(BaseTask *task, const ICopyControl *destanation, const Snapshot &snapshot)
 {
 	m_tasks.add(task, snapshot);
 	addLink();
-//	static_cast<const ExtendedBaseTask *>(task)->destination()->node()->addLink();
+	destanation->node()->addLink();
 	Application::taskPool()->handle(task);
 }
 
@@ -92,21 +92,35 @@ void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask)
 	Application::taskPool()->handle(task);
 }
 
+void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask, const ICopyControl *destanation)
+{
+	m_tasks.resetTask(task, oldTask);
+	destanation->node()->removeLink();
+	Application::taskPool()->handle(task);
+}
+
 void TasksNode::handleTask(BaseTask *task)
 {
 	addLink();
 	Application::taskPool()->handle(task);
 }
 
-void TasksNode::handleTask(ExtendedBaseTask *task)
+void TasksNode::handleTask(BaseTask *task, const ICopyControl *destanation)
 {
 	addLink();
-//	static_cast<const ExtendedBaseTask *>(task)->destination()->node()->addLink();
+	destanation->node()->addLink();
 	Application::taskPool()->handle(task);
 }
 
-void TasksNode::taskHandled()
+void TasksNode::taskHandled(BaseTask *task)
 {
+	Q_UNUSED(task);
+	removeLink();
+}
+
+void TasksNode::taskHandled(BaseTask *task, const ICopyControl *destanation)
+{
+	destanation->node()->removeLink();
 	removeLink();
 }
 
@@ -119,6 +133,13 @@ void TasksNode::cancelTask(NodeItem *item)
 void TasksNode::removeAllTaskLinks(BaseTask *task)
 {
 	m_tasks.removeAll(task);
+	removeLink();
+}
+
+void TasksNode::removeAllTaskLinks(BaseTask *task, const ICopyControl *destanation)
+{
+	m_tasks.removeAll(task);
+	destanation->node()->removeLink();
 	removeLink();
 }
 

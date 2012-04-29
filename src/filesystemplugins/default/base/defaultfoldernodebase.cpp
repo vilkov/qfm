@@ -569,7 +569,7 @@ void FolderNodeBase::nodeRemoved(Node *node)
 	Container::size_type index = m_items.indexOf(node);
 
 	if (index != Container::InvalidIndex)
-		static_cast<DefaultNodeItem*>(m_items[index])->setNode(NULL);
+		static_cast<DefaultNodeItem *>(m_items[index])->setNode(NULL);
 }
 
 Snapshot FolderNodeBase::updateFilesList() const
@@ -865,8 +865,9 @@ void FolderNodeBase::scanForSize(const Snapshot &snapshot)
 
 void FolderNodeBase::scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
-	PScopedPointer<ScanFilesExtendedTask> task(new ScanFilesExtendedTask(ModelEvent::ScanFilesForCopy, this, destination, snapshot, move));
-	addTask(task.take(), snapshot);
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(ModelEvent::ScanFilesForCopy, this, destination, snapshot, move));
+	addTask(task.data(), const_cast<const ScanFilesTask *>(task.data())->destination().data(), snapshot);
+	task.take();
 }
 
 void FolderNodeBase::scanForRemove(const Snapshot &snapshot)
@@ -880,12 +881,16 @@ void FolderNodeBase::performCopy(BaseTask *oldTask, const Snapshot &snapshot, IC
 	if (destination->isPhysical() && move)
 	{
 		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
-		resetTask(task.take(), oldTask);
+		resetTask(task.data(), oldTask);
+		const_cast<const PerformMoveTask *>(task.data())->destination()->node()->refresh();
+		task.take();
 	}
 	else
 	{
 		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
-		resetTask(task.take(), oldTask);
+		resetTask(task.data(), oldTask);
+		const_cast<const PerformCopyTask *>(task.data())->destination()->node()->refresh();
+		task.take();
 	}
 }
 
@@ -893,6 +898,12 @@ void FolderNodeBase::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
 {
 	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
 	resetTask(task.take(), oldTask);
+}
+
+void FolderNodeBase::performRemove(BaseTask *oldTask, const ICopyControl *destination, const Snapshot &snapshot)
+{
+	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
+	resetTask(task.take(), oldTask, destination);
 }
 
 void FolderNodeBase::updateFiles(const BaseTask::Event *e)
@@ -906,7 +917,7 @@ void FolderNodeBase::updateFiles(const BaseTask::Event *e)
 	if (event->isLastEvent)
 	{
 		setUpdating(false);
-		taskHandled();
+		taskHandled(event->task);
 	}
 }
 
@@ -922,14 +933,14 @@ void FolderNodeBase::scanForSize(const BaseTask::Event *e)
 
 void FolderNodeBase::scanForCopy(const BaseTask::Event *e)
 {
-	typedef ScanFilesExtendedTask::CopyEvent * NotConstEvent;
-	typedef const ScanFilesExtendedTask::CopyEvent * Event;
+	typedef ScanFilesTask::CopyEvent * NotConstEvent;
+	typedef const ScanFilesTask::CopyEvent * Event;
 	Event event = static_cast<Event>(e);
 
 	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
 		performCopy(event->task, event->snapshot, const_cast<NotConstEvent>(event)->destination, event->move);
 	else
-		removeAllTaskLinks(event->task);
+		removeAllTaskLinks(event->task, event->destination.data());
 }
 
 void FolderNodeBase::scanForRemove(const BaseTask::Event *e)
@@ -950,10 +961,12 @@ void FolderNodeBase::performCopy(const BaseTask::Event *e)
 	typedef const PerformCopyTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
+	event->destination->node()->refresh();
+
 	if (performCopyEvent(event->canceled, event->snapshot, event->move))
-		performRemove(event->task, event->snapshot);
+		performRemove(event->task, event->destination.data(), event->snapshot);
 	else
-		removeAllTaskLinks(event->task);
+		removeAllTaskLinks(event->task, event->destination.data());
 }
 
 void FolderNodeBase::performRemove(const BaseTask::Event *e)

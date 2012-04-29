@@ -2,6 +2,7 @@
 #include "filesystemtasksnode.h"
 #include "tools/filesystemtaskdialog.h"
 #include "../../application.h"
+
 #include <QtCore/QThread>
 
 
@@ -13,6 +14,17 @@ BaseTask::BaseTask(TasksNode *receiver) :
 	m_canceled(1, flags())
 {
 	Q_ASSERT(m_receiver != 0);
+	Q_ASSERT(m_receiver->thread() == QThread::currentThread());
+}
+
+BaseTask::BaseTask(TasksNode *receiver, ICopyControl::Holder &destination) :
+	Task(),
+	m_receiver(receiver),
+	m_canceled(1, flags()),
+	m_destination(destination.take())
+{
+	Q_ASSERT(m_receiver != 0);
+	Q_ASSERT(m_destination.data());
 	Q_ASSERT(m_receiver->thread() == QThread::currentThread());
 }
 

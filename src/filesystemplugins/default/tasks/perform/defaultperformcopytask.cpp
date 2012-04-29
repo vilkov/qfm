@@ -7,7 +7,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PerformCopyTask::PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
-	FilesExtendedBaseTask(receiver, destination),
+	FilesBaseTask(receiver, destination),
 	m_progress(receiver),
 	m_snapshot(snapshot),
 	m_move(move),

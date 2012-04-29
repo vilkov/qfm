@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMTASKSNODE_H_
 #define FILESYSTEMTASKSNODE_H_
 
-#include "filesystemextendedbasetask.h"
+#include "filesystembasetask.h"
 #include "containers/filesystemtasksmap.h"
 #include "../actions/asynchronous/filesystemasyncfileaction.h"
 #include "../filesystemnode.h"
@@ -31,13 +31,16 @@ protected:
 
 protected:
 	void addTask(BaseTask *task, const Snapshot &snapshot);
-	void addTask(ExtendedBaseTask *task, const Snapshot &snapshot);
+	void addTask(BaseTask *task, const ICopyControl *destanation, const Snapshot &snapshot);
 	void resetTask(BaseTask *task, BaseTask *oldTask);
+	void resetTask(BaseTask *task, BaseTask *oldTask, const ICopyControl *destanation);
 	void handleTask(BaseTask *task);
-	void handleTask(ExtendedBaseTask *task);
-	void taskHandled();
+	void handleTask(BaseTask *task, const ICopyControl *destanation);
+	void taskHandled(BaseTask *task);
+	void taskHandled(BaseTask *task, const ICopyControl *destanation);
 	void cancelTask(NodeItem *item);
 	void removeAllTaskLinks(BaseTask *task);
+	void removeAllTaskLinks(BaseTask *task, const ICopyControl *destanation);
 	Snapshot::List cancelTaskAndTakeItems(NodeItem *item);
 
 private:

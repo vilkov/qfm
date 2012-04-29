@@ -22,8 +22,22 @@ public:
 		Snapshot snapshot;
 	};
 
+	class ExtendedEvent : public BaseTask::ExtendedEvent
+	{
+		Q_DISABLE_COPY(ExtendedEvent)
+
+	public:
+		ExtendedEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot) :
+			BaseTask::ExtendedEvent(task, type, destination, canceled),
+			snapshot(snapshot)
+		{}
+
+		Snapshot snapshot;
+	};
+
 public:
 	FilesBaseTask(TasksNode *receiver);
+	FilesBaseTask(TasksNode *receiver, ICopyControl::Holder &destination);
 };
 
 DEFAULT_PLUGIN_NS_END

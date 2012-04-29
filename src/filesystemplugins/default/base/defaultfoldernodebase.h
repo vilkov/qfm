@@ -145,8 +145,9 @@ private:
 	void scanForSize(const Snapshot &snapshot);
 	void scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move);
 	void scanForRemove(const Snapshot &snapshot);
-	void performCopy(BaseTask *oldTask, const Snapshot &Snapshot, ICopyControl::Holder &destination, bool move);
-	void performRemove(BaseTask *oldTask, const Snapshot &Snapshot);
+	void performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move);
+	void performRemove(BaseTask *oldTask, const Snapshot &snapshot);
+	void performRemove(BaseTask *oldTask, const ICopyControl *destination, const Snapshot &snapshot);
 
 	/* Tasks events */
 	void updateFiles(const BaseTask::Event *event);

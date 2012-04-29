@@ -2,7 +2,6 @@
 #define DEFAULTSCANFILESTASK_H_
 
 #include "../defaultfilesbasetask.h"
-#include "../defaultfilesextendedbasetask.h"
 #include "../../events/defaultmodelevent.h"
 
 
@@ -24,26 +23,11 @@ public:
 		Snapshot::Updates updates;
 	};
 
-public:
-	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
-
-protected:
-	virtual void run(const volatile Flags &aborted);
-
-private:
-	ModelEvent::Type m_type;
-	Snapshot m_snapshot;
-};
-
-
-class ScanFilesExtendedTask : public FilesExtendedBaseTask
-{
-public:
-	class CopyEvent : public FilesExtendedBaseTask::Event
+	class CopyEvent : public ExtendedEvent
 	{
 	public:
 		CopyEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
-			FilesExtendedBaseTask::Event(task, type, destination, canceled, snapshot),
+			ExtendedEvent(task, type, destination, canceled, snapshot),
 			move(move)
 		{}
 
@@ -51,7 +35,8 @@ public:
 	};
 
 public:
-	ScanFilesExtendedTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
+	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
+	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
 
 protected:
 	virtual void run(const volatile Flags &aborted);

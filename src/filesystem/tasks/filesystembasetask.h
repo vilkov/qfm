@@ -3,7 +3,7 @@
 
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
-#include "../filesystem_ns.h"
+#include "../interfaces/filesystemicopycontrol.h"
 #include "../../tools/taskspool/task.h"
 
 
@@ -42,12 +42,30 @@ public:
 		{}
 	};
 
+	class ExtendedEvent : public BaseTask::Event
+	{
+		Q_DISABLE_COPY(ExtendedEvent)
+
+	public:
+		ICopyControl::Holder destination;
+
+	protected:
+		ExtendedEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled) :
+			BaseTask::Event(task, type, canceled),
+			destination(destination.take())
+		{}
+	};
+
 public:
 	BaseTask(TasksNode *receiver);
+	BaseTask(TasksNode *receiver, ICopyControl::Holder &destination);
 
     void cancel() { m_canceled = true; }
+	const ICopyControl::Holder &destination() const { return m_destination; }
 
 protected:
+	ICopyControl::Holder &destination() { return m_destination; }
+
 	/* Posts event to receiver(). */
 	void postEvent(Event *event) const;
 
@@ -55,8 +73,13 @@ protected:
 	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const;
 
 private:
+	friend class TasksNode;
+	void taskHandled();
+
+private:
     TasksNode *m_receiver;
 	StaticFlag m_canceled;
+    ICopyControl::Holder m_destination;
 };
 
 FILE_SYSTEM_NS_END

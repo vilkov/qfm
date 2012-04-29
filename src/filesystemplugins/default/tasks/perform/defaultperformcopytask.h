@@ -2,13 +2,13 @@
 #define DEFAULTPERFORMCOPYTASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "../defaultfilesextendedbasetask.h"
+#include "../defaultfilesbasetask.h"
 #include "../../../../filesystem/tasks/tools/taskprogress.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class PerformCopyTask : public FilesExtendedBaseTask
+class PerformCopyTask : public FilesBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
@@ -16,11 +16,11 @@ public:
 	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 
 public:
-	class Event : public FilesExtendedBaseTask::Event
+	class Event : public FilesBaseTask::ExtendedEvent
 	{
 	public:
 		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
-			FilesExtendedBaseTask::Event(task, type, destination, canceled, snapshot),
+			FilesBaseTask::ExtendedEvent(task, type, destination, canceled, snapshot),
 			move(move)
 		{}
 

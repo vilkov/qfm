@@ -36,7 +36,6 @@ Snapshot::Updates Snapshot::takeUpdates()
 }
 
 Snapshot::Data::Data(const IFileContainer *container) :
-	totalSize(0),
 	container(container)
 {}
 

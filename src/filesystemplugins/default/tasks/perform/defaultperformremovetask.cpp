@@ -17,9 +17,8 @@ void PerformRemoveTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
 	WrappedNodeItem *entry;
-	const Snapshot::List list = m_snapshot.list();
 
-	for (Snapshot::List::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
+	for (Snapshot::iterator it = m_snapshot.begin(), end = m_snapshot.end(); it != end && !aborted; ++it)
 	{
 		entry = (*it).second;
 
@@ -45,12 +44,17 @@ void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAg
 	{
 		WrappedNodeItem *localEntry;
 
-		for (WrappedNodeItem::size_type i = 0, size = entry->size(); i < size; ++i)
+		for (WrappedNodeItem::size_type i = 0; i < entry->size();)
 		{
 			removeEntry(localEntry = entry->at(i), tryAgain = false, aborted);
 
-			if (!localEntry->isRemoved())
+			if (localEntry->isRemoved())
+				entry->remove(i);
+			else
+			{
+				++i;
 				entry->setRemoved(false);
+			}
 		}
 
 		if (entry->isRemoved())

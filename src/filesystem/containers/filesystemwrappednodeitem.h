@@ -19,8 +19,8 @@ public:
 
 public:
 	WrappedNodeItem();
-	WrappedNodeItem(const IFileContainer *container, IFileInfo *info);
-	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo *info, WrappedNodeItem *parent);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent);
 	~WrappedNodeItem();
 
 	bool isValid() const { return m_container != NULL; }
@@ -28,7 +28,31 @@ public:
 	size_type size() const { return m_items.size(); }
 	WrappedNodeItem *at(size_type index) const { return m_items.at(index); }
 
-	void add(WrappedNodeItem *item) { m_items.push_back(item); }
+	void add(WrappedNodeItem *item)
+	{
+		WrappedNodeItem *parent = this;
+
+		while (parent)
+		{
+			parent->m_totalSize += item->totalSize();
+			parent = parent->m_parent;
+		}
+
+		m_items.push_back(item);
+	}
+	void remove(size_type index)
+	{
+		WrappedNodeItem *parent = this;
+		WrappedNodeItem *item = m_items.takeAt(index);
+
+		while (parent)
+		{
+			parent->m_totalSize -= item->totalSize();
+			parent = parent->m_parent;
+		}
+
+		delete item;
+	}
 
 	const IFileContainer::Holder &thisContainer() const { return m_thisContainer; }
 	IFileContainer::Holder &thisContainer() { return m_thisContainer; }
@@ -47,6 +71,7 @@ private:
 	const IFileContainer *m_container;
 	IFileInfo::size_type m_totalSize;
 	IFileInfo::Holder m_info;
+	WrappedNodeItem *m_parent;
 	bool m_removed;
 	List m_items;
 };

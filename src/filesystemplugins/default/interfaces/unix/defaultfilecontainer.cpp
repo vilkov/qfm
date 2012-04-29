@@ -236,7 +236,7 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 	{
 		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
-		subnode = new WrappedNodeItem(snapshot.container(), info);
+		subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
 
 		if (subnode->info()->isDir() &&
 			(subnode->thisContainer() = subnode->container()->open(subnode->info()->fileName(), false, error)))
@@ -244,7 +244,7 @@ void FileContainer::scan(Snapshot &snapshot, const volatile BaseTask::Flags &abo
 			scan(subnode.data(), aborted);
 		}
 
-		(*it).second = subnode.take();
+		snapshot.insert(it, subnode.take());
 	}
 }
 
@@ -256,8 +256,8 @@ void FileContainer::refresh(Snapshot &snapshot, const volatile BaseTask::Flags &
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 	{
 		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
-		subnode = new WrappedNodeItem(snapshot.container(), info);
-		(*it).second = subnode.take();
+		subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
+		snapshot.insert(it, subnode.take());
 	}
 }
 
@@ -265,7 +265,7 @@ void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &
 {
 	DIR *dir;
 
-	if (dir = opendir(root->container()->location().toUtf8()))
+	if (dir = opendir(root->thisContainer()->location().toUtf8()))
 	{
 		QString error;
 		struct dirent *entry;
@@ -278,7 +278,7 @@ void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &
 				if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
 				{
 					info = new Info(root->thisContainer()->location(QString::fromUtf8(entry->d_name)), Info::Identify());
-					subtree = new WrappedNodeItem(root->thisContainer().data(), info);
+					subtree = new WrappedNodeItem(root->thisContainer().data(), info, root);
 
 					if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
 						scan(subtree.data(), aborted);
@@ -289,7 +289,7 @@ void FileContainer::scan(WrappedNodeItem *root, const volatile BaseTask::Flags &
 			else
 			{
 				info = new Info(root->thisContainer()->location(QString::fromUtf8(entry->d_name)), Info::Identify());
-				root->add(new WrappedNodeItem(root->thisContainer().data(), info));
+				root->add(new WrappedNodeItem(root->thisContainer().data(), info, root));
 			}
 
 		closedir(dir);

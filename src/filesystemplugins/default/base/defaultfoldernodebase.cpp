@@ -934,8 +934,8 @@ void FolderNodeBase::scanForCopy(const BaseTask::Event *e)
 
 void FolderNodeBase::scanForRemove(const BaseTask::Event *e)
 {
-	typedef ScanFilesExtendedTask::Event * NotConstEvent;
-	typedef const ScanFilesExtendedTask::Event * Event;
+	typedef ScanFilesTask::Event * NotConstEvent;
+	typedef const ScanFilesTask::Event * Event;
 	Event event = static_cast<Event>(e);
 
 	if (scanForRemoveEvent(event->canceled, event->snapshot))

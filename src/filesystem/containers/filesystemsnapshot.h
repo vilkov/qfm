@@ -37,25 +37,38 @@ public:
 
 	const IFileContainer *container() const { return m_data->container; }
 
+	IFileInfo::size_type totalSize() const
+	{
+		IFileInfo::size_type res = 0;
+
+		for (const_iterator it = begin(), localEnd = end(); it != localEnd; ++it)
+			if ((*it).second)
+				res += (*it).second->totalSize();
+
+		return res;
+	}
+
 	NodeItem *exists(const QString &fileName) const
 	{
 		return m_data->map.value(fileName).first;
 	}
 
-	void insert(const QString &fileName, WrappedNodeItem *item) const
+	void insert(iterator &i, WrappedNodeItem *item)
+	{
+		(*i).second = item;
+	}
+
+	void insert(const QString &fileName, WrappedNodeItem *item)
 	{
 		Pair &pair = m_data->map[fileName];
 		delete pair.second;
 		pair.second = item;
-		m_data->totalSize += item->totalSize();
 	}
 
-	void remove(const QString &fileName)
+	void remove(iterator &i)
 	{
-		Q_ASSERT(m_data->map.value(fileName).second);
-		Pair pair = m_data->map.take(fileName);
-		m_data->totalSize -= pair.second->totalSize();
-		delete pair.second;
+		delete (*i).second;
+		i = m_data->map.erase(i);
 	}
 
 private:
@@ -68,7 +81,6 @@ private:
 		~Data();
 
 		Container map;
-		IFileInfo::size_type totalSize;
 		const IFileContainer *container;
 	};
 
@@ -132,8 +144,18 @@ public:
 	List()
 	{}
 
-	IFileInfo::size_type totalSize() const { return m_data->totalSize; }
 	const IFileContainer *container() const { return m_data->container; }
+
+	IFileInfo::size_type totalSize() const
+	{
+		IFileInfo::size_type res = 0;
+
+		for (const_iterator it = begin(), localEnd = end(); it != localEnd; ++it)
+			if ((*it).second)
+				res += (*it).second->totalSize();
+
+		return res;
+	}
 
 protected:
 	friend class Snapshot;

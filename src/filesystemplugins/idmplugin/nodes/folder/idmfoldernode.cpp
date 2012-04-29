@@ -16,10 +16,15 @@ IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContain
 
 ICopyControl *IdmFolderNode::createControl(INodeView *view) const
 {
-//	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
-//		return new IdmCopyControl(const_cast<IdmFolderNode *>(this), m_container, container(), entity);
-//	else
-		return NULL;
+	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+	{
+		ICopyControl::Holder dest(m_container.container()->createControl(view));
+
+		if (dest)
+			return new IdmCopyControl(dest, m_container, container().data(), entity);
+	}
+
+	return NULL;
 }
 
 void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)

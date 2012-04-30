@@ -12,7 +12,7 @@ void PerformMoveTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 	if (destination->move(entry->container(), entry->info()->fileName(), m_lastError))
 		m_progress.update(entry->info()->fileSize());
 	else
-		PerformCopyTask::copyFile(destination, entry, tryAgain, aborted);
+		PerformCopyTask::copyFile(destination, entry, tryAgain = false, aborted);
 }
 
 DEFAULT_PLUGIN_NS_END

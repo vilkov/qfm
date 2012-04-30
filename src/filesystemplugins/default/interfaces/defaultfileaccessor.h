@@ -23,11 +23,13 @@ public:
 
 	bool isValid() const;
 
-	/* IFile */
+	/* IFileAccessor */
 	virtual const QString &lastError() const;
+	virtual int permissions() const;
 
 	virtual size_type size();
 	virtual bool seek(size_type offset);
+	virtual bool setPermissions(int mode);
 	virtual size_type read(value_type *data, size_type size);
 	virtual size_type write(const value_type *data, size_type size);
 

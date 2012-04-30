@@ -30,7 +30,7 @@ public:
 	virtual bool move(const IFileContainer *source, const QString &fileName, QString &error) const;
 
 	virtual IFileContainer *open() const;
-	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
+	virtual IFileAccessor *open(const QString &fileName, int flags, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
 
 	virtual const IFileContainerScanner *scanner() const;

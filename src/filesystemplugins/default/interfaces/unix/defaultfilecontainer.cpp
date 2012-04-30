@@ -168,9 +168,9 @@ IFileContainer *FileContainer::open() const
 	return new FileContainer(*this);
 }
 
-IFileAccessor *FileContainer::open(const QString &fileName, int mode, QString &error) const
+IFileAccessor *FileContainer::open(const QString &fileName, int flags, QString &error) const
 {
-	FileAccesor::Holder file(new FileAccesor(QString(m_path).append(QChar('/')).append(fileName), mode));
+	IFileAccessor::Holder file(new FileAccesor(QString(m_path).append(QChar('/')).append(fileName), flags));
 
 	if (file)
 		if (static_cast<FileAccesor *>(file.data())->isValid())

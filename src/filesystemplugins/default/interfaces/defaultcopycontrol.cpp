@@ -62,9 +62,9 @@ IFileContainer *CopyControl::open() const
 	return m_container.open();
 }
 
-IFileAccessor *CopyControl::open(const QString &fileName, int mode, QString &error) const
+IFileAccessor *CopyControl::open(const QString &fileName, int flags, QString &error) const
 {
-	return m_container.open(fileName, mode, error);
+	return m_container.open(fileName, flags, error);
 }
 
 IFileContainer *CopyControl::open(const QString &fileName, bool create, QString &error) const

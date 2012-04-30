@@ -2,8 +2,7 @@
 #define FILESYSTEMIFILEACCESSOR_H_
 
 #include <QtCore/QString>
-#include "../filesystem_ns.h"
-#include "../../tools/pointers/pscopedpointer.h"
+#include "filesystemifileinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -13,7 +12,7 @@ class IFileAccessor
 public:
 	typedef PScopedPointer<IFileAccessor> Holder;
 	typedef uchar                         value_type;
-	typedef quint64                       size_type;
+	typedef IFileInfo::size_type          size_type;
 	enum OpenMode
 	{
 		ReadOnly  = 0x00000001,
@@ -22,14 +21,22 @@ public:
 		Create    = 0x00000008,
 		Truncate  = 0x00000010
 	};
+    enum Permissions
+    {
+        UserRead   = 0x00000001, UserWrite   = 0x00000002, UserExec   = 0x00000004,
+        GroupRead  = 0x00000008, GroupWrite  = 0x00000010, GroupExec  = 0x00000020,
+        OthersRead = 0x00000040, OthersWrite = 0x00000080, OthersExec = 0x00000100
+    };
 
 public:
 	virtual ~IFileAccessor();
 
 	virtual const QString &lastError() const = 0;
+	virtual int permissions() const = 0;
 
 	virtual size_type size() = 0;
 	virtual bool seek(size_type offset) = 0;
+	virtual bool setPermissions(int mode) = 0;
 	virtual size_type read(value_type *data, size_type size) = 0;
 	virtual size_type write(const value_type *data, size_type size) = 0;
 };

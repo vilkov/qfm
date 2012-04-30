@@ -4,7 +4,7 @@
 #include <QtCore/QString>
 #include <QtCore/QDateTime>
 #include "filesystemifiletype.h"
-#include "filesystemifileaccessor.h"
+#include "../../tools/pointers/pscopedpointer.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -13,7 +13,7 @@ class IFileInfo
 {
 public:
 	typedef PScopedPointer<IFileInfo> Holder;
-	typedef IFileAccessor::size_type  size_type;
+	typedef quint64                   size_type;
     enum Permissions
     {
         Read = 0x0004, Write = 0x0002, Exec = 0x0001

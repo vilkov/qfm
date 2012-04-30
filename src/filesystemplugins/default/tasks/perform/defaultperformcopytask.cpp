@@ -20,9 +20,8 @@ PerformCopyTask::PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &dest
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
-	const Snapshot::List list = m_snapshot.list();
 
-	for (Snapshot::List::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
+	for (Snapshot::const_iterator it = m_snapshot.begin(), end = m_snapshot.end(); it != end && !aborted; ++it)
 	{
 		m_progress.init((*it).first);
 		copyEntry(destination().data(), (*it).second, tryAgain = false, aborted);
@@ -118,7 +117,10 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 					}
 
 				if (m_written == m_sourceFile->size())
+				{
+					m_destFile->setPermissions(m_sourceFile->permissions());
 					break;
+				}
 			}
 			else
 				if (m_skipAllIfNotCopy || tryAgain)

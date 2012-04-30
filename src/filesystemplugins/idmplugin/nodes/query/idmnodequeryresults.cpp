@@ -3,8 +3,7 @@
 #include "control/idmqueryresultscopycontrol.h"
 #include "events/idmqueryresultsmodelevents.h"
 #include "tasks/scan/idmnodequeryresultsscantask.h"
-#include "tasks/scan/idmnodequeryresultsupdatetask.h"
-#include "tasks/perform/idmnodequeryresultsremovefilestask.h"
+#include "tasks/perform/idmnodequeryresultsperformremovetask.h"
 #include "items/idmqueryresultvalueitem.h"
 #include "items/idmqueryresultpropertyitem.h"
 #include "items/idmqueryresultrootpathvalueitem.h"
@@ -16,6 +15,7 @@
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../application.h"
+
 #include <QtGui/QMessageBox>
 
 
@@ -34,6 +34,12 @@ bool IdmNodeQueryResults::event(QEvent *e)
 {
 	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
+		case ModelEvent::UpdateFiles:
+		{
+			e->accept();
+			scanUpdates(static_cast<BaseTask::Event*>(e));
+			return true;
+		}
 		case ModelEvent::ScanFilesForRemove:
 		{
 			e->accept();
@@ -44,12 +50,6 @@ bool IdmNodeQueryResults::event(QEvent *e)
 		{
 			e->accept();
 			performRemove(static_cast<BaseTask::Event*>(e));
-			return true;
-		}
-		case ModelEvent::UpdateFiles:
-		{
-			e->accept();
-			scanUpdates(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
 		default:
@@ -88,7 +88,7 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	if (!list.isEmpty())
 	{
 		if (!files.isEmpty())
-			handleTask(new UpdateFilesTask(this, files));
+			handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
 
 		beginInsertRows(parent, m_items.size(), m_items.size() + list.size() - 1);
 		m_items.append(list);
@@ -233,19 +233,19 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 //	if (m_container.transaction())
 //	{
 //		QModelIndex index;
-//		Snapshot::Files files;
-//		QueryResultValueItem *item;
+//		Snapshot::Files files(m_container.container());
+//		QueryResultPathItem *item;
 //		QueryResultPropertyItem *property;
 //		QueryResultPropertyItem::size_type idx;
 //
 //		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-//			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isValue())
+//			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isPath())
 //			{
-//				item = static_cast<QueryResultValueItem *>(index.internalPointer());
+//				item = static_cast<QueryResultPathItem *>(index.internalPointer());
 //
 //				if (!item->isLocked())
 //					if (item->value()->entity()->type() == Database::Path)
-//						files.add(item);
+//						files.add(static_cast<QueryResultPathItem *>(item)->fileName(), item);
 //					else
 //					{
 //						property = static_cast<QueryResultPropertyItem*>(item->parent());

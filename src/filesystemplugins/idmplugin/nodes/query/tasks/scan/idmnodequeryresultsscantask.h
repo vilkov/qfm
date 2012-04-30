@@ -2,25 +2,12 @@
 #define IDMNODEQUERYRESULTSSCANTASK_H_
 
 #include "../../events/idmqueryresultsmodelevents.h"
-#include "../../../../../../filesystem/tasks/filesystembasetask.h"
-#include "../../../../../../filesystem/containers/filesystemsnapshot.h"
+#include "../../../../../default/tasks/scan/defaultscanfilestask.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class ScanFilesTask : public BaseTask
-{
-public:
-	ScanFilesTask(TasksNode *receiver, const Snapshot &snapshot);
-
-	virtual void run(const volatile Flags &aborted);
-
-protected:
-	Snapshot scan(const volatile Flags &aborted);
-
-private:
-	Snapshot m_snapshot;
-};
+typedef ::FileSystem::Plugins::Default::ScanFilesTask ScanFilesTask;
 
 IDM_PLUGIN_NS_END
 

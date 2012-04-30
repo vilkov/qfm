@@ -2,20 +2,12 @@
 #define IDMQUERYRESULTSMODELEVENTS_H_
 
 #include "../../../idmplugin_ns.h"
-#include "../../../../../filesystem/tasks/filesystembasetask.h"
+#include "../../../../default/events/defaultmodelevent.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-struct ModelEvent
-{
-	enum Type
-	{
-		ScanFilesForRemove = BaseTask::Event::User,
-		RemoveFiles = BaseTask::Event::User + 1,
-		UpdateFiles = BaseTask::Event::User + 2
-	};
-};
+typedef ::FileSystem::Plugins::Default::ModelEvent ModelEvent;
 
 IDM_PLUGIN_NS_END
 

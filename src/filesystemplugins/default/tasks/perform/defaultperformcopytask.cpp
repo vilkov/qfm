@@ -20,13 +20,15 @@ PerformCopyTask::PerformCopyTask(TasksNode *receiver, ICopyControl::Holder &dest
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
+	WrappedNodeItem *entry;
 
 	for (Snapshot::const_iterator it = m_snapshot.begin(), end = m_snapshot.end(); it != end && !aborted; ++it)
-	{
-		m_progress.init((*it).first);
-		copyEntry(destination().data(), (*it).second, tryAgain = false, aborted);
-		m_progress.complete();
-	}
+		if (entry = (*it).second)
+		{
+			m_progress.init((*it).first);
+			copyEntry(destination().data(), entry, tryAgain = false, aborted);
+			m_progress.complete();
+		}
 
 	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::CopyFiles), destination(), aborted, m_snapshot, m_move));
 }

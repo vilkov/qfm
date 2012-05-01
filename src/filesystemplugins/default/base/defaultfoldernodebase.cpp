@@ -619,7 +619,7 @@ void FolderNodeBase::updateFilesEvent(Snapshot::Updates &updates)
 	if (!updates.isEmpty())
 	{
 		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + updates.size() - 1);
-		for (Snapshot::Updates::const_iterator update = updates.begin(), end = updates.end(); update != end; ++update)
+		for (Snapshot::Updates::iterator update = updates.begin(), end = updates.end(); update != end; update = updates.erase(update))
 			m_items.add(new DefaultNodeItem((*update).second->info()));
 		endInsertRows();
 	}

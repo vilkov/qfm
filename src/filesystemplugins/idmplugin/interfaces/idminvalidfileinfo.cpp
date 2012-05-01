@@ -1,9 +1,10 @@
-#include "defaultinvalidfileinfo.h"
+#include "idminvalidfileinfo.h"
 
 
-DEFAULT_PLUGIN_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
-InvalidInfo::InvalidInfo()
+InvalidInfo::InvalidInfo(const QString &fileName) :
+	m_fileName(fileName)
 {}
 
 FileTypeId InvalidInfo::id() const
@@ -48,7 +49,7 @@ InvalidInfo::size_type InvalidInfo::fileSize() const
 
 QString InvalidInfo::fileName() const
 {
-	return QString();
+	return m_fileName;
 }
 
 QDateTime InvalidInfo::lastModified() const
@@ -61,4 +62,4 @@ int InvalidInfo::permissions() const
 	return 0;
 }
 
-DEFAULT_PLUGIN_NS_END
+IDM_PLUGIN_NS_END

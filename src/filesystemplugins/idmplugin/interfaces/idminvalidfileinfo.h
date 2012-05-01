@@ -1,16 +1,16 @@
 #ifndef DEFAULTINVALIDINFO_H_
 #define DEFAULTINVALIDINFO_H_
 
-#include "../default_ns.h"
+#include "../idmplugin_ns.h"
 #include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-DEFAULT_PLUGIN_NS_BEGIN
+IDM_PLUGIN_NS_BEGIN
 
 class InvalidInfo : public IFileInfo, public IFileType
 {
 public:
-	InvalidInfo();
+	InvalidInfo(const QString &fileName);
 
 	/* IFileType */
 	virtual FileTypeId id() const;
@@ -26,8 +26,11 @@ public:
 	virtual QString fileName() const;
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
+
+private:
+	QString m_fileName;
 };
 
-DEFAULT_PLUGIN_NS_END
+IDM_PLUGIN_NS_END
 
 #endif /* DEFAULTINVALIDINFO_H_ */

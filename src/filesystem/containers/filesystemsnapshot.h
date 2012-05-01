@@ -188,6 +188,13 @@ private:
 
 class Snapshot::Updates : public Snapshot::BaseList
 {
+public:
+	~Updates();
+
+	/* Move semantic */
+	Updates(const Updates &other);
+	void operator=(const Updates &other);
+
 protected:
 	friend class Snapshot;
 

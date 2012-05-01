@@ -45,4 +45,21 @@ Snapshot::Data::~Data()
 		delete (*it).second;
 }
 
+Snapshot::Updates::~Updates()
+{
+	Q_ASSERT(isEmpty());
+}
+
+Snapshot::Updates::Updates(const Updates &other) :
+	BaseList(other)
+{
+	const_cast<Updates &>(other).m_list.clear();
+}
+
+void Snapshot::Updates::operator=(const Updates &other)
+{
+	BaseList::operator=(other);
+	const_cast<Updates &>(other).m_list.clear();
+}
+
 FILE_SYSTEM_NS_END

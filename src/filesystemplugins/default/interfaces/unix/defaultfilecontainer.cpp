@@ -239,7 +239,7 @@ void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) cons
 		subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
 
 		if (subnode->info()->isDir() &&
-			(subnode->thisContainer() = subnode->container()->open(subnode->info()->fileName(), false, error)))
+			(subnode->thisContainer() = subnode->container()->open(it.key(), false, error)))
 		{
 			scan(subnode.data(), aborted);
 		}

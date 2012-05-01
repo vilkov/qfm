@@ -36,4 +36,9 @@ bool QueryResultValueItem::isPath()
 	return false;
 }
 
+bool QueryResultValueItem::isRootPathValue()
+{
+	return false;
+}
+
 IDM_PLUGIN_NS_END

@@ -87,9 +87,9 @@ private:
 	void performRemove(const BaseTask::Event *e);
 
 private:
-	void lock(const Snapshot::List &list, const QString &reason);
-	void unlock(const Snapshot::List &list);
-	void update(const Snapshot::List &list);
+	void lock(const Snapshot &snapshot, const QString &reason);
+	void unlock(const Snapshot &snapshot);
+	void update(Snapshot::Updates &updates);
 
 private:
     enum { PrefetchLimit = 64 };

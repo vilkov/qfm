@@ -57,6 +57,11 @@ bool QueryResultPropertyItem::isPath()
 	return false;
 }
 
+bool QueryResultPropertyItem::isRootPathValue()
+{
+	return false;
+}
+
 void QueryResultPropertyItem::add(const IdmEntityValue::Holder &value)
 {
 	m_items.push_back(new QueryResultValueItem(value, this));

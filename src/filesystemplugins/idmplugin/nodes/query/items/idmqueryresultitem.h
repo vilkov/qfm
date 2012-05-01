@@ -16,6 +16,7 @@ public:
 	virtual bool isProperty() = 0;
 	virtual bool isValue() = 0;
 	virtual bool isPath() = 0;
+	virtual bool isRootPathValue() = 0;
 };
 
 IDM_PLUGIN_NS_END

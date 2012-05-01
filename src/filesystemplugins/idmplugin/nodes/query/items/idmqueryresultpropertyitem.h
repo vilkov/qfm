@@ -27,6 +27,7 @@ public:
 	virtual bool isProperty();
 	virtual bool isValue();
 	virtual bool isPath();
+	virtual bool isRootPathValue();
 
 	const IdmEntity::Property &property() const { return m_property; }
 

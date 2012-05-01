@@ -18,10 +18,13 @@ public:
 	/* IFileInfo */
 	virtual QString fileName() const;
 
+	/* QueryResultItem */
+	virtual bool isRootPathValue();
+
 	/* QueryResultPathItem */
 	virtual void open() const;
 
-	void update(IFileInfo::Holder &item);
+	void update(WrappedNodeItem *item);
 
 private:
 	IdmEntityValue::Holder m_value;

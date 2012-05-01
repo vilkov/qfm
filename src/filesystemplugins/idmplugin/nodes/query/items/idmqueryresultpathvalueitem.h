@@ -15,6 +15,9 @@ class QueryResultPathValueItem : public QueryResultPathItem
 public:
 	QueryResultPathValueItem(const IFileContainer *container, WrappedNodeItem *item, Base *parent);
 
+	/* QueryResultItem */
+	virtual bool isRootPathValue();
+
 	/* QueryResultPathItem */
 	virtual void open() const;
 

@@ -52,6 +52,11 @@ QString InvalidInfo::fileName() const
 	return m_fileName;
 }
 
+const IFileType *InvalidInfo::fileType() const
+{
+	return this;
+}
+
 QDateTime InvalidInfo::lastModified() const
 {
 	return QDateTime();

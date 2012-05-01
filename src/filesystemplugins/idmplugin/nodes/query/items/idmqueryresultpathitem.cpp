@@ -1,4 +1,5 @@
 #include "idmqueryresultpathitem.h"
+#include "../../../interfaces/idminvalidfileinfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -11,7 +12,7 @@ QueryResultPathItem::QueryResultPathItem(IFileInfo::Holder &info, Base *parent) 
 
 QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent) :
 	QueryResultItem(parent),
-	m_info(),
+	m_info(new InvalidInfo(fileName)),
 	m_node(NULL)
 {}
 

@@ -11,13 +11,18 @@ QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *contain
 {
 	if (m_info->isDir())
 	{
-		m_thisContainer = item->container()->open();
+		m_thisContainer = item->thisContainer().take();
 
 		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
 			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this));
 	}
 
 	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);
+}
+
+bool QueryResultPathValueItem::isRootPathValue()
+{
+	return false;
 }
 
 void QueryResultPathValueItem::open() const

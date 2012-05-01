@@ -19,21 +19,29 @@ QString QueryResultRootPathValueItem::fileName() const
 	return m_value->value().toString();
 }
 
+bool QueryResultRootPathValueItem::isRootPathValue()
+{
+	return true;
+}
+
 void QueryResultRootPathValueItem::open() const
 {
 	Application::desktopService()->open(m_container, this);
 }
 
-void QueryResultRootPathValueItem::update(IFileInfo::Holder &item)
+void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
 {
-	m_info = item.take();
+	qDeleteAll(m_items);
+	m_items.clear();
 
-	if (item->isDir())
+	m_info = item->info().take();
+
+	if (m_info->isDir())
 	{
-//		m_thisContainer = static_cast<const InfoListItem *>(item)->container()->open();
-//
-//		for (InfoListItem::size_type i = 0, size = static_cast<const InfoListItem *>(item)->size(); i < size; ++i)
-//			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), static_cast<const InfoListItem *>(item)->at(i), this));
+		m_thisContainer = item->thisContainer().take();
+
+		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
+			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this));
 	}
 
 	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);

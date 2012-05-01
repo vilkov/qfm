@@ -490,7 +490,7 @@ Node *FolderNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins,
 			if (entry->node())
 				entry->node()->setParentEntryIndex(idx);
 			else
-				if (Node *node = plugins->node(m_container.data(), entry->info().data(), this))
+				if (Node *node = createNode(entry->info().data(), plugins))
 				{
 					entry->setNode(node);
 					node->setParentEntryIndex(idx);
@@ -516,7 +516,7 @@ Node *FolderNodeBase::viewChild(const QString &fileName, PluginsManager *plugins
 		IFileInfo::Holder info;
 
 		if (info = m_container->scanner()->info(fileName, error))
-			if (Node *node = plugins->node(m_container.data(), info.data(), this))
+			if (Node *node = createNode(info.data(), plugins))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 				m_items.add(new DefaultNodeItem(info, node));
@@ -547,7 +547,7 @@ Node *FolderNodeBase::viewChild(const QString &fileName, PluginsManager *plugins
 		if (item->node())
 			return item->node();
 		else
-			if (Node *node = plugins->node(m_container.data(), item->info().data(), this))
+			if (Node *node = createNode(item->info().data(), plugins))
 			{
 				item->setNode(node);
 				return node;
@@ -845,6 +845,11 @@ void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
 	}
 
 	updateFirstColumn(update);
+}
+
+Node *FolderNodeBase::createNode(const IFileInfo *file, PluginsManager *plugins) const
+{
+	return plugins->node(m_container.data(), file, const_cast<FolderNodeBase *>(this));
 }
 
 void FolderNodeBase::updateFiles()

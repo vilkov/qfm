@@ -79,6 +79,7 @@ protected:
 
 protected:
 	const IFileContainer::Holder &container() const { return m_container; }
+	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
 
 protected:
 	class Container : public TasksNode::Container

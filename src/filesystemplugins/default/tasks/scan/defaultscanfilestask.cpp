@@ -9,7 +9,8 @@ DEFAULT_PLUGIN_NS_BEGIN
 ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_type(type),
-	m_snapshot(snapshot)
+	m_snapshot(snapshot),
+	m_move(false)
 {}
 
 ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :

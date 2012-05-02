@@ -72,7 +72,7 @@ ICopyControl *IdmRootNode::createControl(INodeView *view) const
 		ICopyControl::Holder dest(m_container.container()->createControl(view));
 
 		if (dest)
-			return new IdmCopyControl(dest, m_container, m_container.container(), entity);
+			return new IdmCopyControl(dest, m_container, entity);
 	}
 
 	return NULL;

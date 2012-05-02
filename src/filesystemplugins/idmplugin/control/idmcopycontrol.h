@@ -15,7 +15,7 @@ class IdmCopyControl : public ICopyControl
 	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
 
 public:
-	IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const IFileContainer *folder, IdmEntity *entity);
+	IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, IdmEntity *entity);
 
 	/* IFileLocation */
 	virtual QString location() const;

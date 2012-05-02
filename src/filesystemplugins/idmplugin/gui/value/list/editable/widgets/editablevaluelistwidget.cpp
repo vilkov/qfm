@@ -135,7 +135,7 @@ EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callba
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Enter, &EditableValueListWidgetPrivate::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Return, &EditableValueListWidgetPrivate::setFilter);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Escape, &EditableValueListWidgetPrivate::clearFilter);
-    m_filter.setToolTip(tr("ENTER - accept filter\nESC - clear filter"));
+    m_filter.setToolTip(tr("ENTER - accept filter\nESC - clear filter, if filter is empty move focus to view"));
 
     m_search.setToolTip(tr("Accept filter"));
 }
@@ -224,8 +224,13 @@ void EditableValueListWidgetPrivate::setFilter()
 
 void EditableValueListWidgetPrivate::clearFilter()
 {
-	m_filter.clear();
-	m_proxy.setFilter(QString());
+	if (m_filter.text().isEmpty())
+		m_view.setFocus();
+	else
+	{
+		m_filter.clear();
+		m_proxy.setFilter(QString());
+	}
 }
 
 void EditableValueListWidgetPrivate::selectValue(const QModelIndex &index)

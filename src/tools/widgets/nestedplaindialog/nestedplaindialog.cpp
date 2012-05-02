@@ -43,14 +43,18 @@ void NestedPlainDialog::reject()
 
 void NestedPlainDialog::accepted()
 {
-	Q_ASSERT(m_currentWidget);
-	m_loop->exit(NestedWidget::Accepted);
+	if (m_currentWidget)
+		m_loop->exit(NestedWidget::Accepted);
+	else
+		QDialog::accept();
 }
 
 void NestedPlainDialog::rejected()
 {
-	Q_ASSERT(m_currentWidget);
-	m_loop->exit(NestedWidget::Rejected);
+	if (m_currentWidget)
+		m_loop->exit(NestedWidget::Rejected);
+	else
+		QDialog::reject();
 }
 
 void NestedPlainDialog::warning(const QString &text)

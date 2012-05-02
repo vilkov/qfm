@@ -13,6 +13,8 @@
 #include "model/queryconstraintsdelegate.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/queries/idmselectquery.h"
+#include "../../../../../tools/events/imp/mouseeventhandler.h"
+#include "../../../../../tools/events/imp/mouseeventsource.h"
 #include "../../../../../tools/events/imp/keyboardeventhandler.h"
 #include "../../../../../tools/events/imp/keyboardeventsource.h"
 
@@ -41,22 +43,24 @@ private Q_SLOTS:
 
 private:
 	typedef KeyboardEventSource<
-				EventSourceBase<
-					QTreeView
+				MouseDoubleClickEventSource<
+					EventSourceBase<
+						QTreeView
+					>
 				>
 			> EntitiesTreeView;
 	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					CreateQueryDialog
+				MouseDoubleClickEventHandler<
+					EventHandlerBase<
+						CreateQueryDialog
+					>
 				>
 			> EntitiesTreeViewHandler;
 
 private:
-	void createEntity();
-
-private:
 	QModelIndex currentIndex1();
 	QModelIndex currentIndex2();
+	void addConstraint();
 
 private:
 	QVBoxLayout m_verticatLayout;

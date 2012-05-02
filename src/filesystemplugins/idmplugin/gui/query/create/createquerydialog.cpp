@@ -1,6 +1,7 @@
 #include "createquerydialog.h"
 #include "model/items/queryentitiesmodelitem.h"
 #include "../constraint/constraintquerydialog.h"
+
 #include <QtGui/QMessageBox>
 
 
@@ -51,8 +52,9 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     m_view2.setModel(&m_model2);
     m_view2.selectionModel()->setCurrentIndex(m_model2.index(0, 0), QItemSelectionModel::ClearAndSelect);
 
-//    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &CreateQueryDialog::removeEntity);
-//    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::insertProperty);
+    m_handler.registerMouseDoubleClickEventHandler(&CreateQueryDialog::addConstraint);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::addConstraint);
+    m_view.setToolTip(tr("INS/Mouse double click - add constraint"));
 }
 
 Select CreateQueryDialog::query()
@@ -76,25 +78,7 @@ void CreateQueryDialog::actionTriggered(QAction *action)
 		}
 		case AddConstraint:
 		{
-			QModelIndex index1 = currentIndex1();
-
-			if (index1.isValid())
-			{
-				QModelIndex index2 = currentIndex2();
-
-				if (index2.isValid() && static_cast<BaseConstraint*>(index2.internalPointer())->isGroup())
-				{
-					ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem*>(index1.internalPointer())->property(), this);
-
-					if (dialog.exec() == ConstraintQueryDialog::Accepted)
-						m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint*>(index2.internalPointer())), index2);
-				}
-				else
-					QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
-			}
-			else
-				QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
-
+			addConstraint();
 			break;
 		}
 	}
@@ -108,4 +92,26 @@ QModelIndex CreateQueryDialog::currentIndex1()
 QModelIndex CreateQueryDialog::currentIndex2()
 {
 	return m_view2.selectionModel()->currentIndex();
+}
+
+void CreateQueryDialog::addConstraint()
+{
+	QModelIndex index1 = currentIndex1();
+
+	if (index1.isValid())
+	{
+		QModelIndex index2 = currentIndex2();
+
+		if (index2.isValid() && static_cast<BaseConstraint *>(index2.internalPointer())->isGroup())
+		{
+			ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property(), this);
+
+			if (dialog.exec() == ConstraintQueryDialog::Accepted)
+				m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint *>(index2.internalPointer())), index2);
+		}
+		else
+			QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
+	}
+	else
+		QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
 }

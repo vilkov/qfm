@@ -36,7 +36,8 @@ public:
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
-
+	virtual Sorting sorting() const;
+	virtual Geometry geometry() const;
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;

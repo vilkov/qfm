@@ -29,7 +29,7 @@ class DirectoryView : public QWidget, public FileSystem::INodeView
     Q_OBJECT
 
 public:
-    typedef QList<qint32> Geometry;
+    typedef ::FileSystem::INode::Geometry Geometry;
 
     struct Tab
     {

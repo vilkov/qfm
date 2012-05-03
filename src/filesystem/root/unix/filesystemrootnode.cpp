@@ -139,6 +139,16 @@ QString RootNode::title() const
 	return QString();
 }
 
+RootNode::Sorting RootNode::sorting() const
+{
+	return Sorting();
+}
+
+RootNode::Geometry RootNode::geometry() const
+{
+	return Geometry();
+}
+
 QAbstractItemModel *RootNode::model() const
 {
 	return NULL;

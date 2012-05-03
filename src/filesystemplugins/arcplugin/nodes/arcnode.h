@@ -39,13 +39,15 @@ public:
 	virtual void move(const INodeView *source, INodeView *destination);
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
+	/* IFileLocation */
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
+
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-	virtual QString location(const QModelIndex &index) const;
-
+	virtual Sorting sorting() const;
+	virtual Geometry geometry() const;
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;

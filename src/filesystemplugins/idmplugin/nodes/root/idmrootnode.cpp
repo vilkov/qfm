@@ -174,6 +174,16 @@ QString IdmRootNode::title() const
 	return res.mid(res.lastIndexOf(QChar('/')));
 }
 
+IdmRootNode::Sorting IdmRootNode::sorting() const
+{
+	return Sorting(0, Qt::AscendingOrder);
+}
+
+IdmRootNode::Geometry IdmRootNode::geometry() const
+{
+	return Geometry() << 100;
+}
+
 QAbstractItemModel *IdmRootNode::model() const
 {
 	return const_cast<IdmRootNode*>(this);

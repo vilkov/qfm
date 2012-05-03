@@ -11,10 +11,17 @@ FILE_SYSTEM_NS_BEGIN
 class INode : public IFileLocation, public IFileOperations, public IFileNavigation
 {
 public:
+    typedef QList<qint32>             Geometry;
+    typedef QPair<int, Qt::SortOrder> Sorting;
+
+public:
 	virtual ~INode();
 
     virtual void refresh() = 0;
 	virtual QString title() const = 0;
+
+	virtual Sorting sorting() const = 0;
+	virtual Geometry geometry() const = 0;
 
 	virtual int columnsCount() const = 0;
 	virtual QAbstractItemModel *model() const = 0;

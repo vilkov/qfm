@@ -321,6 +321,16 @@ void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *
 
 }
 
+QString IdmNodeQueryResults::location() const
+{
+	return m_container.container()->location();
+}
+
+QString IdmNodeQueryResults::location(const QString &fileName) const
+{
+	return m_container.container()->location(fileName);
+}
+
 void IdmNodeQueryResults::refresh()
 {
 
@@ -332,19 +342,14 @@ QString IdmNodeQueryResults::title() const
 	return res.mid(res.lastIndexOf(QChar('/')));
 }
 
-QString IdmNodeQueryResults::location() const
+IdmNodeQueryResults::Sorting IdmNodeQueryResults::sorting() const
 {
-	return m_container.container()->location();
+	return Sorting(0, Qt::AscendingOrder);
 }
 
-QString IdmNodeQueryResults::location(const QString &fileName) const
+IdmNodeQueryResults::Geometry IdmNodeQueryResults::geometry() const
 {
-	return m_container.container()->location(fileName);
-}
-
-QString IdmNodeQueryResults::location(const QModelIndex &index) const
-{
-	return m_container.container()->location();
+	return Geometry() << 100;
 }
 
 QAbstractItemModel *IdmNodeQueryResults::model() const

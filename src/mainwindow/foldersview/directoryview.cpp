@@ -65,11 +65,6 @@ void DirectoryView::setupModel(FileSystem::INode *node, const Tab &tab)
 		m_navigation.init(entry);
 	else
 		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
-
-	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), tab.geometry.size()); i < size; ++i)
-		m_view.setColumnWidth(i, tab.geometry.at(i));
-
-	m_view.sortByColumn(tab.sort.column, tab.sort.order);
 }
 
 void DirectoryView::setupModel(FileSystem::INode *node, const QString &absoluteFilePath)
@@ -78,8 +73,6 @@ void DirectoryView::setupModel(FileSystem::INode *node, const QString &absoluteF
 		m_navigation.init(entry);
 	else
 		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
-
-	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 void DirectoryView::setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry)
@@ -88,11 +81,6 @@ void DirectoryView::setupModel(FileSystem::INode *node, const QModelIndex &index
 		m_navigation.init(entry);
 	else
 		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
-
-	for (Geometry::size_type i = 0, size = qMin(m_node->columnsCount(), geometry.size()); i < size; ++i)
-		m_view.setColumnWidth(i, geometry.at(i));
-
-	m_view.sortByColumn(m_view.header()->sortIndicatorSection(), Qt::AscendingOrder);
 }
 
 FileSystem::INode *DirectoryView::node() const
@@ -142,6 +130,14 @@ void DirectoryView::setNode(FileSystem::INode *node)
 		m_toolBar.addActions(node->actions());
 		m_toolBar.setVisible(true);
 	}
+
+	Geometry geometry(m_node->geometry());
+
+	for (Geometry::size_type i = 0, size = geometry.size(); i < size; ++i)
+		m_view.setColumnWidth(i, geometry.at(i));
+
+	::FileSystem::INode::Sorting sorting(m_node->sorting());
+	m_view.sortByColumn(sorting.first, sorting.second);
 }
 
 QString DirectoryView::defaultPath()

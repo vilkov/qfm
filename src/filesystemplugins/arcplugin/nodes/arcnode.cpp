@@ -167,16 +167,6 @@ void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-void ArcNode::refresh()
-{
-
-}
-
-QString ArcNode::title() const
-{
-	return m_filePath.mid(m_filePath.lastIndexOf(QChar('/')) + 1);
-}
-
 QString ArcNode::location() const
 {
 	return QString();
@@ -187,9 +177,24 @@ QString ArcNode::location(const QString &fileName) const
 	return QString();
 }
 
-QString ArcNode::location(const QModelIndex &index) const
+void ArcNode::refresh()
 {
-	return QString();
+
+}
+
+QString ArcNode::title() const
+{
+	return m_filePath.mid(m_filePath.lastIndexOf(QChar('/')) + 1);
+}
+
+ArcNode::Sorting ArcNode::sorting() const
+{
+	return Sorting(0, Qt::AscendingOrder);
+}
+
+ArcNode::Geometry ArcNode::geometry() const
+{
+	return Geometry() << 100;
 }
 
 QAbstractItemModel *ArcNode::model() const

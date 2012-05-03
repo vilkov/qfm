@@ -179,6 +179,16 @@ QString FolderNodeBase::title() const
 	return res.mid(res.lastIndexOf(QChar('/')) + 1);
 }
 
+FolderNodeBase::Sorting FolderNodeBase::sorting() const
+{
+	return Sorting(0, Qt::AscendingOrder);
+}
+
+FolderNodeBase::Geometry FolderNodeBase::geometry() const
+{
+	return Geometry() << 300 << 80 << 50;
+}
+
 QAbstractItemModel *FolderNodeBase::model() const
 {
 	return const_cast<FolderProxyModel *>(&m_proxy);

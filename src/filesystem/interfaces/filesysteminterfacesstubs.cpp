@@ -8,6 +8,7 @@
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
 #include "filesystemifilecontainerscanner.h"
+#include "filesystemisettings.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -43,6 +44,9 @@ IFileContainerScanner::~IFileContainerScanner()
 {}
 
 IFileContainerScanner::IEnumerator::~IEnumerator()
+{}
+
+ISettings::~ISettings()
 {}
 
 FILE_SYSTEM_NS_END

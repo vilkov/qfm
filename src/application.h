@@ -18,7 +18,7 @@ class Application : public QApplication, protected ExceptionHandler
 	Q_OBJECT
 
 public:
-	Application(const QString &name, const QString &label, const QString &description, int &argc, char **argv, bool GUIenabled = true);
+	Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled = true);
 	virtual ~Application();
 
 	virtual bool notify(QObject *receiver, QEvent *event);

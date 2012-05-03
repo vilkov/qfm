@@ -9,11 +9,12 @@
 #include <QtGui/QKeyEvent>
 
 
-Application::Application(const QString &name, const QString &label, const QString &description, int &argc, char **argv, bool GUIenabled) :
+Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
-	m_taskPool(QThread::idealThreadCount())
+	m_taskPool(QThread::idealThreadCount() * 2)
 {
-	QApplication::setApplicationName(label);
+	QApplication::setApplicationName(name);
+	QApplication::setOrganizationName(organization);
 	QApplication::setApplicationVersion(version());
 }
 

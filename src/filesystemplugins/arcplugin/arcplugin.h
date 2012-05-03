@@ -16,6 +16,15 @@ class Plugin : public IFileReaderPlugin
 public:
 	Plugin();
 
+	/* ISettings */
+	virtual void beginGroup(const QString &name);
+	virtual void writeValue(const QString &name, const QVariant &value);
+	virtual QVariant readValue(const QString &name, const QVariant &defaultValue = QVariant());
+	virtual void endGroup();
+
+	/* IGlobalSettings */
+	virtual QString id() const;
+
 	virtual void registered();
 	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 	virtual FileTypeIdList fileTypes() const;

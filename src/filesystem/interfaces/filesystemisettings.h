@@ -2,6 +2,7 @@
 #define FILESYSTEMISETTINGS_H_
 
 #include <QtCore/QString>
+#include <QtCore/QVariant>
 #include "../filesystem_ns.h"
 
 
@@ -13,8 +14,8 @@ public:
 	virtual ~ISettings();
 
 	virtual void beginGroup(const QString &name) = 0;
-	virtual QVariant readValue(const QString &name) = 0;
 	virtual void writeValue(const QString &name, const QVariant &value) = 0;
+	virtual QVariant readValue(const QString &name, const QVariant &defaultValue = QVariant()) = 0;
 	virtual void endGroup() = 0;
 };
 

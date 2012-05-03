@@ -9,6 +9,31 @@ Plugin::Plugin() :
 	m_identity(QString::fromLatin1("#EXTM3U"))
 {}
 
+void Plugin::beginGroup(const QString &name)
+{
+
+}
+
+void Plugin::writeValue(const QString &name, const QVariant &value)
+{
+
+}
+
+QVariant Plugin::readValue(const QString &name, const QVariant &defaultValue)
+{
+	return defaultValue;
+}
+
+void Plugin::endGroup()
+{
+
+}
+
+QString Plugin::id() const
+{
+	return QString::fromLatin1("M3u");
+}
+
 void Plugin::registered()
 {
 

@@ -8,6 +8,31 @@ IDM_PLUGIN_NS_BEGIN
 Plugin::Plugin()
 {}
 
+void Plugin::beginGroup(const QString &name)
+{
+
+}
+
+void Plugin::writeValue(const QString &name, const QVariant &value)
+{
+
+}
+
+QVariant Plugin::readValue(const QString &name, const QVariant &defaultValue)
+{
+	return defaultValue;
+}
+
+void Plugin::endGroup()
+{
+
+}
+
+QString Plugin::id() const
+{
+	return QString::fromLatin1("Idm");
+}
+
 void Plugin::registered()
 {
 	Application::globalMenu()->registerAction(&m_createDbAction, ::DesktopEnvironment::ContextMenuFactory::SingleFolder);

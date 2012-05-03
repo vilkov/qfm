@@ -2,13 +2,14 @@
 #define FILESYSTEMIPLUGIN_H_
 
 #include "filesystemifileinfo.h"
+#include "filesystemiglobalsettings.h"
 #include "../filesystemnode.h"
 #include "../filetypeinfo/filetypeinfo.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class IPlugin
+class IPlugin : public IGlobalSettings
 {
 public:
 	virtual ~IPlugin();

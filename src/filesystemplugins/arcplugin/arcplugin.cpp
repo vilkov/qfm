@@ -14,6 +14,31 @@ Plugin::Plugin()
 	instance = this;
 }
 
+void Plugin::beginGroup(const QString &name)
+{
+
+}
+
+void Plugin::writeValue(const QString &name, const QVariant &value)
+{
+
+}
+
+QVariant Plugin::readValue(const QString &name, const QVariant &defaultValue)
+{
+	return defaultValue;
+}
+
+void Plugin::endGroup()
+{
+
+}
+
+QString Plugin::id() const
+{
+	return QString::fromLatin1("Arc");
+}
+
 void Plugin::registered()
 {
 	Plugin::FileTypeIdList list = fileTypes();

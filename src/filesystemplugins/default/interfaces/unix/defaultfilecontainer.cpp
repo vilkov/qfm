@@ -240,35 +240,49 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 
 void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) const
 {
+	Info raw;
 	QString error;
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 	{
-		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
-		subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
+		raw = Info(snapshot.container()->location(it.key()), Info::Identify());
 
-		if (subnode->info()->isDir() &&
-			(subnode->thisContainer() = subnode->container()->open(it.key(), false, error)))
+		if (raw.exists())
 		{
-			scan(subnode.data(), aborted);
-		}
+			info = new Info(raw);
+			subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
 
-		snapshot.insert(it, subnode.take());
+			if (subnode->info()->isDir())
+			{
+				subnode->thisContainer() = subnode->container()->open(it.key(), false, error);
+
+				if (subnode->thisContainer())
+					scan(subnode.data(), aborted);
+			}
+
+			snapshot.insert(it, subnode.take());
+		}
 	}
 }
 
 void FileContainer::refresh(Snapshot &snapshot, const volatile Flags &aborted) const
 {
+	Info raw;
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 	{
-		info = new Info(snapshot.container()->location(it.key()), Info::Identify());
-		subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
-		snapshot.insert(it, subnode.take());
+		raw = Info(snapshot.container()->location(it.key()), Info::Identify());
+
+		if (raw.exists())
+		{
+			info = new Info(raw);
+			subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
+			snapshot.insert(it, subnode.take());
+		}
 	}
 }
 

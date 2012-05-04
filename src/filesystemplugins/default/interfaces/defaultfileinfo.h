@@ -42,6 +42,7 @@ public:
 
 public:
 	bool isRoot() const { return m_isRoot; }
+	bool exists() const { return m_info.exists; }
 
 private:
 	void refresh();

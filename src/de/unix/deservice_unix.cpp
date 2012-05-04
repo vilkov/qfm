@@ -334,52 +334,57 @@ Service::~Service()
 
 QIcon Service::processingIcon(int iconSize) const
 {
-	return findIcon("view-refresh", iconSize, Actions);
+	return findIcon("view-refresh", iconSize, XdgThemeActions);
 }
 
 QIcon Service::cancelingIcon(int iconSize) const
 {
-	return findIcon("application-exit", iconSize, Actions);
+	return findIcon("application-exit", iconSize, XdgThemeActions);
 }
 
 QIcon Service::copyActionIcon(int iconSize) const
 {
-	return findIcon("edit-copy", iconSize, Actions);
+	return findIcon("edit-copy", iconSize, XdgThemeActions);
 }
 
 QIcon Service::cutActionIcon(int iconSize) const
 {
-	return findIcon("edit-cut", iconSize, Actions);
+	return findIcon("edit-cut", iconSize, XdgThemeActions);
 }
 
 QIcon Service::pasteActionIcon(int iconSize) const
 {
-	return findIcon("edit-paste", iconSize, Actions);
+	return findIcon("edit-paste", iconSize, XdgThemeActions);
 }
 
 QIcon Service::propertiesActionIcon(int iconSize) const
 {
-	return findIcon("document-properties", iconSize, Actions);
+	return findIcon("document-properties", iconSize, XdgThemeActions);
 }
 
 QIcon Service::packActionIcon(int iconSize) const
 {
-	return findIcon("application-x-archive", iconSize, MimeTypes);
+	return findIcon("application-x-archive", iconSize, XdgThemeMimeTypes);
 }
 
 QIcon Service::unpackActionIcon(int iconSize) const
 {
-	return findIcon("archive-extract", iconSize, Actions);
+	return findIcon("archive-extract", iconSize, XdgThemeActions);
 }
 
 QIcon Service::searchIcon(int iconSize) const
 {
-	return findIcon("system-search", iconSize, Actions);
+	return findIcon("system-search", iconSize, XdgThemeActions);
 }
 
 QIcon Service::openDataIcon(int iconSize) const
 {
-	return findIcon("document-open-data", iconSize, Actions);
+	return findIcon("document-open-data", iconSize, XdgThemeActions);
+}
+
+QIcon Service::missingIcon(int iconSize) const
+{
+	return findIcon("image-missing", iconSize, XdgThemeStatus);
 }
 
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
@@ -507,7 +512,7 @@ QByteArray Service::themeName() const
 {
 	::FileSystem::FileTypeInfo info;
 
-	info.icon = findIcon("folder", iconSize, Places);
+	info.icon = findIcon("folder", iconSize, XdgThemePlaces);
 	info.name = (info.id = fileTypeId(FileTypes::Folder)).mime;
 
 	return info;
@@ -521,7 +526,7 @@ QByteArray Service::themeName() const
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
 	{
-		info.icon = findIcon("text-plain", iconSize, MimeTypes);
+		info.icon = findIcon("text-plain", iconSize, XdgThemeMimeTypes);
 		info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 	}
 	else
@@ -557,7 +562,7 @@ QIcon Service::findMimeTypeIcon(const char *mimeType, int iconSize) const
 {
 	QString nameString = QString::fromLatin1(mimeType);
 
-	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, MimeTypes))
+	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, XdgThemeMimeTypes))
 		return *icon;
 	else
 	{
@@ -566,13 +571,13 @@ QIcon Service::findMimeTypeIcon(const char *mimeType, int iconSize) const
 
 		if (char *icon_path = loadMimeTypeIcon(mimeType, iconSize, iconThemeName))
 		{
-			res = *iconCache->iconToCache(nameString, iconSize, MimeTypes, QString::fromUtf8(icon_path));
+			res = *iconCache->iconToCache(nameString, iconSize, XdgThemeMimeTypes, QString::fromUtf8(icon_path));
 			free(icon_path);
 		}
 		else
 			if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName))
 			{
-				res = *iconCache->iconToCache(nameString, iconSize, MimeTypes, QString::fromUtf8(icon_path));
+				res = *iconCache->iconToCache(nameString, iconSize, XdgThemeMimeTypes, QString::fromUtf8(icon_path));
 				free(icon_path);
 			}
 

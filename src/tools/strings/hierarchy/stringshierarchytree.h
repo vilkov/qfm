@@ -36,7 +36,7 @@ public:
 		for (item = item->parent(); item; item = item->parent())
 			res.prepend(m_delimeter).prepend(item->string());
 
-		return res;
+		return res.remove(0, 1);
 	}
 
 private:

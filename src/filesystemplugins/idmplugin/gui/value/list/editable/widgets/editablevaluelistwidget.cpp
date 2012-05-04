@@ -220,6 +220,9 @@ void EditableValueListWidgetPrivate::removeValue()
 void EditableValueListWidgetPrivate::setFilter()
 {
 	m_proxy.setFilter(m_filter.text());
+
+	if (!m_filter.text().isEmpty())
+		m_view.setFocus();
 }
 
 void EditableValueListWidgetPrivate::clearFilter()
@@ -260,7 +263,7 @@ void MainEditableValueListWidget::setReadOnly(bool value)
 
 void MainEditableValueListWidget::setFocus()
 {
-	m_private.view().setFocus();
+	m_private.setFocusToFilter();
 }
 
 void MainEditableValueListWidget::acceptAndClose()
@@ -294,7 +297,7 @@ EditableValueListWidget::EditableValueListWidget(const IdmContainer &container, 
 
 void EditableValueListWidget::setFocus()
 {
-	m_private.view().setFocus();
+	m_private.setFocusToFilter();
 }
 
 void EditableValueListWidget::acceptAndClose()

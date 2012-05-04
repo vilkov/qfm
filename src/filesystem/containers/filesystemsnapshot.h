@@ -65,10 +65,10 @@ public:
 		pair.second = item;
 	}
 
-	void remove(iterator &i)
+	iterator erase(iterator i)
 	{
 		delete (*i).second;
-		i = m_data->map.erase(i);
+		return m_data->map.erase(i);
 	}
 
 private:

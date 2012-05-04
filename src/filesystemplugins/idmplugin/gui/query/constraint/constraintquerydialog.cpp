@@ -2,6 +2,7 @@
 #include "../../value/list/static/staticvaluelistdialog.h"
 #include "../../../../../tools/metatemplates.h"
 #include "../../../../../application.h"
+
 #include <QtGui/QMessageBox>
 
 
@@ -70,6 +71,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     }
 
     m_operator.setCurrentIndex(0);
+    m_edit.setFocus();
 }
 
 Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
@@ -101,7 +103,12 @@ void ConstraintQueryDialog::chooseValue()
 	StaticValueListDialog dialog(m_container, Select(m_property.entity), this);
 
 	if (dialog.exec() == StaticValueListDialog::Accepted)
+	{
 		updateValue(dialog.takeValue());
+		m_buttonBox.setFocus();
+	}
+	else
+		m_edit.setFocus();
 
 	m_container.updateListGeometry(m_property.entity, dialog.geometry());
 }

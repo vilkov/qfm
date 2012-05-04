@@ -74,6 +74,7 @@ protected:
 	/* IQueryResultsUpdater */
 	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
 	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
+	virtual void refresh(const QModelIndex &index);
 
 private:
 	void process(const QModelIndexList &list, const Functor &functor);

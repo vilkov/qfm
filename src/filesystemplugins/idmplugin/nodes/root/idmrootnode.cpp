@@ -5,7 +5,7 @@
 #include "items/idmrootnodepropertyitem.h"
 #include "../query/idmnodequeryresults.h"
 #include "../folder/idmfoldernode.h"
-#include "../../control/idmcopycontrol.h"
+#include "../control/idmcopycontrol.h"
 #include "../../gui/create/createentitydialog.h"
 #include "../../gui/choose/chooseentitydialog.h"
 #include "../../gui/query/create/createquerydialog.h"

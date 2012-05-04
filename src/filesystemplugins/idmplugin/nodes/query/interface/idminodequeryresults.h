@@ -14,6 +14,7 @@ public:
 
 	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values) = 0;
 	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values) = 0;
+	virtual void refresh(const QModelIndex &index) = 0;
 };
 
 IDM_PLUGIN_NS_END

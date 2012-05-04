@@ -20,10 +20,20 @@ DEFAULT_PLUGIN_NS_BEGIN
 class Enumerator : public IFileContainerScanner::IEnumerator
 {
 public:
+	union Entry
+	{
+		struct dirent d;
+		char b[offsetof (struct dirent, d_name) + NAME_MAX + 1];
+	};
+
+public:
 	Enumerator(const QByteArray &path) :
+		m_res(NULL),
 		m_path(QByteArray(path).append('/')),
 		m_dir(opendir(m_path))
-	{}
+	{
+		memset(&m_entry, 0, sizeof(Entry));
+	}
 
 	virtual ~Enumerator()
 	{
@@ -32,21 +42,20 @@ public:
 
 	virtual bool next()
 	{
-		if (m_dir)
-			while (m_entry = readdir(m_dir))
-				if (m_entry->d_type == DT_DIR)
+		while (readdir_r(m_dir, &m_entry.d, &m_res) == 0 && m_res)
+			if (m_res->d_type == DT_DIR)
+			{
+				if (strcmp(m_res->d_name, ".") != 0 && strcmp(m_res->d_name, "..") != 0)
 				{
-					if (strcmp(m_entry->d_name, ".") != 0 && strcmp(m_entry->d_name, "..") != 0)
-					{
-						m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
-						return true;
-					}
-				}
-				else
-				{
-					m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
+					m_info = Info(QByteArray(m_path).append(m_res->d_name), Info::Identify());
 					return true;
 				}
+			}
+			else
+			{
+				m_info = Info(QByteArray(m_path).append(m_res->d_name), Info::Identify());
+				return true;
+			}
 
 		return false;
 	}
@@ -71,7 +80,9 @@ public:
 	}
 
 private:
-	struct dirent *m_entry;
+	struct dirent *m_res;
+	Entry m_entry;
+
 	QByteArray m_path;
 	Info m_info;
 	DIR *m_dir;

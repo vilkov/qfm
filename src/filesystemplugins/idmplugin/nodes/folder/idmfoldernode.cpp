@@ -1,5 +1,5 @@
 #include "idmfoldernode.h"
-#include "../../control/idmcopycontrol.h"
+#include "../control/idmcopycontrol.h"
 #include "../../gui/choose/chooseentitydialog.h"
 #include "../../../../filesystem/filesystempluginsmanager.h"
 #include "../../../../application.h"

@@ -163,11 +163,10 @@ QString Tools::DestinationFromPathList::choose(const QString &title, QWidget *pa
 void Tools::DestinationFromPathList::add(const QString &file)
 {
 	QString str;
-	int index1 = 0;
+	int index1 = -1;
 	int index2 = file.size();
 
-	while (index1 < index2 && file.at(index1) == delimeter())
-		++index1;
+	while ((++index1) < index2 && file.at(index1) == delimeter());
 
 	while ((--index2) >= index1 && file.at(index2) == delimeter());
 

@@ -130,34 +130,51 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
 	{
-//		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
-//
-//		if (item->property().entity->type() == Database::Path)
-//			if (item->size() == 0)
-//				return new IdmQueryResultsCopyControl(
-//						const_cast<IdmNodeQueryResults *>(this),
-//						m_container,
-//						static_cast<QueryResultRootItem *>(item->parent())->value(),
-//						item->property(),
-//						const_cast<IdmNodeQueryResults *>(this),
-//						index);
-//			else
-//			{
-//				QString destination;
-//				Tools::DestinationFromPathList tree;
-//
-//				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
-//					tree.add(static_cast<QueryResultValueItem*>(item->at(i))->value()->value().toString());
-//
-//				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
-//					return new IdmQueryResultsCopyControl(
-//							m_container,
-//							item->rootValue(),
-//							item->property(),
-//							const_cast<IdmNodeQueryResults*>(this),
-//							index,
-//							destination);
-//			}
+		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+
+		if (item->property().entity->type() == Database::Path)
+			if (item->size() == 0)
+			{
+				ICopyControl::Holder control(m_container.container()->createControl(view));
+
+				if (control)
+					return new IdmQueryResultsCopyControl(
+							control,
+							m_container,
+							static_cast<QueryResultRootItem *>(item->parent())->value(),
+							item->property(),
+							const_cast<IdmNodeQueryResults *>(this),
+							index);
+			}
+			else
+			{
+				QString destination;
+				Tools::DestinationFromPathList tree;
+
+				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
+					tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName());
+
+				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
+				{
+					QString error;
+					IFileContainer::Holder container(m_container.container()->open(destination, false, error));
+
+					if (container)
+					{
+						ICopyControl::Holder control(container->createControl(view));
+
+						return new IdmQueryResultsCopyControl(
+								control,
+								m_container,
+								static_cast<QueryResultRootItem *>(item->parent())->value(),
+								item->property(),
+								const_cast<IdmNodeQueryResults *>(this),
+								index);
+					}
+					else
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+				}
+			}
 	}
 
 	return NULL;
@@ -245,7 +262,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
 
 				if (!pathItem->isLocked())
-						files.add(pathItem->fileName(), pathItem);
+					files.add(pathItem->fileName(), pathItem);
 			}
 			else
 				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
@@ -333,7 +350,15 @@ QString IdmNodeQueryResults::location(const QString &fileName) const
 
 void IdmNodeQueryResults::refresh()
 {
-
+//	QueryResultItem *item;
+//	Snapshot::Files files(m_container.container());
+//
+//	for (ItemsContainer::size_type i = 0, size = m_items.size(); i < size; ++i)
+//		for (QueryResultItem::size_type q = 0, size = (item = static_cast<QueryResultItem *>(m_items.at(i))); q < size; ++q)
+//			if (static_cast<QueryResultPropertyItem *>(item->at(q))->property().entity->type() == Database::Path)
+//			{
+//
+//			}
 }
 
 QString IdmNodeQueryResults::title() const
@@ -446,6 +471,18 @@ void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntity
 void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
 
+}
+
+void IdmNodeQueryResults::refresh(const QModelIndex &index)
+{
+	Snapshot::Files files(m_container.container());
+	QueryResultItem *item = static_cast<QueryResultItem *>(index.internalPointer());
+
+	for (QueryResultItem::size_type i = 0, size = item->size(); i < size; ++i)
+		files.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), static_cast<QueryResultItem *>(item->at(i)));
+
+	if (!files.isEmpty())
+		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
 }
 
 void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)

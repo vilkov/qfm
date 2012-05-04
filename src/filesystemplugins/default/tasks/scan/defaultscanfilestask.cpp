@@ -41,10 +41,13 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 					current = QTime::currentTime();
 
 					if (item = static_cast<DefaultNodeItem *>(m_snapshot.exists(enumerator->fileName())))
-						if (enumerator->isObsolete(item->info().data()))
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
-						else
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
+					{
+						if (!item->isLocked())
+							if (enumerator->isObsolete(item->info().data()))
+								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
+							else
+								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
+					}
 					else
 						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
 

@@ -227,10 +227,9 @@ void EditableValueListWidgetPrivate::clearFilter()
 	if (m_filter.text().isEmpty())
 		m_view.setFocus();
 	else
-	{
 		m_filter.clear();
-		m_proxy.setFilter(QString());
-	}
+
+	m_proxy.setFilter(QString());
 }
 
 void EditableValueListWidgetPrivate::selectValue(const QModelIndex &index)

@@ -22,10 +22,8 @@ struct Tools
 		DestinationFromPathList();
 
 		QString choose(const QString &title, QWidget *parent) const;
+		void add(const QString &file, qint32 excludeLastEntries);
 		void add(const QString &file);
-
-	private:
-		bool isDir(const QString &file) const;
 	};
 };
 

@@ -115,33 +115,14 @@ QString Tools::DestinationFromPathList::choose(const QString &title, QWidget *pa
 	while (item->size() == 1)
 		item = item->begin().value();
 
-	if (isDir(str = make(item)))
-	{
-		items.insert(item);
-		list.push_back(ChooseDialog::List::value_type(str, item));
-	}
-	else
-	{
-		items.insert(item->parent());
-		list.push_back(ChooseDialog::List::value_type(make(item->parent()), item->parent()));
-	}
+	items.insert(item);
+	list.push_back(ChooseDialog::List::value_type(make(item), item));
 
 	for (Item::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
-		if (isDir(str = make(*i)))
+		if (!items.contains(*i))
 		{
-			if (!items.contains(*i))
-			{
-				items.insert(*i);
-				list.push_back(ChooseDialog::List::value_type(str, *i));
-			}
-		}
-		else
-		{
-			if (!items.contains((*i)->parent()))
-			{
-				items.insert((*i)->parent());
-				list.push_back(ChooseDialog::List::value_type(make((*i)->parent()), (*i)->parent()));
-			}
+			items.insert(*i);
+			list.push_back(ChooseDialog::List::value_type(make(*i), *i));
 		}
 
 	if (list.isEmpty())
@@ -160,6 +141,29 @@ QString Tools::DestinationFromPathList::choose(const QString &title, QWidget *pa
 		}
 }
 
+void Tools::DestinationFromPathList::add(const QString &file, qint32 excludeLastEntries)
+{
+	QString str;
+	int index1 = -1;
+	int index2 = file.size();
+
+	while ((++index1) < index2 && file.at(index1) == delimeter());
+
+	while ((--index2) >= index1 && file.at(index2) == delimeter());
+
+	if (!(str = file.mid(index1, index2 - index1 + 1)).isEmpty())
+	{
+		for (
+				index1 = str.lastIndexOf(delimeter(), -1), --excludeLastEntries;
+				index1 != -1 && excludeLastEntries > 0;
+				index1 = str.lastIndexOf(delimeter(), index1 - str.size() - 1), --excludeLastEntries
+			);
+
+		if (index1 != -1 && !(str = str.mid(0, index1)).isEmpty())
+			Tree::add(str);
+	}
+}
+
 void Tools::DestinationFromPathList::add(const QString &file)
 {
 	QString str;
@@ -172,11 +176,6 @@ void Tools::DestinationFromPathList::add(const QString &file)
 
 	if (!(str = file.mid(index1, index2 - index1 + 1)).isEmpty())
 		Tree::add(str);
-}
-
-bool Tools::DestinationFromPathList::isDir(const QString &file) const
-{
-	return QFileInfo(file).isDir();
 }
 
 FILE_SYSTEM_NS_END

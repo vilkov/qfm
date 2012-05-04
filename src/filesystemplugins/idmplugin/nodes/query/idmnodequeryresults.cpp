@@ -152,7 +152,10 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 				Tools::DestinationFromPathList tree;
 
 				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
-					tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName());
+					if (static_cast<QueryResultPathItem *>(item->at(i))->isFile())
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), 1);
+					else
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName());
 
 				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 				{

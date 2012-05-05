@@ -14,7 +14,8 @@
 #include "../../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::FileSystem::Plugins::Idm;
+using namespace ::Tools::Events;
 
 class EditableValueListWidgetPrivate : public QWidget
 {

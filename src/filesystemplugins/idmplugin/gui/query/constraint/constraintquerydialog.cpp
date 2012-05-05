@@ -1,6 +1,6 @@
 #include "constraintquerydialog.h"
 #include "../../value/list/static/staticvaluelistdialog.h"
-#include "../../../../../tools/metatemplates.h"
+#include "../../../../../tools/templates/metatemplates.h"
 #include "../../../../../application.h"
 
 #include <QtGui/QMessageBox>

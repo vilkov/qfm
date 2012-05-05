@@ -2,6 +2,7 @@
 #define FUNCTORS_H_
 
 #include "templates_ns.h"
+#include "../arguments/define.h"
 
 
 TEMPLATES_NS_BEGIN
@@ -15,6 +16,45 @@ public:
 
 protected:
 	virtual void call() const = 0;
+};
+
+
+template <TEMPLATE_ARGS_1>
+class Functor1
+{
+public:
+	virtual ~Functor1() {}
+
+	inline void operator()(ARGUMENTS_BY_VALUE_1) const { call(VALUES_1); }
+
+protected:
+	virtual void call(ARGUMENTS_BY_VALUE_1) const = 0;
+};
+
+
+template <TEMPLATE_ARGS_2>
+class Functor2
+{
+public:
+	virtual ~Functor2() {}
+
+	inline void operator()(ARGUMENTS_BY_VALUE_2) const { call(VALUES_2); }
+
+protected:
+	virtual void call(ARGUMENTS_BY_VALUE_2) const = 0;
+};
+
+
+template <TEMPLATE_ARGS_3>
+class Functor3
+{
+public:
+	virtual ~Functor3() {}
+
+	inline void operator()(ARGUMENTS_BY_VALUE_3) const { call(VALUES_3); }
+
+protected:
+	virtual void call(ARGUMENTS_BY_VALUE_3) const = 0;
 };
 
 
@@ -99,5 +139,7 @@ inline Callable2<T, Arg1, Arg2> callTo(T *object, typename Callable2<T, Arg1, Ar
 { return Callable2<T, Arg1, Arg2>(object, method, arg1, arg2); }
 
 TEMPLATES_NS_END
+
+#include "../arguments/undefine.h"
 
 #endif /* FUNCTORS_H_ */

@@ -669,7 +669,7 @@ void FolderNodeBase::updateFilesEvent(Snapshot &updates)
 				update = updates.erase(update);
 			}
 			else
-				++update;
+				update = updates.erase(update);
 
 	updateColumns(updateRange, columnCount(QModelIndex()) - 1);
 

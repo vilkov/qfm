@@ -41,13 +41,10 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 					current = QTime::currentTime();
 
 					if (item = m_snapshot.exists(enumerator->fileName()))
-					{
-						if (!item->isLocked())
-							if (enumerator->isObsolete(item.as<DefaultNodeItem>()->info().data()))
-								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
-							else
-								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
-					}
+						if (enumerator->isObsolete(item.as<DefaultNodeItem>()->info().data()))
+							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
+						else
+							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
 					else
 						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
 
@@ -96,11 +93,7 @@ Snapshot ScanFilesTask::takeUpdates(Snapshot &snapshot)
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end;)
 		if ((*it).second)
 		{
-			if ((*it).second->isValid())
-				res.add(it.key(), (*it));
-			else
-				delete (*it).second;
-
+			res.add(it.key(), (*it));
 			it = snapshot.erase(it);
 		}
 		else

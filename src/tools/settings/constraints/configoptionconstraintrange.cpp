@@ -1,6 +1,9 @@
 #include "configoptionconstraintrange.h"
-#include <QMessageBox>
 
+#include <QtGui/QMessageBox>
+
+
+SETTINGS_NS_BEGIN
 
 ConfigOptionConstraintRange::ConfigOptionConstraintRange(ConfigOptionValue *option, const qint32 &min, const qint32 &max) :
 	m_option(option),
@@ -23,3 +26,5 @@ bool ConfigOptionConstraintRange::check(QWidget *parent) const
 	else
 		return true;
 }
+
+SETTINGS_NS_END

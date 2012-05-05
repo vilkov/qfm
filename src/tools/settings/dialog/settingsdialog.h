@@ -1,14 +1,16 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <QFont>
-#include <QDialog>
-#include <QTabWidget>
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
+#include <QtGui/QFont>
+#include <QtGui/QDialog>
+#include <QtGui/QTabWidget>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QDialogButtonBox>
 #include "../configoptions/configoptiongroup.h"
 #include "../constraints/configoptionconstraint.h"
 
+
+using namespace ::Tools::Settings;
 
 class SettingsDialog : public QDialog
 {

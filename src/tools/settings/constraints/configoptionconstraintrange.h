@@ -1,10 +1,12 @@
 #ifndef CONFIGOPTIONCONSTRAINTRANGE_H_
 #define CONFIGOPTIONCONSTRAINTRANGE_H_
 
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
 #include "configoptionconstraint.h"
 #include "../configoptions/configoptionvalue.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionConstraintRange : public ConfigOptionConstraint
 {
@@ -19,5 +21,7 @@ private:
 	qint32 m_min;
 	qint32 m_max;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONCONSTRAINTRANGE_H_ */

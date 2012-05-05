@@ -1,6 +1,9 @@
 #include "configoptionconstraintlessthan.h"
-#include <QMessageBox>
 
+#include <QtGui/QMessageBox>
+
+
+SETTINGS_NS_BEGIN
 
 ConfigOptionConstraintLessThan::ConfigOptionConstraintLessThan(ConfigOptionValue *option1, ConfigOptionValue *option2) :
 	m_option1(option1),
@@ -31,3 +34,5 @@ bool ConfigOptionConstraintLessThan::check(QWidget *parent) const
 
 	return false;
 }
+
+SETTINGS_NS_END

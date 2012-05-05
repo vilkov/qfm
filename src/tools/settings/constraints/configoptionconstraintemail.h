@@ -1,11 +1,13 @@
 #ifndef CONFIGOPTIONCONSTRAINTEMAIL_H_
 #define CONFIGOPTIONCONSTRAINTEMAIL_H_
 
-#include <QRegExp>
-#include <QCoreApplication>
+#include <QtCore/QRegExp>
+#include <QtCore/QCoreApplication>
 #include "configoptionconstraint.h"
 #include "../configoptions/configoptionvalue.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionConstraintEmail : public ConfigOptionConstraint
 {
@@ -20,5 +22,7 @@ private:
 	ConfigOptionValue *m_option;
 	QRegExp m_checker;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONCONSTRAINTEMAIL_H_ */

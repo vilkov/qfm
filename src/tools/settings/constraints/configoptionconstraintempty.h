@@ -1,10 +1,12 @@
 #ifndef CONFIGOPTIONCONSTRAINTEMPTY_H_
 #define CONFIGOPTIONCONSTRAINTEMPTY_H_
 
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
 #include "configoptionconstraint.h"
 #include "../configoptions/configoptionvalue.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionConstraintEmpty : public ConfigOptionConstraint
 {
@@ -17,5 +19,7 @@ public:
 private:
 	ConfigOptionValue *m_option;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONCONSTRAINTEMPTY_H_ */

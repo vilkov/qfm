@@ -2,7 +2,7 @@
 #define PSTRING_H_
 
 #include <string>
-#include "../metatemplates.h"
+#include "../templates/metatemplates.h"
 #include "../pbytearray/pbytearray.h"
 
 

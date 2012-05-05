@@ -1,10 +1,12 @@
 #ifndef CONFIGOPTIONCONSTRAINTLESSTHAN_H_
 #define CONFIGOPTIONCONSTRAINTLESSTHAN_H_
 
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
 #include "configoptionconstraint.h"
 #include "../configoptions/configoptionvalue.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionConstraintLessThan : public ConfigOptionConstraint
 {
@@ -18,5 +20,7 @@ private:
 	ConfigOptionValue *m_option1;
 	ConfigOptionValue *m_option2;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONCONSTRAINTLESSTHAN_H_ */

@@ -1,6 +1,9 @@
 #include "configoptionconstraintemail.h"
-#include <QMessageBox>
 
+#include <QtGui/QMessageBox>
+
+
+SETTINGS_NS_BEGIN
 
 ConfigOptionConstraintEmail::ConfigOptionConstraintEmail(ConfigOptionValue *option) :
 	m_option(option),
@@ -23,3 +26,5 @@ QString ConfigOptionConstraintEmail::emailValidator()
 {
 	return QString::fromLatin1("^[-A-Za-z0-9!#$%&'*+/=?^_`{|}~]+(?:\\.[-A-Za-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[A-Za-z0-9]([-A-Za-z0-9]{0,61}[A-Za-z0-9])?\\.)+(?:[A-Za-z]{2,5})$");
 }
+
+SETTINGS_NS_END

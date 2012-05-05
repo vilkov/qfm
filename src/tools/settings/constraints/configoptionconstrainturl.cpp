@@ -1,7 +1,10 @@
 #include "configoptionconstrainturl.h"
-#include <QUrl>
-#include <QMessageBox>
 
+#include <QtCore/QUrl>
+#include <QtGui/QMessageBox>
+
+
+SETTINGS_NS_BEGIN
 
 ConfigOptionConstraintUrl::ConfigOptionConstraintUrl(ConfigOptionValue *option) :
 	m_option(option)
@@ -17,3 +20,5 @@ bool ConfigOptionConstraintUrl::check(QWidget *parent) const
 	else
 		return true;
 }
+
+SETTINGS_NS_END

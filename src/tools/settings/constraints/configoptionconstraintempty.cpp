@@ -1,6 +1,9 @@
 #include "configoptionconstraintempty.h"
-#include <QMessageBox>
 
+#include <QtGui/QMessageBox>
+
+
+SETTINGS_NS_BEGIN
 
 ConfigOptionConstraintEmpty::ConfigOptionConstraintEmpty(ConfigOptionValue *option) :
 	m_option(option)
@@ -18,3 +21,5 @@ bool ConfigOptionConstraintEmpty::check(QWidget *parent) const
 	else
 		return true;
 }
+
+SETTINGS_NS_END

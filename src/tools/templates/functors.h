@@ -12,10 +12,10 @@ class Functor
 public:
 	virtual ~Functor() {}
 
-	inline void operator()() const { call(); }
+	inline void operator()() { call(); }
 
 protected:
-	virtual void call() const = 0;
+	virtual void call() = 0;
 };
 
 
@@ -25,10 +25,10 @@ class Functor1
 public:
 	virtual ~Functor1() {}
 
-	inline void operator()(ARGUMENTS_BY_VALUE_1) const { call(VALUES_1); }
+	inline void operator()(ARGUMENTS_BY_VALUE_1) { call(VALUES_1); }
 
 protected:
-	virtual void call(ARGUMENTS_BY_VALUE_1) const = 0;
+	virtual void call(ARGUMENTS_BY_VALUE_1) = 0;
 };
 
 
@@ -38,10 +38,10 @@ class Functor2
 public:
 	virtual ~Functor2() {}
 
-	inline void operator()(ARGUMENTS_BY_VALUE_2) const { call(VALUES_2); }
+	inline void operator()(ARGUMENTS_BY_VALUE_2) { call(VALUES_2); }
 
 protected:
-	virtual void call(ARGUMENTS_BY_VALUE_2) const = 0;
+	virtual void call(ARGUMENTS_BY_VALUE_2) = 0;
 };
 
 
@@ -51,10 +51,10 @@ class Functor3
 public:
 	virtual ~Functor3() {}
 
-	inline void operator()(ARGUMENTS_BY_VALUE_3) const { call(VALUES_3); }
+	inline void operator()(ARGUMENTS_BY_VALUE_3) { call(VALUES_3); }
 
 protected:
-	virtual void call(ARGUMENTS_BY_VALUE_3) const = 0;
+	virtual void call(ARGUMENTS_BY_VALUE_3) = 0;
 };
 
 
@@ -72,7 +72,7 @@ public:
 	{}
 
 protected:
-	virtual void call() const { (m_object->*m_method)(); }
+	virtual void call() { (m_object->*m_method)(); }
 
 private:
 	T *m_object;
@@ -98,7 +98,7 @@ public:
 	{}
 
 protected:
-	virtual void call() const { (m_object->*m_method)(m_arg1); }
+	virtual void call() { (m_object->*m_method)(m_arg1); }
 
 private:
 	T *m_object;
@@ -126,7 +126,7 @@ public:
 	{}
 
 protected:
-	virtual void call() const { (m_object->*m_method)(m_arg1, m_arg2); }
+	virtual void call() { (m_object->*m_method)(m_arg1, m_arg2); }
 
 private:
 	T *m_object;

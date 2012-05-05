@@ -8,6 +8,7 @@
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 #include "../../../tools/containers/hashedlist.h"
 #include "../../../tools/containers/union.h"
+#include "../../../tools/templates/functors.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -64,19 +65,35 @@ protected:
 	virtual void nodeRemoved(Node *node);
 
 protected:
+	typedef ::Tools::Templates::Functor3<Container::size_type, DefaultNodeItem *, WrappedNodeItem *> EventFunctor;
+
+	class ScanForSizeEventFunctor;
+	class ScanForSizeEventFunctor_canceled;
+	class ScanForCopyEventFunctor;
+	class ScanForCopyEventFunctor_canceled;
+	class ScanForRemoveEventFunctor;
+	class ScanForRemoveEventFunctor_canceled;
+	class PerformCopyEventFunctor;
+	class PerformCopyEventFunctor_canceled;
+	class PerformRemoveEventFunctor;
+
+	void cleanup(Snapshot &snapshot);
+	void processScanEventSnapshot(Snapshot &snapshot, EventFunctor &functor);
+	void processPerformEventSnapshot(Snapshot &snapshot, EventFunctor &functor);
+
 	/* Task event handlers */
 	virtual Snapshot updateFilesList() const;
-	virtual void updateFilesEvent(Snapshot::Updates &updates);
-	virtual void scanForSizeEvent(bool canceled, const Snapshot &snapshot);
-	virtual bool scanForCopyEvent(bool canceled, const Snapshot &snapshot, ICopyControl *control, bool move);
-	virtual bool scanForRemoveEvent(bool canceled, const Snapshot &snapshot);
-	virtual bool performCopyEvent(bool canceled, const Snapshot &snapshot, bool move);
-	virtual void performRemoveEvent(bool canceled, const Snapshot &snapshot);
+	virtual void updateFilesEvent(Snapshot &updates);
+	virtual void scanForSizeEvent(bool canceled, Snapshot &snapshot);
+	virtual bool scanForCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move);
+	virtual bool scanForRemoveEvent(bool canceled, Snapshot &snapshot);
+	virtual bool performCopyEvent(bool canceled, Snapshot &snapshot, bool move);
+	virtual void performRemoveEvent(bool canceled, Snapshot &snapshot);
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 protected:
@@ -87,11 +104,10 @@ protected:
 	class Container : public TasksNode::Container
 	{
 	public:
-		typedef DefaultNodeItem * value_type;
+		typedef DefaultNodeItem::Holder value_type;
 
 	public:
 		Container();
-		virtual ~Container();
 
 		virtual size_type size() const;
 		virtual Item *at(size_type index) const;
@@ -107,16 +123,16 @@ protected:
 		size_type indexOf(Node *item) const
 		{
 			for (List::size_type i = 0, size = m_container.size(); i < size; ++i)
-				if (m_container.at(i)->node() == item)
+				if (m_container.at(i).as<DefaultNodeItem>()->node() == item)
 					return i;
 
 			return InvalidIndex;
 		}
 		size_type indexOf(const QString &fileName) const { return m_container.indexOf(fileName); }
 
-		void add(value_type item) { m_container.add(item->info()->fileName(), item); }
-		void add(const QString &fileName, value_type item) { m_container.add(fileName, item); }
-		void remove(size_type index) { delete m_container.take(index); }
+		void add(const value_type &item) { m_container.add(item.as<DefaultNodeItem>()->info()->fileName(), item); }
+		void add(const QString &fileName, const value_type &item) { m_container.add(fileName, item); }
+		void remove(size_type index) { m_container.remove(index); }
 		value_type take(size_type index) { return m_container.take(index); }
 		void replace(size_type index, const QString &oldHash, const QString &newHash) { m_container.replace(index, oldHash, newHash); }
 		void clear()
@@ -124,11 +140,8 @@ protected:
 			List::ByIndex list(m_container);
 			value_type root = list.at(0);
 
-			for (List::size_type i = 1, size = list.size(); i < size; ++i)
-				delete list.at(i);
-
 			m_container.clear();
-			m_container.add(root->info()->fileName(), root);
+			m_container.add(root.as<DefaultNodeItem>()->info()->fileName(), root);
 		}
 
 	private:
@@ -164,24 +177,16 @@ private:
 	bool isUpdating() const { return m_updating; }
 	void setUpdating(bool value) { m_updating = value; }
 
-	class Functor
-	{
-	public:
-		virtual ~Functor() {}
-
-		inline void operator()(Container::size_type index, DefaultNodeItem *item) { call(index, item); }
-
-	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *item) = 0;
-	};
+private:
+	typedef ::Tools::Templates::Functor2<Container::size_type, DefaultNodeItem *> Functor;
 
 	typedef QPair<Container::size_type, DefaultNodeItem *> ProcessedValue;
 	class ProcessedList : public Functor, public QList<ProcessedValue>
 	{
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *entry)
+		virtual void call(Container::size_type index, DefaultNodeItem *item)
 		{
-			push_back(ProcessedValue(index, entry));
+			push_back(ProcessedValue(index, item));
 		}
 	};
 
@@ -194,9 +199,9 @@ private:
 		{}
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *entry)
+		virtual void call(Container::size_type index, DefaultNodeItem *item)
 		{
-			push_back(m_container->location(entry->info()->fileName()));
+			push_back(m_container->location(item->info()->fileName()));
 		}
 
 	private:
@@ -215,12 +220,12 @@ private:
 		const ::Tools::Containers::Union &updateUnion() const { return m_union; }
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *entry);
+		virtual void call(Container::size_type index, DefaultNodeItem *item);
 
 	private:
 		FolderNodeBase *m_node;
 		QString m_reason;
-		Snapshot::List m_items;
+		TasksMap::List m_items;
 		::Tools::Containers::Union m_union;
 	};
 	friend class CancelFunctor;
@@ -235,7 +240,7 @@ private:
 		{}
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *entry);
+		virtual void call(Container::size_type index, DefaultNodeItem *item);
 
 	private:
 		const IFileContainer *m_container;

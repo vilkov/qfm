@@ -5,6 +5,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+inline static bool compareByFileNames(const QueryResultItem::Holder &v1, const QueryResultItem::Holder &v2)
+{
+	return ProxyModel::compareByFileNames(v1.as<QueryResultPathItem>(), v2.as<QueryResultPathItem>());
+}
+
+
 QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *container, WrappedNodeItem *item, Base *parent) :
 	QueryResultPathItem(item->info(), parent),
 	m_container(container)
@@ -14,10 +20,10 @@ QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *contain
 		m_thisContainer = item->thisContainer().take();
 
 		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
-			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this));
+			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this)));
 	}
 
-	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);
+	qSort(m_items.begin(), m_items.end(), compareByFileNames);
 }
 
 bool QueryResultPathValueItem::isRootPathValue()

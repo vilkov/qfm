@@ -25,7 +25,7 @@ public:
 	void add(ArcNodeEntryItem *item)
 	{
 		m_index[item->fileName()] = m_items.size();
-		m_items.push_back(item);
+		m_items.push_back(ArcNodeItem::Holder(item));
 
 		m_extractedSize += item->extractedSize();
 
@@ -36,7 +36,7 @@ public:
 	void add(ArcNodeDirEntryItem *item)
 	{
 		m_index[item->fileName()] = m_items.size();
-		m_items.push_back(item);
+		m_items.push_back(ArcNodeItem::Holder(item));
 	}
 
 private:

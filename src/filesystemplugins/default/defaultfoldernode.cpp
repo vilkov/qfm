@@ -7,13 +7,13 @@ DEFAULT_PLUGIN_NS_BEGIN
 FolderNode::FolderNode(IFileContainer::Holder &container, Node *parent) :
 	FolderNodeBase(container, parent)
 {
-	DefaultNodeRootItem *item = new DefaultNodeRootItem();
-	items().add(item->label().toString(), item);
+	DefaultNodeRootItem::Holder item(new DefaultNodeRootItem());
+	items().add(item.as<DefaultNodeRootItem>()->label().toString(), item);
 }
 
 QModelIndex FolderNode::rootIndex() const
 {
-	return proxy().mapFromSource(createIndex(0, 0, items()[0]));
+	return proxy().mapFromSource(createIndex(0, 0, items()[0].data()));
 }
 
 Snapshot FolderNode::updateFilesList() const
@@ -21,7 +21,7 @@ Snapshot FolderNode::updateFilesList() const
 	Snapshot::Files files(container().data());
 
 	for (Container::size_type i = 1, size = items().size(); i < size; ++i)
-		files.add(items()[i]->info()->fileName(), items()[i]);
+		files.add(items()[i].as<DefaultNodeItem>()->info()->fileName(), items()[i]);
 
 	return files;
 }

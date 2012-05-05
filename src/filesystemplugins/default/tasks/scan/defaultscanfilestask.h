@@ -10,17 +10,15 @@ DEFAULT_PLUGIN_NS_BEGIN
 class ScanFilesTask : public FilesBaseTask
 {
 public:
-	class UpdatesEvent : public BaseTask::Event
+	class UpdatesEvent : public Event
 	{
 	public:
-		UpdatesEvent(BaseTask *task, bool isLastEvent, const Snapshot::Updates &updates, bool canceled = false) :
-			BaseTask::Event(task, static_cast<Type>(ModelEvent::UpdateFiles), canceled),
-			isLastEvent(isLastEvent),
-			updates(updates)
+		UpdatesEvent(BaseTask *task, bool isLastEvent, const Snapshot &snapshot, bool canceled) :
+			Event(task, static_cast<Type>(ModelEvent::UpdateFiles), canceled, snapshot),
+			isLastEvent(isLastEvent)
 		{}
 
 		bool isLastEvent;
-		Snapshot::Updates updates;
 	};
 
 	class CopyEvent : public ExtendedEvent
@@ -40,6 +38,10 @@ public:
 
 protected:
 	virtual void run(const volatile Flags &aborted);
+
+protected:
+	Snapshot takeUpdates(Snapshot &snapshot);
+	Snapshot takeAllUpdates(Snapshot &snapshot);
 
 private:
 	ModelEvent::Type m_type;

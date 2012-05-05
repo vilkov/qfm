@@ -28,7 +28,7 @@ ArcNodeListItem::ArcNodeListItem(Base *parent) :
 
 ArcNodeListItem::Base *ArcNodeListItem::at(size_type index) const
 {
-	return m_items.at(index);
+	return m_items.at(index).data();
 }
 
 ArcNodeListItem::size_type ArcNodeListItem::size() const
@@ -38,7 +38,8 @@ ArcNodeListItem::size_type ArcNodeListItem::size() const
 
 ArcNodeListItem::size_type ArcNodeListItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(static_cast<ArcNodeItem *>(item));
+	ArcNodeItem::Holder holder(static_cast<ArcNodeItem *>(item));
+	return m_items.indexOf(holder);
 }
 
 ARC_PLUGIN_NS_END

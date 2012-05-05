@@ -10,12 +10,11 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPathItem : public QueryResultItem, public IFileInfo
 {
 public:
-	typedef QList<QueryResultPathItem *> Container;
+	typedef QList<QueryResultItem::Holder> Container;
 
 public:
 	QueryResultPathItem(IFileInfo::Holder &info, Base *parent);
 	QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent);
-	virtual ~QueryResultPathItem();
 
 	/* Base */
 	virtual Base *at(Base::size_type index) const;

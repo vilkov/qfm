@@ -1,12 +1,12 @@
 #ifndef CHECKCONFIGOPTION_H_
 #define CHECKCONFIGOPTION_H_
 
-#include <QList>
-#include <QCheckBox>
+#include <QtCore/QList>
+#include <QtGui/QCheckBox>
 #include "../../tools/settings/configoptions/configoptionvaluedefault.h"
 
 
-class CheckConfigOption: public ConfigOptionValueDefault
+class CheckConfigOption: public ::Tools::Settings::ConfigOptionValueDefault
 {
 public:
 	CheckConfigOption(qint32 id, const QString &title, ConfigOption *parent);

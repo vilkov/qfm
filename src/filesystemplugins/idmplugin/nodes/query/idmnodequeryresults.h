@@ -66,8 +66,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
 protected:
@@ -92,7 +92,7 @@ private:
 private:
 	void lock(const Snapshot &snapshot, const QString &reason);
 	void unlock(const Snapshot &snapshot);
-	void update(Snapshot::Updates &updates);
+	void update(Snapshot &updates);
 
 private:
     enum { PrefetchLimit = 64 };
@@ -101,11 +101,10 @@ private:
 	class ItemsContainer : public Container
 	{
 	public:
-		typedef QList<Item*> List;
+		typedef QList<NodeItem::Holder> List;
 
 	public:
 		ItemsContainer();
-		virtual ~ItemsContainer();
 
 		virtual size_type size() const;
 		virtual Item *at(size_type index) const;

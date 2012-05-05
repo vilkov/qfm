@@ -16,7 +16,7 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const;
-	virtual void extract(State *state, const ArcNodeItem *entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const;
+	virtual void extract(State *state, const ArcNodeItem::Holder &entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const;
 	virtual void extractAll(State *state, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const;
 	virtual void endRead(State *state) const;
 

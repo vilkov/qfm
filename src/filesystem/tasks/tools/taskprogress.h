@@ -14,7 +14,7 @@ class TaskProgress
 public:
 	TaskProgress(TasksNode *receiver);
 
-	void init(const NodeItem *item);
+	void init(const NodeItem::Holder &item);
 	void update(quint64 progressIncrement);
 	void complete();
 	void clear();
@@ -23,7 +23,7 @@ private:
 	void postEvent();
 
 private:
-	const NodeItem *m_item;
+	NodeItem::Holder m_item;
 	quint64 m_progress;
 	TasksNode *m_receiver;
 	QDateTime m_baseTime;

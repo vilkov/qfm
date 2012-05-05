@@ -3,14 +3,35 @@
 
 #include <QtGui/QIcon>
 #include <QtCore/QString>
+#include <QtCore/QSharedData>
 #include "../../filesystem_ns.h"
 #include "../../../tools/models/tree/items/treemodelitem.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class NodeItem : public ::Tools::Models::Tree::Item
+class NodeItem : public ::Tools::Models::Tree::Item, public QSharedData
 {
+	Q_DISABLE_COPY(NodeItem)
+
+public:
+	class Holder : public QExplicitlySharedDataPointer<NodeItem>
+	{
+	public:
+	    inline Holder() :
+	    	QExplicitlySharedDataPointer<NodeItem>()
+	    {}
+
+	    inline explicit Holder(NodeItem *data) :
+				QExplicitlySharedDataPointer<NodeItem>(data)
+	    {}
+
+	    inline Holder &operator=(NodeItem *o) { QExplicitlySharedDataPointer<NodeItem>::operator=(o); return *this; }
+
+	    template <typename R> inline
+	    R *as() const { return static_cast<R *>(data()); }
+	};
+
 public:
 	NodeItem(Base *parent);
 

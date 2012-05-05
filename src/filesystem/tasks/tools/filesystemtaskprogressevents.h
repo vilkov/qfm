@@ -10,14 +10,14 @@ FILE_SYSTEM_NS_BEGIN
 class UpdateProgressEvent : public BaseTask::Event
 {
 public:
-	UpdateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed) :
+	UpdateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed) :
 		BaseTask::Event(NULL, BaseTask::Event::Progress, false),
 		item(item),
 		progress(progress),
 		timeElapsed(timeElapsed)
 	{}
 
-	const NodeItem *item;
+	NodeItem::Holder item;
 	quint64 progress;
 	quint64 timeElapsed;
 };
@@ -26,13 +26,13 @@ public:
 class CompletedProgressEvent : public BaseTask::Event
 {
 public:
-	CompletedProgressEvent(const NodeItem *item, quint64 timeElapsed) :
+	CompletedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed) :
 		BaseTask::Event(NULL, BaseTask::Event::Completed, false),
 		item(item),
 		timeElapsed(timeElapsed)
 	{}
 
-	const NodeItem *item;
+	NodeItem::Holder item;
 	quint64 timeElapsed;
 };
 

@@ -9,7 +9,7 @@
 #include "../../tools/settings/configoptions/configoptionvaluedefault.h"
 
 
-class PasswordConfigOption: public ConfigOptionValueDefault
+class PasswordConfigOption: public ::Tools::Settings::ConfigOptionValueDefault
 {
 	Q_DECLARE_TR_FUNCTIONS(PasswordConfigOption)
 

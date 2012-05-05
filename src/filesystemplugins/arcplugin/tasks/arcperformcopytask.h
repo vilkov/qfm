@@ -23,17 +23,17 @@ public:
 			move(move)
 		{}
 
-		const ArcNodeItem *item;
+		ArcNodeItem::Holder item;
 		bool move;
 	};
 
 public:
-	PerformCopyTask(const QString &fileName, const ArcNodeItem *item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
+	PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
 
 	virtual IFileAccessor::value_type *buffer() const;
 	virtual IFileAccessor::size_type bufferSize() const;
 
-	virtual void progressInit(const NodeItem *item);
+	virtual void progressInit(const NodeItem::Holder &item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 
@@ -50,7 +50,7 @@ private:
 
 private:
 	QString m_fileName;
-	const ArcNodeItem *m_item;
+	ArcNodeItem::Holder m_item;
 	ICopyControl::Holder m_control;
 	bool m_move;
 	bool m_overwriteAll;

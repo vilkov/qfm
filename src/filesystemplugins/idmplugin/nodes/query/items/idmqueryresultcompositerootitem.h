@@ -12,11 +12,10 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultCompositeRootItem : public QueryResultRootItem
 {
 public:
-	typedef QVector<QueryResultItem *> Container;
+	typedef QVector<QueryResultItem::Holder> Container;
 
 public:
 	QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent = 0);
-	virtual ~QueryResultCompositeRootItem();
 
 	/* Base */
 	virtual Base *at(size_type index) const;

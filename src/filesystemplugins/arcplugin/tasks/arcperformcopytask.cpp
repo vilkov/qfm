@@ -6,7 +6,7 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem *item, ICopyControl::Holder &control, bool move, TasksNode *receiver) :
+PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver) :
 	BaseTask(receiver),
 	m_fileName(fileName),
 	m_item(item),
@@ -27,7 +27,7 @@ IFileAccessor::size_type PerformCopyTask::bufferSize() const
 	return FileReadWriteGranularity;
 }
 
-void PerformCopyTask::progressInit(const NodeItem *item)
+void PerformCopyTask::progressInit(const NodeItem::Holder &item)
 {
 	m_progress.init(item);
 }

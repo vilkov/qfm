@@ -32,7 +32,7 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			if (enumerator)
 			{
 				WrappedNodeItem::Holder wrappedItem;
-				DefaultNodeItem *item;
+				DefaultNodeItem::Holder item;
 				QTime base = QTime::currentTime();
 				QTime current;
 
@@ -40,10 +40,10 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 				{
 					current = QTime::currentTime();
 
-					if (item = static_cast<DefaultNodeItem *>(m_snapshot.exists(enumerator->fileName())))
+					if (item = m_snapshot.exists(enumerator->fileName()))
 					{
 						if (!item->isLocked())
-							if (enumerator->isObsolete(item->info().data()))
+							if (enumerator->isObsolete(item.as<DefaultNodeItem>()->info().data()))
 								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
 							else
 								m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
@@ -53,16 +53,16 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 					if (base.msecsTo(current) > 300)
 					{
-						Snapshot::Updates localUpdates = m_snapshot.takeUpdates();
+						Snapshot localUpdates(takeUpdates(m_snapshot));
 						base = current;
 
 						if (!localUpdates.isEmpty())
-							postEvent(new UpdatesEvent(this, false, localUpdates));
+							postEvent(new UpdatesEvent(this, false, localUpdates, false));
 					}
 				}
 			}
 
-			postEvent(new UpdatesEvent(this, true, m_snapshot.takeUpdates()));
+			postEvent(new UpdatesEvent(this, true, m_snapshot, aborted));
 			break;
 		}
 
@@ -87,6 +87,26 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			break;
 		}
 	}
+}
+
+Snapshot ScanFilesTask::takeUpdates(Snapshot &snapshot)
+{
+	Snapshot::Updates res(snapshot);
+
+	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end;)
+		if ((*it).second)
+		{
+			if ((*it).second->isValid())
+				res.add(it.key(), (*it));
+			else
+				delete (*it).second;
+
+			it = snapshot.erase(it);
+		}
+		else
+			++it;
+
+	return res;
 }
 
 DEFAULT_PLUGIN_NS_END

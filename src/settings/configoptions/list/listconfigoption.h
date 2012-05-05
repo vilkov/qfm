@@ -12,7 +12,7 @@
 #include "../../../tools/settings/configoptions/configoptionvaluedefault.h"
 
 
-class ListConfigOption: public ConfigOptionValueDefault
+class ListConfigOption: public ::Tools::Settings::ConfigOptionValueDefault
 {
 	Q_DECLARE_TR_FUNCTIONS(ListConfigOption)
 

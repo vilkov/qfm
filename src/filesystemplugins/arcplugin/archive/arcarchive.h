@@ -12,8 +12,8 @@ ARC_PLUGIN_NS_BEGIN
 class Archive
 {
 public:
-	typedef BaseTask::Task::Flags Flags;
-	typedef QList<ArcNodeItem *>  Container;
+	typedef BaseTask::Task::Flags      Flags;
+	typedef QList<ArcNodeItem::Holder> Container;
 
 	struct Contents
 	{
@@ -33,7 +33,7 @@ public:
 		virtual IFileAccessor::value_type *buffer() const = 0;
 		virtual IFileAccessor::size_type bufferSize() const = 0;
 
-		virtual void progressInit(const NodeItem *item) = 0;
+		virtual void progressInit(const NodeItem::Holder &item) = 0;
 		virtual void progressUpdate(quint64 progressIncrement) = 0;
 		virtual void progresscomplete() = 0;
 
@@ -55,7 +55,7 @@ public:
 
 	virtual State *beginRead(const QString &fileName) const = 0;
 	virtual Contents readAll(State *state, const volatile Flags &aborted) const = 0;
-	virtual void extract(State *state, const ArcNodeItem *entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const = 0;
+	virtual void extract(State *state, const ArcNodeItem::Holder &entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const = 0;
 	virtual void extractAll(State *state, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const = 0;
 	virtual void endRead(State *state) const = 0;
 };

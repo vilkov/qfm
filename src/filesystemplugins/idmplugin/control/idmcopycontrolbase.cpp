@@ -80,7 +80,7 @@ INode *IdmCopyControlBase::node() const
 	return m_dest->node();
 }
 
-bool IdmCopyControlBase::start(const Snapshot::List &files, bool move)
+bool IdmCopyControlBase::start(const Snapshot &files, bool move)
 {
 	return false;
 }

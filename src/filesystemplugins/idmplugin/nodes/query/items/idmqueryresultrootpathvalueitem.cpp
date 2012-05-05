@@ -6,6 +6,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
+inline static bool compareByFileNames(const NodeItem::Holder &v1, const NodeItem::Holder &v2)
+{
+	return ProxyModel::compareByFileNames(v1.as<QueryResultPathItem>(), v2.as<QueryResultPathItem>());
+}
+
+
 QueryResultRootPathValueItem::QueryResultRootPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
 	QueryResultPathItem(container, value->value().toString(), parent),
 	m_value(value),
@@ -31,7 +37,6 @@ void QueryResultRootPathValueItem::open() const
 
 void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
 {
-	qDeleteAll(m_items);
 	m_items.clear();
 
 	m_info = item->info().take();
@@ -41,10 +46,10 @@ void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
 		m_thisContainer = item->thisContainer().take();
 
 		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
-			m_items.push_back(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this));
+			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this)));
 	}
 
-	qSort(m_items.begin(), m_items.end(), ProxyModel::compareByFileNames);
+	qSort(m_items.begin(), m_items.end(), compareByFileNames);
 }
 
 IDM_PLUGIN_NS_END

@@ -14,7 +14,7 @@ IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(ICopyControl::Holder &des
 	m_index(index)
 {}
 
-bool IdmQueryResultsCopyControl::start(const Snapshot::List &files, bool move)
+bool IdmQueryResultsCopyControl::start(const Snapshot &files, bool move)
 {
 	if (m_dest->start(files, move) && m_container.transaction())
 	{
@@ -22,8 +22,8 @@ bool IdmQueryResultsCopyControl::start(const Snapshot::List &files, bool move)
 		IdmCompositeEntityValue::List list;
 		list.reserve(files.size());
 
-		for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
-			if (localValue = m_container.addValue(m_property.entity, QString(m_storage).append(files.at(i).second->info()->fileName())))
+		for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
+			if (localValue = m_container.addValue(m_property.entity, QString(m_storage).append((*i).second->info()->fileName())))
 				list.push_back(localValue);
 			else
 			{

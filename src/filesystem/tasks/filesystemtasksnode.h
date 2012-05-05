@@ -25,8 +25,8 @@ public:
     virtual bool event(QEvent *event);
 
 protected:
-	virtual void updateProgressEvent(const NodeItem *item, quint64 progress, quint64 timeElapsed) = 0;
-	virtual void completedProgressEvent(const NodeItem *item, quint64 timeElapsed) = 0;
+	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed) = 0;
+	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed) = 0;
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
 
 protected:
@@ -38,10 +38,10 @@ protected:
 	void handleTask(BaseTask *task, const ICopyControl *destanation);
 	void taskHandled(BaseTask *task);
 	void taskHandled(BaseTask *task, const ICopyControl *destanation);
-	void cancelTask(NodeItem *item);
+	void cancelTask(const NodeItem::Holder &item);
 	void removeAllTaskLinks(BaseTask *task);
 	void removeAllTaskLinks(BaseTask *task, const ICopyControl *destanation);
-	Snapshot::List cancelTaskAndTakeItems(NodeItem *item);
+	TasksMap::List cancelTaskAndTakeItems(const NodeItem::Holder &item);
 
 private:
 	TasksMap m_tasks;

@@ -24,7 +24,7 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 		case ModelEvent::UpdateFiles:
 		{
 			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
-			postEvent(new UpdatesEvent(this, m_snapshot.takeUpdates(), aborted));
+			postEvent(new UpdatesEvent(this, m_snapshot, aborted));
 			break;
 		}
 

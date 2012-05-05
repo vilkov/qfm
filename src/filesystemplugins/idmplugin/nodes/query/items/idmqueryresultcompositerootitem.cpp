@@ -9,7 +9,7 @@ QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &file
 	QueryResultRootItem(value, parent),
 	m_items(value->entity()->size())
 {
-	QueryResultPropertyItem *item;
+	QueryResultPropertyItem::Holder item;
 
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
@@ -18,26 +18,21 @@ QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &file
 		if (poperty.entity->type() == Database::Path)
 		{
 			item = new QueryResultPathPropertyItem(poperty, this);
-			static_cast<QueryResultPathPropertyItem *>(item)->add(files, container, value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+			item.as<QueryResultPathPropertyItem>()->add(files, container, value.as<IdmCompositeEntityValue>()->values(poperty.entity));
 		}
 		else
 		{
 			item = new QueryResultPropertyItem(poperty, this);
-			item->add(value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+			item.as<QueryResultPropertyItem>()->add(value.as<IdmCompositeEntityValue>()->values(poperty.entity));
 		}
 
 		m_items[i] = item;
 	}
 }
 
-QueryResultCompositeRootItem::~QueryResultCompositeRootItem()
-{
-	qDeleteAll(m_items);
-}
-
 QueryResultCompositeRootItem::Base *QueryResultCompositeRootItem::at(size_type index) const
 {
-	return m_items.at(index);
+	return m_items.at(index).data();
 }
 
 QueryResultCompositeRootItem::size_type QueryResultCompositeRootItem::size() const
@@ -47,7 +42,8 @@ QueryResultCompositeRootItem::size_type QueryResultCompositeRootItem::size() con
 
 QueryResultCompositeRootItem::size_type QueryResultCompositeRootItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(static_cast<QueryResultItem *>(item));
+	Holder holder(static_cast<QueryResultItem *>(item));
+	return m_items.indexOf(holder);
 }
 
 IDM_PLUGIN_NS_END

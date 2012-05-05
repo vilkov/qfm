@@ -16,7 +16,7 @@ public:
 	IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, IdmEntity *entity);
 
 	/* ICopyControl */
-	virtual bool start(const Snapshot::List &files, bool move);
+	virtual bool start(const Snapshot &files, bool move);
 
 private:
 	IdmEntity *m_entity;

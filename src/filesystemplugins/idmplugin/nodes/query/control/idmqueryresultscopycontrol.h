@@ -18,7 +18,7 @@ public:
 	IdmQueryResultsCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index);
 
 	/* ICopyControl */
-	virtual bool start(const Snapshot::List &files, bool move);
+	virtual bool start(const Snapshot &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 

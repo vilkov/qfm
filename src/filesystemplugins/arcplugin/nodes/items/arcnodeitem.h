@@ -25,7 +25,7 @@ public:
 class ArcNodeListItem : public ArcNodeItem
 {
 public:
-	typedef QList<ArcNodeItem *> Container;
+	typedef QList<ArcNodeItem::Holder> Container;
 
 public:
 	ArcNodeListItem(Base *parent);

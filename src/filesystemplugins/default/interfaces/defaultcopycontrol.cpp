@@ -82,18 +82,19 @@ INode *CopyControl::node() const
 	return m_node;
 }
 
-bool CopyControl::start(const Snapshot::List &files, bool move)
+bool CopyControl::start(const Snapshot &files, bool move)
 {
 	IFileInfo::size_type fs;
+	IFileInfo::size_type total;
 
-	return (files.totalSize() <= (fs = freeSpace()) ||
+	return ((total = files.totalSize()) <= (fs = freeSpace()) ||
 		QMessageBox::question(
 							Application::mainWindow(),
 							tr("Insufficient space on device"),
 							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
 								arg(m_container.location()).
 								arg(Tools::humanReadableShortSize(fs)).
-								arg(Tools::humanReadableShortSize(files.totalSize())),
+								arg(Tools::humanReadableShortSize(total)),
 							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);
 }
 

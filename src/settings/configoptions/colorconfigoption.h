@@ -12,7 +12,7 @@
 #include "../../tools/settings/configoptions/configoptionvalue.h"
 
 
-class ColorConfigOption: public ConfigOptionValue
+class ColorConfigOption: public ::Tools::Settings::ConfigOptionValue
 {
 	Q_DECLARE_TR_FUNCTIONS(ColorConfigOption)
 

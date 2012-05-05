@@ -9,7 +9,7 @@
 #include "../../tools/settings/configoptions/configoptionvaluedefault.h"
 
 
-class EmailConfigOption: public ConfigOptionValueDefault
+class EmailConfigOption: public ::Tools::Settings::ConfigOptionValueDefault
 {
 	Q_DECLARE_TR_FUNCTIONS(EmailConfigOption)
 

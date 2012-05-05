@@ -124,7 +124,7 @@ void TasksNode::taskHandled(BaseTask *task, const ICopyControl *destanation)
 	removeLink();
 }
 
-void TasksNode::cancelTask(NodeItem *item)
+void TasksNode::cancelTask(const NodeItem::Holder &item)
 {
 	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();
@@ -143,9 +143,9 @@ void TasksNode::removeAllTaskLinks(BaseTask *task, const ICopyControl *destanati
 	removeLink();
 }
 
-Snapshot::List TasksNode::cancelTaskAndTakeItems(NodeItem *item)
+TasksMap::List TasksNode::cancelTaskAndTakeItems(const NodeItem::Holder &item)
 {
-	Snapshot::List res;
+	TasksMap::List res;
 
 	if (BaseTask *task = m_tasks.take(item, res))
 		task->cancel();

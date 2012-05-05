@@ -16,14 +16,9 @@ QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const 
 	m_node(NULL)
 {}
 
-QueryResultPathItem::~QueryResultPathItem()
-{
-	qDeleteAll(m_items);
-}
-
 QueryResultPathItem::Base *QueryResultPathItem::at(Base::size_type index) const
 {
-	return m_items.at(index);
+	return m_items.at(index).data();
 }
 
 QueryResultPathItem::Base::size_type QueryResultPathItem::size() const
@@ -33,7 +28,8 @@ QueryResultPathItem::Base::size_type QueryResultPathItem::size() const
 
 QueryResultPathItem::Base::size_type QueryResultPathItem::indexOf(Base *item) const
 {
-	return m_items.indexOf(static_cast<QueryResultPathItem *>(item));
+	QueryResultItem::Holder holder(static_cast<QueryResultPathItem *>(item));
+	return m_items.indexOf(holder);
 }
 
 QVariant QueryResultPathItem::data(qint32 column, qint32 role) const

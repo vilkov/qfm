@@ -12,7 +12,7 @@ IdmCopyControl::IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &c
 	m_entity(entity)
 {}
 
-bool IdmCopyControl::start(const Snapshot::List &files, bool move)
+bool IdmCopyControl::start(const Snapshot &files, bool move)
 {
 	if (m_dest->start(files, move) && m_container.transaction())
 	{
@@ -30,11 +30,11 @@ bool IdmCopyControl::start(const Snapshot::List &files, bool move)
 		    	{
 		    		IdmEntityValue::Holder localValue;
 
-					for (Snapshot::List::size_type i = 0, size = files.size(); i < size; ++i)
-						if (localValue = m_container.addValue(path, QString(m_storage).append(files.at(i).second->info()->fileName())))
+		    		for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
+						if (localValue = m_container.addValue(path, QString(m_storage).append((*i).second->info()->fileName())))
 						{
 							list.push_back(localValue);
-							possibleFiles[localValue->id()] = files.at(i).second;
+							possibleFiles[localValue->id()] = (*i).second;
 						}
 						else
 						{

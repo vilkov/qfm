@@ -35,7 +35,7 @@ public:
 	/* ICopyControl */
 	virtual INode *node() const;
 
-	virtual bool start(const Snapshot::List &files, bool move);
+	virtual bool start(const Snapshot &files, bool move);
 	virtual void done(bool error);
 	virtual void canceled();
 

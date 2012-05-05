@@ -52,8 +52,8 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     QMap<QString, ArcNodeDirEntryItem *> parents;
     ArcNodeDirEntryItem::size_type index;
     struct archive_entry *e;
-    ArcNodeDirEntryItem *entry;
-    ArcNodeDirEntryItem *parent;
+    ArcNodeDirEntryItem::Holder entry;
+    ArcNodeDirEntryItem::Holder parent;
     QString fileName;
     const char *path;
     char *sep;
@@ -63,43 +63,43 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     {
     	contents.extractedSize += archive_entry_size(e);
 
-    	path = archive_entry_pathname(e);
-
-    	if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
-    	{
-    		(*sep) = 0;
-    		ArcNodeDirEntryItem *&p = parents[fileName = QString::fromUtf8(path)];
-
-    		if (p == NULL)
-    		{
-    			p = parent = new ArcNodeDirEntryItem(fileName, QDateTime::fromTime_t(archive_entry_mtime(e)));
-    			contents.items.push_back(parent);
-    		}
-    		else
-    			parent = p;
-
-    		path = (++sep);
-
-    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
-    		{
-	    		(*sep) = 0;
-
-	    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArcNodeDirEntryItem::InvalidIndex)
-	    		{
-	    			parent->add(entry = new ArcNodeDirEntryItem(fileName, QDateTime::fromTime_t(archive_entry_mtime(e)), parent));
-	    			parent = entry;
-	    		}
-	    		else
-	    			parent = static_cast<ArcNodeDirEntryItem *>(parent->at(index));
-
-	    		path = (++sep);
-    		}
-
-    		if (!(fileName = QString::fromUtf8(path)).isEmpty())
-    			parent->add(new ArcNodeEntryItem(fileName, archive_entry_size(e), QDateTime::fromTime_t(archive_entry_mtime(e)), parent));
-    	}
-    	else
-    		contents.items.push_back(new ArcNodeEntryItem(QString::fromUtf8(path), archive_entry_size(e), QDateTime::fromTime_t(archive_entry_mtime(e))));
+//    	path = archive_entry_pathname(e);
+//
+//    	if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
+//    	{
+//    		(*sep) = 0;
+//    		ArcNodeDirEntryItem *&p = parents[fileName = QString::fromUtf8(path)];
+//
+//    		if (p == NULL)
+//    		{
+//    			p = parent = new ArcNodeDirEntryItem(fileName, QDateTime::fromTime_t(archive_entry_mtime(e)));
+//    			contents.items.push_back(ArcNodeItem::Holder(parent));
+//    		}
+//    		else
+//    			parent = p;
+//
+//    		path = (++sep);
+//
+//    		while ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
+//    		{
+//	    		(*sep) = 0;
+//
+//	    		if ((index = parent->indexOf(fileName = QString::fromUtf8(path))) == ArcNodeDirEntryItem::InvalidIndex)
+//	    		{
+//	    			parent->add(entry = new ArcNodeDirEntryItem(fileName, QDateTime::fromTime_t(archive_entry_mtime(e)), parent));
+//	    			parent = entry;
+//	    		}
+//	    		else
+//	    			parent = static_cast<ArcNodeDirEntryItem *>(parent->at(index));
+//
+//	    		path = (++sep);
+//    		}
+//
+//    		if (!(fileName = QString::fromUtf8(path)).isEmpty())
+//    			parent->add(ArcNodeItem::Holder(new ArcNodeEntryItem(fileName, archive_entry_size(e), QDateTime::fromTime_t(archive_entry_mtime(e)), parent)));
+//    	}
+//    	else
+//    		contents.items.push_back(ArcNodeItem::Holder(new ArcNodeEntryItem(QString::fromUtf8(path), archive_entry_size(e), QDateTime::fromTime_t(archive_entry_mtime(e)))));
 
         archive_read_data_skip(state->a);
     }
@@ -110,7 +110,7 @@ LibArchivePlugin::Contents LibArchivePlugin::readAll(State *s, const volatile Fl
     return contents;
 }
 
-void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const
+void LibArchivePlugin::extract(State *s, const ArcNodeItem::Holder &entry, const IFileContainer *dest, Callback *callback, const volatile Flags &aborted) const
 {
 	Q_ASSERT(s && s->error.isEmpty());
 	Q_ASSERT(callback);
@@ -120,10 +120,10 @@ void LibArchivePlugin::extract(State *s, const ArcNodeItem *entry, const IFileCo
 
 	state->callback->progressInit(entry);
 
-	if (entry->isDir())
-		extractEntry(state, dest, static_cast<const ArcNodeListItem *>(entry), tryAgain = false, aborted);
+	if (entry.as<ArcNodeItem>()->isDir())
+		extractEntry(state, dest, entry.as<ArcNodeListItem>(), tryAgain = false, aborted);
 	else
-		extractFile(state, dest, static_cast<const ArcNodeItem *>(entry), tryAgain = false, aborted);
+		extractFile(state, dest, entry.as<ArcNodeItem>(), tryAgain = false, aborted);
 
 	state->callback->progresscomplete();
 }

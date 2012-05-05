@@ -10,11 +10,10 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultPropertyItem : public QueryResultItem
 {
 public:
-	typedef QList<QueryResultItem *> Container;
+	typedef QList<QueryResultItem::Holder> Container;
 
 public:
 	QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent);
-	virtual ~QueryResultPropertyItem();
 
 	/* Base */
 	virtual Base *at(size_type index) const;

@@ -5,7 +5,7 @@
 #include "../../tools/memory/memorymanagerbase.h"
 
 
-class LokiAllocator : public Memory::Allocator
+class LokiAllocator : public ::Tools::Memory::Allocator
 {
 public:
 	LokiAllocator(size_type pageSize, size_type maxObjectSize, size_type objectAlignSize) :
@@ -19,7 +19,7 @@ public:
     virtual void deallocate(void *p) { m_allocator.deallocate(p); }
 
 private:
-	Loki::SmallObjAllocator m_allocator;
+	::Loki::SmallObjAllocator m_allocator;
 };
 
 #endif /* LOKI_MEMORY_ALLOCATOR_H_ */

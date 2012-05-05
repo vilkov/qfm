@@ -1,11 +1,13 @@
 #ifndef CONFIGOPTIONVALUE_H_
 #define CONFIGOPTIONVALUE_H_
 
-#include <QList>
-#include <QFont>
-#include <QWidget>
+#include <QtCore/QList>
+#include <QtGui/QFont>
+#include <QtGui/QWidget>
 #include "configoption.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionValue: public ConfigOption
 {
@@ -30,5 +32,7 @@ private:
 	qint32 m_id;
 	QVariant m_defaultValue;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONVALUE_H_ */

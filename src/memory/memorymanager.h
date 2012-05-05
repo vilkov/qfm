@@ -4,7 +4,7 @@
 #include "../tools/memory/memorymanagerbase.h"
 
 
-class MemoryManager : public Memory::ManagerBase<3>
+class MemoryManager : public ::Tools::Memory::ManagerBase<3>
 {
 public:
 	enum Allocators
@@ -18,7 +18,7 @@ public:
 	MemoryManager();
 
 	static MemoryManager *instance();
-	Memory::Allocator *allocator(Allocators a) { return allocators()[a]; }
+	::Tools::Memory::Allocator *allocator(Allocators a) { return allocators()[a]; }
 };
 
 #endif /* MEMORYMANAGER_H_ */

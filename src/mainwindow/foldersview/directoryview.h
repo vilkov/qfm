@@ -22,6 +22,7 @@
 #include "../../tools/events/imp/focuseventhandler.h"
 
 
+using namespace ::Tools::Events;
 class FoldersView;
 
 class DirectoryView : public QWidget, public FileSystem::INodeView

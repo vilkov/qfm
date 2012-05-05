@@ -1,16 +1,16 @@
 #ifndef APPLICATIONSETTINGS_H_
 #define APPLICATIONSETTINGS_H_
 
-#include <QMutex>
-#include <QColor>
-#include <QSplitter>
-#include <QAbstractItemModel>
-#include <QAbstractItemView>
-#include <QCoreApplication>
+#include <QtCore/QMutex>
+#include <QtCore/QAbstractItemModel>
+#include <QtCore/QCoreApplication>
+#include <QtGui/QColor>
+#include <QtGui/QSplitter>
+#include <QtGui/QAbstractItemView>
 #include "../tools/settings/settings.h"
 
 
-class ApplicationSettings : public QObject, public Settings
+class ApplicationSettings : public QObject, public ::Tools::Settings::Settings
 {
 	Q_OBJECT
 
@@ -55,11 +55,11 @@ private:
 	Argument createSettins();
 
 private:
-	ConfigOptionValue *m_thumbnailerBackgroundColor;
-	ConfigOptionValue *m_webServerUseProxy;
-	ConfigOptionValue *m_thumbnailerUseProxy;
-	ConfigOptionValue *m_alertsEnabled;
-	ConfigOptionValue *m_phishingEnabled;
+	::Tools::Settings::ConfigOptionValue *m_thumbnailerBackgroundColor;
+	::Tools::Settings::ConfigOptionValue *m_webServerUseProxy;
+	::Tools::Settings::ConfigOptionValue *m_thumbnailerUseProxy;
+	::Tools::Settings::ConfigOptionValue *m_alertsEnabled;
+	::Tools::Settings::ConfigOptionValue *m_phishingEnabled;
 	QMutex m_mutex;
 };
 

@@ -1,10 +1,13 @@
 #ifndef CONFIGOPTION_H_
 #define CONFIGOPTION_H_
 
-#include <QString>
-#include <QVariant>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
+#include "../settings_ns.h"
 #include "../../pointers/pscopedpointer.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOption
 {
@@ -32,5 +35,7 @@ private:
 	QString m_title;
 	ConfigOption *m_parent;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTION_H_ */

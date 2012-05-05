@@ -1,14 +1,16 @@
 #ifndef CONFIGOPTIONVALUETEMPLATE_H_
 #define CONFIGOPTIONVALUETEMPLATE_H_
 
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QTimeEdit>
-#include <QCheckBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QTimeEdit>
+#include <QtGui/QCheckBox>
 #include <limits.h>
 #include "configoptionvaluedefault.h"
-#include "../../metatemplates.h"
+#include "../../templates/metatemplates.h"
 
+
+SETTINGS_NS_BEGIN
 
 template <typename Editor = QLineEdit>
 class ConfigOptionValueTemplate: public ConfigOptionValueDefault
@@ -51,5 +53,7 @@ private:
 private:
 	Editor *m_editor;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONVALUETEMPLATE_H_ */

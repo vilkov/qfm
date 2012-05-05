@@ -5,7 +5,7 @@
 #include "../../tools/memory/memorymanagerbase.h"
 
 
-class MallocAllocator : public Memory::Allocator
+class MallocAllocator : public ::Tools::Memory::Allocator
 {
 public:
 	virtual void *allocate(size_type n, const void *hint = 0) { return malloc(n); }

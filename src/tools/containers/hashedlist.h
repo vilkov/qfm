@@ -4,7 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QList>
 #include "containers_ns.h"
-#include "../metatemplates.h"
+#include "../templates/metatemplates.h"
 
 
 CONTAINERS_NS_BEGIN

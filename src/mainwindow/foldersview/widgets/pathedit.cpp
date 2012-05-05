@@ -2,7 +2,7 @@
 #include <QKeyEvent>
 
 
-PathEdit::PathEdit(EventHandler *eventHandler, QWidget *parent) :
+PathEdit::PathEdit(::Tools::Events::EventHandler *eventHandler, QWidget *parent) :
 	QLineEdit(parent),
 	m_eventHandler(eventHandler)
 {

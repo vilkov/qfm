@@ -1,15 +1,18 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
-#include <QMap>
-#include <QList>
-#include <QString>
-#include <QVariant>
-#include <QSettings>
+#include <QtCore/QMap>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
+#include <QtCore/QSettings>
+#include "settings_ns.h"
 #include "configoptions/configoptiongroup.h"
 #include "constraints/configoptionconstraint.h"
-#include "../metatemplates.h"
+#include "../templates/metatemplates.h"
 
+
+SETTINGS_NS_BEGIN
 
 class Settings
 {
@@ -86,5 +89,7 @@ private:
 	ConstraintsList m_constraints;
 	Cache m_cache;
 };
+
+SETTINGS_NS_END
 
 #endif /* SETTINGS_H_ */

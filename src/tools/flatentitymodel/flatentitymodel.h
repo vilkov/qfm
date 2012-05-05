@@ -1,17 +1,19 @@
 #ifndef FLATENTITYMODEL_H_
 #define FLATENTITYMODEL_H_
 
-#include <QSet>
-#include <QMap>
-#include <QList>
-#include <QString>
-#include <QVariant>
-#include <QModelIndex>
-#include <QModelIndexList>
-#include <QAbstractItemModel>
+#include <QtCore/QSet>
+#include <QtCore/QMap>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QVariant>
+#include <QtCore/QModelIndex>
+#include <QtCore/QModelIndexList>
+#include <QtCore/QAbstractItemModel>
 #include "items/entityitem.h"
-#include "../metatemplates.h"
+#include "../templates/metatemplates.h"
 
+
+using namespace ::Tools;
 
 class FlatEntityModel : public QAbstractItemModel
 {

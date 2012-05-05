@@ -6,6 +6,8 @@
 #include "eventhandlerbase.h"
 
 
+EVENTS_NS_BEGIN
+
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
 	typename IntercepEvent = Templates::bool_value<true>
@@ -58,5 +60,7 @@ public:
 private:
 	QMap<quint32, Method> m_hotkeys;
 };
+
+EVENTS_NS_END
 
 #endif /* KEYBOARDEVENTHANDLER_H_ */

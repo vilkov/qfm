@@ -10,7 +10,7 @@ class PathEdit : public QLineEdit
 	Q_OBJECT
 
 public:
-	PathEdit(EventHandler *eventHandler, QWidget *parent = 0);
+	PathEdit(::Tools::Events::EventHandler *eventHandler, QWidget *parent = 0);
 
 	void startEdit();
 	void cancelEdit();
@@ -21,7 +21,7 @@ protected:
     virtual void focusOutEvent(QFocusEvent *event);
 
 private:
-    EventHandler *m_eventHandler;
+    ::Tools::Events::EventHandler *m_eventHandler;
     QString m_backupText;
 };
 

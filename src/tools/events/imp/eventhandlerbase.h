@@ -2,8 +2,10 @@
 #define EVENTHANDLERBASE_H_
 
 #include "../eventhandler.h"
-#include "../../metatemplates.h"
+#include "../../templates/metatemplates.h"
 
+
+EVENTS_NS_BEGIN
 
 template <typename ListenerType>
 class EventHandlerBase : public EventHandler
@@ -49,5 +51,7 @@ protected:
 private:
     Listener *m_object;
 };
+
+EVENTS_NS_END
 
 #endif /* EVENTHANDLERBASE_H_ */

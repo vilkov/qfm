@@ -1,13 +1,15 @@
 #ifndef CONFIGOPTIONGROUP_H_
 #define CONFIGOPTIONGROUP_H_
 
-#include <QWidget>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QSpacerItem>
+#include <QtGui/QWidget>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QSpacerItem>
 #include "configoption.h"
 #include "configoptionvaluetemplate.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionGroup : public ConfigOption
 {
@@ -92,5 +94,7 @@ private:
 	QWidget *m_container;
 	value_type m_settings;
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONGROUP_H_ */

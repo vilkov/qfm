@@ -1,8 +1,11 @@
 #include "settings.h"
 #include "dialog/settingsdialog.h"
+
 #include <QtCore/QDir>
 #include <QtGui/QDesktopServices>
 
+
+SETTINGS_NS_BEGIN
 
 Settings::Settings(const QString &title, const QString &appStorage, const Argument &arg) :
 	m_dialog(0),
@@ -147,3 +150,5 @@ void Settings::writeSettingsValues(const QString &path, ConfigOptionGroup *group
 
 	m_storage.endGroup();
 }
+
+SETTINGS_NS_END

@@ -1,9 +1,11 @@
 #ifndef CONFIGOPTIONVALUEDEFAULT_H_
 #define CONFIGOPTIONVALUEDEFAULT_H_
 
-#include <QLabel>
+#include <QtGui/QLabel>
 #include "configoptionvalue.h"
 
+
+SETTINGS_NS_BEGIN
 
 class ConfigOptionValueDefault: public ConfigOptionValue
 {
@@ -19,5 +21,7 @@ public:
 		return label;
 	}
 };
+
+SETTINGS_NS_END
 
 #endif /* CONFIGOPTIONVALUEDEFAULT_H_ */

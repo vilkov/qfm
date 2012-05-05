@@ -4,6 +4,8 @@
 #include "eventsourcebase.h"
 
 
+EVENTS_NS_BEGIN
+
 #include "../../arguments/define.h"
 
 template <typename BaseClass = EventSourceBase<QWidget> >
@@ -73,5 +75,7 @@ protected:
 };
 
 #include "../../arguments/undefine.h"
+
+EVENTS_NS_END
 
 #endif /* KEYBOARDEVENTSOURCE_H_ */

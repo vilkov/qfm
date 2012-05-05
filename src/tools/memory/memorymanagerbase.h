@@ -2,7 +2,8 @@
 #define MEMORYMANAGERBASE_H_
 
 #include "memory_ns.h"
-#include "../metatemplates.h"
+#include "../templates/metatemplates.h"
+
 
 MEMORY_NS_BEGIN
 

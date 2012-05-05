@@ -5,6 +5,8 @@
 #include "eventhandlerbase.h"
 
 
+EVENTS_NS_BEGIN
+
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
 	typename IntercepEvent = Templates::bool_value<false>
@@ -67,5 +69,7 @@ public:
 private:
 	Method m_handler;
 };
+
+EVENTS_NS_END
 
 #endif /* FOCUSEVENTHANDLER_H_ */

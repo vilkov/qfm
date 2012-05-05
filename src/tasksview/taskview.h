@@ -11,6 +11,8 @@
 #include "../tools/events/imp/keyboardeventhandler.h"
 
 
+using namespace ::Tools::Events;
+
 class TaskView : public QWidget
 {
 public:

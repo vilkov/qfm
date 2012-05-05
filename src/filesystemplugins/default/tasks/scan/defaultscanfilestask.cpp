@@ -94,7 +94,7 @@ Snapshot ScanFilesTask::takeUpdates(Snapshot &snapshot)
 		if ((*it).second)
 		{
 			res.add(it.key(), (*it));
-			it = snapshot.erase(it);
+			it = snapshot.remove(it);
 		}
 		else
 			++it;

@@ -74,6 +74,11 @@ public:
 		return m_data->map.erase(i);
 	}
 
+	iterator remove(iterator i)
+	{
+		return m_data->map.erase(i);
+	}
+
 private:
 	friend class Files;
 	friend class Updates;

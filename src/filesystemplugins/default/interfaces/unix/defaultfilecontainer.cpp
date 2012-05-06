@@ -48,13 +48,17 @@ public:
 				if (strcmp(m_res->d_name, ".") != 0 && strcmp(m_res->d_name, "..") != 0)
 				{
 					m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_res->d_name)), Info::Identify());
-					return true;
+
+					if (m_info.isFile() || m_info.isDir())
+						return true;
 				}
 			}
 			else
 			{
 				m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_res->d_name)), Info::Identify());
-				return true;
+
+				if (m_info.isFile() || m_info.isDir())
+					return true;
 			}
 
 		return false;

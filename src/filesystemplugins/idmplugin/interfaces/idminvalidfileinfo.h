@@ -30,6 +30,7 @@ public:
 
 private:
 	QString m_fileName;
+	QIcon m_icon;
 };
 
 IDM_PLUGIN_NS_END

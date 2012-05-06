@@ -1,10 +1,12 @@
 #include "idminvalidfileinfo.h"
+#include "../../../application.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo(const QString &fileName) :
-	m_fileName(fileName)
+	m_fileName(fileName),
+	m_icon(Application::desktopService()->missingIcon(16))
 {}
 
 FileTypeId InvalidInfo::id() const
@@ -14,7 +16,7 @@ FileTypeId InvalidInfo::id() const
 
 QIcon InvalidInfo::icon() const
 {
-	return QIcon();
+	return m_icon;
 }
 
 QString InvalidInfo::name() const

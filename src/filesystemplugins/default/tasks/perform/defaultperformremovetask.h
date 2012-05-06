@@ -22,11 +22,13 @@ protected:
 	void removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 	void doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 
-private:
+protected:
 	Snapshot m_snapshot;
+	TaskProgress m_progress;
+
+private:
 	QString m_error;
 	bool m_skipAllIfNotRemove;
-	TaskProgress m_progress;
 };
 
 DEFAULT_PLUGIN_NS_END

@@ -9,8 +9,8 @@ DEFAULT_PLUGIN_NS_BEGIN
 PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_snapshot(snapshot),
-	m_skipAllIfNotRemove(false),
-	m_progress(receiver)
+	m_progress(receiver),
+	m_skipAllIfNotRemove(false)
 {}
 
 void PerformRemoveTask::run(const volatile Flags &aborted)

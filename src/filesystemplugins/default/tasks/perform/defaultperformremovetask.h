@@ -17,9 +17,8 @@ public:
 
 protected:
 	virtual void run(const volatile Flags &aborted);
-	Snapshot remove(const volatile Flags &aborted);
 
-private:
+protected:
 	void removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 	void doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 

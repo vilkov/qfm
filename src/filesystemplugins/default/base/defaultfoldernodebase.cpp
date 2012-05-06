@@ -1079,7 +1079,7 @@ void FolderNodeBase::scanForRemove(const ProcessedList &entries)
 	{
 		index = entries.at(i).first;
 
-		if ((entry = static_cast<DefaultNodeItem *>(entries.at(i).second))->info()->isDir())
+		if ((entry = entries.at(i).second)->info()->isDir())
 			entry->lock(tr("Scanning folder for remove..."));
 		else
 			entry->lock(tr("Removing..."));
@@ -1173,8 +1173,8 @@ void FolderNodeBase::updateFirstColumn(DefaultNodeItem *entry)
 void FolderNodeBase::updateFirstColumn(const Union &range)
 {
 	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
-		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
-						 createIndex(range.at(i).bottom(), 0, m_items[range.at(i).bottom()]));
+		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()].data()),
+						 createIndex(range.at(i).bottom(), 0, m_items[range.at(i).bottom()].data()));
 }
 
 void FolderNodeBase::updateFirstColumn(Container::size_type index, DefaultNodeItem *entry)
@@ -1191,8 +1191,8 @@ void FolderNodeBase::updateSecondColumn(DefaultNodeItem *entry)
 void FolderNodeBase::updateSecondColumn(const Union &range)
 {
 	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
-		emit dataChanged(createIndex(range.at(i).top(), 1, m_items[range.at(i).top()]),
-						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()]));
+		emit dataChanged(createIndex(range.at(i).top(), 1, m_items[range.at(i).top()].data()),
+						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()].data()));
 }
 
 void FolderNodeBase::updateSecondColumn(Container::size_type index, DefaultNodeItem *entry)
@@ -1209,8 +1209,8 @@ void FolderNodeBase::updateBothColumns(DefaultNodeItem *entry)
 void FolderNodeBase::updateBothColumns(const Union &range)
 {
 	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
-		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
-						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()]));
+		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()].data()),
+						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()].data()));
 }
 
 void FolderNodeBase::updateBothColumns(Container::size_type index, DefaultNodeItem *entry)
@@ -1221,8 +1221,8 @@ void FolderNodeBase::updateBothColumns(Container::size_type index, DefaultNodeIt
 void FolderNodeBase::updateColumns(const Union &range, int lastColumn)
 {
 	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
-		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()]),
-						 createIndex(range.at(i).bottom(), lastColumn, m_items[range.at(i).bottom()]));
+		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()].data()),
+						 createIndex(range.at(i).bottom(), lastColumn, m_items[range.at(i).bottom()].data()));
 }
 
 void FolderNodeBase::removeEntry(Container::size_type index)

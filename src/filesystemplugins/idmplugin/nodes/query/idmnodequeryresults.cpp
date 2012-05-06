@@ -560,25 +560,17 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 		QStringList folders;
 		QStringList files;
 		WrappedNodeItem *entry;
-		ItemsContainer::List removedItems;
 
-		for (Snapshot::iterator i = const_cast<NotConstEvent>(event)->snapshot.begin(), end = const_cast<NotConstEvent>(event)->snapshot.end(); i != end;)
+		for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
 			if (entry = (*i).second)
 			{
 				if (entry->info()->isDir())
 					folders.push_back(entry->info()->fileName());
 				else
 					files.push_back(entry->info()->fileName());
-
-				++i;
 			}
 			else
-			{
 				removed.push_back((*i).first.as<QueryResultPathItem>()->fileName());
-				removedItems.push_back((*i).first);
-
-				i = const_cast<NotConstEvent>(event)->snapshot.erase(i);
-			}
 
 		question = tr("Would you like to remove").
 				append(QString::fromLatin1("\n\t")).
@@ -593,7 +585,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 				append(tr("doesn't exist:")).append(QString::fromLatin1("\n\t\t")).
 				append(removed.join(QString::fromLatin1("\n\t\t"))).
 
-				append(QString::fromLatin1("\n---\n")).
+				append(QString::fromLatin1("\n\t---\n")).
 				append(tr("it will free ").append(Tools::humanReadableSize(event->snapshot.totalSize())));
 
 		if (QMessageBox::question(
@@ -625,11 +617,11 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 		bool ok = true;
 
 		for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
-			if ((*i).second->isRemoved())
+			if ((*i).second == NULL || (*i).second->isRemoved())
 			{
 				property = static_cast<QueryResultPropertyItem *>((*i).first->parent());
 
-				if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), (*i).first.as<QueryResultValueItem>()->value()))
+				if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), (*i).first.as<QueryResultRootPathValueItem>()->value()))
 				{
 					idx = property->indexOf((*i).first.data());
 
@@ -657,7 +649,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 
 	for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
-		if (!(*i).second->isRemoved())
+		if ((*i).second && !(*i).second->isRemoved())
 		{
 			(*i).first.as<QueryResultValueItem>()->unlock();
 			modelIdx = index((*i).first.data());

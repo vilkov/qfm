@@ -7,7 +7,14 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-typedef ::FileSystem::Plugins::Default::PerformRemoveTask PerformRemoveTask;
+class PerformRemoveTask : public ::FileSystem::Plugins::Default::PerformRemoveTask
+{
+public:
+	PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
+
+protected:
+	virtual void run(const volatile Flags &aborted);
+};
 
 IDM_PLUGIN_NS_END
 

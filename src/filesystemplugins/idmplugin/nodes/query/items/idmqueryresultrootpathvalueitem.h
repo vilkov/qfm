@@ -25,6 +25,7 @@ public:
 	virtual void open() const;
 
 	void update(WrappedNodeItem *item);
+	const IdmEntityValue::Holder &value() const { return m_value; }
 
 private:
 	IdmEntityValue::Holder m_value;

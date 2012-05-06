@@ -90,11 +90,6 @@ private:
 	void performRemove(const BaseTask::Event *e);
 
 private:
-	void lock(const Snapshot &snapshot, const QString &reason);
-	void unlock(const Snapshot &snapshot);
-	void update(Snapshot &updates);
-
-private:
     enum { PrefetchLimit = 64 };
 
 private:
@@ -114,6 +109,11 @@ private:
 		friend class IdmNodeQueryResults;
 		List m_container;
 	};
+
+private:
+	void lock(const Snapshot &snapshot, const QString &reason);
+	void unlock(const Snapshot &snapshot);
+	void update(Snapshot &updates);
 
 private:
     ItemsContainer m_itemsContainer;

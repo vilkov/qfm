@@ -1,5 +1,6 @@
 #include "idmqueryresultrootpathvalueitem.h"
 #include "idmqueryresultpathvalueitem.h"
+#include "../../../interfaces/idminvalidfileinfo.h"
 #include "../../../../../filesystem/filesystemproxymodel.h"
 #include "../../../../../application.h"
 
@@ -39,17 +40,22 @@ void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
 {
 	m_items.clear();
 
-	m_info = item->info().take();
-
-	if (m_info->isDir())
+	if (item)
 	{
-		m_thisContainer = item->thisContainer().take();
+		m_info = item->info().take();
 
-		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
-			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this)));
+		if (m_info->isDir())
+		{
+			m_thisContainer = item->thisContainer().take();
+
+			for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
+				m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this)));
+		}
+
+		qSort(m_items.begin(), m_items.end(), compareByFileNames);
 	}
-
-	qSort(m_items.begin(), m_items.end(), compareByFileNames);
+	else
+		m_info = new InvalidInfo(m_value->value().toString());
 }
 
 IDM_PLUGIN_NS_END

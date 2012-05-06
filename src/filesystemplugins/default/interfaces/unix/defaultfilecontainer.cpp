@@ -47,13 +47,13 @@ public:
 			{
 				if (strcmp(m_res->d_name, ".") != 0 && strcmp(m_res->d_name, "..") != 0)
 				{
-					m_info = Info(QByteArray(m_path).append(m_res->d_name), Info::Identify());
+					m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_res->d_name)), Info::Identify());
 					return true;
 				}
 			}
 			else
 			{
-				m_info = Info(QByteArray(m_path).append(m_res->d_name), Info::Identify());
+				m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_res->d_name)), Info::Identify());
 				return true;
 			}
 

@@ -523,19 +523,19 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 			}
 			else
 			{
-				m_container.rollback();
 				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+				m_container.rollback();
 			}
 		else
 		{
-			m_container.rollback();
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+			m_container.rollback();
 		}
 	}
 	else
 	{
-		m_container.rollback();
 		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+		m_container.rollback();
 	}
 }
 

@@ -163,6 +163,8 @@ bool IdmStorage::transaction()
 			}
 			else
 				setLastError(sqlQuery, errorMsg);
+
+			sqlite3_free(errorMsg);
 		}
 	}
 
@@ -180,10 +182,10 @@ bool IdmStorage::commit()
 		return true;
 	}
 	else
-	{
 		setLastError(sqlQuery, errorMsg);
-		return false;
-	}
+
+	sqlite3_free(errorMsg);
+	return false;
 }
 
 void IdmStorage::rollback()
@@ -195,6 +197,8 @@ void IdmStorage::rollback()
 		performUndo();
 	else
 		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
 }
 
 bool IdmStorage::savepoint(const QByteArray &name)
@@ -214,6 +218,8 @@ bool IdmStorage::savepoint(const QByteArray &name)
 		}
 		else
 			setLastError(sqlQuery, errorMsg);
+
+		sqlite3_free(errorMsg);
 	}
 
 	return false;
@@ -231,10 +237,10 @@ bool IdmStorage::release(const QByteArray &name)
 		return true;
 	}
 	else
-	{
 		setLastError(sqlQuery, errorMsg);
-		return false;
-	}
+
+	sqlite3_free(errorMsg);
+	return false;
 }
 
 void IdmStorage::rollback(const QByteArray &name)
@@ -247,6 +253,8 @@ void IdmStorage::rollback(const QByteArray &name)
 		performUndo(name);
 	else
 		setLastError(sqlQuery, errorMsg);
+
+	sqlite3_free(errorMsg);
 }
 
 QueryContext IdmStorage::prepare(const Query &query, QString &error) const
@@ -389,7 +397,6 @@ bool IdmStorage::removeEntity(IdmEntity *entity)
 		setLastError(sqlQuery, errorMsg);
 
 	sqlite3_free(errorMsg);
-
 	return false;
 }
 
@@ -727,7 +734,6 @@ bool IdmStorage::removeValue(const IdmEntityValue::Holder &entityValue, const Id
 		setLastError(sqlQuery, errorMsg);
 
 	sqlite3_free(errorMsg);
-
 	return false;
 }
 
@@ -775,7 +781,6 @@ bool IdmStorage::removeEntityValue(IdmEntity *entity, id_type id) const
 		setLastError(sqlQuery, errorMsg);
 
 	sqlite3_free(errorMsg);
-
 	return false;
 }
 
@@ -790,7 +795,6 @@ bool IdmStorage::removeEntityValues(IdmEntity *entity, const IdsList &ids) const
 		setLastError(sqlQuery, errorMsg);
 
 	sqlite3_free(errorMsg);
-
 	return false;
 }
 
@@ -876,7 +880,6 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity) const
 	}
 
 	sqlite3_free(errorMsg);
-
 	return res;
 }
 
@@ -901,7 +904,6 @@ bool IdmStorage::cleanupParentsValues(IdmEntity *entity, const IdsList &ids) con
 	}
 
 	sqlite3_free(errorMsg);
-
 	return res;
 }
 
@@ -931,7 +933,6 @@ bool IdmStorage::cleanupPropertyValues(IdmEntity *entity) const
 		}
 
 	sqlite3_free(errorMsg);
-
 	return res;
 }
 

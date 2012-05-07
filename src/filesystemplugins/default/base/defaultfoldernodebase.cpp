@@ -381,11 +381,17 @@ void FolderNodeBase::createFile(const QModelIndex &index, INodeView *view)
 
 void FolderNodeBase::createDirectory(const QModelIndex &index, INodeView *view)
 {
-	StringDialog dialog(
-			tr("Enter name for new directory"),
-			tr("Name"),
-			index.isValid() ? m_items[m_proxy.mapToSource(index).row()].as<DefaultNodeItem>()->info()->fileName() : QString(),
-			Application::mainWindow());
+	QString name;
+
+	if (index.isValid())
+	{
+		DefaultNodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<DefaultNodeItem>();
+
+		if (!item->isRootItem())
+			name = item->info()->fileName();
+	}
+
+	StringDialog dialog(tr("Enter name for new directory"), tr("Name"), name, Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
 	{

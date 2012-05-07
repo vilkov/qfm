@@ -35,6 +35,8 @@ public:
 	const IdmEntityValue::Holder &at(size_type index) const { return m_items.at(index); }
 	IdmEntityValue::Holder take(const QModelIndex &index);
 
+	void close() { m_reader.close(); }
+
 protected:
     enum { PrefetchLimit = 64 };
 

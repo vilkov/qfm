@@ -20,6 +20,7 @@ public:
 	IdmEntityValue::Holder next() const;
 	bool eof() const { return m_afterLast; }
 	bool bof() const { return m_beforeFirst; }
+	void close() { m_afterLast = true; m_context = QueryContext(); }
 
 	static void addValue(const IdmEntityValue::Holder &value, const IdmEntityValue::Holder &property);
 	static void addValue(const IdmEntityValue::Holder &value, const IdmCompositeEntityValue::List &values);

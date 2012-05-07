@@ -119,6 +119,8 @@ public:
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
 	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
+	void closeDbContext() { m_private.model().close(); }
+
     void addValue() { m_private.addValue(); }
 	void removeValue() { m_private.removeValue(); }
 //    void select(const QModelIndex &index) { m_private.select(index); }

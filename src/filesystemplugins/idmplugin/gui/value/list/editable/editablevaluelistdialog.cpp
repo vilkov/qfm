@@ -21,6 +21,23 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
     setCentralWidget(&m_widget);
 }
 
+void EditableValueListDialog::accept()
+{
+	closeDbContext();
+	NestedPlainDialog::accept();
+}
+
+void EditableValueListDialog::reject()
+{
+	closeDbContext();
+	NestedPlainDialog::reject();
+}
+
+void EditableValueListDialog::closeDbContext()
+{
+	m_widget.closeDbContext();
+}
+
 IdmEntityValue::Holder EditableValueListDialog::takeValue()
 {
 	return m_widget.takeValue();

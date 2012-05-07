@@ -14,7 +14,11 @@ class EditableValueListDialog : public NestedPlainDialog
 public:
 	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
+    virtual void accept();
+	virtual void reject();
+
 protected:
+	void closeDbContext();
 	IdmEntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
 

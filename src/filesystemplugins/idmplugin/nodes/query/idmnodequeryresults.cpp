@@ -227,6 +227,8 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 				}
 			}
+			else
+				m_container.rollback();
 		}
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());

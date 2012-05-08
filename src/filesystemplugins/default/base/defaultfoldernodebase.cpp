@@ -876,15 +876,15 @@ void FolderNodeBase::performCopy(BaseTask *oldTask, const Snapshot &snapshot, IC
 	if (destination->isPhysical() && move)
 	{
 		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
-		resetTask(task.data(), oldTask);
 		const_cast<const PerformMoveTask *>(task.data())->destination()->node()->refresh();
+		resetTask(task.data(), oldTask);
 		task.take();
 	}
 	else
 	{
 		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
-		resetTask(task.data(), oldTask);
 		const_cast<const PerformCopyTask *>(task.data())->destination()->node()->refresh();
+		resetTask(task.data(), oldTask);
 		task.take();
 	}
 }

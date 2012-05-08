@@ -65,8 +65,8 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 			case Database::Rating:
 				return new Editor<typename EntityValueType<Database::Rating>::type>::type(parent);
 
-			case Database::Path:
-				return new Editor<typename EntityValueType<Database::Path>::type>::type(parent);
+//			case Database::Path:
+//				return new Editor<typename EntityValueType<Database::Path>::type>::type(parent);
 
 			default:
 				break;
@@ -76,7 +76,7 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 		if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
 			return new Editor<QString>::type(parent);
 
-	return 0;
+	return NULL;
 }
 
 void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -213,14 +213,14 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 				{
 					if (!m_container.commit())
 					{
-						m_container.rollback();
 						QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+						m_container.rollback();
 					}
 				}
 				else
 				{
-					m_container.rollback();
 					QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+					m_container.rollback();
 				}
 		else
 			QMessageBox::critical(editor, tr("Error"), m_container.lastError());
@@ -237,17 +237,17 @@ void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 			{
 				if (!m_container.commit())
 				{
-					m_container.rollback();
 					QMessageBox::critical(editor, tr("Error"), m_container.lastError());
+					m_container.rollback();
 				}
 			}
 			else
 			{
-				m_container.rollback();
 				QMessageBox::critical(
 							editor,
 							tr("Failed to rename property \"%1\"").arg(property->property().name),
 							m_container.lastError());
+				m_container.rollback();
 			}
 		}
 		else

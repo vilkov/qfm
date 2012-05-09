@@ -16,7 +16,7 @@ public:
 		Value,
 		List,
 		Group,
-		Tab
+		Page
 	};
 
 public:

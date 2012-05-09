@@ -26,6 +26,7 @@ public:
 
 public:
 	RootNodeListItem(Base *parent);
+	virtual ~RootNodeListItem();
 
 	/* Base */
 	virtual Base *at(size_type index) const;

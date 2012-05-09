@@ -31,6 +31,11 @@ RootNodeListItem::RootNodeListItem(Base *parent) :
 	RootNodeItem(parent)
 {}
 
+RootNodeListItem::~RootNodeListItem()
+{
+	qDeleteAll(m_items);
+}
+
 RootNodeListItem::Base *RootNodeListItem::at(size_type index) const
 {
 	return m_items.at(index);

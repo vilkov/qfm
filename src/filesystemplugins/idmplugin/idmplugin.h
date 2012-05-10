@@ -3,6 +3,7 @@
 
 #include <QtCore/QString>
 #include "actions/idmcreatedbaction.h"
+#include "settings/idmpluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
@@ -13,21 +14,15 @@ class Plugin : public IPlugin
 public:
 	Plugin();
 
-	/* ISettings */
-	virtual void beginGroup(const QString &name);
-	virtual void writeValue(const QString &name, const QVariant &value);
-	virtual QVariant readValue(const QString &name, const QVariant &defaultValue = QVariant());
-	virtual void endGroup();
-
-	/* IGlobalSettings */
-	virtual QString id() const;
-
 	virtual void registered();
+
+	virtual const ::Tools::Settings::Tab *settings() const;
 	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 	static const QString &fileName();
 
 private:
+	Settings m_settings;
 	mutable QString m_error;
 	CreateDbAction m_createDbAction;
 };

@@ -14,31 +14,6 @@ Plugin::Plugin()
 	instance = this;
 }
 
-void Plugin::beginGroup(const QString &name)
-{
-
-}
-
-void Plugin::writeValue(const QString &name, const QVariant &value)
-{
-
-}
-
-QVariant Plugin::readValue(const QString &name, const QVariant &defaultValue)
-{
-	return defaultValue;
-}
-
-void Plugin::endGroup()
-{
-
-}
-
-QString Plugin::id() const
-{
-	return QString::fromLatin1("Arc");
-}
-
 void Plugin::registered()
 {
 	Plugin::FileTypeIdList list = fileTypes();
@@ -48,6 +23,11 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
 
 	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
+}
+
+const ::Tools::Settings::Tab *Plugin::settings() const
+{
+	return &m_settings;
 }
 
 Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const

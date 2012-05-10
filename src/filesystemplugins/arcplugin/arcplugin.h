@@ -6,6 +6,7 @@
 #include "actions/arcunpackhereaction.h"
 #include "actions/arcunpackintosubdiraction.h"
 #include "plugins/arclibarchiveplugin.h"
+#include "settings/arcpluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
@@ -16,22 +17,17 @@ class Plugin : public IFileReaderPlugin
 public:
 	Plugin();
 
-	/* ISettings */
-	virtual void beginGroup(const QString &name);
-	virtual void writeValue(const QString &name, const QVariant &value);
-	virtual QVariant readValue(const QString &name, const QVariant &defaultValue = QVariant());
-	virtual void endGroup();
-
-	/* IGlobalSettings */
-	virtual QString id() const;
-
 	virtual void registered();
+
+	virtual const ::Tools::Settings::Tab *settings() const;
 	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
+
 	virtual FileTypeIdList fileTypes() const;
 
 	static const Archive **archivers();
 
 private:
+	Settings m_settings;
 	PackAction m_packAction;
 	UnPackAction m_unPackAction;
 	UnPackHereAction m_unPackHereAction;

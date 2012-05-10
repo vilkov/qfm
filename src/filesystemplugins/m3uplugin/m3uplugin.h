@@ -1,7 +1,7 @@
 #ifndef M3UPLUGIN_H_
 #define M3UPLUGIN_H_
 
-#include "m3uplugin_ns.h"
+#include "settings/m3upluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
@@ -12,19 +12,13 @@ class Plugin : public IPlugin
 public:
 	Plugin();
 
-	/* ISettings */
-	virtual void beginGroup(const QString &name);
-	virtual void writeValue(const QString &name, const QVariant &value);
-	virtual QVariant readValue(const QString &name, const QVariant &defaultValue = QVariant());
-	virtual void endGroup();
-
-	/* IGlobalSettings */
-	virtual QString id() const;
-
 	virtual void registered();
+
+	virtual const ::Tools::Settings::Tab *settings() const;
 	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
+	Settings m_settings;
 	QString m_identity;
 };
 

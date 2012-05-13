@@ -1,7 +1,6 @@
 #include "idmfoldernode.h"
 #include "../control/idmcopycontrol.h"
 #include "../../gui/choose/chooseentitydialog.h"
-#include "../../../../filesystem/filesystempluginsmanager.h"
 #include "../../../../application.h"
 
 #include <QtGui/QMessageBox>
@@ -52,7 +51,7 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-Node *IdmFolderNode::createNode(const IFileInfo *file, PluginsManager *plugins) const
+Node *IdmFolderNode::createNode(const IFileInfo *file) const
 {
 	if (file->isDir())
 	{
@@ -64,16 +63,16 @@ Node *IdmFolderNode::createNode(const IFileInfo *file, PluginsManager *plugins) 
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 	}
-	else
-		if (Node *res = plugins->node(container().data(), file, const_cast<IdmFolderNode *>(this)))
-			return res;
+//	else
+//		if (Node *res = plugins->node(container().data(), file, const_cast<IdmFolderNode *>(this)))
+//			return res;
 
 	return NULL;
 }
 
-Node *IdmFolderNode::privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *IdmFolderNode::privateViewChild(const QString &fileName, QModelIndex &selected)
 {
-	return FolderNode::viewChild(fileName, plugins, selected);
+	return FolderNode::viewChild(fileName, selected);
 }
 
 IDM_PLUGIN_NS_END

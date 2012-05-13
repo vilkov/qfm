@@ -254,7 +254,7 @@ QModelIndex IdmRootNode::rootIndex() const
 	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
 }
 
-Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	RootNodeItem *item;
 
@@ -304,16 +304,16 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QM
 	return NULL;
 }
 
-Node *IdmRootNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *IdmRootNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	if (Node *node = static_cast<RootNodeFilesItem* >(m_items.at(FilesItemIndex))->node())
-		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, plugins, selected);
+		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, selected);
 	else
 	{
 		IFileContainer::Holder folder(m_container.container()->open());
 
 		static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(folder, m_container, this));
-		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, plugins, selected);
+		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, selected);
 	}
 
 	return NULL;

@@ -16,16 +16,16 @@ void Node::viewClosed(INodeView *nodeView)
 ::History::Entry *Node::viewParent(INodeView *nodeView)
 {
 	if (static_cast<INode*>(parentNode()) != root())
-		return viewChild(nodeView, rootIndex(), 0);
+		return viewChild(nodeView, rootIndex());
 	else
 		return NULL;
 }
 
-::History::Entry *Node::viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
+::History::Entry *Node::viewChild(INodeView *nodeView, const QModelIndex &idx)
 {
 	QModelIndex selected;
 
-	if (Node *node = viewChild(idx, plugins, selected))
+	if (Node *node = viewChild(idx, selected))
 	{
 		/* XXX: Add 2 links because of HistoryEntry */
 
@@ -43,12 +43,12 @@ void Node::viewClosed(INodeView *nodeView)
 	return NULL;
 }
 
-::History::Entry *Node::viewInNewTab(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins)
+::History::Entry *Node::viewInNewTab(INodeView *nodeView, const QModelIndex &idx)
 {
 	Q_ASSERT(nodeView->node() == NULL);
 	QModelIndex selected;
 
-	if (Node *node = viewChild(idx, plugins, selected))
+	if (Node *node = viewChild(idx, selected))
 	{
 		/* XXX: Add 2 links because of HistoryEntry */
 
@@ -63,34 +63,6 @@ void Node::viewClosed(INodeView *nodeView)
 	}
 
 	return new HistoryEntry(this);
-}
-
-::History::Entry *Node::viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins)
-{
-	Path path(filePath);
-	Path::Iterator it = path.begin();
-
-	if (!it.atEnd())
-	{
-		QModelIndex selected;
-
-		if (Node *node = root()->viewChild(nodeView, it, selected, plugins))
-		{
-			/* XXX: Add 2 links because of HistoryEntry */
-
-			if (node == parentNode())
-				node->viewThis(nodeView, m_parentEntryIndex, 2);
-			else
-				node->viewThis(nodeView, selected, 2);
-
-			node->refresh();
-			removeView(nodeView);
-
-			return new HistoryEntry(node);
-		}
-	}
-
-	return NULL;
 }
 
 void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
@@ -139,6 +111,19 @@ Node *Node::root() const
 	removeView(view);
 
 	return new HistoryEntry(node);
+}
+
+Node *Node::viewChild(const Path::Iterator &path, QModelIndex &selected)
+{
+	Node *current = this;
+
+	for (Node *next; !path.atEnd(); ++path)
+		if (next = current->viewChild(*path, selected))
+			current = next;
+		else
+			break;
+
+	return current;
 }
 
 void Node::addLink()
@@ -201,17 +186,6 @@ void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 lin
 		nodeView->select(rootIndex());
 }
 
-Node *Node::viewChild(INodeView *nodeView, const Path::Iterator &path, QModelIndex &selected, PluginsManager *plugins)
-{
-	if (Node *node = viewChild(*path, plugins, selected))
-		if ((++path).atEnd())
-			return node;
-		else
-			return node->viewChild(nodeView, path, selected, plugins);
-
-	return NULL;
-}
-
 bool Node::isLinked() const
 {
 	return m_links;
@@ -242,6 +216,7 @@ void Node::allChildLinksRemoved(Node *child)
 		{
 			nodeRemoved(child);
 			delete child;
+			delete this;
 		}
 }
 

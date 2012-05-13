@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "../filesystem/tools/filesystemcommontools.h"
 #include "../application.h"
+
 #include <QtCore/QDir>
 #include <QtCore/QTextCodec>
 #include <QtGui/QMenuBar>
@@ -15,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_centralWidget(&m_eventHandler, this),
     m_layout(&m_centralWidget),
     m_splitter(&m_centralWidget),
-    m_leftFoldersView(&m_root, loadLeftPanelTabs(), m_rightFoldersView, &m_splitter),
-    m_rightFoldersView(&m_root, loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
+    m_leftFoldersView(loadLeftPanelTabs(), m_rightFoldersView, &m_splitter),
+    m_rightFoldersView(loadRightPanelTabs(), m_leftFoldersView, &m_splitter),
 
     /* Actions */
     m_fileMenuActions(this),

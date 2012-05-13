@@ -7,7 +7,6 @@
 #include "m3uproxymodel.h"
 #include "items/m3uitem.h"
 #include "../../filesystem/filesystemnode.h"
-#include "../../filesystem/filesystempluginsmanager.h"
 
 
 M3U_PLUGIN_NS_BEGIN
@@ -56,8 +55,8 @@ protected:
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((M3uNode *)this)->m_delegate; }
 	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
-	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:
 	M3uItem *rootItem() const { return m_items.container().at(0); }

@@ -60,8 +60,8 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 	virtual void nodeRemoved(Node *node);
 
 protected:
@@ -98,7 +98,7 @@ protected:
 
 protected:
 	const IFileContainer::Holder &container() const { return m_container; }
-	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
+	virtual Node *createNode(const IFileInfo *file) const;
 
 protected:
 	class Container : public TasksNode::Container

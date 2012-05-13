@@ -8,7 +8,6 @@
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
 #include "../de/mountpoints/mountpoints.h"
-#include "../filesystem/root/filesystemrootnode.h"
 
 #include "view/dolphinitemlistcontainer.h"
 
@@ -87,7 +86,6 @@ private:
 
 private:
     MountPoints m_mounts;
-    FileSystem::RootNode m_root;
 
     CentralWidgetEventHandler m_eventHandler;
     CentralWidget m_centralWidget;

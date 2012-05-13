@@ -227,7 +227,7 @@ QModelIndex ArcNode::rootIndex() const
 	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex)));
 }
 
-Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	if (static_cast<ArcNodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
 	{
@@ -238,7 +238,7 @@ Node *ArcNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModel
 	return NULL;
 }
 
-Node *ArcNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *ArcNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	return NULL;
 }

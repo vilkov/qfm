@@ -1,9 +1,6 @@
 #ifndef FILESYSTEMPATH_H_
 #define FILESYSTEMPATH_H_
 
-#ifdef Q_OS_WIN
-#	include <QtCore/QDir>
-#endif
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include "../filesystem_ns.h"
@@ -50,32 +47,79 @@ public:
 	};
 
 public:
-	Path(const QString &path) :
-#ifdef Q_OS_WIN
-		m_isAbsolute(path.size() >= 2 && path.at(1) == QChar(':')),
-		m_path(QDir::fromNativeSeparators(path).split(QChar('/'), QString::SkipEmptyParts))
-#else
-		m_isAbsolute(path.startsWith(QChar('/'))),
-		m_path(path.split(QChar('/'), QString::SkipEmptyParts))
-#endif
+	Path(const QString &path)
 	{
-#ifdef Q_OS_WIN
-		if (isValid())
-			m_path[0].append(QChar('/')); /* TODO: This is Qt bug! */
-#else
-		if (m_isAbsolute)
-			m_path.push_front(QString::fromLatin1("/"));
-#endif
+		parseUri(path);
 	}
 
 	bool isValid() const { return !m_path.isEmpty(); }
-	bool isAbsolute() const { return m_isAbsolute; }
+	const QString &shema() const { return m_shema; }
 	Iterator begin() { return Iterator(m_path); }
 	Iterator erase(const Iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
 	QString toString() const { return m_path.join(QChar('/')); }
 
 private:
-	bool m_isAbsolute;
+	/* Simple Turing machine */
+
+	typedef qint32                size_t;
+	typedef QPair<size_t, size_t> Position;
+
+	void parseUri(const QString &uri)
+	{
+		Position position(0, 0);
+
+		for (size_t size = uri.size(); position.second < size; ++position.second)
+			if (uri.at(position.second) == QChar(':'))
+				shemaState(uri, position);
+			else
+				if (uri.at(position.second) == QChar('/'))
+					pathState(uri, position);
+
+		if (position.first < uri.size())
+		{
+			m_path.push_back(uri.mid(position.first, uri.size() - position.first));
+
+#ifndef Q_OS_WIN32
+			if (m_path.at(0).isEmpty())
+				m_path[0] = QChar('/');
+		}
+		else
+			if (!m_path.isEmpty() && m_path.at(0).isEmpty())
+				m_path[0] = QChar('/');
+#else
+		}
+#endif
+	}
+
+	void shemaState(const QString &uri, Position &position)
+	{
+		if (++position.second < uri.size() && uri.at(position.second) == QChar('/'))
+			if (++position.second < uri.size() && uri.at(position.second) == QChar('/'))
+				if (m_shema.isEmpty())
+				{
+					m_shema = uri.mid(position.first, position.second - position.first - 2);
+					position.first = position.second + 1;
+				}
+				else
+				{
+					m_path.push_back(uri.mid(position.first, position.second - position.first - 1));
+					position.first = position.second + 1;
+				}
+			else
+			{
+				m_path.push_back(uri.mid(position.first, position.second - position.first - 1));
+				position.first = position.second + 1;
+			}
+	}
+
+	void pathState(const QString &uri, Position &position)
+	{
+		m_path.push_back(uri.mid(position.first, position.second - position.first));
+		position.first = position.second + 1;
+	}
+
+private:
+	QString m_shema;
 	QStringList m_path;
 };
 

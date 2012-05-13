@@ -407,7 +407,7 @@ QModelIndex IdmNodeQueryResults::rootIndex() const
 	return QModelIndex();
 }
 
-Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	if (idx.isValid())
 	{
@@ -444,7 +444,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, PluginsManager *plu
 	return NULL;
 }
 
-Node *IdmNodeQueryResults::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *IdmNodeQueryResults::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	return NULL;
 }

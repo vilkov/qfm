@@ -8,9 +8,9 @@
 #include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
 #include "mainwindow/mainwindow.h"
-#include "filesystemplugins/pluginsmanager.h"
 #include "de/deservice.h"
 #include "de/contextmenu/decontextmenufactory.h"
+#include "filesystem/root/filesystemrootnode.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -32,7 +32,7 @@ public:
 	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
-	static ::FileSystem::PluginsManager *plugins() { return &instance()->m_plugins; }
+	static ::FileSystem::RootNode *rootNode();
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
@@ -44,7 +44,6 @@ private:
 	::Tools::TasksPool::TaskPool m_taskPool;
 	::DesktopEnvironment::Service m_desktopService;
     ::DesktopEnvironment::ContextMenuFactory m_globalMenu;
-    ::FileSystem::Plugins::MyPluginsManager m_plugins;
 	MainWindow m_mainWindow;
 };
 

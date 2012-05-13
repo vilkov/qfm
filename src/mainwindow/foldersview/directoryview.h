@@ -50,8 +50,8 @@ public:
     virtual ~DirectoryView();
 
     /* Should be called immediately after construction and adding to the tabWidget! */
-	void setupModel(FileSystem::INode *node, const Tab &tab);
-	void setupModel(FileSystem::INode *node, const QString &absoluteFilePath);
+	void setupModel(const Tab &tab);
+	void setupModel(const QString &absoluteFilePath);
 	void setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry);
 
 public:

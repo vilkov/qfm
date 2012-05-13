@@ -57,8 +57,8 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected);
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
+	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:
 	/* TasksNode */

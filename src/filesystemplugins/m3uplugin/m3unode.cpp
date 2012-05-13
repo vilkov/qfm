@@ -214,12 +214,12 @@ QString M3uNode::location(const QString &fileName) const
 	return NULL;
 }
 
-Node *M3uNode::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	return 0;
 }
 
-Node *M3uNode::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *M3uNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	return 0;
 }

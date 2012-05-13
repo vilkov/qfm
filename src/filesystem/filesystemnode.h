@@ -25,9 +25,8 @@ public:
 	/* IFileNavigation */
 	virtual void viewClosed(INodeView *nodeView);
 	virtual ::History::Entry *viewParent(INodeView *nodeView);
-	virtual ::History::Entry *viewChild(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual ::History::Entry *viewInNewTab(INodeView *nodeView, const QModelIndex &idx, PluginsManager *plugins);
-	virtual ::History::Entry *viewAbsolute(INodeView *nodeView, const QString &filePath, PluginsManager *plugins);
+	virtual ::History::Entry *viewChild(INodeView *nodeView, const QModelIndex &idx);
+	virtual ::History::Entry *viewInNewTab(INodeView *nodeView, const QModelIndex &idx);
 	virtual void viewHistory(INodeView *nodeView, ::History::Entry *entry);
 
 	/* INode */
@@ -38,8 +37,8 @@ public:
 
 protected:
 	virtual QModelIndex rootIndex() const = 0;
-	virtual Node *viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected) = 0;
-	virtual Node *viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected) = 0;
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected) = 0;
+	virtual Node *viewChild(const QString &fileName, QModelIndex &selected) = 0;
 	virtual void nodeRemoved(Node *node);
 
 protected:
@@ -47,6 +46,7 @@ protected:
 	Node *parentNode() const { return static_cast<Node*>(QObject::parent()); }
 	bool isVisible() const { return !m_view.isEmpty(); }
 	::History::Entry *switchTo(Node *node, INodeView *view);
+	Node *viewChild(const Path::Iterator &path, QModelIndex &selected);
 
 private:
 	friend class TasksNode;
@@ -56,6 +56,8 @@ private:
 	virtual void removeLink();
 
 private:
+	friend class RootNode;
+
 	class HistoryEntry : public ::History::Entry
 	{
 	public:
@@ -71,7 +73,6 @@ private:
 
 	void viewThis(INodeView *nodeView, const QModelIndex &selected);
 	void viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links);
-	Node *viewChild(INodeView *nodeView, const Path::Iterator &path, QModelIndex &selected, PluginsManager *plugins);
 
 private:
 	bool isLinked() const;

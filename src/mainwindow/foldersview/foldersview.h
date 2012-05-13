@@ -29,7 +29,7 @@ public:
     typedef QList<Tab> TabList;
 
 public:
-    FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
+    FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);

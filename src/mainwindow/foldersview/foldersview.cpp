@@ -2,15 +2,13 @@
 #include "../../tools/pointers/pscopedpointer.h"
 
 
-FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersViewRef other, QWidget *parent) :
+FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
 	m_doNotRefreshTab(true),
     m_layout(this),
     m_tabWidget(this),
 	m_other(other)
 {
-	Q_ASSERT(root != 0);
-
 	m_layout.setMargin(3);
 	m_layout.setSpacing(1);
 	m_layout.addWidget(&m_tabWidget);
@@ -20,7 +18,7 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 	{
 		DirectoryView *widget;
 		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-		widget->setupModel(root, DirectoryView::defaultPath());
+		widget->setupModel(DirectoryView::defaultPath());
 	}
 	else
 	{
@@ -35,7 +33,7 @@ FoldersView::FoldersView(FileSystem::INode *root, const TabList &tabs, FoldersVi
 				activeWidget = i;
 
 			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-			widget->setupModel(root, tab.tab);
+			widget->setupModel(tab.tab);
 		}
 
 		m_tabWidget.setCurrentIndex(activeWidget);

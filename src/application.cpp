@@ -8,6 +8,41 @@
 #include <QtCore/QTranslator>
 #include <QtGui/QKeyEvent>
 
+#include "filesystemplugins/default/defaultplugin.h"
+#include "filesystemplugins/m3uplugin/m3uplugin.h"
+#include "filesystemplugins/idmplugin/idmplugin.h"
+#include "filesystemplugins/arcplugin/arcplugin.h"
+
+
+FILESYSTEM_PLUGINS_NS_BEGIN
+
+class AppRootNode : public RootNode
+{
+public:
+	AppRootNode() :
+		::FileSystem::RootNode()
+	{
+		registerStatic(&m_m3uplugin);
+		registerStatic(&m_idmplugin);
+		registerStatic(&m_arcplugin);
+
+		/* XXX: Must be last in the list. */
+		registerStatic(&m_default);
+	}
+
+private:
+	M3u::Plugin m_m3uplugin;
+	Idm::Plugin m_idmplugin;
+	Arc::Plugin m_arcplugin;
+
+private:
+	Default::Plugin m_default;
+};
+
+static AppRootNode *appRootNode = NULL;
+
+FILESYSTEM_PLUGINS_NS_END
+
 
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
@@ -21,6 +56,7 @@ Application::Application(const QString &name, const QString &organization, const
 Application::~Application()
 {
 	m_taskPool.clear();
+	delete ::FileSystem::Plugins::appRootNode;
 }
 
 QString Application::version() const
@@ -73,6 +109,14 @@ qint32 Application::exec()
 		m_mainWindow.show();
 		return QApplication::exec();
 	}
+}
+
+::FileSystem::RootNode *Application::rootNode()
+{
+	if (::FileSystem::Plugins::appRootNode)
+		return ::FileSystem::Plugins::appRootNode;
+	else
+		return ::FileSystem::Plugins::appRootNode = new ::FileSystem::Plugins::AppRootNode();
 }
 
 void Application::handleException(const char *where)

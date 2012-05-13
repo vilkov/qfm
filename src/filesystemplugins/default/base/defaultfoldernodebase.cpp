@@ -491,7 +491,7 @@ QModelIndex FolderNodeBase::rootIndex() const
 	return QModelIndex();
 }
 
-Node *FolderNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins, QModelIndex &selected)
+Node *FolderNodeBase::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
@@ -505,7 +505,7 @@ Node *FolderNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins,
 			if (entry->node())
 				entry->node()->setParentEntryIndex(idx);
 			else
-				if (Node *node = createNode(entry->info().data(), plugins))
+				if (Node *node = createNode(entry->info().data()))
 				{
 					entry->setNode(node);
 					node->setParentEntryIndex(idx);
@@ -521,7 +521,7 @@ Node *FolderNodeBase::viewChild(const QModelIndex &idx, PluginsManager *plugins,
 	return NULL;
 }
 
-Node *FolderNodeBase::viewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected)
+Node *FolderNodeBase::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	Container::size_type index = m_items.indexOf(fileName);
 
@@ -531,7 +531,7 @@ Node *FolderNodeBase::viewChild(const QString &fileName, PluginsManager *plugins
 		IFileInfo::Holder info;
 
 		if (info = m_container->scanner()->info(fileName, error))
-			if (Node *node = createNode(info.data(), plugins))
+			if (Node *node = createNode(info.data()))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 				m_items.add(NodeItem::Holder(new DefaultNodeItem(info, node)));
@@ -562,7 +562,7 @@ Node *FolderNodeBase::viewChild(const QString &fileName, PluginsManager *plugins
 		if (item->node())
 			return item->node();
 		else
-			if (Node *node = createNode(item->info().data(), plugins))
+			if (Node *node = createNode(item->info().data()))
 			{
 				item->setNode(node);
 				return node;
@@ -837,9 +837,9 @@ void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
 	updateFirstColumn(update);
 }
 
-Node *FolderNodeBase::createNode(const IFileInfo *file, PluginsManager *plugins) const
+Node *FolderNodeBase::createNode(const IFileInfo *file) const
 {
-	return plugins->node(m_container.data(), file, const_cast<FolderNodeBase *>(this));
+	return NULL;//plugins->node(m_container.data(), file, const_cast<FolderNodeBase *>(this));
 }
 
 void FolderNodeBase::updateFiles()

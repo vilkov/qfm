@@ -22,11 +22,11 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 protected:
-	virtual Node *createNode(const IFileInfo *file, PluginsManager *plugins) const;
+	virtual Node *createNode(const IFileInfo *file) const;
 
 private:
 	friend class IdmRootNode;
-	Node *privateViewChild(const QString &fileName, PluginsManager *plugins, QModelIndex &selected);
+	Node *privateViewChild(const QString &fileName, QModelIndex &selected);
 
 private:
 	IdmContainer m_container;

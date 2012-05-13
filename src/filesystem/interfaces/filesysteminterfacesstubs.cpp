@@ -19,6 +19,9 @@ INode::~INode()
 IPlugin::~IPlugin()
 {}
 
+IContentPlugin::~IContentPlugin()
+{}
+
 INodeView::~INodeView()
 {}
 

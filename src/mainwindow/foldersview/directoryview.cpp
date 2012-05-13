@@ -59,28 +59,28 @@ DirectoryView::~DirectoryView()
 		m_node->viewClosed(this);
 }
 
-void DirectoryView::setupModel(FileSystem::INode *node, const Tab &tab)
+void DirectoryView::setupModel(const Tab &tab)
 {
-	if (::History::Entry *entry = node->viewAbsolute(this, tab.path, Application::plugins()))
+	if (::History::Entry *entry = Application::rootNode()->open(this, tab.path))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
 }
 
-void DirectoryView::setupModel(FileSystem::INode *node, const QString &absoluteFilePath)
+void DirectoryView::setupModel(const QString &absoluteFilePath)
 {
-	if (::History::Entry *entry = node->viewAbsolute(this, absoluteFilePath, Application::plugins()))
+	if (::History::Entry *entry = Application::rootNode()->open(this, absoluteFilePath))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
 }
 
 void DirectoryView::setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry)
 {
-	if (::History::Entry *entry = node->viewInNewTab(this, index, Application::plugins()))
+	if (::History::Entry *entry = node->viewInNewTab(this, index))
 		m_navigation.init(entry);
 	else
-		m_navigation.init(node->viewAbsolute(this, defaultPath(), Application::plugins()));
+		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
 }
 
 FileSystem::INode *DirectoryView::node() const
@@ -217,7 +217,7 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	if (::History::Entry *entry = m_node->viewAbsolute(this, filePath, Application::plugins()))
+	if (::History::Entry *entry = Application::rootNode()->open(this, filePath))
 		m_navigation.save(entry);
 }
 
@@ -249,7 +249,7 @@ void DirectoryView::activated()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-		if (::History::Entry *entry = m_node->viewChild(this, index, Application::plugins()))
+		if (::History::Entry *entry = m_node->viewChild(this, index))
 			m_navigation.save(entry);
 }
 

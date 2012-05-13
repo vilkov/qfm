@@ -10,8 +10,8 @@
 
 
 FILE_SYSTEM_NS_BEGIN
-
 class INode;
+
 
 class INodeView
 {

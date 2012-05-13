@@ -1,5 +1,6 @@
 #include "m3uplugin.h"
 #include "m3unode.h"
+
 #include <QtCore/QTextCodec>
 
 
@@ -19,9 +20,14 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 	return &m_settings;
 }
 
-Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+Plugin::FileTypeIdList Plugin::fileTypes() const
 {
-	return 0;
+	return FileTypeIdList();
+}
+
+Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+{
+	return NULL;
 }
 
 //Node *M3uPlugin::node(const IFileInfo *info, IFile *file, Node *parent) const

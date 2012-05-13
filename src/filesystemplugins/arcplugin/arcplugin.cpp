@@ -30,11 +30,6 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 	return &m_settings;
 }
 
-Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
-{
-	return new ArcNode(container->location(file->fileName()), parent);
-}
-
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
 	using namespace ::DesktopEnvironment;
@@ -48,6 +43,11 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 			fileTypeId(FileTypes::Application::RarFile) <<
 			fileTypeId(FileTypes::Application::TarzFile) <<
 			fileTypeId(FileTypes::Application::BZip2File);
+}
+
+Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+{
+	return new ArcNode(container->location(file->fileName()), parent);
 }
 
 const Archive **Plugin::archivers()

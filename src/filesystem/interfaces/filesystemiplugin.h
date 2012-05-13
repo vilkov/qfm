@@ -17,29 +17,26 @@ public:
 	virtual ~IPlugin();
 
 	virtual void registered() = 0;
-
 	virtual const ::Tools::Settings::Tab *settings() const = 0;
-	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const = 0;
 };
 
 
-class IContentPlugin
+class IContainerPlugin : public virtual IPlugin
 {
 public:
-	virtual ~IContentPlugin();
-
 	virtual const QString &shema() const = 0;
 	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const = 0;
 };
 
 
-class IFileReaderPlugin : public IPlugin
+class IFilePlugin : public virtual IPlugin
 {
 public:
 	typedef QList<FileTypeId> FileTypeIdList;
 
 public:
 	virtual FileTypeIdList fileTypes() const = 0;
+	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const = 0;
 };
 
 FILE_SYSTEM_NS_END

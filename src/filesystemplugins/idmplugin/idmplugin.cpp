@@ -18,7 +18,15 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 	return &m_settings;
 }
 
-Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+Plugin::FileTypeIdList Plugin::fileTypes() const
+{
+	FileTypeId type;
+	type.mime = QString::fromLatin1("inode/directory");
+
+	return FileTypeIdList() << type;
+}
+
+Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
 	if (file->isDir())
 	{

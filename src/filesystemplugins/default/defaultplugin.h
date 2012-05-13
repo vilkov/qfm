@@ -7,7 +7,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class Plugin : public IContentPlugin
+class Plugin : public IContainerPlugin, public IFilePlugin
 {
 public:
 	Plugin();
@@ -15,13 +15,15 @@ public:
 
 	/* IPlugin */
 	virtual void registered();
-
 	virtual const ::Tools::Settings::Tab *settings() const;
-	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 	/* IContentPlugin */
 	const QString &shema() const;
 	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const;
+
+	/* IFilePlugin */
+	virtual FileTypeIdList fileTypes() const;
+	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
 	QString m_shema;

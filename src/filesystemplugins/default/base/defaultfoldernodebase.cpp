@@ -839,7 +839,7 @@ void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
 
 Node *FolderNodeBase::createNode(const IFileInfo *file) const
 {
-	return NULL;//plugins->node(m_container.data(), file, const_cast<FolderNodeBase *>(this));
+	return Application::rootNode()->open(m_container.data(), file, const_cast<FolderNodeBase *>(this));
 }
 
 void FolderNodeBase::updateFiles()

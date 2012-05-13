@@ -17,22 +17,21 @@ class RootNode
 public:
 	RootNode();
 
-	::History::Entry *open(INodeView *nodeView, const QString &uri);
+	::History::Entry *open(INodeView *nodeView, const QString &uri) const;
+	Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 protected:
-	void registerStatic(IPlugin *plugin);
-	void registerStatic(IContentPlugin *plugin);
-	void registerStatic(IFileReaderPlugin *plugin);
+	void registerStatic(IFilePlugin *plugin);
+	void registerStatic(IContainerPlugin *plugin);
 
 private:
-	typedef QList<IPlugin *>                PluginsList;
-	typedef QMap<FileTypeId, PluginsList>   PluginsMap;
-	typedef QMap<QString, IContentPlugin *> ContentPluginsMap;
+	typedef QList<IFilePlugin *>              PluginsList;
+	typedef QMap<FileTypeId, PluginsList>     PluginsMap;
+	typedef QMap<QString, IContainerPlugin *> ContentPluginsMap;
 
 private:
-	PluginsMap m_filePlugins;
-	PluginsList m_otherPlugins;
-	ContentPluginsMap m_contentPlugins;
+	PluginsMap m_fileTypePlugins;
+	ContentPluginsMap m_containerPlugins;
 };
 
 FILE_SYSTEM_NS_END

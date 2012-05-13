@@ -67,16 +67,6 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 	return &m_settings;
 }
 
-Node *Plugin::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
-{
-	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
-
-	if (folder)
-		return new FolderNodeBase(folder, parent);
-	else
-		return NULL;
-}
-
 const QString &Plugin::shema() const
 {
 	return m_shema;
@@ -86,6 +76,24 @@ Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
 {
 	if ((*path) == QLatin1String("/"))
 		return rootNode->viewChild(++path, selected);
+	else
+		return NULL;
+}
+
+Plugin::FileTypeIdList Plugin::fileTypes() const
+{
+	FileTypeId type;
+	type.mime = QString::fromLatin1("inode/directory");
+
+	return FileTypeIdList() << type;
+}
+
+Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+{
+	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
+
+	if (folder)
+		return new FolderNodeBase(folder, parent);
 	else
 		return NULL;
 }

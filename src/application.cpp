@@ -27,7 +27,8 @@ public:
 		registerStatic(&m_arcplugin);
 
 		/* XXX: Must be last in the list. */
-		registerStatic(&m_default);
+		registerStatic(static_cast<IFilePlugin *>(&m_default));
+		registerStatic(static_cast<IContainerPlugin *>(&m_default));
 	}
 
 private:

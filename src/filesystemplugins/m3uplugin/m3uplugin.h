@@ -7,15 +7,18 @@
 
 M3U_PLUGIN_NS_BEGIN
 
-class Plugin : public IPlugin
+class Plugin : public IFilePlugin
 {
 public:
 	Plugin();
 
+	/* IPlugin */
 	virtual void registered();
-
 	virtual const ::Tools::Settings::Tab *settings() const;
-	virtual Node *node(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
+
+	/* IFilePlugin */
+	virtual FileTypeIdList fileTypes() const;
+	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
 	Settings m_settings;

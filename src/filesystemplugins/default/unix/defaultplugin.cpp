@@ -1,5 +1,5 @@
 #include "../defaultplugin.h"
-#include "../base/defaultfoldernodebase.h"
+#include "../defaultfoldernode.h"
 #include "../interfaces/defaultfilecontainer.h"
 
 
@@ -93,7 +93,7 @@ Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node 
 	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
 
 	if (folder)
-		return new FolderNodeBase(folder, parent);
+		return new FolderNode(folder, parent);
 	else
 		return NULL;
 }

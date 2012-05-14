@@ -3,7 +3,6 @@
 
 #include <QtCore/QLocale>
 #include "de_ns.h"
-#include "defiletypes.h"
 #include "../filesystem/interfaces/filesystemifilecontainer.h"
 
 

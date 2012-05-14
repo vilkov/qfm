@@ -32,17 +32,67 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
-	using namespace ::DesktopEnvironment;
-	return FileTypeIdList() <<
-			fileTypeId(FileTypes::Application::GZipFile) <<
-			fileTypeId(FileTypes::Application::TarFile) <<
-			fileTypeId(FileTypes::Application::CompressedTarFile) <<
-			fileTypeId(FileTypes::Application::BZipCompressedTarFile) <<
-			fileTypeId(FileTypes::Application::ZipFile) <<
-			fileTypeId(FileTypes::Application::BZipFile) <<
-			fileTypeId(FileTypes::Application::RarFile) <<
-			fileTypeId(FileTypes::Application::TarzFile) <<
-			fileTypeId(FileTypes::Application::BZip2File);
+	FileTypeIdList res;
+	FileTypeId type;
+
+	type.mime = QString::fromLatin1("application/x-gzip");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-tar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-compressed-tar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-bzip-compressed-tar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/zip");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-bzip");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-rar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-tarz");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-bzip2");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-java-archive");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-deb");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-7z-compressed");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-compress");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-zip-compressed");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-lzma");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-servicepack");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-xz-compressed-tar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-lzma-compressed-tar");
+	res.push_back(type);
+
+	type.mime = QString::fromLatin1("application/x-cd-image");
+	res.push_back(type);
+
+	return res;
 }
 
 Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const

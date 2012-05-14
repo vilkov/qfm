@@ -6,8 +6,7 @@
 
 M3U_PLUGIN_NS_BEGIN
 
-Plugin::Plugin() :
-	m_identity(QString::fromLatin1("#EXTM3U"))
+Plugin::Plugin()
 {}
 
 void Plugin::registered()
@@ -22,7 +21,10 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
-	return FileTypeIdList();
+	FileTypeId type;
+	type.mime = QString::fromLatin1("audio/x-mpegurl");
+
+	return FileTypeIdList() << type;
 }
 
 Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const

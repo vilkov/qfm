@@ -22,7 +22,6 @@ public:
 
 private:
 	Settings m_settings;
-	QString m_identity;
 };
 
 M3U_PLUGIN_NS_END

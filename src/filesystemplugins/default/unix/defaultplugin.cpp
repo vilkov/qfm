@@ -48,9 +48,6 @@ Plugin::Plugin() :
 	m_settings()
 {
 	Q_ASSERT(rootNode == NULL);
-
-	IFileContainer::Holder container(new Plugins::Default::FileContainer(QString()));
-	rootNode = new LocalRootFolderNode(container);
 }
 
 Plugin::~Plugin()
@@ -74,7 +71,15 @@ QString Plugin::shema() const
 Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
 {
 	if ((*path) == QLatin1String("/"))
-		return rootNode->viewChild(++path, selected);
+		if (rootNode)
+			return rootNode->viewChild(++path, selected);
+		else
+		{
+			IFileContainer::Holder container(new FileContainer(QString()));
+			rootNode = new LocalRootFolderNode(container);
+
+			return rootNode->viewChild(++path, selected);
+		}
 	else
 		return NULL;
 }

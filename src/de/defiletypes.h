@@ -52,7 +52,6 @@ struct FileTypes
 	};
 };
 
-::FileSystem::FileTypeId fileTypeId(FileTypes::Type id);
 ::FileSystem::FileTypeId fileTypeId(FileTypes::Audio::Type id);
 ::FileSystem::FileTypeId fileTypeId(FileTypes::Application::Type id);
 

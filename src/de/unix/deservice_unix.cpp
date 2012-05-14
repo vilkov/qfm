@@ -89,43 +89,6 @@ uint qHash(const IconIndex &index)
 }
 
 
-class IconCache
-{
-public:
-	IconCache()
-	{}
-
-	QIcon *iconFromCache(const QString &name, int size, int context)
-	{
-		QReadLocker lock(&m_cacheLock);
-		return m_cache.object(IconIndex(name, size, context));
-	}
-
-	QIcon *iconToCache(const QString &name, int size, int context, const QString &fileName)
-	{
-		IconIndex index(name, size, context);
-		QWriteLocker lock(&m_cacheLock);
-
-		if (QIcon *icon = m_cache.object(index))
-			return icon;
-		else
-		{
-			QScopedPointer<QIcon> icon(new QIcon());
-
-			icon->addFile(fileName, QSize(size, size));
-			m_cache.insert(index, icon.data());
-
-			return icon.take();
-		}
-	}
-
-private:
-	QReadWriteLock m_cacheLock;
-	QCache<IconIndex, QIcon> m_cache;
-};
-static IconCache *iconCache = 0;
-
-
 inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char *theme)
 {
 	if (char *icon_path = xdg_mime_type_icon_lookup(mimeType, size, theme))
@@ -160,6 +123,106 @@ inline static char *loadMimeTypeIcon(const char *mimeType, int size, const char 
 
 	return 0;
 }
+
+
+class IconCache
+{
+public:
+	IconCache(const QByteArray &themeName) :
+		m_themeName(themeName)
+	{}
+
+	void setThemeName(const QByteArray &themeName) { m_themeName = themeName; }
+
+	QIcon findIcon(const char *name, int iconSize, int context)
+	{
+		IconIndex index(QString::fromLatin1(name), iconSize, context);
+
+		if (QIcon *icon = lockedRead(index))
+			return *icon;
+		else
+		{
+			QWriteLocker lock(&m_cacheLock);
+
+			if (icon = read(index))
+				return *icon;
+			else
+			{
+				QIcon res;
+
+				if (char *icon_path = xdg_icon_lookup(name, iconSize, static_cast<Context>(context), m_themeName))
+				{
+					res = *write(index, QString::fromUtf8(icon_path));
+					free(icon_path);
+				}
+
+				return res;
+			}
+		}
+	}
+
+	QIcon findMimeTypeIcon(const char *mimeType, int iconSize)
+	{
+		IconIndex index(QString::fromLatin1(mimeType), iconSize, XdgThemeMimeTypes);
+
+		if (QIcon *icon = lockedRead(index))
+			return *icon;
+		else
+		{
+			QWriteLocker lock(&m_cacheLock);
+
+			if (icon = read(index))
+				return *icon;
+			else
+			{
+				QIcon res;
+
+				if (char *icon_path = loadMimeTypeIcon(mimeType, iconSize, m_themeName))
+				{
+					res = *write(index, QString::fromUtf8(icon_path));
+					free(icon_path);
+				}
+				else
+					if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, m_themeName))
+					{
+						res = *write(index, QString::fromUtf8(icon_path));
+						free(icon_path);
+					}
+
+				return res;
+			}
+		}
+	}
+
+private:
+	QIcon *read(const IconIndex &index)
+	{
+		return m_cache.object(index);
+	}
+
+	QIcon *lockedRead(const IconIndex &index)
+	{
+		QReadLocker lock(&m_cacheLock);
+		return read(index);
+	}
+
+	QIcon *write(const IconIndex &index, const QString &fileName)
+	{
+		QScopedPointer<QIcon> icon(new QIcon());
+
+		icon->addFile(fileName, QSize(index.size, index.size));
+		m_cache.insert(index, icon.data());
+
+		return icon.take();
+	}
+
+private:
+	QByteArray m_themeName;
+	QReadWriteLock m_cacheLock;
+	QCache<IconIndex, QIcon> m_cache;
+};
+static IconCache *iconCache = 0;
+
 
 inline static bool findProgram(const char *mimeType, const char *(&args)[3], const char *lang, const char *country, const char *modifier)
 {
@@ -234,7 +297,6 @@ Service::Service() :
 	m_locale(QString::fromUtf8(getenv("LANG")))
 {
 	LocaleCodes::initialize(m_locale.name().toUtf8());
-	iconCache = new IconCache();
 
 	if (Display *display = XOpenDisplay(NULL))
     {
@@ -323,7 +385,9 @@ Service::Service() :
 		XCloseDisplay(display);
     }
 
-    xdg_init();
+	iconCache = new IconCache(themeName());
+
+	xdg_init();
 }
 
 Service::~Service()
@@ -334,57 +398,57 @@ Service::~Service()
 
 QIcon Service::processingIcon(int iconSize) const
 {
-	return findIcon("view-refresh", iconSize, XdgThemeActions);
+	return iconCache->findIcon("view-refresh", iconSize, XdgThemeActions);
 }
 
 QIcon Service::cancelingIcon(int iconSize) const
 {
-	return findIcon("application-exit", iconSize, XdgThemeActions);
+	return iconCache->findIcon("application-exit", iconSize, XdgThemeActions);
 }
 
 QIcon Service::copyActionIcon(int iconSize) const
 {
-	return findIcon("edit-copy", iconSize, XdgThemeActions);
+	return iconCache->findIcon("edit-copy", iconSize, XdgThemeActions);
 }
 
 QIcon Service::cutActionIcon(int iconSize) const
 {
-	return findIcon("edit-cut", iconSize, XdgThemeActions);
+	return iconCache->findIcon("edit-cut", iconSize, XdgThemeActions);
 }
 
 QIcon Service::pasteActionIcon(int iconSize) const
 {
-	return findIcon("edit-paste", iconSize, XdgThemeActions);
+	return iconCache->findIcon("edit-paste", iconSize, XdgThemeActions);
 }
 
 QIcon Service::propertiesActionIcon(int iconSize) const
 {
-	return findIcon("document-properties", iconSize, XdgThemeActions);
+	return iconCache->findIcon("document-properties", iconSize, XdgThemeActions);
 }
 
 QIcon Service::packActionIcon(int iconSize) const
 {
-	return findIcon("application-x-archive", iconSize, XdgThemeMimeTypes);
+	return iconCache->findIcon("application-x-archive", iconSize, XdgThemeMimeTypes);
 }
 
 QIcon Service::unpackActionIcon(int iconSize) const
 {
-	return findIcon("archive-extract", iconSize, XdgThemeActions);
+	return iconCache->findIcon("archive-extract", iconSize, XdgThemeActions);
 }
 
 QIcon Service::searchIcon(int iconSize) const
 {
-	return findIcon("system-search", iconSize, XdgThemeActions);
+	return iconCache->findIcon("system-search", iconSize, XdgThemeActions);
 }
 
 QIcon Service::openDataIcon(int iconSize) const
 {
-	return findIcon("document-open-data", iconSize, XdgThemeActions);
+	return iconCache->findIcon("document-open-data", iconSize, XdgThemeActions);
 }
 
 QIcon Service::missingIcon(int iconSize) const
 {
-	return findIcon("image-missing", iconSize, XdgThemeStatus);
+	return iconCache->findIcon("image-missing", iconSize, XdgThemeStatus);
 }
 
 ::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
@@ -512,8 +576,9 @@ QByteArray Service::themeName() const
 {
 	::FileSystem::FileTypeInfo info;
 
-	info.icon = findIcon("folder", iconSize, XdgThemePlaces);
-	info.name = (info.id = fileTypeId(FileTypes::Folder)).mime;
+	info.icon = iconCache->findMimeTypeIcon("inode/directory", iconSize);
+	info.id.mime = QString::fromLatin1("inode/directory");
+	info.name = QString::fromLatin1("<DIR>");
 
 	return info;
 }
@@ -526,63 +591,16 @@ QByteArray Service::themeName() const
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
 	{
-		info.icon = findIcon("text-plain", iconSize, XdgThemeMimeTypes);
+		info.icon = iconCache->findIcon("text-plain", iconSize, XdgThemeMimeTypes);
 		info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 	}
 	else
 	{
-		info.icon = findMimeTypeIcon(mimeType, iconSize);
+		info.icon = iconCache->findMimeTypeIcon(mimeType, iconSize);
 		info.name = info.id.mime = QString::fromUtf8(mimeType);
 	}
 
 	return info;
-}
-
-QIcon Service::findIcon(const char *name, int iconSize, int context) const
-{
-	QString nameString = QString::fromLatin1(name);
-
-	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, context))
-		return *icon;
-	else
-	{
-		QIcon res;
-
-		if (char *icon_path = xdg_icon_lookup(name, iconSize, static_cast<Context>(context), themeName()))
-		{
-			res = *iconCache->iconToCache(nameString, iconSize, context, QString::fromUtf8(icon_path));
-			free(icon_path);
-		}
-
-		return res;
-	}
-}
-
-QIcon Service::findMimeTypeIcon(const char *mimeType, int iconSize) const
-{
-	QString nameString = QString::fromLatin1(mimeType);
-
-	if (QIcon *icon = iconCache->iconFromCache(nameString, iconSize, XdgThemeMimeTypes))
-		return *icon;
-	else
-	{
-		QIcon res;
-		QByteArray iconThemeName = themeName();
-
-		if (char *icon_path = loadMimeTypeIcon(mimeType, iconSize, iconThemeName))
-		{
-			res = *iconCache->iconToCache(nameString, iconSize, XdgThemeMimeTypes, QString::fromUtf8(icon_path));
-			free(icon_path);
-		}
-		else
-			if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, iconThemeName))
-			{
-				res = *iconCache->iconToCache(nameString, iconSize, XdgThemeMimeTypes, QString::fromUtf8(icon_path));
-				free(icon_path);
-			}
-
-		return res;
-	}
 }
 
 DE_NS_END

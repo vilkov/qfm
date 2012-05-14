@@ -3,23 +3,6 @@
 
 DE_NS_BEGIN
 
-::FileSystem::FileTypeId fileTypeId(FileTypes::Type id)
-{
-	::FileSystem::FileTypeId typeId;
-
-	switch (id)
-	{
-		case FileTypes::Unknown:
-			break;
-
-		case FileTypes::Folder:
-			typeId.mime = QString::fromLatin1("<DIR>");
-			break;
-	}
-
-	return typeId;
-}
-
 ::FileSystem::FileTypeId fileTypeId(FileTypes::Audio::Type id)
 {
 	::FileSystem::FileTypeId typeId;

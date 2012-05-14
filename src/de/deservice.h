@@ -61,8 +61,6 @@ private:
 	QByteArray themeName() const;
 	::FileSystem::FileTypeInfo fileTypeInfo(int iconSize) const;
 	::FileSystem::FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
-	QIcon findIcon(const char *name, int iconSize, int context) const;
-	QIcon findMimeTypeIcon(const char *mimeType, int iconSize) const;
 
 private:
 	Type m_type;

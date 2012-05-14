@@ -15,7 +15,7 @@ void Node::viewClosed(INodeView *nodeView)
 
 ::History::Entry *Node::viewParent(INodeView *nodeView)
 {
-	if (static_cast<INode*>(parentNode()) != root())
+	if (parentNode())
 		return viewChild(nodeView, rootIndex());
 	else
 		return NULL;
@@ -90,17 +90,6 @@ QAbstractItemView::SelectionMode Node::selectionMode() const
 
 void Node::nodeRemoved(Node *node)
 {}
-
-Node *Node::root() const
-{
-	Node *res;
-	Node *prev = const_cast<Node *>(this);
-
-	while (res = prev->parentNode())
-		prev = res;
-
-	return prev;
-}
 
 ::History::Entry *Node::switchTo(Node *node, INodeView *view)
 {

@@ -4,27 +4,6 @@
 
 FILE_SYSTEM_NS_BEGIN
 
-//Node *PluginsManager::node(const IFileContainer *container, const IFileInfo *file, Node *parent) const
-//{
-//	Node *res;
-//
-//	if (file->isFile())
-//	{
-//		const PluginsList &list = m_filePlugins[file->fileType()->id()];
-//
-//		for (PluginsList::size_type i = 0, size = list.size(); i < size; ++i)
-//			if (res = list.at(i)->node(container, file, parent))
-//				return res;
-//	}
-//
-//	for (PluginsList::size_type i = 0, size = m_otherPlugins.size(); i < size; ++i)
-//		if (res = m_otherPlugins.at(i)->node(container, file, parent))
-//			return res;
-//
-//	return NULL;
-//}
-
-
 RootNode::RootNode()
 {}
 

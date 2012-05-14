@@ -136,7 +136,10 @@ void Node::removeLink()
 	removeLinks(1);
 
 	if (!isLinked())
-		parentNode()->allChildLinksRemoved(this);
+		if (Node *parent = parentNode())
+			parent->allChildLinksRemoved(this);
+		else
+			delete this;
 }
 
 Node::HistoryEntry::HistoryEntry(::FileSystem::Node *node) :

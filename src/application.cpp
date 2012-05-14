@@ -40,14 +40,13 @@ private:
 	Default::Plugin m_default;
 };
 
-static AppRootNode *appRootNode = NULL;
-
 FILESYSTEM_PLUGINS_NS_END
 
 
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
-	m_taskPool(QThread::idealThreadCount() * 2)
+	m_taskPool(QThread::idealThreadCount() * 2),
+	m_rootNode(new ::FileSystem::Plugins::AppRootNode())
 {
 	QApplication::setApplicationName(name);
 	QApplication::setOrganizationName(organization);
@@ -57,7 +56,6 @@ Application::Application(const QString &name, const QString &organization, const
 Application::~Application()
 {
 	m_taskPool.clear();
-	delete ::FileSystem::Plugins::appRootNode;
 }
 
 QString Application::version() const
@@ -110,14 +108,6 @@ qint32 Application::exec()
 		m_mainWindow.show();
 		return QApplication::exec();
 	}
-}
-
-::FileSystem::RootNode *Application::rootNode()
-{
-	if (::FileSystem::Plugins::appRootNode)
-		return ::FileSystem::Plugins::appRootNode;
-	else
-		return ::FileSystem::Plugins::appRootNode = new ::FileSystem::Plugins::AppRootNode();
 }
 
 void Application::handleException(const char *where)

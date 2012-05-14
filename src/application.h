@@ -27,12 +27,12 @@ public:
 	QString version() const;
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
-	static ::DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
-    static ::DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
-	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
+	static DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
+    static DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
+	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
-	static ::FileSystem::RootNode *rootNode();
+	static FileSystem::RootNode *rootNode() { return instance()->m_rootNode.data(); }
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
@@ -41,9 +41,10 @@ protected: /* ExceptionHandler */
 
 private:
 	ApplicationSettings m_settings;
-	::Tools::TasksPool::TaskPool m_taskPool;
-	::DesktopEnvironment::Service m_desktopService;
-    ::DesktopEnvironment::ContextMenuFactory m_globalMenu;
+	Tools::TasksPool::TaskPool m_taskPool;
+	DesktopEnvironment::Service m_desktopService;
+    DesktopEnvironment::ContextMenuFactory m_globalMenu;
+    QScopedPointer<FileSystem::RootNode> m_rootNode;
 	MainWindow m_mainWindow;
 };
 

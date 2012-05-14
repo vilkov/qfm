@@ -24,7 +24,7 @@ public:
 class IContainerPlugin : public virtual IPlugin
 {
 public:
-	virtual const QString &shema() const = 0;
+	virtual QString shema() const = 0;
 	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const = 0;
 };
 

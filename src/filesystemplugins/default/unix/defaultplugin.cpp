@@ -45,7 +45,6 @@ private:
 
 
 Plugin::Plugin() :
-	m_shema(QString::fromLatin1("file")),
 	m_settings()
 {
 	Q_ASSERT(rootNode == NULL);
@@ -67,9 +66,9 @@ const ::Tools::Settings::Tab *Plugin::settings() const
 	return &m_settings;
 }
 
-const QString &Plugin::shema() const
+QString Plugin::shema() const
 {
-	return m_shema;
+	return QString::fromLatin1("file");
 }
 
 Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const

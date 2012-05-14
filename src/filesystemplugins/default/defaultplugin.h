@@ -18,7 +18,7 @@ public:
 	virtual const ::Tools::Settings::Tab *settings() const;
 
 	/* IContentPlugin */
-	const QString &shema() const;
+	QString shema() const;
 	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const;
 
 	/* IFilePlugin */
@@ -26,7 +26,6 @@ public:
 	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
-	QString m_shema;
 	Settings m_settings;
 	mutable QString m_error;
 };

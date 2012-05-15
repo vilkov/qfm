@@ -36,3 +36,7 @@ else ()
 	message (STATUS "Unknown compiler")
 endif ()
 message (STATUS "CMake generates " ${CMAKE_GENERATOR})
+
+
+# Set up compiler flags
+set (CMAKE_CXX_FLAGS "${PROJECT_COMP_FLAGS}")

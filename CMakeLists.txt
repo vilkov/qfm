@@ -35,9 +35,6 @@ if (WIN32)
 endif ()
 
 
-# Set up compiler flags
-set (CMAKE_CXX_FLAGS "${PROJECT_COMP_FLAGS}")
-
 
 # 3rdparty
 if (WIN32)

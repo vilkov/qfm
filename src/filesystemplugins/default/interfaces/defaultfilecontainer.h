@@ -43,7 +43,6 @@ private:
 	void scan(WrappedNodeItem *root, const volatile Flags &aborted) const;
 
 private:
-	friend class CopyControl;
 	QString m_path;
 };
 

@@ -1,5 +1,5 @@
 # CMake tools
-include ("collect_sources")
+include (collect_sources)
 
 
 collect_sources (src_HEADERS src_SOURCES ${CMAKE_SOURCE_DIR})

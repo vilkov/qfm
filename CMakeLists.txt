@@ -8,7 +8,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/home/dav/xdg/share/cmake/Modules")
 
 
 # Project header
-include ("project_header")
+include (project_cxx_header)
 
 
 # Main settings

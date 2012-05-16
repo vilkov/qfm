@@ -6,11 +6,12 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNode::ArcNode(const QString &filePath, Node *parent) :
+ArcNode::ArcNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
+	m_container(container.take()),
 	m_items(m_itemsContainer.m_container),
     m_delegate(&m_proxy),
-    m_filePath(filePath)
+    m_filePath()
 {
 	m_proxy.setSourceModel(this);
 	m_items.push_back(NodeItem::Holder(new ArcNodeRootItem()));

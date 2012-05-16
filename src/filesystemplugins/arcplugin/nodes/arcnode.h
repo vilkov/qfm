@@ -15,7 +15,7 @@ ARC_PLUGIN_NS_BEGIN
 class ArcNode : public TasksNode
 {
 public:
-	ArcNode(const QString &filePath, Node *parent = 0);
+	ArcNode(IFileContainer::Holder &container, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -95,6 +95,7 @@ private:
 	void updateSecondColumn(const ArcNodeItem::Holder &entry);
 
 private:
+	IFileContainer::Holder m_container;
 	ItemsContainer m_itemsContainer;
     ItemsContainer::List &m_items;
     ArcNodeProxyModel m_proxy;

@@ -1,5 +1,6 @@
 #include "arcplugin.h"
 #include "nodes/arcnode.h"
+#include "interfaces/arcfilecontainer.h"
 #include "../../application.h"
 
 
@@ -97,7 +98,13 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 
 Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	return new ArcNode(container->location(file->fileName()), parent);
+	QString error;
+	IFileContainer::Holder localContainer(FileContainer::create(container, file, error));
+
+	if (localContainer)
+		return new ArcNode(localContainer, parent);
+	else
+		return NULL;
 }
 
 const Archive **Plugin::archivers()

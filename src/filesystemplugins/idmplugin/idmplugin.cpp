@@ -28,15 +28,12 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 
 Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	if (file->isDir())
-	{
-		IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
+	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
 
-		if (folder && folder->contains(fileName()))
-			return new IdmRootNode(folder, parent);
-	}
-
-	return NULL;
+	if (folder && folder->contains(fileName()))
+		return new IdmRootNode(folder, parent);
+	else
+		return NULL;
 }
 
 const QString &Plugin::fileName()

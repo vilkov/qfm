@@ -1,7 +1,8 @@
 #ifndef ARCFILECONTAINER_H_
 #define ARCFILECONTAINER_H_
 
-#include "../arcplugin_ns.h"
+#include <QtCore/QSharedData>
+#include "../archive/libarchive.h"
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 #include "../../../filesystem/containers/filesystemwrappednodeitem.h"
 
@@ -46,9 +47,22 @@ private:
 	FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName);
 
 private:
-	IFileContainer::Holder m_container;
-	IFileAccessor::Holder m_file;
-	QString m_fileName;
+	struct Data : public QSharedData
+	{
+		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
+			container(container.take()),
+			m_archive(file),
+			fileName(fileName)
+		{}
+
+		IFileContainer::Holder container;
+		LibArchive m_archive;
+		QString fileName;
+	};
+
+private:
+	QExplicitlySharedDataPointer<Data> m_data;
+	QString m_path;
 };
 
 ARC_PLUGIN_NS_END

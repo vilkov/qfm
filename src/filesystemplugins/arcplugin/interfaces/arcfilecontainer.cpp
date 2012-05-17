@@ -23,12 +23,12 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 
 QString FileContainer::location() const
 {
-	return m_container->location().append(QChar('/')).append(m_fileName);
+	return m_path;
 }
 
 QString FileContainer::location(const QString &fileName) const
 {
-	return m_container->location().append(QChar('/')).append(m_fileName).append(QChar('/')).append(fileName);
+	return QString(m_path).append(QChar('/')).append(fileName);
 }
 
 bool FileContainer::isPhysical() const
@@ -38,7 +38,7 @@ bool FileContainer::isPhysical() const
 
 IFileInfo::size_type FileContainer::freeSpace() const
 {
-	return m_container->freeSpace();
+	return m_data->container->freeSpace();
 }
 
 ICopyControl *FileContainer::createControl(INodeView *view) const
@@ -68,7 +68,7 @@ bool FileContainer::move(const IFileContainer *source, const QString &fileName, 
 
 IFileContainer *FileContainer::open() const
 {
-	return NULL;
+	return new FileContainer(*this);
 }
 
 IFileAccessor *FileContainer::open(const QString &fileName, int flags, QString &error) const
@@ -112,9 +112,8 @@ void FileContainer::scan(WrappedNodeItem *root, const volatile Flags &aborted) c
 }
 
 FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
-	m_container(container.take()),
-	m_file(file.take()),
-	m_fileName(fileName)
+	m_data(new Data(container, file, fileName)),
+	m_path(m_data->container->location().append(QChar('/')).append(fileName))
 {}
 
 ARC_PLUGIN_NS_END

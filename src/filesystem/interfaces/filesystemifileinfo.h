@@ -13,7 +13,7 @@ class IFileInfo
 {
 public:
 	typedef PScopedPointer<IFileInfo> Holder;
-	typedef quint64                   size_type;
+	typedef qint64                    size_type;
     enum Permissions
     {
         Read = 0x0004, Write = 0x0002, Exec = 0x0001

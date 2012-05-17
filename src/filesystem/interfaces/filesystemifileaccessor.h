@@ -27,6 +27,12 @@ public:
         GroupRead  = 0x00000008, GroupWrite  = 0x00000010, GroupExec  = 0x00000020,
         OthersRead = 0x00000040, OthersWrite = 0x00000080, OthersExec = 0x00000100
     };
+    enum SeekFrom
+    {
+    	SeekFromBeggining,
+    	SeekFromCurrent,
+    	SeekFromEnd
+    };
 
 public:
 	virtual ~IFileAccessor();
@@ -35,10 +41,10 @@ public:
 	virtual int permissions() const = 0;
 
 	virtual size_type size() = 0;
-	virtual bool seek(size_type offset) = 0;
 	virtual bool setPermissions(int mode) = 0;
 	virtual size_type read(value_type *data, size_type size) = 0;
 	virtual size_type write(const value_type *data, size_type size) = 0;
+	virtual size_type seek(size_type offset, SeekFrom seekFrom = SeekFromCurrent) = 0;
 };
 
 FILE_SYSTEM_NS_END

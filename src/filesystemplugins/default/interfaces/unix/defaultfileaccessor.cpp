@@ -94,6 +94,12 @@ static const int flags_permissions[S_IRUSR + 1] =
 		IFileAccessor::UserRead
 };
 
+static const int seek_flags[IFileAccessor::SeekFromEnd + 1] =
+{
+		SEEK_SET,
+		SEEK_CUR,
+		SEEK_END
+};
 
 FileAccesor::FileAccesor(const QString &absoluteFilePath, int flags) :
 	m_file(::open(absoluteFilePath.toUtf8(),
@@ -175,11 +181,6 @@ FileAccesor::size_type FileAccesor::size()
 		return 0;
 }
 
-bool FileAccesor::seek(size_type offset)
-{
-	return ((off_t)offset) == ::lseek(m_file, offset, SEEK_SET);
-}
-
 bool FileAccesor::setPermissions(int mode)
 {
 	return ::fchmod(m_file,
@@ -202,6 +203,11 @@ FileAccesor::size_type FileAccesor::read(value_type *data, size_type size)
 FileAccesor::size_type FileAccesor::write(const value_type *data, size_type size)
 {
 	return ::write(m_file, data, size);
+}
+
+FileAccesor::size_type FileAccesor::seek(size_type offset, SeekFrom seekFrom)
+{
+	return ::lseek(m_file, offset, seek_flags[seekFrom]);
 }
 
 DEFAULT_PLUGIN_NS_END

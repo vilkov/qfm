@@ -26,10 +26,10 @@ public:
 	virtual int permissions() const;
 
 	virtual size_type size();
-	virtual bool seek(size_type offset);
 	virtual bool setPermissions(int mode);
 	virtual size_type read(value_type *data, size_type size);
 	virtual size_type write(const value_type *data, size_type size);
+	virtual size_type seek(size_type offset, SeekFrom seekFrom = SeekFromCurrent);
 
 private:
 	FileDescriptor m_file;

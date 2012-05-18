@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMPATH_H_
 #define FILESYSTEMPATH_H_
 
+#include <QtCore/QPair>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include "../filesystem_ns.h"

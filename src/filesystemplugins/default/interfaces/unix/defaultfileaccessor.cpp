@@ -94,7 +94,7 @@ static const int flags_permissions[S_IRUSR + 1] =
 		IFileAccessor::UserRead
 };
 
-static const int seek_flags[IFileAccessor::SeekFromEnd + 1] =
+static const int seek_flags[IFileAccessor::FromEnd + 1] =
 {
 		SEEK_SET,
 		SEEK_CUR,
@@ -205,9 +205,9 @@ FileAccesor::size_type FileAccesor::write(const value_type *data, size_type size
 	return ::write(m_file, data, size);
 }
 
-FileAccesor::size_type FileAccesor::seek(size_type offset, SeekFrom seekFrom)
+FileAccesor::size_type FileAccesor::seek(size_type offset, Seek from)
 {
-	return ::lseek(m_file, offset, seek_flags[seekFrom]);
+	return ::lseek(m_file, offset, seek_flags[from]);
 }
 
 DEFAULT_PLUGIN_NS_END

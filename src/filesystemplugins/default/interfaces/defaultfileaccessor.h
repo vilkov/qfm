@@ -29,7 +29,7 @@ public:
 	virtual bool setPermissions(int mode);
 	virtual size_type read(value_type *data, size_type size);
 	virtual size_type write(const value_type *data, size_type size);
-	virtual size_type seek(size_type offset, SeekFrom seekFrom = SeekFromCurrent);
+	virtual size_type seek(size_type offset, Seek from = FromCurrent);
 
 private:
 	FileDescriptor m_file;

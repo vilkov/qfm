@@ -1,6 +1,4 @@
 #include "defaultperformremovetask.h"
-#include "../../events/defaultmodelevent.h"
-
 #include <QtGui/QMessageBox>
 
 
@@ -31,7 +29,7 @@ void PerformRemoveTask::run(const volatile Flags &aborted)
 			removeEntry(entry, tryAgain = false, aborted);
 		}
 
-	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::RemoveFiles), aborted, m_snapshot));
+	postEvent(new Event(this, Event::RemoveFiles, aborted, m_snapshot));
 }
 
 void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)

@@ -16,10 +16,10 @@ public:
 	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
 
 public:
-	class Event : public FilesBaseTask::ExtendedEvent
+	class ExtendedEvent : public FilesBaseTask::ExtendedEvent
 	{
 	public:
-		Event(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
+		ExtendedEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot, bool move) :
 			FilesBaseTask::ExtendedEvent(task, type, destination, canceled, snapshot),
 			move(move)
 		{}

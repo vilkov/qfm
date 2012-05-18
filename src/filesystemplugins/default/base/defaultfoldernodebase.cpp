@@ -123,39 +123,39 @@ QVariant FolderNodeBase::headerData(int section, Qt::Orientation orientation, in
 
 bool FolderNodeBase::event(QEvent *e)
 {
-	switch (static_cast<ModelEvent::Type>(e->type()))
+	switch (static_cast<FilesBaseTask::Event::Type>(e->type()))
 	{
-		case ModelEvent::UpdateFiles:
+		case FilesBaseTask::Event::UpdateFiles:
 		{
 			e->accept();
 			updateFiles(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForRemove:
+		case FilesBaseTask::Event::ScanFilesForRemove:
 		{
 			e->accept();
 			scanForRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::RemoveFiles:
+		case FilesBaseTask::Event::RemoveFiles:
 		{
 			e->accept();
 			performRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForSize:
+		case FilesBaseTask::Event::ScanFilesForSize:
 		{
 			e->accept();
 			scanForSize(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::ScanFilesForCopy:
+		case FilesBaseTask::Event::ScanFilesForCopy:
 		{
 			e->accept();
 			scanForCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		case ModelEvent::CopyFiles:
+		case FilesBaseTask::Event::CopyFiles:
 		{
 			e->accept();
 			performCopy(static_cast<BaseTask::Event*>(e));
@@ -846,7 +846,7 @@ void FolderNodeBase::updateFiles()
 {
 	if (isVisible())
 	{
-		PScopedPointer<ScanFilesTask> task(new ScanFilesTask(ModelEvent::UpdateFiles, this, updateFilesList()));
+		PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::UpdateFiles, this, updateFilesList()));
 		setUpdating(true);
 		handleTask(task.take());
 	}
@@ -854,20 +854,20 @@ void FolderNodeBase::updateFiles()
 
 void FolderNodeBase::scanForSize(const Snapshot &snapshot)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(ModelEvent::ScanFilesForSize, this, snapshot));
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForSize, this, snapshot));
 	addTask(task.take(), snapshot);
 }
 
 void FolderNodeBase::scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(ModelEvent::ScanFilesForCopy, this, destination, snapshot, move));
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForCopy, this, destination, snapshot, move));
 	addTask(task.data(), const_cast<const ScanFilesTask *>(task.data())->destination().data(), snapshot);
 	task.take();
 }
 
 void FolderNodeBase::scanForRemove(const Snapshot &snapshot)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(ModelEvent::ScanFilesForRemove, this, snapshot));
+	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForRemove, this, snapshot));
 	addTask(task.take(), snapshot);
 }
 
@@ -950,8 +950,8 @@ void FolderNodeBase::scanForRemove(const BaseTask::Event *e)
 
 void FolderNodeBase::performCopy(const BaseTask::Event *e)
 {
-	typedef PerformCopyTask::Event * NotConstEvent;
-	typedef const PerformCopyTask::Event * Event;
+	typedef PerformCopyTask::ExtendedEvent * NotConstEvent;
+	typedef const PerformCopyTask::ExtendedEvent * Event;
 	NotConstEvent event = const_cast<NotConstEvent>(static_cast<Event>(e));
 
 	event->destination->node()->refresh();

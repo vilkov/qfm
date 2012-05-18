@@ -2,7 +2,6 @@
 #define DEFAULTSCANFILESTASK_H_
 
 #include "../defaultfilesbasetask.h"
-#include "../../events/defaultmodelevent.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -14,7 +13,7 @@ public:
 	{
 	public:
 		UpdatesEvent(BaseTask *task, bool isLastEvent, const Snapshot &snapshot, bool canceled) :
-			Event(task, static_cast<Type>(ModelEvent::UpdateFiles), canceled, snapshot),
+			Event(task, static_cast<Type>(Event::UpdateFiles), canceled, snapshot),
 			isLastEvent(isLastEvent)
 		{}
 
@@ -33,8 +32,8 @@ public:
 	};
 
 public:
-	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot);
-	ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
+	ScanFilesTask(Event::Type type, TasksNode *receiver, const Snapshot &snapshot);
+	ScanFilesTask(Event::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
@@ -44,7 +43,7 @@ protected:
 	Snapshot takeAllUpdates(Snapshot &snapshot);
 
 private:
-	ModelEvent::Type m_type;
+	Event::Type m_type;
 	Snapshot m_snapshot;
 	bool m_move;
 };

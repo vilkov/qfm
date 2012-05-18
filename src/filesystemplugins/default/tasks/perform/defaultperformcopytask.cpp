@@ -1,6 +1,4 @@
 #include "defaultperformcopytask.h"
-#include "../../events/defaultmodelevent.h"
-
 #include <QtGui/QMessageBox>
 
 
@@ -28,7 +26,7 @@ void PerformCopyTask::run(const volatile Flags &aborted)
 		m_progress.complete();
 	}
 
-	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::CopyFiles), destination(), aborted, m_snapshot, m_move));
+	postEvent(new ExtendedEvent(this, Event::CopyFiles, destination(), aborted, m_snapshot, m_move));
 }
 
 void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)

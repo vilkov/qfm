@@ -6,14 +6,14 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, const Snapshot &snapshot) :
+ScanFilesTask::ScanFilesTask(Event::Type type, TasksNode *receiver, const Snapshot &snapshot) :
 	FilesBaseTask(receiver),
 	m_type(type),
 	m_snapshot(snapshot),
 	m_move(false)
 {}
 
-ScanFilesTask::ScanFilesTask(ModelEvent::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
+ScanFilesTask::ScanFilesTask(Event::Type type, TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot, bool move) :
 	FilesBaseTask(receiver, destination),
 	m_type(type),
 	m_snapshot(snapshot),
@@ -24,7 +24,7 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 {
 	switch (m_type)
 	{
-		case ModelEvent::UpdateFiles:
+		case Event::UpdateFiles:
 		{
 			IFileContainerScanner::IEnumerator::Holder enumerator;
 			m_snapshot.container()->scanner()->enumerate(enumerator);
@@ -64,15 +64,15 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			break;
 		}
 
-		case ModelEvent::ScanFilesForSize:
-		case ModelEvent::ScanFilesForRemove:
+		case Event::ScanFilesForSize:
+		case Event::ScanFilesForRemove:
 		{
 			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
 			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, m_snapshot));
 			break;
 		}
 
-		case ModelEvent::ScanFilesForCopy:
+		case Event::ScanFilesForCopy:
 		{
 			m_snapshot.container()->scanner()->scan(m_snapshot, aborted);
 			postEvent(new CopyEvent(this, static_cast<CopyEvent::Type>(m_type), destination(), aborted, m_snapshot, m_move));

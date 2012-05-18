@@ -2,7 +2,7 @@
 #define ARCPERFORMCOPYTASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "arctaskevent.h"
+#include "arcfilesbasetask.h"
 #include "../archive/arcarchive.h"
 #include "../../../filesystem/tasks/tools/taskprogress.h"
 #include "../../../filesystem/interfaces/filesystemicopycontrol.h"
@@ -10,22 +10,22 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class PerformCopyTask : public BaseTask, public Archive::Callback
+class PerformCopyTask : public FilesBaseTask, public Archive::Callback
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
 public:
-	class Event : public TaskEvent
-	{
-	public:
-		Event(BaseTask *task, bool canceled, bool move) :
-			TaskEvent(task, CopyComplete, canceled),
-			move(move)
-		{}
-
-		ArcNodeItem::Holder item;
-		bool move;
-	};
+//	class Event : public FilesBaseTask::Event
+//	{
+//	public:
+//		Event(BaseTask *task, bool canceled, bool move) :
+//			FilesBaseTask::Event(task, CopyComplete, canceled),
+//			move(move)
+//		{}
+//
+//		ArcNodeItem::Holder item;
+//		bool move;
+//	};
 
 public:
 	PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);

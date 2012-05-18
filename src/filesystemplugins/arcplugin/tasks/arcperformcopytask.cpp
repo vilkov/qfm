@@ -7,7 +7,7 @@
 ARC_PLUGIN_NS_BEGIN
 
 PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver) :
-	BaseTask(receiver),
+	FilesBaseTask(receiver),
 	m_fileName(fileName),
 	m_item(item),
 	m_control(control.take()),
@@ -111,19 +111,19 @@ void PerformCopyTask::askForSkipIfNotCopy(const QString &text, volatile bool &tr
 
 void PerformCopyTask::run(const volatile Flags &aborted)
 {
-	Archive::State *state;
-	PScopedPointer<Event> event(new Event(this, m_move, false));
-
-	if (const Archive *archive = Archive::archive(m_fileName, &state))
-	{
-		archive->extract(state, m_item, m_control.data(), this, aborted);
-		archive->endRead(state);
-	}
-
-	event->item = m_item;
-	event->move = m_move;
-	event->canceled = aborted;
-	postEvent(event.take());
+//	Archive::State *state;
+//	PScopedPointer<Event> event(new Event(this, m_move, false));
+//
+//	if (const Archive *archive = Archive::archive(m_fileName, &state))
+//	{
+//		archive->extract(state, m_item, m_control.data(), this, aborted);
+//		archive->endRead(state);
+//	}
+//
+//	event->item = m_item;
+//	event->move = m_move;
+//	event->canceled = aborted;
+//	postEvent(event.take());
 }
 
 ARC_PLUGIN_NS_END

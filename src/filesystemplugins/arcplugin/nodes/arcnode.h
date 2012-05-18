@@ -5,7 +5,6 @@
 #include "items/arcnodeitem.h"
 #include "../model/arcdelegate.h"
 #include "../archive/arcarchive.h"
-#include "../tasks/arctaskevent.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
 
@@ -66,8 +65,8 @@ protected:
 	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
 
-	void scanCompleteEvent(TaskEvent *event);
-	void copyCompleteEvent(TaskEvent *event);
+	void scanCompleteEvent(BaseTask::Event *event);
+	void copyCompleteEvent(BaseTask::Event *event);
 
 private:
 	enum { RootItemIndex = 0 };

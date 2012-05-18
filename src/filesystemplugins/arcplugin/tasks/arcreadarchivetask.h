@@ -1,33 +1,21 @@
 #ifndef ARCREADARCHIVETASK_H_
 #define ARCREADARCHIVETASK_H_
 
-#include "arctaskevent.h"
-#include "../archive/arcarchive.h"
+#include "arcfilesbasetask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class ReadArchiveTask : public BaseTask
+class ReadArchiveTask : public FilesBaseTask
 {
 public:
-	class Event : public TaskEvent
-	{
-	public:
-		Event(BaseTask *task, bool canceled) :
-			TaskEvent(task, ScanComplete, canceled)
-		{}
-
-		Archive::Contents contents;
-	};
-
-public:
-	ReadArchiveTask(const QString &fileName, TasksNode *receiver);
+	ReadArchiveTask(IFileContainer::Holder &container, TasksNode *receiver);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
 
 private:
-	QString m_fileName;
+	IFileContainer::Holder m_container;
 };
 
 ARC_PLUGIN_NS_END

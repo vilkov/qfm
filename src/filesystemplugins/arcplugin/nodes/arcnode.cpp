@@ -22,20 +22,20 @@ ArcNode::ArcNode(IFileContainer::Holder &container, Node *parent) :
 
 bool ArcNode::event(QEvent *e)
 {
-	switch (static_cast<TaskEvent::Type>(e->type()))
+	switch (static_cast<FilesBaseTask::Event::Type>(e->type()))
 	{
-		case TaskEvent::ScanComplete:
+		case FilesBaseTask::Event::ScanComplete:
 		{
 			e->accept();
-			scanCompleteEvent(static_cast<TaskEvent*>(e));
+			scanCompleteEvent(static_cast<BaseTask::Event *>(e));
 
 			return true;
 		}
 
-		case TaskEvent::CopyComplete:
+		case FilesBaseTask::Event::CopyComplete:
 		{
 			e->accept();
-			copyCompleteEvent(static_cast<TaskEvent*>(e));
+			copyCompleteEvent(static_cast<BaseTask::Event *>(e));
 
 			return true;
 		}
@@ -261,30 +261,30 @@ void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 }
 
-void ArcNode::scanCompleteEvent(TaskEvent *e)
+void ArcNode::scanCompleteEvent(BaseTask::Event *e)
 {
-	ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
-
-	if (!event->canceled && !event->contents.items.isEmpty())
-	{
-		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->contents.items.size() - 1);
-		m_items.append(event->contents.items);
-		endInsertRows();
-	}
-
-	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
-	updateFirstColumn(m_items.at(RootItemIndex));
-	removeAllTaskLinks(event->task);
+//	ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
+//
+//	if (!event->canceled && !event->contents.items.isEmpty())
+//	{
+//		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->contents.items.size() - 1);
+//		m_items.append(event->contents.items);
+//		endInsertRows();
+//	}
+//
+//	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
+//	updateFirstColumn(m_items.at(RootItemIndex));
+//	removeAllTaskLinks(event->task);
 }
 
-void ArcNode::copyCompleteEvent(TaskEvent *e)
+void ArcNode::copyCompleteEvent(BaseTask::Event *e)
 {
-	PerformCopyTask::Event *event = static_cast<PerformCopyTask::Event*>(e);
-
-	event->item.as<ArcNodeItem>()->unlock();
-
-	updateFirstColumn(event->item);
-	removeAllTaskLinks(event->task);
+//	PerformCopyTask::Event *event = static_cast<PerformCopyTask::Event*>(e);
+//
+//	event->item.as<ArcNodeItem>()->unlock();
+//
+//	updateFirstColumn(event->item);
+//	removeAllTaskLinks(event->task);
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

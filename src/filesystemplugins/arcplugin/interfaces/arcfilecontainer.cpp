@@ -83,32 +83,7 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 
 const IFileContainerScanner *FileContainer::scanner() const
 {
-	return this;
-}
-
-void FileContainer::enumerate(IEnumerator::Holder &enumerator) const
-{
-
-}
-
-IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
-{
-	return NULL;
-}
-
-void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) const
-{
-
-}
-
-void FileContainer::refresh(Snapshot &snapshot, const volatile Flags &aborted) const
-{
-
-}
-
-void FileContainer::scan(WrappedNodeItem *root, const volatile Flags &aborted) const
-{
-
+	return &m_data->m_archive;
 }
 
 FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :

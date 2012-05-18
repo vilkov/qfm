@@ -2,27 +2,51 @@
 #define LIBARCHIVE_H_
 
 #include "../arcplugin_ns.h"
-#include "../../../filesystem/interfaces/filesystemifileaccessor.h"
+#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 struct archive;
 
+
 ARC_PLUGIN_NS_BEGIN
 
-class LibArchive
+class LibArchive : public IFileContainerScanner
 {
 public:
-	LibArchive(IFileAccessor::Holder &file);
+	LibArchive(const IFileContainer *container, IFileAccessor::Holder &file);
 	~LibArchive();
 
-private:
-	/* Callbacks */
-	static int open(struct archive *archive, void *_client_data);
-	static ssize_t read(struct archive *archive, void *_client_data, const void **_buffer);
-	static int64_t skip(struct archive *archive, void *_client_data, int64_t request);
-	static int close(struct archive *archive, void *_client_data);
+	/* IFileContainerScanner */
+	virtual void enumerate(IEnumerator::Holder &enumerator) const;
+	virtual IFileInfo *info(const QString &fileName, QString &error) const;
+	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted) const;
+	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted) const;
 
 private:
+	class ReadArchive
+	{
+	public:
+		ReadArchive(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive);
+		~ReadArchive();
+
+		/* Callbacks */
+		static int open(struct archive *archive, void *_client_data);
+		static ssize_t read(struct archive *archive, void *_client_data, const void **_buffer);
+		static int64_t skip(struct archive *archive, void *_client_data, int64_t request);
+		static int close(struct archive *archive, void *_client_data);
+
+	private:
+		ReadArchive(const ReadArchive &);
+		ReadArchive &operator=(const ReadArchive &);
+
+	private:
+		IFileAccessor::value_type *m_buffer;
+		const IFileAccessor::Holder &m_file;
+		struct archive *m_archive;
+	};
+
+private:
+	const IFileContainer *m_container;
 	IFileAccessor::Holder m_file;
 	struct archive *m_archive;
 

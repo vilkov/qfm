@@ -4,12 +4,11 @@
 #include <QtCore/QSharedData>
 #include "../archive/libarchive.h"
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
-#include "../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class FileContainer : public IFileContainer, public IFileContainerScanner
+class FileContainer : public IFileContainer
 {
 public:
 	static IFileContainer *create(const IFileContainer *container, const IFileInfo *file, QString &error);
@@ -34,15 +33,6 @@ public:
 
 	virtual const IFileContainerScanner *scanner() const;
 
-	/* IFileContainerScanner */
-	virtual void enumerate(IEnumerator::Holder &enumerator) const;
-	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted) const;
-
-private:
-	void scan(WrappedNodeItem *root, const volatile Flags &aborted) const;
-
 private:
 	FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName);
 
@@ -51,7 +41,7 @@ private:
 	{
 		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
 			container(container.take()),
-			m_archive(file),
+			m_archive(this->container.data(), file),
 			fileName(fileName)
 		{}
 

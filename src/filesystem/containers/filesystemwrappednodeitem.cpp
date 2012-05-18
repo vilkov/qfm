@@ -9,14 +9,6 @@ WrappedNodeItem::WrappedNodeItem() :
 	m_removed(true)
 {}
 
-WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, IFileInfo *info, WrappedNodeItem *parent) :
-	m_container(container),
-	m_totalSize(info->fileSize()),
-	m_info(info),
-	m_parent(parent),
-	m_removed(true)
-{}
-
 WrappedNodeItem::WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent) :
 	m_container(container),
 	m_totalSize(info->fileSize()),

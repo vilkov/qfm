@@ -33,6 +33,7 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			{
 				WrappedNodeItem::Holder wrappedItem;
 				DefaultNodeItem::Holder item;
+				IFileInfo::Holder info;
 				QTime base = QTime::currentTime();
 				QTime current;
 
@@ -42,11 +43,11 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 					if (item = m_snapshot.exists(enumerator->fileName()))
 						if (enumerator->isObsolete(item.as<DefaultNodeItem>()->info().data()))
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
+							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->create(), NULL));
 						else
 							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
 					else
-						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), enumerator->create(), NULL));
+						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->create(), NULL));
 
 					if (base.msecsTo(current) > 300)
 					{

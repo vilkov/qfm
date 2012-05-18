@@ -20,7 +20,6 @@ public:
 
 public:
 	WrappedNodeItem();
-	WrappedNodeItem(const IFileContainer *container, IFileInfo *info, WrappedNodeItem *parent);
 	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent);
 	~WrappedNodeItem();
 

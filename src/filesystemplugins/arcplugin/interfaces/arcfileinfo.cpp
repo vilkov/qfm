@@ -1,4 +1,5 @@
 #include "arcfileinfo.h"
+#include "../../../application.h"
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -6,12 +7,13 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-Info::Info(const QString &fileName, struct archive_entry *entry)
-{
-	archive_entry_size(entry);
-	archive_entry_pathname(entry);
-	QDateTime::fromTime_t(archive_entry_mtime(entry));
-}
+Info::Info(const QString &fileName, struct archive_entry *entry) :
+	m_path(archive_entry_pathname(entry)),
+	m_fileName(fileName),
+	m_fileSize(archive_entry_size(entry)),
+	m_lastModified(QDateTime::fromTime_t(archive_entry_mtime(entry))),
+	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(fileName, m_path.endsWith('/'), 16))
+{}
 
 bool Info::isDir() const
 {
@@ -30,12 +32,12 @@ bool Info::isLink() const
 
 Info::size_type Info::fileSize() const
 {
-	return 0;
+	return m_fileSize;
 }
 
 QString Info::fileName() const
 {
-	return QString();
+	return m_fileName;
 }
 
 const IFileType *Info::fileType() const
@@ -45,7 +47,7 @@ const IFileType *Info::fileType() const
 
 QDateTime Info::lastModified() const
 {
-	return QDateTime();
+	return m_lastModified;
 }
 
 int Info::permissions() const
@@ -55,22 +57,22 @@ int Info::permissions() const
 
 FileTypeId Info::id() const
 {
-	return FileTypeId();
+	return m_fileTypeInfo.id;
 }
 
 QIcon Info::icon() const
 {
-	return QIcon();
+	return m_fileTypeInfo.icon;
 }
 
 QString Info::name() const
 {
-	return QString();
+	return m_fileTypeInfo.name;
 }
 
 QString Info::description() const
 {
-	return QString();
+	return m_fileTypeInfo.descritpion;
 }
 
 ARC_PLUGIN_NS_END

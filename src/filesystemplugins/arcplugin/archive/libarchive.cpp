@@ -22,9 +22,7 @@ LibArchive::~LibArchive()
 }
 
 void LibArchive::enumerate(IEnumerator::Holder &enumerator) const
-{
-	ReadArchive archive(const_cast<LibArchive *>(this)->m_buffer, m_file, m_archive);
-}
+{}
 
 IFileInfo *LibArchive::info(const QString &fileName, QString &error) const
 {
@@ -95,9 +93,7 @@ void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted) const
 }
 
 void LibArchive::refresh(Snapshot &snapshot, const volatile Flags &aborted) const
-{
-	ReadArchive archive(const_cast<LibArchive *>(this)->m_buffer, m_file, m_archive);
-}
+{}
 
 LibArchive::ReadArchive::ReadArchive(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive) :
 	m_buffer(buffer),

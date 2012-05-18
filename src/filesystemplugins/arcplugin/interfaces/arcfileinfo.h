@@ -30,6 +30,13 @@ public:
 	virtual QIcon icon() const;
 	virtual QString name() const;
 	virtual QString description() const;
+
+private:
+	QByteArray m_path;
+	QString m_fileName;
+	size_type m_fileSize;
+	QDateTime m_lastModified;
+	FileTypeInfo m_fileTypeInfo;
 };
 
 ARC_PLUGIN_NS_END

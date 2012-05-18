@@ -88,7 +88,7 @@ const IFileContainerScanner *FileContainer::scanner() const
 
 FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
 	m_data(new Data(container, file, fileName)),
-	m_path(m_data->container->location().append(QChar('/')).append(fileName))
+	m_path(m_data->container->location(fileName))
 {}
 
 ARC_PLUGIN_NS_END

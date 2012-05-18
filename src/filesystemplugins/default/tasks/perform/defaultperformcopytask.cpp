@@ -40,8 +40,8 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 				PScopedPointer<IFileContainer> dest;
 
 				if (dest = destination->open(entry->info()->fileName(), false, m_lastError))
-					for (WrappedNodeItem::size_type i = 0; i < entry->size() && !aborted; ++i)
-						copyEntry(dest.data(), entry->at(i), tryAgain = false, aborted);
+					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
+						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;
@@ -70,8 +70,8 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 				PScopedPointer<IFileContainer> dest;
 
 				if (dest = destination->open(entry->info()->fileName(), true, m_lastError))
-					for (WrappedNodeItem::size_type i = 0; i < entry->size() && !aborted; ++i)
-						copyEntry(dest.data(), entry->at(i), tryAgain = false, aborted);
+					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
+						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
 						break;

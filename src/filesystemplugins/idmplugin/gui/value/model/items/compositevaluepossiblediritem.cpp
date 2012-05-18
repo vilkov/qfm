@@ -84,9 +84,9 @@ CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValu
 {
 	const WrappedNodeItem *file;
 
-	for (WrappedNodeItem::size_type i = 0, size = source->size(); i < size; ++i)
+	for (WrappedNodeItem::const_iterator i = source->begin(), end = source->end(); i != end; ++i)
 	{
-		file = source->at(i);
+		file = (*i);
 
 		if (file->info()->isFile())
 			add(new CompositeValueFakePossibleFileItem(file, this));

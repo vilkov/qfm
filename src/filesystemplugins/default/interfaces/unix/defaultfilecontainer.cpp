@@ -312,13 +312,16 @@ void FileContainer::scan(WrappedNodeItem *root, const volatile Flags &aborted) c
 					if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
 						scan(subtree.data(), aborted);
 
-					root->add(subtree.take());
+					root->insert(subtree->info()->fileName(), subtree.data());
+					subtree.take();
 				}
 			}
 			else
 			{
 				info = new Info(root->thisContainer()->location(QString::fromUtf8(entry->d_name)), Info::Identify());
-				root->add(new WrappedNodeItem(root->thisContainer().data(), info, root));
+				subtree = new WrappedNodeItem(root->thisContainer().data(), info, root);
+				root->insert(subtree->info()->fileName(), subtree.data());
+				subtree.take();
 			}
 
 		closedir(dir);

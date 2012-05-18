@@ -3,7 +3,9 @@
 
 #include "../default_ns.h"
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
-#include "../../../filesystem/containers/filesystemwrappednodeitem.h"
+
+
+FILE_SYSTEM_NS(class WrappedNodeItem)
 
 
 DEFAULT_PLUGIN_NS_BEGIN

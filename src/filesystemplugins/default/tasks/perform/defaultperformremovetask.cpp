@@ -40,12 +40,12 @@ void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAg
 	{
 		WrappedNodeItem *localEntry;
 
-		for (WrappedNodeItem::size_type i = 0; i < entry->size();)
+		for (WrappedNodeItem::iterator i = entry->begin(), end = entry->end(); i != end && !aborted;)
 		{
-			removeEntry(localEntry = entry->at(i), tryAgain = false, aborted);
+			removeEntry(localEntry = (*i), tryAgain = false, aborted);
 
 			if (localEntry->isRemoved())
-				entry->remove(i);
+				entry->erase(i);
 			else
 			{
 				++i;

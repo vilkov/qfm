@@ -19,8 +19,8 @@ QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *contain
 	{
 		m_thisContainer = item->thisContainer().take();
 
-		for (WrappedNodeItem::size_type i = 0, size = item->size(); i < size; ++i)
-			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), item->at(i), this)));
+		for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), (*i), this)));
 	}
 
 	qSort(m_items.begin(), m_items.end(), compareByFileNames);

@@ -170,7 +170,7 @@ QString Info::name() const
 
 QString Info::description() const
 {
-	return m_info.type.descritpion;
+	return m_info.type.description;
 }
 
 void Info::refresh()

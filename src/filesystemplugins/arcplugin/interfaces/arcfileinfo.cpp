@@ -72,7 +72,7 @@ QString Info::name() const
 
 QString Info::description() const
 {
-	return m_fileTypeInfo.descritpion;
+	return m_fileTypeInfo.description;
 }
 
 ARC_PLUGIN_NS_END

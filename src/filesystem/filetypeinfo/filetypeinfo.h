@@ -24,7 +24,7 @@ struct FileTypeInfo
 	FileTypeId id;
 	QIcon icon;
 	QString name;
-	QString descritpion;
+	QString description;
 };
 
 FILE_SYSTEM_NS_END

@@ -1,7 +1,11 @@
 #include "arcnode.h"
 #include "items/arcnoderootitem.h"
+#include "items/arcnodeentryitem.h"
 #include "../tasks/arcreadarchivetask.h"
 #include "../tasks/arcperformcopytask.h"
+#include "../../../application.h"
+
+#include <QtGui/QMessageBox>
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -10,14 +14,14 @@ ArcNode::ArcNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_container(container.take()),
 	m_items(m_itemsContainer.m_container),
-    m_delegate(&m_proxy),
-    m_filePath()
+    m_delegate(&m_proxy)
 {
+	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
 	m_items.push_back(NodeItem::Holder(new ArcNodeRootItem()));
 
 	m_items.at(RootItemIndex).as<ArcNodeItem>()->lock(tr("Scanning archive..."));
-//	addTask(new ReadArchiveTask(m_info.absoluteFilePath(), this), TasksItemList() << m_items.at(RootItemIndex));
+	handleTask(new ReadArchiveTask(m_container.data(), this));
 }
 
 bool ArcNode::event(QEvent *e)
@@ -28,7 +32,6 @@ bool ArcNode::event(QEvent *e)
 		{
 			e->accept();
 			scanCompleteEvent(static_cast<BaseTask::Event *>(e));
-
 			return true;
 		}
 
@@ -36,7 +39,6 @@ bool ArcNode::event(QEvent *e)
 		{
 			e->accept();
 			copyCompleteEvent(static_cast<BaseTask::Event *>(e));
-
 			return true;
 		}
 
@@ -170,12 +172,12 @@ void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 QString ArcNode::location() const
 {
-	return QString();
+	return m_container->location();
 }
 
 QString ArcNode::location(const QString &fileName) const
 {
-	return QString();
+	return m_container->location(fileName);
 }
 
 void ArcNode::refresh()
@@ -185,7 +187,8 @@ void ArcNode::refresh()
 
 QString ArcNode::title() const
 {
-	return m_filePath.mid(m_filePath.lastIndexOf(QChar('/')) + 1);
+	QString location(m_container->location());
+	return location.mid(location.lastIndexOf(QChar('/')) + 1);
 }
 
 ArcNode::Sorting ArcNode::sorting() const
@@ -195,7 +198,7 @@ ArcNode::Sorting ArcNode::sorting() const
 
 ArcNode::Geometry ArcNode::geometry() const
 {
-	return Geometry() << 100;
+	return Geometry() << 300 << 80 << 50;
 }
 
 QAbstractItemModel *ArcNode::model() const
@@ -225,7 +228,7 @@ QAbstractItemView::SelectionMode ArcNode::selectionMode() const
 
 QModelIndex ArcNode::rootIndex() const
 {
-	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex)));
+	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex).data()));
 }
 
 Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
@@ -263,18 +266,27 @@ void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)
 
 void ArcNode::scanCompleteEvent(BaseTask::Event *e)
 {
-//	ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
-//
-//	if (!event->canceled && !event->contents.items.isEmpty())
-//	{
-//		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->contents.items.size() - 1);
-//		m_items.append(event->contents.items);
-//		endInsertRows();
-//	}
-//
-//	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
-//	updateFirstColumn(m_items.at(RootItemIndex));
-//	removeAllTaskLinks(event->task);
+	ReadArchiveTask::Event *event = static_cast<ReadArchiveTask::Event*>(e);
+
+	if (!event->canceled)
+		if (!event->error.isEmpty())
+			QMessageBox::critical(
+					Application::mainWindow(),
+					tr("Error"),
+					event->error,
+					QMessageBox::Ok);
+		else
+			if (!event->snapshot.isEmpty())
+			{
+				beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->snapshot.size() - 1);
+				for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
+					m_items.push_back(NodeItem::Holder(new ArcNodeEntryItem((*i).second, NULL)));
+				endInsertRows();
+			}
+
+	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
+	updateFirstColumn(m_items.at(RootItemIndex));
+	taskHandled(event->task);
 }
 
 void ArcNode::copyCompleteEvent(BaseTask::Event *e)
@@ -307,23 +319,23 @@ ArcNode::ItemsContainer::size_type ArcNode::ItemsContainer::indexOf(Item *item) 
 	return m_container.indexOf(holder);
 }
 
-void ArcNode::updateFirstColumn(const ArcNodeItem::Holder &entry)
+void ArcNode::updateFirstColumn(const NodeItem::Holder &entry)
 {
 	QModelIndex index;
 
-	if (ArcNodeListItem *parent = static_cast<ArcNodeListItem *>(entry->parent()))
-		index = createIndex(parent->indexOf(entry.data()), 0, entry);
+	if (ArcNodeEntryItem *parent = static_cast<ArcNodeEntryItem *>(entry->parent()))
+		index = createIndex(parent->indexOf(entry.data()), 0, entry.data());
 	else
-		index = createIndex(m_items.indexOf(entry), 0, entry);
+		index = createIndex(m_items.indexOf(entry), 0, entry.data());
 
 	emit dataChanged(index, index);
 }
 
-void ArcNode::updateSecondColumn(const ArcNodeItem::Holder &entry)
+void ArcNode::updateSecondColumn(const NodeItem::Holder &entry)
 {
 	QModelIndex index;
 
-	if (ArcNodeListItem *parent = static_cast<ArcNodeListItem *>(entry->parent()))
+	if (ArcNodeEntryItem *parent = static_cast<ArcNodeEntryItem *>(entry->parent()))
 		index = createIndex(parent->indexOf(entry.data()), 1, entry);
 	else
 		index = createIndex(m_items.indexOf(entry), 1, entry);

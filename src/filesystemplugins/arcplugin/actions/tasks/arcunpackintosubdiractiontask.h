@@ -2,13 +2,13 @@
 #define ARCUNPACKINTOSUBDIRACTIONTASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "../../archive/arcarchive.h"
+#include "../../arcplugin_ns.h"
 #include "../../../../filesystem/tasks/filesystemperformactiontask.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class UnPackIntoSubdirActionTask : public PerformActionTask, public Archive::Callback
+class UnPackIntoSubdirActionTask : public PerformActionTask
 {
 	Q_DECLARE_TR_FUNCTIONS(UnPackIntoSubdirActionTask)
 

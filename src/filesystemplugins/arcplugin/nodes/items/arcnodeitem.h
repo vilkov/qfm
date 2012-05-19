@@ -16,27 +16,8 @@ public:
 	void unlock() { TasksNodeItem::unlock(); stop(); }
 
 	virtual bool isRoot() const;
-	virtual bool isDir() const;
 
 	void updateProgress(quint64 value, quint64 timeElapsed) { progress(value, timeElapsed); }
-};
-
-
-class ArcNodeListItem : public ArcNodeItem
-{
-public:
-	typedef QList<ArcNodeItem::Holder> Container;
-
-public:
-	ArcNodeListItem(Base *parent);
-
-	/* Base */
-	virtual Base *at(size_type index) const;
-	virtual size_type size() const;
-	virtual size_type indexOf(Base *item) const;
-
-protected:
-	Container m_items;
 };
 
 ARC_PLUGIN_NS_END

@@ -1,12 +1,11 @@
 #include "arcperformcopytask.h"
-#include "../nodes/items/arcnodedirentryitem.h"
 #include "../../../tools/pointers/pscopedpointer.h"
 #include <QtGui/QMessageBox>
 
 
 ARC_PLUGIN_NS_BEGIN
 
-PerformCopyTask::PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver) :
+PerformCopyTask::PerformCopyTask(const QString &fileName, const NodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver) :
 	FilesBaseTask(receiver),
 	m_fileName(fileName),
 	m_item(item),

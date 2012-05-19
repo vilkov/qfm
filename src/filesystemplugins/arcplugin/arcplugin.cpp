@@ -10,8 +10,6 @@ static Plugin *instance = 0;
 
 Plugin::Plugin()
 {
-	m_archivers[0] = &m_libArchive;
-	m_archivers[1] = 0;
 	instance = this;
 }
 
@@ -105,11 +103,6 @@ Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node 
 		return new ArcNode(localContainer, parent);
 	else
 		return NULL;
-}
-
-const Archive **Plugin::archivers()
-{
-	return instance->m_archivers;
 }
 
 ARC_PLUGIN_NS_END

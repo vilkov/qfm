@@ -9,13 +9,13 @@ ARC_PLUGIN_NS_BEGIN
 class ReadArchiveTask : public FilesBaseTask
 {
 public:
-	ReadArchiveTask(IFileContainer::Holder &container, TasksNode *receiver);
+	ReadArchiveTask(const IFileContainer *container, TasksNode *receiver);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
 
 private:
-	IFileContainer::Holder m_container;
+	const IFileContainer *m_container;
 };
 
 ARC_PLUGIN_NS_END

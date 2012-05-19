@@ -3,14 +3,13 @@
 
 #include <QtCore/QCoreApplication>
 #include "arcfilesbasetask.h"
-#include "../archive/arcarchive.h"
 #include "../../../filesystem/tasks/tools/taskprogress.h"
 #include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class PerformCopyTask : public FilesBaseTask, public Archive::Callback
+class PerformCopyTask : public FilesBaseTask
 {
 	Q_DECLARE_TR_FUNCTIONS(PerformCopyTask)
 
@@ -28,7 +27,7 @@ public:
 //	};
 
 public:
-	PerformCopyTask(const QString &fileName, const ArcNodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
+	PerformCopyTask(const QString &fileName, const NodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
 
 	virtual IFileAccessor::value_type *buffer() const;
 	virtual IFileAccessor::size_type bufferSize() const;
@@ -50,7 +49,7 @@ private:
 
 private:
 	QString m_fileName;
-	ArcNodeItem::Holder m_item;
+	NodeItem::Holder m_item;
 	ICopyControl::Holder m_control;
 	bool m_move;
 	bool m_overwriteAll;

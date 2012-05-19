@@ -37,6 +37,8 @@ public:
 	virtual QString name() const;
 	virtual QString description() const;
 
+	const QByteArray &path() const { return m_data.path; }
+
 private:
 	Data m_data;
 	bool m_isDir;

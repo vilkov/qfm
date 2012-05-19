@@ -1,17 +1,33 @@
 #include "arcnodeentryitem.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNodeEntryItem::ArcNodeEntryItem(const QString &fileName, qint64 extractedSize, const QDateTime &lastModified, Base *parent) :
+ArcNodeEntryItem::ArcNodeEntryItem(WrappedNodeItem *item, Base *parent) :
 	ArcNodeItem(parent),
-	m_fileName(fileName),
-	m_extractedSize(extractedSize),
-	m_lastModified(lastModified),
-	m_typeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_fileName, false, 16))
-{}
+	m_info(item->info().take()),
+	m_totalSize(item->totalSize())
+{
+	for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+		m_items.push_back(NodeItem::Holder(new ArcNodeEntryItem((*i), this)));
+}
+
+ArcNodeEntryItem::Base *ArcNodeEntryItem::at(size_type index) const
+{
+	return m_items.at(index).data();
+}
+
+ArcNodeEntryItem::size_type ArcNodeEntryItem::size() const
+{
+	return m_items.size();
+}
+
+ArcNodeEntryItem::size_type ArcNodeEntryItem::indexOf(Base *item) const
+{
+	ArcNodeItem::Holder holder(static_cast<ArcNodeEntryItem *>(item));
+	return m_items.indexOf(holder);
+}
 
 QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 {
@@ -23,13 +39,13 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_fileName;
+					return m_info->fileName();
 
 				case Qt::DecorationRole:
 					if (isLocked())
 						return lockIcon();
 					else
-						return m_typeInfo.icon;
+						return m_info->fileType()->icon();
 
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
@@ -48,13 +64,13 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return Tools::humanReadableSize(m_extractedSize);
+					return Tools::humanReadableSize(m_info->fileSize());
 
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
 
 				case Qt::ToolTipRole:
-					return m_typeInfo.name;
+					return m_info->fileType()->name();
 			}
 			break;
 		}
@@ -64,7 +80,7 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_lastModified;
+					return m_info->lastModified();
 
 				case Qt::TextAlignmentRole:
 					return Qt::AlignLeft;
@@ -78,7 +94,7 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 
 void ArcNodeEntryItem::lock(const QString &reason)
 {
-	start(m_extractedSize);
+	start(m_totalSize);
 	TasksNodeItem::lock(reason);
 }
 

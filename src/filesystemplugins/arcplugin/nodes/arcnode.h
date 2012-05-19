@@ -2,9 +2,7 @@
 #define ARCNODE_H_
 
 #include "arcnodeproxymodel.h"
-#include "items/arcnodeitem.h"
 #include "../model/arcdelegate.h"
-#include "../archive/arcarchive.h"
 #include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
 
@@ -74,7 +72,7 @@ private:
 	class ItemsContainer : public Container
 	{
 	public:
-		typedef QList<ArcNodeItem::Holder> List;
+		typedef QList<NodeItem::Holder> List;
 
 	public:
 		ItemsContainer();
@@ -90,8 +88,8 @@ private:
 
 private:
 	typedef ::Tools::Containers::Union Union;
-	void updateFirstColumn(const ArcNodeItem::Holder &entry);
-	void updateSecondColumn(const ArcNodeItem::Holder &entry);
+	void updateFirstColumn(const NodeItem::Holder &entry);
+	void updateSecondColumn(const NodeItem::Holder &entry);
 
 private:
 	IFileContainer::Holder m_container;
@@ -99,7 +97,6 @@ private:
     ItemsContainer::List &m_items;
     ArcNodeProxyModel m_proxy;
     ArcDelegate m_delegate;
-    QString m_filePath;
     INodeView::MenuActionList m_actions;
 };
 

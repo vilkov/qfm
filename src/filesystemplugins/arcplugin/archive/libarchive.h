@@ -1,6 +1,7 @@
 #ifndef LIBARCHIVE_H_
 #define LIBARCHIVE_H_
 
+#include <QtCore/QMutex>
 #include "../arcplugin_ns.h"
 #include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
@@ -19,8 +20,8 @@ public:
 	/* IFileContainerScanner */
 	virtual void enumerate(IEnumerator::Holder &enumerator) const;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted) const;
+	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 
 private:
 	class ReadArchive
@@ -43,6 +44,7 @@ private:
 		IFileAccessor::value_type *m_buffer;
 		const IFileAccessor::Holder &m_file;
 		struct archive *m_archive;
+		QMutex m_mutex;
 	};
 
 private:

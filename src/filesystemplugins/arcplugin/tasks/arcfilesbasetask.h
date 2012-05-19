@@ -25,9 +25,12 @@ public:
 		};
 
 	public:
-		Event(BaseTask *task, Type type, bool canceled, const Snapshot &snapshot) :
-			Base::Event(task, static_cast<Base::Event::Type>(type), canceled, snapshot)
+		Event(BaseTask *task, Type type, const QString &error, bool canceled, const Snapshot &snapshot) :
+			Base::Event(task, static_cast<Base::Event::Type>(type), canceled, snapshot),
+			error(error)
 		{}
+
+		QString error;
 	};
 
 	class ExtendedEvent : public Base::ExtendedEvent

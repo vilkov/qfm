@@ -13,17 +13,17 @@ bool ProxyModel::compareByFileNames(const IFileInfo *v1, const IFileInfo *v2)
 		if (v2->isFile())
 			return ProxyModel::compareFileNames(v1->fileName(), v2->fileName());
 		else
-			return true;
+			return false;
 	else
 		if (v2->isFile())
-			return false;
+			return true;
 		else
 			return ProxyModel::compareFileNames(v1->fileName(), v2->fileName());
 }
 
 bool ProxyModel::compareFileNames(const QString &str1, const QString &str2)
 {
-	return str1 < str2;
+	return QString::compare(str1, str2, Qt::CaseInsensitive) < 0;
 }
 
 FILE_SYSTEM_NS_END

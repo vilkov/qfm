@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMWRAPPEDNODEITEM_H_
 #define FILESYSTEMWRAPPEDNODEITEM_H_
 
-#include <QtCore/QMap>
+#include <QtCore/QList>
 #include "../interfaces/filesystemifilecontainer.h"
 
 
@@ -12,16 +12,16 @@ class WrappedNodeItem
 	Q_DISABLE_COPY(WrappedNodeItem)
 
 public:
-	typedef PScopedPointer<WrappedNodeItem>  Holder;
-	typedef QMap<QString, WrappedNodeItem *> Container;
-	typedef Container::iterator              iterator;
-	typedef Container::const_iterator        const_iterator;
-	typedef Container::size_type             size_type;
+	typedef PScopedPointer<WrappedNodeItem> Holder;
+	typedef QList<WrappedNodeItem *>        Container;
+	typedef Container::iterator             iterator;
+	typedef Container::const_iterator       const_iterator;
+	typedef Container::size_type            size_type;
 
 public:
 	WrappedNodeItem();
 	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent);
-	~WrappedNodeItem();
+	virtual ~WrappedNodeItem();
 
 	bool isValid() const { return m_container != NULL; }
 
@@ -34,19 +34,31 @@ public:
 	const_iterator end() const { return m_items.end(); }
 	iterator end() { return m_items.end(); }
 
-	WrappedNodeItem *find(const QString &fileName) const { return m_items.value(fileName); }
-
-	void insert(const QString &fileName, WrappedNodeItem *item)
+	void append(WrappedNodeItem *item)
 	{
-		WrappedNodeItem *&value = m_items[fileName];
-		delete value;
-		incTotalSize((value = item)->totalSize());
+		m_items.append(item);
+		incTotalSize(item->totalSize());
+	}
+
+	template <typename T>
+	void append(const T &container)
+	{
+		IFileInfo::size_type size = 0;
+		m_items.reserve(m_items.size() + container.size());
+
+		for (typename T::const_iterator i = container.begin(), end = container.end(); i != end; ++i)
+		{
+			m_items.append(*i);
+			size += (*i)->totalSize();
+		}
+
+		incTotalSize(size);
 	}
 
 	iterator erase(iterator i)
 	{
-		decTotalSize((*i)->totalSize());
-		delete (*i);
+		Holder item(*i);
+		decTotalSize(item->totalSize());
 		return m_items.erase(i);
 	}
 
@@ -61,6 +73,10 @@ public:
 
 	const IFileInfo::Holder &info() const { return m_info; }
 	IFileInfo::Holder &info() { return m_info; }
+
+protected:
+	WrappedNodeItem(const IFileContainer *container, WrappedNodeItem *parent);
+	WrappedNodeItem(const IFileContainer *container, IFileInfo::size_type totalSize, WrappedNodeItem *parent);
 
 private:
 	void incTotalSize(IFileInfo::size_type size)

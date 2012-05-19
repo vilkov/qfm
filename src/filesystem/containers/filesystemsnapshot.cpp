@@ -14,6 +14,10 @@ Snapshot::Snapshot(const Updates &updates) :
 	m_data(updates.m_data)
 {}
 
+Snapshot::Snapshot(const IFileContainer *container) :
+	m_data(new Data(container))
+{}
+
 Snapshot::Data::Data(const IFileContainer *container) :
 	container(container)
 {}

@@ -25,6 +25,7 @@ public:
 	Snapshot();
 	Snapshot(const Files &files);
 	Snapshot(const Updates &updates);
+	Snapshot(const IFileContainer *container);
 
 	bool isEmpty() const { return m_data->map.isEmpty(); }
 	size_type size() const { return m_data->map.size(); }

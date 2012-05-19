@@ -13,10 +13,10 @@ FolderProxyModel::FolderProxyModel(QObject *parent) :
 bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
 	if (static_cast<DefaultNodeItem *>(left.internalPointer())->isRootItem())
-		return true;
+		return sortOrder() == Qt::AscendingOrder;
 	else
 		if (static_cast<DefaultNodeItem*>(right.internalPointer())->isRootItem())
-			return false;
+			return sortOrder() == Qt::DescendingOrder;
 		else
 		{
 			DefaultNodeItem *leftItem = static_cast<DefaultNodeItem *>(left.internalPointer());

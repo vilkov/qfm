@@ -45,6 +45,7 @@ protected:
 private:
 	Event::Type m_type;
 	Snapshot m_snapshot;
+	QString m_error;
 	bool m_move;
 };
 

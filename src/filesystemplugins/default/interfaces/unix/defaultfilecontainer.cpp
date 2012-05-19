@@ -242,10 +242,9 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 	return NULL;
 }
 
-void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) const
+void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
 	Info raw;
-	QString error;
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 
@@ -271,7 +270,7 @@ void FileContainer::scan(Snapshot &snapshot, const volatile Flags &aborted) cons
 	}
 }
 
-void FileContainer::refresh(Snapshot &snapshot, const volatile Flags &aborted) const
+void FileContainer::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
 	Info raw;
 	IFileInfo::Holder info;

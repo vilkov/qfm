@@ -38,8 +38,8 @@ public:
 	/* IFileContainerScanner */
 	virtual void enumerate(IEnumerator::Holder &enumerator) const;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted) const;
+	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 
 private:
 	void scan(WrappedNodeItem *root, const volatile Flags &aborted) const;

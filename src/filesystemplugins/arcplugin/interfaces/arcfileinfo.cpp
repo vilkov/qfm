@@ -1,28 +1,23 @@
 #include "arcfileinfo.h"
 #include "../../../application.h"
 
-#include <archive.h>
-#include <archive_entry.h>
-
 
 ARC_PLUGIN_NS_BEGIN
 
-Info::Info(const QString &fileName, struct archive_entry *entry) :
-	m_path(archive_entry_pathname(entry)),
-	m_fileName(fileName),
-	m_fileSize(archive_entry_size(entry)),
-	m_lastModified(QDateTime::fromTime_t(archive_entry_mtime(entry))),
-	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(fileName, m_path.endsWith('/'), 16))
+Info::Info(const Data &data, bool isDir) :
+	m_data(data),
+	m_isDir(isDir),
+	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_data.fileName, m_isDir, 16))
 {}
 
 bool Info::isDir() const
 {
-	return false;
+	return m_isDir;
 }
 
 bool Info::isFile() const
 {
-	return false;
+	return !m_isDir;
 }
 
 bool Info::isLink() const
@@ -32,12 +27,12 @@ bool Info::isLink() const
 
 Info::size_type Info::fileSize() const
 {
-	return m_fileSize;
+	return m_data.fileSize;
 }
 
 QString Info::fileName() const
 {
-	return m_fileName;
+	return m_data.fileName;
 }
 
 const IFileType *Info::fileType() const
@@ -47,7 +42,7 @@ const IFileType *Info::fileType() const
 
 QDateTime Info::lastModified() const
 {
-	return m_lastModified;
+	return m_data.lastModified;
 }
 
 int Info::permissions() const

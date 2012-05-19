@@ -5,15 +5,21 @@
 #include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-struct archive_entry;
-
-
 ARC_PLUGIN_NS_BEGIN
 
 class Info : public IFileInfo, public IFileType
 {
 public:
-	Info(const QString &fileName, struct archive_entry *entry);
+	struct Data
+	{
+		QByteArray path;
+		QString fileName;
+		size_type fileSize;
+		QDateTime lastModified;
+	};
+
+public:
+	Info(const Data &data, bool isDir);
 
 	/* IFileInfo */
 	virtual bool isDir() const;
@@ -32,10 +38,8 @@ public:
 	virtual QString description() const;
 
 private:
-	QByteArray m_path;
-	QString m_fileName;
-	size_type m_fileSize;
-	QDateTime m_lastModified;
+	Data m_data;
+	bool m_isDir;
 	FileTypeInfo m_fileTypeInfo;
 };
 

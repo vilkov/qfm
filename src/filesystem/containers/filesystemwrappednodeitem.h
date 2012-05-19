@@ -40,21 +40,6 @@ public:
 		incTotalSize(item->totalSize());
 	}
 
-	template <typename T>
-	void append(const T &container)
-	{
-		IFileInfo::size_type size = 0;
-		m_items.reserve(m_items.size() + container.size());
-
-		for (typename T::const_iterator i = container.begin(), end = container.end(); i != end; ++i)
-		{
-			m_items.append(*i);
-			size += (*i)->totalSize();
-		}
-
-		incTotalSize(size);
-	}
-
 	iterator erase(iterator i)
 	{
 		Holder item(*i);
@@ -78,27 +63,25 @@ protected:
 	WrappedNodeItem(const IFileContainer *container, WrappedNodeItem *parent);
 	WrappedNodeItem(const IFileContainer *container, IFileInfo::size_type totalSize, WrappedNodeItem *parent);
 
-private:
+protected:
+	Container &items() { return m_items; }
+
 	void incTotalSize(IFileInfo::size_type size)
 	{
 		WrappedNodeItem *parent = this;
 
-		while (parent)
-		{
+		do
 			parent->m_totalSize += size;
-			parent = parent->m_parent;
-		}
+		while (parent = parent->m_parent);
 	}
 
 	void decTotalSize(IFileInfo::size_type size)
 	{
 		WrappedNodeItem *parent = this;
 
-		while (parent)
-		{
+		do
 			parent->m_totalSize -= size;
-			parent = parent->m_parent;
-		}
+		while (parent = parent->m_parent);
 	}
 
 private:

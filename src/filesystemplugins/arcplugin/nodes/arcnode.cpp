@@ -272,12 +272,17 @@ void ArcNode::scanCompleteEvent(BaseTask::Event *e)
 
 	if (!event->canceled)
 		if (!event->error.isEmpty())
+		{
 			QMessageBox::critical(
 					Application::mainWindow(),
 					tr("Error"),
 					event->error,
 					QMessageBox::Ok);
+
+			m_items.at(RootItemIndex).as<ArcNodeItem>()->cancel(event->error);
+		}
 		else
+		{
 			if (!event->snapshot.isEmpty())
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + event->snapshot.size() - 1);
@@ -286,7 +291,9 @@ void ArcNode::scanCompleteEvent(BaseTask::Event *e)
 				endInsertRows();
 			}
 
-	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
+			m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
+		}
+
 	updateFirstColumn(m_items.at(RootItemIndex));
 	removeAllTaskLinks(event->task);
 }

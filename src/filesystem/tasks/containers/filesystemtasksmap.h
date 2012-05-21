@@ -20,6 +20,12 @@ public:
 	TasksMap()
 	{}
 
+	void add(BaseTask *task, const NodeItem::Holder &item)
+	{
+		m_tasks[task].push_back(item);
+		m_items[item] = task;
+	}
+
 	void add(BaseTask *task, const Snapshot &snapshot)
 	{
 		List &items = m_tasks[task];

@@ -30,6 +30,7 @@ protected:
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
 
 protected:
+	void addTask(BaseTask *task, const NodeItem::Holder &item);
 	void addTask(BaseTask *task, const Snapshot &snapshot);
 	void addTask(BaseTask *task, const ICopyControl *destanation, const Snapshot &snapshot);
 	void resetTask(BaseTask *task, BaseTask *oldTask);

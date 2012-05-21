@@ -71,6 +71,13 @@ bool TasksNode::event(QEvent *e)
 	return Node::event(e);
 }
 
+void TasksNode::addTask(BaseTask *task, const NodeItem::Holder &item)
+{
+	m_tasks.add(task, item);
+	addLink();
+	Application::taskPool()->handle(task);
+}
+
 void TasksNode::addTask(BaseTask *task, const Snapshot &snapshot)
 {
 	m_tasks.add(task, snapshot);

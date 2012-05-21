@@ -8,6 +8,7 @@
 #include <archive_entry.h>
 
 #include <QtCore/QMap>
+#include <QtCore/QDebug>
 
 
 ARC_PLUGIN_NS_BEGIN
@@ -28,25 +29,28 @@ public:
 	}
 	virtual ~WrappedNodeItem()
 	{
-		qDeleteAll(m_items);
+		qDeleteAll(m_map);
 	}
 
-	WrappedNodeItem *find(const QString &fileName) const { return static_cast<WrappedNodeItem *>(m_items.value(fileName)); }
+	WrappedNodeItem *find(const QString &fileName) const
+	{
+		return static_cast<WrappedNodeItem *>(m_map.value(fileName));
+	}
 
 	void insert(const QString &fileName, WrappedNodeItem *item)
 	{
-		incTotalSize((m_items[fileName] = item)->totalSize());
+		incTotalSize((m_map[fileName] = item)->totalSize());
 	}
 
 	void populateInfo()
 	{
-		if (m_items.isEmpty())
+		if (m_map.isEmpty())
 			info() = new Info(m_data, false);
 		else
 		{
-			items().reserve(items().size() + m_items.size());
+			items().reserve(items().size() + m_map.size());
 
-			for (Container::iterator i = m_items.begin(), e = m_items.end(); i != e; i = m_items.erase(i))
+			for (Container::iterator i = m_map.begin(), e = m_map.end(); i != e; i = m_map.erase(i))
 			{
 				items().append(*i);
 				static_cast<WrappedNodeItem *>(*i)->populateInfo();
@@ -59,7 +63,7 @@ public:
 
 private:
 	Info::Data m_data;
-	Container m_items;
+	Container m_map;
 };
 
 
@@ -101,7 +105,6 @@ void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted, QString
     while ((res = archive_read_next_header(m_archive, &e)) == ARCHIVE_OK && !aborted)
     {
     	if (path = archive_entry_pathname(e))
-		{
 			if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
 			{
 				(*sep) = 0;
@@ -131,8 +134,11 @@ void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted, QString
 					path = (++sep);
 				}
 
-				if (!(fileName = QString::fromUtf8(path)).isEmpty())
+				if (!(fileName = QString::fromUtf8(path)).isEmpty() &&
+					parent->find(fileName) == NULL)
+				{
 					parent->insert(fileName, new WrappedNodeItem(m_container, fileName, e, parent));
+				}
 			}
 			else
 			{
@@ -141,12 +147,11 @@ void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted, QString
 				if (p == NULL)
 					snapshot.insert(fileName, p = new WrappedNodeItem(m_container, fileName, e, NULL));
 			}
-		}
 
 		archive_read_data_skip(m_archive);
     }
 
-    if (!aborted)
+	if (!aborted)
     	if (res == ARCHIVE_EOF)
 			for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
 				static_cast<WrappedNodeItem *>((*i).second)->populateInfo();

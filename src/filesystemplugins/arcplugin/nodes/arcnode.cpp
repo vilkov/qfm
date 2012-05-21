@@ -16,12 +16,13 @@ ArcNode::ArcNode(IFileContainer::Holder &container, Node *parent) :
 	m_items(m_itemsContainer.m_container),
     m_delegate(&m_proxy)
 {
-	m_proxy.setDynamicSortFilter(true);
-	m_proxy.setSourceModel(this);
 	m_items.push_back(NodeItem::Holder(new ArcNodeRootItem()));
 
+	m_proxy.setDynamicSortFilter(true);
+	m_proxy.setSourceModel(this);
+
 	m_items.at(RootItemIndex).as<ArcNodeItem>()->lock(tr("Scanning archive..."));
-	handleTask(new ReadArchiveTask(m_container.data(), this));
+	addTask(new ReadArchiveTask(m_container.data(), this), m_items.at(RootItemIndex));
 }
 
 bool ArcNode::event(QEvent *e)
@@ -182,7 +183,8 @@ QString ArcNode::location(const QString &fileName) const
 
 void ArcNode::refresh()
 {
-
+	if (!isUpdating() && m_items.size() == 1)
+		addTask(new ReadArchiveTask(m_container.data(), this), m_items.at(RootItemIndex));
 }
 
 QString ArcNode::title() const
@@ -286,7 +288,7 @@ void ArcNode::scanCompleteEvent(BaseTask::Event *e)
 
 	m_items.at(RootItemIndex).as<ArcNodeItem>()->unlock();
 	updateFirstColumn(m_items.at(RootItemIndex));
-	taskHandled(event->task);
+	removeAllTaskLinks(event->task);
 }
 
 void ArcNode::copyCompleteEvent(BaseTask::Event *e)
@@ -297,6 +299,11 @@ void ArcNode::copyCompleteEvent(BaseTask::Event *e)
 //
 //	updateFirstColumn(event->item);
 //	removeAllTaskLinks(event->task);
+}
+
+bool ArcNode::isUpdating() const
+{
+	return m_items.at(RootItemIndex)->isLocked();
 }
 
 ArcNode::ItemsContainer::ItemsContainer()

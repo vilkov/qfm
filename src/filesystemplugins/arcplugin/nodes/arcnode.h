@@ -67,6 +67,9 @@ protected:
 	void copyCompleteEvent(BaseTask::Event *event);
 
 private:
+	bool isUpdating() const;
+
+private:
 	enum { RootItemIndex = 0 };
 
 	class ItemsContainer : public Container

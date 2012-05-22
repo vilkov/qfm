@@ -67,6 +67,10 @@ find_package (LibArchive REQUIRED)
 include_directories (${LIBARCHIVE_INCLUDE_DIR})
 set (qfm_LIBS ${qfm_LIBS} ${LIBARCHIVE_LIBRARY})
 
+find_package (LibUnrar REQUIRED)
+include_directories (${LIBUNRAR_INCLUDE})
+set (qfm_LIBS ${qfm_LIBS} ${LIBUNRAR_LIBRARY})
+
 
 # Includes
 

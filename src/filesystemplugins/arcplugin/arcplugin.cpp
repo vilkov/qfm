@@ -1,6 +1,7 @@
 #include "arcplugin.h"
 #include "nodes/arcnode.h"
 #include "interfaces/libarchive/libarchivefilecontainer.h"
+#include "interfaces/libunrar/libunrarfilecontainer.h"
 #include "../../application.h"
 
 
@@ -24,7 +25,7 @@ void LibArchivePlugin::registered()
 	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
 }
 
-const ::Tools::Settings::Tab *LibArchivePlugin::settings() const
+const Tools::Settings::Tab *LibArchivePlugin::settings() const
 {
 	return &m_settings;
 }
@@ -50,9 +51,6 @@ LibArchivePlugin::FileTypeIdList LibArchivePlugin::fileTypes() const
 	res.push_back(type);
 
 	type.mime = QString::fromLatin1("application/x-bzip");
-	res.push_back(type);
-
-	type.mime = QString::fromLatin1("application/x-rar");
 	res.push_back(type);
 
 	type.mime = QString::fromLatin1("application/x-tarz");
@@ -111,7 +109,7 @@ LibUnRarPlugin::LibUnRarPlugin()
 void LibUnRarPlugin::registered()
 {}
 
-const ::Tools::Settings::Tab *LibUnRarPlugin::settings() const
+const Tools::Settings::Tab *LibUnRarPlugin::settings() const
 {
 	return &m_settings;
 }
@@ -129,7 +127,13 @@ LibUnRarPlugin::FileTypeIdList LibUnRarPlugin::fileTypes() const
 
 Node *LibUnRarPlugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	return NULL;
+	QString error;
+	IFileContainer::Holder localContainer(LibUnrar::FileContainer::create(container, file, error));
+
+	if (localContainer)
+		return new ArcNode(localContainer, parent);
+	else
+		return NULL;
 }
 
 ARC_PLUGIN_NS_END

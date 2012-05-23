@@ -21,7 +21,7 @@ IFileInfo *Scanner::info(const QString &fileName, QString &error) const
 
 void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
-
+	error = QString::fromLatin1("Not implemented yet");
 }
 
 void Scanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const

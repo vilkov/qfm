@@ -1,7 +1,7 @@
-#include "libarchive.h"
-#include "../interfaces/arcfileinfo.h"
-#include "../../../filesystem/tools/filesystempath.h"
-#include "../../../filesystem/containers/filesystemsnapshot.h"
+#include "libarchivescanner.h"
+#include "../arcfileinfo.h"
+#include "../../../../filesystem/tools/filesystempath.h"
+#include "../../../../filesystem/containers/filesystemsnapshot.h"
 
 #include <string.h>
 #include <archive.h>
@@ -11,7 +11,7 @@
 #include <QtCore/QDebug>
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 class WrappedNodeItem : public FileSystem::WrappedNodeItem
 {
@@ -67,7 +67,7 @@ private:
 };
 
 
-LibArchive::LibArchive(const IFileContainer *container, IFileAccessor::Holder &file) :
+Scanner::Scanner(const IFileContainer *container, IFileAccessor::Holder &file) :
 	m_container(container),
 	m_file(file.take()),
 	m_archive(archive_read_new())
@@ -76,22 +76,22 @@ LibArchive::LibArchive(const IFileContainer *container, IFileAccessor::Holder &f
 	archive_read_support_format_all(m_archive);
 }
 
-LibArchive::~LibArchive()
+Scanner::~Scanner()
 {
 	archive_read_finish(m_archive);
 }
 
-void LibArchive::enumerate(IEnumerator::Holder &enumerator) const
+void Scanner::enumerate(IEnumerator::Holder &enumerator) const
 {}
 
-IFileInfo *LibArchive::info(const QString &fileName, QString &error) const
+IFileInfo *Scanner::info(const QString &fileName, QString &error) const
 {
 	return NULL;
 }
 
-void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
-	ReadArchive archive(const_cast<LibArchive *>(this)->m_buffer, m_file, m_archive);
+	ReadArchive archive(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
     QMap<QString, WrappedNodeItem *> parents;
     IFileContainer::Holder container;
     WrappedNodeItem *parent;
@@ -159,10 +159,10 @@ void LibArchive::scan(Snapshot &snapshot, const volatile Flags &aborted, QString
     		error = QString::fromUtf8(archive_error_string(m_archive));
 }
 
-void LibArchive::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void Scanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {}
 
-LibArchive::ReadArchive::ReadArchive(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive) :
+Scanner::ReadArchive::ReadArchive(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive) :
 	m_buffer(buffer),
 	m_file(file),
 	m_archive(archive)
@@ -171,35 +171,35 @@ LibArchive::ReadArchive::ReadArchive(IFileAccessor::value_type *buffer, const IF
 	archive_read_open2(m_archive, this, open, read, skip, close);
 }
 
-LibArchive::ReadArchive::~ReadArchive()
+Scanner::ReadArchive::~ReadArchive()
 {
 	archive_read_close(m_archive);
 	m_mutex.unlock();
 }
 
-int	LibArchive::ReadArchive::open(struct archive *archive, void *_client_data)
+int	Scanner::ReadArchive::open(struct archive *archive, void *_client_data)
 {
 	static_cast<ReadArchive *>(_client_data)->m_file->seek(0, IFileAccessor::FromBeggining);
 	return ARCHIVE_OK;
 }
 
-ssize_t LibArchive::ReadArchive::read(struct archive *archive, void *_client_data, const void **_buffer)
+ssize_t Scanner::ReadArchive::read(struct archive *archive, void *_client_data, const void **_buffer)
 {
 	ReadArchive *self = static_cast<ReadArchive *>(_client_data);
 	(*_buffer) = self->m_buffer;
 	return self->m_file->read(self->m_buffer, BlockSize);
 }
 
-int64_t LibArchive::ReadArchive::skip(struct archive *archive, void *_client_data, int64_t request)
+int64_t Scanner::ReadArchive::skip(struct archive *archive, void *_client_data, int64_t request)
 {
 	IFileAccessor *file = static_cast<ReadArchive *>(_client_data)->m_file.data();
 	int64_t res = file->seek(0, IFileAccessor::FromCurrent);
 	return file->seek(request, IFileAccessor::FromCurrent) - res;
 }
 
-int	LibArchive::ReadArchive::close(struct archive *archive, void *_client_data)
+int	Scanner::ReadArchive::close(struct archive *archive, void *_client_data)
 {
 	return ARCHIVE_OK;
 }
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END

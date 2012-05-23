@@ -1,12 +1,12 @@
-#ifndef ARCFILECONTAINER_H_
-#define ARCFILECONTAINER_H_
+#ifndef LIBARCHIVEFILECONTAINER_H_
+#define LIBARCHIVEFILECONTAINER_H_
 
 #include <QtCore/QSharedData>
-#include "../archive/libarchive.h"
-#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
+#include "libarchivescanner.h"
+#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 class FileContainer : public IFileContainer
 {
@@ -46,7 +46,7 @@ private:
 		{}
 
 		IFileContainer::Holder container;
-		LibArchive m_archive;
+		Scanner m_archive;
 		QString fileName;
 	};
 
@@ -55,6 +55,6 @@ private:
 	QString m_path;
 };
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END
 
-#endif /* ARCFILECONTAINER_H_ */
+#endif /* LIBARCHIVEFILECONTAINER_H_ */

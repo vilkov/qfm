@@ -24,7 +24,8 @@ public:
 	{
 		registerStatic(&m_m3uplugin);
 		registerStatic(&m_idmplugin);
-		registerStatic(&m_arcplugin);
+		registerStatic(&m_arcplugin1);
+		registerStatic(&m_arcplugin2);
 
 		/* XXX: Must be last in the list. */
 		registerStatic(static_cast<IFilePlugin *>(&m_default));
@@ -34,7 +35,8 @@ public:
 private:
 	M3u::Plugin m_m3uplugin;
 	Idm::Plugin m_idmplugin;
-	Arc::Plugin m_arcplugin;
+	Arc::LibArchivePlugin m_arcplugin1;
+	Arc::LibUnRarPlugin m_arcplugin2;
 
 private:
 	Default::Plugin m_default;

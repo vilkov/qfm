@@ -1,21 +1,21 @@
 #include "arcplugin.h"
 #include "nodes/arcnode.h"
-#include "interfaces/arcfilecontainer.h"
+#include "interfaces/libarchive/libarchivefilecontainer.h"
 #include "../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
-static Plugin *instance = 0;
+static LibArchivePlugin *instance = 0;
 
 
-Plugin::Plugin()
+LibArchivePlugin::LibArchivePlugin()
 {
 	instance = this;
 }
 
-void Plugin::registered()
+void LibArchivePlugin::registered()
 {
-	Plugin::FileTypeIdList list = fileTypes();
+	FileTypeIdList list = fileTypes();
 
 	Application::globalMenu()->registerAction(&m_unPackAction, list);
 	Application::globalMenu()->registerAction(&m_unPackHereAction, list);
@@ -24,12 +24,12 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
 }
 
-const ::Tools::Settings::Tab *Plugin::settings() const
+const ::Tools::Settings::Tab *LibArchivePlugin::settings() const
 {
 	return &m_settings;
 }
 
-Plugin::FileTypeIdList Plugin::fileTypes() const
+LibArchivePlugin::FileTypeIdList LibArchivePlugin::fileTypes() const
 {
 	FileTypeIdList res;
 	FileTypeId type;
@@ -94,15 +94,42 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 	return res;
 }
 
-Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+Node *LibArchivePlugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
 	QString error;
-	IFileContainer::Holder localContainer(FileContainer::create(container, file, error));
+	IFileContainer::Holder localContainer(LibArchive::FileContainer::create(container, file, error));
 
 	if (localContainer)
 		return new ArcNode(localContainer, parent);
 	else
 		return NULL;
+}
+
+LibUnRarPlugin::LibUnRarPlugin()
+{}
+
+void LibUnRarPlugin::registered()
+{}
+
+const ::Tools::Settings::Tab *LibUnRarPlugin::settings() const
+{
+	return &m_settings;
+}
+
+LibUnRarPlugin::FileTypeIdList LibUnRarPlugin::fileTypes() const
+{
+	FileTypeIdList res;
+	FileTypeId type;
+
+	type.mime = QString::fromLatin1("application/x-rar");
+	res.push_back(type);
+
+	return res;
+}
+
+Node *LibUnRarPlugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+{
+	return NULL;
 }
 
 ARC_PLUGIN_NS_END

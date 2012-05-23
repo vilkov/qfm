@@ -1,7 +1,7 @@
-#include "arcfilecontainer.h"
+#include "libarchivefilecontainer.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 IFileContainer *FileContainer::create(const IFileContainer *container, const IFileInfo *file, QString &error)
 {
@@ -91,4 +91,4 @@ FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::H
 	m_path(m_data->container->location(fileName))
 {}
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END

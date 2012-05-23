@@ -11,10 +11,10 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class Plugin : public IFilePlugin
+class LibArchivePlugin : public IFilePlugin
 {
 public:
-	Plugin();
+	LibArchivePlugin();
 
 	/* IPlugin */
 	virtual void registered();
@@ -30,6 +30,24 @@ private:
 	UnPackAction m_unPackAction;
 	UnPackHereAction m_unPackHereAction;
 	UnPackIntoSubdirAction m_unPackIntoSubdirAction;
+};
+
+
+class LibUnRarPlugin : public IFilePlugin
+{
+public:
+	LibUnRarPlugin();
+
+	/* IPlugin */
+	virtual void registered();
+	virtual const ::Tools::Settings::Tab *settings() const;
+
+	/* IFilePlugin */
+	virtual FileTypeIdList fileTypes() const;
+	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
+
+private:
+	Settings m_settings;
 };
 
 ARC_PLUGIN_NS_END

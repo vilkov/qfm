@@ -237,7 +237,9 @@ Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	if (static_cast<ArcNodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
 	{
-		cancelTask(m_items.at(RootItemIndex));
+		if (!isVisible())
+			cancelTask(m_items.at(RootItemIndex));
+
 		return parentNode();
 	}
 

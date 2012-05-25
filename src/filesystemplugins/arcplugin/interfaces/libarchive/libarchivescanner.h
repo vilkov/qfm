@@ -15,7 +15,7 @@ class Scanner : public IFileContainerScanner
 {
 public:
 	Scanner(const IFileContainer *container, IFileAccessor::Holder &file);
-	~Scanner();
+	virtual ~Scanner();
 
 	/* IFileContainerScanner */
 	virtual void enumerate(IEnumerator::Holder &enumerator) const;

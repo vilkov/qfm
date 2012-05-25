@@ -12,7 +12,7 @@ class Scanner : public IFileContainerScanner
 {
 public:
 	Scanner(const IFileContainer *container, IFileAccessor::Holder &file);
-	~Scanner();
+	virtual ~Scanner();
 
 	/* IFileContainerScanner */
 	virtual void enumerate(IEnumerator::Holder &enumerator) const;
@@ -40,14 +40,12 @@ private:
 	private:
 		IFileAccessor::value_type *m_buffer;
 		const IFileAccessor::Holder &m_file;
-		struct archive *m_archive;
 		QMutex m_mutex;
 	};
 
 private:
 	const IFileContainer *m_container;
 	IFileAccessor::Holder m_file;
-	struct archive *m_archive;
 
 private:
 	enum { BlockSize = 16384 };

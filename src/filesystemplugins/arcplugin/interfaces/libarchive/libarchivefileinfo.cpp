@@ -1,8 +1,8 @@
-#include "arcfileinfo.h"
-#include "../../../application.h"
+#include "libarchivefileinfo.h"
+#include "../../../../application.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 Info::Info(const Data &data, bool isDir) :
 	m_data(data),
@@ -70,4 +70,4 @@ QString Info::description() const
 	return m_fileTypeInfo.description;
 }
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END

@@ -1,11 +1,11 @@
-#ifndef ARCFILEINFO_H_
-#define ARCFILEINFO_H_
+#ifndef LIBARCHIVEFILEINFO_H_
+#define LIBARCHIVEFILEINFO_H_
 
-#include "../arcplugin_ns.h"
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
+#include "libarchive_ns.h"
+#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 class Info : public IFileInfo, public IFileType
 {
@@ -45,6 +45,6 @@ private:
 	FileTypeInfo m_fileTypeInfo;
 };
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END
 
-#endif /* ARCFILEINFO_H_ */
+#endif /* LIBARCHIVEFILEINFO_H_ */

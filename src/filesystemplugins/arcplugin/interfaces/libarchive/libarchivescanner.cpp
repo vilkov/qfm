@@ -1,5 +1,5 @@
 #include "libarchivescanner.h"
-#include "../arcfileinfo.h"
+#include "libarchivefileinfo.h"
 #include "../../../../filesystem/tools/filesystempath.h"
 #include "../../../../filesystem/containers/filesystemsnapshot.h"
 
@@ -8,7 +8,6 @@
 #include <archive_entry.h>
 
 #include <QtCore/QMap>
-#include <QtCore/QDebug>
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN

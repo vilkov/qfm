@@ -41,7 +41,7 @@ private:
 	{
 		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
 			container(container.take()),
-			m_archive(this->container.data(), file),
+			m_archive(this->container.data(), file, fileName),
 			fileName(fileName)
 		{}
 

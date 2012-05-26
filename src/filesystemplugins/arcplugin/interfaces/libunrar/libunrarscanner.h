@@ -11,7 +11,7 @@ LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 class Scanner : public IFileContainerScanner
 {
 public:
-	Scanner(const IFileContainer *container, IFileAccessor::Holder &file);
+	Scanner(const IFileContainer *container, IFileAccessor::Holder &file, const QString &fileName);
 	virtual ~Scanner();
 
 	/* IFileContainerScanner */
@@ -46,6 +46,7 @@ private:
 private:
 	const IFileContainer *m_container;
 	IFileAccessor::Holder m_file;
+	QString m_fileName;
 
 private:
 	enum { BlockSize = 16384 };

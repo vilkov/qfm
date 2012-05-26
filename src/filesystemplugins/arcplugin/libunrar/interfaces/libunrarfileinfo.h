@@ -1,18 +1,18 @@
-#ifndef LIBARCHIVEFILEINFO_H_
-#define LIBARCHIVEFILEINFO_H_
+#ifndef LIBUNRARFILEINFO_H_
+#define LIBUNRARFILEINFO_H_
 
-#include "libarchive_ns.h"
+#include "../libunrar_ns.h"
 #include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
-LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
+LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 
 class Info : public IFileInfo, public IFileType
 {
 public:
 	struct Data
 	{
-		QByteArray path;
+		QString path;
 		QString fileName;
 		size_type fileSize;
 		QDateTime lastModified;
@@ -37,7 +37,7 @@ public:
 	virtual QString name() const;
 	virtual QString description() const;
 
-	const QByteArray &path() const { return m_data.path; }
+	const QString &path() const { return m_data.path; }
 
 private:
 	Data m_data;
@@ -45,6 +45,6 @@ private:
 	FileTypeInfo m_fileTypeInfo;
 };
 
-LIBARCHIVE_ARC_PLUGIN_NS_END
+LIBUNRAR_ARC_PLUGIN_NS_END
 
-#endif /* LIBARCHIVEFILEINFO_H_ */
+#endif /* LIBUNRARFILEINFO_H_ */

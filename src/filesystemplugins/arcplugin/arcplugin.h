@@ -1,10 +1,10 @@
 #ifndef ARCPLUGIN_H_
 #define ARCPLUGIN_H_
 
-#include "actions/arcpackaction.h"
-#include "actions/arcunpackaction.h"
-#include "actions/arcunpackhereaction.h"
-#include "actions/arcunpackintosubdiraction.h"
+#include "libarchive/actions/arcpackaction.h"
+#include "libarchive/actions/arcunpackaction.h"
+#include "libarchive/actions/arcunpackhereaction.h"
+#include "libarchive/actions/arcunpackintosubdiraction.h"
 #include "settings/arcpluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
@@ -26,10 +26,10 @@ public:
 
 private:
 	Settings m_settings;
-	PackAction m_packAction;
-	UnPackAction m_unPackAction;
-	UnPackHereAction m_unPackHereAction;
-	UnPackIntoSubdirAction m_unPackIntoSubdirAction;
+	LibArchive::PackAction m_packAction;
+	LibArchive::UnPackAction m_unPackAction;
+	LibArchive::UnPackHereAction m_unPackHereAction;
+	LibArchive::UnPackIntoSubdirAction m_unPackIntoSubdirAction;
 };
 
 

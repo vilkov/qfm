@@ -1,9 +1,10 @@
 #include "arcunpackintosubdiractiontask.h"
-#include "../../../../tools/pointers/pscopedpointer.h"
+#include "../../../../../tools/pointers/pscopedpointer.h"
+
 #include <QtGui/QMessageBox>
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
 	PerformActionTask(receiver, files),
@@ -154,4 +155,4 @@ QString UnPackIntoSubdirActionTask::folderName(const QString &fileName) const
 	return fileName.mid(0, fileName.indexOf(QChar('.')));
 }
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END

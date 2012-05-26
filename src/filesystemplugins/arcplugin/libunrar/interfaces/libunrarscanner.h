@@ -1,20 +1,17 @@
-#ifndef LIBARCHIVESCANNER_H_
-#define LIBARCHIVESCANNER_H_
+#ifndef LIBUNRARSCANNER_H_
+#define LIBUNRARSCANNER_H_
 
 #include <QtCore/QMutex>
-#include "libarchive_ns.h"
+#include "../libunrar_ns.h"
 #include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
-struct archive;
-
-
-LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
+LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 
 class Scanner : public IFileContainerScanner
 {
 public:
-	Scanner(const IFileContainer *container, IFileAccessor::Holder &file);
+	Scanner(const IFileContainer *container, IFileAccessor::Holder &file, const QString &fileName);
 	virtual ~Scanner();
 
 	/* IFileContainerScanner */
@@ -43,20 +40,19 @@ private:
 	private:
 		IFileAccessor::value_type *m_buffer;
 		const IFileAccessor::Holder &m_file;
-		struct archive *m_archive;
 		QMutex m_mutex;
 	};
 
 private:
 	const IFileContainer *m_container;
 	IFileAccessor::Holder m_file;
-	struct archive *m_archive;
+	QString m_fileName;
 
 private:
 	enum { BlockSize = 16384 };
 	IFileAccessor::value_type m_buffer[BlockSize];
 };
 
-LIBARCHIVE_ARC_PLUGIN_NS_END
+LIBUNRAR_ARC_PLUGIN_NS_END
 
-#endif /* LIBARCHIVESCANNER_H_ */
+#endif /* LIBUNRARSCANNER_H_ */

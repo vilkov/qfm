@@ -2,11 +2,11 @@
 #define ARCUNPACKINTOSUBDIRACTIONTASK_H_
 
 #include <QtCore/QCoreApplication>
-#include "../../arcplugin_ns.h"
-#include "../../../../filesystem/tasks/filesystemperformactiontask.h"
+#include "../../libarchive_ns.h"
+#include "../../../../../filesystem/tasks/filesystemperformactiontask.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 class UnPackIntoSubdirActionTask : public PerformActionTask
 {
@@ -44,6 +44,6 @@ private:
 	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];
 };
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END
 
 #endif /* ARCUNPACKINTOSUBDIRACTIONTASK_H_ */

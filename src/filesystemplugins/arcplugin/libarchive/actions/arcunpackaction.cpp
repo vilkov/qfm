@@ -1,8 +1,8 @@
 #include "arcunpackaction.h"
-#include "../../../application.h"
+#include "../../../../application.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 UnPackAction::UnPackAction() :
 	Action(tr("Unpacking..."), Application::desktopService()->unpackActionIcon(16), tr("Unpack..."))
@@ -13,4 +13,4 @@ PerformActionTask *UnPackAction::process(TasksNode *receiver, const IFileContain
 	return NULL;
 }
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END

@@ -1,7 +1,7 @@
 #include "arcplugin.h"
 #include "nodes/arcnode.h"
-#include "interfaces/libarchive/libarchivefilecontainer.h"
-#include "interfaces/libunrar/libunrarfilecontainer.h"
+#include "libarchive/interfaces/libarchivefilecontainer.h"
+#include "libunrar/interfaces/libunrarfilecontainer.h"
 #include "../../application.h"
 
 

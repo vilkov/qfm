@@ -2,10 +2,11 @@
 #define ARCPACKACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include "arcaction.h"
+#include "../libarchive_ns.h"
+#include "../../actions/arcaction.h"
 
 
-ARC_PLUGIN_NS_BEGIN
+LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 class PackAction : public Action
 {
@@ -17,6 +18,6 @@ public:
 	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const;
 };
 
-ARC_PLUGIN_NS_END
+LIBARCHIVE_ARC_PLUGIN_NS_END
 
 #endif /* ARCPACKACTION_H_ */

@@ -227,10 +227,10 @@ ICopyControl *FolderNodeBase::createControl(INodeView *view) const
 
 void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 {
-	typedef QSet<DefaultNodeItem *>                                   ItemsSet;
-	typedef QList<DefaultNodeItem *>                                  ItemsList;
+	typedef QSet<NodeItem::Holder>                                    ItemsSet;
+	typedef QList<NodeItem::Holder>                                   ItemsList;
 	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
-	typedef QMap<const TasksNodeItem *, ::Tools::Containers::Dot>     ItemsIndexMap;
+	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot>          ItemsIndexMap;
 	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
 
 	QMenu menu;
@@ -239,11 +239,11 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 	ItemsList items;
 	QModelIndex index;
 	ItemsIndexMap itemsIndex;
-	DefaultNodeItem *item;
+	NodeItem::Holder item;
 	FileActionsList actions;
 
 	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()].as<DefaultNodeItem>())->isRootItem() && !set.contains(item))
+		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()]).as<DefaultNodeItem>()->isRootItem() && !set.contains(item))
 		{
 			set.insert(item);
 			itemsIndex[item] = index.row();
@@ -262,14 +262,14 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 	{
 		if (items.size() == 1)
 		{
-			if ((item = items.at(0))->info()->isDir())
+			if ((item = items.at(0)).as<DefaultNodeItem>()->info()->isDir())
 			{
 				menu.addAction(const_cast<QAction*>(globalActions.pasteIntoFolderAction->action()));
 
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item->info().data()));
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 			}
 			else
 			{
@@ -278,7 +278,7 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item->info().data()));
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 			}
 		}
 		else
@@ -294,17 +294,17 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 				for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 				{
 					item = items.at(i);
-					files.push_back(FileAction::FilesList::value_type(item, item->info().data()));
+					files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 				}
 			}
 		}
 
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
-			actions = Application::globalMenu()->actions((item = items.at(i))->info()->fileType()->id());
+			actions = Application::globalMenu()->actions((item = items.at(i)).as<DefaultNodeItem>()->info()->fileType()->id());
 
 			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item->info().data()));
+				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 		}
 	}
 
@@ -317,7 +317,7 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
 			item = items.at(i);
-			files.push_back(FileAction::FilesList::value_type(item, item->info().data()));
+			files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 		}
 	}
 
@@ -341,7 +341,7 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 			for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 			{
 				item = items.at(i);
-				files.push_back(FileAction::FilesList::value_type(item, item->info().data()));
+				files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
 			}
 
 		if (action->isAsynchronous())
@@ -351,16 +351,15 @@ void FolderNodeBase::contextMenu(const QModelIndexList &list, INodeView *view)
 			if (task = static_cast<AsyncFileAction *>(action)->process(this, m_container.data(), files))
 			{
 				Union update;
-				DefaultNodeItem *item;
 				Snapshot::Files list(m_container.data());
 
 				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 				{
-					item = const_cast<DefaultNodeItem *>(static_cast<const DefaultNodeItem *>(files.at(i).first));
+					item = files.at(i).first;
 
 					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
 					update.add(itemsIndex.value(item));
-					list.add(item->info()->fileName(), NodeItem::Holder(item));
+					list.add(item.as<DefaultNodeItem>()->info()->fileName(), item);
 				}
 
 				addTask(task.take(), list);
@@ -824,14 +823,14 @@ void FolderNodeBase::completedProgressEvent(const NodeItem::Holder &item, quint6
 void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
 {
 	Union update;
-	TasksNodeItem *item;
+	NodeItem::Holder item;
 
 	for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 	{
-		item = const_cast<TasksNodeItem *>(static_cast<const TasksNodeItem *>(files.at(i).first));
+		item = files.at(i).first;
 
 		item->unlock();
-		update.add(m_items.indexOf(item));
+		update.add(m_items.indexOf(item.data()));
 	}
 
 	updateFirstColumn(update);

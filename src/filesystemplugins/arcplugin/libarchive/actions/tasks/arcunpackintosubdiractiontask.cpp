@@ -1,5 +1,5 @@
 #include "arcunpackintosubdiractiontask.h"
-#include "../../../../../tools/pointers/pscopedpointer.h"
+#include "../../interfaces/libarchivefilecontainer.h"
 
 #include <QtGui/QMessageBox>
 
@@ -13,16 +13,6 @@ UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, cons
 	m_progress(receiver),
 	m_container(container)
 {}
-
-IFileAccessor::value_type *UnPackIntoSubdirActionTask::buffer() const
-{
-	return const_cast<IFileAccessor::value_type *>(m_buffer);
-}
-
-IFileAccessor::size_type UnPackIntoSubdirActionTask::bufferSize() const
-{
-	return FileReadWriteGranularity;
-}
 
 void UnPackIntoSubdirActionTask::progressInit(const NodeItem::Holder &item)
 {
@@ -108,46 +98,57 @@ void UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &text, volati
 
 void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 {
-//	QString error;
-//	bool tryAgain = false;
-//	const IFileInfo *file;
-//	Archive::State *state;
-//	IFileContainer::Holder folder;
-//
-//	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
-//	{
-//		file = files().at(i).second;
-//
-//    	do
-//    	{
-//			if (folder = m_container->open(folderName(file->fileName()), true, error))
-//		    	if (const Archive *archive = Archive::archive(m_container->location(file->fileName()), &state))
-//		    	{
-//					archive->extractAll(state, folder.data(), this, aborted);
-//					archive->endRead(state);
-//		    	}
-//				else
-//					if (m_skipAllIfNotCopy)
-//						break;
-//					else
-//						askForSkipIfNotCopy(
-//								tr("Unknown archive format \"%1\". Skip it?").
-//									arg(m_container->location(file->fileName())),
-//								tryAgain = false,
-//								aborted);
-//			else
-//				if (m_skipAllIfNotCopy)
-//					break;
-//				else
-//					askForSkipIfNotCopy(
-//							tr("Failed to open/create directory \"%1\" (%2). Skip it?").
-//								arg(m_container->location(folderName(file->fileName()))).
-//								arg(state->error),
-//							tryAgain = false,
-//							aborted);
-//    	}
-//    	while (tryAgain && !aborted);
-//	}
+	QString error;
+	bool tryAgain = false;
+	const IFileInfo *file;
+	IFileContainer::Holder folder;
+
+	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
+		do
+		{
+			if (folder = FileContainer::create(m_container, files().at(i).second, error))
+			{
+
+				file = files().at(i).second;
+
+					if (folder = m_container->open(folderName(file->fileName()), true, error))
+						if (const Archive *archive = Archive::archive(m_container->location(file->fileName()), &state))
+						{
+							archive->extractAll(state, folder.data(), this, aborted);
+							archive->endRead(state);
+						}
+						else
+							if (m_skipAllIfNotCopy)
+								break;
+							else
+								askForSkipIfNotCopy(
+										tr("Unknown archive format \"%1\". Skip it?").
+											arg(m_container->location(file->fileName())),
+										tryAgain = false,
+										aborted);
+					else
+						if (m_skipAllIfNotCopy)
+							break;
+						else
+							askForSkipIfNotCopy(
+									tr("Failed to open/create directory \"%1\" (%2). Skip it?").
+										arg(m_container->location(folderName(file->fileName()))).
+										arg(state->error),
+									tryAgain = false,
+									aborted);
+			}
+			else
+				if (m_skipAllIfNotCopy)
+					break;
+				else
+					askForSkipIfNotCopy(
+							tr("Failed to extract file: ").
+								append(files().at(i).second->fileName()).
+								append(error),
+							tryAgain = false,
+							aborted);
+		}
+		while (tryAgain && !aborted);
 }
 
 QString UnPackIntoSubdirActionTask::folderName(const QString &fileName) const

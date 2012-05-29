@@ -15,9 +15,6 @@ class UnPackIntoSubdirActionTask : public PerformActionTask
 public:
 	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files);
 
-	virtual IFileAccessor::value_type *buffer() const;
-	virtual IFileAccessor::size_type bufferSize() const;
-
 	virtual void progressInit(const NodeItem::Holder &item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();

@@ -69,7 +69,7 @@ public:
 		return m_info.fileName();
 	}
 
-	virtual IFileInfo *create() const
+	virtual IFileInfo *info() const
 	{
 		return new Info(m_info);
 	}
@@ -81,6 +81,19 @@ public:
 			item->fileSize() != m_info.fileSize() ||
 			item->permissions() != m_info.permissions() ||
 			item->fileType()->name().isEmpty();
+	}
+
+	virtual IFileAccessor *open(int mode, QString &error) const
+	{
+		if (m_info.isDir())
+		{
+			errno = ENOENT;
+			error = QString::fromUtf8(::strerror(errno));
+
+			return NULL;
+		}
+		else
+			return new FileAccesor(QString::fromUtf8(m_path).append(m_info.fileName()), mode);
 	}
 
 private:

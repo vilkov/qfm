@@ -47,7 +47,7 @@ QDateTime Info::lastModified() const
 
 int Info::permissions() const
 {
-	return 0;
+	return Read;
 }
 
 FileTypeId Info::id() const

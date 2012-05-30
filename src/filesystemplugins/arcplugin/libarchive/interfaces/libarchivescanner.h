@@ -14,6 +14,9 @@ LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 class Scanner : public IFileContainerScanner
 {
 public:
+	class Enumerator;
+
+public:
 	Scanner(const IFileContainer *container, IFileAccessor::Holder &file);
 	virtual ~Scanner();
 

@@ -43,11 +43,11 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 					if (item = m_snapshot.exists(enumerator->fileName()))
 						if (enumerator->isObsolete(item.as<DefaultNodeItem>()->info().data()))
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->create(), NULL));
+							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 						else
 							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
 					else
-						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->create(), NULL));
+						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 
 					if (base.msecsTo(current) > 300)
 					{

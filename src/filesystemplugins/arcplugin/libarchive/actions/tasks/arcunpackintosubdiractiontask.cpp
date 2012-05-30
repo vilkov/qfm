@@ -102,51 +102,52 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 	bool tryAgain = false;
 	const IFileInfo *file;
 	IFileContainer::Holder folder;
+	IFileContainer::Holder destination;
 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 		do
 		{
-			if (folder = FileContainer::create(m_container, files().at(i).second, error))
-			{
-
-				file = files().at(i).second;
-
-					if (folder = m_container->open(folderName(file->fileName()), true, error))
-						if (const Archive *archive = Archive::archive(m_container->location(file->fileName()), &state))
-						{
-							archive->extractAll(state, folder.data(), this, aborted);
-							archive->endRead(state);
-						}
-						else
-							if (m_skipAllIfNotCopy)
-								break;
-							else
-								askForSkipIfNotCopy(
-										tr("Unknown archive format \"%1\". Skip it?").
-											arg(m_container->location(file->fileName())),
-										tryAgain = false,
-										aborted);
-					else
-						if (m_skipAllIfNotCopy)
-							break;
-						else
-							askForSkipIfNotCopy(
-									tr("Failed to open/create directory \"%1\" (%2). Skip it?").
-										arg(m_container->location(folderName(file->fileName()))).
-										arg(state->error),
-									tryAgain = false,
-									aborted);
-			}
-			else
-				if (m_skipAllIfNotCopy)
-					break;
-				else
-					askForSkipIfNotCopy(
-							tr("Failed to extract file: ").
-								append(files().at(i).second->fileName()).
-								append(error),
-							tryAgain = false,
-							aborted);
+//			if (folder = FileContainer::create(m_container, files().at(i).second, error))
+//			{
+//
+//				file = files().at(i).second;
+//
+//					if (folder = m_container->open(folderName(file->fileName()), true, error))
+//						if (const Archive *archive = Archive::archive(m_container->location(file->fileName()), &state))
+//						{
+//							archive->extractAll(state, folder.data(), this, aborted);
+//							archive->endRead(state);
+//						}
+//						else
+//							if (m_skipAllIfNotCopy)
+//								break;
+//							else
+//								askForSkipIfNotCopy(
+//										tr("Unknown archive format \"%1\". Skip it?").
+//											arg(m_container->location(file->fileName())),
+//										tryAgain = false,
+//										aborted);
+//					else
+//						if (m_skipAllIfNotCopy)
+//							break;
+//						else
+//							askForSkipIfNotCopy(
+//									tr("Failed to open/create directory \"%1\" (%2). Skip it?").
+//										arg(m_container->location(folderName(file->fileName()))).
+//										arg(state->error),
+//									tryAgain = false,
+//									aborted);
+//			}
+//			else
+//				if (m_skipAllIfNotCopy)
+//					break;
+//				else
+//					askForSkipIfNotCopy(
+//							tr("Failed to extract file: ").
+//								append(files().at(i).second->fileName()).
+//								append(error),
+//							tryAgain = false,
+//							aborted);
 		}
 		while (tryAgain && !aborted);
 }

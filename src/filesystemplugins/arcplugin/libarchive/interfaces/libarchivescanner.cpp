@@ -2,6 +2,7 @@
 #include "libarchivefileinfo.h"
 #include "../../../../filesystem/tools/filesystempath.h"
 #include "../../../../filesystem/containers/filesystemsnapshot.h"
+#include "../../../../filesystem/interfaces/filesystemifileaccessor.h"
 
 #include <string.h>
 #include <archive.h>
@@ -11,6 +12,104 @@
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
+
+class FileAccesor : public IFileAccessor
+{
+public:
+	FileAccesor(struct archive *archive) :
+		m_archive(archive)
+	{}
+
+	bool isValid() const
+	{
+		return true;
+	}
+
+	virtual const QString &lastError() const
+	{
+		return m_lastError;
+	}
+
+	virtual int permissions() const
+	{
+		return UserRead | GroupRead | OthersRead;
+	}
+
+	virtual size_type size()
+	{
+		return 0;
+	}
+
+	virtual bool setPermissions(int mode)
+	{
+		return false;
+	}
+
+	virtual size_type read(value_type *data, size_type size)
+	{
+		return archive_read_data(m_archive, data, size);
+	}
+
+	virtual size_type write(const value_type *data, size_type size)
+	{
+		return 0;
+	}
+
+	virtual size_type seek(size_type offset, Seek from)
+	{
+		return 0;
+	}
+
+private:
+	struct archive *m_archive;
+	mutable QString m_lastError;
+};
+
+
+class Enumerator : public Scanner::IEnumerator
+{
+public:
+	Enumerator(struct archive *archive) :
+		m_archive(archive)
+	{}
+
+	virtual bool next()
+	{
+	    return archive_read_next_header(m_archive, &m_entry) == ARCHIVE_OK;
+	}
+
+	virtual QString fileName() const
+	{
+		return QString::fromUtf8(archive_entry_pathname(m_entry));
+	}
+
+	virtual IFileInfo *info() const
+	{
+		Info::Data data;
+
+		data.path = QByteArray(archive_entry_pathname(m_entry));
+		data.fileName = QString::fromUtf8(archive_entry_pathname(m_entry));
+		data.fileSize = archive_entry_size(m_entry);
+		data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(m_entry));
+
+		return new Info(data, archive_entry_filetype(m_entry) & AE_IFDIR);
+	}
+
+	virtual bool isObsolete(const IFileInfo *item) const
+	{
+		return false;
+	}
+
+	virtual IFileAccessor *open(int mode, QString &error) const
+	{
+		return new FileAccesor(m_archive);
+	}
+
+private:
+	struct archive *m_archive;
+	struct archive_entry *m_entry;
+};
+
 
 class WrappedNodeItem : public FileSystem::WrappedNodeItem
 {

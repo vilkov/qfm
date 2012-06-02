@@ -8,8 +8,8 @@
 
 
 TASKSPOOL_NS_BEGIN
-
 class TaskPool;
+
 
 class TaskThread : public PThread
 {

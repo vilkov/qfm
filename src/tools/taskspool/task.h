@@ -2,6 +2,7 @@
 #define TASK_H_
 
 #include "taskspool_ns.h"
+#include <limits.h>
 
 
 TASKSPOOL_NS_BEGIN
@@ -36,9 +37,10 @@ public:
 	private:
 		friend class Bit;
 		friend class StaticFlag;
-		bool testBit(int i) const { return m_value & (01 << i); }
-		void setBit(int i) { m_value |= (01 << i); }
-		void clearBit(int i) { m_value &= ~(01 << i); }
+		bool testBit(int i) const { return m_value & (1 << i); }
+		void setBit(int i) { m_value |= (1 << i); }
+		void clearBit(int i) { m_value &= ~(1 << i); }
+		void setBit(int i, bool value) { m_value = (m_value & ((~0U << i) << 1)) | (value << i) | (m_value & ((~0U >> (sizeof(value_type) * CHAR_BIT - i - 1)) >> 1)); }
 
 	private:
 		value_type m_value;
@@ -123,6 +125,7 @@ public:
 		friend class Flag;
 		void set() { m_flags.setBit(m_bit); }
 		void clear() { m_flags.clearBit(m_bit); }
+		void operator=(bool value) { m_flags.setBit(m_bit, value); }
 
 	private:
 		Flag &m_flag;
@@ -152,10 +155,7 @@ private:
 void Task::Flag::operator=(bool value)
 {
 	if (m_bit)
-		if (m_value = value)
-			m_bit->set();
-		else
-			m_bit->clear();
+		(*m_bit) = m_value = value;
 	else
 		m_value = value;
 }
@@ -163,10 +163,7 @@ void Task::Flag::operator=(bool value)
 
 void Task::StaticFlag::operator=(bool value)
 {
-	if (m_value = value)
-		m_flags.setBit(m_bit);
-	else
-		m_flags.clearBit(m_bit);
+	m_flags.setBit(m_bit, m_value = value);
 }
 
 TASKSPOOL_NS_END

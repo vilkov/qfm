@@ -11,12 +11,13 @@ FILE_SYSTEM_NS_BEGIN
 class FilesTree
 {
 public:
-	FilesTree(const IFileContainer *root) :
-		m_root(root)
+	FilesTree(const IFileContainer *root, bool createSubfolders) :
+		m_root(root),
+		m_createSubfolders(createSubfolders)
 	{}
 	~FilesTree();
 
-	bool open(char *pathAsUtf8, bool createSubfolders, const IFileContainer *&container, QString &fileName, QString &error);
+	const IFileContainer *open(const QString &filePath, bool isPathToDirectory, QString &error);
 
 private:
 	class Directory;
@@ -35,7 +36,11 @@ private:
 	};
 
 private:
+	inline const QChar *strchr(const QChar *string, QChar c) const;
+
+private:
 	const IFileContainer *m_root;
+	bool m_createSubfolders;
 	Directories m_files;
 };
 

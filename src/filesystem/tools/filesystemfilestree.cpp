@@ -1,5 +1,4 @@
 #include "filesystemfilestree.h"
-#include <string.h>
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -9,65 +8,106 @@ FilesTree::~FilesTree()
 	qDeleteAll(m_files);
 }
 
-bool FilesTree::open(char *pathAsUtf8, bool createSubfolders, const IFileContainer *&container, QString &fileName, QString &error)
+const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDirectory, QString &error)
 {
-    char *sep;
+	static const QChar separator('/');
+	const IFileContainer *container;
+	const QChar *path = filePath.constData();
+	const QChar *sep;
 
-	if ((sep = strchr(pathAsUtf8, '/')) != NULL)
+	if ((sep = strchr(path, '/')) != NULL)
 	{
-		(*sep) = 0;
+		QString fileName;
+
 		Directory *ptr;
-		Directory *&folder = m_files[fileName = QString::fromUtf8(pathAsUtf8)];
+		Directory *&folder = m_files[fileName = QString(path, sep - path)];
 
 		if (folder == NULL)
 		{
-			IFileContainer::Holder container(m_root->open(fileName, createSubfolders, error));
+			IFileContainer::Holder container(m_root->open(fileName, m_createSubfolders, error));
 
 			if (container)
 				folder = ptr = new Directory(container);
 			else
-				return false;
+				return NULL;
 		}
 		else
 			ptr = folder;
 
-		pathAsUtf8 = (++sep);
+		path = (++sep);
 
-		while ((sep = strchr(pathAsUtf8, '/')) != NULL)
+		while ((sep = strchr(path, '/')) != NULL)
 		{
-			(*sep) = 0;
-			Directory *&subfolder = ptr->files[fileName = QString::fromUtf8(pathAsUtf8)];
+			Directory *&subfolder = ptr->files[fileName = QString(path, sep - path)];
 
 			if (subfolder == NULL)
 			{
-				IFileContainer::Holder container(ptr->control->open(fileName, createSubfolders, error));
+				IFileContainer::Holder container(ptr->control->open(fileName, m_createSubfolders, error));
 
 				if (container)
 					subfolder = ptr = new Directory(container);
 				else
-					return false;
+					return NULL;
 			}
 			else
 				ptr = subfolder;
 
-			pathAsUtf8 = (++sep);
+			path = (++sep);
 		}
 
-		fileName = QString::fromUtf8(pathAsUtf8);
+		if (isPathToDirectory && !(fileName = QString(path, sep - path)).isEmpty())
+		{
+			Directory *&subfolder = ptr->files[fileName];
+
+			if (subfolder == NULL)
+			{
+				IFileContainer::Holder container(ptr->control->open(fileName, m_createSubfolders, error));
+
+				if (container)
+					subfolder = ptr = new Directory(container);
+				else
+					return NULL;
+			}
+			else
+				ptr = subfolder;
+		}
+
 		container = ptr->control.data();
 	}
 	else
-	{
-		container = m_root;
-		fileName = QString::fromUtf8(pathAsUtf8);
-	}
+		if (isPathToDirectory && !filePath.isEmpty())
+		{
+			Directory *&folder = m_files[filePath];
 
-	return true;
+			if (folder == NULL)
+			{
+				IFileContainer::Holder container(m_root->open(filePath, m_createSubfolders, error));
+
+				if (container)
+					folder = new Directory(container);
+				else
+					return NULL;
+			}
+
+			container = folder->control.data();
+		}
+		else
+			container = m_root;
+
+	return container;
 }
 
 FilesTree::Directory::~Directory()
 {
 	qDeleteAll(files);
+}
+
+const QChar *FilesTree::strchr(const QChar *string, QChar c) const
+{
+	while (string && (*string) != c)
+		++string;
+
+	return string;
 }
 
 FILE_SYSTEM_NS_END

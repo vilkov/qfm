@@ -3,6 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include "../../libarchive_ns.h"
+#include "../../../../../filesystem/tools/filesystemfilestree.h"
 #include "../../../../../filesystem/tasks/filesystemperformactiontask.h"
 
 
@@ -19,23 +20,115 @@ public:
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 
-	virtual bool overwriteAll() const;
-	virtual bool skipAllIfNotCopy() const;
-	virtual void askForOverwrite(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
-	virtual void askForSkipIfNotCopy(const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
-
 protected:
 	virtual void process(const volatile Flags &aborted);
 
 private:
-	QString folderName(const QString &fileName) const;
+	class OpenArchive
+	{
+	public:
+		OpenArchive(const IFileContainer *container, const IFileInfo *file, IFileContainer::Holder &result) :
+			m_container(container),
+			m_file(file),
+			m_result(result)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		const IFileContainer *m_container;
+		const IFileInfo *m_file;
+		IFileContainer::Holder &m_result;
+	};
+
+	class CreateDestination
+	{
+	public:
+		CreateDestination(const IFileContainer *container, const IFileInfo *file, IFileContainer::Holder &result) :
+			m_container(container),
+			m_file(file),
+			m_result(result)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		const IFileContainer *m_container;
+		const IFileInfo *m_file;
+		IFileContainer::Holder &m_result;
+	};
+
+	class OpenDestination
+	{
+	public:
+		OpenDestination(FilesTree &tree, const IFileInfo *file, const IFileContainer *&result) :
+			m_tree(tree),
+			m_file(file),
+			m_result(result)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		FilesTree &m_tree;
+		const IFileInfo *m_file;
+		const IFileContainer *&m_result;
+	};
+
+	class OpenArchiveFile
+	{
+	public:
+		OpenArchiveFile(const IFileContainerScanner::IEnumerator *enumerator, IFileAccessor::Holder &result) :
+			m_enumerator(enumerator),
+			m_result(result)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		const IFileContainerScanner::IEnumerator *m_enumerator;
+		IFileAccessor::Holder &m_result;
+	};
+
+	class OverwriteFile
+	{
+	public:
+		OverwriteFile(const IFileContainer *container, const QString &fileName) :
+			m_container(container),
+			m_fileName(fileName)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		const IFileContainer *m_container;
+		const QString &m_fileName;
+	};
+
+	class CreateFile
+	{
+	public:
+		CreateFile(const IFileContainer *container, const QString &fileName, IFileAccessor::Holder &result) :
+			m_container(container),
+			m_fileName(fileName),
+			m_result(result)
+		{}
+
+		inline bool operator()(QString &error) const;
+
+	private:
+		const IFileContainer *m_container;
+		QString m_fileName;
+		IFileAccessor::Holder &m_result;
+	};
+
+	bool askForOverwrite(const QString &error, bool &flag, const volatile Flags &aborted);
+	bool askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted);
 
 private:
-	enum { FileReadWriteGranularity = 16 * 1024 * 1024 };
+	enum { FileReadWriteGranularity = 1 * 1024 * 1024 };
 
 private:
-	bool m_overwriteAll;
-	bool m_skipAllIfNotCopy;
 	TaskProgress m_progress;
 	const IFileContainer *m_container;
 	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];

@@ -25,9 +25,9 @@ public:
 		return true;
 	}
 
-	virtual const QString &lastError() const
+	virtual QString lastError() const
 	{
-		return m_lastError;
+		return QString::fromUtf8(archive_error_string(m_archive));
 	}
 
 	virtual int permissions() const
@@ -62,7 +62,6 @@ public:
 
 private:
 	struct archive *m_archive;
-	mutable QString m_lastError;
 };
 
 

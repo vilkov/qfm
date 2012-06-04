@@ -22,7 +22,7 @@ public:
 	bool isValid() const;
 
 	/* IFileAccessor */
-	virtual const QString &lastError() const;
+	virtual QString lastError() const;
 	virtual int permissions() const;
 
 	virtual size_type size();
@@ -33,7 +33,6 @@ public:
 
 private:
 	FileDescriptor m_file;
-	mutable QString m_lastError;
 };
 
 DEFAULT_PLUGIN_NS_END

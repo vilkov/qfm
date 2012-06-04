@@ -37,7 +37,7 @@ public:
 public:
 	virtual ~IFileAccessor();
 
-	virtual const QString &lastError() const = 0;
+	virtual QString lastError() const = 0;
 	virtual int permissions() const = 0;
 
 	virtual size_type size() = 0;

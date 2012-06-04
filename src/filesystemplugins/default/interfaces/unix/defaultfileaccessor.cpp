@@ -147,9 +147,9 @@ bool FileAccesor::isValid() const
 	return m_file != -1;
 }
 
-const QString &FileAccesor::lastError() const
+QString FileAccesor::lastError() const
 {
-	return m_lastError = QString::fromUtf8(::strerror(errno));
+	return QString::fromUtf8(::strerror(errno));
 }
 
 int FileAccesor::permissions() const

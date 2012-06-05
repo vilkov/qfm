@@ -58,7 +58,7 @@ bool TasksNode::event(QEvent *e)
 			Event event = static_cast<Event>(e);
 			e->accept();
 
-			performActionEvent(event->files);
+			performActionEvent(event->files, event->error);
 			removeAllTaskLinks(event->task);
 
 			return true;

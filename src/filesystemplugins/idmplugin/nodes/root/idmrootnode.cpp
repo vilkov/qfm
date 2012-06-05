@@ -334,7 +334,7 @@ void IdmRootNode::completedProgressEvent(const NodeItem::Holder &item, quint64 t
 
 }
 
-void IdmRootNode::performActionEvent(const AsyncFileAction::FilesList &files)
+void IdmRootNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
 {
 
 }

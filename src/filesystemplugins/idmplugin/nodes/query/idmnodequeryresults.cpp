@@ -459,7 +459,7 @@ void IdmNodeQueryResults::completedProgressEvent(const NodeItem::Holder &item, q
 
 }
 
-void IdmNodeQueryResults::performActionEvent(const AsyncFileAction::FilesList &files)
+void IdmNodeQueryResults::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
 {
 
 }

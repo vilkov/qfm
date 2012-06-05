@@ -17,12 +17,14 @@ public:
 		typedef BaseTask::Event::Type Type;
 
 	public:
-		Event(BaseTask *task, Type type, const AsyncFileAction::FilesList &files, bool canceled) :
+		Event(BaseTask *task, Type type, const AsyncFileAction::FilesList &files, bool canceled, const QString &error) :
 			BaseTask::Event(task, static_cast<Type>(type), canceled),
-			files(files)
+			files(files),
+			error(error)
 		{}
 
 		AsyncFileAction::FilesList files;
+		QString error;
 	};
 
 public:
@@ -30,7 +32,7 @@ public:
 
 protected:
 	virtual void run(const volatile Flags &aborted);
-	virtual void process(const volatile Flags &aborted) = 0;
+	virtual void process(const volatile Flags &aborted, QString &error) = 0;
 
 protected:
 	const AsyncFileAction::FilesList &files() const { return m_files; }

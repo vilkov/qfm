@@ -21,7 +21,7 @@ public:
 	virtual void progresscomplete();
 
 protected:
-	virtual void process(const volatile Flags &aborted);
+	virtual void process(const volatile Flags &aborted, QString &error);
 
 private:
 	class OpenArchive
@@ -92,6 +92,8 @@ private:
 
 	class OverwriteFile
 	{
+		Q_DECLARE_TR_FUNCTIONS(UnPackIntoSubdirActionTask::OverwriteFile)
+
 	public:
 		OverwriteFile(const IFileContainer *container, const QString &fileName) :
 			m_container(container),

@@ -60,7 +60,7 @@ protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files);
+	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
 
 private:
 	enum MenuId

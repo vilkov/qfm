@@ -27,7 +27,7 @@ public:
 protected:
 	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed) = 0;
 	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed) = 0;
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files) = 0;
+	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error) = 0;
 
 protected:
 	void addTask(BaseTask *task, const NodeItem::Holder &item);

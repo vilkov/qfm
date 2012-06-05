@@ -263,7 +263,7 @@ void ArcNode::completedProgressEvent(const NodeItem::Holder &item, quint64 timeE
 	updateSecondColumn(item);
 }
 
-void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files)
+void ArcNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
 {
 
 }

@@ -820,7 +820,7 @@ void FolderNodeBase::completedProgressEvent(const NodeItem::Holder &item, quint6
 	updateSecondColumn(m_items.indexOf(item.as<DefaultNodeItem>()->info()->fileName()), item.as<DefaultNodeItem>());
 }
 
-void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
+void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
 {
 	Union update;
 	NodeItem::Holder item;
@@ -832,6 +832,9 @@ void FolderNodeBase::performActionEvent(const AsyncFileAction::FilesList &files)
 		item->unlock();
 		update.add(m_items.indexOf(item.data()));
 	}
+
+	if (!error.isEmpty())
+		QMessageBox::critical(Application::mainWindow(), tr("Error..."), error);
 
 	updateFirstColumn(update);
 }

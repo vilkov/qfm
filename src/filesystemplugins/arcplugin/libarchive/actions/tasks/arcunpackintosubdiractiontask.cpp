@@ -28,9 +28,8 @@ void UnPackIntoSubdirActionTask::progresscomplete()
 	m_progress.complete();
 }
 
-void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
+void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString &error)
 {
-	QString error;
 	QString fileName;
 	const IFileInfo *file;
 	IFileInfo::Holder info;
@@ -40,7 +39,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 	IFileContainer::Holder archive;
 	IFileContainer::Holder destination;
 	IFileContainerScanner::IEnumerator::Holder enumerator;
-	IFileAccessor::size_type size;
+	IFileAccessor::size_type readed;
 
 	Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask, 2> tryier(this, aborted);
 	tryier.setFlag<0>(&UnPackIntoSubdirActionTask::askForSkipIfNotCopy);
@@ -65,19 +64,19 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted)
 						{
 							for (;!aborted;)
 							{
-								size = sourceFile->read(m_buffer, FileReadWriteGranularity);
+								readed = sourceFile->read(m_buffer, FileReadWriteGranularity);
 
-								if (((int)size) < 0)
+								if (((int)readed) < 0)
 								{
 									error = sourceFile->lastError();
 									cancel();
 									break;
 								}
 
-								if (size == 0)
+								if (readed == 0)
 									break;
 
-								if (destFile->write(m_buffer, size) != size)
+								if (destFile->write(m_buffer, readed) != readed)
 								{
 									error = destFile->lastError();
 									cancel();
@@ -111,7 +110,17 @@ bool UnPackIntoSubdirActionTask::OpenArchiveFile::operator()(QString &error) con
 
 bool UnPackIntoSubdirActionTask::OverwriteFile::operator()(QString &error) const
 {
-	return !m_container->contains(m_fileName);
+	if (m_container->contains(m_fileName))
+	{
+		error = tr("File \"%1\" already exists in \"%2\".").
+				arg(m_fileName).
+				arg(m_container->location()).
+				append(QChar('\n')).
+				append(tr("Overwrite it?"));
+		return false;
+	}
+	else
+		return true;
 }
 
 bool UnPackIntoSubdirActionTask::CreateFile::operator()(QString &error) const

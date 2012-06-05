@@ -43,7 +43,7 @@ void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAg
 			removeEntry(localEntry = (*i), tryAgain = false, aborted);
 
 			if (localEntry->isRemoved())
-				entry->erase(i);
+				i = entry->erase(i);
 			else
 			{
 				++i;

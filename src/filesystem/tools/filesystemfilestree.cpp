@@ -10,7 +10,6 @@ FilesTree::~FilesTree()
 
 const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDirectory, QString &error)
 {
-	static const QChar separator('/');
 	const IFileContainer *container;
 	const QChar *path = filePath.constData();
 	const QChar *sep;
@@ -55,7 +54,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 			path = (++sep);
 		}
 
-		if (isPathToDirectory && !(fileName = QString(path, sep - path)).isEmpty())
+		if (isPathToDirectory && !(fileName = QString(path)).isEmpty())
 		{
 			Directory *&subfolder = ptr->files[fileName];
 
@@ -104,10 +103,13 @@ FilesTree::Directory::~Directory()
 
 const QChar *FilesTree::strchr(const QChar *string, QChar c) const
 {
-	while (string && (*string) != c)
-		++string;
+	while ((*string) != 0)
+		if ((*string) == c)
+			return string;
+		else
+			++string;
 
-	return string;
+	return NULL;
 }
 
 FILE_SYSTEM_NS_END

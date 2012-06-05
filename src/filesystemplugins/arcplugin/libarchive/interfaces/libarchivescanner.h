@@ -27,6 +27,7 @@ public:
 	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 
 private:
+	friend class Enumerator;
 	class ReadArchive
 	{
 	public:

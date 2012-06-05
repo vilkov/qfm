@@ -65,10 +65,11 @@ private:
 };
 
 
-class Enumerator : public Scanner::IEnumerator
+class Scanner::Enumerator : public Scanner::IEnumerator
 {
 public:
-	Enumerator(struct archive *archive) :
+	Enumerator(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive) :
+		m_reader(buffer, file, archive),
 		m_archive(archive)
 	{}
 
@@ -105,6 +106,7 @@ public:
 	}
 
 private:
+	ReadArchive m_reader;
 	struct archive *m_archive;
 	struct archive_entry *m_entry;
 };
@@ -179,7 +181,9 @@ Scanner::~Scanner()
 }
 
 void Scanner::enumerate(IEnumerator::Holder &enumerator) const
-{}
+{
+	enumerator = new Enumerator(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
+}
 
 IFileInfo *Scanner::info(const QString &fileName, QString &error) const
 {

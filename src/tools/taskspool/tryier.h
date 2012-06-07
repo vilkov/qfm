@@ -6,7 +6,7 @@
 
 TASKSPOOL_NS_BEGIN
 
-template <typename T, int N>
+template <typename T>
 class Tryier
 {
 public:
@@ -14,19 +14,14 @@ public:
 	typedef bool (Object::*Method)(const QString &error, bool &flag, const volatile Task::Flags &aborted);
 
 public:
-	inline Tryier(Object *object, const volatile Task::Flags &aborted) :
+	inline Tryier(Object *object, Method method, const volatile Task::Flags &aborted) :
+		m_flag(false),
 		object(object),
+		m_method(method),
 		m_aborted(aborted)
 	{}
 
-	template <int I>
-	inline void setFlag(Method method)
-	{
-		m_flags[I].value = false;
-		m_flags[I].method = method;
-	}
-
-	template <int I, typename F>
+	template <typename F>
 	inline bool tryTo(F functor)
 	{
 		bool res;
@@ -35,25 +30,19 @@ public:
 			if (res = functor(m_error))
 				break;
 			else
-				if (m_flags[I].value)
+				if (m_flag)
 					break;
 				else
-					res = (object->*m_flags[I].method)(m_error, m_flags[I].value, m_aborted);
+					res = (object->*m_method)(m_error, m_flag, m_aborted);
 		while (res && !m_aborted);
 
 		return res;
 	}
 
 private:
-	struct Flag
-	{
-		bool value;
-		Method method;
-	};
-
-private:
+	bool m_flag;
 	Object *object;
-	Flag m_flags[N];
+	Method m_method;
 	QString m_error;
 	const volatile Task::Flags &m_aborted;
 };

@@ -5,6 +5,8 @@
 #include "../../libarchive_ns.h"
 #include "../../../../../filesystem/tools/filesystemfilestree.h"
 #include "../../../../../filesystem/tasks/filesystemperformactiontask.h"
+#include "../../../../../tools/taskspool/tryier.h"
+#include "../../../../../tools/taskspool/questioner.h"
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
@@ -24,6 +26,9 @@ protected:
 	virtual void process(const volatile Flags &aborted, QString &error);
 
 private:
+	typedef Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask>     Tryier;
+	typedef Tools::TasksPool::Questioner<UnPackIntoSubdirActionTask> Questioner;
+
 	class OpenArchive
 	{
 	public:
@@ -124,7 +129,7 @@ private:
 		IFileAccessor::Holder &m_result;
 	};
 
-	bool askForOverwrite(const QString &error, bool &flag, const volatile Flags &aborted);
+	bool askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Flags &aborted);
 	bool askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted);
 
 private:

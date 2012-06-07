@@ -1,6 +1,5 @@
 #include "arcunpackintosubdiractiontask.h"
 #include "../../interfaces/libarchivefilecontainer.h"
-#include "../../../../../tools/taskspool/tryier.h"
 
 #include <QtGui/QMessageBox>
 
@@ -41,13 +40,12 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	IFileContainerScanner::IEnumerator::Holder enumerator;
 	IFileAccessor::size_type readed;
 
-	Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask, 2> tryier(this, aborted);
-	tryier.setFlag<0>(&UnPackIntoSubdirActionTask::askForSkipIfNotCopy);
-	tryier.setFlag<1>(&UnPackIntoSubdirActionTask::askForOverwrite);
+	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
+	Questioner questioner(this, &UnPackIntoSubdirActionTask::askForOverwrite, aborted);
 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
-		if (tryier.tryTo<0>(OpenArchive(m_container, file = files().at(i).second, archive)))
-			if (tryier.tryTo<0>(CreateDestination(m_container, file, destination)))
+		if (tryier.tryTo(OpenArchive(m_container, file = files().at(i).second, archive)))
+			if (tryier.tryTo(CreateDestination(m_container, file, destination)))
 			{
 				FilesTree tree(destination.data(), true);
 				archive->scanner()->enumerate(enumerator);
@@ -56,11 +54,11 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 				{
 					info = enumerator->info();
 
-					if (tryier.tryTo<0>(OpenDestination(tree, info.data(), dest)))
+					if (tryier.tryTo(OpenDestination(tree, info.data(), dest)))
 						if (info->isFile() &&
-							tryier.tryTo<1>(OverwriteFile(dest, fileName = FileContainer::extractArchivedFileName(info.data()))) &&
-							tryier.tryTo<0>(OpenArchiveFile(enumerator.data(), sourceFile)) &&
-							tryier.tryTo<0>(CreateFile(dest, fileName, destFile)))
+							questioner.askFor(OverwriteFile(dest, fileName = FileContainer::extractArchivedFileName(info.data()))) &&
+							tryier.tryTo(OpenArchiveFile(enumerator.data(), sourceFile)) &&
+							tryier.tryTo(CreateFile(dest, fileName, destFile)))
 						{
 							for (;!aborted;)
 							{
@@ -128,7 +126,7 @@ bool UnPackIntoSubdirActionTask::CreateFile::operator()(QString &error) const
 	return m_result = m_container->open(m_fileName, IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, error);
 }
 
-bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, bool &flag, const volatile Flags &aborted)
+bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
 						tr("Extracting..."),
@@ -143,7 +141,7 @@ bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, bool &fla
 	switch (answer)
 	{
 		case QMessageBox::Yes:
-			flag = true;
+			return true;
 			break;
 
 		case QMessageBox::YesToAll:
@@ -151,7 +149,7 @@ bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, bool &fla
 			break;
 
 		case QMessageBox::No:
-			flag = false;
+			return false;
 			break;
 
 		case QMessageBox::NoToAll:

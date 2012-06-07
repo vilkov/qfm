@@ -81,6 +81,8 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 									break;
 								}
 							}
+
+							destFile->setPermissions(sourceFile->permissions());
 						}
 				}
 			}

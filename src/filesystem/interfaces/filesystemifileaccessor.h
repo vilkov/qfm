@@ -45,6 +45,12 @@ public:
 	virtual size_type read(value_type *data, size_type size) = 0;
 	virtual size_type write(const value_type *data, size_type size) = 0;
 	virtual size_type seek(size_type offset, Seek from = FromCurrent) = 0;
+
+protected:
+	static const int open_flags[];
+	static const int permissions_flags[];
+	static const int flags_permissions[];
+	static const int seek_flags[];
 };
 
 FILE_SYSTEM_NS_END

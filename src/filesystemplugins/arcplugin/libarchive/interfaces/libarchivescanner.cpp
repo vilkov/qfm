@@ -16,8 +16,9 @@ LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 class FileAccesor : public IFileAccessor
 {
 public:
-	FileAccesor(struct archive *archive) :
-		m_archive(archive)
+	FileAccesor(struct archive *archive, struct archive_entry *entry) :
+		m_archive(archive),
+		m_permissions(archive_entry_perm(entry))
 	{}
 
 	bool isValid() const
@@ -32,7 +33,16 @@ public:
 
 	virtual int permissions() const
 	{
-		return UserRead | GroupRead | OthersRead;
+		return
+				flags_permissions[m_permissions & S_IRUSR] |
+				flags_permissions[m_permissions & S_IWUSR] |
+				flags_permissions[m_permissions & S_IXUSR] |
+				flags_permissions[m_permissions & S_IRGRP] |
+				flags_permissions[m_permissions & S_IWGRP] |
+				flags_permissions[m_permissions & S_IXGRP] |
+				flags_permissions[m_permissions & S_IROTH] |
+				flags_permissions[m_permissions & S_IWOTH] |
+				flags_permissions[m_permissions & S_IXOTH];
 	}
 
 	virtual size_type size()
@@ -62,6 +72,7 @@ public:
 
 private:
 	struct archive *m_archive;
+	mode_t m_permissions;
 };
 
 
@@ -88,7 +99,7 @@ public:
 		Info::Data data;
 
 		data.path = QByteArray(archive_entry_pathname(m_entry));
-		data.fileName = QString::fromUtf8(archive_entry_pathname(m_entry));
+		data.fileName = QString::fromUtf8(data.path);
 		data.fileSize = archive_entry_size(m_entry);
 		data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(m_entry));
 
@@ -102,7 +113,7 @@ public:
 
 	virtual IFileAccessor *open(int mode, QString &error) const
 	{
-		return new FileAccesor(m_archive);
+		return new FileAccesor(m_archive, m_entry);
 	}
 
 private:

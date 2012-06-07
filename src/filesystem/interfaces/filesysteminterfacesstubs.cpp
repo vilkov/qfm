@@ -3,7 +3,6 @@
 #include "filesysteminodeview.h"
 #include "filesystemifileinfo.h"
 #include "filesystemifiletype.h"
-#include "filesystemifileaccessor.h"
 #include "filesystemifilelocation.h"
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
@@ -26,9 +25,6 @@ IFileInfo::~IFileInfo()
 {}
 
 IFileType::~IFileType()
-{}
-
-IFileAccessor::~IFileAccessor()
 {}
 
 IFileLocation::~IFileLocation()

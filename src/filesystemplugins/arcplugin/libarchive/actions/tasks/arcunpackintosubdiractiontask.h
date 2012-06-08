@@ -18,10 +18,6 @@ class UnPackIntoSubdirActionTask : public PerformActionTask
 public:
 	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files);
 
-	virtual void progressInit(const NodeItem::Holder &item);
-	virtual void progressUpdate(quint64 progressIncrement);
-	virtual void progresscomplete();
-
 protected:
 	virtual void process(const volatile Flags &aborted, QString &error);
 
@@ -136,7 +132,6 @@ private:
 	enum { FileReadWriteGranularity = 1 * 1024 * 1024 };
 
 private:
-	TaskProgress m_progress;
 	const IFileContainer *m_container;
 	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];
 };

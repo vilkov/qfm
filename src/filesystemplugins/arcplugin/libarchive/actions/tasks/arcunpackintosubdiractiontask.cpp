@@ -8,24 +8,8 @@ LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
 UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
 	PerformActionTask(receiver, files),
-	m_progress(receiver),
 	m_container(container)
 {}
-
-void UnPackIntoSubdirActionTask::progressInit(const NodeItem::Holder &item)
-{
-	m_progress.init(item);
-}
-
-void UnPackIntoSubdirActionTask::progressUpdate(quint64 progressIncrement)
-{
-	m_progress.update(progressIncrement);
-}
-
-void UnPackIntoSubdirActionTask::progresscomplete()
-{
-	m_progress.complete();
-}
 
 void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString &error)
 {

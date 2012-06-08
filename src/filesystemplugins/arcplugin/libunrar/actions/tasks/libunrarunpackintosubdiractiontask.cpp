@@ -1,8 +1,8 @@
-#include "libarchiveunpackintosubdiractiontask.h"
-#include "../../interfaces/libarchivefilecontainer.h"
+#include "libunrarunpackintosubdiractiontask.h"
+#include "../../interfaces/libunrarfilecontainer.h"
 
 
-LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
+LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 
 UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
 	UnPackActionTask(receiver, container, files)
@@ -28,4 +28,4 @@ QString UnPackIntoSubdirActionTask::extractDirectoryName(const IFileInfo *file) 
 	return FileContainer::extractDirectoryName(file);
 }
 
-LIBARCHIVE_ARC_PLUGIN_NS_END
+LIBUNRAR_ARC_PLUGIN_NS_END

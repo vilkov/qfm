@@ -12,6 +12,8 @@ class FileContainer : public IFileContainer
 {
 public:
 	static IFileContainer *create(const IFileContainer *container, const IFileInfo *file, QString &error);
+	static QString extractDirectoryName(const IFileInfo *file);
+	static QString extractArchivedFileName(const IFileInfo *file);
 
 	/* IFileLocation */
 	virtual QString location() const;

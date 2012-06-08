@@ -1,11 +1,11 @@
-#ifndef LIBARCHIVEUNPACKINTOSUBDIRACTIONTASK_H_
-#define LIBARCHIVEUNPACKINTOSUBDIRACTIONTASK_H_
+#ifndef LIBUNRARUNPACKINTOSUBDIRACTIONTASK_H_
+#define LIBUNRARUNPACKINTOSUBDIRACTIONTASK_H_
 
-#include "../../libarchive_ns.h"
+#include "../../libunrar_ns.h"
 #include "../../../actions/tasks/arcunpackactiontask.h"
 
 
-LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
+LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 
 class UnPackIntoSubdirActionTask : public UnPackActionTask
 {
@@ -23,6 +23,6 @@ protected:
 	virtual QString extractDirectoryName(const IFileInfo *file) const;
 };
 
-LIBARCHIVE_ARC_PLUGIN_NS_END
+LIBUNRAR_ARC_PLUGIN_NS_END
 
-#endif /* LIBARCHIVEUNPACKINTOSUBDIRACTIONTASK_H_ */
+#endif /* LIBUNRARUNPACKINTOSUBDIRACTIONTASK_H_ */

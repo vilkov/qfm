@@ -18,6 +18,18 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 	return NULL;
 }
 
+QString FileContainer::extractDirectoryName(const IFileInfo *file)
+{
+	QString fileName = file->fileName();
+	return fileName.mid(0, fileName.indexOf(QChar('.')));
+}
+
+QString FileContainer::extractArchivedFileName(const IFileInfo *file)
+{
+	QString fileName = file->fileName();
+	return fileName.mid(fileName.lastIndexOf(QChar('/')) + 1);
+}
+
 QString FileContainer::location() const
 {
 	return m_path;

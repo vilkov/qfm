@@ -1,5 +1,5 @@
-#ifndef ARCUNPACKHEREACTION_H_
-#define ARCUNPACKHEREACTION_H_
+#ifndef LIBARCHIVEUNPACKINTOSUBDIRACTION_H_
+#define LIBARCHIVEUNPACKINTOSUBDIRACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../libarchive_ns.h"
@@ -8,16 +8,16 @@
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
-class UnPackHereAction : public Action
+class UnPackIntoSubdirAction : public Action
 {
-	Q_DECLARE_TR_FUNCTIONS(UnPackHereAction)
+	Q_DECLARE_TR_FUNCTIONS(UnPackIntoSubdirAction)
 
 public:
-	UnPackHereAction();
+	UnPackIntoSubdirAction();
 
 	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const;
 };
 
 LIBARCHIVE_ARC_PLUGIN_NS_END
 
-#endif /* ARCUNPACKHEREACTION_H_ */
+#endif /* LIBARCHIVEUNPACKINTOSUBDIRACTION_H_ */

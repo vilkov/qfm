@@ -17,12 +17,7 @@ LibArchivePlugin::LibArchivePlugin()
 void LibArchivePlugin::registered()
 {
 	FileTypeIdList list = fileTypes();
-
-	Application::globalMenu()->registerAction(&m_unPackAction, list);
-	Application::globalMenu()->registerAction(&m_unPackHereAction, list);
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
-
-	Application::globalMenu()->registerAction(&m_packAction, ::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
 }
 
 const Tools::Settings::Tab *LibArchivePlugin::settings() const

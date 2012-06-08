@@ -1,4 +1,4 @@
-#include "arcunpackintosubdiractiontask.h"
+#include "libarchiveunpackintosubdiractiontask.h"
 #include "../../interfaces/libarchivefilecontainer.h"
 
 #include <QtGui/QMessageBox>

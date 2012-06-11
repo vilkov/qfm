@@ -3,6 +3,7 @@
 
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
+#include <QtGui/QWidget>
 #include <QtGui/QMessageBox>
 #include "../filesystembasetask.h"
 
@@ -16,32 +17,25 @@ public:
 	{
 	public:
 		Result() :
-			m_answer(0)
+			m_answer(0),
+			m_done(false)
 		{}
 
-		void lock() { m_mutex.lock(); }
-		void setAnswer(qint32 value) { m_answer = value; }
-		void unlock() { m_mutex.unlock(); }
-
-		bool waitFor(const volatile BaseTask::Flags &aborted)
+		void waitFor(const volatile BaseTask::Flags &aborted)
 		{
 			QMutexLocker lock(&m_mutex);
 
-			while (!aborted)
-			{
+			while (!m_done && !aborted)
 				m_condition.wait(&m_mutex, 1000);
-
-				if (m_answer > 0)
-					return true;
-			}
-
-			return false;
 		}
+
 		qint32 answer() const { return m_answer; }
 
 	private:
-		qint32 m_answer;
+		friend class QuestionEvent;
 		QMutex m_mutex;
+		qint32 m_answer;
+		volatile bool m_done;
 		QWaitCondition m_condition;
 	};
 
@@ -52,12 +46,65 @@ public:
 		m_question(question),
 		m_buttons(buttons),
 		m_result(result)
-	{}
+	{
+		Q_ASSERT(m_result);
+	}
 
-	const QString &title() const { return m_title; }
-	const QString &question() const { return m_question; }
-	qint32 buttons() const { return m_buttons; }
-	Result *result() const { return m_result; }
+	/* Must be called from the main thread. */
+	void showDialog(QWidget *parent);
+
+private:
+	QString m_title;
+	QString m_question;
+	qint32 m_buttons;
+	Result *m_result;
+};
+
+
+class UserInputEvent: public BaseTask::Event
+{
+public:
+	class Result
+	{
+	public:
+		Result() :
+			m_answer(0),
+			m_done(false)
+		{}
+
+		void waitFor(const volatile BaseTask::Flags &aborted)
+		{
+			QMutexLocker lock(&m_mutex);
+
+			while (!m_done && !aborted)
+				m_condition.wait(&m_mutex, 1000);
+		}
+
+		qint32 answer() const { return m_answer; }
+		const QString &value() const { return m_value; }
+
+	private:
+		friend class UserInputEvent;
+		QMutex m_mutex;
+		qint32 m_answer;
+		QString m_value;
+		volatile bool m_done;
+		QWaitCondition m_condition;
+	};
+
+public:
+	UserInputEvent(const QString &title, const QString &question, qint32 buttons, Result *result) :
+		Event(NULL, UserInput, false),
+		m_title(title),
+		m_question(question),
+		m_buttons(buttons),
+		m_result(result)
+	{
+		Q_ASSERT(m_result);
+	}
+
+	/* Must be called from the main thread. */
+	void showDialog(QWidget *parent);
 
 private:
 	QString m_title;

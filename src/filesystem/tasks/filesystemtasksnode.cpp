@@ -17,12 +17,20 @@ bool TasksNode::event(QEvent *e)
 	{
 		case BaseTask::Event::Question:
 		{
-			QuestionEvent *event = static_cast<QuestionEvent*>(e);
+			QuestionEvent *event = static_cast<QuestionEvent *>(e);
 
 			event->accept();
-			event->result()->lock();
-			event->result()->setAnswer(QMessageBox::question(Application::mainWindow(), event->title(), event->question(), QMessageBox::StandardButtons(event->buttons())));
-			event->result()->unlock();
+			event->showDialog(Application::mainWindow());
+
+			return true;
+		}
+
+		case BaseTask::Event::UserInput:
+		{
+			UserInputEvent *event = static_cast<UserInputEvent *>(e);
+
+			event->accept();
+			event->showDialog(Application::mainWindow());
 
 			return true;
 		}

@@ -37,11 +37,17 @@ qint32 BaseTask::askUser(const QString &title, const QString &question, qint32 b
 {
 	QuestionEvent::Result result;
 	postEvent(new QuestionEvent(title, question, buttons, &result));
+	result.waitFor(aborted);
+	return result.answer();
+}
 
-	if (result.waitFor(aborted))
-		return result.answer();
-	else
-		return 0;
+qint32 BaseTask::askForUserInput(const QString &title, const QString &question, qint32 buttons, QString &value, const volatile Flags &aborted) const
+{
+	UserInputEvent::Result result;
+	postEvent(new UserInputEvent(title, question, buttons, &result));
+	result.waitFor(aborted);
+	value = result.value();
+	return result.answer();
 }
 
 FILE_SYSTEM_NS_END

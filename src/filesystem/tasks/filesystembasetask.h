@@ -22,9 +22,10 @@ public:
 		enum Type
 		{
 			Question = User,
-			Progress = User + 1,
-			Completed = User + 2,
-			Action = User + 3,
+			UserInput = User + 1,
+			Progress = User + 2,
+			Completed = User + 3,
+			Action = User + 4,
 
 			/* First user event id. */
 			User = Action + 1
@@ -71,6 +72,7 @@ protected:
 
 	/* Sync post event to the GUI thread. */
 	qint32 askUser(const QString &title, const QString &question, qint32 buttons, const volatile Flags &aborted) const;
+	qint32 askForUserInput(const QString &title, const QString &question, qint32 buttons, QString &value, const volatile Flags &aborted) const;
 
 private:
 	friend class TasksNode;

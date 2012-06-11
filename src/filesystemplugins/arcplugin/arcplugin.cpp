@@ -102,7 +102,10 @@ LibUnRarPlugin::LibUnRarPlugin()
 {}
 
 void LibUnRarPlugin::registered()
-{}
+{
+	FileTypeIdList list = fileTypes();
+	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
+}
 
 const Tools::Settings::Tab *LibUnRarPlugin::settings() const
 {

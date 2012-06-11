@@ -2,6 +2,7 @@
 #define ARCPLUGIN_H_
 
 #include "libarchive/actions/libarchiveunpackintosubdiraction.h"
+#include "libunrar/actions/libunrarunpackintosubdiraction.h"
 #include "settings/arcpluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
 
@@ -42,6 +43,7 @@ public:
 
 private:
 	Settings m_settings;
+	LibUnrar::UnPackIntoSubdirAction m_unPackIntoSubdirAction;
 };
 
 ARC_PLUGIN_NS_END

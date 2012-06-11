@@ -9,10 +9,27 @@
 #include <libunrar/timefn.hpp>
 
 #include <QtCore/QMap>
-#include <QtCore/QDebug>
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN
+
+inline static IFileInfo::size_type unpackedSize(const struct RARHeaderDataEx &info)
+{
+	IFileInfo::size_type res = info.UnpSizeHigh;
+	return (res << (sizeof(unsigned int) * 8)) | info.UnpSize;
+}
+
+inline static QDateTime fromDosTime(unsigned int time)
+{
+	RarTime dt;
+	RarLocalTime lt;
+
+	dt.SetDos(time);
+	dt.GetLocal(&lt);
+
+	return QDateTime(QDate(lt.Year, lt.Month, lt.Day), QTime(lt.Hour, lt.Minute, lt.Second));
+}
+
 
 class WrappedNodeItem : public FileSystem::WrappedNodeItem
 {
@@ -21,12 +38,12 @@ public:
 
 public:
 	WrappedNodeItem(const IFileContainer *container, const QString &fileName, const struct RARHeaderDataEx &info, WrappedNodeItem *parent) :
-		FileSystem::WrappedNodeItem(container, unpSize(info), parent)
+		FileSystem::WrappedNodeItem(container, unpackedSize(info), parent)
 	{
 		m_data.path = QString::fromWCharArray(info.FileNameW);
 		m_data.fileName = fileName;
 		m_data.fileSize = totalSize();
-		m_data.lastModified = fileTime(info.FileTime);
+		m_data.lastModified = fromDosTime(info.FileTime);
 	}
 	virtual ~WrappedNodeItem()
 	{
@@ -63,32 +80,13 @@ public:
 	}
 
 private:
-	inline static IFileInfo::size_type unpSize(const struct RARHeaderDataEx &info)
-	{
-		IFileInfo::size_type res = info.UnpSizeHigh;
-		return (res << (sizeof(unsigned int) * 8)) | info.UnpSize;
-	}
-
-	inline static QDateTime fileTime(unsigned int time)
-	{
-		RarTime dt;
-		RarLocalTime lt;
-
-		dt.SetDos(time);
-		dt.GetLocal(&lt);
-
-		return QDateTime(QDate(lt.Year, lt.Month, lt.Day), QTime(lt.Hour, lt.Minute, lt.Second));
-	}
-
-private:
 	Info::Data m_data;
 	Container m_map;
 };
 
 
-Scanner::Scanner(const IFileContainer *container, IFileAccessor::Holder &file, const QString &fileName) :
+Scanner::Scanner(const IFileContainer *container, const QString &fileName) :
 	m_container(container),
-	m_file(file.take()),
 	m_fileName(fileName)
 {}
 

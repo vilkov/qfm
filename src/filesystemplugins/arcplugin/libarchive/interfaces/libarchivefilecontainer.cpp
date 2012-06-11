@@ -95,7 +95,7 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 
 const IFileContainerScanner *FileContainer::scanner() const
 {
-	return &m_data->m_archive;
+	return &m_data->m_scanner;
 }
 
 FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :

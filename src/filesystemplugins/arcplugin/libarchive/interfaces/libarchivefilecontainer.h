@@ -43,12 +43,12 @@ private:
 	{
 		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
 			container(container.take()),
-			m_archive(this->container.data(), file),
+			m_scanner(this->container.data(), file),
 			fileName(fileName)
 		{}
 
 		IFileContainer::Holder container;
-		Scanner m_archive;
+		Scanner m_scanner;
 		QString fileName;
 	};
 

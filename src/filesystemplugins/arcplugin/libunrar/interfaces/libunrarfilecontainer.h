@@ -36,19 +36,19 @@ public:
 	virtual const IFileContainerScanner *scanner() const;
 
 private:
-	FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName);
+	FileContainer(IFileContainer::Holder &container, const QString &fileName);
 
 private:
 	struct Data : public QSharedData
 	{
-		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
+		Data(IFileContainer::Holder &container, const QString &fileName) :
 			container(container.take()),
-			m_archive(this->container.data(), file, fileName),
+			m_scanner(this->container.data(), fileName),
 			fileName(fileName)
 		{}
 
 		IFileContainer::Holder container;
-		Scanner m_archive;
+		Scanner m_scanner;
 		QString fileName;
 	};
 

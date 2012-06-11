@@ -8,12 +8,7 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 	IFileContainer::Holder localContainer(container->open());
 
 	if (localContainer)
-	{
-		IFileAccessor::Holder reader(localContainer->open(file->fileName(), IFileAccessor::ReadOnly, error));
-
-		if (reader)
-			return new FileContainer(localContainer, reader, file->fileName());
-	}
+		return new FileContainer(localContainer, file->fileName());
 
 	return NULL;
 }
@@ -92,11 +87,11 @@ IFileContainer *FileContainer::open(const QString &fileName, bool create, QStrin
 
 const IFileContainerScanner *FileContainer::scanner() const
 {
-	return &m_data->m_archive;
+	return &m_data->m_scanner;
 }
 
-FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
-	m_data(new Data(container, file, fileName)),
+FileContainer::FileContainer(IFileContainer::Holder &container, const QString &fileName) :
+	m_data(new Data(container, fileName)),
 	m_path(m_data->container->location(fileName))
 {}
 

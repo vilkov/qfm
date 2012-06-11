@@ -21,11 +21,6 @@ public:
 		m_permissions(archive_entry_perm(entry))
 	{}
 
-	bool isValid() const
-	{
-		return true;
-	}
-
 	virtual QString lastError() const
 	{
 		return QString::fromUtf8(archive_error_string(m_archive));

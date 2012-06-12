@@ -46,6 +46,9 @@ private:
 	bool askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted);
 
 private:
+	QString errorDescription(int res) const;
+
+private:
 	static int callbackProc(unsigned int msg, long userData, long rarBuffer, long bytesProcessed);
 
 private:

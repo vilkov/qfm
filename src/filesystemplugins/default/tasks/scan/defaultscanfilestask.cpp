@@ -26,10 +26,10 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 	{
 		case Event::UpdateFiles:
 		{
+			QString error;
 			IFileContainerScanner::IEnumerator::Holder enumerator;
-			m_snapshot.container()->scanner()->enumerate(enumerator);
 
-			if (enumerator)
+			if (enumerator = m_snapshot.container()->scanner()->enumerate(error))
 			{
 				WrappedNodeItem::Holder wrappedItem;
 				DefaultNodeItem::Holder item;

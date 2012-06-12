@@ -34,7 +34,7 @@ public:
 public:
 	virtual ~IFileContainerScanner();
 
-	virtual void enumerate(IEnumerator::Holder &enumerator) const = 0;
+	virtual IEnumerator *enumerate(QString &error) const = 0;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const = 0;
 	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const = 0;
 	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const = 0;

@@ -93,9 +93,10 @@ Scanner::Scanner(const IFileContainer *container, const QString &fileName) :
 Scanner::~Scanner()
 {}
 
-void Scanner::enumerate(IEnumerator::Holder &enumerator) const
+Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 {
-
+	error = tr("LibUnrar does not support enumerating.");
+	return NULL;
 }
 
 IFileInfo *Scanner::info(const QString &fileName, QString &error) const
@@ -180,7 +181,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
 					static_cast<WrappedNodeItem *>((*i).second)->populateInfo();
 	    	else
-	    		error = QString::fromLatin1("Some error");
+	    		error = errorDescription(res);
 
 		RARCloseArchive(archive);
 	}
@@ -188,7 +189,49 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 
 void Scanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
+	error = tr("LibUnrar does not support refreshing.");
+}
 
+QString Scanner::errorDescription(int code)
+{
+	switch (code)
+	{
+		case ERAR_NO_MEMORY:
+			return tr("ERAR_NO_MEMORY");
+
+		case ERAR_BAD_DATA:
+			return tr("ERAR_BAD_DATA");
+
+		case ERAR_BAD_ARCHIVE:
+			return tr("ERAR_BAD_ARCHIVE");
+
+		case ERAR_UNKNOWN_FORMAT:
+			return tr("ERAR_UNKNOWN_FORMAT");
+
+		case ERAR_EOPEN:
+			return tr("ERAR_EOPEN");
+
+		case ERAR_ECREATE:
+			return tr("ERAR_ECREATE");
+
+		case ERAR_ECLOSE:
+			return tr("ERAR_ECLOSE");
+
+		case ERAR_EREAD:
+			return tr("ERAR_EREAD");
+
+		case ERAR_EWRITE:
+			return tr("ERAR_EWRITE");
+
+		case ERAR_SMALL_BUF:
+			return tr("ERAR_SMALL_BUF");
+
+		case ERAR_UNKNOWN:
+			return tr("ERAR_UNKNOWN");
+
+		default:
+			return tr("Unknown");
+	}
 }
 
 LIBUNRAR_ARC_PLUGIN_NS_END

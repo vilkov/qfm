@@ -240,9 +240,9 @@ const IFileContainerScanner *FileContainer::scanner() const
 	return this;
 }
 
-void FileContainer::enumerate(IEnumerator::Holder &enumerator) const
+FileContainer::IEnumerator *FileContainer::enumerate(QString &error) const
 {
-	enumerator = new Enumerator(m_path.toUtf8());
+	return new Enumerator(m_path.toUtf8());
 }
 
 IFileInfo *FileContainer::info(const QString &fileName, QString &error) const

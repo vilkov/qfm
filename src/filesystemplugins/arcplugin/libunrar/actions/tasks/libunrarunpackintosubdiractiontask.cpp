@@ -1,4 +1,5 @@
 #include "libunrarunpackintosubdiractiontask.h"
+#include "../../interfaces/libunrarscanner.h"
 #include "../../interfaces/libunrarfilecontainer.h"
 
 #include <wchar.h>
@@ -22,14 +23,12 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 {
 	QByteArray fileName;
 	IFileContainer::Holder destination;
+	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
 
 	int res;
 	void *archive;
 	struct RARHeaderDataEx fileInfo;
 	struct RAROpenArchiveDataEx archiveData;
-
-	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
-	Questioner questioner(this, &UnPackIntoSubdirActionTask::askForOverwrite, aborted);
 
 	m_aborted = &aborted;
 
@@ -54,7 +53,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 			    }
 
 				if (!aborted && res != ERAR_END_ARCHIVE)
-		    		error = errorDescription(res);
+		    		error = Scanner::errorDescription(res);
 
 				RARCloseArchive(archive);
 			}
@@ -64,44 +63,6 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 bool UnPackIntoSubdirActionTask::CreateDestination::operator()(QString &error) const
 {
 	return m_result = m_container->open(FileContainer::extractDirectoryName(m_file), true, error);
-}
-
-bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Flags &aborted)
-{
-	qint32 answer = askUser(
-						tr("Extracting..."),
-						error,
-						QMessageBox::Yes |
-						QMessageBox::YesToAll |
-						QMessageBox::No |
-						QMessageBox::NoToAll |
-						QMessageBox::Cancel,
-						aborted);
-
-	switch (answer)
-	{
-		case QMessageBox::Yes:
-			return true;
-			break;
-
-		case QMessageBox::YesToAll:
-			return flag = true;
-			break;
-
-		case QMessageBox::No:
-			return false;
-			break;
-
-		case QMessageBox::NoToAll:
-			return flag = false;
-			break;
-
-		case QMessageBox::Cancel:
-			cancel();
-			break;
-	}
-
-	return false;
 }
 
 bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted)
@@ -125,48 +86,6 @@ bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool 
 				cancel();
 
 	return false;
-}
-
-QString UnPackIntoSubdirActionTask::errorDescription(int res) const
-{
-	switch (res)
-	{
-		case ERAR_NO_MEMORY:
-			return tr("ERAR_NO_MEMORY");
-
-		case ERAR_BAD_DATA:
-			return tr("ERAR_BAD_DATA");
-
-		case ERAR_BAD_ARCHIVE:
-			return tr("ERAR_BAD_ARCHIVE");
-
-		case ERAR_UNKNOWN_FORMAT:
-			return tr("ERAR_UNKNOWN_FORMAT");
-
-		case ERAR_EOPEN:
-			return tr("ERAR_EOPEN");
-
-		case ERAR_ECREATE:
-			return tr("ERAR_ECREATE");
-
-		case ERAR_ECLOSE:
-			return tr("ERAR_ECLOSE");
-
-		case ERAR_EREAD:
-			return tr("ERAR_EREAD");
-
-		case ERAR_EWRITE:
-			return tr("ERAR_EWRITE");
-
-		case ERAR_SMALL_BUF:
-			return tr("ERAR_SMALL_BUF");
-
-		case ERAR_UNKNOWN:
-			return tr("ERAR_UNKNOWN");
-
-		default:
-			return tr("Unknown");
-	}
 }
 
 int UnPackIntoSubdirActionTask::callbackProc(unsigned int msg, long userData, long rarBuffer, long bytesProcessed)

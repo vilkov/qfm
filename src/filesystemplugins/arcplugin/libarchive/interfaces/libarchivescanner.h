@@ -21,7 +21,7 @@ public:
 	virtual ~Scanner();
 
 	/* IFileContainerScanner */
-	virtual void enumerate(IEnumerator::Holder &enumerator) const;
+	virtual IEnumerator *enumerate(QString &error) const;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;

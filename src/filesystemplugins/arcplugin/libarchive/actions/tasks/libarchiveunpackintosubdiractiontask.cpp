@@ -32,7 +32,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 			if (tryier.tryTo(CreateDestination(m_container, file, destination)))
 			{
 				FilesTree tree(destination.data(), true);
-				archive->scanner()->enumerate(enumerator);
+				enumerator = archive->scanner()->enumerate(fileName);
 
 				while (!aborted && enumerator->next())
 				{
@@ -115,7 +115,7 @@ bool UnPackIntoSubdirActionTask::CreateFile::operator()(QString &error) const
 bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
-						tr("Extracting..."),
+						tr("Unpacking..."),
 						error,
 						QMessageBox::Yes |
 						QMessageBox::YesToAll |
@@ -153,7 +153,7 @@ bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, Questione
 bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted)
 {
 	qint32 answer = askUser(
-						tr("Extracting..."),
+						tr("Unpacking..."),
 						QString(error).append('\n').append(tr("Skip it?")),
 						QMessageBox::Yes |
 						QMessageBox::YesToAll |

@@ -186,9 +186,9 @@ Scanner::~Scanner()
 	archive_read_finish(m_archive);
 }
 
-void Scanner::enumerate(IEnumerator::Holder &enumerator) const
+Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 {
-	enumerator = new Enumerator(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
+	return new Enumerator(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
 }
 
 IFileInfo *Scanner::info(const QString &fileName, QString &error) const

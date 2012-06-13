@@ -15,17 +15,15 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	ListOption(const QString &label, Option *parent = 0) :
-		Option(label, parent)
+	ListOption(Option *parent = 0) :
+		Option(parent)
 	{}
-
-	virtual Type type() const;
 
 	Option *at(size_type index) const { return m_items.at(index); }
 	size_type size() const { return m_items.size(); }
 	size_type indexOf(Option *item) const { return m_items.indexOf(item); }
 
-private:
+protected:
 	Container m_items;
 };
 

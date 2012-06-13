@@ -1,6 +1,7 @@
 #ifndef SETTINGSCONTAINER_H_
 #define SETTINGSCONTAINER_H_
 
+#include <QtCore/QList>
 #include "options/settingsoption.h"
 
 

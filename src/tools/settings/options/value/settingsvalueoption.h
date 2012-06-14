@@ -1,25 +1,22 @@
 #ifndef SETTINGSVALUEOPTION_H_
 #define SETTINGSVALUEOPTION_H_
 
-#include "settingsvisibleoption.h"
+#include "../settingsoption.h"
 
 
 SETTINGS_NS_BEGIN
 
-class ValueOption : public VisibleOption
+class ValueOption : public Option
 {
 public:
-	ValueOption(qint32 id, const QString &label, const QVariant &defaultValue, Option *parent = 0) :
-		VisibleOption(label, parent),
-		m_id(id),
+	ValueOption(const QString &id, const QVariant &defaultValue, Option *parent = 0) :
+		Option(id, parent),
 		m_defaultValue(defaultValue)
 	{}
 
-	qint32 id() const { return m_id; }
 	const QVariant &defaultValue() const { return m_defaultValue; }
 
 private:
-	qint32 m_id;
 	QVariant m_defaultValue;
 };
 

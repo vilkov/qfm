@@ -15,8 +15,8 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	ListOption(Option *parent = 0) :
-		Option(parent)
+	ListOption(const QString &id, Option *parent = 0) :
+		Option(id, parent)
 	{}
 
 	Option *at(size_type index) const { return m_items.at(index); }

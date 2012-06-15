@@ -10,13 +10,15 @@ class ValueOption : public Option
 {
 public:
 	ValueOption(const QString &id, const QVariant &defaultValue, Option *parent = 0) :
-		Option(id, parent),
+		Option(parent),
+		m_id(id),
 		m_defaultValue(defaultValue)
 	{}
 
 	const QVariant &defaultValue() const { return m_defaultValue; }
 
 private:
+	QString m_id;
 	QVariant m_defaultValue;
 };
 

@@ -10,13 +10,17 @@ class Scope : public ListOption
 {
 public:
 	Scope(const QString &id, Option *parent = 0) :
-		ListOption(id, parent)
+		ListOption(parent),
+		m_id(id)
 	{}
 	virtual ~Scope();
 
 protected:
 	virtual void save(QXmlStreamWriter &stream) const;
 	virtual void load(QXmlStreamReader &stream);
+
+protected:
+	QString m_id;
 };
 
 SETTINGS_NS_END

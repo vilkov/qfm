@@ -10,7 +10,7 @@ Scope::~Scope()
 
 void Scope::save(QXmlStreamWriter &stream) const
 {
-	stream.writeStartElement(id());
+	stream.writeStartElement(m_id);
 
 	for (size_type i = 0, size = Scope::size(); i < size; ++i)
 		at(i)->save(stream);
@@ -20,7 +20,7 @@ void Scope::save(QXmlStreamWriter &stream) const
 
 void Scope::load(QXmlStreamReader &stream)
 {
-	if (stream.name() == id())
+	if (stream.name() == m_id)
 		for (size_type i = 0, size = Scope::size(); i < size; ++i)
 			at(i)->load(stream);
 }

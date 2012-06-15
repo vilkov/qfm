@@ -7,6 +7,7 @@
 #include "tools/exceptionshandler/exceptionshandler.h"
 #include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
+#include "settings/applicationsettingscontainer.h"
 #include "mainwindow/mainwindow.h"
 #include "de/deservice.h"
 #include "de/contextmenu/decontextmenufactory.h"
@@ -27,6 +28,7 @@ public:
 	QString version() const;
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
+	static Tools::Settings::Container *settings2() { return &instance()->m_settings2; };
 	static DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
     static DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
 	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
@@ -40,6 +42,8 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const char *where, const char *what);
 
 private:
+	SettingsContainer m_settings2;
+
 	ApplicationSettings m_settings;
 	Tools::TasksPool::TaskPool m_taskPool;
 	DesktopEnvironment::Service m_desktopService;

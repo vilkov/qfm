@@ -2,22 +2,29 @@
 #define SETTINGSCONTAINER_H_
 
 #include <QtCore/QList>
-#include "options/settingsoption.h"
+#include "options/settingslistoption.h"
 
 
 SETTINGS_NS_BEGIN
 
-class Container
+class Container : public ListOption
 {
 public:
-	Container();
+	Container(const QString &storage);
 	virtual ~Container();
 
+	void save() const;
+    void load();
+
 protected:
-	typedef QList<Option *> List;
+	virtual void save(QXmlStreamWriter &stream) const;
+    virtual void load(QXmlStreamReader &stream);
+
+protected:
+	static QString storageLocation(const QString &applicationFolder);
 
 private:
-	List m_items;
+	QString m_storage;
 };
 
 SETTINGS_NS_END

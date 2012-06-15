@@ -17,7 +17,8 @@ public:
 
 public:
 	ValueListOption(const QString &id, Option *parent = 0) :
-		Option(id, parent)
+		Option(parent),
+		m_id(id)
 	{}
 
 	QVariant at(size_type index) const { return m_items.at(index); }
@@ -29,6 +30,7 @@ protected:
     virtual void load(QXmlStreamReader &stream);
 
 protected:
+    QString m_id;
 	Container m_items;
 };
 

@@ -2,8 +2,9 @@
 #include "../../tools/pointers/pscopedpointer.h"
 
 
-FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent) :
+FoldersView::FoldersView(const QString &id, Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
+    m_settings(id, settings, this, &FoldersView::save, &FoldersView::load),
 	m_doNotRefreshTab(true),
     m_layout(this),
     m_tabWidget(this),
@@ -13,31 +14,6 @@ FoldersView::FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *par
 	m_layout.setSpacing(1);
 	m_layout.addWidget(&m_tabWidget);
 	m_layout.setStretchFactor(&m_tabWidget, 1);
-
-	if (tabs.isEmpty())
-	{
-		DirectoryView *widget;
-		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-		widget->setupModel(DirectoryView::defaultPath());
-	}
-	else
-	{
-		qint32 activeWidget = 0;
-		DirectoryView *widget;
-
-		for (TabList::size_type i = 0, size = tabs.size(); i < size; ++i)
-		{
-			const TabList::value_type &tab = tabs.at(i);
-
-			if (tab.isActive)
-				activeWidget = i;
-
-			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-			widget->setupModel(tab.tab);
-		}
-
-		m_tabWidget.setCurrentIndex(activeWidget);
-	}
 
 	connect(&m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(refreshTab(int)));
 }
@@ -68,18 +44,18 @@ void FoldersView::closeCurrentTab()
 	{
 		PScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
-		static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
+		static_cast<DirectoryView *>(m_tabWidget.currentWidget())->setFocus();
 	}
 }
 
 void FoldersView::setFocus()
 {
-	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setFocus();
+	static_cast<DirectoryView *>(m_tabWidget.currentWidget())->setFocus();
 }
 
 void FoldersView::setCurrentDirectory(const QString &filePath)
 {
-	static_cast<DirectoryView*>(m_tabWidget.currentWidget())->setCurrentDirectory(filePath);
+	static_cast<DirectoryView *>(m_tabWidget.currentWidget())->setCurrentDirectory(filePath);
 }
 
 void FoldersView::skipOneRefreshTab()
@@ -87,39 +63,39 @@ void FoldersView::skipOneRefreshTab()
 	m_doNotRefreshTab = true;
 }
 
-void FoldersView::saveTabs(QXmlStreamWriter &stream) const
-{
-	QString name = QString::fromLatin1("Tab");
-
-	stream.writeTextElement(QString::fromLatin1("ActiveTab"), QString::number(m_tabWidget.currentIndex()));
-
-	for (qint32 i = 0, size = m_tabWidget.count(); i < size; ++i)
-	{
-		stream.writeStartElement(name + QString::number(i));
-		static_cast<DirectoryView*>(m_tabWidget.widget(i))->save(stream);
-		stream.writeEndElement();
-	}
-}
-
-FoldersView::TabList FoldersView::loadTabs(QXmlStreamReader &stream)
-{
-	qint32 activeTab = 0;
-	QString name;
-	QString tabName = QString::fromLatin1("Tab");
-	TabList res;
-
-	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("ActiveTab"))
-		activeTab = stream.readElementText().toInt();
-
-	while (stream.readNextStartElement())
-		if ((name = stream.name().toString()).startsWith(tabName))
-			res.push_back(Tab(DirectoryView::load(stream, name)));
-
-	if (activeTab < res.size())
-		res[activeTab].isActive = true;
-
-	return res;
-}
+//void FoldersView::saveTabs(QXmlStreamWriter &stream) const
+//{
+//	QString name = QString::fromLatin1("Tab");
+//
+//	stream.writeTextElement(QString::fromLatin1("ActiveTab"), QString::number(m_tabWidget.currentIndex()));
+//
+//	for (qint32 i = 0, size = m_tabWidget.count(); i < size; ++i)
+//	{
+//		stream.writeStartElement(name + QString::number(i));
+//		static_cast<DirectoryView*>(m_tabWidget.widget(i))->save(stream);
+//		stream.writeEndElement();
+//	}
+//}
+//
+//FoldersView::TabList FoldersView::loadTabs(QXmlStreamReader &stream)
+//{
+//	qint32 activeTab = 0;
+//	QString name;
+//	QString tabName = QString::fromLatin1("Tab");
+//	TabList res;
+//
+//	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("ActiveTab"))
+//		activeTab = stream.readElementText().toInt();
+//
+//	while (stream.readNextStartElement())
+//		if ((name = stream.name().toString()).startsWith(tabName))
+//			res.push_back(Tab(DirectoryView::load(stream, name)));
+//
+//	if (activeTab < res.size())
+//		res[activeTab].isActive = true;
+//
+//	return res;
+//}
 
 void FoldersView::refreshTab(int index)
 {
@@ -132,4 +108,140 @@ void FoldersView::doRefresh(QWidget *tab)
 		m_doNotRefreshTab = false;
 	else
 		static_cast<DirectoryView*>(tab)->refresh();
+}
+
+void FoldersView::save()
+{
+	m_settings.setActiveTab(m_tabWidget.currentIndex());
+
+	for (qint32 i = 0, size = m_tabWidget.count(); i < size; ++i)
+		m_settings.tabs().add(static_cast<DirectoryView *>(m_tabWidget.widget(i))->tab());
+}
+
+void FoldersView::load()
+{
+	if (m_settings.tabs().isEmpty())
+	{
+		DirectoryView *widget;
+		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
+		widget->setupModel(DirectoryView::defaultPath());
+	}
+	else
+	{
+		Tab *tab;
+		DirectoryView *widget;
+
+		for (Tabs::size_type i = 0, size = m_settings.tabs().size(); i < size; ++i)
+		{
+			tab = m_settings.tabs().at(i)->as<Tab>();
+			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
+			widget->setupModel(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry());
+		}
+
+		m_tabWidget.setCurrentIndex(m_settings.activeTab());
+	}
+}
+
+FoldersView::Sort::Sort(Option *parent) :
+	Scope(QString::fromLatin1("Sort"), parent),
+	m_column(QString::fromLatin1("Column"), this),
+	m_order(QString::fromLatin1("Order"), this)
+{
+	manage(&m_column);
+	manage(&m_order);
+}
+
+FoldersView::Sort::Sort(const DirectoryView::Tab::Sort &sort, Option *parent) :
+	Scope(QString::fromLatin1("Sort"), parent),
+	m_column(QString::fromLatin1("Column"), this),
+	m_order(QString::fromLatin1("Order"), this)
+{
+	manage(&m_column);
+	manage(&m_order);
+
+	m_column.setValue(QString::number(sort.column));
+	m_order.setValue(QString::number(sort.order));
+}
+
+FoldersView::Tab::Tab(Option *parent) :
+	Scope(QString::fromLatin1("Tab"), parent),
+	m_path(QString::fromLatin1("Path"), this),
+	m_sort(this),
+	m_geometry(QString::fromLatin1("Geometry"), this)
+{
+	manage(&m_path);
+	manage(&m_sort);
+	manage(&m_geometry);
+}
+
+FoldersView::Tab::Tab(const DirectoryView::Tab &tab, Option *parent) :
+	Scope(QString::fromLatin1("Tab"), parent),
+	m_path(QString::fromLatin1("Path"), this),
+	m_sort(tab.sort, this),
+	m_geometry(QString::fromLatin1("Geometry"), this)
+{
+	manage(&m_path);
+	manage(&m_sort);
+	manage(&m_geometry);
+
+	m_path.setValue(tab.path);
+
+	for (DirectoryView::Geometry::size_type i = 0, size = tab.geometry.size(); i < size; ++i)
+		m_geometry.add(QString::number(tab.geometry.at(i)));
+}
+
+FileSystem::INode::Geometry FoldersView::Tab::geometry() const
+{
+	FileSystem::INode::Geometry res;
+	res.reserve(m_geometry.size());
+
+	for (Tools::Settings::OptionValueList::size_type i = 0, size = m_geometry.size(); i < size; ++i)
+		res.push_back(m_geometry.at(i).toInt());
+
+	return res;
+}
+
+FoldersView::Tabs::Tabs(Option *parent) :
+	OptionList(QString::fromLatin1("Tabs"), parent)
+{}
+
+void FoldersView::Tabs::add(const DirectoryView::Tab &tab)
+{
+	OptionList::add(new Tab(tab, this));
+}
+
+Tools::Settings::Option *FoldersView::Tabs::create()
+{
+	return new Tab(this);
+}
+
+FoldersView::Settings::Settings(const QString &id, Scope *parent, FoldersView *object, Method save, Method load) :
+	Scope(id, parent),
+	m_activeTab(QString::fromLatin1("ActiveTab"), this),
+	m_tabs(this),
+	m_object(object),
+	m_save(save),
+	m_load(load)
+{
+	parent->manage(this);
+	manage(&m_activeTab);
+	manage(&m_tabs);
+}
+
+void FoldersView::Settings::save(QXmlStreamWriter &stream) const
+{
+	(m_object->*m_save)();
+	Scope::save(stream);
+}
+
+void FoldersView::Settings::load(QXmlStreamReader &stream)
+{
+	Scope::load(stream);
+	(m_object->*m_load)();
+}
+
+void FoldersView::Settings::loadDefault()
+{
+	Scope::loadDefault();
+	(m_object->*m_load)();
 }

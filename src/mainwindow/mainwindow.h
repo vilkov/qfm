@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtCore/QByteArray>
 #include <QtGui/QMainWindow>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QSplitter>
@@ -8,6 +9,7 @@
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
 #include "../de/mountpoints/mountpoints.h"
+#include "../tools/settings/options/settingswidgetscope.h"
 
 #include "view/dolphinitemlistcontainer.h"
 
@@ -18,7 +20,6 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
-    virtual ~MainWindow();
 
 	void switchToOtherPanel();
 
@@ -26,11 +27,11 @@ protected:
     virtual void changeEvent(QEvent *event);
 
 private:
-    void saveTabs() const;
-    void saveTabs(const FoldersView &panel, const QString &fileName) const;
-    FoldersView::TabList loadLeftPanelTabs() const;
-    FoldersView::TabList loadRightPanelTabs() const;
-    FoldersView::TabList loadPanelTabs(const QString &fileName) const;
+//    void saveTabs() const;
+//    void saveTabs(const FoldersView &panel, const QString &fileName) const;
+//    FoldersView::TabList loadLeftPanelTabs() const;
+//    FoldersView::TabList loadRightPanelTabs() const;
+//    FoldersView::TabList loadPanelTabs(const QString &fileName) const;
 
 
 private:
@@ -85,6 +86,31 @@ private:
 	void showMounts(FoldersView &view);
 
 private:
+	void save();
+	void load();
+
+private:
+    class Settings : public Tools::Settings::WidgetScope
+    {
+    public:
+    	typedef void (MainWindow::*Method)();
+
+    public:
+    	Settings(MainWindow *object, Method save, Method load);
+
+    protected:
+    	virtual void save(QXmlStreamWriter &stream) const;
+    	virtual void load(QXmlStreamReader &stream);
+        virtual void loadDefault();
+
+    private:
+    	MainWindow *m_object;
+    	Method m_save;
+    	Method m_load;
+    };
+
+private:
+    Settings m_settings;
     MountPoints m_mounts;
 
     CentralWidgetEventHandler m_eventHandler;

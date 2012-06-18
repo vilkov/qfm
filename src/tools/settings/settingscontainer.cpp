@@ -9,7 +9,7 @@
 SETTINGS_NS_BEGIN
 
 Container::Container(const QString &storage) :
-	ListOption(NULL),
+	List(NULL),
 	m_storage(storage)
 {}
 
@@ -40,13 +40,13 @@ void Container::load()
 	{
 		QXmlStreamReader stream(&file);
 
-		if (!stream.atEnd() &&
-			stream.readNext() == QXmlStreamReader::StartDocument &&
-			stream.readNextStartElement())
-		{
+		if (!stream.atEnd() && stream.readNext() == QXmlStreamReader::StartDocument)
 			load(stream);
-		}
+		else
+			loadDefault();
 	}
+	else
+		loadDefault();
 }
 
 void Container::save(QXmlStreamWriter &stream) const
@@ -59,6 +59,12 @@ void Container::load(QXmlStreamReader &stream)
 {
 	for (size_type i = 0, size = Container::size(); i < size; ++i)
 		at(i)->load(stream);
+}
+
+void Container::loadDefault()
+{
+	for (size_type i = 0, size = Container::size(); i < size; ++i)
+		at(i)->loadDefault();
 }
 
 QString Container::storageLocation(const QString &applicationFolder)

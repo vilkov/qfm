@@ -2,12 +2,12 @@
 #define SETTINGSCONTAINER_H_
 
 #include <QtCore/QList>
-#include "options/settingslistoption.h"
+#include "options/settingslist.h"
 
 
 SETTINGS_NS_BEGIN
 
-class Container : public ListOption
+class Container : public List
 {
 public:
 	Container(const QString &storage);
@@ -19,6 +19,7 @@ public:
 protected:
 	virtual void save(QXmlStreamWriter &stream) const;
     virtual void load(QXmlStreamReader &stream);
+    virtual void loadDefault();
 
 protected:
 	static QString storageLocation(const QString &applicationFolder);

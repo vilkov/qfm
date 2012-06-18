@@ -8,6 +8,10 @@
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "directoryview.h"
+#include "../../tools/settings/options/settingsscope.h"
+#include "../../tools/settings/options/settingsoptionlist.h"
+#include "../../tools/settings/options/value/settingsoptionvalue.h"
+#include "../../tools/settings/options/value/settingsoptionvaluelist.h"
 
 
 class FoldersView : public QWidget
@@ -16,20 +20,9 @@ class FoldersView : public QWidget
 
 public:
     typedef const FoldersView & FoldersViewRef;
-    struct Tab
-    {
-    	Tab(const DirectoryView::Tab &tab) :
-			isActive(false),
-			tab(tab)
-    	{}
-
-    	bool isActive;
-    	DirectoryView::Tab tab;
-    };
-    typedef QList<Tab> TabList;
 
 public:
-    FoldersView(const TabList &tabs, FoldersViewRef other, QWidget *parent = 0);
+    FoldersView(const QString &id, Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);
@@ -45,8 +38,8 @@ public:
 	QPoint listPos() const { return static_cast<DirectoryView*>(m_tabWidget.currentWidget())->listPos(); }
     bool hasFocus() const { return static_cast<DirectoryView*>(m_tabWidget.currentWidget())->hasFocus(); }
 
-	void saveTabs(QXmlStreamWriter &stream) const;
-	static TabList loadTabs(QXmlStreamReader &stream);
+//	void saveTabs(QXmlStreamWriter &stream) const;
+//	static TabList loadTabs(QXmlStreamReader &stream);
 
 private Q_SLOTS:
 	void refreshTab(int index);
@@ -55,6 +48,83 @@ private:
 	void doRefresh(QWidget *tab);
 
 private:
+	void save();
+	void load();
+
+private:
+	class Sort : public Tools::Settings::Scope
+	{
+	public:
+		Sort(Option *parent);
+		Sort(const DirectoryView::Tab::Sort &sort, Option *parent);
+
+		qint32 column() const { return m_column.value().toInt(); }
+		Qt::SortOrder order() const { return static_cast<Qt::SortOrder>(m_order.value().toInt()); }
+
+	private:
+		Tools::Settings::OptionValue m_column;
+		Tools::Settings::OptionValue m_order;
+	};
+
+
+	class Tab : public Tools::Settings::Scope
+    {
+    public:
+    	Tab(Option *parent);
+		Tab(const DirectoryView::Tab &tab, Option *parent);
+
+		QString path() const { return m_path.value(); }
+		const Sort &sort() const { return m_sort; }
+    	FileSystem::INode::Geometry geometry() const;
+
+    private:
+		Tools::Settings::OptionValue m_path;
+		Sort m_sort;
+		Tools::Settings::OptionValueList m_geometry;
+    };
+
+
+    class Tabs : public Tools::Settings::OptionList
+    {
+    public:
+    	Tabs(Option *parent);
+
+    	void add(const DirectoryView::Tab &tab);
+
+    protected:
+    	virtual Option *create();
+    };
+
+
+    class Settings : public Tools::Settings::Scope
+    {
+    public:
+    	typedef void (FoldersView::*Method)();
+
+    public:
+    	Settings(const QString &id, Scope *parent, FoldersView *object, Method save, Method load);
+
+    	qint32 activeTab() const { return m_activeTab.value().toInt(); }
+    	void setActiveTab(qint32 value) { m_activeTab.setValue(QString::number(value)); }
+
+    	const Tabs &tabs() const { return m_tabs; }
+    	Tabs &tabs() { return m_tabs; }
+
+    protected:
+    	virtual void save(QXmlStreamWriter &stream) const;
+    	virtual void load(QXmlStreamReader &stream);
+        virtual void loadDefault();
+
+    private:
+    	Tools::Settings::OptionValue m_activeTab;
+    	Tabs m_tabs;
+    	FoldersView *m_object;
+    	Method m_save;
+    	Method m_load;
+    };
+
+private:
+    Settings m_settings;
 	bool m_doNotRefreshTab;
     QVBoxLayout m_layout;
     QTabWidget m_tabWidget;

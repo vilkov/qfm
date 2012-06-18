@@ -53,10 +53,13 @@ Application::Application(const QString &name, const QString &organization, const
 	QApplication::setApplicationName(name);
 	QApplication::setOrganizationName(organization);
 	QApplication::setApplicationVersion(version());
+
+	m_settings2.load();
 }
 
 Application::~Application()
 {
+	m_settings2.save();
 	m_taskPool.clear();
 }
 

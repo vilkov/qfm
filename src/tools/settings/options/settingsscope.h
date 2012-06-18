@@ -1,23 +1,25 @@
 #ifndef SETTINGSSCOPE_H_
 #define SETTINGSSCOPE_H_
 
-#include "settingslistoption.h"
+#include "settingslist.h"
 
 
 SETTINGS_NS_BEGIN
 
-class Scope : public ListOption
+class Scope : public List
 {
 public:
 	Scope(const QString &id, Option *parent = 0) :
-		ListOption(parent),
+		List(parent),
 		m_id(id)
 	{}
-	virtual ~Scope();
+
+	void manage(Option *option);
 
 protected:
 	virtual void save(QXmlStreamWriter &stream) const;
 	virtual void load(QXmlStreamReader &stream);
+    virtual void loadDefault();
 
 protected:
 	QString m_id;

@@ -28,7 +28,7 @@ public:
 	QString version() const;
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
-	static Tools::Settings::Container *settings2() { return &instance()->m_settings2; };
+	static SettingsContainer *settings2() { return &instance()->m_settings2; };
 	static DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
     static DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
 	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }

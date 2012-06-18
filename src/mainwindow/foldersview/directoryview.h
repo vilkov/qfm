@@ -30,7 +30,7 @@ class DirectoryView : public QWidget, public FileSystem::INodeView
     Q_OBJECT
 
 public:
-    typedef ::FileSystem::INode::Geometry Geometry;
+    typedef FileSystem::INode::Geometry Geometry;
 
     struct Tab
     {
@@ -50,9 +50,9 @@ public:
     virtual ~DirectoryView();
 
     /* Should be called immediately after construction and adding to the tabWidget! */
-	void setupModel(const Tab &tab);
 	void setupModel(const QString &absoluteFilePath);
 	void setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry);
+	void setupModel(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry);
 
 public:
 	/* INodeView */
@@ -68,8 +68,10 @@ public:
     bool hasFocus() const;
 	QPoint listPos() const;
 //	QString currentDirectoryName() const;
-	void save(QXmlStreamWriter &stream) const;
-	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
+//	void save(QXmlStreamWriter &stream) const;
+//	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
+
+	Tab tab() const;
 
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);

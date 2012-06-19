@@ -12,7 +12,7 @@ class SettingsContainer : public QObject, public Tools::Settings::Container
 public:
 	SettingsContainer(QObject *parent = 0);
 
-	void manage(Option *option);
+	using Container::manage;
 };
 
 #endif /* APPLICATIONSETTINGSCONTAINER_H_ */

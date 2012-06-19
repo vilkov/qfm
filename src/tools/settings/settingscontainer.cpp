@@ -13,9 +13,6 @@ Container::Container(const QString &storage) :
 	m_storage(storage)
 {}
 
-Container::~Container()
-{}
-
 void Container::save() const
 {
 	QFile file(m_storage);
@@ -47,6 +44,11 @@ void Container::load()
 	}
 	else
 		loadDefault();
+}
+
+void Container::manage(Option *option)
+{
+	m_items.push_back(option);
 }
 
 void Container::save(QXmlStreamWriter &stream) const

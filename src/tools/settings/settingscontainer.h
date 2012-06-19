@@ -11,10 +11,12 @@ class Container : public List
 {
 public:
 	Container(const QString &storage);
-	virtual ~Container();
 
 	void save() const;
     void load();
+
+protected:
+	void manage(Option *option);
 
 protected:
 	virtual void save(QXmlStreamWriter &stream) const;

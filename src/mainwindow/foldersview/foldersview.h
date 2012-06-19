@@ -38,9 +38,6 @@ public:
 	QPoint listPos() const { return static_cast<DirectoryView*>(m_tabWidget.currentWidget())->listPos(); }
     bool hasFocus() const { return static_cast<DirectoryView*>(m_tabWidget.currentWidget())->hasFocus(); }
 
-//	void saveTabs(QXmlStreamWriter &stream) const;
-//	static TabList loadTabs(QXmlStreamReader &stream);
-
 private Q_SLOTS:
 	void refreshTab(int index);
 
@@ -92,6 +89,7 @@ private:
     	void add(const DirectoryView::Tab &tab);
 
     protected:
+    	virtual bool isSubOptionName(const QStringRef &name) const;
     	virtual Option *create();
     };
 

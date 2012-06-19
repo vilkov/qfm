@@ -1,5 +1,4 @@
 #include "settingsscope.h"
-#include <QtCore/QDebug>
 
 
 SETTINGS_NS_BEGIN
@@ -21,15 +20,12 @@ void Scope::save(QXmlStreamWriter &stream) const
 
 void Scope::load(QXmlStreamReader &stream)
 {
-	qDebug() << stream.name();
-
-	if (readNextStartElement(stream, m_id))
-	{
-		qDebug() << stream.name();
-
+	if (stream.name() == m_id)
 		for (size_type i = 0, size = Scope::size(); i < size; ++i)
-			at(i)->load(stream);
-	}
+			if (readNextStartElement(stream))
+				at(i)->load(stream);
+			else
+				break;
 	else
 		loadDefault();
 }

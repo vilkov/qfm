@@ -1,6 +1,5 @@
 #include "settingsoptionlist.h"
 #include "../../pointers/pscopedpointer.h"
-#include <QtCore/QDebug>
 
 
 SETTINGS_NS_BEGIN
@@ -13,6 +12,7 @@ OptionList::~OptionList()
 void OptionList::clear()
 {
 	qDeleteAll(m_items);
+	m_items.clear();
 }
 
 void OptionList::save(QXmlStreamWriter &stream) const
@@ -27,22 +27,23 @@ void OptionList::save(QXmlStreamWriter &stream) const
 
 void OptionList::load(QXmlStreamReader &stream)
 {
-	if (readNextStartElement(stream, m_id))
+	if (stream.name() == m_id)
 	{
-		qDebug() << stream.name();
 		PScopedPointer<Option> option;
 
 		for (QXmlStreamReader::TokenType token = stream.readNext(); !stream.atEnd(); token = stream.readNext())
 			if (token == QXmlStreamReader::EndElement && stream.name() == m_id)
 				break;
 			else
-			{
-				qDebug() << stream.name();
-				option = create();
-				option->load(stream);
-				add(option.take());
-			}
+				if (token == QXmlStreamReader::StartElement && isSubOptionName(stream.name()))
+				{
+					option = create();
+					option->load(stream);
+					add(option.take());
+				}
 	}
+	else
+		loadDefault();
 }
 
 void OptionList::loadDefault()

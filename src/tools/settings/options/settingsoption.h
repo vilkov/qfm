@@ -33,13 +33,13 @@ protected:
     virtual void loadDefault() = 0;
 
 protected:
-    inline bool readNextStartElement(QXmlStreamReader &stream, const QString &name) const
+    inline bool readNextStartElement(QXmlStreamReader &stream) const
     {
     	for (QXmlStreamReader::TokenType token = stream.readNext(); token != QXmlStreamReader::StartElement; token = stream.readNext())
     		if (token == QXmlStreamReader::NoToken || token == QXmlStreamReader::Invalid)
     			return false;
 
-    	return stream.name() == name;
+    	return true;
     }
 
 private:

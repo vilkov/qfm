@@ -57,8 +57,11 @@ void Container::save(QXmlStreamWriter &stream) const
 
 void Container::load(QXmlStreamReader &stream)
 {
-	for (size_type i = 0, size = Container::size(); i < size; ++i)
-		at(i)->load(stream);
+	if (readNextStartElement(stream))
+		for (size_type i = 0, size = Container::size(); i < size; ++i)
+			at(i)->load(stream);
+	else
+		loadDefault();
 }
 
 void Container::loadDefault()

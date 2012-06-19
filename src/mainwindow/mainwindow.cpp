@@ -58,62 +58,6 @@ void MainWindow::changeEvent(QEvent *event)
 	QMainWindow::changeEvent(event);
 }
 
-//void MainWindow::saveTabs() const
-//{
-//	QDir dir(ApplicationSettings::storageLocation());
-//
-//	saveTabs(m_leftFoldersView, dir.absoluteFilePath(QString::fromLatin1("leftpaneltabs.xml")));
-//	saveTabs(m_rightFoldersView, dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
-//}
-//
-//void MainWindow::saveTabs(const FoldersView &panel, const QString &fileName) const
-//{
-//	QFile file(fileName);
-//
-//	if (file.open(QFile::WriteOnly | QFile::Truncate))
-//	{
-//		QXmlStreamWriter stream(&file);
-//		stream.setCodec(QTextCodec::codecForName("UTF-8"));
-//		stream.setAutoFormatting(true);
-//
-//		stream.writeStartDocument(QString::fromLatin1("1.0"));
-//
-//		stream.writeStartElement(QString::fromLatin1("Tabs"));
-//		panel.saveTabs(stream);
-//		stream.writeEndElement();
-//
-//		stream.writeEndDocument();
-//	}
-//}
-//
-//FoldersView::TabList MainWindow::loadLeftPanelTabs() const
-//{
-//	QDir dir(ApplicationSettings::storageLocation());
-//	return loadPanelTabs(dir.absoluteFilePath(QString::fromLatin1("leftpaneltabs.xml")));
-//}
-//
-//FoldersView::TabList MainWindow::loadRightPanelTabs() const
-//{
-//	QDir dir(ApplicationSettings::storageLocation());
-//	return loadPanelTabs(dir.absoluteFilePath(QString::fromLatin1("rightpaneltabs.xml")));
-//}
-//
-//FoldersView::TabList MainWindow::loadPanelTabs(const QString &fileName) const
-//{
-//	QFile file(fileName);
-//
-//	if (file.open(QFile::ReadOnly))
-//	{
-//		QXmlStreamReader stream(&file);
-//
-//		if (!stream.atEnd() && stream.readNext() == QXmlStreamReader::StartDocument)
-//			if (stream.readNextStartElement() && stream.name() == QLatin1String("Tabs"))
-//				return FoldersView::loadTabs(stream);
-//	}
-//
-//	return FoldersView::TabList();
-//}
-
 MainWindow::FileMenuActions::FileMenuActions(QMainWindow *parent) :
 	open(tr("Open..."), parent),
 	exit(tr("Exit"), parent)

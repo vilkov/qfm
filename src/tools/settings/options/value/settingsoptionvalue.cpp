@@ -1,5 +1,4 @@
 #include "settingsoptionvalue.h"
-#include <QtCore/QDebug>
 
 
 SETTINGS_NS_BEGIN
@@ -11,8 +10,10 @@ void OptionValue::save(QXmlStreamWriter &stream) const
 
 void OptionValue::load(QXmlStreamReader &stream)
 {
-	if (readNextStartElement(stream, m_id))
+	if (stream.name() == m_id)
 		m_value = stream.readElementText();
+	else
+		loadDefault();
 }
 
 void OptionValue::loadDefault()

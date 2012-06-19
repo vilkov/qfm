@@ -1,5 +1,4 @@
 #include "settingsoptionvaluelist.h"
-#include <QtCore/QDebug>
 
 
 SETTINGS_NS_BEGIN
@@ -18,24 +17,15 @@ void OptionValueList::save(QXmlStreamWriter &stream) const
 
 void OptionValueList::load(QXmlStreamReader &stream)
 {
-	qDebug() << stream.name();
-
-	if (readNextStartElement(stream, m_id))
-	{
-		qDebug() << stream.name();
-		Option *option;
-
+	if (stream.name() != m_id)
+		loadDefault();
+	else
 		for (QXmlStreamReader::TokenType token = stream.readNext(); !stream.atEnd(); token = stream.readNext())
 			if (token == QXmlStreamReader::StartElement)
-			{
-				QString s;
-				m_items.push_back(s = stream.readElementText());
-				qDebug() << s;
-			}
+				m_items.push_back(stream.readElementText());
 			else
 				if (token == QXmlStreamReader::EndElement && stream.name() == m_id)
 					break;
-	}
 }
 
 void OptionValueList::loadDefault()

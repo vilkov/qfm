@@ -27,14 +27,6 @@ protected:
     virtual void changeEvent(QEvent *event);
 
 private:
-//    void saveTabs() const;
-//    void saveTabs(const FoldersView &panel, const QString &fileName) const;
-//    FoldersView::TabList loadLeftPanelTabs() const;
-//    FoldersView::TabList loadRightPanelTabs() const;
-//    FoldersView::TabList loadPanelTabs(const QString &fileName) const;
-
-
-private:
     struct FileMenuActions
     {
     	FileMenuActions(QMainWindow *parent);

@@ -25,6 +25,7 @@ protected:
     virtual void loadDefault();
 
 protected:
+	virtual bool isSubOptionName(const QStringRef &name) const = 0;
 	virtual Option *create() = 0;
 
 protected:

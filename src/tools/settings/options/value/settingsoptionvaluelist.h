@@ -27,6 +27,7 @@ public:
 
 	void add(const QString &value) { m_items.push_back(value); }
 	void remove(size_type index) { m_items.removeAt(index); }
+	void clear() { m_items.clear(); }
 
 protected:
     virtual void save(QXmlStreamWriter &stream) const;

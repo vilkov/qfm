@@ -22,7 +22,7 @@
 #include "../../tools/events/imp/focuseventhandler.h"
 
 
-using namespace ::Tools::Events;
+using namespace Tools::Events;
 class FoldersView;
 
 class DirectoryView : public QWidget, public FileSystem::INodeView
@@ -67,9 +67,6 @@ public:
 
     bool hasFocus() const;
 	QPoint listPos() const;
-//	QString currentDirectoryName() const;
-//	void save(QXmlStreamWriter &stream) const;
-//	static Tab load(QXmlStreamReader &stream, const QString &stopTagName);
 
 	Tab tab() const;
 

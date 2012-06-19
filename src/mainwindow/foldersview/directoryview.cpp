@@ -3,6 +3,7 @@
 #include "../../de/contextmenu/decontextmenu.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
+
 #include <QtGui/QHeaderView>
 #include <QtGui/QMessageBox>
 
@@ -158,57 +159,6 @@ QPoint DirectoryView::listPos() const
 {
 	return mapToGlobal(m_view.pos());
 }
-
-//QString DirectoryView::currentDirectoryName() const
-//{
-//	return m_node->fileName();
-//}
-
-//void DirectoryView::save(QXmlStreamWriter &stream) const
-//{
-//	stream.writeTextElement(QString::fromLatin1("Path"), m_node->location());
-//
-//	stream.writeStartElement(QString::fromLatin1("Sort"));
-//	stream.writeTextElement(QString::fromLatin1("Column"), QString::number(m_view.header()->sortIndicatorSection()));
-//	stream.writeTextElement(QString::fromLatin1("Order"), QString::number(m_view.header()->sortIndicatorOrder()));
-//	stream.writeEndElement();
-//
-//	QString name = QString::fromLatin1("Column");
-//	stream.writeStartElement(QString::fromLatin1("Geometry"));
-//	for (qint32 i = 0, size = m_node->columnsCount(); i < size; ++i)
-//		stream.writeTextElement(name + QString::number(i), QString::number(m_view.columnWidth(i)));
-//	stream.writeEndElement();
-//}
-//
-//DirectoryView::Tab DirectoryView::load(QXmlStreamReader &stream, const QString &stopTagName)
-//{
-//	DirectoryView::Tab res;
-//	QString column = QString::fromLatin1("Column");
-//
-//	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Path"))
-//		res.path = stream.readElementText();
-//
-//	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Sort"))
-//	{
-//		if (stream.readNextStartElement() && stream.name() == column)
-//			res.sort.column = stream.readElementText().toInt();
-//
-//		if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Order"))
-//			res.sort.order = static_cast<Qt::SortOrder>(stream.readElementText().toInt());
-//
-//		stream.readNextStartElement();
-//	}
-//
-//	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("Geometry"))
-//	{
-//		while (stream.readNextStartElement() && stream.name().toString().startsWith(column))
-//			res.geometry.push_back(stream.readElementText().toInt());
-//
-//		stream.readNextStartElement();
-//	}
-//
-//	return res;
-//}
 
 DirectoryView::Tab DirectoryView::tab() const
 {

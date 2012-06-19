@@ -63,40 +63,6 @@ void FoldersView::skipOneRefreshTab()
 	m_doNotRefreshTab = true;
 }
 
-//void FoldersView::saveTabs(QXmlStreamWriter &stream) const
-//{
-//	QString name = QString::fromLatin1("Tab");
-//
-//	stream.writeTextElement(QString::fromLatin1("ActiveTab"), QString::number(m_tabWidget.currentIndex()));
-//
-//	for (qint32 i = 0, size = m_tabWidget.count(); i < size; ++i)
-//	{
-//		stream.writeStartElement(name + QString::number(i));
-//		static_cast<DirectoryView*>(m_tabWidget.widget(i))->save(stream);
-//		stream.writeEndElement();
-//	}
-//}
-//
-//FoldersView::TabList FoldersView::loadTabs(QXmlStreamReader &stream)
-//{
-//	qint32 activeTab = 0;
-//	QString name;
-//	QString tabName = QString::fromLatin1("Tab");
-//	TabList res;
-//
-//	if (stream.readNextStartElement() && stream.name() == QString::fromLatin1("ActiveTab"))
-//		activeTab = stream.readElementText().toInt();
-//
-//	while (stream.readNextStartElement())
-//		if ((name = stream.name().toString()).startsWith(tabName))
-//			res.push_back(Tab(DirectoryView::load(stream, name)));
-//
-//	if (activeTab < res.size())
-//		res[activeTab].isActive = true;
-//
-//	return res;
-//}
-
 void FoldersView::refreshTab(int index)
 {
 	doRefresh(m_tabWidget.widget(index));
@@ -139,6 +105,7 @@ void FoldersView::load()
 		}
 
 		m_tabWidget.setCurrentIndex(m_settings.activeTab());
+		m_settings.tabs().clear();
 	}
 }
 
@@ -208,6 +175,12 @@ FoldersView::Tabs::Tabs(Option *parent) :
 void FoldersView::Tabs::add(const DirectoryView::Tab &tab)
 {
 	OptionList::add(new Tab(tab, this));
+}
+
+bool FoldersView::Tabs::isSubOptionName(const QStringRef &name) const
+{
+	static const QString optionName = QString::fromLatin1("Tab");
+	return name == optionName;
 }
 
 Tools::Settings::Option *FoldersView::Tabs::create()

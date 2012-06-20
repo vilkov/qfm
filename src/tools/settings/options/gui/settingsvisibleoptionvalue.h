@@ -1,7 +1,7 @@
 #ifndef SETTINGSVISIBLEOPTIONVALUE_H_
 #define SETTINGSVISIBLEOPTIONVALUE_H_
 
-#include "settingsivisiblepption.h"
+#include "settingsivisibleoption.h"
 #include "../value/settingsoptionvalue.h"
 
 

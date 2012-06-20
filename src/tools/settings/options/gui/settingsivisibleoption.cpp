@@ -1,4 +1,4 @@
-#include "settingsivisiblepption.h"
+#include "settingsivisibleoption.h"
 
 
 SETTINGS_NS_BEGIN

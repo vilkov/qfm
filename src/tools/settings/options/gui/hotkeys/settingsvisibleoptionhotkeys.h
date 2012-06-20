@@ -2,7 +2,7 @@
 #define SETTINGSVISIBLEOPTIONHOTKEYS_H_
 
 #include "settingsvisibleoptionhotkey.h"
-#include "../settingsivisiblepption.h"
+#include "../settingsivisibleoption.h"
 #include "../../settingsscope.h"
 
 

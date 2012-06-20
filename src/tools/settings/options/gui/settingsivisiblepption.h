@@ -6,6 +6,7 @@
 
 class QLayout;
 
+
 SETTINGS_NS_BEGIN
 
 class IVisibleOption
@@ -13,9 +14,9 @@ class IVisibleOption
 public:
 	virtual ~IVisibleOption();
 
-	virtual QLayout *createEditor() const = 0;
-	virtual bool accept() const = 0;
-	virtual void reject() const = 0;
+	virtual QLayout *createEditor() = 0;
+	virtual bool accept() = 0;
+	virtual void reject() = 0;
 };
 
 SETTINGS_NS_END

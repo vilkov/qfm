@@ -11,7 +11,7 @@ SETTINGS_NS_BEGIN
 class VisibleOptionHotKeys : public Scope, public IVisibleOption
 {
 public:
-	VisibleOptionHotKeys(const QString &id, Option *parent = 0);
+	VisibleOptionHotKeys(const QString &id, Option *parent);
 
 	void manage(VisibleOptionHotKey *option) { Scope::manage(option); }
 

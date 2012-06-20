@@ -10,7 +10,7 @@ SETTINGS_NS_BEGIN
 class VisibleOptionHotKey : public Scope
 {
 public:
-	VisibleOptionHotKey(const QString &label, const QString &context, const QString &id, Option *parent = 0, int modifiers = Qt::NoModifier, int key = 0);
+	VisibleOptionHotKey(const QString &label, const QString &context, const QString &id, Option *parent, int modifiers = Qt::NoModifier, int key = 0);
 
 	const QString &label() const { return m_label; }
 	const QString &context() const { return m_context; }

@@ -10,13 +10,13 @@ SETTINGS_NS_BEGIN
 class TabbedPage : public Page
 {
 public:
-	TabbedPage(const QString &id, Option *parent);
+	TabbedPage(const QString &title, const QString &id, Option *parent);
 
 	void manage(Tab *option) { Page::manage(option, option); }
 
-	virtual QLayout *createEditor() const;
-	virtual bool accept() const;
-	virtual void reject() const;
+	virtual QLayout *createEditor();
+	virtual bool accept();
+	virtual void reject();
 };
 
 SETTINGS_NS_END

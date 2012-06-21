@@ -17,7 +17,10 @@ QLayout *VisibleOptionValue::createEditor()
 {
 	PScopedPointer<QHBoxLayout> res(new QHBoxLayout());
 
-	res->addWidget(new QLabel(m_label));
+    res->setSpacing(1);
+    res->setMargin(1);
+
+    res->addWidget(new QLabel(m_label));
 	res->addWidget(m_editor = new QLineEdit(value()));
 
 	return res.take();

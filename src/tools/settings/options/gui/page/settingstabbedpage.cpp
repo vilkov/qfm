@@ -3,21 +3,21 @@
 
 SETTINGS_NS_BEGIN
 
-TabbedPage::TabbedPage(const QString &id, Option *parent) :
-	Page(id, parent)
+TabbedPage::TabbedPage(const QString &title, const QString &id, Option *parent) :
+	Page(title, id, parent)
 {}
 
-QLayout *TabbedPage::createEditor() const
+QLayout *TabbedPage::createEditor()
 {
 	return NULL;
 }
 
-bool TabbedPage::accept() const
+bool TabbedPage::accept()
 {
 	return false;
 }
 
-void TabbedPage::reject() const
+void TabbedPage::reject()
 {
 
 }

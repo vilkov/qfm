@@ -9,7 +9,7 @@ SETTINGS_NS_BEGIN
 class OptionList : public List
 {
 public:
-	OptionList(const QString &id, Option *parent = 0) :
+	OptionList(const QString &id, Option *parent) :
 		List(parent),
 		m_id(id)
 	{}

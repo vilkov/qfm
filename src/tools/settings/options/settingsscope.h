@@ -9,7 +9,7 @@ SETTINGS_NS_BEGIN
 class Scope : public List
 {
 public:
-	Scope(const QString &id, Option *parent = 0) :
+	Scope(const QString &id, Option *parent) :
 		List(parent),
 		m_id(id)
 	{}

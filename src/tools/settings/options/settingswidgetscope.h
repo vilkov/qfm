@@ -10,7 +10,7 @@ SETTINGS_NS_BEGIN
 class WidgetScope : public Scope
 {
 public:
-	WidgetScope(const QString &id, Option *parent = 0);
+	WidgetScope(const QString &id, Option *parent);
 
 	QByteArray geometry() const { return QByteArray::fromBase64(m_geometry.value().toAscii()); }
 	void setGeometry(const QByteArray &value) { m_geometry.setValue(QString::fromAscii(value.toBase64())); }

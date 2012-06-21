@@ -99,7 +99,7 @@ MainWindow::ToolsMenuActions::ToolsMenuActions(QMainWindow *parent) :
 
 void MainWindow::actToolsMenuPreferences()
 {
-
+	Application::settings2()->exec(this);
 }
 
 MainWindow::HelpMenuActions::HelpMenuActions(QMainWindow *parent) :

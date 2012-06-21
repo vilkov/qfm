@@ -14,15 +14,18 @@ public:
 	typedef QList<IVisibleOption *> Container;
 
 public:
-	Page(const QString &id, Option *parent);
+	Page(const QString &title, const QString &id, Option *parent);
+
+	const QString &title() const { return m_title; }
 
 	void manage(Option *option, IVisibleOption *gui) { Scope::manage(option); m_guis.push_back(gui); }
 
-	virtual QLayout *createEditor() const;
-	virtual bool accept() const;
-	virtual void reject() const;
+	virtual QLayout *createEditor();
+	virtual bool accept();
+	virtual void reject();
 
 protected:
+	QString m_title;
 	Container m_guis;
 };
 

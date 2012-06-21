@@ -10,8 +10,8 @@ MODELS_TREE_NS_BEGIN
 class Item
 {
 public:
-	typedef Item     Base;
-	typedef ::size_t size_type;
+	typedef Item   Base;
+	typedef size_t size_type;
 	enum { InvalidIndex = (size_type)-1 };
 
 public:

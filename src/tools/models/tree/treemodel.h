@@ -29,8 +29,8 @@ protected:
 	class Container
 	{
 	public:
-		typedef ::Tools::Models::Tree::Item Item;
-		typedef Item::size_type             size_type;
+		typedef Tools::Models::Tree::Item Item;
+		typedef Item::size_type           size_type;
 		enum { InvalidIndex = Item::InvalidIndex };
 
 	public:

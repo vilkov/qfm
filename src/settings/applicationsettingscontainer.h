@@ -2,17 +2,25 @@
 #define APPLICATIONSETTINGSCONTAINER_H_
 
 #include <QtCore/QObject>
-#include "../tools/settings/settingscontainer.h"
+#include "pages/applicationsettingsgeneralpage.h"
+#include "../tools/settings/settingsvisiblecontainer.h"
+#include "../tools/settings/options/value/settingsoptionvalue.h"
+#include "../tools/settings/dialog/settings/settingsdialogsettings.h"
 
 
-class SettingsContainer : public QObject, public Tools::Settings::Container
+class SettingsContainer : public QObject, public Tools::Settings::VisibleContainer
 {
 	Q_OBJECT
 
 public:
 	SettingsContainer(QObject *parent = 0);
 
-	using Container::manage;
+	using VisibleContainer::manage;
+	void exec(QWidget *parent = 0);
+
+private:
+	Tools::Settings::DialogSettings m_dialogSettings;
+	Tools::Settings::GeneralPage m_generalPage;
 };
 
 #endif /* APPLICATIONSETTINGSCONTAINER_H_ */

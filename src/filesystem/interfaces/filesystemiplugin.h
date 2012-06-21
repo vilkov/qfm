@@ -4,7 +4,6 @@
 #include <QtCore/QModelIndex>
 #include "filesystemifilecontainer.h"
 #include "../tools/filesystempath.h"
-#include "../../tools/settings/settingstab.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -17,7 +16,7 @@ public:
 	virtual ~IPlugin();
 
 	virtual void registered() = 0;
-	virtual const ::Tools::Settings::Tab *settings() const = 0;
+//	virtual const ::Tools::Settings::Tab *settings() const = 0;
 };
 
 

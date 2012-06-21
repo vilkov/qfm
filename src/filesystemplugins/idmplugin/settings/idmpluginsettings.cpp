@@ -23,7 +23,7 @@ const QString &Settings::name() const
 
 QWidget *Settings::centralWidget() const
 {
-	return new QWidget();
+	return NULL;//new QWidget();
 }
 
 IDM_PLUGIN_NS_END

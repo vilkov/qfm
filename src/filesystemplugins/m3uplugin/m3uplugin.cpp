@@ -14,10 +14,10 @@ void Plugin::registered()
 
 }
 
-const ::Tools::Settings::Tab *Plugin::settings() const
-{
-	return &m_settings;
-}
+//const ::Tools::Settings::Tab *Plugin::settings() const
+//{
+//	return &m_settings;
+//}
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {

@@ -58,10 +58,10 @@ Plugin::~Plugin()
 void Plugin::registered()
 {}
 
-const ::Tools::Settings::Tab *Plugin::settings() const
-{
-	return &m_settings;
-}
+//const ::Tools::Settings::Tab *Plugin::settings() const
+//{
+//	return &m_settings;
+//}
 
 QString Plugin::shema() const
 {

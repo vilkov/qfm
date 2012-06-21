@@ -13,10 +13,10 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_createDbAction, ::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 }
 
-const ::Tools::Settings::Tab *Plugin::settings() const
-{
-	return &m_settings;
-}
+//const ::Tools::Settings::Tab *Plugin::settings() const
+//{
+//	return &m_settings;
+//}
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {

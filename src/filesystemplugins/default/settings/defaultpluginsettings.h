@@ -3,21 +3,20 @@
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
-#include "../../../tools/settings/settingstab.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class Settings : public ::Tools::Settings::Tab
+class Settings
 {
 	Q_DECLARE_TR_FUNCTIONS(Settings)
 
 public:
 	Settings();
 
-	virtual const QByteArray &id() const;
-	virtual const QString &name() const;
-	virtual QWidget *centralWidget() const;
+	const QByteArray &id() const;
+	const QString &name() const;
+	QWidget *centralWidget() const;
 
 private:
 	QByteArray m_id;

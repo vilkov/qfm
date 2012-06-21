@@ -16,7 +16,7 @@ public:
 
 	/* IPlugin */
 	virtual void registered();
-	virtual const ::Tools::Settings::Tab *settings() const;
+//	virtual const ::Tools::Settings::Tab *settings() const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;
@@ -35,7 +35,7 @@ public:
 
 	/* IPlugin */
 	virtual void registered();
-	virtual const ::Tools::Settings::Tab *settings() const;
+//	virtual const ::Tools::Settings::Tab *settings() const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;

@@ -20,10 +20,10 @@ void LibArchivePlugin::registered()
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
 }
 
-const Tools::Settings::Tab *LibArchivePlugin::settings() const
-{
-	return &m_settings;
-}
+//const Tools::Settings::Tab *LibArchivePlugin::settings() const
+//{
+//	return &m_settings;
+//}
 
 LibArchivePlugin::FileTypeIdList LibArchivePlugin::fileTypes() const
 {
@@ -107,10 +107,10 @@ void LibUnRarPlugin::registered()
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
 }
 
-const Tools::Settings::Tab *LibUnRarPlugin::settings() const
-{
-	return &m_settings;
-}
+//const Tools::Settings::Tab *LibUnRarPlugin::settings() const
+//{
+//	return &m_settings;
+//}
 
 LibUnRarPlugin::FileTypeIdList LibUnRarPlugin::fileTypes() const
 {

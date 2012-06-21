@@ -2,6 +2,60 @@
 #include "../configoptions/configoptionvalue.h"
 
 
+Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &pages, QWidget *parent) :
+	QDialog(parent),
+	m_settings(settings),
+	m_layout(this),
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
+	m_model(pages, this)
+{
+	setWindowTitle(title);
+	restoreGeometry(settings.geometry());
+
+	m_pagesView.setModel(&m_model);
+	m_pagesView.setHeaderHidden(true);
+	m_selectedPage.setLayout(m_editedPages[pages.at(0)] = pages.at(0)->createEditor());
+
+	m_hLayout.setSpacing(1);
+    m_hLayout.setMargin(1);
+
+    m_hLayout.addWidget(&m_pagesView);
+	m_hLayout.addWidget(&m_selectedPage);
+
+	m_layout.setSpacing(1);
+	m_layout.setMargin(1);
+
+	m_layout.addLayout(&m_hLayout);
+	m_layout.addWidget(&m_buttonBox);
+
+    connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+}
+
+Dialog::~Dialog()
+{
+	qDeleteAll(m_editedPages);
+}
+
+void Dialog::accept()
+{
+	for (PagesCache::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
+		if (!i.key()->accept())
+			return;
+
+	QDialog::accept();
+}
+
+void Dialog::reject()
+{
+	for (PagesCache::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
+		i.key()->reject();
+
+	QDialog::reject();
+}
+
+
+
 SettingsDialog::SettingsDialog(const QString &title, const SettingsList &settings, const ConstraintsList &constraints, QWidget *parent) :
 	QDialog(parent),
     m_tabs(this),

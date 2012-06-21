@@ -1,16 +1,53 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
+#include <QtCore/QMap>
 #include <QtGui/QFont>
 #include <QtGui/QDialog>
+#include <QtGui/QTreeView>
 #include <QtGui/QTabWidget>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QDialogButtonBox>
 #include "../configoptions/configoptiongroup.h"
 #include "../constraints/configoptionconstraint.h"
 
 
-using namespace ::Tools::Settings;
+#include "model/settingsdialogmodel.h"
+#include "settings/settingsdialogsettings.h"
+
+
+using namespace Tools::Settings;
+
+
+class Dialog : public QDialog
+{
+public:
+	typedef Model::Pages            Pages;
+	typedef QMap<Page *, QLayout *> PagesCache;
+
+public:
+	Dialog(const QString &title, DialogSettings &settings, const Pages &pages, QWidget *parent = 0);
+	virtual ~Dialog();
+
+public:
+    virtual void accept();
+    virtual void reject();
+
+private:
+	DialogSettings &m_settings;
+	QVBoxLayout m_layout;
+	QHBoxLayout m_hLayout;
+	QTreeView m_pagesView;
+	QWidget m_selectedPage;
+	QDialogButtonBox m_buttonBox;
+
+private:
+	Model m_model;
+	PagesCache m_editedPages;
+};
+
+
 
 class SettingsDialog : public QDialog
 {

@@ -11,7 +11,7 @@ Page::Page(const QString &title, const QString &id, Option *parent) :
 	m_title(title)
 {}
 
-QLayout *Page::createEditor()
+QLayout *Page::createEditor(const QFont &font)
 {
 	PScopedPointer<QVBoxLayout> res(new QVBoxLayout());
 
@@ -19,7 +19,7 @@ QLayout *Page::createEditor()
 	res->setMargin(1);
 
 	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)
-		res->addLayout(m_guis.at(i)->createEditor());
+		res->addLayout(m_guis.at(i)->createEditor(font));
 
 	res->addStretch(1);
 	return res.take();

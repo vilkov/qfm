@@ -15,9 +15,9 @@ public:
 
 	void manage(VisibleOptionHotKey *option) { Scope::manage(option); }
 
-	virtual QLayout *createEditor() const;
-	virtual bool accept() const;
-	virtual void reject() const;
+	virtual QLayout *createEditor(const QFont &font);
+	virtual bool accept();
+	virtual void reject();
 };
 
 SETTINGS_NS_END

@@ -7,7 +7,7 @@ Tab::Tab(const QString &label, const QString &id, Option *parent) :
 	Scope(id, parent)
 {}
 
-QLayout *Tab::createEditor()
+QLayout *Tab::createEditor(const QFont &font)
 {
 	return NULL;
 }

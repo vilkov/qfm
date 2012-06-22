@@ -1,8 +1,8 @@
 #ifndef SETTINGSVISIBLEOPTIONTAB_H_
 #define SETTINGSVISIBLEOPTIONTAB_H_
 
-#include "../../settingsscope.h"
 #include "../settingsivisibleoption.h"
+#include "../../settingsscope.h"
 
 
 SETTINGS_NS_BEGIN
@@ -19,7 +19,7 @@ public:
 
 	void manage(Option *option, IVisibleOption *gui) { Scope::manage(option); m_guis.push_back(gui); }
 
-	virtual QLayout *createEditor();
+	virtual QLayout *createEditor(const QFont &font);
 	virtual bool accept();
 	virtual void reject();
 

@@ -16,10 +16,10 @@ public:
 	const QString &context() const { return m_context; }
 
 	int modifiers() const { return m_modifiers.value().toInt(); }
-	void setModifiers(int value) { m_modifiers = QString::number(value); }
+	void setModifiers(int value) { m_modifiers.setValue(QString::number(value)); }
 
 	int key() const { return m_key.value().toInt(); }
-	void setKey(int value) { m_key = QString::number(value); }
+	void setKey(int value) { m_key.setValue(QString::number(value)); }
 
 private:
 	QString m_label;

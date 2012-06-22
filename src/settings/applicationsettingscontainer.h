@@ -3,9 +3,9 @@
 
 #include <QtCore/QObject>
 #include "pages/applicationsettingsgeneralpage.h"
+#include "dialog/applicationsettingsdialogsettings.h"
 #include "../tools/settings/settingsvisiblecontainer.h"
 #include "../tools/settings/options/value/settingsoptionvalue.h"
-#include "../tools/settings/dialog/settings/settingsdialogsettings.h"
 
 
 class SettingsContainer : public QObject, public Tools::Settings::VisibleContainer
@@ -19,7 +19,7 @@ public:
 	void exec(QWidget *parent = 0);
 
 private:
-	Tools::Settings::DialogSettings m_dialogSettings;
+	Tools::Settings::ApplicationDialogSettings m_dialogSettings;
 	Tools::Settings::GeneralPage m_generalPage;
 };
 

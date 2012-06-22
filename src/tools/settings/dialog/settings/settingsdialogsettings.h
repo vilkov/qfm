@@ -1,6 +1,7 @@
 #ifndef SETTINGSDIALOGSETTINGS_H_
 #define SETTINGSDIALOGSETTINGS_H_
 
+#include <QtGui/QFont>
 #include "../../options/settingswidgetscope.h"
 
 
@@ -10,6 +11,8 @@ class DialogSettings : public WidgetScope
 {
 public:
 	DialogSettings(Option *parent);
+
+	virtual QFont font() const = 0;
 };
 
 SETTINGS_NS_END

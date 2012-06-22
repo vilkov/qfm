@@ -2,8 +2,8 @@
 #define APPLICATIONSETTINGSGENERALPAGE_H_
 
 #include <QtCore/QCoreApplication>
+#include "../options/applicationsettingsoptionfont.h"
 #include "../../tools/settings/options/gui/page/settingspage.h"
-#include "../../tools/settings/options/gui/settingsvisibleoptionvalue.h"
 
 
 SETTINGS_NS_BEGIN
@@ -15,8 +15,11 @@ class GeneralPage : public Page
 public:
 	GeneralPage(Option *parent);
 
+	QFont baseFont() const { return m_baseFont.font(); }
+	void setBaseFont(const QFont &value) { m_baseFont.setFont(value); }
+
 private:
-	VisibleOptionValue m_option;
+	AppllicationOptionFont m_baseFont;
 };
 
 SETTINGS_NS_END

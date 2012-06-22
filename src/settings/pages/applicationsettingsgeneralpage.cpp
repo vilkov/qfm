@@ -1,13 +1,14 @@
 #include "applicationsettingsgeneralpage.h"
+#include "../../application.h"
 
 
 SETTINGS_NS_BEGIN
 
 GeneralPage::GeneralPage(Option *parent) :
 	Page(tr("General"), QString::fromLatin1("General"), parent),
-	m_option(tr("Just some test"), QString::fromLatin1("Test1"), this, QString::fromLatin1("Default value"))
+	m_baseFont(tr("Base font"), QString::fromLatin1("BaseFont"), this, Application::font())
 {
-	manage(&m_option, &m_option);
+	manage(&m_baseFont, &m_baseFont);
 }
 
 SETTINGS_NS_END

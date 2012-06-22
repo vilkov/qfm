@@ -1,18 +1,16 @@
 #include "applicationsettingsdialogsettings.h"
+#include "../../application.h"
 
 
 SETTINGS_NS_BEGIN
 
 ApplicationDialogSettings::ApplicationDialogSettings(Option *parent) :
-	DialogSettings(parent),
-	m_font(QString::fromLatin1("Font"), this)
-{
-	manage(&m_font);
-}
+	DialogSettings(parent)
+{}
 
 QFont ApplicationDialogSettings::font() const
 {
-	return m_font.font();
+	return Application::settings2()->generalPage().baseFont();
 }
 
 SETTINGS_NS_END

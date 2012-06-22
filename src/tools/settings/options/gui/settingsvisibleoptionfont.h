@@ -3,9 +3,10 @@
 
 #include "settingsivisibleoption.h"
 #include "../value/settingsoptionfont.h"
+#include "../../../events/imp/mouseeventhandler.h"
 
 
-class QWidget;
+class QLabel;
 
 
 SETTINGS_NS_BEGIN
@@ -13,13 +14,24 @@ SETTINGS_NS_BEGIN
 class VisibleOptioinFont : public OptionFont, public IVisibleOption
 {
 public:
-	VisibleOptioinFont(const QString &id, Option *parent);
+	VisibleOptioinFont(const QString &label, const QString &id, Option *parent, const QFont &defaultValue);
 
 	virtual QLayout *createEditor(const QFont &font);
 	virtual bool accept();
 	virtual void reject();
 
-	static QFont chooseFont(QWidget *parent);
+protected:
+	virtual bool chooseFont(QFont &font) const = 0;
+
+private:
+	typedef Events::MouseReleaseEventHandler<Events::EventHandlerBase<VisibleOptioinFont> > EventHandler;
+	void chooseFontEvent();
+
+private:
+	EventHandler m_eventHandler;
+	QString m_label;
+	QFont m_newFont;
+	QLabel *m_editor;
 };
 
 SETTINGS_NS_END

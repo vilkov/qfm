@@ -16,7 +16,7 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	OptionValueList(const QString &id, Option *parent = 0) :
+	OptionValueList(const QString &id, Option *parent) :
 		Option(parent),
 		m_id(id)
 	{}

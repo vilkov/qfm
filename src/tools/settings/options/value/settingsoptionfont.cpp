@@ -13,7 +13,13 @@ OptionFont::OptionFont(const QString &id, Option *parent, const QFont &defaultVa
 	m_pointSize(QString::fromLatin1("pixelSize"), this),
 	m_underline(QString::fromLatin1("underline"), this),
 	m_strikeOut(QString::fromLatin1("strikeOut"), this)
-{}
+{
+	manage(&m_family);
+	manage(&m_styleName);
+	manage(&m_pointSize);
+	manage(&m_underline);
+	manage(&m_strikeOut);
+}
 
 QFont OptionFont::font() const
 {

@@ -16,7 +16,7 @@ class VisibleOptioinFont : public OptionFont, public IVisibleOption
 public:
 	VisibleOptioinFont(const QString &label, const QString &id, Option *parent, const QFont &defaultValue);
 
-	virtual QLayout *createEditor(const QFont &font);
+	virtual QLayout *createEditor();
 	virtual bool accept();
 	virtual void reject();
 
@@ -24,7 +24,11 @@ protected:
 	virtual bool chooseFont(QFont &font) const = 0;
 
 private:
-	typedef Events::MouseReleaseEventHandler<Events::EventHandlerBase<VisibleOptioinFont> > EventHandler;
+	typedef Events::MouseReleaseEventHandler<
+				Events::EventHandlerBase<
+					VisibleOptioinFont
+				>
+			> EventHandler;
 	void chooseFontEvent();
 
 private:

@@ -15,7 +15,7 @@ class VisibleOptionValue : public OptionValue, public IVisibleOption
 public:
 	VisibleOptionValue(const QString &label, const QString &id, Option *parent = 0, const QString &defaultValue = QString());
 
-	virtual QLayout *createEditor(const QFont &font);
+	virtual QLayout *createEditor();
 	virtual bool accept();
 	virtual void reject();
 

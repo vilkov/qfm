@@ -14,7 +14,7 @@ public:
 
 	void manage(Tab *option) { Page::manage(option, option); }
 
-	virtual QLayout *createEditor(const QFont &font);
+	virtual QLayout *createEditor();
 	virtual bool accept();
 	virtual void reject();
 };

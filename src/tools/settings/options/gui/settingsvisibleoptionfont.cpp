@@ -17,25 +17,22 @@ VisibleOptioinFont::VisibleOptioinFont(const QString &label, const QString &id, 
 	m_eventHandler.registerMouseReleaseEventHandler(&VisibleOptioinFont::chooseFontEvent);
 }
 
-QLayout *VisibleOptioinFont::createEditor(const QFont &font)
+QLayout *VisibleOptioinFont::createEditor()
 {
 	typedef Events::MouseReleaseEventSource<Events::EventSourceBase<QPushButton> > Button;
 	PScopedPointer<QHBoxLayout> res(new QHBoxLayout());
-	Button *button;
 
     res->setSpacing(3);
     res->setMargin(1);
 
-    res->addWidget(m_editor = new QLabel(m_label));
-    m_editor->setFont(font);
+    res->addWidget(new QLabel(m_label));
 
 	res->addWidget(m_editor = new QLabel(toString(m_newFont = OptionFont::font())), 1);
 	m_editor->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 	m_editor->setAlignment(Qt::AlignCenter);
 	m_editor->setFont(m_newFont);
 
-	res->addWidget(button = new Button(&m_eventHandler, QString::fromLatin1("...")));
-	button->setFont(font);
+	res->addWidget(new Button(&m_eventHandler, QString::fromLatin1("...")));
 
 	return res.take();
 }

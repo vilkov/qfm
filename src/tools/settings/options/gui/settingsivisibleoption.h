@@ -4,7 +4,6 @@
 #include "../../settings_ns.h"
 
 
-class QFont;
 class QLayout;
 
 
@@ -15,7 +14,7 @@ class IVisibleOption
 public:
 	virtual ~IVisibleOption();
 
-	virtual QLayout *createEditor(const QFont &font) = 0;
+	virtual QLayout *createEditor() = 0;
 	virtual bool accept() = 0;
 	virtual void reject() = 0;
 };

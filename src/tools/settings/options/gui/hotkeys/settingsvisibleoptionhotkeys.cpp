@@ -7,7 +7,7 @@ VisibleOptionHotKeys::VisibleOptionHotKeys(const QString &id, Option *parent) :
 	Scope(id, parent)
 {}
 
-QLayout *VisibleOptionHotKeys::createEditor(const QFont &font)
+QLayout *VisibleOptionHotKeys::createEditor()
 {
 	return NULL;
 }

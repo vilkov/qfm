@@ -13,7 +13,7 @@ VisibleOptionValue::VisibleOptionValue(const QString &label, const QString &id, 
 	m_label(label)
 {}
 
-QLayout *VisibleOptionValue::createEditor(const QFont &font)
+QLayout *VisibleOptionValue::createEditor()
 {
 	PScopedPointer<QHBoxLayout> res(new QHBoxLayout());
 

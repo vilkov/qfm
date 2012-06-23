@@ -11,10 +11,11 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 {
 	setWindowTitle(title);
 	restoreGeometry(settings.geometry());
+	setFont(settings.font());
 
 	m_pagesView.setModel(&m_model);
 	m_pagesView.setHeaderHidden(true);
-	m_selectedPage.setLayout(m_editedPages[pages.at(0)] = pages.at(0)->createEditor(settings.font()));
+	m_selectedPage.setLayout(m_editedPages[pages.at(0)] = pages.at(0)->createEditor());
 
 	m_hLayout.setSpacing(1);
     m_hLayout.setMargin(1);

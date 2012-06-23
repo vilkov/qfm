@@ -4,6 +4,7 @@
 #include <QtCore/QMap>
 #include <QtGui/QFont>
 #include <QtGui/QDialog>
+#include <QtGui/QSplitter>
 #include <QtGui/QTreeView>
 #include <QtGui/QTabWidget>
 #include <QtGui/QVBoxLayout>
@@ -37,9 +38,9 @@ public:
 private:
 	DialogSettings &m_settings;
 	QVBoxLayout m_layout;
-	QHBoxLayout m_hLayout;
+	QSplitter m_splitter;
 	QTreeView m_pagesView;
-	QWidget m_selectedPage;
+	QGroupBox m_selectedPage;
 	QDialogButtonBox m_buttonBox;
 
 private:

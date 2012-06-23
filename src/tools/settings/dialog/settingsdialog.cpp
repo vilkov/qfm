@@ -6,27 +6,35 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 	QDialog(parent),
 	m_settings(settings),
 	m_layout(this),
+	m_splitter(this),
+	m_selectedPage(pages.at(0)->title()),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_model(pages, this)
 {
 	setWindowTitle(title);
-	restoreGeometry(settings.geometry());
-	setFont(settings.font());
+	restoreGeometry(m_settings.geometry());
+	setFont(m_settings.font());
 
 	m_pagesView.setModel(&m_model);
 	m_pagesView.setHeaderHidden(true);
+	m_pagesView.selectionModel()->select(m_model.index(0, 0), QItemSelectionModel::ClearAndSelect);
 	m_selectedPage.setLayout(m_editedPages[pages.at(0)] = pages.at(0)->createEditor());
 
-	m_hLayout.setSpacing(1);
-    m_hLayout.setMargin(1);
+	m_splitter.setChildrenCollapsible(false);
+	m_splitter.addWidget(&m_pagesView);
+	m_splitter.addWidget(&m_selectedPage);
 
-    m_hLayout.addWidget(&m_pagesView);
-	m_hLayout.addWidget(&m_selectedPage);
+	QByteArray splitterGeometry(m_settings.splitterGeometry());
+
+	if (splitterGeometry.isEmpty())
+		m_splitter.setSizes(QList<int>() << width() * 1/4 << width() * 3/4);
+	else
+		m_splitter.restoreGeometry(splitterGeometry);
 
 	m_layout.setSpacing(3);
 	m_layout.setMargin(1);
 
-	m_layout.addLayout(&m_hLayout);
+	m_layout.addWidget(&m_splitter);
 	m_layout.addWidget(&m_buttonBox);
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -35,6 +43,8 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 
 Dialog::~Dialog()
 {
+	m_settings.setSplitterGeometry(m_splitter.saveGeometry());
+	m_settings.setGeometry(saveGeometry());
 	qDeleteAll(m_editedPages);
 }
 

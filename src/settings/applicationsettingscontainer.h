@@ -2,6 +2,7 @@
 #define APPLICATIONSETTINGSCONTAINER_H_
 
 #include <QtCore/QObject>
+#include "pages/applicationsettingshelppage.h"
 #include "pages/applicationsettingsgeneralpage.h"
 #include "dialog/applicationsettingsdialogsettings.h"
 #include "../tools/settings/settingsvisiblecontainer.h"
@@ -23,6 +24,9 @@ public:
 
 private:
 	Tools::Settings::GeneralPage m_generalPage;
+	Tools::Settings::HelpPage m_helpPage;
+
+private:
 	Tools::Settings::ApplicationDialogSettings m_dialogSettings;
 };
 

@@ -13,7 +13,7 @@ AppllicationOptionFont::AppllicationOptionFont(const QString &label, const QStri
 bool AppllicationOptionFont::chooseFont(QFont &font) const
 {
 	bool ok;
-	font = QFontDialog::getFont(&ok, Application::mainWindow());
+	font = QFontDialog::getFont(&ok, font, Application::mainWindow());
 	return ok;
 }
 

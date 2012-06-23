@@ -55,6 +55,8 @@ Application::Application(const QString &name, const QString &organization, const
 	QApplication::setApplicationVersion(version());
 
 	m_settings2.load();
+
+	setFont(m_settings2.generalPage().baseFont());
 }
 
 Application::~Application()

@@ -3,11 +3,13 @@
 
 SettingsContainer::SettingsContainer(QObject *parent) :
 	VisibleContainer(storageLocation(QString::fromLatin1(".qfm")).append(QString::fromLatin1("/settings.xml"))),
-	m_dialogSettings(this),
-	m_generalPage(this)
+	m_generalPage(this),
+	m_helpPage(this),
+	m_dialogSettings(this)
 {
-	manage(&m_dialogSettings);
 	manage(&m_generalPage);
+	manage(&m_helpPage);
+	manage(&m_dialogSettings);
 }
 
 void SettingsContainer::exec(QWidget *parent)

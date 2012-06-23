@@ -24,7 +24,9 @@ void Container::save() const
 		stream.setAutoFormatting(true);
 
 		stream.writeStartDocument(QString::fromLatin1("1.0"));
+		stream.writeStartElement(QString::fromLatin1("QFM"));
 		save(stream);
+		stream.writeEndElement();
 		stream.writeEndDocument();
 	}
 }
@@ -37,7 +39,7 @@ void Container::load()
 	{
 		QXmlStreamReader stream(&file);
 
-		if (!stream.atEnd() && stream.readNext() == QXmlStreamReader::StartDocument)
+		if (readNextStartElement(stream) && stream.name() == QString::fromLatin1("QFM"))
 			load(stream);
 		else
 			loadDefault();
@@ -59,11 +61,16 @@ void Container::save(QXmlStreamWriter &stream) const
 
 void Container::load(QXmlStreamReader &stream)
 {
-	if (readNextStartElement(stream))
-		for (size_type i = 0, size = Container::size(); i < size; ++i)
+	for (size_type i = 0, size = Container::size(); i < size; ++i)
+		if (readNextStartElement(stream))
 			at(i)->load(stream);
-	else
-		loadDefault();
+		else
+		{
+			for (; i < size; ++i)
+				at(i)->loadDefault();
+
+			break;
+		}
 }
 
 void Container::loadDefault()

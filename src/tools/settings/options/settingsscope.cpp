@@ -25,7 +25,12 @@ void Scope::load(QXmlStreamReader &stream)
 			if (readNextStartElement(stream))
 				at(i)->load(stream);
 			else
+			{
+				for (; i < size; ++i)
+					at(i)->loadDefault();
+
 				break;
+			}
 	else
 		loadDefault();
 }

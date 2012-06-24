@@ -15,6 +15,7 @@ public:
 	virtual ~IVisibleOption();
 
 	virtual QWidget *createEditor() = 0;
+	virtual void restoreDefault() = 0;
 	virtual bool accept() = 0;
 	virtual void reject() = 0;
 };

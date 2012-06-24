@@ -12,6 +12,11 @@ QWidget *Tab::createEditor()
 	return NULL;
 }
 
+void Tab::restoreDefault()
+{
+
+}
+
 bool Tab::accept()
 {
 	return false;

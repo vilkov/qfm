@@ -16,6 +16,7 @@ public:
 	VisibleOptionValue(const QString &label, const QString &id, Option *parent = 0, const QString &defaultValue = QString());
 
 	virtual QWidget *createEditor();
+	virtual void restoreDefault();
 	virtual bool accept();
 	virtual void reject();
 

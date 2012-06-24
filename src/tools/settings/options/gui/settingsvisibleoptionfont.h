@@ -17,6 +17,7 @@ public:
 	VisibleOptioinFont(const QString &label, const QString &id, Option *parent, const QFont &defaultValue);
 
 	virtual QWidget *createEditor();
+	virtual void restoreDefault();
 	virtual bool accept();
 	virtual void reject();
 
@@ -34,7 +35,7 @@ private:
 private:
 	EventHandler m_eventHandler;
 	QString m_label;
-	QFont m_newFont;
+	QFont m_currentFont;
 	QLabel *m_editor;
 };
 

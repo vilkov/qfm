@@ -16,6 +16,7 @@ public:
 	void manage(VisibleOptionHotKey *option) { Scope::manage(option); }
 
 	virtual QWidget *createEditor();
+	virtual void restoreDefault();
 	virtual bool accept();
 	virtual void reject();
 };

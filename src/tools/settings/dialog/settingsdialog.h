@@ -42,6 +42,7 @@ private:
 
 private Q_SLOTS:
 	void clicked(const QModelIndex &index);
+	void clicked(QAbstractButton *button);
 
 private:
 	DialogSettings &m_settings;

@@ -12,6 +12,11 @@ QWidget *VisibleOptionHotKeys::createEditor()
 	return NULL;
 }
 
+void VisibleOptionHotKeys::restoreDefault()
+{
+
+}
+
 bool VisibleOptionHotKeys::accept()
 {
 	return false;

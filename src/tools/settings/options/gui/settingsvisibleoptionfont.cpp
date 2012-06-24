@@ -28,19 +28,25 @@ QWidget *VisibleOptioinFont::createEditor()
 
 	layout->addWidget(new QLabel(m_label));
 
-	layout->addWidget(m_editor = new QLabel(toString(m_newFont = OptionFont::font())), 1);
+	layout->addWidget(m_editor = new QLabel(toString(m_currentFont = OptionFont::font())), 1);
 	m_editor->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 	m_editor->setAlignment(Qt::AlignCenter);
-	m_editor->setFont(m_newFont);
+	m_editor->setFont(m_currentFont);
 
 	layout->addWidget(new Button(&m_eventHandler, QString::fromLatin1("...")));
 
 	return page.take();
 }
 
+void VisibleOptioinFont::restoreDefault()
+{
+	m_editor->setText(toString(m_currentFont = OptionFont::defaultValue()));
+	m_editor->setFont(m_currentFont);
+}
+
 bool VisibleOptioinFont::accept()
 {
-	setFont(m_newFont);
+	setFont(m_currentFont);
 	return true;
 }
 
@@ -49,10 +55,10 @@ void VisibleOptioinFont::reject()
 
 void VisibleOptioinFont::chooseFontEvent()
 {
-	if (chooseFont(m_newFont))
+	if (chooseFont(m_currentFont))
 	{
-		m_editor->setText(toString(m_newFont));
-		m_editor->setFont(m_newFont);
+		m_editor->setText(toString(m_currentFont));
+		m_editor->setFont(m_currentFont);
 	}
 }
 

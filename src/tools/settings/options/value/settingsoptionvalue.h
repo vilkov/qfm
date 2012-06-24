@@ -24,6 +24,9 @@ protected:
     virtual void load(QXmlStreamReader &stream);
     virtual void loadDefault();
 
+protected:
+    const QString &defaultValue() const { return m_defaultValue; }
+
 private:
     QString m_id;
     QString m_value;

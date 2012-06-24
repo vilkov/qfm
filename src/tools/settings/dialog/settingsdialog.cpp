@@ -9,7 +9,7 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 	m_currentPage(pages.at(0)),
 	m_layout(this),
 	m_splitter(this),
-	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
 	setWindowTitle(title);
 	restoreGeometry(m_settings.geometry());
@@ -35,6 +35,7 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(&m_buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
     connect(&m_pagesView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(clicked(const QModelIndex &)));
 }
 
@@ -87,6 +88,11 @@ void Dialog::clicked(const QModelIndex &index)
 	}
 }
 
+void Dialog::clicked(QAbstractButton *button)
+{
+	if (m_buttonBox.standardButton(button) == QDialogButtonBox::RestoreDefaults)
+		m_currentPage->restoreDefault();
+}
 
 
 SettingsDialog::SettingsDialog(const QString &title, const SettingsList &settings, const ConstraintsList &constraints, QWidget *parent) :

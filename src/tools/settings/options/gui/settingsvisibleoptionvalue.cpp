@@ -27,9 +27,20 @@ QWidget *VisibleOptionValue::createEditor()
 	return page.take();
 }
 
+void VisibleOptionValue::restoreDefault()
+{
+	m_editor->setText(defaultValue());
+}
+
 bool VisibleOptionValue::accept()
 {
-	return !m_editor->text().isEmpty();
+	if (!m_editor->text().isEmpty())
+	{
+		setValue(m_editor->text());
+		return true;
+	}
+
+	return false;
 }
 
 void VisibleOptionValue::reject()

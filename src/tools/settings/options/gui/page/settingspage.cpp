@@ -29,6 +29,12 @@ QWidget *Page::createEditor()
 	return page.take();
 }
 
+void Page::restoreDefault()
+{
+	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)
+		m_guis.at(i)->restoreDefault();
+}
+
 bool Page::accept()
 {
 	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)

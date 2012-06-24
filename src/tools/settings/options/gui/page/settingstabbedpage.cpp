@@ -12,6 +12,11 @@ QWidget *TabbedPage::createEditor()
 	return NULL;
 }
 
+void TabbedPage::restoreDefault()
+{
+
+}
+
 bool TabbedPage::accept()
 {
 	return false;

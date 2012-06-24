@@ -20,6 +20,8 @@ protected:
     virtual void loadDefault();
 
 protected:
+    const QFont &defaultValue() const { return m_defaultValue; }
+
     static QString toString(const QFont &font);
 
 private:

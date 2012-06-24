@@ -5,7 +5,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Plugin::Plugin()
+Plugin::Plugin(::Tools::Settings::Option *parentOption) :
+	m_settings(parentOption)
 {}
 
 void Plugin::registered()
@@ -13,10 +14,10 @@ void Plugin::registered()
 	Application::globalMenu()->registerAction(&m_createDbAction, ::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 }
 
-//const ::Tools::Settings::Tab *Plugin::settings() const
-//{
-//	return &m_settings;
-//}
+::Tools::Settings::Page *Plugin::settings()
+{
+	return &m_settings;
+}
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {

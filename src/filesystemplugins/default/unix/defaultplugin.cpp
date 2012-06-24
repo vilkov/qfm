@@ -44,8 +44,8 @@ private:
 };
 
 
-Plugin::Plugin() :
-	m_settings()
+Plugin::Plugin(::Tools::Settings::Option *parentOption) :
+	m_settings(parentOption)
 {
 	Q_ASSERT(rootNode == NULL);
 }
@@ -58,10 +58,10 @@ Plugin::~Plugin()
 void Plugin::registered()
 {}
 
-//const ::Tools::Settings::Tab *Plugin::settings() const
-//{
-//	return &m_settings;
-//}
+::Tools::Settings::Page *Plugin::settings()
+{
+	return &m_settings;
+}
 
 QString Plugin::shema() const
 {

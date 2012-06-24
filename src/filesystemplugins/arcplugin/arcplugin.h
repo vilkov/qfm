@@ -3,46 +3,52 @@
 
 #include "libarchive/actions/libarchiveunpackintosubdiraction.h"
 #include "libunrar/actions/libunrarunpackintosubdiraction.h"
-#include "settings/arcpluginsettings.h"
 #include "../../filesystem/interfaces/filesystemiplugin.h"
+#include "../../tools/settings/options/settingsoption.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class LibArchivePlugin : public IFilePlugin
+class ArcPlugin : public IFilePlugin
 {
 public:
-	LibArchivePlugin();
+	ArcPlugin(::Tools::Settings::Option *parentOption);
+
+	/* IPlugin */
+	virtual ::Tools::Settings::Page *settings();
+};
+
+
+class LibArchivePlugin : public ArcPlugin
+{
+public:
+	LibArchivePlugin(::Tools::Settings::Option *parentOption);
 
 	/* IPlugin */
 	virtual void registered();
-//	virtual const ::Tools::Settings::Tab *settings() const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;
 	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
-	Settings m_settings;
 	LibArchive::UnPackIntoSubdirAction m_unPackIntoSubdirAction;
 };
 
 
-class LibUnRarPlugin : public IFilePlugin
+class LibUnRarPlugin : public ArcPlugin
 {
 public:
-	LibUnRarPlugin();
+	LibUnRarPlugin(::Tools::Settings::Option *parentOption);
 
 	/* IPlugin */
 	virtual void registered();
-//	virtual const ::Tools::Settings::Tab *settings() const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;
 	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
 private:
-	Settings m_settings;
 	LibUnrar::UnPackIntoSubdirAction m_unPackIntoSubdirAction;
 };
 

@@ -1,29 +1,36 @@
 #include "arcplugin.h"
 #include "nodes/arcnode.h"
+#include "settings/arcpluginsettings.h"
 #include "libarchive/interfaces/libarchivefilecontainer.h"
 #include "libunrar/interfaces/libunrarfilecontainer.h"
 #include "../../application.h"
 
 
 ARC_PLUGIN_NS_BEGIN
-static LibArchivePlugin *instance = 0;
+static Settings *globalSettings;
 
 
-LibArchivePlugin::LibArchivePlugin()
+ArcPlugin::ArcPlugin(::Tools::Settings::Option *parentOption)
 {
-	instance = this;
+	static Settings settings(parentOption);
+	globalSettings = &settings;
 }
+
+::Tools::Settings::Page *ArcPlugin::settings()
+{
+	return globalSettings;
+}
+
+
+LibArchivePlugin::LibArchivePlugin(::Tools::Settings::Option *parentOption) :
+	ArcPlugin(parentOption)
+{}
 
 void LibArchivePlugin::registered()
 {
 	FileTypeIdList list = fileTypes();
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
 }
-
-//const Tools::Settings::Tab *LibArchivePlugin::settings() const
-//{
-//	return &m_settings;
-//}
 
 LibArchivePlugin::FileTypeIdList LibArchivePlugin::fileTypes() const
 {
@@ -98,7 +105,8 @@ Node *LibArchivePlugin::open(const IFileContainer *container, const IFileInfo *f
 		return NULL;
 }
 
-LibUnRarPlugin::LibUnRarPlugin()
+LibUnRarPlugin::LibUnRarPlugin(::Tools::Settings::Option *parentOption) :
+	ArcPlugin(parentOption)
 {}
 
 void LibUnRarPlugin::registered()
@@ -106,11 +114,6 @@ void LibUnRarPlugin::registered()
 	FileTypeIdList list = fileTypes();
 	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
 }
-
-//const Tools::Settings::Tab *LibUnRarPlugin::settings() const
-//{
-//	return &m_settings;
-//}
 
 LibUnRarPlugin::FileTypeIdList LibUnRarPlugin::fileTypes() const
 {

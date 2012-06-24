@@ -3,24 +3,17 @@
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
+#include "../../../tools/settings/options/gui/page/settingspage.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class Settings
+class Settings : public Tools::Settings::Page
 {
 	Q_DECLARE_TR_FUNCTIONS(Settings)
 
 public:
-	Settings();
-
-	const QByteArray &id() const;
-	const QString &name() const;
-	QWidget *centralWidget() const;
-
-private:
-	QByteArray m_id;
-	QString m_name;
+	Settings(Option *parent);
 };
 
 DEFAULT_PLUGIN_NS_END

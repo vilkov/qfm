@@ -10,11 +10,11 @@ M3U_PLUGIN_NS_BEGIN
 class Plugin : public IFilePlugin
 {
 public:
-	Plugin();
+	Plugin(::Tools::Settings::Option *parentOption);
 
 	/* IPlugin */
 	virtual void registered();
-//	virtual const ::Tools::Settings::Tab *settings() const;
+	virtual ::Tools::Settings::Page *settings();
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;

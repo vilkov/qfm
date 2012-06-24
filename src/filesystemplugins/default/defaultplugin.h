@@ -10,12 +10,12 @@ DEFAULT_PLUGIN_NS_BEGIN
 class Plugin : public IContainerPlugin, public IFilePlugin
 {
 public:
-	Plugin();
+	Plugin(::Tools::Settings::Option *parentOption);
 	virtual ~Plugin();
 
 	/* IPlugin */
 	virtual void registered();
-//	virtual const ::Tools::Settings::Tab *settings() const;
+	virtual ::Tools::Settings::Page *settings();
 
 	/* IContentPlugin */
 	QString shema() const;

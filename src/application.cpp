@@ -1,5 +1,6 @@
 #include "application.h"
 #include "version.h"
+
 #if defined(Q_WS_WIN)
 #	include <QtCore/qt_windows.h>
 #endif
@@ -19,8 +20,13 @@ FILESYSTEM_PLUGINS_NS_BEGIN
 class AppRootNode : public RootNode
 {
 public:
-	AppRootNode() :
-		::FileSystem::RootNode()
+	AppRootNode(::Tools::Settings::Page *pluginsPage) :
+		RootNode(),
+		m_m3uplugin(pluginsPage),
+		m_idmplugin(pluginsPage),
+		m_arcplugin1(pluginsPage),
+		m_arcplugin2(pluginsPage),
+		m_default(pluginsPage)
 	{
 		registerStatic(&m_m3uplugin);
 		registerStatic(&m_idmplugin);
@@ -30,6 +36,12 @@ public:
 		/* XXX: Must be last in the list. */
 		registerStatic(static_cast<IFilePlugin *>(&m_default));
 		registerStatic(static_cast<IContainerPlugin *>(&m_default));
+
+		/* Register settings pages. */
+		pluginsPage->manage(m_default.settings());
+		pluginsPage->manage(m_arcplugin2.settings());
+		pluginsPage->manage(m_idmplugin.settings());
+		pluginsPage->manage(m_m3uplugin.settings());
 	}
 
 private:
@@ -48,7 +60,7 @@ FILESYSTEM_PLUGINS_NS_END
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
 	m_taskPool(QThread::idealThreadCount() * 2),
-	m_rootNode(new ::FileSystem::Plugins::AppRootNode())
+	m_rootNode(new FileSystem::Plugins::AppRootNode(&m_settings2.pluginsPage()))
 {
 	QApplication::setApplicationName(name);
 	QApplication::setOrganizationName(organization);

@@ -1,7 +1,7 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <QtCore/QMap>
+#include <QtCore/QSet>
 #include <QtGui/QFont>
 #include <QtGui/QDialog>
 #include <QtGui/QSplitter>
@@ -23,9 +23,11 @@ using namespace Tools::Settings;
 
 class Dialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-	typedef Model::Pages            Pages;
-	typedef QMap<Page *, QLayout *> PagesCache;
+	typedef Model::Pages Pages;
+	typedef QSet<Page *> PagesSet;
 
 public:
 	Dialog(const QString &title, DialogSettings &settings, const Pages &pages, QWidget *parent = 0);
@@ -36,16 +38,23 @@ public:
     virtual void reject();
 
 private:
+    void restoreSplitterState();
+
+private Q_SLOTS:
+	void clicked(const QModelIndex &index);
+
+private:
 	DialogSettings &m_settings;
+	Model m_model;
+	Page *m_currentPage;
+	PagesSet m_editedPages;
+
+private:
 	QVBoxLayout m_layout;
 	QSplitter m_splitter;
 	QTreeView m_pagesView;
-	QGroupBox m_selectedPage;
 	QDialogButtonBox m_buttonBox;
-
-private:
-	Model m_model;
-	PagesCache m_editedPages;
+	QWidget *m_currentPageWidget;
 };
 
 

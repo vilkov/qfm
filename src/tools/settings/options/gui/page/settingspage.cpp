@@ -1,6 +1,7 @@
 #include "settingspage.h"
 #include "../../../../pointers/pscopedpointer.h"
 
+#include <QtGui/QGroupBox>
 #include <QtGui/QVBoxLayout>
 
 
@@ -11,18 +12,21 @@ Page::Page(const QString &title, const QString &id, Option *parent) :
 	m_title(title)
 {}
 
-QLayout *Page::createEditor()
+QWidget *Page::createEditor()
 {
-	PScopedPointer<QVBoxLayout> res(new QVBoxLayout());
+	PScopedPointer<QGroupBox> page(new QGroupBox(title()));
+	QVBoxLayout *layout(new QVBoxLayout(page.data()));
 
-	res->setSpacing(1);
-	res->setMargin(1);
+	QGroupBox m_selectedPage;
+
+	layout->setSpacing(1);
+	layout->setMargin(1);
 
 	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)
-		res->addLayout(m_guis.at(i)->createEditor());
+		layout->addWidget(m_guis.at(i)->createEditor());
 
-	res->addStretch(1);
-	return res.take();
+	layout->addStretch(1);
+	return page.take();
 }
 
 bool Page::accept()

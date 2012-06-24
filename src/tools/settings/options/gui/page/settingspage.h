@@ -20,7 +20,7 @@ public:
 
 	void manage(Option *option, IVisibleOption *gui) { Scope::manage(option); m_guis.push_back(gui); }
 
-	virtual QLayout *createEditor();
+	virtual QWidget *createEditor();
 	virtual bool accept();
 	virtual void reject();
 

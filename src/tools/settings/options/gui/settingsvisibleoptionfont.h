@@ -16,7 +16,7 @@ class VisibleOptioinFont : public OptionFont, public IVisibleOption
 public:
 	VisibleOptioinFont(const QString &label, const QString &id, Option *parent, const QFont &defaultValue);
 
-	virtual QLayout *createEditor();
+	virtual QWidget *createEditor();
 	virtual bool accept();
 	virtual void reject();
 

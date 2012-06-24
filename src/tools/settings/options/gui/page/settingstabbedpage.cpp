@@ -7,7 +7,7 @@ TabbedPage::TabbedPage(const QString &title, const QString &id, Option *parent) 
 	Page(title, id, parent)
 {}
 
-QLayout *TabbedPage::createEditor()
+QWidget *TabbedPage::createEditor()
 {
 	return NULL;
 }

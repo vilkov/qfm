@@ -4,7 +4,7 @@
 #include "../../settings_ns.h"
 
 
-class QLayout;
+class QWidget;
 
 
 SETTINGS_NS_BEGIN
@@ -14,7 +14,7 @@ class IVisibleOption
 public:
 	virtual ~IVisibleOption();
 
-	virtual QLayout *createEditor() = 0;
+	virtual QWidget *createEditor() = 0;
 	virtual bool accept() = 0;
 	virtual void reject() = 0;
 };

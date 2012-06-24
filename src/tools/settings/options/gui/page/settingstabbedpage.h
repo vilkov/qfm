@@ -14,7 +14,7 @@ public:
 
 	void manage(Tab *option) { Page::manage(option, option); }
 
-	virtual QLayout *createEditor();
+	virtual QWidget *createEditor();
 	virtual bool accept();
 	virtual void reject();
 };

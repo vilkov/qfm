@@ -13,17 +13,18 @@ VisibleOptionValue::VisibleOptionValue(const QString &label, const QString &id, 
 	m_label(label)
 {}
 
-QLayout *VisibleOptionValue::createEditor()
+QWidget *VisibleOptionValue::createEditor()
 {
-	PScopedPointer<QHBoxLayout> res(new QHBoxLayout());
+	PScopedPointer<QWidget> page(new QWidget());
+	QHBoxLayout *layout(new QHBoxLayout(page.data()));
 
-    res->setSpacing(1);
-    res->setMargin(1);
+	layout->setSpacing(1);
+	layout->setMargin(1);
 
-    res->addWidget(new QLabel(m_label));
-	res->addWidget(m_editor = new QLineEdit(value()));
+	layout->addWidget(new QLabel(m_label));
+	layout->addWidget(m_editor = new QLineEdit(value()));
 
-	return res.take();
+	return page.take();
 }
 
 bool VisibleOptionValue::accept()

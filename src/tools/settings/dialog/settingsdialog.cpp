@@ -5,11 +5,11 @@
 Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &pages, QWidget *parent) :
 	QDialog(parent),
 	m_settings(settings),
+	m_model(pages, this),
+	m_currentPage(pages.at(0)),
 	m_layout(this),
 	m_splitter(this),
-	m_selectedPage(pages.at(0)->title()),
-	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
-	m_model(pages, this)
+	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
 	setWindowTitle(title);
 	restoreGeometry(m_settings.geometry());
@@ -18,18 +18,14 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 	m_pagesView.setModel(&m_model);
 	m_pagesView.setHeaderHidden(true);
 	m_pagesView.selectionModel()->select(m_model.index(0, 0), QItemSelectionModel::ClearAndSelect);
-	m_selectedPage.setLayout(m_editedPages[pages.at(0)] = pages.at(0)->createEditor());
+
+	m_currentPageWidget = m_currentPage->createEditor();
+	m_editedPages.insert(m_currentPage);
 
 	m_splitter.setChildrenCollapsible(false);
 	m_splitter.addWidget(&m_pagesView);
-	m_splitter.addWidget(&m_selectedPage);
-
-	QByteArray splitterGeometry(m_settings.splitterGeometry());
-
-	if (splitterGeometry.isEmpty())
-		m_splitter.setSizes(QList<int>() << width() * 1/4 << width() * 3/4);
-	else
-		m_splitter.restoreGeometry(splitterGeometry);
+	m_splitter.addWidget(m_currentPageWidget);
+	restoreSplitterState();
 
 	m_layout.setSpacing(3);
 	m_layout.setMargin(1);
@@ -39,19 +35,19 @@ Dialog::Dialog(const QString &title, DialogSettings &settings, const Pages &page
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(&m_pagesView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(clicked(const QModelIndex &)));
 }
 
 Dialog::~Dialog()
 {
-	m_settings.setSplitterGeometry(m_splitter.saveGeometry());
+	m_settings.setSplitterState(m_splitter.saveState());
 	m_settings.setGeometry(saveGeometry());
-	qDeleteAll(m_editedPages);
 }
 
 void Dialog::accept()
 {
-	for (PagesCache::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
-		if (!i.key()->accept())
+	for (PagesSet::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
+		if (!(*i)->accept())
 			return;
 
 	QDialog::accept();
@@ -59,10 +55,36 @@ void Dialog::accept()
 
 void Dialog::reject()
 {
-	for (PagesCache::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
-		i.key()->reject();
+	for (PagesSet::const_iterator i = m_editedPages.constBegin(), end = m_editedPages.constEnd(); i != end; ++i)
+		(*i)->reject();
 
 	QDialog::reject();
+}
+
+void Dialog::restoreSplitterState()
+{
+	QByteArray splitterState(m_settings.splitterState());
+
+	if (splitterState.isEmpty())
+		m_splitter.setSizes(QList<int>() << width() * 1/4 << width() * 3/4);
+	else
+		m_splitter.restoreState(splitterState);
+}
+
+void Dialog::clicked(const QModelIndex &index)
+{
+	Page *page = m_model.pageAt(index);
+
+	if (page != m_currentPage)
+	{
+		delete m_currentPageWidget;
+
+		m_currentPage = page;
+		m_editedPages.insert(m_currentPage);
+
+		m_splitter.addWidget(m_currentPageWidget = m_currentPage->createEditor());
+		restoreSplitterState();
+	}
 }
 
 

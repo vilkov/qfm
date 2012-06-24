@@ -5,9 +5,9 @@ SETTINGS_NS_BEGIN
 
 DialogSettings::DialogSettings(Option *parent) :
 	WidgetScope(QString::fromLatin1("SettingsDialog"), parent),
-	m_splitterGeometry(QString::fromLatin1("SplitterGeometry"), this)
+	m_splitterState(QString::fromLatin1("SplitterState"), this)
 {
-	manage(&m_splitterGeometry);
+	manage(&m_splitterState);
 }
 
 SETTINGS_NS_END

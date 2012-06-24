@@ -14,11 +14,11 @@ public:
 
 	virtual QFont font() const = 0;
 
-	QByteArray splitterGeometry() const { return QByteArray::fromBase64(m_splitterGeometry.value().toAscii()); }
-	void setSplitterGeometry(const QByteArray &value) { m_splitterGeometry.setValue(QString::fromAscii(value.toBase64())); }
+	QByteArray splitterState() const { return QByteArray::fromBase64(m_splitterState.value().toAscii()); }
+	void setSplitterState(const QByteArray &value) { m_splitterState.setValue(QString::fromAscii(value.toBase64())); }
 
 private:
-	OptionValue m_splitterGeometry;
+	OptionValue m_splitterState;
 };
 
 SETTINGS_NS_END

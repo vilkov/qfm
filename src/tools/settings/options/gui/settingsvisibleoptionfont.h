@@ -23,6 +23,7 @@ public:
 
 protected:
 	virtual bool chooseFont(QFont &font) const = 0;
+	virtual void applyFont(const QFont &font) = 0;
 
 private:
 	typedef Events::MouseReleaseEventHandler<

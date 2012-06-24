@@ -13,6 +13,7 @@ public:
 
 protected:
 	virtual bool chooseFont(QFont &font) const;
+	virtual void applyFont(const QFont &font);
 };
 
 SETTINGS_NS_END

@@ -46,7 +46,12 @@ void VisibleOptioinFont::restoreDefault()
 
 bool VisibleOptioinFont::accept()
 {
-	setFont(m_currentFont);
+	if (m_currentFont != font())
+	{
+		setFont(m_currentFont);
+		applyFont(m_currentFont);
+	}
+
 	return true;
 }
 

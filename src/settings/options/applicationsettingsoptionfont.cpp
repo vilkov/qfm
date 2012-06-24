@@ -17,4 +17,9 @@ bool AppllicationOptionFont::chooseFont(QFont &font) const
 	return ok;
 }
 
+void AppllicationOptionFont::applyFont(const QFont &font)
+{
+	Application::setFont(font);
+}
+
 SETTINGS_NS_END

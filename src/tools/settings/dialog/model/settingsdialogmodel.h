@@ -24,7 +24,7 @@ private:
 		typedef QList<ItemPage *> Container;
 
 	public:
-		ItemPage(Page *page);
+		ItemPage(Page *page, Base *parent = NULL);
 		virtual ~ItemPage();
 
 		virtual Base *at(size_type index) const;

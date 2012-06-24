@@ -13,8 +13,8 @@ Page *Model::pageAt(const QModelIndex &index) const
 	return static_cast<ItemPage *>(index.internalPointer())->page();
 }
 
-Model::ItemPage::ItemPage(Page *page) :
-	Tools::Models::Tree::Item(NULL),
+Model::ItemPage::ItemPage(Page *page, Base *parent) :
+	Tools::Models::Tree::Item(parent),
 	m_page(page)
 {
 	Q_ASSERT(m_page);
@@ -23,7 +23,7 @@ Model::ItemPage::ItemPage(Page *page) :
 	m_subpages.reserve(subpages.size());
 
 	for (Page::Pages::size_type i = 0, size = subpages.size(); i < size; ++i)
-		m_subpages.push_back(new ItemPage(subpages.at(i)));
+		m_subpages.push_back(new ItemPage(subpages.at(i), this));
 }
 
 Model::ItemPage::~ItemPage()

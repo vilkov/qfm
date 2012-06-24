@@ -18,6 +18,32 @@ Model::ItemPage::ItemPage(Page *page) :
 	m_page(page)
 {
 	Q_ASSERT(m_page);
+
+	const Page::Pages &subpages = m_page->subpages();
+	m_subpages.reserve(subpages.size());
+
+	for (Page::Pages::size_type i = 0, size = subpages.size(); i < size; ++i)
+		m_subpages.push_back(new ItemPage(subpages.at(i)));
+}
+
+Model::ItemPage::~ItemPage()
+{
+	qDeleteAll(m_subpages);
+}
+
+Model::ItemPage::Base *Model::ItemPage::at(size_type index) const
+{
+	return m_subpages.at(index);
+}
+
+Model::ItemPage::size_type Model::ItemPage::size() const
+{
+	return m_subpages.size();
+}
+
+Model::ItemPage::size_type Model::ItemPage::indexOf(Base *item) const
+{
+	return m_subpages.indexOf(static_cast<ItemPage *>(item));
 }
 
 QVariant Model::ItemPage::data(qint32 column, qint32 role) const

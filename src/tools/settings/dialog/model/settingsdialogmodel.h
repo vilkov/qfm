@@ -21,7 +21,15 @@ private:
 	class ItemPage : public Tools::Models::Tree::Item
 	{
 	public:
+		typedef QList<ItemPage *> Container;
+
+	public:
 		ItemPage(Page *page);
+		virtual ~ItemPage();
+
+		virtual Base *at(size_type index) const;
+		virtual size_type size() const;
+		virtual size_type indexOf(Base *item) const;
 
 		Page *page() const { return m_page; }
 
@@ -29,6 +37,7 @@ private:
 
 	private:
 		Page *m_page;
+		Container m_subpages;
 	};
 
 	class Container : public Tools::Models::Tree::Model::Container

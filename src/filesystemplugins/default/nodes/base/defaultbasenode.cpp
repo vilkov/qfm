@@ -999,10 +999,14 @@ BaseNode::Container::size_type BaseNode::Container::indexOf(Item *item) const
 void BaseNode::CancelFunctor::call(Container::size_type index, DefaultNodeItem *item)
 {
 	m_items = m_node->cancelTaskAndTakeItems(NodeItem::Holder(item));
-	m_union.add(index);
 
-	for (TasksMap::List::size_type i = 0, size = m_items.size(); i < size; ++i)
-		m_items.at(i).as<TasksNodeItem>()->cancel(m_reason);
+	if (!m_items.isEmpty())
+	{
+		m_union.add(index);
+
+		for (TasksMap::List::size_type i = 0, size = m_items.size(); i < size; ++i)
+			m_items.at(i).as<TasksNodeItem>()->cancel(m_reason);
+	}
 }
 
 void BaseNode::RenameFunctor::call(Container::size_type index, DefaultNodeItem *item)

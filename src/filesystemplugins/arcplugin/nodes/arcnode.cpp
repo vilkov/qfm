@@ -117,12 +117,14 @@ void ArcNode::remove(const QModelIndexList &list, INodeView *view)
 
 void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 {
+	QString reason = tr("Canceling...");
 	ArcNodeItem *item;
+	TasksMap::List items;
 
-	if (!list.isEmpty() && !(item = static_cast<ArcNodeItem *>(m_proxy.mapToSource(list.at(0)).internalPointer()))->isRoot())
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
 	{
-		QString reason = tr("Canceling...");
-		TasksMap::List items = cancelTaskAndTakeItems(NodeItem::Holder(item));
+		item = static_cast<ArcNodeItem *>(m_proxy.mapToSource(list.at(i)).internalPointer());
+		items = cancelTaskAndTakeItems(NodeItem::Holder(item));
 
 		for (TasksMap::List::size_type i = 0, size = items.size(); i < size; ++i)
 		{
@@ -236,14 +238,9 @@ QModelIndex ArcNode::rootIndex() const
 Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	if (static_cast<ArcNodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
-	{
-		if (!isVisible())
-			cancelTask(m_items.at(RootItemIndex));
-
 		return parentNode();
-	}
-
-	return NULL;
+	else
+		return NULL;
 }
 
 Node *ArcNode::viewChild(const QString &fileName, QModelIndex &selected)

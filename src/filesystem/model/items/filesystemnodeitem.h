@@ -23,7 +23,7 @@ public:
 	    {}
 
 	    inline explicit Holder(NodeItem *data) :
-				QExplicitlySharedDataPointer<NodeItem>(data)
+			QExplicitlySharedDataPointer<NodeItem>(data)
 	    {}
 
 	    inline Holder &operator=(NodeItem *o) { QExplicitlySharedDataPointer<NodeItem>::operator=(o); return *this; }

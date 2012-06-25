@@ -3,15 +3,15 @@
 
 #include "../../idmplugin_ns.h"
 #include "../../containeres/idmcontainer.h"
-#include "../../../default/defaultfoldernode.h"
+#include "../../../default/nodes/defaultnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmFolderNode : public ::FileSystem::Plugins::Default::FolderNode
+class IdmFolderNode : public Default::Node
 {
 public:
-	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, Node *parent = 0);
+	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, FileSystem::Node *parent = 0);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -22,11 +22,11 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 protected:
-	virtual Node *createNode(const IFileInfo *file) const;
+	virtual FileSystem::Node *createNode(const IFileInfo *file) const;
 
 private:
 	friend class IdmRootNode;
-	Node *privateViewChild(const QString &fileName, QModelIndex &selected);
+	FileSystem::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
 
 private:
 	IdmContainer m_container;

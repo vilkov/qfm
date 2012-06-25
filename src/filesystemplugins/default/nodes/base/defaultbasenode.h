@@ -1,25 +1,25 @@
-#ifndef DEFAULTFOLDERNODEBASE_H_
-#define DEFAULTFOLDERNODEBASE_H_
+#ifndef DEFAULTBASENODE_H_
+#define DEFAULTBASENODE_H_
 
-#include "../defaultfolderdelegate.h"
-#include "../defaultfolderproxymodel.h"
-#include "../model/items/defaultnodeitem.h"
-#include "../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
-#include "../../../tools/containers/hashedlist.h"
-#include "../../../tools/containers/union.h"
-#include "../../../tools/templates/functors.h"
+#include "../defaultdelegate.h"
+#include "../defaultproxymodel.h"
+#include "../../model/items/defaultnodeitem.h"
+#include "../../../../filesystem/tasks/filesystemtasksnode.h"
+#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
+#include "../../../../tools/containers/hashedlist.h"
+#include "../../../../tools/containers/union.h"
+#include "../../../../tools/templates/functors.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderNodeBase : public TasksNode
+class BaseNode : public TasksNode
 {
-	Q_DISABLE_COPY(FolderNodeBase)
+	Q_DISABLE_COPY(BaseNode)
 
 public:
-	FolderNodeBase(IFileContainer::Holder &container, Node *parent = 0);
-	virtual ~FolderNodeBase();
+	BaseNode(IFileContainer::Holder &container, Node *parent = 0);
+	virtual ~BaseNode();
 
     /* Model */
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -152,8 +152,8 @@ protected:
 	const Container &items() const { return m_items; }
 	Container &items() { return m_items; }
 
-	const FolderProxyModel &proxy() const { return m_proxy; }
-	FolderProxyModel &proxy() { return m_proxy; }
+	const ProxyModel &proxy() const { return m_proxy; }
+	ProxyModel &proxy() { return m_proxy; }
 
 private:
 	/* Prepare tasks */
@@ -212,7 +212,7 @@ private:
 	class CancelFunctor : public Functor
 	{
 	public:
-		CancelFunctor(FolderNodeBase *node, const QString &reason) :
+		CancelFunctor(BaseNode *node, const QString &reason) :
 			m_node(node),
 			m_reason(reason)
 		{}
@@ -223,7 +223,7 @@ private:
 		virtual void call(Container::size_type index, DefaultNodeItem *item);
 
 	private:
-		FolderNodeBase *m_node;
+		BaseNode *m_node;
 		QString m_reason;
 		TasksMap::List m_items;
 		::Tools::Containers::Union m_union;
@@ -282,11 +282,11 @@ private:
 	Container m_items;
 	bool m_updating;
 
-	FolderProxyModel m_proxy;
-	FolderDelegate m_delegate;
+	ProxyModel m_proxy;
+	Delegate m_delegate;
 	INodeView::MenuActionList m_menuActions;
 };
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTFOLDERNODEBASE_H_ */
+#endif /* DEFAULTBASENODE_H_ */

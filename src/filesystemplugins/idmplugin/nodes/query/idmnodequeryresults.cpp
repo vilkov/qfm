@@ -10,7 +10,7 @@
 #include "items/idmqueryresultpathpropertyitem.h"
 #include "items/idmqueryresultcompositerootitem.h"
 #include "../../gui/value/list/selectable/selectablevaluelistdialog.h"
-#include "../../../default/defaultfoldernode.h"
+#include "../../../default/nodes/defaultnode.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
@@ -426,7 +426,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &select
 
 					if (folder)
 					{
-						node = new ::FileSystem::Plugins::Default::FolderNode(folder, this);
+						node = new ::FileSystem::Plugins::Default::Node(folder, this);
 						static_cast<QueryResultPathItem *>(item)->setNode(node);
 						return node;
 					}

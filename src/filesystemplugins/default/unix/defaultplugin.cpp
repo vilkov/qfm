@@ -1,5 +1,5 @@
 #include "../defaultplugin.h"
-#include "../defaultfoldernode.h"
+#include "../nodes/defaultnode.h"
 #include "../interfaces/defaultfilecontainer.h"
 
 
@@ -9,11 +9,11 @@ class LocalRootFolderNode;
 static LocalRootFolderNode *rootNode = NULL;
 
 
-class LocalRootFolderNode : public FolderNodeBase
+class LocalRootFolderNode : public BaseNode
 {
 public:
 	LocalRootFolderNode(IFileContainer::Holder &container) :
-		FolderNodeBase(container, NULL),
+		BaseNode(container, NULL),
 		m_path(QString::fromLatin1("/"))
 	{}
 
@@ -68,7 +68,7 @@ QString Plugin::shema() const
 	return QString::fromLatin1("file");
 }
 
-Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
+FileSystem::Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
 {
 	if ((*path) == QLatin1String("/"))
 		if (rootNode)
@@ -92,12 +92,12 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 	return FileTypeIdList() << type;
 }
 
-Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
+FileSystem::Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, FileSystem::Node *parent) const
 {
 	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
 
 	if (folder)
-		return new FolderNode(folder, parent);
+		return new Node(folder, parent);
 	else
 		return NULL;
 }

@@ -1,5 +1,5 @@
-#ifndef DEFAULTFOLDERPROPERTIESACTION_H_
-#define DEFAULTFOLDERPROPERTIESACTION_H_
+#ifndef DEFAULTMCUTACTION_H_
+#define DEFAULTMCUTACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
@@ -8,16 +8,16 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderPropertiesAction : public SyncFileAction
+class CutAction : public SyncFileAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderPropertiesAction)
+	Q_DECLARE_TR_FUNCTIONS(CutAction)
 
 public:
-	FolderPropertiesAction();
+	CutAction();
 
 	virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTFOLDERPROPERTIESACTION_H_ */
+#endif /* DEFAULTMCUTACTION_H_ */

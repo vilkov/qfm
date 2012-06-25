@@ -1,5 +1,5 @@
-#ifndef DEFAULTFOLDERPASTEACTION_H_
-#define DEFAULTFOLDERPASTEACTION_H_
+#ifndef DEFAULTPASTEACTION_H_
+#define DEFAULTPASTEACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
@@ -8,12 +8,12 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderPasteAction : public AsyncFileAction
+class PasteAction : public AsyncFileAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderPasteAction)
+	Q_DECLARE_TR_FUNCTIONS(PasteAction)
 
 public:
-	FolderPasteAction();
+	PasteAction();
 
 	virtual const QString &lockReason() const;
 	virtual PerformActionTask *process(TasksNode *receiver, const IFileContainer *container, const FilesList &files) const;
@@ -24,4 +24,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTFOLDERPASTEACTION_H_ */
+#endif /* DEFAULTPASTEACTION_H_ */

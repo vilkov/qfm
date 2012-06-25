@@ -1,5 +1,5 @@
-#ifndef DEFAULTFOLDERPASTECLIPBOARDACTION_H_
-#define DEFAULTFOLDERPASTECLIPBOARDACTION_H_
+#ifndef DEFAULTPASTECLIPBOARDACTION_H_
+#define DEFAULTPASTECLIPBOARDACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
@@ -8,16 +8,16 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderPasteClipboardAction : public SyncFileAction
+class PasteClipboardAction : public SyncFileAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderPasteClipboardAction)
+	Q_DECLARE_TR_FUNCTIONS(PasteClipboardAction)
 
 public:
-	FolderPasteClipboardAction();
+	PasteClipboardAction();
 
 	virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTFOLDERPASTECLIPBOARDACTION_H_ */
+#endif /* DEFAULTPASTECLIPBOARDACTION_H_ */

@@ -1,14 +1,14 @@
-#include "defaultfolderpropertiesaction.h"
+#include "defaultpropertiesaction.h"
 #include "../../../application.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderPropertiesAction::FolderPropertiesAction() :
+PropertiesAction::PropertiesAction() :
 	SyncFileAction(Application::desktopService()->propertiesActionIcon(16), tr("Properties..."))
 {}
 
-void FolderPropertiesAction::process(const IFileContainer *container, const FilesList &files) const
+void PropertiesAction::process(const IFileContainer *container, const FilesList &files) const
 {
 	Application::desktopService()->test(container->location(files.at(0).second->fileName()));
 }

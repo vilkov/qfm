@@ -4,7 +4,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderNodeBase::ScanForSizeEventFunctor : public EventFunctor
+class BaseNode::ScanForSizeEventFunctor : public EventFunctor
 {
 public:
 	ScanForSizeEventFunctor()
@@ -22,7 +22,7 @@ protected:
 };
 
 
-class FolderNodeBase::ScanForSizeEventFunctor_canceled : public EventFunctor
+class BaseNode::ScanForSizeEventFunctor_canceled : public EventFunctor
 {
 public:
 	ScanForSizeEventFunctor_canceled()
@@ -40,7 +40,7 @@ protected:
 };
 
 
-class FolderNodeBase::ScanForCopyEventFunctor : public EventFunctor
+class BaseNode::ScanForCopyEventFunctor : public EventFunctor
 {
 public:
 	ScanForCopyEventFunctor(const QString &lockReason) :
@@ -59,7 +59,7 @@ protected:
 };
 
 
-class FolderNodeBase::ScanForCopyEventFunctor_canceled : public EventFunctor
+class BaseNode::ScanForCopyEventFunctor_canceled : public EventFunctor
 {
 public:
 	ScanForCopyEventFunctor_canceled()
@@ -77,7 +77,7 @@ protected:
 };
 
 
-class FolderNodeBase::ScanForRemoveEventFunctor : public EventFunctor
+class BaseNode::ScanForRemoveEventFunctor : public EventFunctor
 {
 public:
 	ScanForRemoveEventFunctor(const QString &lockReason) :
@@ -104,7 +104,7 @@ protected:
 };
 
 
-class FolderNodeBase::ScanForRemoveEventFunctor_canceled : public EventFunctor
+class BaseNode::ScanForRemoveEventFunctor_canceled : public EventFunctor
 {
 public:
 	ScanForRemoveEventFunctor_canceled()
@@ -122,7 +122,7 @@ protected:
 };
 
 
-class FolderNodeBase::PerformCopyEventFunctor : public EventFunctor
+class BaseNode::PerformCopyEventFunctor : public EventFunctor
 {
 public:
 	PerformCopyEventFunctor(const QString &lockReason) :
@@ -145,7 +145,7 @@ protected:
 };
 
 
-class FolderNodeBase::PerformCopyEventFunctor_canceled : public EventFunctor
+class BaseNode::PerformCopyEventFunctor_canceled : public EventFunctor
 {
 public:
 	PerformCopyEventFunctor_canceled()
@@ -162,19 +162,19 @@ protected:
 };
 
 
-class FolderNodeBase::PerformRemoveEventFunctor : public EventFunctor
+class BaseNode::PerformRemoveEventFunctor : public EventFunctor
 {
 public:
-	typedef void (FolderNodeBase::*Method)(Container::size_type index);
+	typedef void (BaseNode::*Method)(Container::size_type index);
 
 public:
-	PerformRemoveEventFunctor(FolderNodeBase *node, Method method) :
+	PerformRemoveEventFunctor(BaseNode *node, Method method) :
 		node(node),
 		method(method)
 	{}
 
 	mutable QStringList list;
-	FolderNodeBase *node;
+	BaseNode *node;
 	Method method;
 
 protected:

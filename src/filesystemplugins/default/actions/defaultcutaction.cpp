@@ -1,14 +1,14 @@
-#include "defaultfoldercutaction.h"
+#include "defaultcutaction.h"
 #include "../../../application.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderCutAction::FolderCutAction() :
+CutAction::CutAction() :
 	SyncFileAction(Application::desktopService()->cutActionIcon(16), tr("Cut"))
 {}
 
-void FolderCutAction::process(const IFileContainer *container, const FilesList &files) const
+void CutAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

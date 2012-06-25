@@ -1,18 +1,18 @@
-#include "defaultfolderdelegate.h"
-#include "model/items/defaultnodeitem.h"
-#include "../../filesystem/tools/filesystemcommontools.h"
+#include "defaultdelegate.h"
+#include "../model/items/defaultnodeitem.h"
+#include "../../../filesystem/tools/filesystemcommontools.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderDelegate::FolderDelegate(QAbstractProxyModel *proxy, QObject *parent) :
+Delegate::Delegate(QAbstractProxyModel *proxy, QObject *parent) :
 	TasksNodeDelegate(parent),
     m_proxy(proxy)
 {
 	Q_ASSERT(m_proxy != 0);
 }
 
-void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void Delegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	if (index.column() == 1)
 	{
@@ -25,7 +25,7 @@ void FolderDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 		}
 	}
 
-	Delegate::paintBackgroundLines(painter, option, index);
+	paintBackgroundLines(painter, option, index);
 }
 
 DEFAULT_PLUGIN_NS_END

@@ -1,16 +1,16 @@
-#include "defaultfolderproxymodel.h"
-#include "model/items/defaultnodeitem.h"
+#include "defaultproxymodel.h"
+#include "../model/items/defaultnodeitem.h"
 
 #include <QtCore/QDateTime>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderProxyModel::FolderProxyModel(QObject *parent) :
-	ProxyModel(parent)
+ProxyModel::ProxyModel(QObject *parent) :
+	FileSystem::ProxyModel(parent)
 {}
 
-bool FolderProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
 	if (static_cast<DefaultNodeItem *>(left.internalPointer())->isRootItem())
 		return sortOrder() == Qt::AscendingOrder;

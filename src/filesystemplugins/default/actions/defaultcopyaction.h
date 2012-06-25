@@ -1,5 +1,5 @@
-#ifndef DEFAULTFOLDERCOPYACTION_H_
-#define DEFAULTFOLDERCOPYACTION_H_
+#ifndef DEFAULTCOPYACTION_H_
+#define DEFAULTCOPYACTION_H_
 
 #include <QtCore/QCoreApplication>
 #include "../default_ns.h"
@@ -8,16 +8,16 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FolderCopyAction : public SyncFileAction
+class CopyAction : public SyncFileAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderCopyAction)
+	Q_DECLARE_TR_FUNCTIONS(CopyAction)
 
 public:
-	FolderCopyAction();
+	CopyAction();
 
 	virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTFOLDERCOPYACTION_H_ */
+#endif /* DEFAULTCOPYACTION_H_ */

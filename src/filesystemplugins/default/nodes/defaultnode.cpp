@@ -1,22 +1,22 @@
-#include "defaultfoldernode.h"
-#include "model/items/defaultnoderootitem.h"
+#include "defaultnode.h"
+#include "../model/items/defaultnoderootitem.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderNode::FolderNode(IFileContainer::Holder &container, Node *parent) :
-	FolderNodeBase(container, parent)
+Node::Node(IFileContainer::Holder &container, FileSystem::Node *parent) :
+	BaseNode(container, parent)
 {
 	DefaultNodeRootItem::Holder item(new DefaultNodeRootItem());
 	items().add(item.as<DefaultNodeRootItem>()->label().toString(), item);
 }
 
-QModelIndex FolderNode::rootIndex() const
+QModelIndex Node::rootIndex() const
 {
 	return proxy().mapFromSource(createIndex(0, 0, items()[0].data()));
 }
 
-Snapshot FolderNode::updateFilesList() const
+Snapshot Node::updateFilesList() const
 {
 	Snapshot::Files files(container().data());
 

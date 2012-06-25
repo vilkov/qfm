@@ -8,8 +8,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, Node *parent) :
-	FolderNode(container, parent),
+IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, FileSystem::Node *parent) :
+	Default::Node(container, parent),
 	m_container(storage)
 {}
 
@@ -51,7 +51,7 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-Node *IdmFolderNode::createNode(const IFileInfo *file) const
+FileSystem::Node *IdmFolderNode::createNode(const IFileInfo *file) const
 {
 	if (file->isDir())
 	{
@@ -70,9 +70,9 @@ Node *IdmFolderNode::createNode(const IFileInfo *file) const
 	return NULL;
 }
 
-Node *IdmFolderNode::privateViewChild(const QString &fileName, QModelIndex &selected)
+FileSystem::Node *IdmFolderNode::privateViewChild(const QString &fileName, QModelIndex &selected)
 {
-	return FolderNode::viewChild(fileName, selected);
+	return Node::viewChild(fileName, selected);
 }
 
 IDM_PLUGIN_NS_END

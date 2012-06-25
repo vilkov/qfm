@@ -19,11 +19,11 @@ public:
 
 	/* IContentPlugin */
 	QString shema() const;
-	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const;
+	virtual FileSystem::Node *open(const Path::Iterator &path, QModelIndex &selected) const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;
-	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
+	virtual FileSystem::Node *open(const IFileContainer *container, const IFileInfo *file, FileSystem::Node *parent) const;
 
 private:
 	Settings m_settings;

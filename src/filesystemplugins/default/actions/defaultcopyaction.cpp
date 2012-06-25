@@ -1,14 +1,14 @@
-#include "defaultfoldercopyaction.h"
+#include "defaultcopyaction.h"
 #include "../../../application.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FolderCopyAction::FolderCopyAction() :
+CopyAction::CopyAction() :
 	SyncFileAction(Application::desktopService()->copyActionIcon(16), tr("Copy"))
 {}
 
-void FolderCopyAction::process(const IFileContainer *container, const FilesList &files) const
+void CopyAction::process(const IFileContainer *container, const FilesList &files) const
 {
 
 }

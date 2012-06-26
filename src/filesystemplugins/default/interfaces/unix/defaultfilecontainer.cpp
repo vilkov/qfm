@@ -43,7 +43,7 @@ public:
 	virtual bool next()
 	{
 		while (readdir_r(m_dir, &m_entry.d, &m_res) == 0 && m_res)
-			if (m_res->d_type == DT_DIR)
+			if (m_res->d_type == DT_DIR || m_res->d_type == DT_UNKNOWN)
 			{
 				if (strcmp(m_res->d_name, ".") != 0 && strcmp(m_res->d_name, "..") != 0)
 				{

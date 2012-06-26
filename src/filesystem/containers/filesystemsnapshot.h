@@ -52,7 +52,7 @@ public:
 	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
 	bool isRemoved(const_iterator i) const { return (*i).second == NULL; }
 
-	NodeItem::Holder exists(const QString &fileName) const
+	NodeItem::Holder find(const QString &fileName) const
 	{
 		return m_data->map.value(fileName).first;
 	}

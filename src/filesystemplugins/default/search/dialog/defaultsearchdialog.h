@@ -1,5 +1,5 @@
-#ifndef DEFAULTNODESEARCHDIALOG_H_
-#define DEFAULTNODESEARCHDIALOG_H_
+#ifndef DEFAULTSEARCHDIALOG_H_
+#define DEFAULTSEARCHDIALOG_H_
 
 #include <QtGui/QLabel>
 #include <QtGui/QDialog>
@@ -30,4 +30,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTNODESEARCHDIALOG_H_ */
+#endif /* DEFAULTSEARCHDIALOG_H_ */

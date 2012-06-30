@@ -1,4 +1,4 @@
-#include "defaultnodesearchdialog.h"
+#include "defaultsearchdialog.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -10,14 +10,14 @@ SearchDialog::SearchDialog(QWidget *parent) :
 	m_editor(this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
-	m_hLayout.setSpacing(1);
-	m_hLayout.setMargin(1);
+	m_hLayout.setSpacing(3);
+	m_hLayout.setMargin(3);
 
 	m_hLayout.addWidget(&m_label);
 	m_hLayout.addWidget(&m_editor);
 
-	m_layout.setSpacing(1);
-	m_layout.setMargin(1);
+	m_layout.setSpacing(3);
+	m_layout.setMargin(3);
 
 	m_layout.addLayout(&m_hLayout);
 	m_layout.addWidget(&m_buttonBox);

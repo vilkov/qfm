@@ -12,15 +12,15 @@ ProxyModel::ProxyModel(QObject *parent) :
 
 bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-	if (static_cast<DefaultNodeItem *>(left.internalPointer())->isRootItem())
+	if (static_cast<NodeItem *>(left.internalPointer())->isRootItem())
 		return sortOrder() == Qt::AscendingOrder;
 	else
-		if (static_cast<DefaultNodeItem*>(right.internalPointer())->isRootItem())
+		if (static_cast<NodeItem*>(right.internalPointer())->isRootItem())
 			return sortOrder() == Qt::DescendingOrder;
 		else
 		{
-			DefaultNodeItem *leftItem = static_cast<DefaultNodeItem *>(left.internalPointer());
-			DefaultNodeItem *rightItem = static_cast<DefaultNodeItem *>(right.internalPointer());
+			NodeItem *leftItem = static_cast<NodeItem *>(left.internalPointer());
+			NodeItem *rightItem = static_cast<NodeItem *>(right.internalPointer());
 
 			switch (left.column())
 			{

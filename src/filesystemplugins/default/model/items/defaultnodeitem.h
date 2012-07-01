@@ -9,11 +9,11 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultNodeItem : public TasksNodeItem
+class NodeItem : public TasksNodeItem
 {
 public:
-	DefaultNodeItem(IFileInfo::Holder &info, Base *parent = 0);
-	DefaultNodeItem(IFileInfo::Holder &info, Node *node, Base *parent = 0);
+	NodeItem(IFileInfo::Holder &info, Base *parent = 0);
+	NodeItem(IFileInfo::Holder &info, Node *node, Base *parent = 0);
 
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;

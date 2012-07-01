@@ -21,7 +21,7 @@ Snapshot Node::updateFilesList() const
 	Snapshot::Files files(container().data());
 
 	for (Container::size_type i = 1, size = items().size(); i < size; ++i)
-		files.add(items()[i].as<DefaultNodeItem>()->info()->fileName(), items()[i]);
+		files.add(items()[i].as<NodeItem>()->info()->fileName(), items()[i]);
 
 	return files;
 }

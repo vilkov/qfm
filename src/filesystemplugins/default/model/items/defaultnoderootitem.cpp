@@ -6,7 +6,7 @@ static IFileInfo::Holder emptyInfo;
 
 
 DefaultNodeRootItem::DefaultNodeRootItem(Base *parent) :
-	DefaultNodeItem(emptyInfo, parent),
+	NodeItem(emptyInfo, parent),
 	m_label(QString::fromLatin1(".."))
 {}
 

@@ -66,7 +66,7 @@ protected:
 	virtual void nodeRemoved(Node *node);
 
 protected:
-	typedef ::Tools::Templates::Functor3<Container::size_type, DefaultNodeItem *, WrappedNodeItem *> EventFunctor;
+	typedef ::Tools::Templates::Functor3<Container::size_type, NodeItem *, WrappedNodeItem *> EventFunctor;
 
 	class ScanForSizeEventFunctor;
 	class ScanForSizeEventFunctor_canceled;
@@ -105,7 +105,7 @@ protected:
 	class Container : public TasksNode::Container
 	{
 	public:
-		typedef DefaultNodeItem::Holder value_type;
+		typedef NodeItem::Holder value_type;
 
 	public:
 		Container();
@@ -124,14 +124,14 @@ protected:
 		size_type indexOf(Node *item) const
 		{
 			for (List::size_type i = 0, size = m_container.size(); i < size; ++i)
-				if (m_container.at(i).as<DefaultNodeItem>()->node() == item)
+				if (m_container.at(i).as<NodeItem>()->node() == item)
 					return i;
 
 			return InvalidIndex;
 		}
 		size_type indexOf(const QString &fileName) const { return m_container.indexOf(fileName); }
 
-		void add(const value_type &item) { m_container.add(item.as<DefaultNodeItem>()->info()->fileName(), item); }
+		void add(const value_type &item) { m_container.add(item.as<NodeItem>()->info()->fileName(), item); }
 		void add(const QString &fileName, const value_type &item) { m_container.add(fileName, item); }
 		void remove(size_type index) { m_container.remove(index); }
 		value_type take(size_type index) { return m_container.take(index); }
@@ -142,7 +142,7 @@ protected:
 			value_type root = list.at(0);
 
 			m_container.clear();
-			m_container.add(root.as<DefaultNodeItem>()->info()->fileName(), root);
+			m_container.add(root.as<NodeItem>()->info()->fileName(), root);
 		}
 
 	private:
@@ -179,13 +179,13 @@ private:
 	void setUpdating(bool value) { m_updating = value; }
 
 private:
-	typedef ::Tools::Templates::Functor2<Container::size_type, DefaultNodeItem *> Functor;
+	typedef ::Tools::Templates::Functor2<Container::size_type, NodeItem *> Functor;
 
-	typedef QPair<Container::size_type, DefaultNodeItem *> ProcessedValue;
+	typedef QPair<Container::size_type, NodeItem *> ProcessedValue;
 	class ProcessedList : public Functor, public QList<ProcessedValue>
 	{
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *item)
+		virtual void call(Container::size_type index, NodeItem *item)
 		{
 			push_back(ProcessedValue(index, item));
 		}
@@ -200,7 +200,7 @@ private:
 		{}
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *item)
+		virtual void call(Container::size_type index, NodeItem *item)
 		{
 			push_back(m_container->location(item->info()->fileName()));
 		}
@@ -221,7 +221,7 @@ private:
 		const ::Tools::Containers::Union &updateUnion() const { return m_union; }
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *item);
+		virtual void call(Container::size_type index, NodeItem *item);
 
 	private:
 		BaseNode *m_node;
@@ -241,7 +241,7 @@ private:
 		{}
 
 	protected:
-		virtual void call(Container::size_type index, DefaultNodeItem *item);
+		virtual void call(Container::size_type index, NodeItem *item);
 
 	private:
 		const IFileContainer *m_container;
@@ -258,22 +258,22 @@ private:
 	void scanForCopy(const ProcessedList &entries, INodeView *destination, bool move);
 
 private:
-	QModelIndex index(int column, DefaultNodeItem *item) const;
-	QModelIndex indexForFile(DefaultNodeItem *item) const;
-	QModelIndex indexForFile(DefaultNodeItem *item, Container::size_type index) const;
+	QModelIndex index(int column, NodeItem *item) const;
+	QModelIndex indexForFile(NodeItem *item) const;
+	QModelIndex indexForFile(NodeItem *item, Container::size_type index) const;
 
 private:
 	typedef ::Tools::Containers::Union Union;
 
-	void updateFirstColumn(DefaultNodeItem *entry);
+	void updateFirstColumn(NodeItem *entry);
 	void updateFirstColumn(const Union &range);
-	void updateFirstColumn(Container::size_type index, DefaultNodeItem *entry);
-	void updateSecondColumn(DefaultNodeItem *entry);
+	void updateFirstColumn(Container::size_type index, NodeItem *entry);
+	void updateSecondColumn(NodeItem *entry);
 	void updateSecondColumn(const Union &range);
-	void updateSecondColumn(Container::size_type index, DefaultNodeItem *entry);
-	void updateBothColumns(DefaultNodeItem *entry);
+	void updateSecondColumn(Container::size_type index, NodeItem *entry);
+	void updateBothColumns(NodeItem *entry);
 	void updateBothColumns(const Union &range);
-	void updateBothColumns(Container::size_type index, DefaultNodeItem *entry);
+	void updateBothColumns(Container::size_type index, NodeItem *entry);
 	void updateColumns(const Union &range, int lastColumn);
 	void removeEntry(Container::size_type index);
 	void removeEntry(const QModelIndex &index);

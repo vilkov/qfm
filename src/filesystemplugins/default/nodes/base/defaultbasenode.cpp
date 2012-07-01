@@ -244,7 +244,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	FileActionsList actions;
 
 	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()]).as<DefaultNodeItem>()->isRootItem() && !set.contains(item))
+		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()]).as<NodeItem>()->isRootItem() && !set.contains(item))
 		{
 			set.insert(item);
 			itemsIndex[item] = index.row();
@@ -263,14 +263,14 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	{
 		if (items.size() == 1)
 		{
-			if ((item = items.at(0)).as<DefaultNodeItem>()->info()->isDir())
+			if ((item = items.at(0)).as<NodeItem>()->info()->isDir())
 			{
 				menu.addAction(const_cast<QAction*>(globalActions.pasteIntoFolderAction->action()));
 
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 			}
 			else
 			{
@@ -279,7 +279,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 			}
 		}
 		else
@@ -295,17 +295,17 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 				for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 				{
 					item = items.at(i);
-					files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+					files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 				}
 			}
 		}
 
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
-			actions = Application::globalMenu()->actions((item = items.at(i)).as<DefaultNodeItem>()->info()->fileType()->id());
+			actions = Application::globalMenu()->actions((item = items.at(i)).as<NodeItem>()->info()->fileType()->id());
 
 			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 		}
 	}
 
@@ -318,7 +318,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
 			item = items.at(i);
-			files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+			files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 		}
 	}
 
@@ -342,7 +342,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 			{
 				item = items.at(i);
-				files.push_back(FileAction::FilesList::value_type(item, item.as<DefaultNodeItem>()->info().data()));
+				files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
 			}
 
 		if (action->isAsynchronous())
@@ -360,7 +360,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
 					update.add(itemsIndex.value(item));
-					list.add(item.as<DefaultNodeItem>()->info()->fileName(), item);
+					list.add(item.as<NodeItem>()->info()->fileName(), item);
 				}
 
 				addTask(task.take(), list);
@@ -385,7 +385,7 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 	if (index.isValid())
 	{
-		DefaultNodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<DefaultNodeItem>();
+		NodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<NodeItem>();
 
 		if (!item->isRootItem())
 			name = item->info()->fileName();
@@ -400,11 +400,11 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 		if (folder)
 		{
-			DefaultNodeItem *item;
+			NodeItem *item;
 			IFileInfo::Holder info(m_container->scanner()->info(dialog.value(), error));
 
 			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-			m_items.add(NodeItem::Holder(item = new DefaultNodeItem(info)));
+			m_items.add(NodeItem::Holder(item = new NodeItem(info)));
 			endInsertRows();
 
 			view->select(indexForFile(item, m_items.size() - 1));
@@ -416,9 +416,9 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 void BaseNode::rename(const QModelIndex &index, INodeView *view)
 {
-	DefaultNodeItem *entry = static_cast<DefaultNodeItem *>(m_proxy.mapToSource(index).internalPointer());
+	NodeItem *entry = static_cast<NodeItem *>(m_proxy.mapToSource(index).internalPointer());
 
-	if (!entry->isRootItem() && !static_cast<DefaultNodeItem *>(entry)->isLocked())
+	if (!entry->isRootItem() && !static_cast<NodeItem *>(entry)->isLocked())
 	{
 		RenameFunctor functor(m_container.data(), m_items);
 		functor(index.row(), entry);
@@ -505,12 +505,12 @@ Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
-	if (static_cast<DefaultNodeItem *>(index.internalPointer())->isRootItem())
+	if (static_cast<NodeItem *>(index.internalPointer())->isRootItem())
 		return parentNode();
 	else
-		if (!static_cast<DefaultNodeItem *>(index.internalPointer())->isLocked())
+		if (!static_cast<NodeItem *>(index.internalPointer())->isLocked())
 		{
-			DefaultNodeItem *entry = static_cast<DefaultNodeItem *>(index.internalPointer());
+			NodeItem *entry = static_cast<NodeItem *>(index.internalPointer());
 
 			if (entry->node())
 				entry->node()->setParentEntryIndex(idx);
@@ -544,7 +544,7 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 			if (Node *node = createNode(info.data()))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-				m_items.add(NodeItem::Holder(new DefaultNodeItem(info, node)));
+				m_items.add(NodeItem::Holder(new NodeItem(info, node)));
 				endInsertRows();
 
 				return node;
@@ -553,10 +553,10 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 			{
 				if (info->isFile())
 				{
-					DefaultNodeItem *item;
+					NodeItem *item;
 
 					beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-					m_items.add(NodeItem::Holder(item = new DefaultNodeItem(info)));
+					m_items.add(NodeItem::Holder(item = new NodeItem(info)));
 					endInsertRows();
 
 					selected = indexForFile(item, m_items.lastIndex());
@@ -567,7 +567,7 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 	}
 	else
 	{
-		DefaultNodeItem *item = m_items[index].as<DefaultNodeItem>();
+		NodeItem *item = m_items[index].as<NodeItem>();
 
 		if (item->node())
 			return item->node();
@@ -594,7 +594,7 @@ void BaseNode::nodeRemoved(Node *node)
 	Container::size_type index = m_items.indexOf(node);
 
 	if (index != Container::InvalidIndex)
-		m_items[index].as<DefaultNodeItem>()->setNode(NULL);
+		m_items[index].as<NodeItem>()->setNode(NULL);
 }
 
 void BaseNode::cleanup(Snapshot &snapshot)
@@ -604,7 +604,7 @@ void BaseNode::cleanup(Snapshot &snapshot)
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
 		if (snapshot.isRemoved(i))
 		{
-			if ((index = m_items.indexOf((*i).first.as<DefaultNodeItem>()->info()->fileName())) != Container::InvalidIndex)
+			if ((index = m_items.indexOf((*i).first.as<NodeItem>()->info()->fileName())) != Container::InvalidIndex)
 				removeEntry(index);
 
 			i = snapshot.erase(i);
@@ -615,13 +615,13 @@ void BaseNode::cleanup(Snapshot &snapshot)
 
 void BaseNode::processScanEventSnapshot(Snapshot &snapshot, EventFunctor &functor)
 {
-	DefaultNodeItem *entry;
+	NodeItem *entry;
 	Container::size_type index;
 
 	cleanup(snapshot);
 
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
-		if ((index = m_items.indexOf((entry = (*i).first.as<DefaultNodeItem>())->info()->fileName())) != Container::InvalidIndex)
+		if ((index = m_items.indexOf((entry = (*i).first.as<NodeItem>())->info()->fileName())) != Container::InvalidIndex)
 		{
 			functor(index, entry, (*i).second);
 			++i;
@@ -632,11 +632,11 @@ void BaseNode::processScanEventSnapshot(Snapshot &snapshot, EventFunctor &functo
 
 void BaseNode::processPerformEventSnapshot(Snapshot &snapshot, EventFunctor &functor)
 {
-	DefaultNodeItem *entry;
+	NodeItem *entry;
 	Container::size_type index;
 
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
-		if ((index = m_items.indexOf((entry = (*i).first.as<DefaultNodeItem>())->info()->fileName())) != Container::InvalidIndex)
+		if ((index = m_items.indexOf((entry = (*i).first.as<NodeItem>())->info()->fileName())) != Container::InvalidIndex)
 		{
 			functor(index, entry, (*i).second);
 			++i;
@@ -650,7 +650,7 @@ Snapshot BaseNode::updateFilesList() const
 	Snapshot::Files files(m_container.data());
 
 	for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
-		files.add(m_items[i].as<DefaultNodeItem>()->info()->fileName(), m_items[i]);
+		files.add(m_items[i].as<NodeItem>()->info()->fileName(), m_items[i]);
 
 	return files;
 }
@@ -665,7 +665,7 @@ void BaseNode::updateFilesEvent(Snapshot &updates)
 		{
 			if ((index = m_items.indexOf((*update).second->info()->fileName())) != Container::InvalidIndex)
 			{
-				m_items[index].as<DefaultNodeItem>()->update((*update).second->info());
+				m_items[index].as<NodeItem>()->update((*update).second->info());
 				updateRange.add(index);
 
 				update = updates.erase(update);
@@ -676,9 +676,9 @@ void BaseNode::updateFilesEvent(Snapshot &updates)
 		else
 			if (updates.isRemoved(update))
 			{
-				if ((index = m_items.indexOf((*update).first.as<DefaultNodeItem>()->info()->fileName())) != Container::InvalidIndex)
+				if ((index = m_items.indexOf((*update).first.as<NodeItem>()->info()->fileName())) != Container::InvalidIndex)
 				{
-					if (!m_items[index].as<DefaultNodeItem>()->isLocked())
+					if (!m_items[index].as<NodeItem>()->isLocked())
 						removeEntry(index);
 				}
 
@@ -693,7 +693,7 @@ void BaseNode::updateFilesEvent(Snapshot &updates)
 	{
 		beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + updates.size() - 1);
 		for (Snapshot::iterator update = updates.begin(), end = updates.end(); update != end; update = updates.erase(update))
-			m_items.add(NodeItem::Holder(new DefaultNodeItem((*update).second->info())));
+			m_items.add(NodeItem::Holder(new NodeItem((*update).second->info())));
 		endInsertRows();
 	}
 }
@@ -738,7 +738,7 @@ bool BaseNode::scanForCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl 
 			control->done(false);
 
 		for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
-			(*i).first.as<DefaultNodeItem>()->unlock();
+			(*i).first.as<NodeItem>()->unlock();
 
 		updateBothColumns(functor.updateRange);
 	}
@@ -778,7 +778,7 @@ bool BaseNode::scanForRemoveEvent(bool canceled, Snapshot &snapshot)
 		}
 		else
 			for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
-				(*i).first.as<DefaultNodeItem>()->unlock();
+				(*i).first.as<NodeItem>()->unlock();
 
 		updateBothColumns(functor.updateRange);
 	}
@@ -821,14 +821,14 @@ void BaseNode::performRemoveEvent(bool canceled, Snapshot &snapshot)
 
 void BaseNode::updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed)
 {
-	item.as<DefaultNodeItem>()->updateProgress(progress, timeElapsed);
-	updateSecondColumn(m_items.indexOf(item.as<DefaultNodeItem>()->info()->fileName()), item.as<DefaultNodeItem>());
+	item.as<NodeItem>()->updateProgress(progress, timeElapsed);
+	updateSecondColumn(m_items.indexOf(item.as<NodeItem>()->info()->fileName()), item.as<NodeItem>());
 }
 
 void BaseNode::completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed)
 {
-	item.as<DefaultNodeItem>()->updateProgress(item.as<DefaultNodeItem>()->total(), timeElapsed);
-	updateSecondColumn(m_items.indexOf(item.as<DefaultNodeItem>()->info()->fileName()), item.as<DefaultNodeItem>());
+	item.as<NodeItem>()->updateProgress(item.as<NodeItem>()->total(), timeElapsed);
+	updateSecondColumn(m_items.indexOf(item.as<NodeItem>()->info()->fileName()), item.as<NodeItem>());
 }
 
 void BaseNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
@@ -1007,7 +1007,7 @@ BaseNode::Container::size_type BaseNode::Container::indexOf(Item *item) const
 	return InvalidIndex;
 }
 
-void BaseNode::CancelFunctor::call(Container::size_type index, DefaultNodeItem *item)
+void BaseNode::CancelFunctor::call(Container::size_type index, NodeItem *item)
 {
 	m_items = m_node->cancelTaskAndTakeItems(NodeItem::Holder(item));
 
@@ -1020,7 +1020,7 @@ void BaseNode::CancelFunctor::call(Container::size_type index, DefaultNodeItem *
 	}
 }
 
-void BaseNode::RenameFunctor::call(Container::size_type index, DefaultNodeItem *item)
+void BaseNode::RenameFunctor::call(Container::size_type index, NodeItem *item)
 {
 	StringDialog dialog(
 			item->info()->isDir() ?
@@ -1059,15 +1059,15 @@ void BaseNode::RenameFunctor::call(Container::size_type index, DefaultNodeItem *
 void BaseNode::processIndexList(const QModelIndexList &list, Functor &functor)
 {
 	QModelIndex index;
-	DefaultNodeItem *entry;
-	QSet<DefaultNodeItem *> done;
+	NodeItem *entry;
+	QSet<NodeItem *> done;
 
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!done.contains(entry = static_cast<DefaultNodeItem *>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
+		if (!done.contains(entry = static_cast<NodeItem *>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
 		{
 			done.insert(entry);
 
-			if (!entry->isRootItem() && !static_cast<DefaultNodeItem *>(entry)->isLocked())
+			if (!entry->isRootItem() && !static_cast<NodeItem *>(entry)->isLocked())
 				functor(index.row(), entry);
 		}
 }
@@ -1076,15 +1076,15 @@ void BaseNode::processLockedIndexList(const QModelIndexList &list, Functor &func
 {
 	QModelIndex index;
 	ProcessedList res;
-	DefaultNodeItem *entry;
-	QSet<DefaultNodeItem *> done;
+	NodeItem *entry;
+	QSet<NodeItem *> done;
 
 	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (!done.contains(entry = static_cast<DefaultNodeItem *>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
+		if (!done.contains(entry = static_cast<NodeItem *>((index = m_proxy.mapToSource(list.at(i))).internalPointer())))
 		{
 			done.insert(entry);
 
-			if (!entry->isRootItem() && static_cast<DefaultNodeItem *>(entry)->isLocked())
+			if (!entry->isRootItem() && static_cast<NodeItem *>(entry)->isLocked())
 				functor(index.row(), entry);
 		}
 }
@@ -1092,7 +1092,7 @@ void BaseNode::processLockedIndexList(const QModelIndexList &list, Functor &func
 void BaseNode::scanForRemove(const ProcessedList &entries)
 {
 	Union updateRange;
-	DefaultNodeItem *entry;
+	NodeItem *entry;
 	Container::size_type index;
 	Snapshot::Files files(m_container.data());
 
@@ -1116,12 +1116,12 @@ void BaseNode::scanForRemove(const ProcessedList &entries)
 void BaseNode::scanForSize(const ProcessedList &entries)
 {
 	Union updateRange;
-	DefaultNodeItem *entry;
+	NodeItem *entry;
 	Container::size_type index;
 	Snapshot::Files files(m_container.data());
 
 	for (ProcessedList::size_type i = 0, size = entries.size(); i < size; ++i)
-		if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info()->isDir())
+		if ((entry = static_cast<NodeItem*>(entries.at(i).second))->info()->isDir())
 		{
 			index = entries.at(i).first;
 			entry->lock(tr("Scanning folder for size..."));
@@ -1140,7 +1140,7 @@ void BaseNode::scanForCopy(const ProcessedList &entries, INodeView *destination,
 	if (control)
 	{
 		Union updateRange;
-		DefaultNodeItem *entry;
+		NodeItem *entry;
 		Container::size_type index;
 		Snapshot::Files files(m_container.data());
 		QString fileLockReason = move ? tr("Moving...") : tr("Copying...");
@@ -1150,7 +1150,7 @@ void BaseNode::scanForCopy(const ProcessedList &entries, INodeView *destination,
 		{
 			index = entries.at(i).first;
 
-			if ((entry = static_cast<DefaultNodeItem*>(entries.at(i).second))->info()->isDir())
+			if ((entry = static_cast<NodeItem*>(entries.at(i).second))->info()->isDir())
 				entry->lock(folderLockReason);
 			else
 				entry->lock(fileLockReason);
@@ -1164,7 +1164,7 @@ void BaseNode::scanForCopy(const ProcessedList &entries, INodeView *destination,
 	}
 }
 
-QModelIndex BaseNode::index(int column, DefaultNodeItem *item) const
+QModelIndex BaseNode::index(int column, NodeItem *item) const
 {
 	Container::size_type index = m_items.indexOf(item);
 
@@ -1174,19 +1174,19 @@ QModelIndex BaseNode::index(int column, DefaultNodeItem *item) const
 		return QModelIndex();
 }
 
-QModelIndex BaseNode::indexForFile(DefaultNodeItem *item) const
+QModelIndex BaseNode::indexForFile(NodeItem *item) const
 {
 	Q_ASSERT(m_items.indexOf(item) != Container::InvalidIndex);
 	Container::size_type index = m_items.indexOf(item);
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }
 
-QModelIndex BaseNode::indexForFile(DefaultNodeItem *item, Container::size_type index) const
+QModelIndex BaseNode::indexForFile(NodeItem *item, Container::size_type index) const
 {
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
 }
 
-void BaseNode::updateFirstColumn(DefaultNodeItem *entry)
+void BaseNode::updateFirstColumn(NodeItem *entry)
 {
 	updateFirstColumn(m_items.indexOf(entry), entry);
 }
@@ -1198,13 +1198,13 @@ void BaseNode::updateFirstColumn(const Union &range)
 						 createIndex(range.at(i).bottom(), 0, m_items[range.at(i).bottom()].data()));
 }
 
-void BaseNode::updateFirstColumn(Container::size_type index, DefaultNodeItem *entry)
+void BaseNode::updateFirstColumn(Container::size_type index, NodeItem *entry)
 {
 	QModelIndex idx = createIndex(index, 0, entry);
 	emit dataChanged(idx, idx);
 }
 
-void BaseNode::updateSecondColumn(DefaultNodeItem *entry)
+void BaseNode::updateSecondColumn(NodeItem *entry)
 {
 	updateSecondColumn(m_items.indexOf(entry), entry);
 }
@@ -1216,13 +1216,13 @@ void BaseNode::updateSecondColumn(const Union &range)
 						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()].data()));
 }
 
-void BaseNode::updateSecondColumn(Container::size_type index, DefaultNodeItem *entry)
+void BaseNode::updateSecondColumn(Container::size_type index, NodeItem *entry)
 {
 	QModelIndex idx = createIndex(index, 1, entry);
 	emit dataChanged(idx, idx);
 }
 
-void BaseNode::updateBothColumns(DefaultNodeItem *entry)
+void BaseNode::updateBothColumns(NodeItem *entry)
 {
 	updateBothColumns(m_items.indexOf(entry), entry);
 }
@@ -1234,7 +1234,7 @@ void BaseNode::updateBothColumns(const Union &range)
 						 createIndex(range.at(i).bottom(), 1, m_items[range.at(i).bottom()].data()));
 }
 
-void BaseNode::updateBothColumns(Container::size_type index, DefaultNodeItem *entry)
+void BaseNode::updateBothColumns(Container::size_type index, NodeItem *entry)
 {
 	emit dataChanged(createIndex(index, 0, entry), createIndex(index, 1, entry));
 }

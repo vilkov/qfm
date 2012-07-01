@@ -6,7 +6,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultNodeRootItem : public DefaultNodeItem
+class DefaultNodeRootItem : public NodeItem
 {
 public:
 	DefaultNodeRootItem(Base *parent = 0);

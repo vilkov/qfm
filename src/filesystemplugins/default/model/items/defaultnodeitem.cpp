@@ -4,19 +4,19 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-DefaultNodeItem::DefaultNodeItem(IFileInfo::Holder &info, Base *parent) :
+NodeItem::NodeItem(IFileInfo::Holder &info, Base *parent) :
 	TasksNodeItem(parent),
 	m_node(NULL),
 	m_info(info.take())
 {}
 
-DefaultNodeItem::DefaultNodeItem(IFileInfo::Holder &info, Node *node, Base *parent) :
+NodeItem::NodeItem(IFileInfo::Holder &info, Node *node, Base *parent) :
 	TasksNodeItem(parent),
 	m_node(node),
 	m_info(info.take())
 {}
 
-QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
+QVariant NodeItem::data(qint32 column, qint32 role) const
 {
 	switch (column)
 	{
@@ -79,24 +79,24 @@ QVariant DefaultNodeItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool DefaultNodeItem::isRootItem() const
+bool NodeItem::isRootItem() const
 {
 	return false;
 }
 
-void DefaultNodeItem::lock(const QString &reason, quint64 totalSize)
+void NodeItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_totalSize = totalSize;
 	TasksNodeItem::lock(reason);
 	start(totalSize);
 }
 
-void DefaultNodeItem::lock(const QString &reason)
+void NodeItem::lock(const QString &reason)
 {
 	TasksNodeItem::lock(reason);
 }
 
-void DefaultNodeItem::unlock()
+void NodeItem::unlock()
 {
 	stop();
 	TasksNodeItem::unlock();

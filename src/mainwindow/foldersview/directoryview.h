@@ -88,6 +88,7 @@ public Q_SLOTS:
 	void copy();
 	void move();
 	void cancel();
+	void search();
 
 private Q_SLOTS:
 	void actionTriggered(QAction *action);

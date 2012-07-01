@@ -50,6 +50,7 @@ DirectoryView::DirectoryView(FoldersView *parent) :
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
 	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Escape,    &DirectoryView::cancel);
+	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_F,         &DirectoryView::search);
 
 	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 }
@@ -260,6 +261,11 @@ void DirectoryView::move()
 void DirectoryView::cancel()
 {
 	m_node->cancel(selectedIndexes(), this);
+}
+
+void DirectoryView::search()
+{
+	m_node->search(currentIndex(), this);
 }
 
 void DirectoryView::actionTriggered(QAction *action)

@@ -1,5 +1,6 @@
 #include "defaultbasenode.h"
 #include "defaultbasenode_p.h"
+#include "../../search/dialog/defaultsearchdialog.h"
 #include "../../tasks/scan/defaultscanfilestask.h"
 #include "../../tasks/perform/defaultperformcopytask.h"
 #include "../../tasks/perform/defaultperformmovetask.h"
@@ -478,6 +479,16 @@ void BaseNode::move(const INodeView *source, INodeView *destination)
 
 	if (!entries.isEmpty())
 		scanForCopy(entries, destination, true);
+}
+
+void BaseNode::search(const QModelIndex &index, INodeView *view)
+{
+	SearchDialog dialog(Application::mainWindow());
+
+	if (dialog.exec() == SearchDialog::Accepted)
+	{
+
+	}
 }
 
 void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)

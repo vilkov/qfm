@@ -338,6 +338,11 @@ void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
 
 }
 
+void IdmNodeQueryResults::search(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 

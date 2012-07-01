@@ -30,6 +30,9 @@ IFileType::~IFileType()
 IFileLocation::~IFileLocation()
 {}
 
+IFileContainer::Filter::~Filter()
+{}
+
 IFileOperations::~IFileOperations()
 {}
 

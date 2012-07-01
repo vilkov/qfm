@@ -1,19 +1,15 @@
 #ifndef DEFAULTFILECONTAINER_H_
 #define DEFAULTFILECONTAINER_H_
 
-#include "../default_ns.h"
-#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
-
-
-FILE_SYSTEM_NS(class WrappedNodeItem)
+#include "defaultfilecontainerscanner.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class FileContainer : public IFileContainer, public IFileContainerScanner
+class BaseFileContainer : public IFileContainer
 {
 public:
-	FileContainer(const QString &path);
+	BaseFileContainer(const QString &path);
 
 	/* IFileLocation */
 	virtual QString location() const;
@@ -32,20 +28,34 @@ public:
 	virtual IFileContainer *open() const;
 	virtual IFileAccessor *open(const QString &fileName, int flags, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
-
-	virtual const IFileContainerScanner *scanner() const;
-
-	/* IFileContainerScanner */
-	virtual IEnumerator *enumerate(QString &error) const;
-	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-
-private:
-	void scan(WrappedNodeItem *root, const volatile Flags &aborted) const;
+	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
 
 private:
 	QString m_path;
+};
+
+
+class FileContainer : public BaseFileContainer
+{
+public:
+	FileContainer(const QString &path);
+
+	virtual const IFileContainerScanner *scanner() const;
+
+private:
+	FileContainerScanner m_scanner;
+};
+
+
+class FilteredFileContainer : public BaseFileContainer
+{
+public:
+	FilteredFileContainer(const QString &path, Filter::Holder &filter);
+
+	virtual const IFileContainerScanner *scanner() const;
+
+private:
+	FilteredFileContainerScanner m_scanner;
 };
 
 DEFAULT_PLUGIN_NS_END

@@ -72,6 +72,11 @@ IFileContainer *CopyControl::open(const QString &fileName, bool create, QString 
 	return m_container.open(fileName, create, error);
 }
 
+IFileContainer *CopyControl::filter(Filter::Holder &filter, QString &error) const
+{
+	return m_container.filter(filter, error);
+}
+
 const IFileContainerScanner *CopyControl::scanner() const
 {
 	return m_container.scanner();

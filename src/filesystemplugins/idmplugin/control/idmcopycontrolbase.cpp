@@ -70,6 +70,11 @@ IFileContainer *IdmCopyControlBase::open(const QString &fileName, bool create, Q
 	return m_dest->open(fileName, create, error);
 }
 
+IFileContainer *IdmCopyControlBase::filter(Filter::Holder &filter, QString &error) const
+{
+	return NULL;
+}
+
 const IFileContainerScanner *IdmCopyControlBase::scanner() const
 {
 	return m_dest->scanner();

@@ -19,8 +19,11 @@ public:
 public:
     explicit Info();
 
-    template <int I>
-    explicit Info(const QString &filePath, int_to_type<I>);
+    template <typename T>
+    explicit Info(const QString &filePath, T = T());
+
+    template <typename T>
+    explicit Info(const Info &other, T = T());
 
     QString operator-(const Info &other) const;
 

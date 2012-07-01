@@ -168,6 +168,11 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void ArcNode::search(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 

@@ -28,6 +28,7 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void copy(const INodeView *source, INodeView *destination) = 0;
 	virtual void move(const INodeView *source, INodeView *destination) = 0;
+	virtual void search(const QModelIndex &index, INodeView *view) = 0;
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view) = 0;
 };
 

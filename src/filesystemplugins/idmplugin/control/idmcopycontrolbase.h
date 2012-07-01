@@ -29,6 +29,7 @@ public:
 	virtual IFileContainer *open() const;
 	virtual IFileAccessor *open(const QString &fileName, int mode, QString &error) const;
 	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
+	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
 
 	virtual const IFileContainerScanner *scanner() const;
 

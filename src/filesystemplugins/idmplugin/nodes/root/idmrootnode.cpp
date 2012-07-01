@@ -148,6 +148,11 @@ void IdmRootNode::move(const INodeView *source, INodeView *destination)
 
 }
 
+void IdmRootNode::search(const QModelIndex &index, INodeView *view)
+{
+
+}
+
 void IdmRootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 

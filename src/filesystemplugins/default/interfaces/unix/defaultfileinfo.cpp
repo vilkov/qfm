@@ -70,14 +70,14 @@ Info::Info() :
 {}
 
 template <>
-Info::Info<0>(const QString &filePath, None) :
+Info::Info<Info::None>(const QString &filePath, None) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
 {}
 
 template <>
-Info::Info<1>(const QString &filePath, Refresh) :
+Info::Info<Info::Refresh>(const QString &filePath, Refresh) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
@@ -86,12 +86,40 @@ Info::Info<1>(const QString &filePath, Refresh) :
 }
 
 template <>
-Info::Info<2>(const QString &filePath, Identify) :
+Info::Info<Info::Identify>(const QString &filePath, Identify) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
 {
 	refresh();
+	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
+}
+
+template <>
+Info::Info<Info::None>(const Info &other, None) :
+	m_isRoot(other.m_isRoot),
+	m_filePath(other.m_filePath),
+	m_fileName(other.m_fileName),
+	m_info(other.m_info)
+{}
+
+template <>
+Info::Info<Info::Refresh>(const Info &other, Refresh) :
+	m_isRoot(other.m_isRoot),
+	m_filePath(other.m_filePath),
+	m_fileName(other.m_fileName),
+	m_info(other.m_info)
+{
+	refresh();
+}
+
+template <>
+Info::Info<Info::Identify>(const Info &other, Identify) :
+	m_isRoot(other.m_isRoot),
+	m_filePath(other.m_filePath),
+	m_fileName(other.m_fileName),
+	m_info(other.m_info)
+{
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
 }
 

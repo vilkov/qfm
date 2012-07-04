@@ -73,10 +73,8 @@ bool TasksNode::event(QEvent *e)
 		}
 
 		default:
-			break;
+			return Node::event(e);
 	}
-
-	return Node::event(e);
 }
 
 void TasksNode::addTask(BaseTask *task, const NodeItem::Holder &item)

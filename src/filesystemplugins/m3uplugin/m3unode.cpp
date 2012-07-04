@@ -145,14 +145,14 @@ void M3uNode::move(const INodeView *source, INodeView *destination)
 
 }
 
-void M3uNode::search(const QModelIndex &index, INodeView *view)
+void M3uNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void M3uNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+::History::Entry *M3uNode::search(const QModelIndex &index, INodeView *view)
 {
-
+	return NULL;
 }
 
 void M3uNode::refresh()

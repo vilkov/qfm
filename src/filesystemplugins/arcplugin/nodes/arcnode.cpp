@@ -168,14 +168,14 @@ void ArcNode::move(const INodeView *source, INodeView *destination)
 
 }
 
-void ArcNode::search(const QModelIndex &index, INodeView *view)
+void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+::History::Entry *ArcNode::search(const QModelIndex &index, INodeView *view)
 {
-
+	return NULL;
 }
 
 QString ArcNode::location() const

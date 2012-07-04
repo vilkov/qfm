@@ -265,7 +265,8 @@ void DirectoryView::cancel()
 
 void DirectoryView::search()
 {
-	m_node->search(currentIndex(), this);
+	if (::History::Entry *entry = m_node->search(currentIndex(), this))
+		m_navigation.save(entry);
 }
 
 void DirectoryView::actionTriggered(QAction *action)

@@ -5,6 +5,7 @@
 #include <QtCore/QModelIndexList>
 #include "filesysteminodeview.h"
 #include "filesystemicopycontrol.h"
+#include "../../history/historyentry.h"
 
 
 FILE_SYSTEM_NS_BEGIN
@@ -28,8 +29,8 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view) = 0;
 	virtual void copy(const INodeView *source, INodeView *destination) = 0;
 	virtual void move(const INodeView *source, INodeView *destination) = 0;
-	virtual void search(const QModelIndex &index, INodeView *view) = 0;
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view) = 0;
+	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view) = 0;
 };
 
 FILE_SYSTEM_NS_END

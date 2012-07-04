@@ -1,15 +1,15 @@
-#ifndef DEFAULTNODEROOTITEM_H_
-#define DEFAULTNODEROOTITEM_H_
+#ifndef DEFAULTROOTNODEITEM_H_
+#define DEFAULTROOTNODEITEM_H_
 
 #include "defaultnodeitem.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class DefaultNodeRootItem : public NodeItem
+class RootNodeItem : public NodeItem
 {
 public:
-	DefaultNodeRootItem(Base *parent = 0);
+	RootNodeItem(Base *parent = 0);
 
 	/* ::Tools::Models::Tree::Item */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -24,4 +24,4 @@ private:
 
 DEFAULT_PLUGIN_NS_END
 
-#endif /* DEFAULTNODEROOTITEM_H_ */
+#endif /* DEFAULTROOTNODEITEM_H_ */

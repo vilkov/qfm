@@ -23,7 +23,8 @@ public:
 			ScanFilesForRemove = BaseTask::Event::User + 2,
 			ScanFilesForCopy = BaseTask::Event::User + 3,
 			RemoveFiles = BaseTask::Event::User + 4,
-			CopyFiles = BaseTask::Event::User + 5
+			CopyFiles = BaseTask::Event::User + 5,
+			SearchFiles = BaseTask::Event::User + 6
 		};
 
 	public:

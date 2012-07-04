@@ -1,5 +1,6 @@
 #include "defaultbasenode.h"
 #include "defaultbasenode_p.h"
+#include "../search/defaultsearchnode.h"
 #include "../../search/dialog/defaultsearchdialog.h"
 #include "../../tasks/scan/defaultscanfilestask.h"
 #include "../../tasks/perform/defaultperformcopytask.h"
@@ -11,6 +12,7 @@
 #include "../../actions/defaultpasteintofolderaction.h"
 #include "../../actions/defaultpropertiesaction.h"
 #include "../../actions/defaultpasteclipboardaction.h"
+#include "../../../../filesystem/filters/filesystemfilters.h"
 #include "../../../../filesystem/tasks/filesystemperformactiontask.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
@@ -132,41 +134,45 @@ bool BaseNode::event(QEvent *e)
 			updateFiles(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
+
 		case FilesBaseTask::Event::ScanFilesForRemove:
 		{
 			e->accept();
 			scanForRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
+
 		case FilesBaseTask::Event::RemoveFiles:
 		{
 			e->accept();
 			performRemove(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
+
 		case FilesBaseTask::Event::ScanFilesForSize:
 		{
 			e->accept();
 			scanForSize(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
+
 		case FilesBaseTask::Event::ScanFilesForCopy:
 		{
 			e->accept();
 			scanForCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
+
 		case FilesBaseTask::Event::CopyFiles:
 		{
 			e->accept();
 			performCopy(static_cast<BaseTask::Event*>(e));
 			return true;
 		}
-		default:
-			break;
-	}
 
-	return TasksNode::event(e);
+		default:
+			return TasksNode::event(e);
+	}
 }
 
 void BaseNode::refresh()
@@ -481,19 +487,28 @@ void BaseNode::move(const INodeView *source, INodeView *destination)
 		scanForCopy(entries, destination, true);
 }
 
-void BaseNode::search(const QModelIndex &index, INodeView *view)
+void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+{
+
+}
+
+::History::Entry *BaseNode::search(const QModelIndex &index, INodeView *view)
 {
 	SearchDialog dialog(Application::mainWindow());
 
 	if (dialog.exec() == SearchDialog::Accepted)
 	{
+		QString error;
+		IFileContainer::Holder container;
+		FileNameFilter::Holder filter(new FileNameFilter(dialog.pattern()));
 
+		if (container = m_container->filter(filter, error))
+			return switchTo(new SearchNode(container, this), view);
+		else
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 	}
-}
 
-void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
-{
-
+	return NULL;
 }
 
 QModelIndex BaseNode::rootIndex() const

@@ -1,5 +1,5 @@
 #include "defaultnode.h"
-#include "../model/items/defaultnoderootitem.h"
+#include "../model/items/defaultrootnodeitem.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -7,8 +7,8 @@ DEFAULT_PLUGIN_NS_BEGIN
 Node::Node(IFileContainer::Holder &container, FileSystem::Node *parent) :
 	BaseNode(container, parent)
 {
-	DefaultNodeRootItem::Holder item(new DefaultNodeRootItem());
-	items().add(item.as<DefaultNodeRootItem>()->label().toString(), item);
+	RootNodeItem::Holder item(new RootNodeItem());
+	items().add(item.as<RootNodeItem>()->label().toString(), item);
 }
 
 QModelIndex Node::rootIndex() const

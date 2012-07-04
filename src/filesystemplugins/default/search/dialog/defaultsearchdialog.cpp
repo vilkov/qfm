@@ -1,5 +1,7 @@
 #include "defaultsearchdialog.h"
 
+#include <QtGui/QMessageBox>
+
 
 DEFAULT_PLUGIN_NS_BEGIN
 
@@ -28,7 +30,10 @@ SearchDialog::SearchDialog(QWidget *parent) :
 
 void SearchDialog::accept()
 {
-	QDialog::accept();
+	if (m_editor.text().isEmpty())
+		QMessageBox::warning(this, windowTitle(), tr("Enter file name pattern"));
+	else
+		QDialog::accept();
 }
 
 void SearchDialog::reject()

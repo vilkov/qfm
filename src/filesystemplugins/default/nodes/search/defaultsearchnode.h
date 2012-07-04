@@ -1,25 +1,18 @@
 #ifndef DEFAULTSEARCHNODE_H_
 #define DEFAULTSEARCHNODE_H_
 
-#include "../defaultproxymodel.h"
-#include "../defaultdelegate.h"
-#include "../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../tools/containers/union.h"
+#include "../base/defaultbasenode.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class SearchNode : public TasksNode
+class SearchNode : public BaseNode
 {
 public:
 	SearchNode(IFileContainer::Holder &container, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
-
-    /* FileSystemModel */
-	virtual int columnCount(const QModelIndex &parent) const;
-	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -34,23 +27,11 @@ public:
 	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
 	virtual void copy(const INodeView *source, INodeView *destination);
 	virtual void move(const INodeView *source, INodeView *destination);
-	virtual void search(const QModelIndex &index, INodeView *view);
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
-
-	/* IFileLocation */
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
+	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view);
 
 	/* INode */
     virtual void refresh();
-	virtual QString title() const;
-	virtual Sorting sorting() const;
-	virtual Geometry geometry() const;
-	virtual QAbstractItemModel *model() const;
-	virtual QAbstractItemDelegate *delegate() const;
-	virtual const INodeView::MenuActionList &actions() const;
-	virtual QAbstractItemView::SelectionMode selectionMode() const;
-	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
 
 protected:
 	/* Node */
@@ -60,48 +41,15 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
-
-	void scanCompleteEvent(BaseTask::Event *event);
-	void copyCompleteEvent(BaseTask::Event *event);
-
-private:
-	bool isUpdating() const;
+	void searchCompleteEvent(BaseTask::Event *event);
 
 private:
 	enum { RootItemIndex = 0 };
 
-	class ItemsContainer : public Container
-	{
-	public:
-		typedef QList<NodeItem::Holder> List;
-
-	public:
-		ItemsContainer();
-
-		virtual size_type size() const;
-		virtual Item *at(size_type index) const;
-		virtual size_type indexOf(Item *item) const;
-
-	private:
-		friend class SearchNode;
-		List m_container;
-	};
-
 private:
-	typedef Tools::Containers::Union Union;
-	void updateFirstColumn(const NodeItem::Holder &entry);
-	void updateSecondColumn(const NodeItem::Holder &entry);
-
-private:
-	IFileContainer::Holder m_container;
-	ItemsContainer m_itemsContainer;
-    ItemsContainer::List &m_items;
-    ProxyModel m_proxy;
-    Delegate m_delegate;
-    INodeView::MenuActionList m_actions;
+	typedef ::Tools::Containers::Union Union;
+	void updateFirstColumn();
+	void updateSecondColumn();
 };
 
 DEFAULT_PLUGIN_NS_END

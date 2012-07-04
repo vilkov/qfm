@@ -17,6 +17,8 @@ class SearchDialog : public QDialog
 public:
 	SearchDialog(QWidget *parent = 0);
 
+	QString pattern() const { return m_editor.text(); }
+
     virtual void accept();
     virtual void reject();
 

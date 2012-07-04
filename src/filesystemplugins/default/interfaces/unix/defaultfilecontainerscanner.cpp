@@ -400,7 +400,7 @@ void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags
 					{
 						subtree = new WrappedNodeItem(snapshot.container(), NULL);
 
-						if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
+						if (subtree->thisContainer() = subtree->container()->open(tmp.fileName(), false, error))
 							scan(subtree.data(), aborted, error);
 
 						if (!subtree->isEmpty() || m_filter->match(&tmp))
@@ -428,7 +428,7 @@ void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags
 				{
 					subtree = new WrappedNodeItem(snapshot.container(), NULL);
 
-					if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
+					if (subtree->thisContainer() = subtree->container()->open(tmp.fileName(), false, error))
 						scan(subtree.data(), aborted, error);
 
 					if (!subtree->isEmpty() || m_filter->match(&tmp))
@@ -474,7 +474,7 @@ void FilteredFileContainerScanner::scan(WrappedNodeItem *root, const volatile Fl
 					{
 						subtree = new WrappedNodeItem(root->thisContainer().data(), root);
 
-						if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
+						if (subtree->thisContainer() = subtree->container()->open(tmp.fileName(), false, error))
 							scan(subtree.data(), aborted, error);
 
 						if (!subtree->isEmpty() || m_filter->match(&tmp))
@@ -502,7 +502,7 @@ void FilteredFileContainerScanner::scan(WrappedNodeItem *root, const volatile Fl
 				{
 					subtree = new WrappedNodeItem(root->thisContainer().data(), root);
 
-					if (subtree->thisContainer() = subtree->container()->open(subtree->info()->fileName(), false, error))
+					if (subtree->thisContainer() = subtree->container()->open(tmp.fileName(), false, error))
 						scan(subtree.data(), aborted, error);
 
 					if (!subtree->isEmpty() || m_filter->match(&tmp))

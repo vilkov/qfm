@@ -1,5 +1,5 @@
-#ifndef ARCNODEENTRYITEM_H_
-#define ARCNODEENTRYITEM_H_
+#ifndef ARCENTRYNODEITEM_H_
+#define ARCENTRYNODEITEM_H_
 
 #include "arcnodeitem.h"
 #include "../../../../filesystem/filetypeinfo/filetypeinfo.h"
@@ -8,13 +8,13 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcNodeEntryItem : public ArcNodeItem
+class EntryNodeItem : public NodeItem
 {
 public:
-	typedef QList<ArcNodeEntryItem::Holder> Container;
+	typedef QList<Holder> Container;
 
 public:
-	ArcNodeEntryItem(WrappedNodeItem *item, Base *parent = 0);
+	EntryNodeItem(WrappedNodeItem *item, Base *parent = 0);
 
 	/* Base */
 	virtual Base *at(size_type index) const;
@@ -35,4 +35,4 @@ private:
 
 ARC_PLUGIN_NS_END
 
-#endif /* ARCNODEENTRYITEM_H_ */
+#endif /* ARCENTRYNODEITEM_H_ */

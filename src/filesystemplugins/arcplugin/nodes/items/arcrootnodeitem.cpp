@@ -1,14 +1,14 @@
-#include "arcnoderootitem.h"
+#include "arcrootnodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNodeRootItem::ArcNodeRootItem(Base *parent) :
-	ArcNodeItem(parent),
+RootNodeItem::RootNodeItem(Base *parent) :
+	NodeItem(parent),
 	m_label(QString::fromLatin1(".."))
 {}
 
-QVariant ArcNodeRootItem::data(qint32 column, qint32 role) const
+QVariant RootNodeItem::data(qint32 column, qint32 role) const
 {
 	if (column == 0)
 		switch (role)
@@ -36,7 +36,7 @@ QVariant ArcNodeRootItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-bool ArcNodeRootItem::isRoot() const
+bool RootNodeItem::isRoot() const
 {
 	return true;
 }

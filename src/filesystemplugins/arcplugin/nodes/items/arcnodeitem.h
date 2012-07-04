@@ -7,10 +7,10 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-class ArcNodeItem : public TasksNodeItem
+class NodeItem : public TasksNodeItem
 {
 public:
-	ArcNodeItem(Base *parent);
+	NodeItem(Base *parent);
 
 	virtual void lock(const QString &reason);
 	void unlock() { TasksNodeItem::unlock(); stop(); }

@@ -1,35 +1,35 @@
-#include "arcnodeentryitem.h"
+#include "arcentrynodeitem.h"
 #include "../../../../filesystem/tools/filesystemcommontools.h"
 
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNodeEntryItem::ArcNodeEntryItem(WrappedNodeItem *item, Base *parent) :
-	ArcNodeItem(parent),
+EntryNodeItem::EntryNodeItem(WrappedNodeItem *item, Base *parent) :
+	NodeItem(parent),
 	m_info(item->info().take()),
 	m_totalSize(item->totalSize())
 {
 	for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
-		m_items.push_back(NodeItem::Holder(new ArcNodeEntryItem((*i), this)));
+		m_items.push_back(NodeItem::Holder(new EntryNodeItem((*i), this)));
 }
 
-ArcNodeEntryItem::Base *ArcNodeEntryItem::at(size_type index) const
+EntryNodeItem::Base *EntryNodeItem::at(size_type index) const
 {
 	return m_items.at(index).data();
 }
 
-ArcNodeEntryItem::size_type ArcNodeEntryItem::size() const
+EntryNodeItem::size_type EntryNodeItem::size() const
 {
 	return m_items.size();
 }
 
-ArcNodeEntryItem::size_type ArcNodeEntryItem::indexOf(Base *item) const
+EntryNodeItem::size_type EntryNodeItem::indexOf(Base *item) const
 {
-	ArcNodeItem::Holder holder(static_cast<ArcNodeEntryItem *>(item));
+	Holder holder(static_cast<EntryNodeItem *>(item));
 	return m_items.indexOf(holder);
 }
 
-QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
+QVariant EntryNodeItem::data(qint32 column, qint32 role) const
 {
 	switch (column)
 	{
@@ -92,7 +92,7 @@ QVariant ArcNodeEntryItem::data(qint32 column, qint32 role) const
 	return QVariant();
 }
 
-void ArcNodeEntryItem::lock(const QString &reason)
+void EntryNodeItem::lock(const QString &reason)
 {
 	start(m_totalSize);
 	TasksNodeItem::lock(reason);

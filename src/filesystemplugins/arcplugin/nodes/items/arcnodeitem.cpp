@@ -3,16 +3,16 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-ArcNodeItem::ArcNodeItem(Base *parent) :
+NodeItem::NodeItem(Base *parent) :
 	TasksNodeItem(parent)
 {}
 
-void ArcNodeItem::lock(const QString &reason)
+void NodeItem::lock(const QString &reason)
 {
 	TasksNodeItem::lock(reason);
 }
 
-bool ArcNodeItem::isRoot() const
+bool NodeItem::isRoot() const
 {
 	return false;
 }

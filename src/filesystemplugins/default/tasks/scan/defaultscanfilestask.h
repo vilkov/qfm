@@ -41,6 +41,7 @@ protected:
 protected:
 	Snapshot takeUpdates(Snapshot &snapshot);
 	Snapshot takeAllUpdates(Snapshot &snapshot);
+	inline bool isObsolete(const IFileInfo *oldInfo, const IFileInfo *newInfo);
 
 private:
 	Event::Type m_type;

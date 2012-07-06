@@ -34,25 +34,26 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 				WrappedNodeItem::Holder wrappedItem;
 				NodeItem::Holder item;
 				IFileInfo::Holder info;
-				QTime base = QTime::currentTime();
-				QTime current;
+				const IFileInfo *current;
+				QTime baseTime = QTime::currentTime();
+				QTime currentTime;
 
-				while (enumerator->next() && !aborted)
+				while ((current = enumerator->next()) && !aborted)
 				{
-					current = QTime::currentTime();
+					currentTime = QTime::currentTime();
 
-					if (item = m_snapshot.find(enumerator->fileName()))
-						if (enumerator->isObsolete(item.as<NodeItem>()->info().data()))
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
+					if (item = m_snapshot.find(current->fileName()))
+						if (isObsolete(item.as<NodeItem>()->info().data(), current))
+							m_snapshot.insert(current->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 						else
-							m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem());
+							m_snapshot.insert(current->fileName(), new WrappedNodeItem());
 					else
-						m_snapshot.insert(enumerator->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
+						m_snapshot.insert(current->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 
-					if (base.msecsTo(current) > 300)
+					if (baseTime.msecsTo(currentTime) > 300)
 					{
 						Snapshot localUpdates(takeUpdates(m_snapshot));
-						base = current;
+						baseTime = currentTime;
 
 						if (!localUpdates.isEmpty())
 							postEvent(new UpdatesEvent(this, false, localUpdates, false));
@@ -101,6 +102,14 @@ Snapshot ScanFilesTask::takeUpdates(Snapshot &snapshot)
 			++it;
 
 	return res;
+}
+
+bool ScanFilesTask::isObsolete(const IFileInfo *oldInfo, const IFileInfo *newInfo)
+{
+	return  oldInfo->lastModified() != newInfo->lastModified() ||
+			oldInfo->fileSize() != newInfo->fileSize() ||
+			oldInfo->permissions() != newInfo->permissions() ||
+			oldInfo->fileType()->name().isEmpty();
 }
 
 DEFAULT_PLUGIN_NS_END

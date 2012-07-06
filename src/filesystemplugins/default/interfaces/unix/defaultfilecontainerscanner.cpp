@@ -37,7 +37,7 @@ public:
 		closedir(m_dir);
 	}
 
-	virtual bool next()
+	virtual const IFileInfo *next()
 	{
 		while (readdir_r(m_dir, &m_buffer.d, &m_entry) == 0 && m_entry)
 			if (m_entry->d_type == DT_DIR || m_entry->d_type == DT_UNKNOWN)
@@ -47,7 +47,7 @@ public:
 					m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_entry->d_name)), Info::Identify());
 
 					if (m_info.isFile() || m_info.isDir())
-						return true;
+						return &m_info;
 				}
 			}
 			else
@@ -55,29 +55,15 @@ public:
 				m_info = Info(QString::fromUtf8(QByteArray(m_path).append(m_entry->d_name)), Info::Identify());
 
 				if (m_info.isFile() || m_info.isDir())
-					return true;
+					return &m_info;
 			}
 
-		return false;
-	}
-
-	virtual QString fileName() const
-	{
-		return m_info.fileName();
+		return NULL;
 	}
 
 	virtual IFileInfo *info() const
 	{
 		return new Info(m_info);
-	}
-
-	virtual bool isObsolete(const IFileInfo *item) const
-	{
-		return
-			item->lastModified() != m_info.lastModified() ||
-			item->fileSize() != m_info.fileSize() ||
-			item->permissions() != m_info.permissions() ||
-			item->fileType()->name().isEmpty();
 	}
 
 	virtual IFileAccessor *open(int mode, QString &error) const
@@ -111,7 +97,7 @@ public:
 		m_filter(filter)
 	{}
 
-	virtual bool next()
+	virtual const IFileInfo *next()
 	{
 		while (readdir_r(m_dir, &m_buffer.d, &m_entry) == 0 && m_entry)
 			if (m_entry->d_type == DT_DIR || m_entry->d_type == DT_UNKNOWN)
@@ -123,7 +109,7 @@ public:
 					if ((m_info.isFile() || m_info.isDir()) && m_filter->match(&m_info))
 					{
 						m_info = Info(m_info, Info::Identify());
-						return true;
+						return &m_info;
 					}
 				}
 			}
@@ -134,11 +120,11 @@ public:
 				if ((m_info.isFile() || m_info.isDir()) && m_filter->match(&m_info))
 				{
 					m_info = Info(m_info, Info::Identify());
-					return true;
+					return &m_info;
 				}
 			}
 
-		return false;
+		return NULL;
 	}
 
 private:

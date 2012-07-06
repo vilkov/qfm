@@ -24,10 +24,8 @@ public:
 	public:
 		virtual ~IEnumerator();
 
-		virtual bool next() = 0;
-		virtual QString fileName() const = 0;
+		virtual const IFileInfo *next() = 0;
 		virtual IFileInfo *info() const = 0;
-		virtual bool isObsolete(const IFileInfo *item) const = 0;
 		virtual IFileAccessor *open(int mode, QString &error) const = 0;
 	};
 

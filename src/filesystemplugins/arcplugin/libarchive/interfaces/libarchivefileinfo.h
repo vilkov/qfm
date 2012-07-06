@@ -19,6 +19,7 @@ public:
 	};
 
 public:
+	Info();
 	Info(const Data &data, bool isDir);
 
 	/* IFileInfo */

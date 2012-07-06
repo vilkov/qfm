@@ -4,6 +4,9 @@
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
 
+Info::Info()
+{}
+
 Info::Info(const Data &data, bool isDir) :
 	m_data(data),
 	m_isDir(isDir),

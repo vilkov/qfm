@@ -79,31 +79,27 @@ public:
 		m_archive(archive)
 	{}
 
-	virtual bool next()
+	virtual const IFileInfo *next()
 	{
-	    return archive_read_next_header(m_archive, &m_entry) == ARCHIVE_OK;
-	}
+		if (archive_read_next_header(m_archive, &m_entry) == ARCHIVE_OK)
+		{
+			Info::Data data;
 
-	virtual QString fileName() const
-	{
-		return QString::fromUtf8(archive_entry_pathname(m_entry));
+			data.path = QByteArray(archive_entry_pathname(m_entry));
+			data.fileName = QString::fromUtf8(data.path);
+			data.fileSize = archive_entry_size(m_entry);
+			data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(m_entry));
+
+			m_info = Info(data, archive_entry_filetype(m_entry) & AE_IFDIR);
+			return &m_info;
+		}
+
+		return NULL;
 	}
 
 	virtual IFileInfo *info() const
 	{
-		Info::Data data;
-
-		data.path = QByteArray(archive_entry_pathname(m_entry));
-		data.fileName = QString::fromUtf8(data.path);
-		data.fileSize = archive_entry_size(m_entry);
-		data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(m_entry));
-
-		return new Info(data, archive_entry_filetype(m_entry) & AE_IFDIR);
-	}
-
-	virtual bool isObsolete(const IFileInfo *item) const
-	{
-		return false;
+		return new Info(m_info);
 	}
 
 	virtual IFileAccessor *open(int mode, QString &error) const
@@ -112,6 +108,7 @@ public:
 	}
 
 private:
+	Info m_info;
 	ReadArchive m_reader;
 	struct archive *m_archive;
 	struct archive_entry *m_entry;

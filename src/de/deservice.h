@@ -25,6 +25,11 @@ public:
 		DE_Unknown
 	};
 
+	enum IconSize
+	{
+		Small = 16
+	};
+
 public:
 	Service();
 	~Service();
@@ -32,24 +37,24 @@ public:
 	Type type() const { return m_type; }
 	const QLocale &locale() const { return m_locale; }
 
-	QIcon processingIcon(int iconSize) const;
-	QIcon cancelingIcon(int iconSize) const;
+	QIcon processingIcon(int iconSize = Small) const;
+	QIcon cancelingIcon(int iconSize = Small) const;
 
-	QIcon copyActionIcon(int iconSize) const;
-	QIcon cutActionIcon(int iconSize) const;
-	QIcon pasteActionIcon(int iconSize) const;
-	QIcon propertiesActionIcon(int iconSize) const;
+	QIcon copyActionIcon(int iconSize = Small) const;
+	QIcon cutActionIcon(int iconSize = Small) const;
+	QIcon pasteActionIcon(int iconSize = Small) const;
+	QIcon propertiesActionIcon(int iconSize = Small) const;
 
-	QIcon packActionIcon(int iconSize) const;
-	QIcon unpackActionIcon(int iconSize) const;
+	QIcon packActionIcon(int iconSize = Small) const;
+	QIcon unpackActionIcon(int iconSize = Small) const;
 
-	QIcon searchIcon(int iconSize) const;
-	QIcon openDataIcon(int iconSize) const;
+	QIcon searchIcon(int iconSize = Small) const;
+	QIcon openDataIcon(int iconSize = Small) const;
 
-	QIcon missingIcon(int iconSize) const;
+	QIcon missingIcon(int iconSize = Small) const;
 
-	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const;
-	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const;
+	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize = Small) const;
+	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
 
 	void open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const;
 

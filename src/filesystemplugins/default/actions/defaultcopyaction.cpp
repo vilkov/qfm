@@ -5,7 +5,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 CopyAction::CopyAction() :
-	SyncFileAction(Application::desktopService()->copyActionIcon(16), tr("Copy"))
+	SyncFileAction(Application::desktopService()->copyActionIcon(), tr("Copy"))
 {}
 
 void CopyAction::process(const IFileContainer *container, const FilesList &files) const

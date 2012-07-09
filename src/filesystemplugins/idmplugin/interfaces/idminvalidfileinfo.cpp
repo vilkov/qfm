@@ -6,7 +6,7 @@ IDM_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo(const QString &fileName) :
 	m_fileName(fileName),
-	m_icon(Application::desktopService()->missingIcon(16))
+	m_icon(Application::desktopService()->missingIcon())
 {}
 
 FileTypeId InvalidInfo::id() const

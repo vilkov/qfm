@@ -12,14 +12,14 @@ NodeItem::NodeItem(Base *parent) :
 void NodeItem::lock(const QString &reason)
 {
 	m_reason = reason;
-	m_icon = Application::desktopService()->processingIcon(16);
+	m_icon = Application::desktopService()->processingIcon();
 	m_locked = true;
 }
 
 void NodeItem::cancel(const QString &reason)
 {
 	m_reason = reason;
-	m_icon = Application::desktopService()->cancelingIcon(16);
+	m_icon = Application::desktopService()->cancelingIcon();
 }
 
 FILE_SYSTEM_NS_END

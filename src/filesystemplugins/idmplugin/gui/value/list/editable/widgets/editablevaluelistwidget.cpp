@@ -101,7 +101,7 @@ EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callba
 	m_vLayout(this),
 	m_handler(this),
 	m_filter(&m_handler, this),
-	m_search(Application::desktopService()->searchIcon(16), QString(), this),
+	m_search(Application::desktopService()->searchIcon(), QString(), this),
 	m_view(handler, this),
 	m_model(m_container, query)
 {

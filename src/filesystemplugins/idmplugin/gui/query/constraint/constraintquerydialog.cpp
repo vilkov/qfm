@@ -14,7 +14,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	m_label(m_property.name, this),
 	m_operator(this),
 	m_edit(this),
-	m_choose(Application::desktopService()->openDataIcon(16), QString(), this),
+	m_choose(Application::desktopService()->openDataIcon(), QString(), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {

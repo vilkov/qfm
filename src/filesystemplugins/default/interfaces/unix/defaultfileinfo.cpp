@@ -92,7 +92,7 @@ Info::Info<Info::Identify>(const QString &filePath, Identify) :
 	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
 {
 	refresh();
-	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
+	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
 }
 
 template <>
@@ -120,7 +120,7 @@ Info::Info<Info::Identify>(const Info &other, Identify) :
 	m_fileName(other.m_fileName),
 	m_info(other.m_info)
 {
-	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir, 16);
+	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
 }
 
 QString Info::operator-(const Info &o) const

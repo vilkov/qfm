@@ -5,7 +5,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PasteAction::PasteAction() :
-	AsyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste")),
+	AsyncFileAction(Application::desktopService()->pasteActionIcon(), tr("Paste")),
 	m_lockReason(tr("Copying..."))
 {}
 

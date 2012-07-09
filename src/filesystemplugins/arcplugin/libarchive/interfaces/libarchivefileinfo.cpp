@@ -10,7 +10,7 @@ Info::Info()
 Info::Info(const Data &data, bool isDir) :
 	m_data(data),
 	m_isDir(isDir),
-	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_data.fileName, m_isDir, 16))
+	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_data.fileName, m_isDir))
 {}
 
 bool Info::isDir() const

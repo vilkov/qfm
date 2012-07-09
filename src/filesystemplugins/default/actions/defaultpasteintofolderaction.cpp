@@ -5,7 +5,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PasteIntoFolderAction::PasteIntoFolderAction() :
-	AsyncFileAction(Application::desktopService()->pasteActionIcon(16), tr("Paste into folder")),
+	AsyncFileAction(Application::desktopService()->pasteActionIcon(), tr("Paste into folder")),
 	m_lockReason(tr("Copying..."))
 {}
 

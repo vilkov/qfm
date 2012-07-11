@@ -13,7 +13,7 @@ public:
 	IdmCopyControlBase(ICopyControl::Holder &dest, const IdmContainer &container);
 
 	/* IFileContainer */
-	virtual bool isPhysical() const;
+	virtual bool isDefault() const;
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 

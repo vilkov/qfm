@@ -53,13 +53,10 @@ public:
 
 	QIcon missingIcon(int iconSize = Small) const;
 
-	::FileSystem::FileTypeInfo fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize = Small) const;
+	::FileSystem::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
 	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
 
 	void open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const;
-
-
-	void test(const QString &absoluteFilePath) const;
 
 private:
 	QByteArray themeName() const;

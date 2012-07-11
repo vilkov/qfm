@@ -1,4 +1,5 @@
 #include "../defaultfileaccessor.h"
+#include "../defaultfileinfo.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -9,8 +10,8 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-FileAccesor::FileAccesor(const QString &absoluteFilePath, int flags) :
-	m_file(::open(absoluteFilePath.toUtf8(),
+FileAccesor::FileAccesor(const QByteArray &absoluteFilePath, int flags) :
+	m_file(::open(absoluteFilePath,
 				  open_flags[flags & ReadOnly]  |
 				  open_flags[flags & ReadWrite] |
 				  open_flags[flags & Open]      |
@@ -57,7 +58,7 @@ bool FileAccesor::isValid() const
 
 QString FileAccesor::lastError() const
 {
-	return QString::fromUtf8(::strerror(errno));
+	return Info::codec()->toUnicode(::strerror(errno));
 }
 
 int FileAccesor::permissions() const

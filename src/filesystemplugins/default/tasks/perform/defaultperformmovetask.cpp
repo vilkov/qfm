@@ -9,7 +9,7 @@ PerformMoveTask::PerformMoveTask(TasksNode *receiver, ICopyControl::Holder &dest
 
 void PerformMoveTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
-	if (destination->move(entry->container(), entry->info()->fileName(), m_lastError))
+	if (destination->move(entry->container(), entry->info(), m_lastError))
 		m_progress.update(entry->info()->fileSize());
 	else
 		PerformCopyTask::copyFile(destination, entry, tryAgain = false, aborted);

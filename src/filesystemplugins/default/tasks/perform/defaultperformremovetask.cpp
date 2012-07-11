@@ -64,7 +64,7 @@ void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAg
 
 void PerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
-	if (!entry->container()->remove(entry->info()->fileName(), m_error))
+	if (!entry->container()->remove(entry->info(), m_error))
 		if (m_skipAllIfNotRemove)
 			entry->setRemoved(false);
 		else
@@ -72,7 +72,7 @@ void PerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain
 			qint32 answer = askUser(
 								tr("Failed to remove"),
 								tr("\"%1\" (%2). Skip it?").
-									arg(entry->container()->location(entry->info()->fileName())).
+									arg(entry->container()->location().append(QChar('/')).append(entry->info()->fileName())).
 									arg(m_error),
 								QMessageBox::Yes |
 								QMessageBox::YesToAll |

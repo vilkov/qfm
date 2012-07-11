@@ -16,7 +16,6 @@ public:
 
 	/* IFileContainerScanner */
 	virtual IEnumerator *enumerate(QString &error) const;
-	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 
@@ -32,18 +31,17 @@ protected:
 class FilteredFileContainerScanner : public FileContainerScanner
 {
 public:
-	FilteredFileContainerScanner(const IFileContainer *container, IFileContainer::Filter::Holder &filter);
+	FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter);
 
 	/* IFileContainerScanner */
 	virtual IEnumerator *enumerate(QString &error) const;
-	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 
 protected:
 	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
 	virtual void scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const;
 
 private:
-	IFileContainer::Filter::Holder m_filter;
+	const IFileContainer::Filter *m_filter;
 };
 
 DEFAULT_PLUGIN_NS_END

@@ -74,7 +74,7 @@ FileSystem::Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected
 			return rootNode->viewChild(++path, selected);
 		else
 		{
-			IFileContainer::Holder container(new FileContainer(QString()));
+			IFileContainer::Holder container(new FileContainer(QByteArray()));
 			rootNode = new LocalRootFolderNode(container);
 
 			return rootNode->viewChild(++path, selected);
@@ -93,7 +93,7 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 
 FileSystem::Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, FileSystem::Node *parent) const
 {
-	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
+	IFileContainer::Holder folder(container->open(file, m_error));
 
 	if (folder)
 		return new Node(folder, parent);

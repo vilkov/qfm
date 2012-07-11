@@ -1,6 +1,8 @@
 #include "libunrarunpackintosubdiractiontask.h"
 #include "../../interfaces/libunrarscanner.h"
 #include "../../interfaces/libunrarfilecontainer.h"
+#include "../../../../default/interfaces/defaultfileinfo.h"
+#include "../../../../default/interfaces/defaultfilecontainer.h"
 
 #include <wchar.h>
 #include <libunrar/rar.hpp>
@@ -25,6 +27,8 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	IFileContainer::Holder destination;
 	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
 
+	QByteArray path = QByteArray(static_cast<const Default::BaseFileContainer *>(m_container)->m_path).append('/');
+
 	int res;
 	void *archive;
 	struct RARHeaderDataEx fileInfo;
@@ -35,7 +39,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 		if (tryier.tryTo(CreateDestination(m_container, m_file = files().at(i).second, destination)))
 		{
-			fileName = m_container->location(m_file->fileName()).toUtf8();
+			fileName = QByteArray(path).append(static_cast<const Default::Info *>(m_file)->rawFileName());
 
 			memset(&archiveData, 0, sizeof(struct RAROpenArchiveDataEx));
 
@@ -62,7 +66,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 
 bool UnPackIntoSubdirActionTask::CreateDestination::operator()(QString &error) const
 {
-	return m_result = m_container->open(FileContainer::extractDirectoryName(m_file), true, error);
+	return m_result = m_container->create(FileContainer::extractDirectoryName(m_file), error);
 }
 
 bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Flags &aborted)

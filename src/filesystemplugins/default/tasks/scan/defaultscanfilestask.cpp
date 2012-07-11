@@ -32,21 +32,21 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 			if (enumerator = m_snapshot.container()->scanner()->enumerate(error))
 			{
 				WrappedNodeItem::Holder wrappedItem;
-				NodeItem::Holder item;
+				Snapshot::iterator item;
 				IFileInfo::Holder info;
 				const IFileInfo *current;
 				QTime baseTime = QTime::currentTime();
 				QTime currentTime;
 
-				while ((current = enumerator->next()) && !aborted)
+				for (Snapshot::iterator item, end = m_snapshot.end(); (current = enumerator->next()) && !aborted;)
 				{
 					currentTime = QTime::currentTime();
 
-					if (item = m_snapshot.find(current->fileName()))
-						if (isObsolete(item.as<NodeItem>()->info().data(), current))
-							m_snapshot.insert(current->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
+					if ((item = m_snapshot.find(current->fileName())) != end)
+						if (isObsolete((*item).first.as<NodeItem>()->info(), current))
+							m_snapshot.insert(item, new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 						else
-							m_snapshot.insert(current->fileName(), new WrappedNodeItem());
+							m_snapshot.insert(item, new WrappedNodeItem());
 					else
 						m_snapshot.insert(current->fileName(), new WrappedNodeItem(m_snapshot.container(), info = enumerator->info(), NULL));
 

@@ -19,6 +19,7 @@ public:
     T *operator->() const { return m_data.operator->(); }
     T *data() const { return m_data.data(); }
     operator bool() const { return !m_data.isNull(); }
+    operator const T *() const { return m_data.data(); }
 
     class_type &operator=(T *p) { reset(p); return *this; }
 
@@ -26,6 +27,12 @@ public:
     void swap(class_type &other) { m_data.swap(other.m_data); }
     T *take() { return m_data.take(); }
     void release() { m_data.take(); }
+
+    template <typename R> inline
+    const R *as() const { return static_cast<const R *>(m_data.data()); }
+
+    template <typename R> inline
+    R *as() { return static_cast<R *>(m_data.data()); }
 
 private:
     PScopedPointer(const class_type &);

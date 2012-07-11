@@ -188,11 +188,6 @@ Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 	return new Enumerator(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
 }
 
-IFileInfo *Scanner::info(const QString &fileName, QString &error) const
-{
-	return NULL;
-}
-
 void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
 	ReadArchive archive(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);

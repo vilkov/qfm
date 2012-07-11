@@ -10,9 +10,9 @@ IdmCopyControlBase::IdmCopyControlBase(ICopyControl::Holder &dest, const IdmCont
 	m_storage(difference(m_dest->location(), m_container.container()->location()).append(QChar('/')))
 {}
 
-bool IdmCopyControlBase::isPhysical() const
+bool IdmCopyControlBase::isDefault() const
 {
-	return m_dest->isPhysical();
+	return m_dest->isDefault();
 }
 
 IFileInfo::size_type IdmCopyControlBase::freeSpace() const

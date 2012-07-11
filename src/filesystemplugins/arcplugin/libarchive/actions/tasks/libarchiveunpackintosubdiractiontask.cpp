@@ -79,7 +79,7 @@ bool UnPackIntoSubdirActionTask::OpenArchive::operator()(QString &error) const
 
 bool UnPackIntoSubdirActionTask::CreateDestination::operator()(QString &error) const
 {
-	return m_result = m_container->open(FileContainer::extractDirectoryName(m_file), true, error);
+	return m_result = m_container->create(FileContainer::extractDirectoryName(m_file), error);
 }
 
 bool UnPackIntoSubdirActionTask::OpenDestination::operator()(QString &error) const
@@ -109,7 +109,7 @@ bool UnPackIntoSubdirActionTask::OverwriteFile::operator()(QString &error) const
 
 bool UnPackIntoSubdirActionTask::CreateFile::operator()(QString &error) const
 {
-	return m_result = m_container->open(m_fileName, IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, error);
+	return m_result = m_container->create(m_fileName, IFileAccessor::ReadWrite | IFileAccessor::Truncate, error);
 }
 
 bool UnPackIntoSubdirActionTask::askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Flags &aborted)

@@ -377,7 +377,22 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 void BaseNode::createFile(const QModelIndex &index, INodeView *view)
 {
+	QString name;
 
+	if (index.isValid())
+	{
+		NodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<NodeItem>();
+
+		if (!item->isRootItem())
+			name = item->info()->fileName();
+	}
+
+	StringDialog dialog(tr("Enter name for new file"), tr("Name"), name, Application::mainWindow());
+
+	if (dialog.exec() == QDialog::Accepted)
+	{
+
+	}
 }
 
 void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
@@ -397,12 +412,12 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 	if (dialog.exec() == QDialog::Accepted)
 	{
 		QString error;
-		IFileContainer::Holder folder(m_container->open(dialog.value(), true, error));
+		IFileContainer::Holder folder(m_container->create(dialog.value(), error));
 
 		if (folder)
 		{
 			NodeItem *item;
-			IFileInfo::Holder info(m_container->scanner()->info(dialog.value(), error));
+			IFileInfo::Holder info(m_container->info(dialog.value(), error));
 
 			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 			m_items.add(NodeItem::Holder(item = new NodeItem(info)));
@@ -550,7 +565,7 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 		QString error;
 		IFileInfo::Holder info;
 
-		if (info = m_container->scanner()->info(fileName, error))
+		if (info = m_container->info(fileName, error))
 			if (Node *node = createNode(info.data()))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
@@ -896,7 +911,7 @@ void BaseNode::scanForRemove(const Snapshot &snapshot)
 
 void BaseNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
-	if (destination->isPhysical() && move)
+	if (destination->isDefault() && move)
 	{
 		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
 		resetTask(task.data(), oldTask);

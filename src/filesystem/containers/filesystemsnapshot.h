@@ -52,13 +52,19 @@ public:
 	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
 	bool isRemoved(const_iterator i) const { return (*i).second == NULL; }
 
-	NodeItem::Holder find(const QString &fileName) const
+	const_iterator find(const QString &fileName) const
 	{
-		return m_data->map.value(fileName).first;
+		return m_data->map.find(fileName);
+	}
+
+	iterator find(const QString &fileName)
+	{
+		return m_data->map.find(fileName);
 	}
 
 	void insert(iterator &i, WrappedNodeItem *item)
 	{
+		delete (*i).second;
 		(*i).second = item;
 	}
 

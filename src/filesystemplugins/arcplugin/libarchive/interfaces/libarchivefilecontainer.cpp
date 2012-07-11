@@ -9,12 +9,12 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 
 	if (localContainer)
 	{
-		IFileAccessor::Holder reader(localContainer->open(file->fileName(), IFileAccessor::ReadWrite, error));
+		IFileAccessor::Holder reader(localContainer->open(file, IFileAccessor::ReadWrite, error));
 
 		if (reader)
 			return new FileContainer(localContainer, reader, file->fileName());
 		else
-			if (reader = localContainer->open(file->fileName(), IFileAccessor::ReadOnly, error))
+			if (reader = localContainer->open(file, IFileAccessor::ReadOnly, error))
 				return new FileContainer(localContainer, reader, file->fileName());
 	}
 
@@ -33,7 +33,7 @@ QString FileContainer::extractArchivedFileName(const IFileInfo *file)
 	return fileName.mid(fileName.lastIndexOf(QChar('/')) + 1);
 }
 
-bool FileContainer::isPhysical() const
+bool FileContainer::isDefault() const
 {
 	return false;
 }
@@ -53,27 +53,27 @@ QString FileContainer::location() const
 	return m_path;
 }
 
-QString FileContainer::location(const QString &fileName) const
-{
-	return QString(m_path).append(QChar('/')).append(fileName);
-}
-
 bool FileContainer::contains(const QString &fileName) const
 {
 	return false;
 }
 
-bool FileContainer::remove(const QString &fileName, QString &error) const
+IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
+{
+	return NULL;
+}
+
+bool FileContainer::remove(const IFileInfo *info, QString &error) const
 {
 	return false;
 }
 
-bool FileContainer::rename(const QString &oldName, const QString &newName, QString &error) const
+bool FileContainer::rename(const IFileInfo *oldInfo, IFileInfo *newInfo, QString &error) const
 {
 	return false;
 }
 
-bool FileContainer::move(const IFileContainer *source, const QString &fileName, QString &error) const
+bool FileContainer::move(const IFileContainer *source, const IFileInfo *info, QString &error) const
 {
 	return false;
 }
@@ -83,12 +83,22 @@ IFileContainer *FileContainer::open() const
 	return new FileContainer(*this);
 }
 
-IFileAccessor *FileContainer::open(const QString &fileName, int flags, QString &error) const
+IFileContainer *FileContainer::open(const IFileInfo *info, QString &error) const
 {
 	return NULL;
 }
 
-IFileContainer *FileContainer::open(const QString &fileName, bool create, QString &error) const
+IFileAccessor *FileContainer::open(const IFileInfo *info, int flags, QString &error) const
+{
+	return NULL;
+}
+
+IFileContainer *FileContainer::create(const QString &fileName, QString &error) const
+{
+	return NULL;
+}
+
+IFileAccessor *FileContainer::create(const QString &fileName, int flags, QString &error) const
 {
 	return NULL;
 }
@@ -105,7 +115,7 @@ const IFileContainerScanner *FileContainer::scanner() const
 
 FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
 	m_data(new Data(container, file, fileName)),
-	m_path(m_data->container->location(fileName))
+	m_path(m_data->container->location().append(QChar('/')).append(fileName))
 {}
 
 LIBARCHIVE_ARC_PLUGIN_NS_END

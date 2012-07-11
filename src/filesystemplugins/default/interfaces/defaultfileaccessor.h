@@ -16,7 +16,7 @@ DEFAULT_PLUGIN_NS_BEGIN
 class FileAccesor : public IFileAccessor
 {
 public:
-	FileAccesor(const QString &absoluteFilePath, int mode);
+	FileAccesor(const QByteArray &absoluteFilePath, int mode);
 	virtual ~FileAccesor();
 
 	bool isValid() const;

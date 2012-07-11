@@ -10,7 +10,7 @@ PropertiesAction::PropertiesAction() :
 
 void PropertiesAction::process(const IFileContainer *container, const FilesList &files) const
 {
-	Application::desktopService()->test(container->location(files.at(0).second->fileName()));
+
 }
 
 DEFAULT_PLUGIN_NS_END

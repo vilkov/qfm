@@ -85,9 +85,9 @@ private:
 };
 
 
-Scanner::Scanner(const IFileContainer *container, const QString &fileName) :
+Scanner::Scanner(const IFileContainer *container, const QByteArray &filePath) :
 	m_container(container),
-	m_fileName(fileName)
+	m_filePath(filePath)
 {}
 
 Scanner::~Scanner()
@@ -99,19 +99,12 @@ Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 	return NULL;
 }
 
-IFileInfo *Scanner::info(const QString &fileName, QString &error) const
-{
-	return NULL;
-}
-
 void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
-	QByteArray fileName(m_container->location(m_fileName).toUtf8());
-
 	struct RAROpenArchiveDataEx archiveData;
 	memset(&archiveData, 0, sizeof(struct RAROpenArchiveDataEx));
 
-	archiveData.ArcName = fileName.data();
+	archiveData.ArcName = const_cast<char *>(m_filePath.data());
 	archiveData.OpenMode = RAR_OM_LIST;
 
 	if (void *archive = RAROpenArchiveEx(&archiveData))

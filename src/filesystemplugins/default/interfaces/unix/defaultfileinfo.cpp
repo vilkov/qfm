@@ -2,6 +2,8 @@
 #include "../defaultfileaccessor.h"
 #include "../../../../application.h"
 
+#include <QtCore/QTextCodec>
+
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
@@ -38,11 +40,11 @@ static int translatePermissions(const struct stat &st)
 }
 
 
-static QString normalizeFilePath(const QString &filePath, bool &isRoot)
+static QByteArray normalizeFilePath(const QByteArray &filePath, bool &isRoot)
 {
-	QString res = filePath;
+	QByteArray res = filePath;
 
-	if (res.startsWith(QChar('/')))
+	if (res.startsWith('/'))
 	{
 		if (res.size() == 1)
 		{
@@ -55,10 +57,10 @@ static QString normalizeFilePath(const QString &filePath, bool &isRoot)
 		char buff[PATH_MAX] = {};
 
 		if (char *name = getcwd(buff, PATH_MAX))
-			res.prepend(QString::fromUtf8(name));
+			res.prepend(name);
 	}
 
-	if (res.endsWith(QChar('/')))
+	if (res.endsWith('/'))
 		res.chop(1);
 
 	return res;
@@ -69,27 +71,38 @@ Info::Info() :
 	m_isRoot(false)
 {}
 
-template <>
-Info::Info<Info::None>(const QString &filePath, None) :
-	m_isRoot(false),
-	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
+Info::Info(const Info &other) :
+	m_isRoot(other.m_isRoot),
+	m_filePath(other.m_filePath),
+	m_fileName(other.m_fileName),
+	m_fileNameString(other.m_fileNameString),
+	m_info(other.m_info)
 {}
 
 template <>
-Info::Info<Info::Refresh>(const QString &filePath, Refresh) :
+Info::Info<Info::None>(const QByteArray &filePath, None) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
+	m_fileName(filePath.mid(filePath.lastIndexOf('/') + 1)),
+    m_fileNameString(codec()->toUnicode(m_fileName))
+{}
+
+template <>
+Info::Info<Info::Refresh>(const QByteArray &filePath, Refresh) :
+	m_isRoot(false),
+	m_filePath(normalizeFilePath(filePath, m_isRoot)),
+	m_fileName(m_filePath.mid(m_filePath.lastIndexOf('/') + 1)),
+    m_fileNameString(codec()->toUnicode(m_fileName))
 {
 	refresh();
 }
 
 template <>
-Info::Info<Info::Identify>(const QString &filePath, Identify) :
+Info::Info<Info::Identify>(const QByteArray &filePath, Identify) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(filePath.mid(filePath.lastIndexOf(QChar('/')) + 1))
+	m_fileName(m_filePath.mid(m_filePath.lastIndexOf('/') + 1)),
+    m_fileNameString(codec()->toUnicode(m_fileName))
 {
 	refresh();
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
@@ -100,6 +113,7 @@ Info::Info<Info::None>(const Info &other, None) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
+    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {}
 
@@ -108,6 +122,7 @@ Info::Info<Info::Refresh>(const Info &other, Refresh) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
+    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {
 	refresh();
@@ -118,6 +133,7 @@ Info::Info<Info::Identify>(const Info &other, Identify) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
+    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
@@ -163,7 +179,7 @@ Info::size_type Info::fileSize() const
 
 QString Info::fileName() const
 {
-	return m_fileName;
+	return m_fileNameString;
 }
 
 const IFileType *Info::fileType() const
@@ -201,12 +217,16 @@ QString Info::description() const
 	return m_info.type.description;
 }
 
+QTextCodec *Info::codec()
+{
+	return QTextCodec::codecForLocale();
+}
+
 void Info::refresh()
 {
 	struct stat st;
-	QByteArray name = m_filePath.toUtf8();
 
-	if (m_info.exists = (::lstat(name, &st) == 0))
+	if (m_info.exists = (::lstat(m_filePath, &st) == 0))
 		if ((m_info.isFile = S_ISREG(st.st_mode)) || (m_info.isDir = S_ISDIR(st.st_mode)))
 		{
 			m_info.size = st.st_size;
@@ -218,7 +238,7 @@ void Info::refresh()
 			{
 				char buff[PATH_MAX] = {};
 
-				if (::readlink(name, buff, PATH_MAX) == 0)
+				if (::readlink(m_filePath, buff, PATH_MAX) == 0)
 					if (char *realName = ::canonicalize_file_name(buff))
 					{
 						if (m_info.exists = (stat(realName, &st) == 0))

@@ -451,17 +451,16 @@ QIcon Service::missingIcon(int iconSize) const
 	return iconCache->findIcon("image-missing", iconSize, XdgThemeStatus);
 }
 
-::FileSystem::FileTypeInfo Service::fileTypeInfo(const QString &absoluteFilePath, bool isDir, int iconSize) const
+::FileSystem::FileTypeInfo Service::fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
 	else
 	{
-		QByteArray fileName = absoluteFilePath.toUtf8();
-		const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName);
+		const char *mimeType = xdg_mime_get_mime_type_from_file_name(absoluteFilePath);
 
 		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
-			mimeType = xdg_mime_get_mime_type_for_file(fileName, NULL);
+			mimeType = xdg_mime_get_mime_type_for_file(absoluteFilePath, NULL);
 
 		return fileTypeInfo(mimeType, iconSize);
 	}
@@ -482,8 +481,8 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 
 	if (findProgram(file->fileType()->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
 	{
-		QString absoluteFilePath = container->location(file->fileName());
-		QByteArray workingDirectory = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar('/'))).toUtf8();
+		QString absoluteFilePath;// = container->location(file->fileName());
+		QByteArray workingDirectory;// = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar('/'))).toUtf8();
 
 		List arguments = QByteArray(args[0]).
 				replace("%d", QByteArray()).
@@ -496,11 +495,11 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 				trimmed().
 				split(' ');
 
-		QByteArray fileName = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar('/')) + 1).toUtf8().
-				replace('"', "\\\"").
-				replace('`', "\\`").
-				replace('$', "\\$").
-				replace('\\', "\\\\");
+		QByteArray fileName;// = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar('/')) + 1).toUtf8().
+//				replace('"', "\\\"").
+//				replace('`', "\\`").
+//				replace('$', "\\$").
+//				replace('\\', "\\\\");
 
 		for (List::size_type i = 0, size = arguments.size(); i < size;)
 			if (arguments.at(i).indexOf('=') != -1)
@@ -556,11 +555,6 @@ void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSy
 			exit(EXIT_FAILURE);
 		}
 	}
-}
-
-void Service::test(const QString &absoluteFilePath) const
-{
-	fileTypeInfo(absoluteFilePath, false, 16);
 }
 
 QByteArray Service::themeName() const

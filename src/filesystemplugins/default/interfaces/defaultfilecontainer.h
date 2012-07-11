@@ -4,40 +4,59 @@
 #include "defaultfilecontainerscanner.h"
 
 
+namespace FileSystem {
+	namespace Plugins {
+		namespace Arc {
+			namespace LibUnrar {
+				class FileContainer;
+				class UnPackIntoSubdirActionTask;
+			}
+		}
+	}
+}
+
+
 DEFAULT_PLUGIN_NS_BEGIN
 
 class BaseFileContainer : public IFileContainer
 {
 public:
-	BaseFileContainer(const QString &path);
+	BaseFileContainer(const QByteArray &path);
 
 	/* IFileContainer */
-	virtual bool isPhysical() const;
+	virtual bool isDefault() const;
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 
 	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-
 	virtual bool contains(const QString &fileName) const;
-	virtual bool remove(const QString &fileName, QString &error) const;
-	virtual bool rename(const QString &oldName, const QString &newName, QString &error) const;
-	virtual bool move(const IFileContainer *source, const QString &fileName, QString &error) const;
+	virtual IFileInfo *info(const QString &fileName, QString &error) const;
+
+	virtual bool remove(const IFileInfo *info, QString &error) const;
+	virtual bool rename(const IFileInfo *oldInfo, IFileInfo *newInfo, QString &error) const;
+	virtual bool move(const IFileContainer *source, const IFileInfo *info, QString &error) const;
 
 	virtual IFileContainer *open() const;
-	virtual IFileAccessor *open(const QString &fileName, int flags, QString &error) const;
-	virtual IFileContainer *open(const QString &fileName, bool create, QString &error) const;
+	virtual IFileContainer *open(const IFileInfo *info, QString &error) const;
+	virtual IFileAccessor *open(const IFileInfo *info, int flags, QString &error) const;
+	virtual IFileContainer *create(const QString &fileName, QString &error) const;
+	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const;
+
 	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
 
-private:
-	QString m_path;
+protected:
+	friend class FileContainerScanner;
+	friend class FilteredFileContainerScanner;
+	friend class Arc::LibUnrar::FileContainer;
+	friend class Arc::LibUnrar::UnPackIntoSubdirActionTask;
+	QByteArray m_path;
 };
 
 
 class FileContainer : public BaseFileContainer
 {
 public:
-	FileContainer(const QString &path);
+	FileContainer(const QByteArray &path);
 
 	virtual const IFileContainerScanner *scanner() const;
 
@@ -49,11 +68,13 @@ private:
 class FilteredFileContainer : public BaseFileContainer
 {
 public:
-	FilteredFileContainer(const QString &path, Filter::Holder &filter);
+	FilteredFileContainer(const QByteArray &path, Filter::Holder &filter);
 
+	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 	virtual const IFileContainerScanner *scanner() const;
 
 private:
+	Filter::Holder m_filter;
 	FilteredFileContainerScanner m_scanner;
 };
 

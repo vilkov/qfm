@@ -7,14 +7,14 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-CopyControl::CopyControl(INode *node, const QString &path) :
-	m_node(node),
-	m_container(path)
+CopyControl::CopyControl(INode *node, const QByteArray &path) :
+	m_container(path),
+	m_node(node)
 {}
 
-bool CopyControl::isPhysical() const
+bool CopyControl::isDefault() const
 {
-	return m_container.isPhysical();
+	return m_container.isDefault();
 }
 
 IFileInfo::size_type CopyControl::freeSpace() const
@@ -24,7 +24,7 @@ IFileInfo::size_type CopyControl::freeSpace() const
 
 ICopyControl *CopyControl::createControl(INodeView *view) const
 {
-	return new CopyControl(*this);
+	return m_container.createControl(view);
 }
 
 QString CopyControl::location() const
@@ -32,29 +32,29 @@ QString CopyControl::location() const
 	return m_container.location();
 }
 
-QString CopyControl::location(const QString &fileName) const
-{
-	return m_container.location(fileName);
-}
-
 bool CopyControl::contains(const QString &fileName) const
 {
 	return m_container.contains(fileName);
 }
 
-bool CopyControl::remove(const QString &fileName, QString &error) const
+IFileInfo *CopyControl::info(const QString &fileName, QString &error) const
 {
-	return m_container.remove(fileName, error);
+	return m_container.info(fileName, error);
 }
 
-bool CopyControl::rename(const QString &oldName, const QString &newName, QString &error) const
+bool CopyControl::remove(const IFileInfo *info, QString &error) const
 {
-	return m_container.rename(oldName, newName, error);
+	return m_container.remove(info, error);
 }
 
-bool CopyControl::move(const IFileContainer *source, const QString &fileName, QString &error) const
+bool CopyControl::rename(const IFileInfo *oldInfo, IFileInfo *newInfo, QString &error) const
 {
-	return m_container.move(source, fileName, error);
+	return m_container.rename(oldInfo, newInfo, error);
+}
+
+bool CopyControl::move(const IFileContainer *source, const IFileInfo *info, QString &error) const
+{
+	return m_container.move(source, info, error);
 }
 
 IFileContainer *CopyControl::open() const
@@ -62,14 +62,24 @@ IFileContainer *CopyControl::open() const
 	return m_container.open();
 }
 
-IFileAccessor *CopyControl::open(const QString &fileName, int flags, QString &error) const
+IFileContainer *CopyControl::open(const IFileInfo *info, QString &error) const
 {
-	return m_container.open(fileName, flags, error);
+	return m_container.open(info, error);
 }
 
-IFileContainer *CopyControl::open(const QString &fileName, bool create, QString &error) const
+IFileAccessor *CopyControl::open(const IFileInfo *info, int flags, QString &error) const
 {
-	return m_container.open(fileName, create, error);
+	return m_container.open(info, flags, error);
+}
+
+IFileContainer *CopyControl::create(const QString &fileName, QString &error) const
+{
+	return m_container.create(fileName, error);
+}
+
+IFileAccessor *CopyControl::create(const QString &fileName, int flags, QString &error) const
+{
+	return m_container.create(fileName, flags, error);
 }
 
 IFileContainer *CopyControl::filter(Filter::Holder &filter, QString &error) const
@@ -97,7 +107,7 @@ bool CopyControl::start(const Snapshot &files, bool move)
 							Application::mainWindow(),
 							tr("Insufficient space on device"),
 							tr("Destination \"%1\" (%2) doesn't have enough free space (%3). Continue?").
-								arg(m_container.location()).
+								arg(location()).
 								arg(Tools::humanReadableShortSize(fs)).
 								arg(Tools::humanReadableShortSize(total)),
 							QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes);

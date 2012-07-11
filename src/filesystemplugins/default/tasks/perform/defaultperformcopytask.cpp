@@ -37,7 +37,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 			{
 				PScopedPointer<IFileContainer> dest;
 
-				if (dest = destination->open(entry->info()->fileName(), false, m_lastError))
+				if (dest = destination->create(entry->info()->fileName(), m_lastError))
 					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
 						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
@@ -67,7 +67,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 			{
 				PScopedPointer<IFileContainer> dest;
 
-				if (dest = destination->open(entry->info()->fileName(), true, m_lastError))
+				if (dest = destination->create(entry->info()->fileName(), m_lastError))
 					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
 						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
@@ -88,8 +88,8 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
-		if (m_sourceFile = entry->container()->open(entry->info()->fileName(), IFileAccessor::ReadOnly, m_lastError))
-			if (m_destFile = destination->open(entry->info()->fileName(), IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, m_lastError))
+		if (m_sourceFile = entry->container()->open(entry->info(), IFileAccessor::ReadOnly, m_lastError))
+			if (m_destFile = destination->open(entry->info(), IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, m_lastError))
 			{
 				m_written = 0;
 
@@ -106,7 +106,7 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 						askForSkipIfNotCopy(
 								tr("Failed to copy..."),
 								tr("Failed to write to file \"%1\" (%2). Skip it?").
-									arg(destination->location(entry->info()->fileName())).
+									arg(destination->location().append(QChar('/')).append(entry->info()->fileName())).
 									arg(m_lastError),
 								tryAgain = false,
 								aborted);
@@ -127,7 +127,7 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 					askForSkipIfNotCopy(
 							tr("Failed to copy..."),
 							tr("Failed to create file \"%1\" (%2). Skip it?").
-								arg(destination->location(entry->info()->fileName())).
+								arg(destination->location().append(QChar('/')).append(entry->info()->fileName())).
 								arg(m_lastError),
 							tryAgain = false,
 							aborted);
@@ -138,7 +138,7 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 				askForSkipIfNotCopy(
 						tr("Failed to copy..."),
 						tr("Failed to open file \"%1\" (%2). Skip it?").
-							arg(entry->container()->location(entry->info()->fileName())).
+							arg(entry->container()->location().append(QChar('/')).append(entry->info()->fileName())).
 							arg(m_lastError),
 						tryAgain = false,
 						aborted);

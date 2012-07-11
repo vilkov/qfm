@@ -1,6 +1,7 @@
 #ifndef DEFAULTFILEINFO_H_
 #define DEFAULTFILEINFO_H_
 
+#include <QtCore/QTextCodec>
 #include "../default_ns.h"
 #include "../../../filesystem/filetypeinfo/filetypeinfo.h"
 #include "../../../filesystem/interfaces/filesystemifileinfo.h"
@@ -18,9 +19,10 @@ public:
 
 public:
     explicit Info();
+    explicit Info(const Info &other);
 
     template <typename T>
-    explicit Info(const QString &filePath, T = T());
+    explicit Info(const QByteArray &filePath, T = T());
 
     template <typename T>
     explicit Info(const Info &other, T = T());
@@ -44,11 +46,12 @@ public:
 	virtual QString description() const;
 
 public:
+	static QTextCodec *codec();
+
+	void refresh();
 	bool isRoot() const { return m_isRoot; }
 	bool exists() const { return m_info.exists; }
-
-private:
-	void refresh();
+    const QByteArray &rawFileName() const { return m_fileName; }
 
 private:
 	struct FileInfo
@@ -74,8 +77,9 @@ private:
 
 private:
     bool m_isRoot;
-    QString m_filePath;
-    QString m_fileName;
+    QByteArray m_filePath;
+    QByteArray m_fileName;
+    QString m_fileNameString;
     FileInfo m_info;
 };
 

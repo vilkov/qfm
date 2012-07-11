@@ -348,16 +348,6 @@ void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *
 	return NULL;
 }
 
-QString IdmNodeQueryResults::location() const
-{
-	return m_container.container()->location();
-}
-
-QString IdmNodeQueryResults::location(const QString &fileName) const
-{
-	return m_container.container()->location(fileName);
-}
-
 void IdmNodeQueryResults::refresh()
 {
 //	QueryResultItem *item;
@@ -375,6 +365,11 @@ QString IdmNodeQueryResults::title() const
 {
 	QString res = m_container.container()->location();
 	return res.mid(res.lastIndexOf(QChar('/')));
+}
+
+QString IdmNodeQueryResults::location() const
+{
+	return m_container.container()->location();
 }
 
 IdmNodeQueryResults::Sorting IdmNodeQueryResults::sorting() const

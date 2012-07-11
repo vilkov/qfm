@@ -209,11 +209,6 @@ QString M3uNode::location() const
 	return QString();
 }
 
-QString M3uNode::location(const QString &fileName) const
-{
-	return QString();
-}
-
 ::History::Entry *M3uNode::menuAction(QAction *action, INodeView *view)
 {
 	return NULL;

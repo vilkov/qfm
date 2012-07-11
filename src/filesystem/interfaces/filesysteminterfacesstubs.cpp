@@ -3,7 +3,7 @@
 #include "filesysteminodeview.h"
 #include "filesystemifileinfo.h"
 #include "filesystemifiletype.h"
-#include "filesystemifilelocation.h"
+#include "filesystemifilecontainer.h"
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
 #include "filesystemifilecontainerscanner.h"
@@ -27,7 +27,7 @@ IFileInfo::~IFileInfo()
 IFileType::~IFileType()
 {}
 
-IFileLocation::~IFileLocation()
+IFileContainer::~IFileContainer()
 {}
 
 IFileContainer::Filter::~Filter()

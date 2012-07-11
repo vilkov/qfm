@@ -46,7 +46,6 @@ public:
     virtual void refresh();
 	virtual QString title() const;
 	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
 
 	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
 

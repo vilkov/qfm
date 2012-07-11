@@ -45,13 +45,10 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view);
 
-	/* IFileLocation */
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
+	virtual QString location() const;
 	virtual Sorting sorting() const;
 	virtual Geometry geometry() const;
 	virtual QAbstractItemModel *model() const;

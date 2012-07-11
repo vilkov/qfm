@@ -178,16 +178,6 @@ void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 	return NULL;
 }
 
-QString ArcNode::location() const
-{
-	return m_container->location();
-}
-
-QString ArcNode::location(const QString &fileName) const
-{
-	return m_container->location(fileName);
-}
-
 void ArcNode::refresh()
 {
 	if (!isUpdating() && m_items.size() == 1)
@@ -198,6 +188,11 @@ QString ArcNode::title() const
 {
 	QString location(m_container->location());
 	return location.mid(location.lastIndexOf(QChar('/')) + 1);
+}
+
+QString ArcNode::location() const
+{
+	return m_container->location();
 }
 
 ArcNode::Sorting ArcNode::sorting() const

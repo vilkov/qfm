@@ -28,7 +28,6 @@ public:
 		return m_path;
 	}
 
-	/* IFileLocation */
 	virtual QString location() const
 	{
 		return m_path;

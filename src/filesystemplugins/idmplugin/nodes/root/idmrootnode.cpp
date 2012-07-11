@@ -158,16 +158,6 @@ void IdmRootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 	return NULL;
 }
 
-QString IdmRootNode::location() const
-{
-	return m_container.container()->location();
-}
-
-QString IdmRootNode::location(const QString &fileName) const
-{
-	return m_container.container()->location(fileName);
-}
-
 void IdmRootNode::refresh()
 {
 
@@ -177,6 +167,11 @@ QString IdmRootNode::title() const
 {
 	QString res = m_container.container()->location();
 	return res.mid(res.lastIndexOf(QChar('/')));
+}
+
+QString IdmRootNode::location() const
+{
+	return m_container.container()->location();
 }
 
 IdmRootNode::Sorting IdmRootNode::sorting() const

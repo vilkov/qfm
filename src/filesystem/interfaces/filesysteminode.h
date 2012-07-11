@@ -1,14 +1,13 @@
 #ifndef FILESYSTEMINODE_H_
 #define FILESYSTEMINODE_H_
 
-#include "filesystemifilelocation.h"
 #include "filesystemifileoperations.h"
 #include "filesystemifilenavigation.h"
 
 
 FILE_SYSTEM_NS_BEGIN
 
-class INode : public IFileLocation, public IFileOperations, public IFileNavigation
+class INode : public IFileOperations, public IFileNavigation
 {
 public:
     typedef QList<qint32>             Geometry;
@@ -18,6 +17,7 @@ public:
 	virtual ~INode();
 
     virtual void refresh() = 0;
+	virtual QString location() const = 0;
 	virtual QString title() const = 0;
 
 	virtual Sorting sorting() const = 0;

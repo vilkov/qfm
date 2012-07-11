@@ -25,6 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
     m_toolsMenuActions(this),
 	m_helpMenuActions(this)
 {
+	QIcon icon;
+
+	icon.addFile(QString::fromLatin1(":/icons/red-folder-16.png"), QSize(16, 16));
+	icon.addFile(QString::fromLatin1(":/icons/red-folder-32.png"), QSize(32, 32));
+	setWindowIcon(icon);
+
 	setCentralWidget(&m_centralWidget);
 	m_centralWidget.setLayout(&m_layout);
 	m_layout.setMargin(1);

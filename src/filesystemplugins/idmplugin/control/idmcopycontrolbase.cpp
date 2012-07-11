@@ -10,16 +10,6 @@ IdmCopyControlBase::IdmCopyControlBase(ICopyControl::Holder &dest, const IdmCont
 	m_storage(difference(m_dest->location(), m_container.container()->location()).append(QChar('/')))
 {}
 
-QString IdmCopyControlBase::location() const
-{
-	return m_dest->location();
-}
-
-QString IdmCopyControlBase::location(const QString &fileName) const
-{
-	return m_dest->location(fileName);
-}
-
 bool IdmCopyControlBase::isPhysical() const
 {
 	return m_dest->isPhysical();
@@ -33,6 +23,16 @@ IFileInfo::size_type IdmCopyControlBase::freeSpace() const
 ICopyControl *IdmCopyControlBase::createControl(INodeView *view) const
 {
 	return NULL;
+}
+
+QString IdmCopyControlBase::location() const
+{
+	return m_dest->location();
+}
+
+QString IdmCopyControlBase::location(const QString &fileName) const
+{
+	return m_dest->location(fileName);
 }
 
 bool IdmCopyControlBase::contains(const QString &fileName) const

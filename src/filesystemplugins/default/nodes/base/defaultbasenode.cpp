@@ -187,6 +187,11 @@ QString BaseNode::title() const
 	return res.mid(res.lastIndexOf(QChar('/')) + 1);
 }
 
+QString BaseNode::location() const
+{
+	return m_container->location();
+}
+
 BaseNode::Sorting BaseNode::sorting() const
 {
 	return Sorting(0, Qt::AscendingOrder);
@@ -215,16 +220,6 @@ const INodeView::MenuActionList &BaseNode::actions() const
 ::History::Entry *BaseNode::menuAction(QAction *action, INodeView *view)
 {
 	return NULL;
-}
-
-QString BaseNode::location() const
-{
-	return m_container->location();
-}
-
-QString BaseNode::location(const QString &fileName) const
-{
-	return m_container->location(fileName);
 }
 
 ICopyControl *BaseNode::createControl(INodeView *view) const

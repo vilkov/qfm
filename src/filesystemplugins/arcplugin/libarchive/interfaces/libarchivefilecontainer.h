@@ -15,14 +15,13 @@ public:
 	static QString extractDirectoryName(const IFileInfo *file);
 	static QString extractArchivedFileName(const IFileInfo *file);
 
-	/* IFileLocation */
-	virtual QString location() const;
-	virtual QString location(const QString &fileName) const;
-
 	/* IFileContainer */
 	virtual bool isPhysical() const;
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
+
+	virtual QString location() const;
+	virtual QString location(const QString &fileName) const;
 
 	virtual bool contains(const QString &fileName) const;
 	virtual bool remove(const QString &fileName, QString &error) const;

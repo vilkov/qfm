@@ -1,7 +1,6 @@
 #ifndef FILESYSTEMIFILECONTAINER_H_
 #define FILESYSTEMIFILECONTAINER_H_
 
-#include "filesystemifilelocation.h"
 #include "filesystemifileaccessor.h"
 #include "filesystemifilecontainerscanner.h"
 
@@ -11,7 +10,7 @@ class ICopyControl;
 class INodeView;
 
 
-class IFileContainer : public IFileLocation
+class IFileContainer
 {
 public:
 	typedef PScopedPointer<IFileContainer> Holder;
@@ -27,9 +26,14 @@ public:
 	};
 
 public:
+	virtual ~IFileContainer();
+
 	virtual bool isPhysical() const = 0;
 	virtual IFileInfo::size_type freeSpace() const = 0;
 	virtual ICopyControl *createControl(INodeView *view) const = 0;
+
+	virtual QString location() const = 0;
+	virtual QString location(const QString &fileName) const = 0;
 
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual bool remove(const QString &fileName, QString &error) const = 0;

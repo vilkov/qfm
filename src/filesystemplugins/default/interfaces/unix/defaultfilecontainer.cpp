@@ -18,16 +18,6 @@ BaseFileContainer::BaseFileContainer(const QString &path) :
 	m_path(path)
 {}
 
-QString BaseFileContainer::location() const
-{
-	return m_path;
-}
-
-QString BaseFileContainer::location(const QString &fileName) const
-{
-	return QString(m_path).append(QChar('/')).append(fileName);
-}
-
 bool BaseFileContainer::isPhysical() const
 {
 	return true;
@@ -41,6 +31,16 @@ IFileInfo::size_type BaseFileContainer::freeSpace() const
 ICopyControl *BaseFileContainer::createControl(INodeView *view) const
 {
 	return new CopyControl(view->node(), m_path);
+}
+
+QString BaseFileContainer::location() const
+{
+	return m_path;
+}
+
+QString BaseFileContainer::location(const QString &fileName) const
+{
+	return QString(m_path).append(QChar('/')).append(fileName);
 }
 
 bool BaseFileContainer::contains(const QString &fileName) const

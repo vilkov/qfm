@@ -33,16 +33,6 @@ QString FileContainer::extractArchivedFileName(const IFileInfo *file)
 	return fileName.mid(fileName.lastIndexOf(QChar('/')) + 1);
 }
 
-QString FileContainer::location() const
-{
-	return m_path;
-}
-
-QString FileContainer::location(const QString &fileName) const
-{
-	return QString(m_path).append(QChar('/')).append(fileName);
-}
-
 bool FileContainer::isPhysical() const
 {
 	return false;
@@ -56,6 +46,16 @@ IFileInfo::size_type FileContainer::freeSpace() const
 ICopyControl *FileContainer::createControl(INodeView *view) const
 {
 	return NULL;
+}
+
+QString FileContainer::location() const
+{
+	return m_path;
+}
+
+QString FileContainer::location(const QString &fileName) const
+{
+	return QString(m_path).append(QChar('/')).append(fileName);
 }
 
 bool FileContainer::contains(const QString &fileName) const

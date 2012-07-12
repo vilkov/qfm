@@ -2,9 +2,9 @@
 #define IDMQUERYRESULTCOMPOSITEROOTITEM_H_
 
 #include <QtCore/QVector>
+#include <vfs/tasks/vfs_tasksnode.h>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "idmqueryresultrootitem.h"
-#include "../../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN

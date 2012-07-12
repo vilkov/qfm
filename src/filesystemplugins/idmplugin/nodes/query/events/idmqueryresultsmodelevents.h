@@ -1,8 +1,8 @@
 #ifndef IDMQUERYRESULTSMODELEVENTS_H_
 #define IDMQUERYRESULTSMODELEVENTS_H_
 
+#include <vfs/tasks/vfs_basetask.h>
 #include "../../../idmplugin_ns.h"
-#include "../../../../../filesystem/tasks/filesystembasetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN

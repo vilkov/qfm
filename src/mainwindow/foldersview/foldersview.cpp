@@ -28,7 +28,7 @@ void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 	m_tabWidget.setTabText(m_tabWidget.indexOf(widget), fileName);
 }
 
-void FoldersView::openInNewTab(FileSystem::INode *node, const QModelIndex &index, const QList<qint32> &geometry)
+void FoldersView::openInNewTab(::VFS::INode *node, const QModelIndex &index, const QList<qint32> &geometry)
 {
 	DirectoryView *widget;
 	m_doNotRefreshTab = true;
@@ -157,9 +157,9 @@ FoldersView::Tab::Tab(const DirectoryView::Tab &tab, Option *parent) :
 		m_geometry.add(QString::number(tab.geometry.at(i)));
 }
 
-FileSystem::INode::Geometry FoldersView::Tab::geometry() const
+::VFS::INode::Geometry FoldersView::Tab::geometry() const
 {
-	FileSystem::INode::Geometry res;
+	::VFS::INode::Geometry res;
 	res.reserve(m_geometry.size());
 
 	for (Tools::Settings::OptionValueList::size_type i = 0, size = m_geometry.size(); i < size; ++i)

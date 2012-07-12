@@ -4,7 +4,7 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-Node::Node(IFileContainer::Holder &container, FileSystem::Node *parent) :
+Node::Node(IFileContainer::Holder &container, ::VFS::Node *parent) :
 	BaseNode(container, parent)
 {
 	RootNodeItem::Holder item(new RootNodeItem());

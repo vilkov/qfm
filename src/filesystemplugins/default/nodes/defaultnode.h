@@ -11,7 +11,7 @@ class Node : public BaseNode
 	Q_DISABLE_COPY(Node)
 
 public:
-	Node(IFileContainer::Holder &container, FileSystem::Node *parent = 0);
+	Node(IFileContainer::Holder &container, ::VFS::Node *parent = 0);
 
 protected:
 	/* Node */

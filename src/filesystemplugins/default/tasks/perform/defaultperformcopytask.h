@@ -2,8 +2,8 @@
 #define DEFAULTPERFORMCOPYTASK_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/tasks/tools/vfs_taskprogress.h>
 #include "../defaultfilesbasetask.h"
-#include "../../../../filesystem/tasks/tools/taskprogress.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

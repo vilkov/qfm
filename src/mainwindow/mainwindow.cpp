@@ -1,6 +1,7 @@
 #include "mainwindow.h"
-#include "../filesystem/tools/filesystemcommontools.h"
 #include "../application.h"
+
+#include <vfs/tools/vfs_commontools.h>
 
 #include <QtCore/QDir>
 #include <QtCore/QTextCodec>
@@ -161,7 +162,7 @@ void MainWindow::showMounts(FoldersView &view)
 		const MountPoint &mount = m_mounts.at(i);
 
 		if (mount.totalSize() > 0 && mount.freeSize() <= mount.totalSize())
-			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(FileSystem::Tools::humanReadableShortSize(mount.freeSize())).arg(FileSystem::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
+			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(::VFS::Tools::humanReadableShortSize(mount.freeSize())).arg(::VFS::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
 		else
 			menu.addAction(mount.icon(), mount.label())->setData(i);
 	}

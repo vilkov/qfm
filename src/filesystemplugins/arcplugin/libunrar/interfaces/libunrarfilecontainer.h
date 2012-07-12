@@ -2,8 +2,8 @@
 #define LIBUNRARFILECONTAINER_H_
 
 #include <QtCore/QSharedData>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "libunrarscanner.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN

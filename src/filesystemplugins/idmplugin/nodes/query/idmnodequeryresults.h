@@ -1,11 +1,11 @@
 #ifndef IDMNODEQUERYRESULTS_H_
 #define IDMNODEQUERYRESULTS_H_
 
+#include <vfs/tasks/vfs_tasksnode.h>
 #include "idmqueryresultsdelegate.h"
 #include "interface/idminodequeryresults.h"
 #include "../../containeres/idmcontainer.h"
 #include "../../storage/values/idmvaluereader.h"
-#include "../../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../../tools/containers/union.h"
 
 

@@ -1,8 +1,8 @@
 #ifndef IDMROOTNODEITEM_H_
 #define IDMROOTNODEITEM_H_
 
+#include <vfs/tasks/model/items/vfs_tasksnodeitem.h>
 #include "../../../idmplugin_ns.h"
-#include "../../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

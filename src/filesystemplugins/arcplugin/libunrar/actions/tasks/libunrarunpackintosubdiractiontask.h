@@ -2,9 +2,9 @@
 #define LIBUNRARUNPACKINTOSUBDIRACTIONTASK_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/tools/vfs_filestree.h>
+#include <vfs/tasks/vfs_performactiontask.h>
 #include "../../libunrar_ns.h"
-#include "../../../../../filesystem/tools/filesystemfilestree.h"
-#include "../../../../../filesystem/tasks/filesystemperformactiontask.h"
 #include "../../../../../tools/taskspool/tryier.h"
 
 

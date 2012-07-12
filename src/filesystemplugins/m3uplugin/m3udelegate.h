@@ -1,8 +1,8 @@
 #ifndef M3UDELEGATE_H_
 #define M3UDELEGATE_H_
 
+#include <vfs/vfs_delegate.h>
 #include "m3uplugin_ns.h"
-#include "../../filesystem/filesystemdelegate.h"
 
 
 M3U_PLUGIN_NS_BEGIN

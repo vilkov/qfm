@@ -4,18 +4,6 @@
 #include "defaultfilecontainerscanner.h"
 
 
-namespace FileSystem {
-	namespace Plugins {
-		namespace Arc {
-			namespace LibUnrar {
-				class FileContainer;
-				class UnPackIntoSubdirActionTask;
-			}
-		}
-	}
-}
-
-
 DEFAULT_PLUGIN_NS_BEGIN
 
 class BaseFileContainer : public IFileContainer
@@ -47,8 +35,6 @@ public:
 protected:
 	friend class FileContainerScanner;
 	friend class FilteredFileContainerScanner;
-	friend class Arc::LibUnrar::FileContainer;
-	friend class Arc::LibUnrar::UnPackIntoSubdirActionTask;
 	QByteArray m_path;
 };
 

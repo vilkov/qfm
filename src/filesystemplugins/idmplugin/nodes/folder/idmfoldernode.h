@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class IdmFolderNode : public Default::Node
 {
 public:
-	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, FileSystem::Node *parent = 0);
+	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent = 0);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
@@ -22,11 +22,11 @@ public:
 	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
 
 protected:
-	virtual FileSystem::Node *createNode(const IFileInfo *file) const;
+	virtual ::VFS::Node *createNode(const IFileInfo *file) const;
 
 private:
 	friend class IdmRootNode;
-	FileSystem::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
+	::VFS::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
 
 private:
 	IdmContainer m_container;

@@ -1,7 +1,8 @@
 #include "libunrarscanner.h"
 #include "libunrarfileinfo.h"
-#include "../../../../filesystem/tools/filesystempath.h"
-#include "../../../../filesystem/containers/filesystemsnapshot.h"
+
+#include <vfs/tools/vfs_path.h>
+#include <vfs/containers/vfs_snapshot.h>
 
 #include <wchar.h>
 #include <libunrar/rar.hpp>
@@ -31,14 +32,14 @@ inline static QDateTime fromDosTime(unsigned int time)
 }
 
 
-class WrappedNodeItem : public FileSystem::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::WrappedNodeItem
 {
 public:
-	typedef QMap<QString, FileSystem::WrappedNodeItem *> Container;
+	typedef QMap<QString, ::VFS::WrappedNodeItem *> Container;
 
 public:
 	WrappedNodeItem(const IFileContainer *container, const QString &fileName, const struct RARHeaderDataEx &info, WrappedNodeItem *parent) :
-		FileSystem::WrappedNodeItem(container, unpackedSize(info), parent)
+		::VFS::WrappedNodeItem(container, unpackedSize(info), parent)
 	{
 		m_data.path = QString::fromWCharArray(info.FileNameW);
 		m_data.fileName = fileName;

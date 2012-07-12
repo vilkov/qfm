@@ -1,8 +1,8 @@
 #ifndef DEFAULTPLUGIN_H_
 #define DEFAULTPLUGIN_H_
 
+#include <vfs/interfaces/vfs_iplugin.h>
 #include "settings/defaultpluginsettings.h"
-#include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -19,11 +19,11 @@ public:
 
 	/* IContentPlugin */
 	QString shema() const;
-	virtual FileSystem::Node *open(const Path::Iterator &path, QModelIndex &selected) const;
+	virtual ::VFS::Node *open(const Path::Iterator &path, QModelIndex &selected) const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;
-	virtual FileSystem::Node *open(const IFileContainer *container, const IFileInfo *file, FileSystem::Node *parent) const;
+	virtual ::VFS::Node *open(const IFileContainer *container, const IFileInfo *file, ::VFS::Node *parent) const;
 
 private:
 	Settings m_settings;

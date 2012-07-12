@@ -4,9 +4,11 @@
 #include <QtCore/QPoint>
 #include <QtCore/QList>
 #include <QtGui/QMenu>
+
+#include <vfs/actions/vfs_fileaction.h>
+#include <vfs/filetypeinfo/vfs_filetypeinfo.h>
+
 #include "../de_ns.h"
-#include "../../filesystem/actions/filesystemfileaction.h"
-#include "../../filesystem/filetypeinfo/filetypeinfo.h"
 
 
 DE_NS_BEGIN
@@ -14,9 +16,9 @@ DE_NS_BEGIN
 class ContextMenuFactory
 {
 public:
-	typedef ::FileSystem::FileTypeId                FileTypeId;
-	typedef QList<FileTypeId>                       FileTypesList;
-	typedef QList<const ::FileSystem::FileAction *> FileActionsList;
+	typedef ::VFS::FileTypeId                FileTypeId;
+	typedef QList<FileTypeId>                FileTypesList;
+	typedef QList<const ::VFS::FileAction *> FileActionsList;
 
 	enum Type
 	{
@@ -35,8 +37,8 @@ public:
 	FileActionsList actions(Type type) { return m_actions[type]; }
 	FileActionsList actions(const FileTypeId &type) { return m_files.value(type); }
 
-	void registerAction(const ::FileSystem::FileAction *action, Type type);
-	void registerAction(const ::FileSystem::FileAction *action, const FileTypesList &fileTypes);
+	void registerAction(const ::VFS::FileAction *action, Type type);
+	void registerAction(const ::VFS::FileAction *action, const FileTypesList &fileTypes);
 
 private:
 	typedef QMap<FileTypeId, FileActionsList> FileActionsMap;

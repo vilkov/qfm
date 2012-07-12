@@ -1,9 +1,9 @@
 #ifndef ARCPLUGIN_H_
 #define ARCPLUGIN_H_
 
+#include <vfs/interfaces/vfs_iplugin.h>
 #include "libarchive/actions/libarchiveunpackintosubdiraction.h"
 #include "libunrar/actions/libunrarunpackintosubdiraction.h"
-#include "../../filesystem/interfaces/filesystemiplugin.h"
 #include "../../tools/settings/options/settingsoption.h"
 
 

@@ -1,11 +1,11 @@
 #ifndef DEFAULTBASENODE_H_
 #define DEFAULTBASENODE_H_
 
+#include <vfs/tasks/vfs_tasksnode.h>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "../defaultdelegate.h"
 #include "../defaultproxymodel.h"
 #include "../../model/items/defaultnodeitem.h"
-#include "../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 #include "../../../../tools/containers/hashedlist.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/templates/functors.h"

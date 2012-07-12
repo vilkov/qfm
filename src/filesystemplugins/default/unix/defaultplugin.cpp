@@ -67,7 +67,7 @@ QString Plugin::shema() const
 	return QString::fromLatin1("file");
 }
 
-FileSystem::Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
+::VFS::Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
 {
 	if ((*path) == QLatin1String("/"))
 		if (rootNode)
@@ -91,7 +91,7 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 	return FileTypeIdList() << type;
 }
 
-FileSystem::Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, FileSystem::Node *parent) const
+::VFS::Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, ::VFS::Node *parent) const
 {
 	IFileContainer::Holder folder(container->open(file, m_error));
 

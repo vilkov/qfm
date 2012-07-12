@@ -1,7 +1,7 @@
 #include "defaultcopycontrol.h"
-#include "../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../application.h"
 
+#include <vfs/tools/vfs_commontools.h>
 #include <QtGui/QMessageBox>
 
 

@@ -2,7 +2,7 @@
 #define ARCACTION_H_
 
 #include "../arcplugin_ns.h"
-#include "../../../filesystem/actions/asynchronous/filesystemasyncfileaction.h"
+#include <vfs/actions/asynchronous/vfs_asyncfileaction.h>
 
 
 ARC_PLUGIN_NS_BEGIN

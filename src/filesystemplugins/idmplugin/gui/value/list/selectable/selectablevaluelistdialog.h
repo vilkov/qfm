@@ -4,7 +4,7 @@
 #include "../editable/editablevaluelistdialog.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class SelectableValueListDialog : public EditableValueListDialog
 {

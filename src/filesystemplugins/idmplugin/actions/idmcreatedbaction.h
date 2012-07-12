@@ -2,8 +2,8 @@
 #define IDMCREATEDBACTION_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/actions/synchronous/vfs_syncfileaction.h>
 #include "../idmplugin_ns.h"
-#include "../../../filesystem/actions/synchronous/filesystemsyncfileaction.h"
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -2,9 +2,9 @@
 #define COMPOSITEVALUEMODEL_H_
 
 #include <QtCore/QMap>
+#include <vfs/containers/vfs_snapshot.h>
 #include "../../../model/idmmodel.h"
 #include "../../../storage/values/idmentityvalue.h"
-#include "../../../../../filesystem/containers/filesystemsnapshot.h"
 
 
 IDM_PLUGIN_NS_BEGIN

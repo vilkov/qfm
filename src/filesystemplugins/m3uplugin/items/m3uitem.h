@@ -1,9 +1,9 @@
 #ifndef M3UITEM_H_
 #define M3UITEM_H_
 
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "../m3uplugin_ns.h"
 #include "../../../tools/models/tree/items/treemodelitem.h"
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 M3U_PLUGIN_NS_BEGIN

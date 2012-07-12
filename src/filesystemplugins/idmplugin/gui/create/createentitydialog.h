@@ -14,7 +14,7 @@
 #include "model/entitieslistdelegate.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class CreateEntityDialog : public QDialog
 {

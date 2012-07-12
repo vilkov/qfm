@@ -11,7 +11,7 @@
 #include "../../containeres/idmcontainer.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class ChooseEntityDialog : public QDialog
 {

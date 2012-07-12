@@ -1,13 +1,13 @@
 #ifndef DEFAULTPROXYMODEL_H_
 #define DEFAULTPROXYMODEL_H_
 
+#include <vfs/vfs_proxymodel.h>
 #include "../default_ns.h"
-#include "../../../filesystem/filesystemproxymodel.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class ProxyModel : public FileSystem::ProxyModel
+class ProxyModel : public ::VFS::ProxyModel
 {
 	Q_DISABLE_COPY(ProxyModel)
 

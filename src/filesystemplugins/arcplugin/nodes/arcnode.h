@@ -1,9 +1,9 @@
 #ifndef ARCNODE_H_
 #define ARCNODE_H_
 
+#include <vfs/tasks/vfs_tasksnode.h>
 #include "arcnodeproxymodel.h"
 #include "../model/arcdelegate.h"
-#include "../../../filesystem/tasks/filesystemtasksnode.h"
 #include "../../../tools/containers/union.h"
 
 

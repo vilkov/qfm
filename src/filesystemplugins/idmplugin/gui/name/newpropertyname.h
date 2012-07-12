@@ -6,7 +6,7 @@
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class NewPropertyNameDialog : public StringDialog
 {

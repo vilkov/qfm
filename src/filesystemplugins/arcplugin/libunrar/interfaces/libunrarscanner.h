@@ -3,8 +3,8 @@
 
 #include <QtCore/QMutex>
 #include <QtCore/QCoreApplication>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "../libunrar_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN

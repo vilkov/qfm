@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class ScanFilesTask : public ::FileSystem::Plugins::Default::FilesBaseTask
+class ScanFilesTask : public ::VFS::Plugins::Default::FilesBaseTask
 {
 public:
 	class UpdatesEvent : public Event

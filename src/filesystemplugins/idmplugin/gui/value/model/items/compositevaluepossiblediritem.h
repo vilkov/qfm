@@ -1,8 +1,8 @@
 #ifndef COMPOSITEVALUEPOSSIBLEDIRITEM_H_
 #define COMPOSITEVALUEPOSSIBLEDIRITEM_H_
 
+#include <vfs/containers/vfs_wrappednodeitem.h>
 #include "compositevaluepathitem.h"
-#include "../../../../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 IDM_PLUGIN_NS_BEGIN

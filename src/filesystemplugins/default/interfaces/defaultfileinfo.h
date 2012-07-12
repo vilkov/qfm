@@ -2,9 +2,9 @@
 #define DEFAULTFILEINFO_H_
 
 #include <QtCore/QTextCodec>
+#include <vfs/filetypeinfo/vfs_filetypeinfo.h>
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "../default_ns.h"
-#include "../../../filesystem/filetypeinfo/filetypeinfo.h"
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

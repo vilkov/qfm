@@ -2,8 +2,8 @@
 #define DEFAULTDELEGATE_H_
 
 #include <QtGui/QAbstractProxyModel>
+#include <vfs/tasks/vfs_tasksnodedelegate.h>
 #include "../default_ns.h"
-#include "../../../filesystem/tasks/filesystemtasksnodedelegate.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

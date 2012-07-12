@@ -39,9 +39,9 @@ public:
 public:
 	Services();
 
-//	void view(const FileSystem::Info &file);
-//	void edit(const FileSystem::Info &file);
-//	void open(const FileSystem::Info &file);
+//	void view(const ::VFS::Info &file);
+//	void edit(const ::VFS::Info &file);
+//	void open(const ::VFS::Info &file);
 
 public:
 	static Services *instance();

@@ -2,9 +2,9 @@
 #define ARCPERFORMCOPYTASK_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/tasks/tools/vfs_taskprogress.h>
+#include <vfs/interfaces/vfs_icopycontrol.h>
 #include "arcfilesbasetask.h"
-#include "../../../filesystem/tasks/tools/taskprogress.h"
-#include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 ARC_PLUGIN_NS_BEGIN

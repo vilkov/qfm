@@ -1,8 +1,8 @@
 #ifndef LIBARCHIVEFILEINFO_H_
 #define LIBARCHIVEFILEINFO_H_
 
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "../libarchive_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN

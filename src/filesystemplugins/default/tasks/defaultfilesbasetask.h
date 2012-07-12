@@ -1,9 +1,9 @@
 #ifndef DEFAULTFILESBASETASK_H_
 #define DEFAULTFILESBASETASK_H_
 
+#include <vfs/tasks/vfs_basetask.h>
+#include <vfs/containers/vfs_snapshot.h>
 #include "../default_ns.h"
-#include "../../../filesystem/tasks/filesystembasetask.h"
-#include "../../../filesystem/containers/filesystemsnapshot.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

@@ -1,8 +1,8 @@
 #ifndef DEFAULTFILECONTAINERSCANNER_H_
 #define DEFAULTFILECONTAINERSCANNER_H_
 
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "../default_ns.h"
-#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

@@ -1,6 +1,5 @@
 #include "defaultdelegate.h"
 #include "../model/items/defaultnodeitem.h"
-#include "../../../filesystem/tools/filesystemcommontools.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -16,7 +15,7 @@ void Delegate::paint(QPainter *painter, const QStyleOptionViewItem &option, cons
 {
 	if (index.column() == 1)
 	{
-		NodeItem *entry = static_cast<NodeItem*>(m_proxy->mapToSource(index).internalPointer());
+		NodeItem *entry = static_cast<NodeItem *>(m_proxy->mapToSource(index).internalPointer());
 
 		if (!entry->isRootItem() && entry->isInProgress())
 		{

@@ -4,7 +4,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot) :
-	::FileSystem::Plugins::Default::PerformRemoveTask(receiver, snapshot)
+	::VFS::Plugins::Default::PerformRemoveTask(receiver, snapshot)
 {}
 
 void PerformRemoveTask::run(const volatile Flags &aborted)

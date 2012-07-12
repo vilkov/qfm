@@ -5,10 +5,12 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QCoreApplication>
 #include <QtGui/QAction>
+
+#include <vfs/interfaces/vfs_inodeview.h>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
+
 #include "idmentitytypes.h"
 #include "../storage/idmstorage.h"
-#include "../../../filesystem/interfaces/filesysteminodeview.h"
-#include "../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN

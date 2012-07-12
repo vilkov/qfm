@@ -7,7 +7,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 ProxyModel::ProxyModel(QObject *parent) :
-	FileSystem::ProxyModel(parent)
+	::VFS::ProxyModel(parent)
 {}
 
 bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const

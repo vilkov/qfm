@@ -1,9 +1,9 @@
 #ifndef IDMQUERYRESULTPATHPROPERTYITEM_H_
 #define IDMQUERYRESULTPATHPROPERTYITEM_H_
 
+#include <vfs/tasks/vfs_tasksnode.h>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "idmqueryresultpropertyitem.h"
-#include "../../../../../filesystem/tasks/filesystemtasksnode.h"
-#include "../../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 IDM_PLUGIN_NS_BEGIN

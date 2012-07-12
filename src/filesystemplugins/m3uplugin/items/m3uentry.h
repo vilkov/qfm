@@ -3,8 +3,8 @@
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QCoreApplication>
+#include <vfs/tools/vfs_commontools.h>
 #include "m3uitem.h"
-#include "../../../filesystem/tools/filesystemcommontools.h"
 
 
 M3U_PLUGIN_NS_BEGIN

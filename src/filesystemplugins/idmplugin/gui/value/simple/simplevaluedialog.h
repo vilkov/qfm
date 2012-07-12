@@ -6,7 +6,7 @@
 #include "../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 template <Database::EntityType EntityType>
 class SimpleValueDialog : public NestedPlainDialog

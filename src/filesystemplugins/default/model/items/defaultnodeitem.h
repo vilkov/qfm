@@ -1,10 +1,10 @@
 #ifndef DEFAULTNODEITEM_H_
 #define DEFAULTNODEITEM_H_
 
+#include <vfs/vfs_node.h>
+#include <vfs/interfaces/vfs_ifileinfo.h>
+#include <vfs/tasks/model/items/vfs_tasksnodeitem.h>
 #include "../../default_ns.h"
-#include "../../../../filesystem/filesystemnode.h"
-#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
-#include "../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

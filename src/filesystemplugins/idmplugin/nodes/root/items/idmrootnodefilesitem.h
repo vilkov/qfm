@@ -2,8 +2,8 @@
 #define IDMROOTNODEFILESITEM_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/vfs_node.h>
 #include "idmrootnodeitem.h"
-#include "../../../../../filesystem/filesystemnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN

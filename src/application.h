@@ -4,6 +4,9 @@
 #include <QtCore/QThread>
 #include <QtGui/QApplication>
 //#include <QtSingleInstance/QSingleApplication>
+
+#include <vfs/root/vfs_rootnode.h>
+
 #include "tools/exceptionshandler/exceptionshandler.h"
 #include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
@@ -11,7 +14,6 @@
 #include "mainwindow/mainwindow.h"
 #include "de/deservice.h"
 #include "de/contextmenu/decontextmenufactory.h"
-#include "filesystem/root/filesystemrootnode.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -34,7 +36,7 @@ public:
 	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
-	static FileSystem::RootNode *rootNode() { return instance()->m_rootNode.data(); }
+	static ::VFS::RootNode *rootNode() { return instance()->m_rootNode.data(); }
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
@@ -48,7 +50,7 @@ private:
 	Tools::TasksPool::TaskPool m_taskPool;
 	DesktopEnvironment::Service m_desktopService;
     DesktopEnvironment::ContextMenuFactory m_globalMenu;
-    QScopedPointer<FileSystem::RootNode> m_rootNode;
+    QScopedPointer<VFS::RootNode> m_rootNode;
 	MainWindow m_mainWindow;
 };
 

@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class PerformRemoveTask : public ::FileSystem::Plugins::Default::PerformRemoveTask
+class PerformRemoveTask : public ::VFS::Plugins::Default::PerformRemoveTask
 {
 public:
 	PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);

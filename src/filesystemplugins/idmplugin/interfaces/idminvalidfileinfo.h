@@ -1,8 +1,8 @@
 #ifndef DEFAULTINVALIDINFO_H_
 #define DEFAULTINVALIDINFO_H_
 
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "../idmplugin_ns.h"
-#include "../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 IDM_PLUGIN_NS_BEGIN

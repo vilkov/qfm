@@ -10,9 +10,11 @@
 #include <QtGui/QToolButton>
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
+
+#include <vfs/interfaces/vfs_inode.h>
+
 #include "widgets/pathedit.h"
 #include "../../history/navigationhistory.h"
-#include "../../filesystem/interfaces/filesysteminode.h"
 #include "../../tools/events/imp/mouseeventhandler.h"
 #include "../../tools/events/imp/keyboardeventhandler.h"
 #include "../../tools/events/imp/contextmenueventhandler.h"
@@ -25,12 +27,12 @@
 using namespace Tools::Events;
 class FoldersView;
 
-class DirectoryView : public QWidget, public FileSystem::INodeView
+class DirectoryView : public QWidget, public ::VFS::INodeView
 {
     Q_OBJECT
 
 public:
-    typedef FileSystem::INode::Geometry Geometry;
+    typedef ::VFS::INode::Geometry Geometry;
 
     struct Tab
     {
@@ -51,17 +53,17 @@ public:
 
     /* Should be called immediately after construction and adding to the tabWidget! */
 	void setupModel(const QString &absoluteFilePath);
-	void setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry);
+	void setupModel(::VFS::INode *node, const QModelIndex &index, const Geometry &geometry);
 	void setupModel(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry);
 
 public:
 	/* INodeView */
-	virtual FileSystem::INode *node() const;
+	virtual ::VFS::INode *node() const;
 	virtual QModelIndex currentIndex() const;
 	virtual QModelIndexList selectedIndexes() const;
 	virtual void edit(const QModelIndex &index);
 	virtual void select(const QModelIndex &index);
-	virtual void setNode(FileSystem::INode *node);
+	virtual void setNode(::VFS::INode *node);
 
 	static QString defaultPath();
 
@@ -154,7 +156,7 @@ private:
 
 private:
 	FoldersView *m_parent;
-    FileSystem::INode *m_node;
+    ::VFS::INode *m_node;
     QVBoxLayout m_layout;
     PathEventHandler m_pathEventHandler;
     Header m_header;

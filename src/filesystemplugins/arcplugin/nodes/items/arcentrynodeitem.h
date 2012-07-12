@@ -1,9 +1,9 @@
 #ifndef ARCENTRYNODEITEM_H_
 #define ARCENTRYNODEITEM_H_
 
+#include <vfs/filetypeinfo/vfs_filetypeinfo.h>
+#include <vfs/containers/vfs_wrappednodeitem.h>
 #include "arcnodeitem.h"
-#include "../../../../filesystem/filetypeinfo/filetypeinfo.h"
-#include "../../../../filesystem/containers/filesystemwrappednodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN

@@ -12,11 +12,12 @@
 #include "../../actions/defaultpasteintofolderaction.h"
 #include "../../actions/defaultpropertiesaction.h"
 #include "../../actions/defaultpasteclipboardaction.h"
-#include "../../../../filesystem/filters/filesystemfilters.h"
-#include "../../../../filesystem/tasks/filesystemperformactiontask.h"
-#include "../../../../filesystem/tools/filesystemcommontools.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
+
+#include <vfs/filters/vfs_filters.h>
+#include <vfs/tasks/vfs_performactiontask.h>
+#include <vfs/tools/vfs_commontools.h>
 
 #include <QtGui/QClipboard>
 #include <QtGui/QMessageBox>

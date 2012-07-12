@@ -2,8 +2,8 @@
 #define DEFAULTMCUTACTION_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/actions/synchronous/vfs_syncfileaction.h>
 #include "../default_ns.h"
-#include "../../../filesystem/actions/synchronous/filesystemsyncfileaction.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

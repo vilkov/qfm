@@ -1,8 +1,8 @@
 #ifndef LIBUNRARFILEINFO_H_
 #define LIBUNRARFILEINFO_H_
 
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "../libunrar_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifileinfo.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN

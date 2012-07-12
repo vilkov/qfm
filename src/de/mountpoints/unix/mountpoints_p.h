@@ -6,7 +6,8 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusConnectionInterface>
 #include "../mountpoint.h"
-#include "../../../filesystem/tools/filesystemcommontools.h"
+
+#include <vfs/tools/vfs_commontools.h>
 
 
 /* UDisks */
@@ -104,7 +105,7 @@ void MountPoints::MountPointsPrivate::refresh()
 											(value = device.property("IdLabel").toString()).isEmpty() ? path.path() : value,
 											path.path(),
 											QPixmap(),
-											FileSystem::Tools::freeSpace(list.at(0).toUtf8()),
+											::VFS::Tools::freeSpace(list.at(0).toUtf8()),
 											device.property("PartitionSize").toULongLong()));
 
 

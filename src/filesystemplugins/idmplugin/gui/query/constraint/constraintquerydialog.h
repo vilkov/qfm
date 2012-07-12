@@ -13,7 +13,7 @@
 #include "../../../storage/constraints/value/idmconstraint.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class ConstraintQueryDialog : public QDialog
 {

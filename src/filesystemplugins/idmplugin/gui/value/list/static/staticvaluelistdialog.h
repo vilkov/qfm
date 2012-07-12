@@ -5,7 +5,7 @@
 #include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
-using namespace FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 
 class StaticValueListDialog : public NestedPlainDialog
 {

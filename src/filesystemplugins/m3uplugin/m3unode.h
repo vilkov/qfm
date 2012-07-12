@@ -2,11 +2,11 @@
 #define M3UNODE_H_
 
 #include <QtCore/QFileInfo>
+#include <vfs/vfs_node.h>
 #include "m3uplugin_ns.h"
 #include "m3udelegate.h"
 #include "m3uproxymodel.h"
 #include "items/m3uitem.h"
-#include "../../filesystem/filesystemnode.h"
 
 
 M3U_PLUGIN_NS_BEGIN

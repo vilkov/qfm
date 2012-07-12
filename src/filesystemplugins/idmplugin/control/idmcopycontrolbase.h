@@ -1,8 +1,8 @@
 #ifndef IDMCOPYCONTROLBASE_H_
 #define IDMCOPYCONTROLBASE_H_
 
+#include <vfs/interfaces/vfs_icopycontrol.h>
 #include "../containeres/idmcontainer.h"
-#include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -1,8 +1,8 @@
 #ifndef IDMQUERYRESULTPATHITEM_H_
 #define IDMQUERYRESULTPATHITEM_H_
 
+#include <vfs/vfs_node.h>
 #include "idmqueryresultitem.h"
-#include "../../../../../filesystem/filesystemnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN

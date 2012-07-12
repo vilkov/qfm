@@ -12,7 +12,7 @@
 #include "../../../../tools/events/imp/keyboardeventsource.h"
 
 
-using namespace ::FileSystem::Plugins::Idm;
+using namespace ::VFS::Plugins::Idm;
 using namespace ::Tools::Events;
 
 class ListEntityDialog : public QDialog

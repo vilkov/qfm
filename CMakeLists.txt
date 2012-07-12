@@ -73,6 +73,7 @@ set (qfm_LIBS ${qfm_LIBS} ${LIBUNRAR_LIBRARY})
 
 
 # Includes
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Link directories
 

@@ -4,7 +4,7 @@
 #include "../defaultfileinfo.h"
 #include "../../model/items/defaultnodeitem.h"
 
-#include "../../../../filesystem/containers/filesystemsnapshot.h"
+#include <vfs/containers/vfs_snapshot.h>
 
 #include <sys/stat.h>
 #include <string.h>
@@ -121,14 +121,14 @@ private:
 };
 
 
-class WrappedNodeItem : public FileSystem::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::WrappedNodeItem
 {
 public:
 	WrappedNodeItem(const IFileContainer *container, WrappedNodeItem *parent) :
-		FileSystem::WrappedNodeItem(container, parent)
+		::VFS::WrappedNodeItem(container, parent)
 	{}
 	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent) :
-		FileSystem::WrappedNodeItem(container, info, parent)
+		::VFS::WrappedNodeItem(container, info, parent)
 	{}
 };
 

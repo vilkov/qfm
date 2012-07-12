@@ -1,9 +1,9 @@
 #ifndef IDMROOTNODE_H_
 #define IDMROOTNODE_H_
 
+#include <vfs/tasks/vfs_tasksnode.h>
 #include "idmrootnodedelegate.h"
 #include "../../containeres/idmcontainer.h"
-#include "../../../../filesystem/tasks/filesystemtasksnode.h"
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -69,7 +69,7 @@ void DirectoryView::setupModel(const QString &absoluteFilePath)
 		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
 }
 
-void DirectoryView::setupModel(FileSystem::INode *node, const QModelIndex &index, const Geometry &geometry)
+void DirectoryView::setupModel(::VFS::INode *node, const QModelIndex &index, const Geometry &geometry)
 {
 	if (::History::Entry *entry = node->viewInNewTab(this, index))
 		m_navigation.init(entry);
@@ -85,7 +85,7 @@ void DirectoryView::setupModel(const QString &path, qint32 column, Qt::SortOrder
 		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
 }
 
-FileSystem::INode *DirectoryView::node() const
+::VFS::INode *DirectoryView::node() const
 {
 	return m_node;
 }
@@ -113,7 +113,7 @@ void DirectoryView::select(const QModelIndex &index)
 	m_view.selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 }
 
-void DirectoryView::setNode(FileSystem::INode *node)
+void DirectoryView::setNode(::VFS::INode *node)
 {
     m_node = node;
 	m_view.setModel(node->model());
@@ -138,7 +138,7 @@ void DirectoryView::setNode(FileSystem::INode *node)
 	for (Geometry::size_type i = 0, size = geometry.size(); i < size; ++i)
 		m_view.setColumnWidth(i, geometry.at(i));
 
-	::FileSystem::INode::Sorting sorting(m_node->sorting());
+	::VFS::INode::Sorting sorting(m_node->sorting());
 	m_view.sortByColumn(sorting.first, sorting.second);
 }
 

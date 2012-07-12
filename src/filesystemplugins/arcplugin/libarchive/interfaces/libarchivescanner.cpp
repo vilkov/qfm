@@ -1,8 +1,9 @@
 #include "libarchivescanner.h"
 #include "libarchivefileinfo.h"
-#include "../../../../filesystem/tools/filesystempath.h"
-#include "../../../../filesystem/containers/filesystemsnapshot.h"
-#include "../../../../filesystem/interfaces/filesystemifileaccessor.h"
+
+#include <vfs/tools/vfs_path.h>
+#include <vfs/containers/vfs_snapshot.h>
+#include <vfs/interfaces/vfs_ifileaccessor.h>
 
 #include <string.h>
 #include <archive.h>
@@ -115,14 +116,14 @@ private:
 };
 
 
-class WrappedNodeItem : public FileSystem::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::WrappedNodeItem
 {
 public:
-	typedef QMap<QString, FileSystem::WrappedNodeItem *> Container;
+	typedef QMap<QString, ::VFS::WrappedNodeItem *> Container;
 
 public:
 	WrappedNodeItem(const IFileContainer *container, const QString &fileName, struct archive_entry *entry, WrappedNodeItem *parent) :
-		FileSystem::WrappedNodeItem(container, archive_entry_size(entry), parent)
+		::VFS::WrappedNodeItem(container, archive_entry_size(entry), parent)
 	{
 		m_data.path = QByteArray(archive_entry_pathname(entry));
 		m_data.fileName = fileName;

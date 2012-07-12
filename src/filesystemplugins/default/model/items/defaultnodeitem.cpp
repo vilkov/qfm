@@ -1,5 +1,5 @@
 #include "defaultnodeitem.h"
-#include "../../../../filesystem/tools/filesystemcommontools.h"
+#include <vfs/tools/vfs_commontools.h>
 
 
 DEFAULT_PLUGIN_NS_BEGIN

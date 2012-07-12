@@ -2,9 +2,9 @@
 #define IDMPLUGIN_H_
 
 #include <QtCore/QString>
+#include <vfs/interfaces/vfs_iplugin.h>
 #include "actions/idmcreatedbaction.h"
 #include "settings/idmpluginsettings.h"
-#include "../../filesystem/interfaces/filesystemiplugin.h"
 
 
 IDM_PLUGIN_NS_BEGIN

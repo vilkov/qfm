@@ -60,7 +60,7 @@ FILESYSTEM_PLUGINS_NS_END
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
 	m_taskPool(QThread::idealThreadCount() * 2),
-	m_rootNode(new FileSystem::Plugins::AppRootNode(&m_settings2.pluginsPage()))
+	m_rootNode(new ::VFS::Plugins::AppRootNode(&m_settings2.pluginsPage()))
 {
 	QApplication::setApplicationName(name);
 	QApplication::setOrganizationName(organization);

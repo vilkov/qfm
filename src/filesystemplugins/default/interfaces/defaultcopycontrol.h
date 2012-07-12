@@ -2,8 +2,8 @@
 #define DEFAULTCOPYINFO_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/interfaces/vfs_icopycontrol.h>
 #include "defaultfilecontainer.h"
-#include "../../../filesystem/interfaces/filesystemicopycontrol.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

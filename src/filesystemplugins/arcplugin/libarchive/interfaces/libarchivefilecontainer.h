@@ -2,8 +2,8 @@
 #define LIBARCHIVEFILECONTAINER_H_
 
 #include <QtCore/QSharedData>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "libarchivescanner.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN

@@ -1,5 +1,6 @@
 #include "arcentrynodeitem.h"
-#include "../../../../filesystem/tools/filesystemcommontools.h"
+
+#include <vfs/tools/vfs_commontools.h>
 
 
 ARC_PLUGIN_NS_BEGIN

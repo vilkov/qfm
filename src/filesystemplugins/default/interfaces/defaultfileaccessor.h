@@ -1,8 +1,8 @@
 #ifndef DEFAULTFILEACCESSOR_H_
 #define DEFAULTFILEACCESSOR_H_
 
+#include <vfs/interfaces/vfs_ifileaccessor.h>
 #include "../default_ns.h"
-#include "../../../filesystem/interfaces/filesystemifileaccessor.h"
 
 #ifdef Q_OS_UNIX
 	typedef int FileDescriptor;

@@ -26,7 +26,7 @@ public:
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);
-    void openInNewTab(FileSystem::INode *node, const QModelIndex &index, const QList<qint32> &geometry);
+    void openInNewTab(::VFS::INode *node, const QModelIndex &index, const QList<qint32> &geometry);
     void closeCurrentTab();
 	void setFocus();
 	void setCurrentDirectory(const QString &filePath);
@@ -72,7 +72,7 @@ private:
 
 		QString path() const { return m_path.value(); }
 		const Sort &sort() const { return m_sort; }
-    	FileSystem::INode::Geometry geometry() const;
+    	::VFS::INode::Geometry geometry() const;
 
     private:
 		Tools::Settings::OptionValue m_path;

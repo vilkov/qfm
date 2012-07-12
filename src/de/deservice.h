@@ -2,8 +2,8 @@
 #define DESERVICE_H_
 
 #include <QtCore/QLocale>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "de_ns.h"
-#include "../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 DE_NS_BEGIN
@@ -53,15 +53,15 @@ public:
 
 	QIcon missingIcon(int iconSize = Small) const;
 
-	::FileSystem::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
-	::FileSystem::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
+	::VFS::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
+	::VFS::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
 
-	void open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const;
+	void open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file) const;
 
 private:
 	QByteArray themeName() const;
-	::FileSystem::FileTypeInfo fileTypeInfo(int iconSize) const;
-	::FileSystem::FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
+	::VFS::FileTypeInfo fileTypeInfo(int iconSize) const;
+	::VFS::FileTypeInfo fileTypeInfo(const char *mimeType, int iconSize) const;
 
 private:
 	Type m_type;

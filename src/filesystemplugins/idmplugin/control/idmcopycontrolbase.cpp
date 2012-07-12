@@ -1,5 +1,6 @@
 #include "idmcopycontrolbase.h"
-#include "../../../filesystem/tools/filesystempath.h"
+
+#include <vfs/tools/vfs_path.h>
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -3,9 +3,10 @@
 #include "../defaultcopycontrol.h"
 #include "../defaultfileinfo.h"
 
-#include "../../../../filesystem/tools/filesystemcommontools.h"
-#include "../../../../filesystem/interfaces/filesysteminodeview.h"
+#include <vfs/tools/vfs_commontools.h>
+#include <vfs/interfaces/vfs_inodeview.h>
 
+#include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
@@ -26,7 +27,12 @@ bool BaseFileContainer::isDefault() const
 
 IFileInfo::size_type BaseFileContainer::freeSpace() const
 {
-	return Tools::freeSpace(m_path);
+	struct statvfs64 info;
+
+	if (statvfs64(m_path, &info) == -1)
+		return 0;
+	else
+		return info.f_bsize * info.f_bfree;
 }
 
 ICopyControl *BaseFileContainer::createControl(INodeView *view) const

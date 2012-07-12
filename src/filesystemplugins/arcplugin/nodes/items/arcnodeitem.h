@@ -1,8 +1,8 @@
 #ifndef ARCNODEITEM_H_
 #define ARCNODEITEM_H_
 
+#include <vfs/tasks/model/items/vfs_tasksnodeitem.h>
 #include "../../arcplugin_ns.h"
-#include "../../../../filesystem/tasks/model/items/filesystemtasksnodeitem.h"
 
 
 ARC_PLUGIN_NS_BEGIN

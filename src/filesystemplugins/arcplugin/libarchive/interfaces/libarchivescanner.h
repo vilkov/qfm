@@ -2,8 +2,8 @@
 #define LIBARCHIVESCANNER_H_
 
 #include <QtCore/QMutex>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "../libarchive_ns.h"
-#include "../../../../filesystem/interfaces/filesystemifilecontainer.h"
 
 
 struct archive;

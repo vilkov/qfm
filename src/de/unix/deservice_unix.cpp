@@ -1,6 +1,6 @@
 #include "../deservice.h"
-#include "../../filesystem/interfaces/filesystemifileinfo.h"
 
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include <xdg/xdg.h>
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
@@ -451,7 +451,7 @@ QIcon Service::missingIcon(int iconSize) const
 	return iconCache->findIcon("image-missing", iconSize, XdgThemeStatus);
 }
 
-::FileSystem::FileTypeInfo Service::fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize) const
+::VFS::FileTypeInfo Service::fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -466,7 +466,7 @@ QIcon Service::missingIcon(int iconSize) const
 	}
 }
 
-::FileSystem::FileTypeInfo Service::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
+::VFS::FileTypeInfo Service::fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize) const
 {
 	if (isDir)
 		return fileTypeInfo(iconSize);
@@ -474,7 +474,7 @@ QIcon Service::missingIcon(int iconSize) const
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
 }
 
-void Service::open(const ::FileSystem::IFileContainer *container, const ::FileSystem::IFileInfo *file) const
+void Service::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file) const
 {
 	typedef QList<QByteArray> List;
 	const char *args[3] = {NULL, NULL, NULL};
@@ -566,9 +566,9 @@ QByteArray Service::themeName() const
 #endif
 }
 
-::FileSystem::FileTypeInfo Service::fileTypeInfo(int iconSize) const
+::VFS::FileTypeInfo Service::fileTypeInfo(int iconSize) const
 {
-	::FileSystem::FileTypeInfo info;
+	::VFS::FileTypeInfo info;
 
 	info.icon = iconCache->findMimeTypeIcon("inode/directory", iconSize);
 	info.id.mime = QString::fromLatin1("inode/directory");
@@ -577,9 +577,9 @@ QByteArray Service::themeName() const
 	return info;
 }
 
-::FileSystem::FileTypeInfo Service::fileTypeInfo(const char *mimeType, int iconSize) const
+::VFS::FileTypeInfo Service::fileTypeInfo(const char *mimeType, int iconSize) const
 {
-	::FileSystem::FileTypeInfo info;
+	::VFS::FileTypeInfo info;
 
 	if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||

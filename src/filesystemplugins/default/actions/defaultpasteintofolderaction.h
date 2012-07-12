@@ -2,8 +2,8 @@
 #define DEFAULTPASTEINTOFOLDERACTION_H_
 
 #include <QtCore/QCoreApplication>
+#include <vfs/actions/asynchronous/vfs_asyncfileaction.h>
 #include "../default_ns.h"
-#include "../../../filesystem/actions/asynchronous/filesystemasyncfileaction.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

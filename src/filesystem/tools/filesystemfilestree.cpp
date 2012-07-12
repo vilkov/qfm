@@ -23,7 +23,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 
 		if (folder == NULL)
 		{
-			IFileContainer::Holder container(m_root->open(fileName, m_createSubfolders, error));
+			IFileContainer::Holder container(m_root->create(fileName, error));
 
 			if (container)
 				folder = ptr = new Directory(container);
@@ -41,7 +41,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 
 			if (subfolder == NULL)
 			{
-				IFileContainer::Holder container(ptr->control->open(fileName, m_createSubfolders, error));
+				IFileContainer::Holder container(ptr->control->create(fileName, error));
 
 				if (container)
 					subfolder = ptr = new Directory(container);
@@ -60,7 +60,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 
 			if (subfolder == NULL)
 			{
-				IFileContainer::Holder container(ptr->control->open(fileName, m_createSubfolders, error));
+				IFileContainer::Holder container(ptr->control->create(fileName, error));
 
 				if (container)
 					subfolder = ptr = new Directory(container);
@@ -80,7 +80,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 
 			if (folder == NULL)
 			{
-				IFileContainer::Holder container(m_root->open(filePath, m_createSubfolders, error));
+				IFileContainer::Holder container(m_root->create(filePath, error));
 
 				if (container)
 					folder = new Directory(container);

@@ -81,10 +81,10 @@ bool BaseFileContainer::remove(const IFileInfo *info, QString &error) const
 	return false;
 }
 
-bool BaseFileContainer::rename(const IFileInfo *oldInfo, const QString &newName, QString &error) const
+bool BaseFileContainer::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
-	if (::rename(QByteArray(m_path).append('/').append(static_cast<const Info *>(oldInfo)->rawFileName()),
-				 QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(newName))) == 0)
+	if (::rename(QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName()),
+				 QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(fileName))) == 0)
 	{
 		return true;
 	}

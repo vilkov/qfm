@@ -45,9 +45,9 @@ bool IdmCopyControlBase::remove(const IFileInfo *info, QString &error) const
 	return m_dest->remove(info, error);
 }
 
-bool IdmCopyControlBase::rename(const IFileInfo *oldInfo, const QString &newName, QString &error) const
+bool IdmCopyControlBase::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
-	return m_dest->rename(oldInfo, newName, error);
+	return m_dest->rename(info, fileName, error);
 }
 
 bool IdmCopyControlBase::move(const IFileContainer *source, const IFileInfo *info, QString &error) const

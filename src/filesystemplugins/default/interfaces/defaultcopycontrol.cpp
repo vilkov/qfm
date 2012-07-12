@@ -47,9 +47,9 @@ bool CopyControl::remove(const IFileInfo *info, QString &error) const
 	return m_container.remove(info, error);
 }
 
-bool CopyControl::rename(const IFileInfo *oldInfo, const QString &newName, QString &error) const
+bool CopyControl::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
-	return m_container.rename(oldInfo, newName, error);
+	return m_container.rename(info, fileName, error);
 }
 
 bool CopyControl::move(const IFileContainer *source, const IFileInfo *info, QString &error) const

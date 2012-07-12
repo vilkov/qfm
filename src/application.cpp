@@ -9,13 +9,13 @@
 #include <QtCore/QTranslator>
 #include <QtGui/QKeyEvent>
 
-#include "filesystemplugins/default/defaultplugin.h"
-#include "filesystemplugins/m3uplugin/m3uplugin.h"
-#include "filesystemplugins/idmplugin/idmplugin.h"
-#include "filesystemplugins/arcplugin/arcplugin.h"
+#include "vfs-plugins/default/defaultplugin.h"
+#include "vfs-plugins/m3uplugin/m3uplugin.h"
+#include "vfs-plugins/idmplugin/idmplugin.h"
+#include "vfs-plugins/arcplugin/arcplugin.h"
 
 
-FILESYSTEM_PLUGINS_NS_BEGIN
+VFS_PLUGINS_NS_BEGIN
 
 class AppRootNode : public RootNode
 {
@@ -54,7 +54,7 @@ private:
 	Default::Plugin m_default;
 };
 
-FILESYSTEM_PLUGINS_NS_END
+VFS_PLUGINS_NS_END
 
 
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :

@@ -56,7 +56,7 @@ FileSystem::Node *IdmFolderNode::createNode(const IFileInfo *file) const
 	if (file->isDir())
 	{
 		QString error;
-		IFileContainer::Holder folder(container()->open(file->fileName(), false, error));
+		IFileContainer::Holder folder(container()->open(file, error));
 
 		if (folder)
 			return new IdmFolderNode(folder, m_container, const_cast<IdmFolderNode *>(this));

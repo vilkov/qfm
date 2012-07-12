@@ -68,7 +68,7 @@ bool FileContainer::remove(const IFileInfo *info, QString &error) const
 	return false;
 }
 
-bool FileContainer::rename(const IFileInfo *oldInfo, IFileInfo *newInfo, QString &error) const
+bool FileContainer::rename(const IFileInfo *oldInfo, const QString &newName, QString &error) const
 {
 	return false;
 }

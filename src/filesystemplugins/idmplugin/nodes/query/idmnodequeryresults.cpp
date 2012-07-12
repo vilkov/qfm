@@ -160,7 +160,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 				{
 					QString error;
-					IFileContainer::Holder container(m_container.container()->open(destination, false, error));
+					IFileContainer::Holder container(m_container.container()->create(destination, error));
 
 					if (container)
 					{
@@ -422,7 +422,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &select
 				if (static_cast<QueryResultPathItem *>(item)->isDir())
 				{
 					QString error;
-					IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->fileName(), false, error));
+					IFileContainer::Holder folder(m_container.container()->create(static_cast<QueryResultPathItem *>(item)->fileName(), error));
 
 					if (folder)
 					{

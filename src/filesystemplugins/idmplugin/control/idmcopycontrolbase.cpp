@@ -30,29 +30,29 @@ QString IdmCopyControlBase::location() const
 	return m_dest->location();
 }
 
-QString IdmCopyControlBase::location(const QString &fileName) const
-{
-	return m_dest->location(fileName);
-}
-
 bool IdmCopyControlBase::contains(const QString &fileName) const
 {
 	return m_dest->contains(fileName);
 }
 
-bool IdmCopyControlBase::remove(const QString &fileName, QString &error) const
+IFileInfo *IdmCopyControlBase::info(const QString &fileName, QString &error) const
 {
-	return m_dest->remove(fileName, error);
+	return m_dest->info(fileName, error);
 }
 
-bool IdmCopyControlBase::rename(const QString &oldName, const QString &newName, QString &error) const
+bool IdmCopyControlBase::remove(const IFileInfo *info, QString &error) const
 {
-	return m_dest->rename(oldName, newName, error);
+	return m_dest->remove(info, error);
 }
 
-bool IdmCopyControlBase::move(const IFileContainer *source, const QString &fileName, QString &error) const
+bool IdmCopyControlBase::rename(const IFileInfo *oldInfo, const QString &newName, QString &error) const
 {
-	return m_dest->move(source, fileName, error);
+	return m_dest->rename(oldInfo, newName, error);
+}
+
+bool IdmCopyControlBase::move(const IFileContainer *source, const IFileInfo *info, QString &error) const
+{
+	return m_dest->move(source, info, error);
 }
 
 IFileContainer *IdmCopyControlBase::open() const
@@ -60,14 +60,24 @@ IFileContainer *IdmCopyControlBase::open() const
 	return m_dest->open();
 }
 
-IFileAccessor *IdmCopyControlBase::open(const QString &fileName, int mode, QString &error) const
+IFileContainer *IdmCopyControlBase::open(const IFileInfo *info, QString &error) const
 {
-	return m_dest->open(fileName, mode, error);
+	return m_dest->open(info, error);
 }
 
-IFileContainer *IdmCopyControlBase::open(const QString &fileName, bool create, QString &error) const
+IFileAccessor *IdmCopyControlBase::open(const IFileInfo *info, int flags, QString &error) const
 {
-	return m_dest->open(fileName, create, error);
+	return m_dest->open(info, flags, error);
+}
+
+IFileContainer *IdmCopyControlBase::create(const QString &fileName, QString &error) const
+{
+	return m_dest->create(fileName, error);
+}
+
+IFileAccessor *IdmCopyControlBase::create(const QString &fileName, int flags, QString &error) const
+{
+	return m_dest->create(fileName, flags, error);
 }
 
 IFileContainer *IdmCopyControlBase::filter(Filter::Holder &filter, QString &error) const

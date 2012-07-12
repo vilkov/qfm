@@ -89,7 +89,7 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeIte
 {
 	do
 		if (m_sourceFile = entry->container()->open(entry->info(), IFileAccessor::ReadOnly, m_lastError))
-			if (m_destFile = destination->open(entry->info(), IFileAccessor::ReadWrite | IFileAccessor::Create | IFileAccessor::Truncate, m_lastError))
+			if (m_destFile = destination->create(entry->info()->fileName(), IFileAccessor::ReadWrite | IFileAccessor::Truncate, m_lastError))
 			{
 				m_written = 0;
 

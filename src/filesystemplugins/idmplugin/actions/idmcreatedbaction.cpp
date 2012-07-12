@@ -15,12 +15,13 @@ CreateDbAction::CreateDbAction() :
 void CreateDbAction::process(const IFileContainer *container, const FilesList &files) const
 {
 	QString error;
+	IFileInfo::Holder info;
 	IFileContainer::Holder folder;
 
 	for (FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 		if (files.at(i).second->isDir())
-			if (folder = container->open(files.at(i).second->fileName(), false, error))
-				if (folder->contains(Plugin::fileName()))
+			if (folder = container->open(files.at(i).second, error))
+				if (info = folder->info(Plugin::fileName(), error))
 				{
 					int res = QMessageBox::question(
 							Application::mainWindow(),
@@ -47,7 +48,7 @@ void CreateDbAction::process(const IFileContainer *container, const FilesList &f
 							oldName = string;
 						}
 
-						if (folder->rename(Plugin::fileName(), oldName, error))
+						if (folder->rename(info, oldName, error))
 							if (res == QMessageBox::Yes)
 							{
 								IdmStorage storage(folder->location(Plugin::fileName()), folder->location(oldName));

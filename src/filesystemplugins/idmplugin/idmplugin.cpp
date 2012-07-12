@@ -29,7 +29,7 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 
 Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	IFileContainer::Holder folder(container->open(file->fileName(), false, m_error));
+	IFileContainer::Holder folder(container->open(file, m_error));
 
 	if (folder && folder->contains(fileName()))
 		return new IdmRootNode(folder, parent);

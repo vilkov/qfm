@@ -3,6 +3,7 @@
 
 #include "vfs_ifileaccessor.h"
 #include "vfs_ifilecontainerscanner.h"
+#include "../location/vfs_location.h"
 
 
 VFS_NS_BEGIN
@@ -32,7 +33,10 @@ public:
 	virtual IFileInfo::size_type freeSpace() const = 0;
 	virtual ICopyControl *createControl(INodeView *view) const = 0;
 
-	virtual QString location() const = 0;
+	virtual const Location &location() const = 0;
+	virtual Location location(const IFileInfo *info) const = 0;
+	virtual Location location(const QString &fileName) const = 0;
+
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const = 0;
 
@@ -48,6 +52,12 @@ public:
 
 	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const = 0;
 	virtual const IFileContainerScanner *scanner() const = 0;
+
+protected:
+	static Location location(const QString &label, const QByteArray &location)
+	{
+		return Location(label, location);
+	}
 };
 
 VFS_NS_END

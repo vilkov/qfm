@@ -7,6 +7,9 @@
 #include <QtCore/QMutex>
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
+
+#include <vfs/location/vfs_location.h>
+
 #include "entities/idmentityroot.h"
 #include "queries/idmquery.h"
 #include "queries/idmquerycontext.h"
@@ -36,8 +39,8 @@ public:
 	enum { InvalidIndex = IdmEntity::InvalidIndex };
 
 public:
-	IdmStorage(const QString &storage, bool create);
-	IdmStorage(const QString &newStorage, const QString &oldStorage);
+	IdmStorage(const Location &storage, bool create);
+	IdmStorage(const Location &newStorage, const Location &oldStorage);
 	~IdmStorage();
 
 	bool isValid() const { return m_valid; }

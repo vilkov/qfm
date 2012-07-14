@@ -16,12 +16,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorage::IdmStorage(const QString &storage, bool create) :
+IdmStorage::IdmStorage(const Location &storage, bool create) :
 	m_valid(true),
 	m_db(0)
 {
 	if (create)
-		if (sqlite3_open16(storage.unicode(), &m_db) == SQLITE_OK)
+		if (sqlite3_open16(storage.as<QString>().unicode(), &m_db) == SQLITE_OK)
 		{
 			char *error;
 			QByteArray sqlQuery = Database::init();
@@ -40,7 +40,7 @@ IdmStorage::IdmStorage(const QString &storage, bool create) :
 			m_valid = false;
 		}
 	else
-		if (sqlite3_open16(storage.unicode(), &m_db) == SQLITE_OK)
+		if (sqlite3_open16(storage.as<QString>().unicode(), &m_db) == SQLITE_OK)
 		{
 			loadEntities();
 
@@ -54,13 +54,13 @@ IdmStorage::IdmStorage(const QString &storage, bool create) :
 		}
 }
 
-IdmStorage::IdmStorage(const QString &newStorage, const QString &oldStorage)
+IdmStorage::IdmStorage(const Location &newStorage, const Location &oldStorage)
 {
 	sqlite3 *oldDb;
 
-	if (sqlite3_open16(oldStorage.unicode(), &oldDb) == SQLITE_OK)
+	if (sqlite3_open16(oldStorage.as<QString>().unicode(), &oldDb) == SQLITE_OK)
 	{
-		if (sqlite3_open16(newStorage.unicode(), &m_db) == SQLITE_OK)
+		if (sqlite3_open16(newStorage.as<QString>().unicode(), &m_db) == SQLITE_OK)
 		{
 			char *error;
 			QByteArray sqlQuery = Database::init();
@@ -274,7 +274,7 @@ QueryContext IdmStorage::prepare(const Query &query, QString &error) const
 IdmEntity *IdmStorage::createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat)
 {
 	IdmEntity *res = 0;
-	IdmEntity::id_type id = loadId("ENTITY");
+	IdmEntity::id_type id = loadId(QString::fromLatin1("ENTITY"));
 
 	if (id != IdmEntity::InvalidId)
 	{

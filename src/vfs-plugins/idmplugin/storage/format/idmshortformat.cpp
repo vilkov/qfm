@@ -10,7 +10,7 @@ IdmShortFormat::IdmShortFormat(const QString &format) :
 	token.reserve(m_format.size());
 
 	for (size_type pos = 0; pos < m_format.size(); ++pos)
-		if (m_format.at(pos) == QChar('$'))
+		if (m_format.at(pos) == QChar(L'$'))
 			dollarToken(pos, token, m_format);
 		else
 			token.append(m_format.at(pos));
@@ -30,7 +30,7 @@ bool IdmShortFormat::isValid() const
 void IdmShortFormat::dollarToken(size_type &pos, QString &token, const QString &source)
 {
 	if (pos + 1 < source.size())
-		if (source.at(pos + 1) == QChar('{'))
+		if (source.at(pos + 1) == QChar(L'{'))
 			nameToken(++pos, token, source);
 		else
 			token.append(source.at(pos));
@@ -45,7 +45,7 @@ void IdmShortFormat::nameToken(size_type &pos, QString &token, const QString &so
 		QString name;
 
 		for (++pos; pos < source.size(); ++pos)
-			if (source.at(pos) == QChar('}'))
+			if (source.at(pos) == QChar(L'}'))
 			{
 				if (!name.isEmpty())
 				{

@@ -57,7 +57,7 @@ public:
 	const QString &shema() const { return m_shema; }
 	Iterator begin() { return Iterator(m_path); }
 	Iterator erase(const Iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
-	QString toString() const { return m_path.join(QChar('/')); }
+	QString toString() const { return m_path.join(QChar(L'/')); }
 
 private:
 	/* Simple Turing machine */
@@ -70,10 +70,10 @@ private:
 		Position position(0, 0);
 
 		for (size_t size = uri.size(); position.second < size; ++position.second)
-			if (uri.at(position.second) == QChar(':'))
+			if (uri.at(position.second) == QChar(L':'))
 				shemaState(uri, position);
 			else
-				if (uri.at(position.second) == QChar('/'))
+				if (uri.at(position.second) == QChar(L'/'))
 					pathState(uri, position);
 
 		if (position.first < uri.size())
@@ -82,11 +82,11 @@ private:
 
 #ifndef Q_OS_WIN32
 			if (m_path.at(0).isEmpty())
-				m_path[0] = QChar('/');
+				m_path[0] = QChar(L'/');
 		}
 		else
 			if (!m_path.isEmpty() && m_path.at(0).isEmpty())
-				m_path[0] = QChar('/');
+				m_path[0] = QChar(L'/');
 #else
 		}
 #endif
@@ -94,8 +94,8 @@ private:
 
 	void shemaState(const QString &uri, Position &position)
 	{
-		if (++position.second < uri.size() && uri.at(position.second) == QChar('/'))
-			if (++position.second < uri.size() && uri.at(position.second) == QChar('/'))
+		if (++position.second < uri.size() && uri.at(position.second) == QChar(L'/'))
+			if (++position.second < uri.size() && uri.at(position.second) == QChar(L'/'))
 				if (m_shema.isEmpty())
 				{
 					m_shema = uri.mid(position.first, position.second - position.first - 2);

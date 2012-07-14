@@ -364,7 +364,7 @@ void IdmNodeQueryResults::refresh()
 QString IdmNodeQueryResults::title() const
 {
 	QString res = m_container.container()->location();
-	return res.mid(res.lastIndexOf(QChar('/')));
+	return res.mid(res.lastIndexOf(QChar(L'/')));
 }
 
 QString IdmNodeQueryResults::location() const

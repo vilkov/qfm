@@ -17,7 +17,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 BaseFileContainer::BaseFileContainer(const QByteArray &path) :
-	m_path(path)
+	m_path(IFileContainer::location(Info::codec()->toUnicode(path), path))
 {}
 
 bool BaseFileContainer::isDefault() const
@@ -29,7 +29,7 @@ IFileInfo::size_type BaseFileContainer::freeSpace() const
 {
 	struct statvfs64 info;
 
-	if (statvfs64(m_path, &info) == -1)
+	if (statvfs64(m_path.as<QByteArray>(), &info) == -1)
 		return 0;
 	else
 		return info.f_bsize * info.f_bfree;
@@ -40,9 +40,23 @@ ICopyControl *BaseFileContainer::createControl(INodeView *view) const
 	return new CopyControl(view->node(), m_path);
 }
 
-QString BaseFileContainer::location() const
+const Location &BaseFileContainer::location() const
 {
-	return Info::codec()->toUnicode(m_path);
+	return m_path;
+}
+
+Location BaseFileContainer::location(const IFileInfo *info) const
+{
+	QByteArray path(m_path);
+	path.append('/').append(static_cast<const Info *>(info)->rawFileName());
+	return IFileContainer::location(Info::codec()->toUnicode(path), path);
+}
+
+Location BaseFileContainer::location(const QString &fileName) const
+{
+	QByteArray path(m_path);
+	path.append('/');
+	return IFileContainer::location(Info::codec()->toUnicode(path).append(fileName), path);
 }
 
 bool BaseFileContainer::contains(const QString &fileName) const

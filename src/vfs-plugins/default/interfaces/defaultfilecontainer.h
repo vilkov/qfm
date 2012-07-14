@@ -16,7 +16,10 @@ public:
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 
-	virtual QString location() const;
+	virtual const Location &location() const;
+	virtual Location location(const IFileInfo *info) const;
+	virtual Location location(const QString &fileName) const;
+
 	virtual bool contains(const QString &fileName) const;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 
@@ -35,7 +38,7 @@ public:
 protected:
 	friend class FileContainerScanner;
 	friend class FilteredFileContainerScanner;
-	QByteArray m_path;
+	Location m_path;
 };
 
 

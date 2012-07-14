@@ -49,7 +49,7 @@ void OptionFont::loadDefault()
 
 QString OptionFont::toString(const QFont &font)
 {
-	return QString(font.family()).append(' ').append(QString::number(font.pointSize()));
+	return QString(font.family()).append(L' ').append(QString::number(font.pointSize()));
 }
 
 SETTINGS_NS_END

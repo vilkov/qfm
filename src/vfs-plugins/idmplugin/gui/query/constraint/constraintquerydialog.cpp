@@ -93,7 +93,7 @@ Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 void ConstraintQueryDialog::accept()
 {
 	if (m_edit.text().isEmpty())
-		QMessageBox::warning(this, windowTitle(), "You must enter or choose the value.");
+		QMessageBox::warning(this, windowTitle(), tr("You must enter or select a value."));
 	else
 		QDialog::accept();
 }

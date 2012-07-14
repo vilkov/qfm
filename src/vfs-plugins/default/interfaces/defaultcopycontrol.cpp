@@ -27,9 +27,19 @@ ICopyControl *CopyControl::createControl(INodeView *view) const
 	return m_container.createControl(view);
 }
 
-QString CopyControl::location() const
+const Location &CopyControl::location() const
 {
 	return m_container.location();
+}
+
+Location CopyControl::location(const IFileInfo *info) const
+{
+	return m_container.location(info);
+}
+
+Location CopyControl::location(const QString &fileName) const
+{
+	return m_container.location(fileName);
 }
 
 bool CopyControl::contains(const QString &fileName) const

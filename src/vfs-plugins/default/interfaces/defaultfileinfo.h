@@ -27,8 +27,6 @@ public:
     template <typename T>
     explicit Info(const Info &other, T = T());
 
-    QString operator-(const Info &other) const;
-
 	/* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;

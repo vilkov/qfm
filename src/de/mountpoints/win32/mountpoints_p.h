@@ -115,7 +115,7 @@ void MountPoints::MountPointsPrivate::refresh()
 										else
 											pixmap = QPixmap();
 
-										if ((index = label.lastIndexOf(QChar(')'))) != -1)
+										if ((index = label.lastIndexOf(QChar(L')'))) != -1)
 										{
 											path = label.mid(index - 2, 2);
 

@@ -99,7 +99,7 @@ bool UnPackIntoSubdirActionTask::OverwriteFile::operator()(QString &error) const
 		error = tr("File \"%1\" already exists in \"%2\".").
 				arg(m_fileName).
 				arg(m_container->location()).
-				append(QChar('\n')).
+				append(QChar(L'\n')).
 				append(tr("Overwrite it?"));
 		return false;
 	}
@@ -154,7 +154,7 @@ bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool 
 {
 	qint32 answer = askUser(
 						tr("Unpacking..."),
-						QString(error).append('\n').append(tr("Skip it?")),
+						QString(error).append(L'\n').append(tr("Skip it?")),
 						QMessageBox::Yes |
 						QMessageBox::YesToAll |
 						QMessageBox::Retry |

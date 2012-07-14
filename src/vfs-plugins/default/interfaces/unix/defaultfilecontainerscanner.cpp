@@ -139,7 +139,7 @@ FileContainerScanner::FileContainerScanner(const IFileContainer *container) :
 
 FileContainerScanner::IEnumerator *FileContainerScanner::enumerate(QString &error) const
 {
-	return new Enumerator(m_container->location().toUtf8());
+	return new Enumerator(m_container->location());
 }
 
 void FileContainerScanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
@@ -300,7 +300,7 @@ FilteredFileContainerScanner::FilteredFileContainerScanner(const IFileContainer 
 
 FilteredFileContainerScanner::IEnumerator *FilteredFileContainerScanner::enumerate(QString &error) const
 {
-	return new FilteredEnumerator(m_container->location().toUtf8(), m_filter);
+	return new FilteredEnumerator(m_container->location(), m_filter);
 }
 
 void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const

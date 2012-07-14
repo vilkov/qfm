@@ -1,8 +1,6 @@
 #include "libunrarunpackintosubdiractiontask.h"
 #include "../../interfaces/libunrarscanner.h"
 #include "../../interfaces/libunrarfilecontainer.h"
-#include "../../../../default/interfaces/defaultfileinfo.h"
-#include "../../../../default/interfaces/defaultfilecontainer.h"
 
 #include <wchar.h>
 #include <libunrar/rar.hpp>
@@ -27,8 +25,6 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	IFileContainer::Holder destination;
 	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
 
-	QByteArray path = QByteArray(static_cast<const Default::BaseFileContainer *>(m_container)->m_path).append('/');
-
 	int res;
 	void *archive;
 	struct RARHeaderDataEx fileInfo;
@@ -39,7 +35,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 		if (tryier.tryTo(CreateDestination(m_container, m_file = files().at(i).second, destination)))
 		{
-			fileName = QByteArray(path).append(static_cast<const Default::Info *>(m_file)->rawFileName());
+			fileName = m_container->location(m_file);
 
 			memset(&archiveData, 0, sizeof(struct RAROpenArchiveDataEx));
 
@@ -52,7 +48,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 
 			    while ((res = RARReadHeaderEx(archive, &fileInfo)) == 0 && !aborted)
 			    {
-					if ((res = RARProcessFile(archive, RAR_EXTRACT, destination->location().toUtf8().data(), NULL)) != 0)
+					if ((res = RARProcessFile(archive, RAR_EXTRACT, const_cast<char *>(destination->location().as<QByteArray>().data()), NULL)) != 0)
 						break;
 			    }
 
@@ -73,7 +69,7 @@ bool UnPackIntoSubdirActionTask::askForSkipIfNotCopy(const QString &error, bool 
 {
 	qint32 answer = askUser(
 						tr("Extracting..."),
-						QString(error).append('\n').append(tr("Skip it?")),
+						QString(error).append(L'\n').append(tr("Skip it?")),
 						QMessageBox::Yes |
 						QMessageBox::YesToAll |
 						QMessageBox::Retry |

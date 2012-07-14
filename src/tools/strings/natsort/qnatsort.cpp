@@ -91,17 +91,17 @@ static int natural_order_compare(const QString &leftStr, const QString &rightStr
         cb = rightStr[i];
         
         /* process run of digits */
-        if (ca.isDigit() && cb.isDigit()) {
-            fractional = (ca == '0' || cb == '0');
-            
-            if (fractional) {
-                if ((result = compare_left(leftStr, rightStr, i)) != 0)
-                    return result;
-            } else {
-                if ((result = compare_right(leftStr, rightStr, i)) != 0)
-                    return result;
-            }
-        }
+//        if (ca.isDigit() && cb.isDigit()) {
+//            fractional = (ca == '0' || cb == '0');
+//
+//            if (fractional) {
+//                if ((result = compare_left(leftStr, rightStr, i)) != 0)
+//                    return result;
+//            } else {
+//                if ((result = compare_right(leftStr, rightStr, i)) != 0)
+//                    return result;
+//            }
+//        }
         
         if (fold_case) {
             ca = ca.toUpper();

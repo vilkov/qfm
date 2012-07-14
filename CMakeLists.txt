@@ -4,7 +4,6 @@ project (qfm)
 
 # Custom modules
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/home/dav/xdg/share/cmake/Modules")
 
 
 # Project header
@@ -103,6 +102,8 @@ add_definitions (
     -DTOOLS_THREADS_BACKEND_QT
     -DTOOLS_TYPES_BACKEND_QT
     -DTOOLS_POINTERS_BACKEND_QT
+    
+    -DQT_NO_CAST_FROM_ASCII
 )
 
 # We're require at least Windows 2000 (http://msdn.microsoft.com/en-us/library/Aa383745)

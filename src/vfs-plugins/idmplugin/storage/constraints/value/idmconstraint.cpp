@@ -74,7 +74,7 @@ QString Constraint::operatorToString(Operator op, Database::EntityType type, con
 			return QString::fromLatin1(" = ").append(Database::valueToConstraintString(type, value));
 
 		case Like:
-			return QString::fromLatin1(" like ").append(Database::valueToConstraintString(type, value).replace(QChar('*'), QChar('%')));
+			return QString::fromLatin1(" like ").append(Database::valueToConstraintString(type, value).replace(QChar(L'*'), QChar(L'%')));
 
 		default:
 			return QString();

@@ -12,7 +12,7 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 		IFileContainer::Holder localContainer(container->open());
 
 		if (localContainer)
-			return new FileContainer(localContainer, QByteArray(localContainer.as<Default::BaseFileContainer>()->m_path).append('/').append(static_cast<const Default::Info *>(file)->rawFileName()), file->fileName());
+			return new FileContainer(localContainer, localContainer->location(file));
 	}
 
 	return NULL;
@@ -21,13 +21,13 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 QString FileContainer::extractDirectoryName(const IFileInfo *file)
 {
 	QString fileName = file->fileName();
-	return fileName.mid(0, fileName.indexOf(QChar('.')));
+	return fileName.mid(0, fileName.indexOf(QChar(L'.')));
 }
 
 QString FileContainer::extractArchivedFileName(const IFileInfo *file)
 {
 	QString fileName = file->fileName();
-	return fileName.mid(fileName.lastIndexOf(QChar('/')) + 1);
+	return fileName.mid(fileName.lastIndexOf(QChar(L'/')) + 1);
 }
 
 bool FileContainer::isDefault() const
@@ -45,9 +45,19 @@ ICopyControl *FileContainer::createControl(INodeView *view) const
 	return NULL;
 }
 
-QString FileContainer::location() const
+const Location &FileContainer::location() const
 {
-	return m_path;
+	return m_data->location;
+}
+
+Location FileContainer::location(const IFileInfo *info) const
+{
+	return Location();
+}
+
+Location FileContainer::location(const QString &fileName) const
+{
+	return Location();
 }
 
 bool FileContainer::contains(const QString &fileName) const
@@ -107,12 +117,11 @@ IFileContainer *FileContainer::filter(Filter::Holder &filter, QString &error) co
 
 const IFileContainerScanner *FileContainer::scanner() const
 {
-	return &m_data->m_scanner;
+	return &m_data->scanner;
 }
 
-FileContainer::FileContainer(IFileContainer::Holder &container, const QByteArray &filePath, const QString &fileName) :
-	m_data(new Data(container, filePath)),
-	m_path(m_data->container->location().append(QChar('/')).append(fileName))
+FileContainer::FileContainer(IFileContainer::Holder &container, const Location &location) :
+	m_data(new Data(container, location))
 {}
 
 LIBUNRAR_ARC_PLUGIN_NS_END

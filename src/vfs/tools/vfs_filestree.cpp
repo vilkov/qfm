@@ -14,7 +14,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 	const QChar *path = filePath.constData();
 	const QChar *sep;
 
-	if ((sep = strchr(path, '/')) != NULL)
+	if ((sep = strchr(path, L'/')) != NULL)
 	{
 		QString fileName;
 
@@ -35,7 +35,7 @@ const IFileContainer *FilesTree::open(const QString &filePath, bool isPathToDire
 
 		path = (++sep);
 
-		while ((sep = strchr(path, '/')) != NULL)
+		while ((sep = strchr(path, L'/')) != NULL)
 		{
 			Directory *&subfolder = ptr->files[fileName = QString(path, sep - path)];
 

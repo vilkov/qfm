@@ -185,7 +185,7 @@ void BaseNode::refresh()
 QString BaseNode::title() const
 {
 	QString res = m_container->location();
-	return res.mid(res.lastIndexOf(QChar('/')) + 1);
+	return res.mid(res.lastIndexOf(QChar(L'/')) + 1);
 }
 
 QString BaseNode::location() const
@@ -477,7 +477,7 @@ void BaseNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 	AbsoluteFilePathList pathList(m_container.data());
 	processIndexList(list, pathList);
-	Application::instance()->clipboard()->setText(pathList.join(QChar('\r')));
+	Application::instance()->clipboard()->setText(pathList.join(QChar(L'\r')));
 }
 
 void BaseNode::copy(const INodeView *source, INodeView *destination)

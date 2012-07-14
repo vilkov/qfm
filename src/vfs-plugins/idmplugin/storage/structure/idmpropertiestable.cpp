@@ -5,7 +5,7 @@ IDM_PLUGIN_NS_BEGIN
 
 QString PropertiesTable::tableName()
 {
-	return "PROPERTIES";
+	return QString::fromLatin1("PROPERTIES");
 }
 
 QByteArray PropertiesTable::create()
@@ -89,11 +89,11 @@ QByteArray PropertiesTable::addValue(const QString &tableName, Database::id_type
 			append(tableName).
 			append(QString::fromLatin1(" (ID, ENTITY_VALUE_ID, PROPERTY_VALUE_ID) values (")).
 			append(QString::number(id)).
-			append(QChar(',')).
+			append(QChar(L',')).
 			append(QString::number(entity)).
-			append(QChar(',')).
+			append(QChar(L',')).
 			append(QString::number(property)).
-			append(QChar(')')).toUtf8();
+			append(QChar(L')')).toUtf8();
 }
 
 QByteArray PropertiesTable::removeValue(Database::id_type entity, Database::id_type entityValue, Database::id_type property, Database::id_type propertyValue)

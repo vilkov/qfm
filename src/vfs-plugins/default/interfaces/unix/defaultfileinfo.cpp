@@ -139,24 +139,6 @@ Info::Info<Info::Identify>(const Info &other, Identify) :
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
 }
 
-QString Info::operator-(const Info &o) const
-{
-	Path current(m_filePath);
-	Path other(o.m_filePath);
-
-	for (Path::Iterator otherIt = other.begin(), currentIt = current.begin();
-		!otherIt.atEnd() && !currentIt.atEnd();
-		++otherIt)
-	{
-		if (*currentIt == *otherIt)
-			currentIt = current.erase(currentIt);
-		else
-			break;
-	}
-
-	return current.toString();
-}
-
 bool Info::isDir() const
 {
 	return m_info.isDir;

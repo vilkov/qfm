@@ -43,9 +43,9 @@ void KFileItemModelFilter::setPattern(const QString& filter)
     m_pattern = filter;
     m_lowerCasePattern = filter.toLower();
 
-    m_useRegExp = filter.contains('*') ||
-                  filter.contains('?') ||
-                  filter.contains('[');
+//    m_useRegExp = filter.contains('*') ||
+//                  filter.contains('?') ||
+//                  filter.contains('[');
     if (m_useRegExp) {
         if (!m_regExp) {
             m_regExp = new QRegExp();

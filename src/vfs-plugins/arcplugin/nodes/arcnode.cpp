@@ -186,8 +186,8 @@ void ArcNode::refresh()
 
 QString ArcNode::title() const
 {
-	QString location(m_container->location());
-	return location.mid(location.lastIndexOf(QChar('/')) + 1);
+	QString location(m_container->location().as<QString>());
+	return location.mid(location.lastIndexOf(QChar(L'/')) + 1);
 }
 
 QString ArcNode::location() const

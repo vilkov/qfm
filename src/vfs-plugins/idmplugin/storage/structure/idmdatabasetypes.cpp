@@ -50,9 +50,9 @@ QString Database::valueToString(EntityType type, const QVariant &value)
 		case Memo:
 		case Path:
 		case String:   return value.toString();
-		case Date:     return value.toDate().toString("MM/dd/yyyy");
-		case Time:     return value.toTime().toString("hh:mm:ss");
-		case DateTime: return value.toDateTime().toString("hh:mm:ss MM/dd/yyyy");
+		case Date:     return value.toDate().toString(QString::fromLatin1("MM/dd/yyyy"));
+		case Time:     return value.toTime().toString(QString::fromLatin1("hh:mm:ss"));
+		case DateTime: return value.toDateTime().toString(QString::fromLatin1("hh:mm:ss MM/dd/yyyy"));
 		default:       return QString();
 	}
 }
@@ -67,13 +67,13 @@ QString Database::valueToConstraintString(EntityType type, const QVariant &value
 		case Memo:
 		case Path:
 		case String:   return value.toString().
-								replace('%', QString::fromLatin1("\\%")).
-								replace('\'', QString::fromLatin1("\\'")).
-								prepend(QChar('\'')).
-								append(QChar('\''));
-		case Date:     return value.toDate().toString("'MM/dd/yyyy'");
-		case Time:     return value.toTime().toString("'hh:mm:ss'");
-		case DateTime: return value.toDateTime().toString("'hh:mm:ss MM/dd/yyyy'");
+								replace(L'%', QString::fromLatin1("\\%")).
+								replace(L'\'', QString::fromLatin1("\\'")).
+								prepend(QChar(L'\'')).
+								append(QChar(L'\''));
+		case Date:     return value.toDate().toString(QString::fromLatin1("'MM/dd/yyyy'"));
+		case Time:     return value.toTime().toString(QString::fromLatin1("'hh:mm:ss'"));
+		case DateTime: return value.toDateTime().toString(QString::fromLatin1("'hh:mm:ss MM/dd/yyyy'"));
 		default:       return QString();
 	}
 }
@@ -83,7 +83,7 @@ QString Database::idsToString(const IdsSet &ids)
 	QString res;
 
 	for (IdsSet::const_iterator it = ids.constBegin(), end = ids.constEnd(); it != end; ++it)
-		res.append(QString::number(*it)).append(QChar(','));
+		res.append(QString::number(*it)).append(QChar(L','));
 
 	res.chop(1);
 	return res;
@@ -94,7 +94,7 @@ QString Database::idsToString(const IdsList &ids)
 	QString res;
 
 	for (IdsList::size_type i = 0, size = ids.size(); i < size; ++i)
-		res.append(QString::number(ids.at(i))).append(QChar(','));
+		res.append(QString::number(ids.at(i))).append(QChar(L','));
 
 	res.chop(1);
 	return res;

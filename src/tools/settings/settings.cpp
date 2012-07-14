@@ -94,7 +94,7 @@ void Settings::makeSettingsCache(const QString &groupPath, GroupPathCache &group
 			m_cache[static_cast<ConfigOptionValue*>(option)->id()] = CacheEntry(static_cast<ConfigOptionValue*>(option), groupPath);
 		}
 		else
-			makeSettingsCache(QString(groupPath).append(QChar('.')).append(option->title()), groupPathCache, static_cast<ConfigOptionGroup*>(option));
+			makeSettingsCache(QString(groupPath).append(QChar(L'.')).append(option->title()), groupPathCache, static_cast<ConfigOptionGroup*>(option));
 }
 
 void Settings::readSettingsValues()

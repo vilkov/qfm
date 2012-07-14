@@ -29,7 +29,7 @@ void StaticValueListDialog::accept()
 	if (currentIndex().isValid())
 		QDialog::accept();
 	else
-		warning(windowTitle(), "You must choose the value.");
+		warning(windowTitle(), tr("You must select a value."));
 }
 
 QModelIndex StaticValueListDialog::currentIndex() const

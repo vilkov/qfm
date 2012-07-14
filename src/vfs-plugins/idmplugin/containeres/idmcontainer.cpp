@@ -29,7 +29,7 @@ IdmContainer::IdmContainer(IFileContainer::Holder &container, bool create) :
 }
 
 IdmContainer::Data::Data(IFileContainer::Holder &container, bool create) :
-	storage(container->location().append(QChar('/')).append(Plugin::fileName()), create),
+	storage(container->location(Plugin::fileName()), create),
 	container(container.take())
 {}
 

@@ -8,7 +8,7 @@ IDM_PLUGIN_NS_BEGIN
 IdmCopyControlBase::IdmCopyControlBase(ICopyControl::Holder &dest, const IdmContainer &container) :
 	m_dest(dest.take()),
 	m_container(container),
-	m_storage(difference(m_dest->location(), m_container.container()->location()).append(QChar('/')))
+	m_storage(difference(m_dest->location(), m_container.container()->location()).append(QChar(L'/')))
 {}
 
 bool IdmCopyControlBase::isDefault() const
@@ -26,9 +26,19 @@ ICopyControl *IdmCopyControlBase::createControl(INodeView *view) const
 	return NULL;
 }
 
-QString IdmCopyControlBase::location() const
+const Location &IdmCopyControlBase::location() const
 {
 	return m_dest->location();
+}
+
+Location IdmCopyControlBase::location(const IFileInfo *info) const
+{
+	return m_dest->location(info);
+}
+
+Location IdmCopyControlBase::location(const QString &fileName) const
+{
+	return m_dest->location(fileName);
 }
 
 bool IdmCopyControlBase::contains(const QString &fileName) const

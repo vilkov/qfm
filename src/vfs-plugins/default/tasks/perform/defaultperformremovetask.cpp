@@ -72,7 +72,7 @@ void PerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain
 			qint32 answer = askUser(
 								tr("Failed to remove"),
 								tr("\"%1\" (%2). Skip it?").
-									arg(entry->container()->location().append(QChar('/')).append(entry->info()->fileName())).
+									arg(entry->container()->location(entry->info())).
 									arg(m_error),
 								QMessageBox::Yes |
 								QMessageBox::YesToAll |

@@ -24,7 +24,7 @@ QString GroupConstraint::toString() const
 		return QString();
 	else
 	{
-		QString res(QChar('('));
+		QString res(QChar(L'('));
 		QString constraint;
 
 		if (m_type == And)
@@ -36,7 +36,7 @@ QString GroupConstraint::toString() const
 			res += m_items.at(i)->toString().append(constraint);
 
 		res.chop(constraint.size());
-		return res.append(QChar(')'));
+		return res.append(QChar(L')'));
 	}
 }
 

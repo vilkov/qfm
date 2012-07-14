@@ -178,14 +178,14 @@ void M3uNode::refresh()
 //		while (!(line = stream.readLine()).isEmpty())
 //			if (line.startsWith(m_tag))
 //			{
-//				list = line.mid(m_tag.size()).split(QChar(','));
+//				list = line.mid(m_tag.size()).split(QChar(L','));
 //
 //				if (list.size() == 2)
 //				{
 //					QFileInfo info(line = stream.readLine());
 //
 //					if (!info.isAbsolute())
-//						info = QFileInfo(rootItem()->absoluteFilePath().append(QChar('/')).append(line));
+//						info = QFileInfo(rootItem()->absoluteFilePath().append(QChar(L'/')).append(line));
 //
 //					items.push_back(new M3uEntry(info, list.at(0).toInt(), list.at(1).trimmed()));
 //				}

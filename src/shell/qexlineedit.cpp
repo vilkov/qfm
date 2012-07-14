@@ -101,15 +101,15 @@ void QExLineEdit::setClearButtonShown(bool show)
         
         d->clearButton = new QExLineEditButton(this);
         d->clearButton->setCursor(Qt::ArrowCursor);
-        d->clearButton->setToolTip("Clear text");
+//        d->clearButton->setToolTip("Clear text");
         
         updateClearButtonIcon(text());
         updateClearButton();
-        connect(this, SIGNAL(textChanged(QString)), this, SLOT(updateClearButtonIcon(QString)));
+//        connect(this, SIGNAL(textChanged(QString)), this, SLOT(updateClearButtonIcon(QString)));
     }
     else
     {
-        disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(updateClearButtonIcon(QString)));
+//        disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(updateClearButtonIcon(QString)));
         delete d->clearButton;
         d->clearButton = 0;
         d->clickInClear = false;
@@ -348,11 +348,11 @@ void QExLineEdit::checkCompletion(const QString &text)
 	qint32 cur = cursorPosition();
 	qint32 pos = cur - 1;
 	
-	while (pos >= 0)
-		if (text[pos] == ' ')
-			break;
-		else
-			--pos;
+//	while (pos >= 0)
+//		if (text[pos] == ' ')
+//			break;
+//		else
+//			--pos;
     ++pos;
     
 	if (pos == cur)
@@ -419,7 +419,7 @@ void QExLineEdit::updateClearButton()
     const int buttonWidth = d->clearButton->sizeHint().width();
     const QSize newButtonSize(buttonWidth, geom.height());
     const QFontMetrics fm(font());
-    const int em = fm.width("m");
+    const int em = 0;// = fm.width("m");
 
     // make sure we have enough room for the clear button
     // no point in showing it if we can't also see a few characters as well
@@ -452,7 +452,7 @@ void QExLineEdit::updateLeftButton()
     const int buttonWidth = d->leftButton->sizeHint().width();
     const QSize newButtonSize(buttonWidth, geom.height());
     const QFontMetrics fm(font());
-    const int em = fm.width("m");
+    const int em = 0;// = fm.width("m");
 
     // make sure we have enough room for the button
     // no point in showing it if we can't also see a few characters as well

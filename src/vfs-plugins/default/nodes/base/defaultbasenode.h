@@ -199,7 +199,7 @@ private:
 	protected:
 		virtual void call(Container::size_type index, NodeItem *item)
 		{
-			push_back(m_container->location().append(QChar('/')).append(item->info()->fileName()));
+			push_back(m_container->location(item->info()));
 		}
 
 	private:

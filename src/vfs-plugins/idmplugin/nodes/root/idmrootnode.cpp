@@ -166,7 +166,7 @@ void IdmRootNode::refresh()
 QString IdmRootNode::title() const
 {
 	QString res = m_container.container()->location();
-	return res.mid(res.lastIndexOf(QChar('/')));
+	return res.mid(res.lastIndexOf(QChar(L'/')));
 }
 
 QString IdmRootNode::location() const

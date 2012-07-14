@@ -20,7 +20,10 @@ public:
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 
-	virtual QString location() const;
+	virtual const Location &location() const;
+	virtual Location location(const IFileInfo *info) const;
+	virtual Location location(const QString &fileName) const;
+
 	virtual bool contains(const QString &fileName) const;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const;
 
@@ -38,25 +41,24 @@ public:
 	virtual const IFileContainerScanner *scanner() const;
 
 private:
-	FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName);
+	FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const Location &location);
 
 private:
 	struct Data : public QSharedData
 	{
-		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
+		Data(IFileContainer::Holder &container, IFileAccessor::Holder &file, const Location &location) :
 			container(container.take()),
-			m_scanner(this->container.data(), file),
-			fileName(fileName)
+			location(location),
+			scanner(this->container.data(), file)
 		{}
 
 		IFileContainer::Holder container;
-		Scanner m_scanner;
-		QString fileName;
+		Location location;
+		Scanner scanner;
 	};
 
 private:
 	QExplicitlySharedDataPointer<Data> m_data;
-	QString m_path;
 };
 
 LIBARCHIVE_ARC_PLUGIN_NS_END

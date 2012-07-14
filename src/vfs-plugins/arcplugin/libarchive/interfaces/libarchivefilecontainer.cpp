@@ -12,10 +12,10 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 		IFileAccessor::Holder reader(localContainer->open(file, IFileAccessor::ReadWrite, error));
 
 		if (reader)
-			return new FileContainer(localContainer, reader, file->fileName());
+			return new FileContainer(localContainer, reader, localContainer->location(file));
 		else
 			if (reader = localContainer->open(file, IFileAccessor::ReadOnly, error))
-				return new FileContainer(localContainer, reader, file->fileName());
+				return new FileContainer(localContainer, reader, localContainer->location(file));
 	}
 
 	return NULL;
@@ -24,13 +24,13 @@ IFileContainer *FileContainer::create(const IFileContainer *container, const IFi
 QString FileContainer::extractDirectoryName(const IFileInfo *file)
 {
 	QString fileName = file->fileName();
-	return fileName.mid(0, fileName.indexOf(QChar('.')));
+	return fileName.mid(0, fileName.indexOf(QChar(L'.')));
 }
 
 QString FileContainer::extractArchivedFileName(const IFileInfo *file)
 {
 	QString fileName = file->fileName();
-	return fileName.mid(fileName.lastIndexOf(QChar('/')) + 1);
+	return fileName.mid(fileName.lastIndexOf(QChar(L'/')) + 1);
 }
 
 bool FileContainer::isDefault() const
@@ -48,9 +48,19 @@ ICopyControl *FileContainer::createControl(INodeView *view) const
 	return NULL;
 }
 
-QString FileContainer::location() const
+const Location &FileContainer::location() const
 {
-	return m_path;
+	return m_data->location;
+}
+
+Location FileContainer::location(const IFileInfo *info) const
+{
+	return Location();
+}
+
+Location FileContainer::location(const QString &fileName) const
+{
+	return Location();
 }
 
 bool FileContainer::contains(const QString &fileName) const
@@ -110,12 +120,11 @@ IFileContainer *FileContainer::filter(Filter::Holder &filter, QString &error) co
 
 const IFileContainerScanner *FileContainer::scanner() const
 {
-	return &m_data->m_scanner;
+	return &m_data->scanner;
 }
 
-FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const QString &fileName) :
-	m_data(new Data(container, file, fileName)),
-	m_path(m_data->container->location().append(QChar('/')).append(fileName))
+FileContainer::FileContainer(IFileContainer::Holder &container, IFileAccessor::Holder &file, const Location &location) :
+	m_data(new Data(container, file, location))
 {}
 
 LIBARCHIVE_ARC_PLUGIN_NS_END

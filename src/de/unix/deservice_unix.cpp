@@ -482,7 +482,7 @@ void Service::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInf
 	if (findProgram(file->fileType()->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
 	{
 		QString absoluteFilePath;// = container->location(file->fileName());
-		QByteArray workingDirectory;// = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar('/'))).toUtf8();
+		QByteArray workingDirectory;// = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar(L'/'))).toUtf8();
 
 		List arguments = QByteArray(args[0]).
 				replace("%d", QByteArray()).
@@ -495,7 +495,7 @@ void Service::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInf
 				trimmed().
 				split(' ');
 
-		QByteArray fileName;// = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar('/')) + 1).toUtf8().
+		QByteArray fileName;// = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar(L'/')) + 1).toUtf8().
 //				replace('"', "\\\"").
 //				replace('`', "\\`").
 //				replace('$', "\\$").

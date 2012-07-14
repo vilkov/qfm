@@ -5,7 +5,7 @@ IDM_PLUGIN_NS_BEGIN
 
 QString EntitiesTable::tableName()
 {
-	return "ENTITY";
+	return QString::fromLatin1("ENTITY");
 }
 
 QByteArray EntitiesTable::create()

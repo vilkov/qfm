@@ -43,7 +43,7 @@ void ApplicationSettings::saveState(QWidget *widget, QAbstractItemView *view)
 
 	beginGroup(widget->objectName());
 	setValue(geometry, widget->saveGeometry());
-	setValue(geometry.append(QChar('.')).append(view->objectName()), widget->saveGeometry());
+	setValue(geometry.append(QChar(L'.')).append(view->objectName()), widget->saveGeometry());
 	endGroup();
 }
 
@@ -54,7 +54,7 @@ void ApplicationSettings::saveState(QWidget *widget, QSplitter *splitter, QAbstr
 	beginGroup(widget->objectName());
 	setValue(geometry, widget->saveGeometry());
 	setValue(QString::fromLatin1("Splitter"), splitter->saveState());
-	setValue(geometry.append(QChar('.')).append(view->objectName()), widget->saveGeometry());
+	setValue(geometry.append(QChar(L'.')).append(view->objectName()), widget->saveGeometry());
 	endGroup();
 }
 
@@ -71,7 +71,7 @@ void ApplicationSettings::loadState(QWidget *widget, QAbstractItemView *view)
 
 	beginGroup(widget->objectName());
 	widget->restoreGeometry(value(geometry).toByteArray());
-	view->restoreGeometry(value(geometry.append(QChar('.')).append(view->objectName())).toByteArray());
+	view->restoreGeometry(value(geometry.append(QChar(L'.')).append(view->objectName())).toByteArray());
 	endGroup();
 }
 
@@ -82,7 +82,7 @@ void ApplicationSettings::loadState(QWidget *widget, QSplitter *splitter, QAbstr
 	beginGroup(widget->objectName());
 	widget->restoreGeometry(value(geometry).toByteArray());
 	splitter->restoreState(value(QString::fromLatin1("Splitter")).toByteArray());
-	view->restoreGeometry(value(geometry.append(QChar('.')).append(view->objectName())).toByteArray());
+	view->restoreGeometry(value(geometry.append(QChar(L'.')).append(view->objectName())).toByteArray());
 	endGroup();
 }
 

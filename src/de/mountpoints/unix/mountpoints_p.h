@@ -36,7 +36,10 @@ public:
 
 
 MountPoints::MountPointsPrivate::MountPointsPrivate() :
-	manager(UD_DBUS_SERVICE, UD_DBUS_PATH, UD_DBUS_INTERFACE_DISKS, QDBusConnection::systemBus())
+	manager(QString::fromLatin1(UD_DBUS_SERVICE),
+			QString::fromLatin1(UD_DBUS_PATH),
+			QString::fromLatin1(UD_DBUS_INTERFACE_DISKS),
+			QDBusConnection::systemBus())
 {
 //	qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 //  qDBusRegisterMetaType<QVariantMap>();
@@ -46,16 +49,16 @@ MountPoints::MountPointsPrivate::MountPointsPrivate() :
     if (!serviceFound)
     {
         // find out whether it will be activated automatically
-        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.DBus",
-                                                              "/org/freedesktop/DBus",
-                                                              "org.freedesktop.DBus",
-                                                              "ListActivatableNames");
+        QDBusMessage message = QDBusMessage::createMethodCall(QString::fromLatin1("org.freedesktop.DBus"),
+        													  QString::fromLatin1("/org/freedesktop/DBus"),
+        													  QString::fromLatin1("org.freedesktop.DBus"),
+        													  QString::fromLatin1("ListActivatableNames"));
 
         QDBusReply<QStringList> reply = QDBusConnection::systemBus().call(message);
 
-        if (reply.isValid() && reply.value().contains(UD_DBUS_SERVICE))
+        if (reply.isValid() && reply.value().contains(QString::fromLatin1(UD_DBUS_SERVICE)))
         {
-            QDBusConnection::systemBus().interface()->startService(UD_DBUS_SERVICE);
+            QDBusConnection::systemBus().interface()->startService(QString::fromLatin1(UD_DBUS_SERVICE));
             serviceFound = true;
         }
     }
@@ -75,7 +78,7 @@ void MountPoints::MountPointsPrivate::refresh()
 {
 	QString value;
 	QStringList list;
-	QDBusReply<QList<QDBusObjectPath> > reply = manager.call("EnumerateDevices");
+	QDBusReply<QList<QDBusObjectPath> > reply = manager.call(QString::fromLatin1("EnumerateDevices"));
 
 	if (reply.isValid())
 		items.clear();
@@ -87,7 +90,7 @@ void MountPoints::MountPointsPrivate::refresh()
 
 	foreach(const QDBusObjectPath &path, reply.value())
 	{
-		QDBusInterface device(UD_DBUS_SERVICE, path.path(), UD_DBUS_INTERFACE_DISKS_DEVICE, QDBusConnection::systemBus());
+		QDBusInterface device(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
 
 		if (device.isValid() && device.property("DeviceIsPartition").toBool())
 		{
@@ -105,7 +108,7 @@ void MountPoints::MountPointsPrivate::refresh()
 											(value = device.property("IdLabel").toString()).isEmpty() ? path.path() : value,
 											path.path(),
 											QPixmap(),
-											::VFS::Tools::freeSpace(list.at(0).toUtf8()),
+											0,//::VFS::Tools::freeSpace(list.at(0).toUtf8()),
 											device.property("PartitionSize").toULongLong()));
 
 

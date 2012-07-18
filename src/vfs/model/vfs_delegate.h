@@ -3,7 +3,7 @@
 
 #include <QtGui/QStyledItemDelegate>
 #include <QtGui/QStyleOptionViewItem>
-#include "vfs_ns.h"
+#include "../vfs_ns.h"
 
 
 VFS_NS_BEGIN

@@ -3,7 +3,7 @@
 #include "../../../interfaces/idminvalidfileinfo.h"
 #include "../../../../../application.h"
 
-#include <vfs/vfs_proxymodel.h>
+#include <vfs/model/vfs_proxymodel.h>
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -3,8 +3,8 @@
 
 #include <vfs/tasks/vfs_tasksnode.h>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
-#include "../defaultdelegate.h"
-#include "../defaultproxymodel.h"
+#include "../../model/defaultdelegate.h"
+#include "../../model/defaultproxymodel.h"
 #include "../../model/items/defaultnodeitem.h"
 #include "../../../../tools/containers/hashedlist.h"
 #include "../../../../tools/containers/union.h"

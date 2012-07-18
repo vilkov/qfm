@@ -1,6 +1,6 @@
 #include "vfs_tasksnodedelegate.h"
-#include "../tools/vfs_commontools.h"
-#include "../../application.h"
+#include "../../tools/vfs_commontools.h"
+#include "../../../application.h"
 
 
 VFS_NS_BEGIN

@@ -2,7 +2,7 @@
 #define VFS_PROXYMODEL_H_
 
 #include <QtGui/QSortFilterProxyModel>
-#include "interfaces/vfs_ifileinfo.h"
+#include "../interfaces/vfs_ifileinfo.h"
 
 
 VFS_NS_BEGIN

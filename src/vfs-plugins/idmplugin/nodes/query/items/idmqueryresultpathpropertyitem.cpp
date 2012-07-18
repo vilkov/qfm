@@ -1,7 +1,7 @@
 #include "idmqueryresultpathpropertyitem.h"
 #include "idmqueryresultrootpathvalueitem.h"
 
-#include <vfs/vfs_proxymodel.h>
+#include <vfs/model/vfs_proxymodel.h>
 
 
 IDM_PLUGIN_NS_BEGIN

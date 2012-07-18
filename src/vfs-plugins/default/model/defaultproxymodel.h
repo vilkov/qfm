@@ -1,7 +1,7 @@
 #ifndef DEFAULTPROXYMODEL_H_
 #define DEFAULTPROXYMODEL_H_
 
-#include <vfs/vfs_proxymodel.h>
+#include <vfs/model/vfs_proxymodel.h>
 #include "../default_ns.h"
 
 

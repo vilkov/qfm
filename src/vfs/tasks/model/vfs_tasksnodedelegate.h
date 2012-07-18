@@ -1,8 +1,8 @@
 #ifndef VFS_TASKSNODEDELEGATE_H_
 #define VFS_TASKSNODEDELEGATE_H_
 
-#include "model/items/vfs_tasksnodeitem.h"
-#include "../vfs_delegate.h"
+#include "items/vfs_tasksnodeitem.h"
+#include "../../model/vfs_delegate.h"
 
 
 VFS_NS_BEGIN

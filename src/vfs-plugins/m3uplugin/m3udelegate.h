@@ -1,7 +1,7 @@
 #ifndef M3UDELEGATE_H_
 #define M3UDELEGATE_H_
 
-#include <vfs/vfs_delegate.h>
+#include <vfs/model/vfs_delegate.h>
 #include "m3uplugin_ns.h"
 
 

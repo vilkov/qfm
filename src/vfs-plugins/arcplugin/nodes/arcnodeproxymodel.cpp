@@ -1,7 +1,7 @@
 #include "arcnodeproxymodel.h"
 #include "items/arcentrynodeitem.h"
 
-#include <vfs/vfs_proxymodel.h>
+#include <vfs/model/vfs_proxymodel.h>
 
 
 ARC_PLUGIN_NS_BEGIN

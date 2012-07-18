@@ -2,7 +2,7 @@
 #define ARCDELEGATE_H_
 
 #include <QtGui/QAbstractProxyModel>
-#include <vfs/tasks/vfs_tasksnodedelegate.h>
+#include <vfs/tasks/model/vfs_tasksnodedelegate.h>
 #include "../arcplugin_ns.h"
 
 

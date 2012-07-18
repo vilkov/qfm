@@ -27,12 +27,12 @@ public:
 //	};
 
 public:
-	PerformCopyTask(const QString &fileName, const NodeItem::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
+	PerformCopyTask(const QString &fileName, const Item::Holder &item, ICopyControl::Holder &control, bool move, TasksNode *receiver);
 
 	virtual IFileAccessor::value_type *buffer() const;
 	virtual IFileAccessor::size_type bufferSize() const;
 
-	virtual void progressInit(const NodeItem::Holder &item);
+	virtual void progressInit(const Item::Holder &item);
 	virtual void progressUpdate(quint64 progressIncrement);
 	virtual void progresscomplete();
 
@@ -49,7 +49,7 @@ private:
 
 private:
 	QString m_fileName;
-	NodeItem::Holder m_item;
+	Item::Holder m_item;
 	ICopyControl::Holder m_control;
 	bool m_move;
 	bool m_overwriteAll;

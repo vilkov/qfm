@@ -1,12 +1,12 @@
 #ifndef VFS_TASKSNODEITEM_H_
 #define VFS_TASKSNODEITEM_H_
 
-#include "../../../model/items/vfs_nodeitem.h"
+#include "../../../model/items/vfs_item.h"
 
 
 VFS_NS_BEGIN
 
-class TasksNodeItem : public NodeItem
+class TasksNodeItem : public Item
 {
 public:
 	TasksNodeItem(Base *parent);

@@ -13,7 +13,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->setTotalSize(entry->totalSize());
@@ -31,7 +31,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->clearTotalSize();
@@ -51,7 +51,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->lock(lockReason, entry->totalSize());
@@ -68,7 +68,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->setTotalSize(entry->totalSize());
@@ -90,7 +90,7 @@ public:
 	QStringList files;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 
@@ -113,7 +113,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->setTotalSize(entry->totalSize());
@@ -133,7 +133,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 
@@ -154,7 +154,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->unlock();
@@ -178,7 +178,7 @@ public:
 	Method method;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, WrappedNodeItem *entry)
+	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
 	{
 		if (entry->isRemoved())
 			(node->*method)(index);

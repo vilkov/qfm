@@ -12,7 +12,7 @@ inline static bool compareByFileNames(const QueryResultItem::Holder &v1, const Q
 }
 
 
-QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *container, WrappedNodeItem *item, Base *parent) :
+QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *container, SnapshotItem *item, Base *parent) :
 	QueryResultPathItem(item->info(), parent),
 	m_container(container)
 {
@@ -20,7 +20,7 @@ QueryResultPathValueItem::QueryResultPathValueItem(const IFileContainer *contain
 	{
 		m_thisContainer = item->thisContainer().take();
 
-		for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+		for (SnapshotItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
 			m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), (*i), this)));
 	}
 

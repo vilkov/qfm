@@ -12,7 +12,7 @@ public:
 	typedef QList<Holder> Container;
 
 public:
-	SearchNodeItem(WrappedNodeItem *item, Base *parent = 0);
+	SearchNodeItem(SnapshotItem *item, Base *parent = 0);
 
 	/* Base */
 	virtual Base *at(size_type index) const;

@@ -31,7 +31,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 	IdmModel(parent)
 {
 	ValueList list;
-	const WrappedNodeItem *file;
+	const SnapshotItem *file;
 	CompositeValuePropertyItem *item;
 
 	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)

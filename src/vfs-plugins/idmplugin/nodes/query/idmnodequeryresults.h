@@ -64,8 +64,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const Item::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
 
 protected:
@@ -94,7 +94,7 @@ private:
 	class ItemsContainer : public Container
 	{
 	public:
-		typedef QList<NodeItem::Holder> List;
+		typedef QList<VFS::Item::Holder> List;
 
 	public:
 		ItemsContainer();

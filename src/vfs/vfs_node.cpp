@@ -4,7 +4,7 @@
 VFS_NS_BEGIN
 
 Node::Node(const Container &conteiner, Node *parent) :
-	NodeModel(conteiner, parent),
+	Model(conteiner, parent),
 	m_links(0)
 {}
 

@@ -77,7 +77,7 @@ bool TasksNode::event(QEvent *e)
 	}
 }
 
-void TasksNode::addTask(BaseTask *task, const NodeItem::Holder &item)
+void TasksNode::addTask(BaseTask *task, const Item::Holder &item)
 {
 	m_tasks.add(task, item);
 	addLink();
@@ -137,7 +137,7 @@ void TasksNode::taskHandled(BaseTask *task, const ICopyControl *destanation)
 	removeLink();
 }
 
-void TasksNode::cancelTask(const NodeItem::Holder &item)
+void TasksNode::cancelTask(const Item::Holder &item)
 {
 	if (BaseTask *task = m_tasks.take(item))
 		task->cancel();
@@ -156,7 +156,7 @@ void TasksNode::removeAllTaskLinks(BaseTask *task, const ICopyControl *destanati
 	removeLink();
 }
 
-TasksMap::List TasksNode::cancelTaskAndTakeItems(const NodeItem::Holder &item)
+TasksMap::List TasksNode::cancelTaskAndTakeItems(const Item::Holder &item)
 {
 	TasksMap::List res;
 

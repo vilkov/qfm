@@ -14,7 +14,7 @@ class CompositeValueModel : public IdmModel
 public:
 	typedef IdmCompositeEntityValue::List                    ValueList;
 	typedef Container::size_type                             size_type;
-	typedef QMap<Database::id_type, const WrappedNodeItem *> Files;
+	typedef QMap<Database::id_type, const SnapshotItem *> Files;
 
 public:
 	CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent = 0);

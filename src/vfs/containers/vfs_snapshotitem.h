@@ -1,5 +1,5 @@
-#ifndef VFS_WRAPPEDNODEITEM_H_
-#define VFS_WRAPPEDNODEITEM_H_
+#ifndef VFS_SNAPSHOTITEM_H_
+#define VFS_SNAPSHOTITEM_H_
 
 #include <QtCore/QList>
 #include "../interfaces/vfs_ifilecontainer.h"
@@ -7,21 +7,21 @@
 
 VFS_NS_BEGIN
 
-class WrappedNodeItem
+class SnapshotItem
 {
-	Q_DISABLE_COPY(WrappedNodeItem)
+	Q_DISABLE_COPY(SnapshotItem)
 
 public:
-	typedef PScopedPointer<WrappedNodeItem> Holder;
-	typedef QList<WrappedNodeItem *>        Container;
-	typedef Container::iterator             iterator;
-	typedef Container::const_iterator       const_iterator;
-	typedef Container::size_type            size_type;
+	typedef PScopedPointer<SnapshotItem> Holder;
+	typedef QList<SnapshotItem *>        Container;
+	typedef Container::iterator          iterator;
+	typedef Container::const_iterator    const_iterator;
+	typedef Container::size_type         size_type;
 
 public:
-	WrappedNodeItem();
-	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent);
-	virtual ~WrappedNodeItem();
+	SnapshotItem();
+	SnapshotItem(const IFileContainer *container, IFileInfo::Holder &info, SnapshotItem *parent);
+	virtual ~SnapshotItem();
 
 	bool isValid() const { return m_container != NULL; }
 
@@ -34,7 +34,7 @@ public:
 	const_iterator end() const { return m_items.end(); }
 	iterator end() { return m_items.end(); }
 
-	void append(WrappedNodeItem *item)
+	void append(SnapshotItem *item)
 	{
 		m_items.append(item);
 		incTotalSize(item->totalSize());
@@ -60,15 +60,15 @@ public:
 	IFileInfo::Holder &info() { return m_info; }
 
 protected:
-	WrappedNodeItem(const IFileContainer *container, WrappedNodeItem *parent);
-	WrappedNodeItem(const IFileContainer *container, IFileInfo::size_type totalSize, WrappedNodeItem *parent);
+	SnapshotItem(const IFileContainer *container, SnapshotItem *parent);
+	SnapshotItem(const IFileContainer *container, IFileInfo::size_type totalSize, SnapshotItem *parent);
 
 protected:
 	Container &items() { return m_items; }
 
 	void incTotalSize(IFileInfo::size_type size)
 	{
-		WrappedNodeItem *parent = this;
+		SnapshotItem *parent = this;
 
 		do
 			parent->m_totalSize += size;
@@ -77,7 +77,7 @@ protected:
 
 	void decTotalSize(IFileInfo::size_type size)
 	{
-		WrappedNodeItem *parent = this;
+		SnapshotItem *parent = this;
 
 		do
 			parent->m_totalSize -= size;
@@ -89,11 +89,11 @@ private:
 	const IFileContainer *m_container;
 	IFileInfo::size_type m_totalSize;
 	IFileInfo::Holder m_info;
-	WrappedNodeItem *m_parent;
+	SnapshotItem *m_parent;
 	Container m_items;
 	bool m_removed;
 };
 
 VFS_NS_END
 
-#endif /* VFS_WRAPPEDNODEITEM_H_ */
+#endif /* VFS_SNAPSHOTITEM_H_ */

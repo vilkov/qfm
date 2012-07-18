@@ -33,8 +33,8 @@ public:
 protected:
 	virtual void run(const volatile Flags &aborted);
 
-	void copyEntry(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
-	virtual void copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void copyEntry(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	virtual void copyFile(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 
 protected:
 	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);

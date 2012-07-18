@@ -2,7 +2,7 @@
 #define VFS_TASKPROGRESS_H_
 
 #include <QtCore/QDateTime>
-#include "../../model/items/vfs_nodeitem.h"
+#include "../../model/items/vfs_item.h"
 
 
 VFS_NS_BEGIN
@@ -14,7 +14,7 @@ class TaskProgress
 public:
 	TaskProgress(TasksNode *receiver);
 
-	void init(const NodeItem::Holder &item);
+	void init(const Item::Holder &item);
 	void update(quint64 progressIncrement);
 	void complete();
 	void clear();
@@ -23,7 +23,7 @@ private:
 	void postEvent();
 
 private:
-	NodeItem::Holder m_item;
+	Item::Holder m_item;
 	quint64 m_progress;
 	TasksNode *m_receiver;
 	QDateTime m_baseTime;

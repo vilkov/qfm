@@ -104,13 +104,10 @@ public:
 			}
 			else
 			{
-				m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Refresh());
+				m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
 
 				if ((m_info.isFile() || m_info.isDir()) && m_filter->match(&m_info))
-				{
-					m_info = Info(m_info, Info::Identify());
 					return &m_info;
-				}
 			}
 
 		return NULL;
@@ -121,14 +118,14 @@ private:
 };
 
 
-class WrappedNodeItem : public ::VFS::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::SnapshotItem
 {
 public:
 	WrappedNodeItem(const IFileContainer *container, WrappedNodeItem *parent) :
-		::VFS::WrappedNodeItem(container, parent)
+		::VFS::SnapshotItem(container, parent)
 	{}
 	WrappedNodeItem(const IFileContainer *container, IFileInfo::Holder &info, WrappedNodeItem *parent) :
-		::VFS::WrappedNodeItem(container, info, parent)
+		::VFS::SnapshotItem(container, info, parent)
 	{}
 };
 

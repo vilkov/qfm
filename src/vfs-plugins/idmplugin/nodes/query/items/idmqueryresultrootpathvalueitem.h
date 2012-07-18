@@ -24,7 +24,7 @@ public:
 	/* QueryResultPathItem */
 	virtual void open() const;
 
-	void update(WrappedNodeItem *item);
+	void update(SnapshotItem *item);
 	const IdmEntityValue::Holder &value() const { return m_value; }
 
 private:

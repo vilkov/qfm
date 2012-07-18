@@ -14,7 +14,7 @@ PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapsh
 void PerformRemoveTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
-	WrappedNodeItem *entry;
+	SnapshotItem *entry;
 
 	for (Snapshot::iterator it = m_snapshot.begin(), end = m_snapshot.end(); it != end && !aborted; ++it)
 		if ((entry = (*it).second)->info()->isDir())
@@ -32,13 +32,13 @@ void PerformRemoveTask::run(const volatile Flags &aborted)
 	postEvent(new Event(this, Event::RemoveFiles, aborted, m_snapshot));
 }
 
-void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveTask::removeEntry(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (entry->info()->isDir())
 	{
-		WrappedNodeItem *localEntry;
+		SnapshotItem *localEntry;
 
-		for (WrappedNodeItem::iterator i = entry->begin(), end = entry->end(); i != end && !aborted;)
+		for (SnapshotItem::iterator i = entry->begin(), end = entry->end(); i != end && !aborted;)
 		{
 			removeEntry(localEntry = (*i), tryAgain = false, aborted);
 
@@ -62,7 +62,7 @@ void PerformRemoveTask::removeEntry(WrappedNodeItem *entry, volatile bool &tryAg
 		while (tryAgain && !aborted);
 }
 
-void PerformRemoveTask::doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformRemoveTask::doRemove(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (!entry->container()->remove(entry->info(), m_error))
 		if (m_skipAllIfNotRemove)

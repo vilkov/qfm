@@ -1,5 +1,5 @@
-#ifndef VFS_NODEITEM_H_
-#define VFS_NODEITEM_H_
+#ifndef VFS_ITEM_H_
+#define VFS_ITEM_H_
 
 #include <QtGui/QIcon>
 #include <QtCore/QString>
@@ -10,30 +10,30 @@
 
 VFS_NS_BEGIN
 
-class NodeItem : public ::Tools::Models::Tree::Item, public QSharedData
+class Item : public ::Tools::Models::Tree::Item, public QSharedData
 {
-	Q_DISABLE_COPY(NodeItem)
+	Q_DISABLE_COPY(Item)
 
 public:
-	class Holder : public QExplicitlySharedDataPointer<NodeItem>
+	class Holder : public QExplicitlySharedDataPointer<Item>
 	{
 	public:
 	    inline Holder() :
-	    	QExplicitlySharedDataPointer<NodeItem>()
+	    	QExplicitlySharedDataPointer<Item>()
 	    {}
 
-	    inline explicit Holder(NodeItem *data) :
-			QExplicitlySharedDataPointer<NodeItem>(data)
+	    inline explicit Holder(Item *data) :
+			QExplicitlySharedDataPointer<Item>(data)
 	    {}
 
-	    inline Holder &operator=(NodeItem *o) { QExplicitlySharedDataPointer<NodeItem>::operator=(o); return *this; }
+	    inline Holder &operator=(Item *o) { QExplicitlySharedDataPointer<Item>::operator=(o); return *this; }
 
 	    template <typename R> inline
 	    R *as() const { return static_cast<R *>(data()); }
 	};
 
 public:
-	NodeItem(Base *parent);
+	Item(Base *parent);
 
 	bool isLocked() const { return m_locked; }
 	const QString &lockReason() const { return m_reason; }
@@ -51,4 +51,4 @@ private:
 
 VFS_NS_END
 
-#endif /* VFS_NODEITEM_H_ */
+#endif /* VFS_ITEM_H_ */

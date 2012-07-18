@@ -10,7 +10,7 @@ PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapsh
 void PerformRemoveTask::run(const volatile Flags &aborted)
 {
 	bool tryAgain;
-	WrappedNodeItem *entry;
+	SnapshotItem *entry;
 
 	for (Snapshot::iterator it = m_snapshot.begin(), end = m_snapshot.end(); it != end && !aborted; ++it)
 		if (entry = (*it).second)

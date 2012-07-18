@@ -12,15 +12,15 @@ VFS_NS_BEGIN
 class TasksMap
 {
 public:
-	typedef QList<NodeItem::Holder>            List;
+	typedef QList<Item::Holder>            List;
 	typedef QMap<BaseTask *, List>             Tasks;
-	typedef QMap<NodeItem::Holder, BaseTask *> Items;
+	typedef QMap<Item::Holder, BaseTask *> Items;
 
 public:
 	TasksMap()
 	{}
 
-	void add(BaseTask *task, const NodeItem::Holder &item)
+	void add(BaseTask *task, const Item::Holder &item)
 	{
 		m_tasks[task].push_back(item);
 		m_items[item] = task;
@@ -38,7 +38,7 @@ public:
 		}
 	}
 
-	void remove(const NodeItem::Holder &item)
+	void remove(const Item::Holder &item)
 	{
 		if (BaseTask *task = m_items.value(item, NULL))
 		{
@@ -63,7 +63,7 @@ public:
 			m_items.remove(list.at(i));
 	}
 
-	BaseTask *take(const NodeItem::Holder &item)
+	BaseTask *take(const Item::Holder &item)
 	{
 		if (BaseTask *task = m_items.value(item, 0))
 		{
@@ -78,7 +78,7 @@ public:
 		return NULL;
 	}
 
-	BaseTask *take(const NodeItem::Holder &item, List &list)
+	BaseTask *take(const Item::Holder &item, List &list)
 	{
 		if (BaseTask *task = m_items.value(item, NULL))
 		{

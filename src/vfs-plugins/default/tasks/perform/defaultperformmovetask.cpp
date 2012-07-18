@@ -7,7 +7,7 @@ PerformMoveTask::PerformMoveTask(TasksNode *receiver, ICopyControl::Holder &dest
 	PerformCopyTask(receiver, destination, snapshot, true)
 {}
 
-void PerformMoveTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformMoveTask::copyFile(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	if (destination->move(entry->container(), entry->info(), m_lastError))
 		m_progress.update(entry->info()->fileSize());

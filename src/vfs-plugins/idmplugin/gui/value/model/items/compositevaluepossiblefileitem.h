@@ -1,7 +1,7 @@
 #ifndef COMPOSITEVALUEPOSSIBLEFILEITEM_H_
 #define COMPOSITEVALUEPOSSIBLEFILEITEM_H_
 
-#include <vfs/containers/vfs_wrappednodeitem.h>
+#include <vfs/containers/vfs_snapshotitem.h>
 #include "compositevaluepathitem.h"
 
 
@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValuePossibleFileItem : public CompositeValuePathItem
 {
 public:
-	CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -21,10 +21,10 @@ public:
 	virtual void open() const;
 
 protected:
-	const WrappedNodeItem *source() const { return m_source; }
+	const SnapshotItem *source() const { return m_source; }
 
 private:
-	const WrappedNodeItem *m_source;
+	const SnapshotItem *m_source;
 };
 
 IDM_PLUGIN_NS_END

@@ -63,7 +63,7 @@ protected:
 	virtual void nodeRemoved(Node *node);
 
 protected:
-	typedef ::Tools::Templates::Functor3<Container::size_type, NodeItem *, WrappedNodeItem *> EventFunctor;
+	typedef ::Tools::Templates::Functor3<Container::size_type, NodeItem *, SnapshotItem *> EventFunctor;
 
 	class ScanForSizeEventFunctor;
 	class ScanForSizeEventFunctor_canceled;

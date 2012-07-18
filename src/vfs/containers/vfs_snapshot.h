@@ -3,8 +3,8 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QSharedData>
-#include "vfs_wrappednodeitem.h"
-#include "../model/items/vfs_nodeitem.h"
+#include "vfs_snapshotitem.h"
+#include "../model/items/vfs_item.h"
 
 
 VFS_NS_BEGIN
@@ -15,11 +15,11 @@ public:
 	class Files;
 	class Updates;
 
-	typedef QPair<NodeItem::Holder, WrappedNodeItem *> Pair;
-	typedef QMap<QString, Pair>                        Container;
-	typedef Container::iterator                        iterator;
-	typedef Container::const_iterator                  const_iterator;
-	typedef Container::size_type                       size_type;
+	typedef QPair<Item::Holder, SnapshotItem *> Pair;
+	typedef QMap<QString, Pair>                 Container;
+	typedef Container::iterator                 iterator;
+	typedef Container::const_iterator           const_iterator;
+	typedef Container::size_type                size_type;
 
 public:
 	Snapshot();
@@ -62,13 +62,13 @@ public:
 		return m_data->map.find(fileName);
 	}
 
-	void insert(iterator &i, WrappedNodeItem *item)
+	void insert(iterator &i, SnapshotItem *item)
 	{
 		delete (*i).second;
 		(*i).second = item;
 	}
 
-	void insert(const QString &fileName, WrappedNodeItem *item)
+	void insert(const QString &fileName, SnapshotItem *item)
 	{
 		Pair &pair = m_data->map[fileName];
 		delete pair.second;
@@ -112,7 +112,7 @@ public:
 	{}
 
 	bool isEmpty() const { return m_data->map.isEmpty(); }
-	void add(const QString &fileName, const NodeItem::Holder &item) { m_data->map[fileName].first = item; }
+	void add(const QString &fileName, const Item::Holder &item) { m_data->map[fileName].first = item; }
 
 private:
 	friend class Snapshot;

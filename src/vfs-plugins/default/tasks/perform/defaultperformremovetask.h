@@ -19,8 +19,8 @@ protected:
 	virtual void run(const volatile Flags &aborted);
 
 protected:
-	void removeEntry(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
-	void doRemove(WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void removeEntry(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+	void doRemove(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
 
 protected:
 	Snapshot m_snapshot;

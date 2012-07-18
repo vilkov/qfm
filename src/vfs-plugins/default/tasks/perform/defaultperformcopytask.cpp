@@ -29,7 +29,7 @@ void PerformCopyTask::run(const volatile Flags &aborted)
 	postEvent(new ExtendedEvent(this, Event::CopyFiles, destination(), aborted, m_snapshot, m_move));
 }
 
-void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyEntry(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (destination->contains(entry->info()->fileName()))
@@ -38,7 +38,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 				PScopedPointer<IFileContainer> dest;
 
 				if (dest = destination->create(entry->info()->fileName(), m_lastError))
-					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
+					for (SnapshotItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
 						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
@@ -68,7 +68,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 				PScopedPointer<IFileContainer> dest;
 
 				if (dest = destination->create(entry->info()->fileName(), m_lastError))
-					for (WrappedNodeItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
+					for (SnapshotItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
 						copyEntry(dest.data(), (*i), tryAgain = false, aborted);
 				else
 					if (m_skipAllIfNotCopy)
@@ -85,7 +85,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, WrappedNodeIt
 	while (tryAgain && !aborted);
 }
 
-void PerformCopyTask::copyFile(const IFileContainer *destination, WrappedNodeItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
+void PerformCopyTask::copyFile(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
 	do
 		if (m_sourceFile = entry->container()->open(entry->info(), IFileAccessor::ReadOnly, m_lastError))

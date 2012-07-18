@@ -1,7 +1,7 @@
 #ifndef COMPOSITEVALUEPOSSIBLEDIRITEM_H_
 #define COMPOSITEVALUEPOSSIBLEDIRITEM_H_
 
-#include <vfs/containers/vfs_wrappednodeitem.h>
+#include <vfs/containers/vfs_snapshotitem.h>
 #include "compositevaluepathitem.h"
 
 
@@ -13,7 +13,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
 	virtual ~CompositeValuePossibleDirItem();
 
 	/* Base */
@@ -33,10 +33,10 @@ protected:
 	friend class CompositeValueModel;
 	void add(IdmItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
-	const WrappedNodeItem *source() const { return m_source; }
+	const SnapshotItem *source() const { return m_source; }
 
 private:
-	const WrappedNodeItem *m_source;
+	const SnapshotItem *m_source;
 	Container m_items;
 };
 

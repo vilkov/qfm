@@ -6,7 +6,7 @@
 
 VFS_NS_BEGIN
 
-typedef NodeModel TasksNodeModel;
+typedef Model TasksNodeModel;
 
 VFS_NS_END
 

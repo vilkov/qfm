@@ -13,7 +13,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValueFakePossibleDirItem(const WrappedNodeItem *source, IdmItem *parent = 0) :
+	CompositeValueFakePossibleDirItem(const SnapshotItem *source, IdmItem *parent = 0) :
 		CompositeValuePossibleDirItem(IdmEntityValue::Holder(), source, parent)
 	{}
 
@@ -41,7 +41,7 @@ public:
 class CompositeValueFakePossibleFileItem : public CompositeValuePossibleFileItem
 {
 public:
-	CompositeValueFakePossibleFileItem(const WrappedNodeItem *source, IdmItem *parent = 0) :
+	CompositeValueFakePossibleFileItem(const SnapshotItem *source, IdmItem *parent = 0) :
 		CompositeValuePossibleFileItem(IdmEntityValue::Holder(), source, parent)
 	{}
 
@@ -79,13 +79,13 @@ static bool lessThan(CompositeValuePossibleDirItem::Container::value_type v1, Co
 			return ProxyModel::compareFileNames(static_cast<CompositeValuePathItem *>(v1)->fileName(), static_cast<CompositeValuePathItem *>(v2)->fileName());
 }
 
-CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const WrappedNodeItem *source, IdmItem *parent) :
+CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
 	m_source(source)
 {
-	const WrappedNodeItem *file;
+	const SnapshotItem *file;
 
-	for (WrappedNodeItem::const_iterator i = source->begin(), end = source->end(); i != end; ++i)
+	for (SnapshotItem::const_iterator i = source->begin(), end = source->end(); i != end; ++i)
 	{
 		file = (*i);
 

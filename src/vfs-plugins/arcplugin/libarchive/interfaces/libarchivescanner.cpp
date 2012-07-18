@@ -116,14 +116,14 @@ private:
 };
 
 
-class WrappedNodeItem : public ::VFS::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::SnapshotItem
 {
 public:
-	typedef QMap<QString, ::VFS::WrappedNodeItem *> Container;
+	typedef QMap<QString, ::VFS::SnapshotItem *> Container;
 
 public:
 	WrappedNodeItem(const IFileContainer *container, const QString &fileName, struct archive_entry *entry, WrappedNodeItem *parent) :
-		::VFS::WrappedNodeItem(container, archive_entry_size(entry), parent)
+		::VFS::SnapshotItem(container, archive_entry_size(entry), parent)
 	{
 		m_data.path = QByteArray(archive_entry_pathname(entry));
 		m_data.fileName = fileName;

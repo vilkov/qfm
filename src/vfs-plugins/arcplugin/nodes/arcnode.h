@@ -57,8 +57,8 @@ protected:
 
 protected:
 	/* TasksNode */
-	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
-	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
+	virtual void updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed);
+	virtual void completedProgressEvent(const Item::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
 
 	void scanCompleteEvent(BaseTask::Event *event);
@@ -73,7 +73,7 @@ private:
 	class ItemsContainer : public Container
 	{
 	public:
-		typedef QList<NodeItem::Holder> List;
+		typedef QList<VFS::Item::Holder> List;
 
 	public:
 		ItemsContainer();
@@ -89,8 +89,8 @@ private:
 
 private:
 	typedef ::Tools::Containers::Union Union;
-	void updateFirstColumn(const NodeItem::Holder &entry);
-	void updateSecondColumn(const NodeItem::Holder &entry);
+	void updateFirstColumn(const Item::Holder &entry);
+	void updateSecondColumn(const Item::Holder &entry);
 
 private:
 	IFileContainer::Holder m_container;

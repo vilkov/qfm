@@ -3,7 +3,7 @@
 
 #include <QtCore/QList>
 #include <QtGui/QAction>
-#include "../model/items/vfs_nodeitem.h"
+#include "../model/items/vfs_item.h"
 #include "../interfaces/vfs_ifilecontainer.h"
 
 
@@ -12,8 +12,8 @@ VFS_NS_BEGIN
 class FileAction
 {
 public:
-	typedef QPair<NodeItem::Holder, const IFileInfo *> FileItem;
-	typedef QList<FileItem>                            FilesList;
+	typedef QPair<Item::Holder, const IFileInfo *> FileItem;
+	typedef QList<FileItem>                        FilesList;
 
 public:
 	FileAction(const QIcon &icon, const QString &text);

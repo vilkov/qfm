@@ -8,7 +8,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-inline static bool compareByFileNames(const NodeItem::Holder &v1, const NodeItem::Holder &v2)
+inline static bool compareByFileNames(const Item::Holder &v1, const Item::Holder &v2)
 {
 	return ProxyModel::compareByFileNames(v1.as<QueryResultPathItem>(), v2.as<QueryResultPathItem>());
 }
@@ -37,7 +37,7 @@ void QueryResultRootPathValueItem::open() const
 	Application::desktopService()->open(m_container, this);
 }
 
-void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
+void QueryResultRootPathValueItem::update(SnapshotItem *item)
 {
 	m_items.clear();
 
@@ -49,7 +49,7 @@ void QueryResultRootPathValueItem::update(WrappedNodeItem *item)
 		{
 			m_thisContainer = item->thisContainer().take();
 
-			for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+			for (SnapshotItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
 				m_items.push_back(QueryResultItem::Holder(new QueryResultPathValueItem(m_thisContainer.data(), (*i), this)));
 		}
 

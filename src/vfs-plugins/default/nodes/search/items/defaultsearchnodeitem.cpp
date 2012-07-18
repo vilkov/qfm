@@ -3,12 +3,12 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-SearchNodeItem::SearchNodeItem(WrappedNodeItem *item, Base *parent) :
+SearchNodeItem::SearchNodeItem(SnapshotItem *item, Base *parent) :
 	NodeItem(item->info(), parent)
 {
 	setTotalSize(item->totalSize());
 
-	for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+	for (SnapshotItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
 		m_items.push_back(Holder(new SearchNodeItem((*i), this)));
 }
 

@@ -32,14 +32,14 @@ inline static QDateTime fromDosTime(unsigned int time)
 }
 
 
-class WrappedNodeItem : public ::VFS::WrappedNodeItem
+class WrappedNodeItem : public ::VFS::SnapshotItem
 {
 public:
-	typedef QMap<QString, ::VFS::WrappedNodeItem *> Container;
+	typedef QMap<QString, ::VFS::SnapshotItem *> Container;
 
 public:
 	WrappedNodeItem(const IFileContainer *container, const QString &fileName, const struct RARHeaderDataEx &info, WrappedNodeItem *parent) :
-		::VFS::WrappedNodeItem(container, unpackedSize(info), parent)
+		::VFS::SnapshotItem(container, unpackedSize(info), parent)
 	{
 		m_data.path = QString::fromWCharArray(info.FileNameW);
 		m_data.fileName = fileName;

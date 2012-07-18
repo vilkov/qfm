@@ -5,12 +5,12 @@
 
 ARC_PLUGIN_NS_BEGIN
 
-EntryNodeItem::EntryNodeItem(WrappedNodeItem *item, Base *parent) :
+EntryNodeItem::EntryNodeItem(SnapshotItem *item, Base *parent) :
 	NodeItem(parent),
 	m_info(item->info().take()),
 	m_totalSize(item->totalSize())
 {
-	for (WrappedNodeItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
+	for (SnapshotItem::const_iterator i = item->begin(), end = item->end(); i != end; ++i)
 		m_items.push_back(NodeItem::Holder(new EntryNodeItem((*i), this)));
 }
 

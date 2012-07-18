@@ -3,7 +3,7 @@
 
 #include <QtCore/QSet>
 #include "tools/vfs_path.h"
-#include "model/vfs_nodemodel.h"
+#include "model/vfs_model.h"
 #include "interfaces/vfs_inode.h"
 #include "../history/historyentry.h"
 
@@ -15,7 +15,7 @@ VFS_NS_BEGIN
  *
  */
 
-class Node : public NodeModel, public INode
+class Node : public Model, public INode
 {
 	Q_DISABLE_COPY(Node)
 

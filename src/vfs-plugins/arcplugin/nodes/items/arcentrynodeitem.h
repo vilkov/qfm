@@ -2,7 +2,7 @@
 #define ARCENTRYNODEITEM_H_
 
 #include <vfs/filetypeinfo/vfs_filetypeinfo.h>
-#include <vfs/containers/vfs_wrappednodeitem.h>
+#include <vfs/containers/vfs_snapshotitem.h>
 #include "arcnodeitem.h"
 
 
@@ -14,7 +14,7 @@ public:
 	typedef QList<Holder> Container;
 
 public:
-	EntryNodeItem(WrappedNodeItem *item, Base *parent = 0);
+	EntryNodeItem(SnapshotItem *item, Base *parent = 0);
 
 	/* Base */
 	virtual Base *at(size_type index) const;

@@ -75,13 +75,13 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	if (m_reader.entity()->type() == Database::Composite)
 		for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 			if (item = m_reader.next())
-				list.push_back(NodeItem::Holder(new QueryResultCompositeRootItem(files, m_container.container(), item)));
+				list.push_back(Item::Holder(new QueryResultCompositeRootItem(files, m_container.container(), item)));
 			else
 				break;
 	else
 		for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
 			if (item = m_reader.next())
-				list.push_back(NodeItem::Holder(new QueryResultRootItem(item)));
+				list.push_back(Item::Holder(new QueryResultRootItem(item)));
 			else
 				break;
 
@@ -267,7 +267,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
 
 				if (!pathItem->isLocked())
-					files.add(pathItem->fileName(), NodeItem::Holder(pathItem));
+					files.add(pathItem->fileName(), Item::Holder(pathItem));
 			}
 			else
 				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
@@ -449,12 +449,12 @@ Node *IdmNodeQueryResults::viewChild(const QString &fileName, QModelIndex &selec
 	return NULL;
 }
 
-void IdmNodeQueryResults::updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed)
+void IdmNodeQueryResults::updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed)
+void IdmNodeQueryResults::completedProgressEvent(const Item::Holder &item, quint64 timeElapsed)
 {
 
 }
@@ -484,7 +484,7 @@ void IdmNodeQueryResults::refresh(const QModelIndex &index)
 	QueryResultItem *item = static_cast<QueryResultItem *>(index.internalPointer());
 
 	for (QueryResultItem::size_type i = 0, size = item->size(); i < size; ++i)
-		files.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), NodeItem::Holder(static_cast<QueryResultItem *>(item->at(i))));
+		files.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), Item::Holder(static_cast<QueryResultItem *>(item->at(i))));
 
 	if (!files.isEmpty())
 		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
@@ -561,7 +561,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 		QStringList removed;
 		QStringList folders;
 		QStringList files;
-		WrappedNodeItem *entry;
+		SnapshotItem *entry;
 
 		for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
 			if (entry = (*i).second)
@@ -749,7 +749,7 @@ IdmNodeQueryResults::ItemsContainer::Item *IdmNodeQueryResults::ItemsContainer::
 
 IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(Item *item) const
 {
-	NodeItem::Holder holder(static_cast<NodeItem *>(item));
+	VFS::Item::Holder holder(static_cast<VFS::Item *>(item));
 	return m_container.indexOf(holder);
 }
 

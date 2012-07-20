@@ -36,8 +36,6 @@ public:
 	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
 
 protected:
-	friend class FileContainerScanner;
-	friend class FilteredFileContainerScanner;
 	Location m_path;
 };
 

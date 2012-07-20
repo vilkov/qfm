@@ -1,5 +1,4 @@
 #include "../defaultfilecontainerscanner.h"
-#include "../defaultfilecontainer.h"
 #include "../defaultfileaccessor.h"
 #include "../defaultfileinfo.h"
 #include "../../model/items/defaultnodeitem.h"
@@ -148,7 +147,7 @@ void FileContainerScanner::scan(Snapshot &snapshot, const volatile Flags &aborte
 		fill(snapshot, aborted, error);
 	else
 	{
-		QByteArray path = static_cast<const BaseFileContainer *>(snapshot.container())->m_path;
+		QByteArray path = snapshot.container()->location();
 		path.append('/');
 
 		for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
@@ -178,7 +177,7 @@ void FileContainerScanner::refresh(Snapshot &snapshot, const volatile Flags &abo
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 
-	QByteArray path = static_cast<const BaseFileContainer *>(snapshot.container())->m_path;
+	QByteArray path = snapshot.container()->location();
 	path.append('/');
 
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
@@ -195,7 +194,7 @@ void FileContainerScanner::refresh(Snapshot &snapshot, const volatile Flags &abo
 
 void FileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
-	QByteArray path = static_cast<const BaseFileContainer *>(snapshot.container())->m_path;
+	QByteArray path = snapshot.container()->location();
 
 	if (DIR *dir = opendir(path))
 	{
@@ -242,7 +241,7 @@ void FileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborte
 
 void FileContainerScanner::scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const
 {
-	QByteArray path = root->thisContainer().as<BaseFileContainer>()->m_path;
+	QByteArray path = root->thisContainer()->location();
 
 	if (DIR *dir = opendir(path))
 	{
@@ -302,7 +301,7 @@ FilteredFileContainerScanner::IEnumerator *FilteredFileContainerScanner::enumera
 
 void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
-	QByteArray path = static_cast<const BaseFileContainer *>(snapshot.container())->m_path;
+	QByteArray path = snapshot.container()->location();
 
 	if (DIR *dir = opendir(path))
 	{
@@ -355,7 +354,7 @@ void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags
 
 void FilteredFileContainerScanner::scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const
 {
-	QByteArray path = root->thisContainer().as<BaseFileContainer>()->m_path;
+	QByteArray path = root->thisContainer()->location();
 
 	if (DIR *dir = opendir(path))
 	{

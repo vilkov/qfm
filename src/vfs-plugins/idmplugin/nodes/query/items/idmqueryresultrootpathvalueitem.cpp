@@ -29,7 +29,11 @@ bool QueryResultRootPathValueItem::isRootPathValue()
 
 void QueryResultRootPathValueItem::open() const
 {
-	Application::desktopService()->open(m_container, info());
+	QString error = m_value->value().toString();
+	IFileContainer::Holder folder(m_container->create(error.mid(0, error.lastIndexOf(QChar(L'/'))), error));
+
+	if (folder)
+		Application::desktopService()->open(folder, info());
 }
 
 void QueryResultRootPathValueItem::update(SnapshotItem *item)

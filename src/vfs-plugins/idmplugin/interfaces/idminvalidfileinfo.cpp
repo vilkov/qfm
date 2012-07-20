@@ -5,29 +5,9 @@
 IDM_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo(const QString &fileName) :
-	m_fileName(fileName),
+	m_fileName(IFileInfo::location(fileName, fileName.toUtf8())),
 	m_icon(Application::desktopService()->missingIcon())
 {}
-
-FileTypeId InvalidInfo::id() const
-{
-	return FileTypeId();
-}
-
-QIcon InvalidInfo::icon() const
-{
-	return m_icon;
-}
-
-QString InvalidInfo::name() const
-{
-	return QString();
-}
-
-QString InvalidInfo::description() const
-{
-	return QString();
-}
 
 bool InvalidInfo::isDir() const
 {
@@ -49,7 +29,7 @@ InvalidInfo::size_type InvalidInfo::fileSize() const
 	return 0;
 }
 
-QString InvalidInfo::fileName() const
+const Location &InvalidInfo::fileName() const
 {
 	return m_fileName;
 }
@@ -67,6 +47,26 @@ QDateTime InvalidInfo::lastModified() const
 int InvalidInfo::permissions() const
 {
 	return 0;
+}
+
+FileTypeId InvalidInfo::id() const
+{
+	return FileTypeId();
+}
+
+QIcon InvalidInfo::icon() const
+{
+	return m_icon;
+}
+
+QString InvalidInfo::name() const
+{
+	return QString();
+}
+
+QString InvalidInfo::description() const
+{
+	return QString();
 }
 
 IDM_PLUGIN_NS_END

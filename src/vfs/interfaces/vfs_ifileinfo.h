@@ -1,9 +1,10 @@
 #ifndef VFS_IFILEINFO_H_
 #define VFS_IFILEINFO_H_
 
-#include <QtCore/QString>
 #include <QtCore/QDateTime>
+#include <QtCore/QTextCodec>
 #include "vfs_ifiletype.h"
+#include "../location/vfs_location.h"
 #include "../../tools/pointers/pscopedpointer.h"
 
 
@@ -26,10 +27,26 @@ public:
 	virtual bool isFile() const = 0;
 	virtual bool isLink() const = 0;
 	virtual size_type fileSize() const = 0;
-	virtual QString fileName() const = 0;
+	virtual const Location &fileName() const = 0;
 	virtual const IFileType *fileType() const = 0;
 	virtual QDateTime lastModified() const = 0;
 	virtual int permissions() const = 0;
+
+protected:
+	static Location location(const QString &label, const QByteArray &location)
+	{
+		return Location(label, location);
+	}
+
+	static Location location(const QByteArray &location, const QTextCodec *codec)
+	{
+		return Location(codec->toUnicode(location), location);
+	}
+
+	static Location location(const QString &label, const QTextCodec *codec)
+	{
+		return Location(label, codec->fromUnicode(label));
+	}
 };
 
 VFS_NS_END

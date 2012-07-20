@@ -38,7 +38,7 @@ QVariant QueryResultPathItem::data(qint32 column, qint32 role) const
 	{
 		case Qt::EditRole:
 		case Qt::DisplayRole:
-			return m_info->fileName();
+			return m_info->fileName().as<QString>();
 		case Qt::DecorationRole:
 			if (isLocked())
 				return lockIcon();
@@ -74,46 +74,6 @@ bool QueryResultPathItem::isValue()
 bool QueryResultPathItem::isPath()
 {
 	return true;
-}
-
-bool QueryResultPathItem::isDir() const
-{
-	return m_info->isDir();
-}
-
-bool QueryResultPathItem::isFile() const
-{
-	return m_info->isFile();
-}
-
-bool QueryResultPathItem::isLink() const
-{
-	return m_info->isLink();
-}
-
-IFileInfo::size_type QueryResultPathItem::fileSize() const
-{
-	return m_info->fileSize();
-}
-
-QString QueryResultPathItem::fileName() const
-{
-	return m_info->fileName();
-}
-
-const IFileType *QueryResultPathItem::fileType() const
-{
-	return m_info->fileType();
-}
-
-QDateTime QueryResultPathItem::lastModified() const
-{
-	return m_info->lastModified();
-}
-
-int QueryResultPathItem::permissions() const
-{
-	return m_info->permissions();
 }
 
 IDM_PLUGIN_NS_END

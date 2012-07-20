@@ -48,7 +48,7 @@ const Location &BaseFileContainer::location() const
 Location BaseFileContainer::location(const IFileInfo *info) const
 {
 	QByteArray path(m_path);
-	path.append('/').append(static_cast<const Info *>(info)->rawFileName());
+	path.append('/').append(info->fileName().as<QByteArray>());
 	return IFileContainer::location(Info::codec()->toUnicode(path), path);
 }
 
@@ -85,7 +85,7 @@ bool BaseFileContainer::remove(const IFileInfo *info, QString &error) const
 		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
 #endif
 	struct stat st;
-	QByteArray name = QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName());
+	QByteArray name = QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>());
 
 	if (::stat(name, &st) == 0)
 		if (S_ISDIR(st.st_mode))
@@ -103,7 +103,7 @@ bool BaseFileContainer::remove(const IFileInfo *info, QString &error) const
 
 bool BaseFileContainer::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
-	if (::rename(QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName()),
+	if (::rename(QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>()),
 				 QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(fileName))) == 0)
 	{
 		return true;
@@ -117,8 +117,8 @@ bool BaseFileContainer::rename(const IFileInfo *info, const QString &fileName, Q
 
 bool BaseFileContainer::move(const IFileContainer *source, const IFileInfo *info, QString &error) const
 {
-	QByteArray destFileName = QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName());
-	QByteArray sourceFileName = QByteArray(static_cast<const BaseFileContainer *>(source)->m_path).append('/').append(static_cast<const Info *>(info)->rawFileName());
+	QByteArray destFileName = QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>());
+	QByteArray sourceFileName = QByteArray(source->location()).append('/').append(info->fileName().as<QByteArray>());
 
 	if (::link(sourceFileName, destFileName) == 0)
 		return true;
@@ -138,7 +138,7 @@ IFileContainer *BaseFileContainer::open() const
 IFileContainer *BaseFileContainer::open(const IFileInfo *info, QString &error) const
 {
 	struct stat st;
-	QByteArray name = QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName());
+	QByteArray name = QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>());
 
 	if (::stat(name, &st) == 0)
 		if (S_ISDIR(st.st_mode))
@@ -152,7 +152,7 @@ IFileContainer *BaseFileContainer::open(const IFileInfo *info, QString &error) c
 
 IFileAccessor *BaseFileContainer::open(const IFileInfo *info, int flags, QString &error) const
 {
-	IFileAccessor::Holder file(new FileAccesor(QByteArray(m_path).append('/').append(static_cast<const Info *>(info)->rawFileName()), flags));
+	IFileAccessor::Holder file(new FileAccesor(QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>()), flags));
 
 	if (file)
 		if (static_cast<FileAccesor *>(file.data())->isValid())

@@ -18,7 +18,7 @@ bool ArcNodeProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 		if (static_cast<NodeItem *>(right.internalPointer())->isRoot())
 			return sortOrder() == Qt::DescendingOrder;
 		else
-			return ProxyModel::compareByFileNames(static_cast<EntryNodeItem *>(left.internalPointer())->info().data(), static_cast<EntryNodeItem *>(right.internalPointer())->info().data());
+			return ProxyModel::compareByFileNames(static_cast<EntryNodeItem *>(left.internalPointer())->info(), static_cast<EntryNodeItem *>(right.internalPointer())->info());
 }
 
 ARC_PLUGIN_NS_END

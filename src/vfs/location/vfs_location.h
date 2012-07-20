@@ -17,12 +17,16 @@ public:
 	operator const QString &() const { return m_label; }
 	operator const QByteArray &() const { return m_location; }
 
+	bool operator<(const Location &other) const { return m_location < other.m_location; }
+	bool operator==(const Location &other) const { return m_location == other.m_location; }
+
 	bool isValid() const { return !m_location.isNull(); }
 
 	template <typename R> inline
 	const R &as() const;
 
 protected:
+	friend class IFileInfo;
 	friend class IFileContainer;
 	Location(const QString &label, const QByteArray &location) :
 		m_label(label),

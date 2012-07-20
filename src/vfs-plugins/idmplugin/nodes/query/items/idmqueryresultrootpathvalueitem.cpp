@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 
 inline static bool compareByFileNames(const Item::Holder &v1, const Item::Holder &v2)
 {
-	return ProxyModel::compareByFileNames(v1.as<QueryResultPathItem>(), v2.as<QueryResultPathItem>());
+	return ProxyModel::compareByFileNames(v1.as<QueryResultPathItem>()->info(), v2.as<QueryResultPathItem>()->info());
 }
 
 
@@ -22,11 +22,6 @@ QueryResultRootPathValueItem::QueryResultRootPathValueItem(const IFileContainer 
 	lock(tr("Updating..."));
 }
 
-QString QueryResultRootPathValueItem::fileName() const
-{
-	return m_value->value().toString();
-}
-
 bool QueryResultRootPathValueItem::isRootPathValue()
 {
 	return true;
@@ -34,7 +29,7 @@ bool QueryResultRootPathValueItem::isRootPathValue()
 
 void QueryResultRootPathValueItem::open() const
 {
-	Application::desktopService()->open(m_container, this);
+	Application::desktopService()->open(m_container, info());
 }
 
 void QueryResultRootPathValueItem::update(SnapshotItem *item)

@@ -32,7 +32,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual size_type fileSize() const;
-	virtual QString fileName() const;
+	virtual const Location &fileName() const;
 	virtual const IFileType *fileType() const;
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
@@ -49,7 +49,6 @@ public:
 	void refresh();
 	bool isRoot() const { return m_isRoot; }
 	bool exists() const { return m_info.exists; }
-    const QByteArray &rawFileName() const { return m_fileName; }
 
 private:
 	struct FileInfo
@@ -76,8 +75,7 @@ private:
 private:
     bool m_isRoot;
     QByteArray m_filePath;
-    QByteArray m_fileName;
-    QString m_fileNameString;
+    Location m_fileName;
     FileInfo m_info;
 };
 

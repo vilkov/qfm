@@ -24,7 +24,7 @@ public:
 		{
 			case Qt::EditRole:
 			case Qt::DisplayRole:
-				return source()->info()->fileName();
+				return source()->info()->fileName().as<QString>();
 			case Qt::DecorationRole:
 				return source()->info()->fileType()->icon();
 			case Qt::TextAlignmentRole:
@@ -52,7 +52,7 @@ public:
 		{
 			case Qt::EditRole:
 			case Qt::DisplayRole:
-				return source()->info()->fileName();
+				return source()->info()->fileName().as<QString>();
 			case Qt::DecorationRole:
 				return source()->info()->fileType()->icon();
 			case Qt::TextAlignmentRole:

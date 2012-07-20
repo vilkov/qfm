@@ -26,7 +26,7 @@ public:
 	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool isLink() const { return false; }
 	virtual IFileInfo::size_type fileSize() const { return 0; }
-	virtual QString fileName() const { return m_info.fileName(); }
+	virtual const Location &fileName() const { return m_fileName; }
 	virtual const IFileType *fileType() const { return NULL; }
 	virtual QDateTime lastModified() const { return m_info.lastModified(); }
 	virtual int permissions() const { return 0; }
@@ -44,6 +44,7 @@ public:
 
 private:
 	QFileInfo m_info;
+	Location m_fileName;
 	QString m_label;
 };
 

@@ -13,7 +13,7 @@ public:
 	struct Data
 	{
 		QString path;
-		QString fileName;
+		Location fileName;
 		size_type fileSize;
 		QDateTime lastModified;
 	};
@@ -26,7 +26,7 @@ public:
 	virtual bool isFile() const;
 	virtual bool isLink() const;
 	virtual size_type fileSize() const;
-	virtual QString fileName() const;
+	virtual const Location &fileName() const;
 	virtual const IFileType *fileType() const;
 	virtual QDateTime lastModified() const;
 	virtual int permissions() const;
@@ -38,6 +38,8 @@ public:
 	virtual QString description() const;
 
 	const QString &path() const { return m_data.path; }
+
+	static Location location(const QString &label);
 
 private:
 	Data m_data;

@@ -33,7 +33,7 @@ public:
 	virtual bool isLink() const { return false; }
 	virtual bool exists() const { return m_info.exists(); }
 	virtual IFileInfo::size_type fileSize() const { return 0; }
-	virtual QString fileName() const { return m_info.fileName(); }
+	virtual const Location &fileName() const { return m_fileName; }
 	virtual QString absolutePath() const { return m_info.absolutePath(); }
 	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
 	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
@@ -95,6 +95,7 @@ private:
 	bool m_locked;
 	QString m_lockReason;
 	QFileInfo m_info;
+	Location m_fileName;
 	qint32 m_length;
 	QString m_title;
 };

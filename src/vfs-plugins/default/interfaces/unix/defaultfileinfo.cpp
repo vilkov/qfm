@@ -75,7 +75,6 @@ Info::Info(const Info &other) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
-	m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {}
 
@@ -83,16 +82,14 @@ template <>
 Info::Info<Info::None>(const QByteArray &filePath, None) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(filePath.mid(filePath.lastIndexOf('/') + 1)),
-    m_fileNameString(codec()->toUnicode(m_fileName))
+	m_fileName(location(filePath.mid(filePath.lastIndexOf('/') + 1), codec()))
 {}
 
 template <>
 Info::Info<Info::Refresh>(const QByteArray &filePath, Refresh) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(m_filePath.mid(m_filePath.lastIndexOf('/') + 1)),
-    m_fileNameString(codec()->toUnicode(m_fileName))
+	m_fileName(location(filePath.mid(filePath.lastIndexOf('/') + 1), codec()))
 {
 	refresh();
 }
@@ -101,8 +98,7 @@ template <>
 Info::Info<Info::Identify>(const QByteArray &filePath, Identify) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
-	m_fileName(m_filePath.mid(m_filePath.lastIndexOf('/') + 1)),
-    m_fileNameString(codec()->toUnicode(m_fileName))
+	m_fileName(location(filePath.mid(filePath.lastIndexOf('/') + 1), codec()))
 {
 	refresh();
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
@@ -113,7 +109,6 @@ Info::Info<Info::None>(const Info &other, None) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
-    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {}
 
@@ -122,7 +117,6 @@ Info::Info<Info::Refresh>(const Info &other, Refresh) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
-    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {
 	refresh();
@@ -133,7 +127,6 @@ Info::Info<Info::Identify>(const Info &other, Identify) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
-    m_fileNameString(other.m_fileNameString),
 	m_info(other.m_info)
 {
 	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
@@ -159,9 +152,9 @@ Info::size_type Info::fileSize() const
 	return m_info.size;
 }
 
-QString Info::fileName() const
+const Location &Info::fileName() const
 {
-	return m_fileNameString;
+	return m_fileName;
 }
 
 const IFileType *Info::fileType() const

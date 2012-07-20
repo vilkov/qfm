@@ -1,6 +1,8 @@
 #include "libunrarfileinfo.h"
 #include "../../../../application.h"
 
+#include <QtCore/QTextCodec>
+
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 
@@ -30,7 +32,7 @@ Info::size_type Info::fileSize() const
 	return m_data.fileSize;
 }
 
-QString Info::fileName() const
+const Location &Info::fileName() const
 {
 	return m_data.fileName;
 }
@@ -68,6 +70,11 @@ QString Info::name() const
 QString Info::description() const
 {
 	return m_fileTypeInfo.description;
+}
+
+Location Info::location(const QString &label)
+{
+	return IFileInfo::location(label, label.toUtf8());
 }
 
 LIBUNRAR_ARC_PLUGIN_NS_END

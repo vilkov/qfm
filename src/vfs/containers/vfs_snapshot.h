@@ -16,7 +16,7 @@ public:
 	class Updates;
 
 	typedef QPair<Item::Holder, SnapshotItem *> Pair;
-	typedef QMap<QString, Pair>                 Container;
+	typedef QMap<Location, Pair>                Container;
 	typedef Container::iterator                 iterator;
 	typedef Container::const_iterator           const_iterator;
 	typedef Container::size_type                size_type;
@@ -52,12 +52,12 @@ public:
 	bool isUpdated(const_iterator i) const { return (*i).second != NULL && (*i).second->isValid(); }
 	bool isRemoved(const_iterator i) const { return (*i).second == NULL; }
 
-	const_iterator find(const QString &fileName) const
+	const_iterator find(const Location &fileName) const
 	{
 		return m_data->map.find(fileName);
 	}
 
-	iterator find(const QString &fileName)
+	iterator find(const Location &fileName)
 	{
 		return m_data->map.find(fileName);
 	}
@@ -68,7 +68,7 @@ public:
 		(*i).second = item;
 	}
 
-	void insert(const QString &fileName, SnapshotItem *item)
+	void insert(const Location &fileName, SnapshotItem *item)
 	{
 		Pair &pair = m_data->map[fileName];
 		delete pair.second;
@@ -112,7 +112,7 @@ public:
 	{}
 
 	bool isEmpty() const { return m_data->map.isEmpty(); }
-	void add(const QString &fileName, const Item::Holder &item) { m_data->map[fileName].first = item; }
+	void add(const Location &fileName, const Item::Holder &item) { m_data->map[fileName].first = item; }
 
 private:
 	friend class Snapshot;
@@ -127,7 +127,7 @@ public:
 		m_data(new Data(snapshot.m_data->container))
 	{}
 
-	void add(const QString &fileName, const Pair &pair) { m_data->map[fileName] = pair; }
+	void add(const Location &fileName, const Pair &pair) { m_data->map[fileName] = pair; }
 
 private:
 	friend class Snapshot;

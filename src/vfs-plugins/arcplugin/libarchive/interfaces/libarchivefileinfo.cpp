@@ -33,7 +33,7 @@ Info::size_type Info::fileSize() const
 	return m_data.fileSize;
 }
 
-QString Info::fileName() const
+const Location &Info::fileName() const
 {
 	return m_data.fileName;
 }
@@ -71,6 +71,11 @@ QString Info::name() const
 QString Info::description() const
 {
 	return m_fileTypeInfo.description;
+}
+
+Location Info::location(const QByteArray &location)
+{
+	return IFileInfo::location(QString::fromUtf8(location), location);
 }
 
 LIBARCHIVE_ARC_PLUGIN_NS_END

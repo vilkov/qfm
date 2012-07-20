@@ -152,10 +152,10 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 				Tools::DestinationFromPathList tree;
 
 				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
-					if (static_cast<QueryResultPathItem *>(item->at(i))->isFile())
-						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), 1);
+					if (static_cast<QueryResultPathItem *>(item->at(i))->info()->isFile())
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName(), 1);
 					else
-						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName());
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName());
 
 				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 				{
@@ -267,7 +267,7 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
 
 				if (!pathItem->isLocked())
-					files.add(pathItem->fileName(), Item::Holder(pathItem));
+					files.add(pathItem->info()->fileName(), Item::Holder(pathItem));
 			}
 			else
 				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
@@ -419,10 +419,10 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &select
 				return node;
 			else
 			{
-				if (static_cast<QueryResultPathItem *>(item)->isDir())
+				if (static_cast<QueryResultPathItem *>(item)->info()->isDir())
 				{
 					QString error;
-					IFileContainer::Holder folder(m_container.container()->create(static_cast<QueryResultPathItem *>(item)->fileName(), error));
+					IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->info(), error));
 
 					if (folder)
 					{
@@ -434,7 +434,7 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &select
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 				}
 				else
-					if (static_cast<QueryResultPathItem *>(item)->isFile())
+					if (static_cast<QueryResultPathItem *>(item)->info()->isFile())
 						static_cast<QueryResultPathItem *>(item)->open();
 			}
 	}
@@ -484,7 +484,7 @@ void IdmNodeQueryResults::refresh(const QModelIndex &index)
 	QueryResultItem *item = static_cast<QueryResultItem *>(index.internalPointer());
 
 	for (QueryResultItem::size_type i = 0, size = item->size(); i < size; ++i)
-		files.add(static_cast<QueryResultPathItem *>(item->at(i))->fileName(), Item::Holder(static_cast<QueryResultItem *>(item->at(i))));
+		files.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName(), Item::Holder(static_cast<QueryResultItem *>(item->at(i))));
 
 	if (!files.isEmpty())
 		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
@@ -572,7 +572,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 					files.push_back(entry->info()->fileName());
 			}
 			else
-				removed.push_back((*i).first.as<QueryResultPathItem>()->fileName());
+				removed.push_back((*i).first.as<QueryResultPathItem>()->info()->fileName());
 
 		question = tr("Would you like to remove").
 				append(QString::fromLatin1("\n\t")).

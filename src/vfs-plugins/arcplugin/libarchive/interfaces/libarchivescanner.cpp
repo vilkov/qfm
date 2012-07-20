@@ -87,7 +87,7 @@ public:
 			Info::Data data;
 
 			data.path = QByteArray(archive_entry_pathname(m_entry));
-			data.fileName = QString::fromUtf8(data.path);
+			data.fileName = Info::location(data.path);
 			data.fileSize = archive_entry_size(m_entry);
 			data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(m_entry));
 
@@ -116,13 +116,13 @@ private:
 };
 
 
-class WrappedNodeItem : public ::VFS::SnapshotItem
+class SnapshotItem : public ::VFS::SnapshotItem
 {
 public:
-	typedef QMap<QString, ::VFS::SnapshotItem *> Container;
+	typedef QMap<QByteArray, ::VFS::SnapshotItem *> Container;
 
 public:
-	WrappedNodeItem(const IFileContainer *container, const QString &fileName, struct archive_entry *entry, WrappedNodeItem *parent) :
+	SnapshotItem(const IFileContainer *container, const Location &fileName, struct archive_entry *entry, SnapshotItem *parent) :
 		::VFS::SnapshotItem(container, archive_entry_size(entry), parent)
 	{
 		m_data.path = QByteArray(archive_entry_pathname(entry));
@@ -130,17 +130,17 @@ public:
 		m_data.fileSize = totalSize();
 		m_data.lastModified = QDateTime::fromTime_t(archive_entry_mtime(entry));
 	}
-	virtual ~WrappedNodeItem()
+	virtual ~SnapshotItem()
 	{
 		qDeleteAll(m_map);
 	}
 
-	WrappedNodeItem *find(const QString &fileName) const
+	SnapshotItem *find(const QByteArray &fileName) const
 	{
-		return static_cast<WrappedNodeItem *>(m_map.value(fileName));
+		return static_cast<SnapshotItem *>(m_map.value(fileName));
 	}
 
-	void insert(const QString &fileName, WrappedNodeItem *item)
+	void insert(const QByteArray &fileName, SnapshotItem *item)
 	{
 		incTotalSize((m_map[fileName] = item)->totalSize());
 	}
@@ -156,7 +156,7 @@ public:
 			for (Container::iterator i = m_map.begin(), e = m_map.end(); i != e; i = m_map.erase(i))
 			{
 				items().append(*i);
-				static_cast<WrappedNodeItem *>(*i)->populateInfo();
+				static_cast<SnapshotItem *>(*i)->populateInfo();
 			}
 
 			m_data.fileSize += totalSize();
@@ -192,12 +192,13 @@ Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
 {
 	ReadArchive archive(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
-    QMap<QString, WrappedNodeItem *> parents;
+    QMap<QByteArray, SnapshotItem *> parents;
     IFileContainer::Holder container;
-    WrappedNodeItem *parent;
-    WrappedNodeItem *entry;
+    SnapshotItem *parent;
+    SnapshotItem *entry;
     struct archive_entry *e;
-    QString fileName;
+    QByteArray fileName;
+    Location fileNameLocation;
     const char *path;
     char *sep;
     int res;
@@ -208,11 +209,14 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 			if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
 			{
 				(*sep) = 0;
-				WrappedNodeItem *&p = parents[fileName = QString::fromUtf8(path)];
+				SnapshotItem *&p = parents[fileName = path];
 				(*sep) = '/';
 
 				if (p == NULL)
-					snapshot.insert(fileName, p = parent = new WrappedNodeItem(m_container, fileName, e, NULL));
+				{
+					fileNameLocation = Info::location(fileName);
+					snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, e, NULL));
+				}
 				else
 					parent = p;
 
@@ -222,11 +226,11 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				{
 					(*sep) = 0;
 
-					if (entry = parent->find(fileName = QString::fromUtf8(path)))
+					if (entry = parent->find(fileName = path))
 						parent = entry;
 					else
 					{
-						parent->insert(fileName, entry = new WrappedNodeItem(m_container, fileName, e, parent));
+						parent->insert(fileName, entry = new SnapshotItem(m_container, Info::location(fileName), e, parent));
 						parent = entry;
 					}
 
@@ -234,18 +238,21 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 					path = (++sep);
 				}
 
-				if (!(fileName = QString::fromUtf8(path)).isEmpty() &&
+				if (!(fileName = path).isEmpty() &&
 					parent->find(fileName) == NULL)
 				{
-					parent->insert(fileName, new WrappedNodeItem(m_container, fileName, e, parent));
+					parent->insert(fileName, new SnapshotItem(m_container, Info::location(fileName), e, parent));
 				}
 			}
 			else
 			{
-				WrappedNodeItem *&p = parents[fileName = QString::fromUtf8(path)];
+				SnapshotItem *&p = parents[fileName = path];
 
 				if (p == NULL)
-					snapshot.insert(fileName, p = new WrappedNodeItem(m_container, fileName, e, NULL));
+				{
+					fileNameLocation = Info::location(fileName);
+					snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, e, NULL));
+				}
 			}
 
 		archive_read_data_skip(m_archive);
@@ -254,7 +261,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 	if (!aborted)
     	if (res == ARCHIVE_EOF)
 			for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
-				static_cast<WrappedNodeItem *>((*i).second)->populateInfo();
+				static_cast<SnapshotItem *>((*i).second)->populateInfo();
     	else
     		error = QString::fromUtf8(archive_error_string(m_archive));
 }

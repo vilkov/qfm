@@ -385,7 +385,7 @@ void BaseNode::createFile(const QModelIndex &index, INodeView *view)
 		NodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<NodeItem>();
 
 		if (!item->isRootItem())
-			name = item->info()->fileName();
+			name = item->info()->fileName().as<QString>();
 	}
 
 	StringDialog dialog(tr("Enter name for new file"), tr("Name"), name, Application::mainWindow());
@@ -405,7 +405,7 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 		NodeItem *item = m_items[m_proxy.mapToSource(index).row()].as<NodeItem>();
 
 		if (!item->isRootItem())
-			name = item->info()->fileName();
+			name = item->info()->fileName().as<QString>();
 	}
 
 	StringDialog dialog(tr("Enter name for new directory"), tr("Name"), name, Application::mainWindow());

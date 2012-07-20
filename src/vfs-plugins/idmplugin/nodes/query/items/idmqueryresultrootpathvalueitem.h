@@ -15,9 +15,6 @@ class QueryResultRootPathValueItem : public QueryResultPathItem
 public:
 	QueryResultRootPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent);
 
-	/* IFileInfo */
-	virtual QString fileName() const;
-
 	/* QueryResultItem */
 	virtual bool isRootPathValue();
 

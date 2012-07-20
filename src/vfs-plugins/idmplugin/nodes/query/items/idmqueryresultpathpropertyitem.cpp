@@ -8,7 +8,7 @@ IDM_PLUGIN_NS_BEGIN
 
 inline static bool lessThan(const QueryResultItem::Holder &v1, const QueryResultItem::Holder &v2)
 {
-	return ProxyModel::compareByFileNames(v1.as<QueryResultRootPathValueItem>(), v2.as<QueryResultRootPathValueItem>());
+	return ProxyModel::compareByFileNames(v1.as<QueryResultRootPathValueItem>()->info(), v2.as<QueryResultRootPathValueItem>()->info());
 }
 
 
@@ -37,7 +37,7 @@ void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContain
 	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 	{
 		m_items.push_back(item = new QueryResultRootPathValueItem(container, values.at(i), this));
-		files.add(item.as<QueryResultRootPathValueItem>()->fileName(), item);
+		files.add(item.as<QueryResultRootPathValueItem>()->info()->fileName(), item);
 	}
 
 	qSort(m_items.begin(), m_items.end(), lessThan);

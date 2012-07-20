@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class QueryResultPathItem : public QueryResultItem, public IFileInfo
+class QueryResultPathItem : public QueryResultItem
 {
 public:
 	typedef QList<QueryResultItem::Holder> Container;
@@ -28,15 +28,8 @@ public:
 	virtual bool isValue();
 	virtual bool isPath();
 
-	/* IFileInfo */
-	virtual bool isDir() const;
-	virtual bool isFile() const;
-	virtual bool isLink() const;
-	virtual IFileInfo::size_type fileSize() const;
-	virtual QString fileName() const;
-	virtual const IFileType *fileType() const;
-	virtual QDateTime lastModified() const;
-	virtual int permissions() const;
+	const IFileInfo::Holder &info() const { return m_info; }
+	IFileInfo::Holder &info() { return m_info; }
 
 	virtual void open() const = 0;
 

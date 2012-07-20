@@ -40,7 +40,7 @@ QVariant EntryNodeItem::data(qint32 column, qint32 role) const
 			{
 				case Qt::EditRole:
 				case Qt::DisplayRole:
-					return m_info->fileName();
+					return m_info->fileName().as<QString>();
 
 				case Qt::DecorationRole:
 					if (isLocked())

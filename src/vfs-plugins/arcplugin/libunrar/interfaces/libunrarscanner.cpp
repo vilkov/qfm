@@ -32,13 +32,13 @@ inline static QDateTime fromDosTime(unsigned int time)
 }
 
 
-class WrappedNodeItem : public ::VFS::SnapshotItem
+class SnapshotItem : public ::VFS::SnapshotItem
 {
 public:
 	typedef QMap<QString, ::VFS::SnapshotItem *> Container;
 
 public:
-	WrappedNodeItem(const IFileContainer *container, const QString &fileName, const struct RARHeaderDataEx &info, WrappedNodeItem *parent) :
+	SnapshotItem(const IFileContainer *container, const Location &fileName, const struct RARHeaderDataEx &info, SnapshotItem *parent) :
 		::VFS::SnapshotItem(container, unpackedSize(info), parent)
 	{
 		m_data.path = QString::fromWCharArray(info.FileNameW);
@@ -46,17 +46,17 @@ public:
 		m_data.fileSize = totalSize();
 		m_data.lastModified = fromDosTime(info.FileTime);
 	}
-	virtual ~WrappedNodeItem()
+	virtual ~SnapshotItem()
 	{
 		qDeleteAll(m_map);
 	}
 
-	WrappedNodeItem *find(const QString &fileName) const
+	SnapshotItem *find(const QString &fileName) const
 	{
-		return static_cast<WrappedNodeItem *>(m_map.value(fileName));
+		return static_cast<SnapshotItem *>(m_map.value(fileName));
 	}
 
-	void insert(const QString &fileName, WrappedNodeItem *item)
+	void insert(const QString &fileName, SnapshotItem *item)
 	{
 		incTotalSize((m_map[fileName] = item)->totalSize());
 	}
@@ -72,7 +72,7 @@ public:
 			for (Container::iterator i = m_map.begin(), e = m_map.end(); i != e; i = m_map.erase(i))
 			{
 				items().append(*i);
-				static_cast<WrappedNodeItem *>(*i)->populateInfo();
+				static_cast<SnapshotItem *>(*i)->populateInfo();
 			}
 
 			m_data.fileSize += totalSize();
@@ -110,12 +110,13 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 
 	if (void *archive = RAROpenArchiveEx(&archiveData))
 	{
-		QMap<QString, WrappedNodeItem *> parents;
+		QMap<QString, SnapshotItem *> parents;
 	    IFileContainer::Holder container;
 		struct RARHeaderDataEx fileInfo;
-	    WrappedNodeItem *parent;
-	    WrappedNodeItem *entry;
+	    SnapshotItem *parent;
+	    SnapshotItem *entry;
 	    QString fileName;
+	    Location fileNameLocation;
 	    const wchar_t *path;
 	    wchar_t *sep;
 		int res;
@@ -127,11 +128,14 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 			if ((sep = wcschr(const_cast<wchar_t *>(path), L'/')) != NULL)
 			{
 				(*sep) = 0;
-				WrappedNodeItem *&p = parents[fileName = QString::fromWCharArray(path)];
+				SnapshotItem *&p = parents[fileName = QString::fromWCharArray(path)];
 				(*sep) = L'/';
 
 				if (p == NULL)
-					snapshot.insert(fileName, p = parent = new WrappedNodeItem(m_container, fileName, fileInfo, NULL));
+				{
+					fileNameLocation = Info::location(fileName);
+					snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
+				}
 				else
 					parent = p;
 
@@ -145,7 +149,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 						parent = entry;
 					else
 					{
-						parent->insert(fileName, entry = new WrappedNodeItem(m_container, fileName, fileInfo, parent));
+						parent->insert(fileName, entry = new SnapshotItem(m_container, Info::location(fileName), fileInfo, parent));
 						parent = entry;
 					}
 
@@ -156,15 +160,18 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				if (!(fileName = QString::fromWCharArray(path)).isEmpty() &&
 					parent->find(fileName) == NULL)
 				{
-					parent->insert(fileName, new WrappedNodeItem(m_container, fileName, fileInfo, parent));
+					parent->insert(fileName, new SnapshotItem(m_container, Info::location(fileName), fileInfo, parent));
 				}
 			}
 			else
 			{
-				WrappedNodeItem *&p = parents[fileName = QString::fromWCharArray(path)];
+				SnapshotItem *&p = parents[fileName = QString::fromWCharArray(path)];
 
 				if (p == NULL)
-					snapshot.insert(fileName, p = new WrappedNodeItem(m_container, fileName, fileInfo, NULL));
+				{
+					fileNameLocation = Info::location(fileName);
+					snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
+				}
 			}
 
 			RARProcessFile(archive, RAR_SKIP, NULL, NULL);
@@ -173,7 +180,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 		if (!aborted)
 	    	if (res == ERAR_END_ARCHIVE)
 				for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
-					static_cast<WrappedNodeItem *>((*i).second)->populateInfo();
+					static_cast<SnapshotItem *>((*i).second)->populateInfo();
 	    	else
 	    		error = errorDescription(res);
 

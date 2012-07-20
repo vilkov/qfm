@@ -72,7 +72,7 @@ public:
 			return NULL;
 		}
 		else
-			return new FileAccesor(QByteArray(m_path).append(m_info.rawFileName()), mode);
+			return new FileAccesor(QByteArray(m_path).append(m_info.fileName().as<QByteArray>()), mode);
 	}
 
 protected:
@@ -152,7 +152,7 @@ void FileContainerScanner::scan(Snapshot &snapshot, const volatile Flags &aborte
 
 		for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 		{
-			info = new Info(QByteArray(path).append((*it).first.as<NodeItem>()->info().as<Info>()->rawFileName()), Info::Identify());
+			info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
 
 			if (info.as<Info>()->exists())
 			{
@@ -182,7 +182,7 @@ void FileContainerScanner::refresh(Snapshot &snapshot, const volatile Flags &abo
 
 	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
 	{
-		info = new Info(QByteArray(path).append((*it).first.as<NodeItem>()->info().as<Info>()->rawFileName()), Info::Identify());
+		info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
 
 		if (info.as<Info>()->exists())
 		{

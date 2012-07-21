@@ -68,14 +68,16 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 		case Event::ScanFilesForSize:
 		case Event::ScanFilesForRemove:
 		{
-			m_snapshot.container()->scanner()->scan(m_snapshot, aborted, m_error);
+			IFileContainerScanner::ScanArguments args = {m_snapshot, aborted};
+			m_snapshot.container()->scanner()->scan(args, m_error);
 			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, m_snapshot));
 			break;
 		}
 
 		case Event::ScanFilesForCopy:
 		{
-			m_snapshot.container()->scanner()->scan(m_snapshot, aborted, m_error);
+			IFileContainerScanner::ScanArguments args = {m_snapshot, aborted};
+			m_snapshot.container()->scanner()->scan(args, m_error);
 			postEvent(new CopyEvent(this, static_cast<CopyEvent::Type>(m_type), destination(), aborted, m_snapshot, m_move));
 			break;
 		}

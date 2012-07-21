@@ -7,6 +7,7 @@
 
 VFS_NS_BEGIN
 class Snapshot;
+class SnapshotItem;
 class IFileAccessor;
 
 
@@ -29,12 +30,44 @@ public:
 		virtual IFileAccessor *open(int mode, QString &error) const = 0;
 	};
 
+	class Filter
+	{
+	public:
+		typedef PScopedPointer<Filter> Holder;
+
+	public:
+		virtual ~Filter();
+		virtual bool match(const IFileInfo *info) const = 0;
+	};
+
+	struct Callback
+	{
+		typedef void (*Method)(void *user_data, SnapshotItem *item);
+
+		Method method;
+		void *user_data;
+	};
+
+	struct SearchArguments
+	{
+		Snapshot &snapshot;
+		const Filter *filter;
+		Callback callback;
+		const volatile Flags &aborted;
+	};
+
+	struct ScanArguments
+	{
+		Snapshot &snapshot;
+		const volatile Flags &aborted;
+	};
+
 public:
 	virtual ~IFileContainerScanner();
 
 	virtual IEnumerator *enumerate(QString &error) const = 0;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const = 0;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const = 0;
+	virtual void scan(const ScanArguments &arguments, QString &error) const = 0;
+	virtual void search(const SearchArguments &arguments, QString &error) const = 0;
 };
 
 VFS_NS_END

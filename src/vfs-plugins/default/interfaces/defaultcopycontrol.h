@@ -37,7 +37,6 @@ public:
 	virtual IFileContainer *create(const QString &fileName, QString &error) const;
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const;
 
-	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
 	virtual const IFileContainerScanner *scanner() const;
 
 	/* ICopyControl */

@@ -100,7 +100,7 @@ Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 	return NULL;
 }
 
-void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void Scanner::scan(const ScanArguments &arguments, QString &error) const
 {
 	struct RAROpenArchiveDataEx archiveData;
 	memset(&archiveData, 0, sizeof(struct RAROpenArchiveDataEx));
@@ -121,7 +121,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 	    wchar_t *sep;
 		int res;
 
-	    while ((res = RARReadHeaderEx(archive, &fileInfo)) == 0 && !aborted)
+	    while ((res = RARReadHeaderEx(archive, &fileInfo)) == 0 && !arguments.aborted)
 	    {
 			path = fileInfo.FileNameW;
 
@@ -134,7 +134,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				if (p == NULL)
 				{
 					fileNameLocation = Info::location(fileName);
-					snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
+					arguments.snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
 				}
 				else
 					parent = p;
@@ -170,16 +170,16 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				if (p == NULL)
 				{
 					fileNameLocation = Info::location(fileName);
-					snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
+					arguments.snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, fileInfo, NULL));
 				}
 			}
 
 			RARProcessFile(archive, RAR_SKIP, NULL, NULL);
 	    }
 
-		if (!aborted)
+		if (!arguments.aborted)
 	    	if (res == ERAR_END_ARCHIVE)
-				for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
+				for (Snapshot::const_iterator i = arguments.snapshot.begin(), end = arguments.snapshot.end(); i != end; ++i)
 					static_cast<SnapshotItem *>((*i).second)->populateInfo();
 	    	else
 	    		error = errorDescription(res);
@@ -188,9 +188,9 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 	}
 }
 
-void Scanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void Scanner::search(const SearchArguments &argument, QString &error) const
 {
-	error = tr("LibUnrar does not support refreshing.");
+
 }
 
 QString Scanner::errorDescription(int code)

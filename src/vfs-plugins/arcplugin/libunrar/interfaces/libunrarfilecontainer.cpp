@@ -110,11 +110,6 @@ IFileAccessor *FileContainer::open(const IFileInfo *info, int flags, QString &er
 	return NULL;
 }
 
-IFileContainer *FileContainer::filter(Filter::Holder &filter, QString &error) const
-{
-	return NULL;
-}
-
 const IFileContainerScanner *FileContainer::scanner() const
 {
 	return &m_data->scanner;

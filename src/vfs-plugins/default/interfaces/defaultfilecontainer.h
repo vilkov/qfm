@@ -33,8 +33,6 @@ public:
 	virtual IFileContainer *create(const QString &fileName, QString &error) const;
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const;
 
-	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const;
-
 protected:
 	Location m_path;
 };
@@ -52,18 +50,18 @@ private:
 };
 
 
-class FilteredFileContainer : public BaseFileContainer
-{
-public:
-	FilteredFileContainer(const QByteArray &path, Filter::Holder &filter);
-
-	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-	virtual const IFileContainerScanner *scanner() const;
-
-private:
-	Filter::Holder m_filter;
-	FilteredFileContainerScanner m_scanner;
-};
+//class FilteredFileContainer : public BaseFileContainer
+//{
+//public:
+//	FilteredFileContainer(const QByteArray &path, Filter::Holder &filter);
+//
+//	virtual IFileInfo *info(const QString &fileName, QString &error) const;
+//	virtual const IFileContainerScanner *scanner() const;
+//
+//private:
+//	Filter::Holder m_filter;
+//	FilteredFileContainerScanner m_scanner;
+//};
 
 DEFAULT_PLUGIN_NS_END
 

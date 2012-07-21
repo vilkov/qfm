@@ -12,7 +12,8 @@ void ReadArchiveTask::run(const volatile Flags &aborted)
 {
 	QString error;
 	Snapshot snapshot(m_container);
-	m_container->scanner()->scan(snapshot, aborted, error);
+	IFileContainerScanner::ScanArguments args = {snapshot, aborted};
+	m_container->scanner()->scan(args, error);
 	postEvent(new Event(this, Event::ScanComplete, error, aborted, snapshot));
 }
 

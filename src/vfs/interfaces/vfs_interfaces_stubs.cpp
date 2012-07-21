@@ -29,13 +29,13 @@ IFileType::~IFileType()
 IFileContainer::~IFileContainer()
 {}
 
-IFileContainer::Filter::~Filter()
-{}
-
 IFileOperations::~IFileOperations()
 {}
 
 IFileNavigation::~IFileNavigation()
+{}
+
+IFileContainerScanner::Filter::~Filter()
 {}
 
 IFileContainerScanner::~IFileContainerScanner()

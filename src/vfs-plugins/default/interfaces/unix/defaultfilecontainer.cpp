@@ -198,11 +198,6 @@ IFileAccessor *BaseFileContainer::create(const QString &fileName, int flags, QSt
 	return NULL;
 }
 
-IFileContainer *BaseFileContainer::filter(Filter::Holder &filter, QString &error) const
-{
-	return new FilteredFileContainer(m_path, filter);
-}
-
 
 FileContainer::FileContainer(const QByteArray &path) :
 	BaseFileContainer(path),
@@ -215,27 +210,27 @@ const IFileContainerScanner *FileContainer::scanner() const
 }
 
 
-FilteredFileContainer::FilteredFileContainer(const QByteArray &path, Filter::Holder &filter) :
-	BaseFileContainer(path),
-	m_filter(filter.take()),
-	m_scanner(this, m_filter.data())
-{}
-
-IFileInfo *FilteredFileContainer::info(const QString &fileName, QString &error) const
-{
-	Info info(QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(fileName)), Info::Identify());
-
-	if (info.exists() && m_filter->match(&info))
-		return new Info(info, Info::None());
-	else
-		error = Info::codec()->toUnicode(::strerror(ENOENT));
-
-	return NULL;
-}
-
-const IFileContainerScanner *FilteredFileContainer::scanner() const
-{
-	return &m_scanner;
-}
+//FilteredFileContainer::FilteredFileContainer(const QByteArray &path, Filter::Holder &filter) :
+//	BaseFileContainer(path),
+//	m_filter(filter.take()),
+//	m_scanner(this, m_filter.data())
+//{}
+//
+//IFileInfo *FilteredFileContainer::info(const QString &fileName, QString &error) const
+//{
+//	Info info(QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(fileName)), Info::Identify());
+//
+//	if (info.exists() && m_filter->match(&info))
+//		return new Info(info, Info::None());
+//	else
+//		error = Info::codec()->toUnicode(::strerror(ENOENT));
+//
+//	return NULL;
+//}
+//
+//const IFileContainerScanner *FilteredFileContainer::scanner() const
+//{
+//	return &m_scanner;
+//}
 
 DEFAULT_PLUGIN_NS_END

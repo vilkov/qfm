@@ -25,14 +25,16 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 	{
 		case ModelEvent::UpdateFiles:
 		{
-			m_snapshot.container()->scanner()->scan(m_snapshot, aborted, error);
+			IFileContainerScanner::ScanArguments args = {m_snapshot, aborted};
+			m_snapshot.container()->scanner()->scan(args, error);
 			postEvent(new UpdatesEvent(this, m_snapshot, aborted));
 			break;
 		}
 
 		default:
 		{
-			m_snapshot.container()->scanner()->scan(m_snapshot, aborted, error);
+			IFileContainerScanner::ScanArguments args = {m_snapshot, aborted};
+			m_snapshot.container()->scanner()->scan(args, error);
 			postEvent(new Event(this, static_cast<Event::Type>(m_type), aborted, m_snapshot));
 			break;
 		}

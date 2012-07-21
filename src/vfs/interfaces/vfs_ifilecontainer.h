@@ -16,16 +16,6 @@ class IFileContainer
 public:
 	typedef PScopedPointer<IFileContainer> Holder;
 
-	class Filter
-	{
-	public:
-		typedef PScopedPointer<Filter> Holder;
-
-	public:
-		virtual ~Filter();
-		virtual bool match(const IFileInfo *info) const = 0;
-	};
-
 public:
 	virtual ~IFileContainer();
 
@@ -50,7 +40,6 @@ public:
 	virtual IFileContainer *create(const QString &fileName, QString &error) const = 0;
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const = 0;
 
-	virtual IFileContainer *filter(Filter::Holder &filter, QString &error) const = 0;
 	virtual const IFileContainerScanner *scanner() const = 0;
 
 protected:

@@ -189,7 +189,7 @@ Scanner::IEnumerator *Scanner::enumerate(QString &error) const
 	return new Enumerator(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
 }
 
-void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void Scanner::scan(const ScanArguments &arguments, QString &error) const
 {
 	ReadArchive archive(const_cast<Scanner *>(this)->m_buffer, m_file, m_archive);
     QMap<QByteArray, SnapshotItem *> parents;
@@ -203,7 +203,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
     char *sep;
     int res;
 
-    while ((res = archive_read_next_header(m_archive, &e)) == ARCHIVE_OK && !aborted)
+    while ((res = archive_read_next_header(m_archive, &e)) == ARCHIVE_OK && !arguments.aborted)
     {
     	if (path = archive_entry_pathname(e))
 			if ((sep = strchr(const_cast<char *>(path), '/')) != NULL)
@@ -215,7 +215,7 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				if (p == NULL)
 				{
 					fileNameLocation = Info::location(fileName);
-					snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, e, NULL));
+					arguments.snapshot.insert(fileNameLocation, p = parent = new SnapshotItem(m_container, fileNameLocation, e, NULL));
 				}
 				else
 					parent = p;
@@ -251,23 +251,25 @@ void Scanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &e
 				if (p == NULL)
 				{
 					fileNameLocation = Info::location(fileName);
-					snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, e, NULL));
+					arguments.snapshot.insert(fileNameLocation, p = new SnapshotItem(m_container, fileNameLocation, e, NULL));
 				}
 			}
 
 		archive_read_data_skip(m_archive);
     }
 
-	if (!aborted)
+	if (!arguments.aborted)
     	if (res == ARCHIVE_EOF)
-			for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
+			for (Snapshot::const_iterator i = arguments.snapshot.begin(), end = arguments.snapshot.end(); i != end; ++i)
 				static_cast<SnapshotItem *>((*i).second)->populateInfo();
     	else
     		error = QString::fromUtf8(archive_error_string(m_archive));
 }
 
-void Scanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
-{}
+void Scanner::search(const SearchArguments &argument, QString &error) const
+{
+
+}
 
 Scanner::ReadArchive::ReadArchive(IFileAccessor::value_type *buffer, const IFileAccessor::Holder &file, struct archive *archive) :
 	m_buffer(buffer),

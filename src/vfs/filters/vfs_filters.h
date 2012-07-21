@@ -10,7 +10,7 @@
 
 VFS_NS_BEGIN
 
-class Filters : public IFileContainer::Filter
+class Filters : public IFileContainerScanner::Filter
 {
 public:
 	Filters(int size = 0)
@@ -36,7 +36,7 @@ private:
 };
 
 
-class FileNameFilter : public IFileContainer::Filter
+class FileNameFilter : public IFileContainerScanner::Filter
 {
 public:
 	FileNameFilter(const QString &pattern) :
@@ -52,7 +52,7 @@ private:
 };
 
 
-class DateFilterRange : public IFileContainer::Filter
+class DateFilterRange : public IFileContainerScanner::Filter
 {
 public:
 	DateFilterRange(const QDateTime &from, const QDateTime &to) :

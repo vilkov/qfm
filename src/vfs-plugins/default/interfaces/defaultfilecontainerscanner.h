@@ -16,8 +16,8 @@ public:
 
 	/* IFileContainerScanner */
 	virtual IEnumerator *enumerate(QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+	virtual void scan(const ScanArguments &arguments, QString &error) const;
+	virtual void search(const SearchArguments &arguments, QString &error) const;
 
 protected:
 	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
@@ -28,21 +28,21 @@ protected:
 };
 
 
-class FilteredFileContainerScanner : public FileContainerScanner
-{
-public:
-	FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter);
-
-	/* IFileContainerScanner */
-	virtual IEnumerator *enumerate(QString &error) const;
-
-protected:
-	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-	virtual void scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const;
-
-private:
-	const IFileContainer::Filter *m_filter;
-};
+//class FilteredFileContainerScanner : public FileContainerScanner
+//{
+//public:
+//	FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter);
+//
+//	/* IFileContainerScanner */
+//	virtual IEnumerator *enumerate(QString &error) const;
+//
+//protected:
+//	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+//	virtual void scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const;
+//
+//private:
+//	const IFileContainer::Filter *m_filter;
+//};
 
 DEFAULT_PLUGIN_NS_END
 

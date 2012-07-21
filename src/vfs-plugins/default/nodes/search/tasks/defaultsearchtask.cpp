@@ -12,7 +12,7 @@ void SearchTask::run(const volatile Flags &aborted)
 {
 	QString error;
 	Snapshot snapshot(m_container);
-	m_container->scanner()->scan(snapshot, aborted, error);
+//	m_container->scanner()->scan(snapshot, aborted, error);
 	postEvent(new Event(this, Event::SearchFiles, aborted, snapshot));
 }
 

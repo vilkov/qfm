@@ -85,36 +85,36 @@ protected:
 };
 
 
-class FilteredEnumerator : public Enumerator
-{
-public:
-	FilteredEnumerator(const QByteArray &path, const IFileContainer::Filter *filter) :
-		Enumerator(path),
-		m_filter(filter)
-	{}
-
-	virtual const IFileInfo *next()
-	{
-		while (readdir_r(m_dir, &m_buffer.d, &m_entry) == 0 && m_entry)
-			if ((m_entry->d_type == DT_DIR || m_entry->d_type == DT_UNKNOWN) &&
-				(strcmp(m_entry->d_name, ".") == 0 || strcmp(m_entry->d_name, "..") == 0))
-			{
-				continue;
-			}
-			else
-			{
-				m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
-
-				if ((m_info.isFile() || m_info.isDir()) && m_filter->match(&m_info))
-					return &m_info;
-			}
-
-		return NULL;
-	}
-
-private:
-	const IFileContainer::Filter *m_filter;
-};
+//class FilteredEnumerator : public Enumerator
+//{
+//public:
+//	FilteredEnumerator(const QByteArray &path, const IFileContainer::Filter *filter) :
+//		Enumerator(path),
+//		m_filter(filter)
+//	{}
+//
+//	virtual const IFileInfo *next()
+//	{
+//		while (readdir_r(m_dir, &m_buffer.d, &m_entry) == 0 && m_entry)
+//			if ((m_entry->d_type == DT_DIR || m_entry->d_type == DT_UNKNOWN) &&
+//				(strcmp(m_entry->d_name, ".") == 0 || strcmp(m_entry->d_name, "..") == 0))
+//			{
+//				continue;
+//			}
+//			else
+//			{
+//				m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
+//
+//				if ((m_info.isFile() || m_info.isDir()) && m_filter->match(&m_info))
+//					return &m_info;
+//			}
+//
+//		return NULL;
+//	}
+//
+//private:
+//	const IFileContainer::Filter *m_filter;
+//};
 
 
 class WrappedNodeItem : public ::VFS::SnapshotItem
@@ -138,58 +138,43 @@ FileContainerScanner::IEnumerator *FileContainerScanner::enumerate(QString &erro
 	return new Enumerator(m_container->location());
 }
 
-void FileContainerScanner::scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void FileContainerScanner::scan(const ScanArguments &arguments, QString &error) const
 {
 	IFileInfo::Holder info;
 	PScopedPointer<WrappedNodeItem> subnode;
 
-	if (snapshot.isEmpty())
-		fill(snapshot, aborted, error);
+	if (arguments.snapshot.isEmpty())
+		fill(arguments.snapshot, arguments.aborted, error);
 	else
 	{
-		QByteArray path = snapshot.container()->location();
+		QByteArray path = arguments.snapshot.container()->location();
 		path.append('/');
 
-		for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
+		for (Snapshot::iterator it = arguments.snapshot.begin(), end = arguments.snapshot.end(); it != end && !arguments.aborted; ++it)
 		{
 			info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
 
 			if (info.as<Info>()->exists())
 			{
-				subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
+				subnode = new WrappedNodeItem(arguments.snapshot.container(), info, NULL);
 
 				if (subnode->info()->isDir())
 				{
 					subnode->thisContainer() = subnode->container()->open(subnode->info(), error);
 
 					if (subnode->thisContainer())
-						scan(subnode.data(), aborted, error);
+						scan(subnode.data(), arguments.aborted, error);
 				}
 
-				snapshot.insert(it, subnode.take());
+				arguments.snapshot.insert(it, subnode.take());
 			}
 		}
 	}
 }
 
-void FileContainerScanner::refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+void FileContainerScanner::search(const SearchArguments &arguments, QString &error) const
 {
-	IFileInfo::Holder info;
-	PScopedPointer<WrappedNodeItem> subnode;
 
-	QByteArray path = snapshot.container()->location();
-	path.append('/');
-
-	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end && !aborted; ++it)
-	{
-		info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
-
-		if (info.as<Info>()->exists())
-		{
-			subnode = new WrappedNodeItem(snapshot.container(), info, NULL);
-			snapshot.insert(it, subnode.take());
-		}
-	}
 }
 
 void FileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
@@ -287,122 +272,122 @@ void FileContainerScanner::scan(WrappedNodeItem *root, const volatile Flags &abo
 }
 
 
-FilteredFileContainerScanner::FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter) :
-	FileContainerScanner(container),
-	m_filter(filter)
-{
-	Q_ASSERT(m_filter);
-}
-
-FilteredFileContainerScanner::IEnumerator *FilteredFileContainerScanner::enumerate(QString &error) const
-{
-	return new FilteredEnumerator(m_container->location(), m_filter);
-}
-
-void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
-{
-	QByteArray path = snapshot.container()->location();
-
-	if (DIR *dir = opendir(path))
-	{
-		struct dirent *entry;
-		Enumerator::Buffer buffer;
-
-		Info tmp;
-		IFileInfo::Holder info;
-		PScopedPointer<WrappedNodeItem> subtree;
-
-		path.append('/');
-
-		while (!aborted && readdir_r(dir, &buffer.d, &entry) == 0 && entry)
-			if ((entry->d_type == DT_DIR || entry->d_type == DT_UNKNOWN) &&
-				(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0))
-			{
-				continue;
-			}
-			else
-			{
-				tmp = Info(QByteArray(path).append(entry->d_name), Info::Identify());
-
-				if (tmp.isDir())
-				{
-					subtree = new WrappedNodeItem(snapshot.container(), NULL);
-
-					if (subtree->thisContainer() = subtree->container()->open(&tmp, error))
-						scan(subtree.data(), aborted, error);
-
-					if (!subtree->isEmpty() || m_filter->match(&tmp))
-					{
-						subtree->info() = new Info(tmp);
-						snapshot.insert(subtree->info()->fileName(), subtree.data());
-						subtree.release();
-					}
-				}
-				else
-					if (tmp.isFile() && m_filter->match(&tmp))
-					{
-						info = new Info(tmp);
-						subtree = new WrappedNodeItem(snapshot.container(), info, NULL);
-						snapshot.insert(subtree->info()->fileName(), subtree.data());
-						subtree.release();
-					}
-			}
-
-		closedir(dir);
-	}
-}
-
-void FilteredFileContainerScanner::scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const
-{
-	QByteArray path = root->thisContainer()->location();
-
-	if (DIR *dir = opendir(path))
-	{
-		struct dirent *entry;
-		Enumerator::Buffer buffer;
-
-		Info tmp;
-		IFileInfo::Holder info;
-		PScopedPointer<WrappedNodeItem> subtree;
-
-		path.append('/');
-
-		while (!aborted && readdir_r(dir, &buffer.d, &entry) == 0 && entry)
-			if ((entry->d_type == DT_DIR || entry->d_type == DT_UNKNOWN) &&
-				(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0))
-			{
-				continue;
-			}
-			else
-			{
-				tmp = Info(QByteArray(path).append(entry->d_name), Info::Identify());
-
-				if (tmp.isDir())
-				{
-					subtree = new WrappedNodeItem(root->thisContainer().data(), root);
-
-					if (subtree->thisContainer() = subtree->container()->open(&tmp, error))
-						scan(subtree.data(), aborted, error);
-
-					if (!subtree->isEmpty() || m_filter->match(&tmp))
-					{
-						subtree->info() = new Info(tmp);
-						root->append(subtree.data());
-						subtree.release();
-					}
-				}
-				else
-					if (tmp.isFile() && m_filter->match(&tmp))
-					{
-						info = new Info(tmp);
-						subtree = new WrappedNodeItem(root->thisContainer().data(), info, root);
-						root->append(subtree.data());
-						subtree.release();
-					}
-			}
-
-		closedir(dir);
-	}
-}
+//FilteredFileContainerScanner::FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter) :
+//	FileContainerScanner(container),
+//	m_filter(filter)
+//{
+//	Q_ASSERT(m_filter);
+//}
+//
+//FilteredFileContainerScanner::IEnumerator *FilteredFileContainerScanner::enumerate(QString &error) const
+//{
+//	return new FilteredEnumerator(m_container->location(), m_filter);
+//}
+//
+//void FilteredFileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const
+//{
+//	QByteArray path = snapshot.container()->location();
+//
+//	if (DIR *dir = opendir(path))
+//	{
+//		struct dirent *entry;
+//		Enumerator::Buffer buffer;
+//
+//		Info tmp;
+//		IFileInfo::Holder info;
+//		PScopedPointer<WrappedNodeItem> subtree;
+//
+//		path.append('/');
+//
+//		while (!aborted && readdir_r(dir, &buffer.d, &entry) == 0 && entry)
+//			if ((entry->d_type == DT_DIR || entry->d_type == DT_UNKNOWN) &&
+//				(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0))
+//			{
+//				continue;
+//			}
+//			else
+//			{
+//				tmp = Info(QByteArray(path).append(entry->d_name), Info::Identify());
+//
+//				if (tmp.isDir())
+//				{
+//					subtree = new WrappedNodeItem(snapshot.container(), NULL);
+//
+//					if (subtree->thisContainer() = subtree->container()->open(&tmp, error))
+//						scan(subtree.data(), aborted, error);
+//
+//					if (!subtree->isEmpty() || m_filter->match(&tmp))
+//					{
+//						subtree->info() = new Info(tmp);
+//						snapshot.insert(subtree->info()->fileName(), subtree.data());
+//						subtree.release();
+//					}
+//				}
+//				else
+//					if (tmp.isFile() && m_filter->match(&tmp))
+//					{
+//						info = new Info(tmp);
+//						subtree = new WrappedNodeItem(snapshot.container(), info, NULL);
+//						snapshot.insert(subtree->info()->fileName(), subtree.data());
+//						subtree.release();
+//					}
+//			}
+//
+//		closedir(dir);
+//	}
+//}
+//
+//void FilteredFileContainerScanner::scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const
+//{
+//	QByteArray path = root->thisContainer()->location();
+//
+//	if (DIR *dir = opendir(path))
+//	{
+//		struct dirent *entry;
+//		Enumerator::Buffer buffer;
+//
+//		Info tmp;
+//		IFileInfo::Holder info;
+//		PScopedPointer<WrappedNodeItem> subtree;
+//
+//		path.append('/');
+//
+//		while (!aborted && readdir_r(dir, &buffer.d, &entry) == 0 && entry)
+//			if ((entry->d_type == DT_DIR || entry->d_type == DT_UNKNOWN) &&
+//				(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0))
+//			{
+//				continue;
+//			}
+//			else
+//			{
+//				tmp = Info(QByteArray(path).append(entry->d_name), Info::Identify());
+//
+//				if (tmp.isDir())
+//				{
+//					subtree = new WrappedNodeItem(root->thisContainer().data(), root);
+//
+//					if (subtree->thisContainer() = subtree->container()->open(&tmp, error))
+//						scan(subtree.data(), aborted, error);
+//
+//					if (!subtree->isEmpty() || m_filter->match(&tmp))
+//					{
+//						subtree->info() = new Info(tmp);
+//						root->append(subtree.data());
+//						subtree.release();
+//					}
+//				}
+//				else
+//					if (tmp.isFile() && m_filter->match(&tmp))
+//					{
+//						info = new Info(tmp);
+//						subtree = new WrappedNodeItem(root->thisContainer().data(), info, root);
+//						root->append(subtree.data());
+//						subtree.release();
+//					}
+//			}
+//
+//		closedir(dir);
+//	}
+//}
 
 DEFAULT_PLUGIN_NS_END

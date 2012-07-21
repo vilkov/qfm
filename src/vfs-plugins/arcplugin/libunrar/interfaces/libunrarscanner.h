@@ -19,8 +19,8 @@ public:
 
 	/* IFileContainerScanner */
 	virtual IEnumerator *enumerate(QString &error) const;
-	virtual void scan(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-	virtual void refresh(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+	virtual void scan(const ScanArguments &arguments, QString &error) const;
+	virtual void search(const SearchArguments &arguments, QString &error) const;
 
 	static QString errorDescription(int code);
 

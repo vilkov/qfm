@@ -91,11 +91,6 @@ IFileAccessor *IdmCopyControlBase::create(const QString &fileName, int flags, QS
 	return m_dest->create(fileName, flags, error);
 }
 
-IFileContainer *IdmCopyControlBase::filter(Filter::Holder &filter, QString &error) const
-{
-	return NULL;
-}
-
 const IFileContainerScanner *IdmCopyControlBase::scanner() const
 {
 	return m_dest->scanner();

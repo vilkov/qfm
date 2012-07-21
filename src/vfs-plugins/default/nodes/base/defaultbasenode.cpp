@@ -513,10 +513,10 @@ void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 		IFileContainer::Holder container;
 		FileNameFilter::Holder filter(new FileNameFilter(dialog.pattern()));
 
-		if (container = m_container->filter(filter, error))
-			return switchTo(new SearchNode(container, this), view);
-		else
-			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+//		if (container = m_container->filter(filter, error))
+//			return switchTo(new SearchNode(container, this), view);
+//		else
+//			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 	}
 
 	return NULL;

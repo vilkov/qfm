@@ -17,11 +17,11 @@ public:
 			m_file(file)
 		{}
 
-		const PScopedPointer<SnapshotItem> &file() const { return m_file; }
-		PScopedPointer<SnapshotItem> &file() { return m_file; }
+		const SnapshotItem::Holder &file() const { return m_file; }
+		SnapshotItem::Holder &file() { return m_file; }
 
 	private:
-		PScopedPointer<SnapshotItem> m_file;
+		SnapshotItem::Holder m_file;
 	};
 
 	class DoneEvent : public Event

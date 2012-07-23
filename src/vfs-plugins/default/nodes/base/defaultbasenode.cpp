@@ -193,16 +193,6 @@ QString BaseNode::location() const
 	return m_container->location();
 }
 
-BaseNode::Sorting BaseNode::sorting() const
-{
-	return Sorting(0, Qt::AscendingOrder);
-}
-
-BaseNode::Geometry BaseNode::geometry() const
-{
-	return Geometry() << 300 << 80 << 50;
-}
-
 QAbstractItemModel *BaseNode::model() const
 {
 	return const_cast<ProxyModel *>(&m_proxy);

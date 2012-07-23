@@ -30,6 +30,8 @@ public:
 	virtual void viewHistory(INodeView *nodeView, ::History::Entry *entry);
 
 	/* INode */
+	virtual Sorting sorting() const;
+	virtual Geometry geometry() const;
 	virtual int columnsCount() const;
 	virtual QAbstractItemView::SelectionMode selectionMode() const;
 

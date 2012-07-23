@@ -78,6 +78,16 @@ void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
 	removeView(nodeView);
 }
 
+Node::Sorting Node::sorting() const
+{
+	return Sorting(0, Qt::AscendingOrder);
+}
+
+Node::Geometry Node::geometry() const
+{
+	return Geometry() << 300 << 80 << 50;
+}
+
 int Node::columnsCount() const
 {
 	return columnCount(QModelIndex());

@@ -12,15 +12,10 @@ public:
 	typedef QList<Holder> Container;
 
 public:
-	SearchNodeItem(SnapshotItem *item, Base *parent = 0);
-
-	/* Base */
-	virtual Base *at(size_type index) const;
-	virtual size_type size() const;
-	virtual size_type indexOf(Base *item) const;
+	SearchNodeItem(SnapshotItem::Holder &file, Base *parent = 0);
 
 private:
-	Container m_items;
+	SnapshotItem::Holder m_file;
 };
 
 DEFAULT_PLUGIN_NS_END

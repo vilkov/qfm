@@ -7,13 +7,20 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 SearchNode::SearchNode(IFileContainer::Holder &container, IFileContainerScanner::Filter::Holder &filter, Node *parent) :
-	BaseNode(container, parent)
+	TasksNode(m_items, parent),
+	m_container(container.take()),
+	m_proxy(this),
+	m_delegate(&m_proxy)
 {
-	RootNodeItem::Holder item(new RootNodeItem());
-	items().add(item.as<RootNodeItem>()->label().toString(), item);
+	RootNodeItem::Holder root(new RootNodeItem());
 
-	items()[RootItemIndex].as<SearchNodeItem>()->lock(tr("Searching..."));
-	addTask(new SearchTask(Snapshot(BaseNode::container().data()), filter, this), items()[RootItemIndex]);
+	m_items.list.push_back(root);
+	root->lock(tr("Searching..."));
+
+	addTask(new SearchTask(Snapshot(m_container), filter, this), m_items.list.at(RootItemIndex));
+
+	m_proxy.setDynamicSortFilter(true);
+	m_proxy.setSourceModel(this);
 }
 
 bool SearchNode::event(QEvent *e)
@@ -35,8 +42,73 @@ bool SearchNode::event(QEvent *e)
 		}
 
 		default:
-			return BaseNode::event(e);
+			return TasksNode::event(e);
 	}
+}
+
+int SearchNode::columnCount(const QModelIndex &parent) const
+{
+	return 3;
+}
+
+QVariant SearchNode::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+		switch (section)
+		{
+			case 0:
+			{
+				return tr("Name");
+				break;
+			}
+			case 1:
+			{
+				return tr("Size");
+				break;
+			}
+			case 2:
+			{
+				return tr("Modified");
+				break;
+			}
+		}
+
+	return QVariant();
+}
+
+void SearchNode::refresh()
+{
+
+}
+
+QString SearchNode::location() const
+{
+	return m_container->location();
+}
+
+QString SearchNode::title() const
+{
+	return tr("Search results");
+}
+
+QAbstractItemModel *SearchNode::model() const
+{
+	return const_cast<ProxyModel *>(&m_proxy);
+}
+
+QAbstractItemDelegate *SearchNode::delegate() const
+{
+	return const_cast<Delegate *>(&m_delegate);
+}
+
+const INodeView::MenuActionList &SearchNode::actions() const
+{
+	return m_menuActions;
+}
+
+::History::Entry *SearchNode::menuAction(QAction *action, INodeView *view)
+{
+	return NULL;
 }
 
 ICopyControl *SearchNode::createControl(INodeView *view) const
@@ -76,21 +148,21 @@ void SearchNode::remove(const QModelIndexList &list, INodeView *view)
 
 void SearchNode::cancel(const QModelIndexList &list, INodeView *view)
 {
-//	QString reason = tr("Canceling...");
-//	SearchNodeItem *item;
-//	TasksMap::List items;
-//
-//	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-//	{
-//		item = static_cast<SearchNodeItem *>(m_proxy.mapToSource(list.at(i)).internalPointer());
-//		items = cancelTaskAndTakeItems(NodeItem::Holder(item));
-//
-//		for (TasksMap::List::size_type i = 0, size = items.size(); i < size; ++i)
-//		{
-//			items.at(i).as<SearchNodeItem>()->cancel(reason);
-//			updateFirstColumn(items.at(i));
-//		}
-//	}
+	QString reason = tr("Canceling...");
+	SearchNodeItem *item;
+	TasksMap::List items;
+
+	for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+	{
+		item = static_cast<SearchNodeItem *>(m_proxy.mapToSource(list.at(i)).internalPointer());
+		items = cancelTaskAndTakeItems(NodeItem::Holder(item));
+
+		for (TasksMap::List::size_type i = 0, size = items.size(); i < size; ++i)
+		{
+			items.at(i).as<SearchNodeItem>()->cancel(reason);
+			updateFirstColumn(m_items.list.indexOf(items.at(i)), items.at(i).as<NodeItem>());
+		}
+	}
 }
 
 void SearchNode::calculateSize(const QModelIndexList &list, INodeView *view)
@@ -137,19 +209,14 @@ void SearchNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 	return NULL;
 }
 
-void SearchNode::refresh()
-{
-
-}
-
 QModelIndex SearchNode::rootIndex() const
 {
-	return proxy().mapFromSource(createIndex(0, 0, items()[RootItemIndex].data()));
+	return m_proxy.mapFromSource(createIndex(0, 0, m_items.list.at(RootItemIndex).data()));
 }
 
 Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
-	if (static_cast<SearchNodeItem *>(proxy().mapToSource(idx).internalPointer())->isRootItem())
+	if (static_cast<SearchNodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRootItem())
 		return parentNode();
 	else
 		return NULL;
@@ -160,34 +227,66 @@ Node *SearchNode::viewChild(const QString &fileName, QModelIndex &selected)
 	return NULL;
 }
 
+void SearchNode::updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed)
+{
+
+}
+
+void SearchNode::completedProgressEvent(const Item::Holder &item, quint64 timeElapsed)
+{
+
+}
+
+void SearchNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+{
+
+}
+
 void SearchNode::searchNewFileEvent(BaseTask::Event *e)
 {
 	SearchTask::NewFileEvent *event = static_cast<SearchTask::NewFileEvent *>(e);
+	NodeItem::Holder item(new SearchNodeItem(event->file()));
 
-//	beginInsertRows(QModelIndex(), items().size(), items().size());
-//	items().add(item.as<SearchNodeItem>()->info()->fileName(), item);
-//	endInsertRows();
+	beginInsertRows(QModelIndex(), m_items.list.size(), m_items.list.size());
+	m_items.list.push_back(item);
+	endInsertRows();
 }
 
 void SearchNode::searchCompleteEvent(BaseTask::Event *e)
 {
 	SearchTask::DoneEvent *event = static_cast<SearchTask::DoneEvent *>(e);
 
-	items()[RootItemIndex].as<SearchNodeItem>()->unlock();
-	updateFirstColumn();
+	m_items.list.at(RootItemIndex).as<SearchNodeItem>()->unlock();
+	updateFirstColumn(RootItemIndex, m_items.list.at(RootItemIndex).as<SearchNodeItem>());
 	removeAllTaskLinks(event->task);
 }
 
-void SearchNode::updateFirstColumn()
+SearchNode::Container::size_type SearchNode::Container::size() const
 {
-	QModelIndex index(createIndex(RootItemIndex, 0, items()[RootItemIndex].data()));
-	emit dataChanged(index, index);
+	return list.size();
 }
 
-void SearchNode::updateSecondColumn()
+SearchNode::Container::Item *SearchNode::Container::at(size_type index) const
 {
-	QModelIndex index(createIndex(RootItemIndex, 1, items()[RootItemIndex].data()));
-	emit dataChanged(index, index);
+	return list.at(index).data();
+}
+
+SearchNode::Container::size_type SearchNode::Container::indexOf(Item *item) const
+{
+	NodeItem::Holder itemHolder(static_cast<NodeItem *>(item));
+	return list.indexOf(itemHolder);
+}
+
+void SearchNode::updateFirstColumn(Container::size_type index, NodeItem *entry)
+{
+	QModelIndex idx(createIndex(index, 0, entry));
+	emit dataChanged(idx, idx);
+}
+
+void SearchNode::updateSecondColumn(Container::size_type index, NodeItem *entry)
+{
+	QModelIndex idx(createIndex(index, 1, entry));
+	emit dataChanged(idx, idx);
 }
 
 DEFAULT_PLUGIN_NS_END

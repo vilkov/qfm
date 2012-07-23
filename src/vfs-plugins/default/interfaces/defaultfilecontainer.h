@@ -49,20 +49,6 @@ private:
 	FileContainerScanner m_scanner;
 };
 
-
-//class FilteredFileContainer : public BaseFileContainer
-//{
-//public:
-//	FilteredFileContainer(const QByteArray &path, Filter::Holder &filter);
-//
-//	virtual IFileInfo *info(const QString &fileName, QString &error) const;
-//	virtual const IFileContainerScanner *scanner() const;
-//
-//private:
-//	Filter::Holder m_filter;
-//	FilteredFileContainerScanner m_scanner;
-//};
-
 DEFAULT_PLUGIN_NS_END
 
 #endif /* DEFAULTFILECONTAINER_H_ */

@@ -209,7 +209,15 @@ void FileContainerScanner::search(const SearchArguments &arguments, QString &err
 			info = Info(dir = QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
 
 			if (info.isDir())
+			{
 				dirs.push_back(dir);
+
+				if (arguments.filter->match(&info))
+				{
+					infoHolder = new Info(info);
+					arguments.callback.method(arguments.callback.user_data, new SearchSnapshotItem(arguments.snapshot.container(), infoHolder));
+				}
+			}
 			else
 				if (info.isFile() && arguments.filter->match(&info))
 				{
@@ -349,7 +357,16 @@ void FileContainerScanner::search(const IFileContainer *container, const Callbac
 				info = Info(dirPath = QByteArray(path).append(entry->d_name), Info::Identify());
 
 				if (info.isDir())
+				{
 					dirs.push_back(dirPath);
+
+					if (filter->match(&info))
+					{
+						infoHolder = new Info(info);
+						containerHolder = container->open();
+						callback.method(callback.user_data, new SearchSnapshotItem(containerHolder, infoHolder));
+					}
+				}
 				else
 					if (info.isFile() && filter->match(&info))
 					{

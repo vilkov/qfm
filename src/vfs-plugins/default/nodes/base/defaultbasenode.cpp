@@ -526,7 +526,7 @@ Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 			if (entry->node())
 				entry->node()->setParentEntryIndex(idx);
 			else
-				if (Node *node = createNode(entry->info().data()))
+				if (Node *node = createNode(entry->info()))
 				{
 					entry->setNode(node);
 					node->setParentEntryIndex(idx);
@@ -552,7 +552,7 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 		IFileInfo::Holder info;
 
 		if (info = m_container->info(fileName, error))
-			if (Node *node = createNode(info.data()))
+			if (Node *node = createNode(info))
 			{
 				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 				m_items.add(NodeItem::Holder(new NodeItem(info, node)));
@@ -583,7 +583,7 @@ Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
 		if (item->node())
 			return item->node();
 		else
-			if (Node *node = createNode(item->info().data()))
+			if (Node *node = createNode(item->info()))
 			{
 				item->setNode(node);
 				return node;

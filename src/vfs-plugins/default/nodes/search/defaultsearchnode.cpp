@@ -2,6 +2,8 @@
 #include "tasks/defaultsearchtask.h"
 #include "items/defaultsearchnodeitem.h"
 #include "../../model/items/defaultrootnodeitem.h"
+#include "../../../../application.h"
+
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -216,10 +218,32 @@ QModelIndex SearchNode::rootIndex() const
 
 Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
-	if (static_cast<SearchNodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRootItem())
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<NodeItem *>(index.internalPointer())->isRootItem())
 		return parentNode();
 	else
-		return NULL;
+		if (!static_cast<NodeItem *>(index.internalPointer())->isLocked())
+		{
+			SearchNodeItem *entry = static_cast<SearchNodeItem *>(index.internalPointer());
+
+			if (entry->node())
+				entry->node()->setParentEntryIndex(idx);
+			else
+				if (Node *node = Application::rootNode()->open(entry->container(), entry->info(), const_cast<SearchNode *>(this)))
+				{
+					entry->setNode(node);
+					node->setParentEntryIndex(idx);
+				}
+
+			if (entry->node())
+				return entry->node();
+			else
+				if (entry->info()->isFile())
+					Application::desktopService()->open(entry->container(), entry->info().data());
+		}
+
+	return NULL;
 }
 
 Node *SearchNode::viewChild(const QString &fileName, QModelIndex &selected)

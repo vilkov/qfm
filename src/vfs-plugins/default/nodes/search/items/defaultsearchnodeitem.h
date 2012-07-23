@@ -14,6 +14,11 @@ public:
 public:
 	SearchNodeItem(SnapshotItem::Holder &file, Base *parent = 0);
 
+	/* ::Tools::Models::Tree::Item */
+	virtual QVariant data(qint32 column, qint32 role) const;
+
+	const IFileContainer *container() const { return m_file->container(); }
+
 private:
 	SnapshotItem::Holder m_file;
 };

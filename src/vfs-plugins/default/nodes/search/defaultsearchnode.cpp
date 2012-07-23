@@ -6,21 +6,28 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-SearchNode::SearchNode(IFileContainer::Holder &container, Node *parent) :
+SearchNode::SearchNode(IFileContainer::Holder &container, IFileContainerScanner::Filter::Holder &filter, Node *parent) :
 	BaseNode(container, parent)
 {
 	RootNodeItem::Holder item(new RootNodeItem());
 	items().add(item.as<RootNodeItem>()->label().toString(), item);
 
 	items()[RootItemIndex].as<SearchNodeItem>()->lock(tr("Searching..."));
-	addTask(new SearchTask(BaseNode::container().data(), this), items()[RootItemIndex]);
+	addTask(new SearchTask(Snapshot(BaseNode::container().data()), filter, this), items()[RootItemIndex]);
 }
 
 bool SearchNode::event(QEvent *e)
 {
 	switch (static_cast<FilesBaseTask::Event::Type>(e->type()))
 	{
-		case SearchTask::Event::SearchFiles:
+		case FilesBaseTask::Event::SearchFiles_NewFile:
+		{
+			e->accept();
+			searchNewFileEvent(static_cast<BaseTask::Event *>(e));
+			return true;
+		}
+
+		case FilesBaseTask::Event::SearchFiles_Done:
 		{
 			e->accept();
 			searchCompleteEvent(static_cast<BaseTask::Event *>(e));
@@ -153,28 +160,20 @@ Node *SearchNode::viewChild(const QString &fileName, QModelIndex &selected)
 	return NULL;
 }
 
+void SearchNode::searchNewFileEvent(BaseTask::Event *e)
+{
+	SearchTask::NewFileEvent *event = static_cast<SearchTask::NewFileEvent *>(e);
+
+//	beginInsertRows(QModelIndex(), items().size(), items().size());
+//	items().add(item.as<SearchNodeItem>()->info()->fileName(), item);
+//	endInsertRows();
+}
+
 void SearchNode::searchCompleteEvent(BaseTask::Event *e)
 {
-	SearchTask::Event *event = static_cast<SearchTask::Event *>(e);
+	SearchTask::DoneEvent *event = static_cast<SearchTask::DoneEvent *>(e);
 
-	if (!event->canceled)
-	{
-		if (!event->snapshot.isEmpty())
-		{
-			NodeItem::Holder item;
-
-			beginInsertRows(QModelIndex(), items().size(), items().size() + event->snapshot.size() - 1);
-			for (Snapshot::const_iterator i = event->snapshot.begin(), end = event->snapshot.end(); i != end; ++i)
-			{
-				item = new SearchNodeItem((*i).second, NULL);
-				items().add(item.as<SearchNodeItem>()->info()->fileName(), item);
-			}
-			endInsertRows();
-		}
-
-		items()[RootItemIndex].as<SearchNodeItem>()->unlock();
-	}
-
+	items()[RootItemIndex].as<SearchNodeItem>()->unlock();
 	updateFirstColumn();
 	removeAllTaskLinks(event->task);
 }

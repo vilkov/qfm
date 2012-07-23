@@ -6,7 +6,7 @@
 
 
 DEFAULT_PLUGIN_NS_BEGIN
-class WrappedNodeItem;
+class SnapshotItem;
 
 
 class FileContainerScanner : public IFileContainerScanner
@@ -20,29 +20,13 @@ public:
 	virtual void search(const SearchArguments &arguments, QString &error) const;
 
 protected:
-	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-	virtual void scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const;
+	void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
+	void scan(SnapshotItem *root, const volatile Flags &aborted, QString &error) const;
+	void search(const IFileContainer *container, const Callback &callback, const IFileContainerScanner::Filter *filter, const volatile Flags &aborted) const;
 
 protected:
 	const IFileContainer *m_container;
 };
-
-
-//class FilteredFileContainerScanner : public FileContainerScanner
-//{
-//public:
-//	FilteredFileContainerScanner(const IFileContainer *container, const IFileContainer::Filter *filter);
-//
-//	/* IFileContainerScanner */
-//	virtual IEnumerator *enumerate(QString &error) const;
-//
-//protected:
-//	virtual void fill(Snapshot &snapshot, const volatile Flags &aborted, QString &error) const;
-//	virtual void scan(WrappedNodeItem *root, const volatile Flags &aborted, QString &error) const;
-//
-//private:
-//	const IFileContainer::Filter *m_filter;
-//};
 
 DEFAULT_PLUGIN_NS_END
 

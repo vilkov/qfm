@@ -9,7 +9,7 @@ DEFAULT_PLUGIN_NS_BEGIN
 class SearchNode : public BaseNode
 {
 public:
-	SearchNode(IFileContainer::Holder &container, Node *parent = 0);
+	SearchNode(IFileContainer::Holder &container, IFileContainerScanner::Filter::Holder &filter, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -41,6 +41,7 @@ protected:
 
 protected:
 	/* TasksNode */
+	void searchNewFileEvent(BaseTask::Event *event);
 	void searchCompleteEvent(BaseTask::Event *event);
 
 private:

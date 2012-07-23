@@ -509,14 +509,9 @@ void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 	if (dialog.exec() == SearchDialog::Accepted)
 	{
-		QString error;
-		IFileContainer::Holder container;
+		IFileContainer::Holder container(m_container->open());
 		FileNameFilter::Holder filter(new FileNameFilter(dialog.pattern()));
-
-//		if (container = m_container->filter(filter, error))
-//			return switchTo(new SearchNode(container, this), view);
-//		else
-//			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+		return switchTo(new SearchNode(container, filter, this), view);
 	}
 
 	return NULL;

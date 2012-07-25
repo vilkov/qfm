@@ -34,14 +34,14 @@ public:
 	virtual size_type fileSize() const;
 	virtual const Location &fileName() const;
 	virtual const IFileType *fileType() const;
-	virtual QDateTime lastModified() const;
+	virtual const QDateTime &lastModified() const;
 	virtual int permissions() const;
 
 	/* IFileType */
-	virtual FileTypeId id() const;
-	virtual QIcon icon() const;
-	virtual QString name() const;
-	virtual QString description() const;
+	virtual const FileTypeId &id() const;
+	virtual const QIcon &icon() const;
+	virtual const QString &name() const;
+	virtual const QString &description() const;
 
 public:
 	static QTextCodec *codec();

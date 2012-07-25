@@ -38,6 +38,7 @@ public:
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const;
 
 	virtual const IFileContainerScanner *scanner() const;
+	virtual const IApplications *applications() const;
 
 	/* ICopyControl */
 	virtual INode *node() const;

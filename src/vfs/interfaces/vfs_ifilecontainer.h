@@ -1,6 +1,7 @@
 #ifndef VFS_IFILECONTAINER_H_
 #define VFS_IFILECONTAINER_H_
 
+#include "vfs_iapplications.h"
 #include "vfs_ifileaccessor.h"
 #include "vfs_ifilecontainerscanner.h"
 #include "../location/vfs_location.h"
@@ -41,6 +42,7 @@ public:
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const = 0;
 
 	virtual const IFileContainerScanner *scanner() const = 0;
+	virtual const IApplications *applications() const = 0;
 
 protected:
 	static Location location(const QString &label, const QByteArray &location)

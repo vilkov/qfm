@@ -42,7 +42,7 @@ const IFileType *Info::fileType() const
 	return this;
 }
 
-QDateTime Info::lastModified() const
+const QDateTime &Info::lastModified() const
 {
 	return m_data.lastModified;
 }
@@ -52,22 +52,22 @@ int Info::permissions() const
 	return 0;
 }
 
-FileTypeId Info::id() const
+const FileTypeId &Info::id() const
 {
 	return m_fileTypeInfo.id;
 }
 
-QIcon Info::icon() const
+const QIcon &Info::icon() const
 {
 	return m_fileTypeInfo.icon;
 }
 
-QString Info::name() const
+const QString &Info::name() const
 {
 	return m_fileTypeInfo.name;
 }
 
-QString Info::description() const
+const QString &Info::description() const
 {
 	return m_fileTypeInfo.description;
 }

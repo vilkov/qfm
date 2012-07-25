@@ -115,6 +115,11 @@ const IFileContainerScanner *FileContainer::scanner() const
 	return &m_data->scanner;
 }
 
+const IApplications *FileContainer::applications() const
+{
+	return m_data->container->applications();
+}
+
 FileContainer::FileContainer(IFileContainer::Holder &container, const Location &location) :
 	m_data(new Data(container, location))
 {}

@@ -29,7 +29,7 @@ public:
 	virtual size_type fileSize() const = 0;
 	virtual const Location &fileName() const = 0;
 	virtual const IFileType *fileType() const = 0;
-	virtual QDateTime lastModified() const = 0;
+	virtual const QDateTime &lastModified() const = 0;
 	virtual int permissions() const = 0;
 
 protected:

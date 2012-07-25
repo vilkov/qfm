@@ -6,10 +6,10 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class BaseFileContainer : public IFileContainer
+class FileContainer : public IFileContainer
 {
 public:
-	BaseFileContainer(const QByteArray &path);
+	FileContainer(const QByteArray &path);
 
 	/* IFileContainer */
 	virtual bool isDefault() const;
@@ -33,19 +33,11 @@ public:
 	virtual IFileContainer *create(const QString &fileName, QString &error) const;
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const;
 
+	virtual const IFileContainerScanner *scanner() const;
+	virtual const IApplications *applications() const;
+
 protected:
 	Location m_path;
-};
-
-
-class FileContainer : public BaseFileContainer
-{
-public:
-	FileContainer(const QByteArray &path);
-
-	virtual const IFileContainerScanner *scanner() const;
-
-private:
 	FileContainerScanner m_scanner;
 };
 

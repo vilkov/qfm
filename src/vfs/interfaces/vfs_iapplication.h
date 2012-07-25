@@ -1,25 +1,24 @@
-#ifndef VFS_IFILETYPE_H_
-#define VFS_IFILETYPE_H_
+#ifndef VFS_IAPPLICATION_H_
+#define VFS_IAPPLICATION_H_
 
 #include <QtGui/QIcon>
 #include <QtCore/QString>
 #include "../vfs_ns.h"
-#include "../filetypeinfo/vfs_filetypeinfo.h"
 
 
 VFS_NS_BEGIN
 
-class IFileType
+class IApplication
 {
 public:
-	virtual ~IFileType();
+	virtual ~IApplication();
 
-	virtual const FileTypeId &id() const = 0;
 	virtual const QIcon &icon() const = 0;
 	virtual const QString &name() const = 0;
 	virtual const QString &description() const = 0;
+	virtual const QString &category() const = 0;
 };
 
 VFS_NS_END
 
-#endif /* VFS_IFILETYPE_H_ */
+#endif /* VFS_IAPPLICATION_H_ */

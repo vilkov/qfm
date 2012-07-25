@@ -97,6 +97,11 @@ const IFileContainerScanner *CopyControl::scanner() const
 	return m_container.scanner();
 }
 
+const IApplications *CopyControl::applications() const
+{
+	return m_container.applications();
+}
+
 INode *CopyControl::node() const
 {
 	return m_node;

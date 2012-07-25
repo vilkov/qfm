@@ -44,7 +44,7 @@ protected:
 	virtual void nodeRemoved(Node *node);
 
 protected:
-	Node *parentNode() const { return static_cast<Node*>(QObject::parent()); }
+	Node *parentNode() const { return static_cast<Node *>(QObject::parent()); }
 	bool isVisible() const { return !m_view.isEmpty(); }
 	::History::Entry *switchTo(Node *node, INodeView *view);
 	Node *viewChild(const Path::Iterator &path, QModelIndex &selected);

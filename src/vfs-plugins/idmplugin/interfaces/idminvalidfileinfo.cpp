@@ -39,9 +39,9 @@ const IFileType *InvalidInfo::fileType() const
 	return this;
 }
 
-QDateTime InvalidInfo::lastModified() const
+const QDateTime &InvalidInfo::lastModified() const
 {
-	return QDateTime();
+	return m_lastModified;
 }
 
 int InvalidInfo::permissions() const
@@ -49,24 +49,24 @@ int InvalidInfo::permissions() const
 	return 0;
 }
 
-FileTypeId InvalidInfo::id() const
+const FileTypeId &InvalidInfo::id() const
 {
-	return FileTypeId();
+	return m_id;
 }
 
-QIcon InvalidInfo::icon() const
+const QIcon &InvalidInfo::icon() const
 {
 	return m_icon;
 }
 
-QString InvalidInfo::name() const
+const QString &InvalidInfo::name() const
 {
-	return QString();
+	return m_name;
 }
 
-QString InvalidInfo::description() const
+const QString &InvalidInfo::description() const
 {
-	return QString();
+	return m_description;
 }
 
 IDM_PLUGIN_NS_END

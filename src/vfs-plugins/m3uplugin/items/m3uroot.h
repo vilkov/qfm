@@ -28,7 +28,7 @@ public:
 	virtual IFileInfo::size_type fileSize() const { return 0; }
 	virtual const Location &fileName() const { return m_fileName; }
 	virtual const IFileType *fileType() const { return NULL; }
-	virtual QDateTime lastModified() const { return m_info.lastModified(); }
+	virtual const QDateTime &lastModified() const { return m_info.lastModified(); }
 	virtual int permissions() const { return 0; }
 	virtual void refresh() {}
 

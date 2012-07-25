@@ -96,6 +96,11 @@ const IFileContainerScanner *IdmCopyControlBase::scanner() const
 	return m_dest->scanner();
 }
 
+const IApplications *IdmCopyControlBase::applications() const
+{
+	return m_dest->applications();
+}
+
 INode *IdmCopyControlBase::node() const
 {
 	return m_dest->node();

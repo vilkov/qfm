@@ -16,8 +16,8 @@ public:
 public:
 	virtual ~IApplications();
 
-	virtual const List &user(const IFileType *fileType) const = 0;
-	virtual const List &system(const IFileType *fileType) const = 0;
+	virtual List user(const IFileType *fileType) const = 0;
+	virtual List system(const IFileType *fileType) const = 0;
 };
 
 VFS_NS_END

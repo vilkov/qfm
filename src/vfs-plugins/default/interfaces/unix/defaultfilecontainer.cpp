@@ -209,4 +209,14 @@ const IApplications *FileContainer::applications() const
 	return NULL;
 }
 
+FileContainer::List FileContainer::user(const IFileType *fileType) const
+{
+	return List();
+}
+
+FileContainer::List FileContainer::system(const IFileType *fileType) const
+{
+	return List();
+}
+
 DEFAULT_PLUGIN_NS_END

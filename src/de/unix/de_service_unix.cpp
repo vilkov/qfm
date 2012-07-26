@@ -1,4 +1,5 @@
 #include "../de_service.h"
+#include "../../application.h"
 
 #include <vfs/interfaces/vfs_ifileinfo.h>
 #include <xdg/xdg.h>
@@ -42,21 +43,6 @@ static const char *x11_atomnames[NAtoms] =
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
 	static int kde_version = 0;
 #endif
-
-
-namespace LocaleCodes
-{
-	static QByteArray lang;
-	static QByteArray country;
-	static QByteArray modifier;
-
-	static void initialize(const QByteArray &localeNameAsUtf8)
-	{
-		int index;
-		lang = localeNameAsUtf8.mid(0, index = localeNameAsUtf8.indexOf('_'));
-		country = localeNameAsUtf8.mid(index + 1);
-	}
-}
 
 
 struct IconIndex
@@ -265,11 +251,8 @@ inline static bool findProgram(const char *mimeType, const char *(&args)[3], con
 DE_NS_BEGIN
 
 Service::Service() :
-	m_type(DE_Unknown),
-	m_locale(QString::fromUtf8(getenv("LANG")))
+	m_type(DE_Unknown)
 {
-	LocaleCodes::initialize(m_locale.name().toUtf8());
-
 	if (Display *display = XOpenDisplay(NULL))
     {
         int rc;
@@ -451,7 +434,7 @@ void Service::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInf
 	typedef QList<QByteArray> List;
 	const char *args[3] = {NULL, NULL, NULL};
 
-	if (findProgram(file->fileType()->id().mime.toUtf8(), args, LocaleCodes::lang, LocaleCodes::country, NULL))
+	if (findProgram(file->fileType()->id().mime.toUtf8(), args, Application::locale()->lang(), Application::locale()->country(), Application::locale()->modifier()))
 	{
 		QByteArray absoluteFilePath = container->location(file);
 		QByteArray workingDirectory = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar(L'/')));

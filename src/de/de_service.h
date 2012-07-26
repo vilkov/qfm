@@ -1,7 +1,6 @@
 #ifndef DE_SERVICE_H_
 #define DE_SERVICE_H_
 
-#include <QtCore/QLocale>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "de_ns.h"
 
@@ -35,7 +34,6 @@ public:
 	~Service();
 
 	Type type() const { return m_type; }
-	const QLocale &locale() const { return m_locale; }
 
 	QIcon processingIcon(int iconSize = Small) const;
 	QIcon cancelingIcon(int iconSize = Small) const;
@@ -67,7 +65,6 @@ private:
 
 private:
 	Type m_type;
-	QLocale m_locale;
 };
 
 DE_NS_END

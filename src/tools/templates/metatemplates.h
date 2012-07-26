@@ -377,6 +377,13 @@ struct length_of_type_list<type_list<T, U> >
 };
 
 
+#define TYPELlST_1(T1) Tools::Templates::type_list<T1, Tools::Templates::null_type>
+#define TYPELlST_2(T1, T2) Tools::Templates::type_list<T1, TYPELlST_1(T2) >
+#define TYPELlST_3(T1, T2, T3) Tools::Templates::type_list<T1, TYPELlST_2(T2, T3) >
+#define TYPELlST_4(T1, T2, T3, T4) Tools::Templates::type_list<T1, TYPELlST_3(T2, T3, T4) >
+#define TYPELlST_5(T1, T2, T3, T4, T5) Tools::Templates::type_list<T1, TYPELlST_4(T2, T3, T4, T5) >
+
+
 /***************************************************************************************************/
 namespace Adaptors
 {
@@ -491,11 +498,6 @@ namespace Utils
 		value = 0;
 	}
 }
-
-#define TYPELlST_1(T1) Templates::type_list<T1, Templates::null_type>
-#define TYPELlST_2(T1, T2) Templates::type_list<T1, TYPELlST_1(T2) >
-#define TYPELlST_3(T1, T2, T3) Templates::type_list<T1, TYPELlST_2(T2, T3) >
-#define TYPELlST_4(T1, T2, T3, T4) Templates::type_list<T1, TYPELlST_3(T2, T3, T4) >
 
 TEMPLATES_NS_END
 

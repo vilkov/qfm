@@ -12,7 +12,7 @@ struct Rule
 {
 	typedef void (Context::*Action)(const char *input, int size);
 
-	template <int FromState, int Event, int ToState, Action action>
+	template <int FromState, int Token, int ToState, Action action>
 	struct Definition
 	{
 		typedef Context rule_context;
@@ -20,7 +20,7 @@ struct Rule
 		enum
         {
         	FROM_STATE = FromState,
-        	EVENT = Event,
+        	TOKEN = Token,
         	TO_STATE = ToState
         };
 
@@ -40,7 +40,6 @@ struct Data
 {
 	void *context;
 	int state;
-	int event;
 
 	const char *iterator;
 	const char *input;
@@ -54,11 +53,11 @@ struct ProcessEvent
 	{
 		typedef typename RulesTypeList::head RulesTypeList_Item;
 
-		if(RulesTypeList_Item::FROM_STATE == data.state && RulesTypeList_Item::EVENT == data.event)
+		if (RulesTypeList_Item::FROM_STATE == data.state && RulesTypeList_Item::TOKEN == *data.iterator)
 		{
 			data.state = RulesTypeList_Item::TO_STATE;
 			RulesTypeList_Item::invoke(static_cast<typename RulesTypeList_Item::rule_context *>(data.context), data.input, data.iterator - data.input);
-			data.input = data.iterator;
+			data.input = data.iterator + 1;
 			return;
 		}
 
@@ -85,7 +84,7 @@ public:
 	{
 		m_data.context = &context;
 		m_data.state = RulesTypeList::head::FROM_STATE;
-		m_data.event = 0;
+		m_data.iterator = NULL;
 		m_data.input = NULL;
 	}
 
@@ -93,7 +92,6 @@ public:
 	{
 		m_data.context = context;
 		m_data.state = RulesTypeList::head::FROM_STATE;
-		m_data.event = 0;
 		m_data.iterator = NULL;
 		m_data.input = NULL;
 	}

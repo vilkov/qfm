@@ -12,7 +12,8 @@
 #include "settings/applicationsettings.h"
 #include "settings/applicationsettingscontainer.h"
 #include "mainwindow/mainwindow.h"
-#include "de/deservice.h"
+#include "de/de_locale.h"
+#include "de/de_service.h"
 #include "de/contextmenu/decontextmenufactory.h"
 
 
@@ -31,6 +32,7 @@ public:
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 	static SettingsContainer *settings2() { return &instance()->m_settings2; };
+	static DesktopEnvironment::Locale *locale() { return &instance()->m_desktopLocale; }
 	static DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
     static DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
 	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
@@ -48,6 +50,7 @@ private:
 
 	ApplicationSettings m_settings;
 	Tools::TasksPool::TaskPool m_taskPool;
+	DesktopEnvironment::Locale m_desktopLocale;
 	DesktopEnvironment::Service m_desktopService;
     DesktopEnvironment::ContextMenuFactory m_globalMenu;
     QScopedPointer<VFS::RootNode> m_rootNode;

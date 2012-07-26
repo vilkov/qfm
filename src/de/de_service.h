@@ -1,5 +1,5 @@
-#ifndef DESERVICE_H_
-#define DESERVICE_H_
+#ifndef DE_SERVICE_H_
+#define DE_SERVICE_H_
 
 #include <QtCore/QLocale>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
@@ -53,6 +53,8 @@ public:
 
 	QIcon missingIcon(int iconSize = Small) const;
 
+	::VFS::IApplications::LinkedList userApplications(const ::VFS::FileTypeId &id) const;
+
 	::VFS::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
 	::VFS::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
 
@@ -70,4 +72,4 @@ private:
 
 DE_NS_END
 
-#endif /* DESERVICE_H_ */
+#endif /* DE_SERVICE_H_ */

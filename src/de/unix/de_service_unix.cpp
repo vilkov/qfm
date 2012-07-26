@@ -1,4 +1,4 @@
-#include "../deservice.h"
+#include "../de_service.h"
 
 #include <vfs/interfaces/vfs_ifileinfo.h>
 #include <xdg/xdg.h>
@@ -48,6 +48,7 @@ namespace LocaleCodes
 {
 	static QByteArray lang;
 	static QByteArray country;
+	static QByteArray modifier;
 
 	static void initialize(const QByteArray &localeNameAsUtf8)
 	{
@@ -60,7 +61,9 @@ namespace LocaleCodes
 
 struct IconIndex
 {
-	IconIndex()
+	IconIndex() :
+		size(0),
+		context(0)
 	{}
 	IconIndex(const QString &name, int size, int context) :
 		name(name),

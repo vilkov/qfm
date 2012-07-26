@@ -209,14 +209,14 @@ const IApplications *FileContainer::applications() const
 	return NULL;
 }
 
-FileContainer::List FileContainer::user(const IFileType *fileType) const
+FileContainer::LinkedList FileContainer::user(const IFileType *fileType) const
 {
-	return List();
+	return LinkedList();
 }
 
-FileContainer::List FileContainer::system(const IFileType *fileType) const
+FileContainer::LinkedList FileContainer::system(const IFileType *fileType) const
 {
-	return List();
+	return LinkedList();
 }
 
 DEFAULT_PLUGIN_NS_END

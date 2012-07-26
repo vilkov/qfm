@@ -36,8 +36,8 @@ public:
 	virtual const IFileContainerScanner *scanner() const;
 	virtual const IApplications *applications() const;
 
-	virtual List user(const IFileType *fileType) const;
-	virtual List system(const IFileType *fileType) const;
+	virtual LinkedList user(const IFileType *fileType) const;
+	virtual LinkedList system(const IFileType *fileType) const;
 
 protected:
 	Location m_path;

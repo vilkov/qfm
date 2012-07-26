@@ -71,12 +71,14 @@ Locale::Locale() :
 		m_lang = parser.m_lang;
 		m_country = parser.m_country;
 		m_modifier = parser.m_modifier;
-		m_codec = QTextCodec::codecForName(parser.m_encoding);
+
+		if ((m_codec = QTextCodec::codecForName(parser.m_encoding)) == NULL)
+			m_codec = QTextCodec::codecForName("UTF-8");
 	}
 	else
 	{
 		m_lang = "en";
-		m_country = "UK";
+		m_country = "GB";
 		m_codec = QTextCodec::codecForName("UTF-8");
 	}
 }

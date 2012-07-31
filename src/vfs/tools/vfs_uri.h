@@ -12,20 +12,6 @@ VFS_NS_BEGIN
 class Uri
 {
 public:
-	enum State
-	{
-		Shema,
-		Semicolon,
-		Slash1,
-		UserName,
-		Password,
-		Domain,
-		Port,
-		Path,
-		Stoped
-	};
-
-public:
 	class Iterator
 	{
 		friend class Uri;
@@ -63,85 +49,27 @@ public:
 
 public:
 	Uri(const QString &path);
+	Uri(const QByteArray &path);
 
-	bool isValid() const { return !m_path.isEmpty(); }
+	bool isValid() const { return m_valid; }
+
 	const QString &shema() const { return m_shema; }
+	const QString &userName() const { return m_userName; }
+	const QString &password() const { return m_password; }
+	ushort port() const { return m_port; }
+	const QString &domain() const { return m_domain; }
+
 	Iterator begin() { return Iterator(m_path); }
 	Iterator erase(const Iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
 	QString toString() const { return m_path.join(QChar(L'/')); }
 
 private:
-	void doNothing(const char *string, int size);
-	void shema(const char *string, int size);
-	void userName(const char *string, int size);
-	void password(const char *string, int size);
-	void domain(const char *string, int size);
-	void port(const char *string, int size);
-	void path(const char *string, int size);
-	void userNameIsDomain_thisIsPort(const char *string, int size);
-
-private:
-	/* Simple Turing machine */
-
-	typedef qint32                size_t;
-	typedef QPair<size_t, size_t> Position;
-
-	void parseUri(const QString &uri)
-	{
-		Position position(0, 0);
-
-		for (size_t size = uri.size(); position.second < size; ++position.second)
-			if (uri.at(position.second) == QChar(L':'))
-				shemaState(uri, position);
-			else
-				if (uri.at(position.second) == QChar(L'/'))
-					pathState(uri, position);
-
-		if (position.first < uri.size())
-		{
-			m_path.push_back(uri.mid(position.first, uri.size() - position.first));
-
-#ifndef Q_OS_WIN32
-			if (m_path.at(0).isEmpty())
-				m_path[0] = QChar(L'/');
-		}
-		else
-			if (!m_path.isEmpty() && m_path.at(0).isEmpty())
-				m_path[0] = QChar(L'/');
-#else
-		}
-#endif
-	}
-
-	void shemaState(const QString &uri, Position &position)
-	{
-		if (++position.second < uri.size() && uri.at(position.second) == QChar(L'/'))
-			if (++position.second < uri.size() && uri.at(position.second) == QChar(L'/'))
-				if (m_shema.isEmpty())
-				{
-					m_shema = uri.mid(position.first, position.second - position.first - 2);
-					position.first = position.second + 1;
-				}
-				else
-				{
-					m_path.push_back(uri.mid(position.first, position.second - position.first - 1));
-					position.first = position.second + 1;
-				}
-			else
-			{
-				m_path.push_back(uri.mid(position.first, position.second - position.first - 1));
-				position.first = position.second + 1;
-			}
-	}
-
-	void pathState(const QString &uri, Position &position)
-	{
-		m_path.push_back(uri.mid(position.first, position.second - position.first));
-		position.first = position.second + 1;
-	}
-
-private:
+	bool m_valid;
 	QString m_shema;
+	QString m_userName;
+	QString m_password;
+	ushort m_port;
+	QString m_domain;
 	QStringList m_path;
 };
 

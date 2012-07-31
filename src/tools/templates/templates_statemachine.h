@@ -2,7 +2,12 @@
 #define TEMPLATES_STATEMACHINE_H_
 
 #include <stddef.h>
-#include "metatemplates.h"
+#include "templates_ns.h"
+#include "loki-0.1.7/Typelist.h"
+
+
+#define RULE(FromState, Event, ToState, Context, ContextMethod) \
+	::Tools::Templates::Rule<Context>::Definition<FromState, Event, ToState, &Context::ContextMethod>
 
 
 TEMPLATES_NS_BEGIN
@@ -32,10 +37,6 @@ struct Rule
 };
 
 
-#define RULE(FromState, Event, ToState, Context, ContextMethod) \
-	Tools::Templates::Rule<Context>::Definition<FromState, Event, ToState, &Context::ContextMethod>
-
-
 struct Data
 {
 	void *context;
@@ -51,7 +52,7 @@ struct ProcessEvent
 {
 	static inline void process(Data &data)
 	{
-		typedef typename RulesTypeList::head RulesTypeList_Item;
+		typedef typename RulesTypeList::Head RulesTypeList_Item;
 
 		if (RulesTypeList_Item::FROM_STATE == data.state && RulesTypeList_Item::TOKEN == *data.iterator)
 		{
@@ -61,12 +62,12 @@ struct ProcessEvent
 			return;
 		}
 
-		ProcessEvent<Context, typename RulesTypeList::tail>::process(data);
+		ProcessEvent<Context, typename RulesTypeList::Tail>::process(data);
 	}
 };
 
 template <typename Context>
-struct ProcessEvent<Context, null_type>
+struct ProcessEvent<Context, ::Loki::NullType>
 {
 	static inline void process(Data &data)
 	{}
@@ -77,13 +78,13 @@ template <typename RulesTypeList>
 class StateMachine
 {
 public:
-	typedef typename RulesTypeList::head::rule_context Context;
+	typedef typename RulesTypeList::Head::rule_context Context;
 
 public:
 	StateMachine(Context &context)
 	{
 		m_data.context = &context;
-		m_data.state = RulesTypeList::head::FROM_STATE;
+		m_data.state = RulesTypeList::Head::FROM_STATE;
 		m_data.iterator = NULL;
 		m_data.input = NULL;
 	}
@@ -91,17 +92,19 @@ public:
 	StateMachine(Context *context)
 	{
 		m_data.context = context;
-		m_data.state = RulesTypeList::head::FROM_STATE;
+		m_data.state = RulesTypeList::Head::FROM_STATE;
 		m_data.iterator = NULL;
 		m_data.input = NULL;
 	}
 
-	inline void process(const char *string)
+	inline int process(const char *string)
 	{
 		for (m_data.input = m_data.iterator = string; *m_data.iterator; ++m_data.iterator)
 			ProcessEvent<Context, RulesTypeList>::process(m_data);
 
 		ProcessEvent<Context, RulesTypeList>::process(m_data);
+
+		return m_data.state;
 	}
 
 protected:

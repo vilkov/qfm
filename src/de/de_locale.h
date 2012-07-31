@@ -19,6 +19,9 @@ public:
 	const QTextCodec *codec() const { return m_codec; }
 
 private:
+	void setDefaultLocale();
+
+private:
 	QByteArray m_lang;
 	QByteArray m_country;
 	QByteArray m_modifier;

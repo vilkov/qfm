@@ -351,6 +351,21 @@ Service::~Service()
 	delete iconCache;
 }
 
+QIcon Service::applicationIcon(int iconSize) const
+{
+	return iconCache->findMimeTypeIcon(XDG_MIME_TYPE_UNKNOWN, iconSize);
+}
+
+QIcon Service::applicationIcon(const char *application, int iconSize) const
+{
+	QIcon res(iconCache->findIcon(application, iconSize, XdgThemeApplications));
+
+	if (res.isNull())
+		return iconCache->findMimeTypeIcon(XDG_MIME_TYPE_UNKNOWN, iconSize);
+	else
+		return res;
+}
+
 QIcon Service::processingIcon(int iconSize) const
 {
 	return iconCache->findIcon("view-refresh", iconSize, XdgThemeActions);
@@ -540,7 +555,7 @@ QByteArray Service::themeName() const
 		strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
 		strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
 	{
-		info.icon = iconCache->findIcon("text-plain", iconSize, XdgThemeMimeTypes);
+		info.icon = iconCache->findMimeTypeIcon(XDG_MIME_TYPE_TEXTPLAIN, iconSize);
 		info.name = info.id.mime = QString::fromUtf8(XDG_MIME_TYPE_TEXTPLAIN);
 	}
 	else

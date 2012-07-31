@@ -35,6 +35,9 @@ public:
 
 	Type type() const { return m_type; }
 
+	QIcon applicationIcon(int iconSize = Small) const;
+	QIcon applicationIcon(const char *application, int iconSize = Small) const;
+
 	QIcon processingIcon(int iconSize = Small) const;
 	QIcon cancelingIcon(int iconSize = Small) const;
 
@@ -50,8 +53,6 @@ public:
 	QIcon openDataIcon(int iconSize = Small) const;
 
 	QIcon missingIcon(int iconSize = Small) const;
-
-	::VFS::IApplications::LinkedList userApplications(const ::VFS::FileTypeId &id) const;
 
 	::VFS::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
 	::VFS::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;

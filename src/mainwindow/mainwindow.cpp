@@ -9,6 +9,8 @@
 #include <QtGui/QMenu>
 #include <QtXml/QXmlStreamWriter>
 #include <QtGui/QMessageBox>
+#include <QtGui/QStyle>
+#include <QtGui/QDesktopWidget>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -181,7 +183,13 @@ void MainWindow::save()
 
 void MainWindow::load()
 {
-	restoreGeometry(m_settings.geometry());
+	QByteArray geometry = m_settings.geometry();
+
+	if (geometry.isEmpty())
+		setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), Application::instance()->desktop()->availableGeometry()));
+	else
+		restoreGeometry(geometry);
+
 	m_leftFoldersView.setFocus();
 }
 

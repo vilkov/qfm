@@ -16,7 +16,6 @@ public:
 	virtual const QIcon &icon() const = 0;
 	virtual const QString &name() const = 0;
 	virtual const QString &description() const = 0;
-	virtual const QString &category() const = 0;
 };
 
 VFS_NS_END

@@ -141,7 +141,9 @@ public:
 	}
 	static PByteArray fromInt(int value)
 	{
-		return PByteArray();
+		char buffer[sizeof(int) * 8 + 1];
+		sprintf(buffer, "%lu", value);
+		return PByteArray::copy(buffer);
 	}
 
 	static PByteArray format(const value_type *data, size_type len,

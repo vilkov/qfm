@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <string.h>
+#include <stdio.h>
 #include "pbytearray_imp.h"
 
 #define IMP(Type, var1, var2) Type var1 = ((Type)var2)

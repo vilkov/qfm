@@ -2,6 +2,7 @@
 #include "../defaultfileaccessor.h"
 #include "../defaultcopycontrol.h"
 #include "../defaultfileinfo.h"
+#include "../../../../application.h"
 
 #include <vfs/tools/vfs_commontools.h>
 #include <vfs/interfaces/vfs_inodeview.h>
@@ -14,6 +15,7 @@
 #include <errno.h>
 #include <stdio.h>
 
+#include <QtCore/QMap>
 #include <QtCore/QReadWriteLock>
 
 
@@ -22,11 +24,11 @@ DEFAULT_PLUGIN_NS_BEGIN
 class App : public IApplication
 {
 public:
-	App(const QIcon &icon, const QString &name, const QString &description, const QString &category) :
+	App(const QIcon &icon, const QString &name, const QString &description, const QByteArray &exec) :
 		m_icon(icon),
 		m_name(name),
 		m_description(description),
-		m_category(category)
+		m_exec(exec)
 	{}
 
 	virtual const QIcon &icon() const
@@ -44,95 +46,148 @@ public:
 		return m_description;
 	}
 
-	virtual const QString &category() const
-	{
-		return m_category;
-	}
-
 private:
 	QIcon m_icon;
 	QString m_name;
 	QString m_description;
-	QString m_category;
+	QByteArray m_exec;
 };
 
 
-//class AppsCache
-//{
-//public:
-//	AppsCache()
-//	{}
-//
-//	IApplications::LinkedList findUserApplications(const IFileType *fileType)
-//	{
-//		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
-//			return *list;
-//		else
-//		{
-//			QWriteLocker lock(&m_cacheLock);
-//
-//			if (list = read(fileType->id()))
-//				return *list;
-//			else
-//			{
-//				const XdgAppGroup *group;
-//				const XdgJointList *apps;
-//				IApplications::LinkedList res;
-//
-//				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime.toUtf8())))
-//					do
-//						if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
-//						{
-//
-//						}
-//					while (apps = xdg_joint_list_next(apps));
-//
-//
-//
-//				if (char *icon_path = xdg_icon_lookup(name, iconSize, static_cast<Context>(context), m_themeName))
-//				{
-//					res = *write(index, QString::fromUtf8(icon_path));
-//					free(icon_path);
-//				}
-//
-//				return res;
-//			}
-//		}
-//	}
-//
-////	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
-////		do
-////			if (icon_path = xdg_app_icon_lookup(app = xdg_joint_list_item_app(apps), theme, size))
-////				return icon_path;
-////		while (apps = xdg_joint_list_next(apps));
-//
-//private:
-//	QIcon *read(const FileTypeId &index)
-//	{
-//		return m_cache.object(index);
-//	}
-//
-//	QIcon *lockedRead(const FileTypeId &index)
-//	{
-//		QReadLocker lock(&m_cacheLock);
-//		return read(index);
-//	}
-//
-//	QIcon *write(const FileTypeId &index, const QString &fileName)
-//	{
-//		QScopedPointer<QIcon> icon(new QIcon());
-//
-//		icon->addFile(fileName, QSize(index.size, index.size));
-//		m_cache.insert(index, icon.data());
-//
-//		return icon.take();
-//	}
-//
-//private:
-//	QReadWriteLock m_cacheLock;
-//	QCache<FileTypeId, IApplications::LinkedList> m_cache;
-//};
-//static AppsCache *appsCache = 0;
+class AppsCache
+{
+public:
+	AppsCache()
+	{}
+	~AppsCache()
+	{
+		qDeleteAll(m_cache);
+	}
+
+	IApplications::LinkedList findUserApplications(const IFileType *fileType)
+	{
+		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
+			return *list;
+		else
+		{
+			QWriteLocker lock(&m_cacheLock);
+
+			if (list = read(fileType->id()))
+				return *list;
+			else
+			{
+				const XdgJointList *apps;
+				IApplications::LinkedList res;
+
+				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime.toUtf8())))
+					res = fill(apps);
+
+				write(fileType->id(), res);
+
+				return res;
+			}
+		}
+	}
+
+	IApplications::LinkedList findSystemApplications(const IFileType *fileType)
+	{
+		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
+			return *list;
+		else
+		{
+			QWriteLocker lock(&m_cacheLock);
+
+			if (list = read(fileType->id()))
+				return *list;
+			else
+			{
+				const XdgJointList *apps;
+				IApplications::LinkedList res;
+
+				if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(fileType->id().mime.toUtf8())))
+					res = fill(apps);
+
+				write(fileType->id(), res);
+
+				return res;
+			}
+		}
+	}
+
+private:
+	IApplications::LinkedList *read(const FileTypeId &index)
+	{
+		return m_cache.value(index);
+	}
+
+	IApplications::LinkedList *lockedRead(const FileTypeId &index)
+	{
+		QReadLocker lock(&m_cacheLock);
+		return read(index);
+	}
+
+	void write(const FileTypeId &index, const IApplications::LinkedList &list)
+	{
+		QScopedPointer<LinkedList> icon(new LinkedList(list));
+		m_cache.insert(index, icon.data());
+		icon.take();
+	}
+
+	IApplications::LinkedList fill(const XdgJointList *apps)
+	{
+		QIcon icon;
+		const char *name = NULL;
+		const char *exec = NULL;
+		const char *gen_name = NULL;
+
+		const XdgList *values;
+		const XdgAppGroup *group;
+		IApplications::LinkedList res;
+		DesktopEnvironment::Locale *locale = Application::locale();
+
+		do
+			if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
+			{
+				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier())))
+					name = xdg_list_item_app_group_entry_value(values);
+
+				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier())))
+					gen_name = xdg_list_item_app_group_entry_value(values);
+
+				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier())))
+					exec = xdg_list_item_app_group_entry_value(values);
+
+				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
+					icon = Application::desktopService()->applicationIcon(xdg_list_item_app_group_entry_value(values));
+				else
+					icon = Application::desktopService()->applicationIcon();
+
+				res.push_back(new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec)));
+			}
+		while (apps = xdg_joint_list_next(apps));
+
+		return res;
+	}
+
+private:
+	class LinkedList : public IApplications::LinkedList
+	{
+	public:
+		LinkedList(const IApplications::LinkedList &other) :
+			IApplications::LinkedList(other)
+		{}
+
+		~LinkedList()
+		{
+			qDeleteAll(*this);
+		}
+	};
+
+private:
+	QReadWriteLock m_cacheLock;
+	QMap<FileTypeId, LinkedList *> m_cache;
+};
+static AppsCache appsCache;
 
 
 FileContainer::FileContainer(const QByteArray &path) :
@@ -330,12 +385,12 @@ const IApplications *FileContainer::applications() const
 
 FileContainer::LinkedList FileContainer::user(const IFileType *fileType) const
 {
-	return LinkedList();
+	return appsCache.findUserApplications(fileType);
 }
 
 FileContainer::LinkedList FileContainer::system(const IFileType *fileType) const
 {
-	return LinkedList();
+	return appsCache.findSystemApplications(fileType);
 }
 
 DEFAULT_PLUGIN_NS_END

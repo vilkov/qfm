@@ -3,7 +3,7 @@
 
 #include <QtCore/QModelIndex>
 #include "vfs_ifilecontainer.h"
-#include "../tools/vfs_path.h"
+#include "../tools/vfs_uri.h"
 #include "../../tools/settings/options/gui/page/settingspage.h"
 
 
@@ -25,7 +25,7 @@ class IContainerPlugin : public virtual IPlugin
 {
 public:
 	virtual QString shema() const = 0;
-	virtual Node *open(const Path::Iterator &path, QModelIndex &selected) const = 0;
+	virtual Node *open(const Uri::Iterator &path, QModelIndex &selected) const = 0;
 };
 
 

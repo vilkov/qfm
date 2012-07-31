@@ -1,6 +1,6 @@
 #include "idmcopycontrolbase.h"
 
-#include <vfs/tools/vfs_path.h>
+#include <vfs/tools/vfs_uri.h>
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -123,10 +123,10 @@ void IdmCopyControlBase::canceled()
 
 QString IdmCopyControlBase::difference(const QString &path1, const QString &path2)
 {
-	Path current(path1);
-	Path other(path2);
+	Uri current(path1);
+	Uri other(path2);
 
-	for (Path::Iterator otherIt = other.begin(), currentIt = current.begin();
+	for (Uri::Iterator otherIt = other.begin(), currentIt = current.begin();
 		!otherIt.atEnd() && !currentIt.atEnd();
 		++otherIt)
 	{

@@ -1,5 +1,5 @@
-#ifndef VFS_PATH_H_
-#define VFS_PATH_H_
+#ifndef VFS_URI_H_
+#define VFS_URI_H_
 
 #include <QtCore/QPair>
 #include <QtCore/QString>
@@ -9,12 +9,26 @@
 
 VFS_NS_BEGIN
 
-class Path
+class Uri
 {
+public:
+	enum State
+	{
+		Shema,
+		Semicolon,
+		Slash1,
+		UserName,
+		Password,
+		Domain,
+		Port,
+		Path,
+		Stoped
+	};
+
 public:
 	class Iterator
 	{
-		friend class Path;
+		friend class Uri;
 
 	public:
 		Iterator &operator=(const Iterator &other) { m_pos = other.m_pos; return *this; }
@@ -48,16 +62,23 @@ public:
 	};
 
 public:
-	Path(const QString &path)
-	{
-		parseUri(path);
-	}
+	Uri(const QString &path);
 
 	bool isValid() const { return !m_path.isEmpty(); }
 	const QString &shema() const { return m_shema; }
 	Iterator begin() { return Iterator(m_path); }
 	Iterator erase(const Iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
 	QString toString() const { return m_path.join(QChar(L'/')); }
+
+private:
+	void doNothing(const char *string, int size);
+	void shema(const char *string, int size);
+	void userName(const char *string, int size);
+	void password(const char *string, int size);
+	void domain(const char *string, int size);
+	void port(const char *string, int size);
+	void path(const char *string, int size);
+	void userNameIsDomain_thisIsPort(const char *string, int size);
 
 private:
 	/* Simple Turing machine */
@@ -126,4 +147,4 @@ private:
 
 VFS_NS_END
 
-#endif /* VFS_PATH_H_ */
+#endif /* VFS_URI_H_ */

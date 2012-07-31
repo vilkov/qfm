@@ -2,7 +2,7 @@
 #define VFS_NODE_H_
 
 #include <QtCore/QSet>
-#include "tools/vfs_path.h"
+#include "tools/vfs_uri.h"
 #include "model/vfs_model.h"
 #include "interfaces/vfs_inode.h"
 #include "../history/historyentry.h"
@@ -47,7 +47,7 @@ protected:
 	Node *parentNode() const { return static_cast<Node *>(QObject::parent()); }
 	bool isVisible() const { return !m_view.isEmpty(); }
 	::History::Entry *switchTo(Node *node, INodeView *view);
-	Node *viewChild(const Path::Iterator &path, QModelIndex &selected);
+	Node *viewChild(const Uri::Iterator &path, QModelIndex &selected);
 
 private:
 	friend class TasksNode;

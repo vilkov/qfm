@@ -112,7 +112,7 @@ void Node::nodeRemoved(Node *node)
 	return new HistoryEntry(node);
 }
 
-Node *Node::viewChild(const Path::Iterator &path, QModelIndex &selected)
+Node *Node::viewChild(const Uri::Iterator &path, QModelIndex &selected)
 {
 	Node *current = this;
 

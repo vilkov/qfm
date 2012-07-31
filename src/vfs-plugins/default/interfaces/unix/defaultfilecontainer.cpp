@@ -5,6 +5,7 @@
 
 #include <vfs/tools/vfs_commontools.h>
 #include <vfs/interfaces/vfs_inodeview.h>
+#include <xdg/xdg.h>
 
 #include <sys/statvfs.h>
 #include <sys/stat.h>
@@ -13,8 +14,126 @@
 #include <errno.h>
 #include <stdio.h>
 
+#include <QtCore/QReadWriteLock>
+
 
 DEFAULT_PLUGIN_NS_BEGIN
+
+class App : public IApplication
+{
+public:
+	App(const QIcon &icon, const QString &name, const QString &description, const QString &category) :
+		m_icon(icon),
+		m_name(name),
+		m_description(description),
+		m_category(category)
+	{}
+
+	virtual const QIcon &icon() const
+	{
+		return m_icon;
+	}
+
+	virtual const QString &name() const
+	{
+		return m_name;
+	}
+
+	virtual const QString &description() const
+	{
+		return m_description;
+	}
+
+	virtual const QString &category() const
+	{
+		return m_category;
+	}
+
+private:
+	QIcon m_icon;
+	QString m_name;
+	QString m_description;
+	QString m_category;
+};
+
+
+//class AppsCache
+//{
+//public:
+//	AppsCache()
+//	{}
+//
+//	IApplications::LinkedList findUserApplications(const IFileType *fileType)
+//	{
+//		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
+//			return *list;
+//		else
+//		{
+//			QWriteLocker lock(&m_cacheLock);
+//
+//			if (list = read(fileType->id()))
+//				return *list;
+//			else
+//			{
+//				const XdgAppGroup *group;
+//				const XdgJointList *apps;
+//				IApplications::LinkedList res;
+//
+//				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime.toUtf8())))
+//					do
+//						if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
+//						{
+//
+//						}
+//					while (apps = xdg_joint_list_next(apps));
+//
+//
+//
+//				if (char *icon_path = xdg_icon_lookup(name, iconSize, static_cast<Context>(context), m_themeName))
+//				{
+//					res = *write(index, QString::fromUtf8(icon_path));
+//					free(icon_path);
+//				}
+//
+//				return res;
+//			}
+//		}
+//	}
+//
+////	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
+////		do
+////			if (icon_path = xdg_app_icon_lookup(app = xdg_joint_list_item_app(apps), theme, size))
+////				return icon_path;
+////		while (apps = xdg_joint_list_next(apps));
+//
+//private:
+//	QIcon *read(const FileTypeId &index)
+//	{
+//		return m_cache.object(index);
+//	}
+//
+//	QIcon *lockedRead(const FileTypeId &index)
+//	{
+//		QReadLocker lock(&m_cacheLock);
+//		return read(index);
+//	}
+//
+//	QIcon *write(const FileTypeId &index, const QString &fileName)
+//	{
+//		QScopedPointer<QIcon> icon(new QIcon());
+//
+//		icon->addFile(fileName, QSize(index.size, index.size));
+//		m_cache.insert(index, icon.data());
+//
+//		return icon.take();
+//	}
+//
+//private:
+//	QReadWriteLock m_cacheLock;
+//	QCache<FileTypeId, IApplications::LinkedList> m_cache;
+//};
+//static AppsCache *appsCache = 0;
+
 
 FileContainer::FileContainer(const QByteArray &path) :
 	m_path(IFileContainer::location(Info::codec()->toUnicode(path), path)),

@@ -9,7 +9,7 @@ RootNode::RootNode()
 
 ::History::Entry *RootNode::open(INodeView *nodeView, const QString &uri) const
 {
-	Path path(uri);
+	Uri path(uri);
 
 	if (path.isValid())
 	{

@@ -1,7 +1,7 @@
 #include "libunrarscanner.h"
 #include "libunrarfileinfo.h"
 
-#include <vfs/tools/vfs_path.h>
+#include <vfs/tools/vfs_uri.h>
 #include <vfs/containers/vfs_snapshot.h>
 
 #include <wchar.h>

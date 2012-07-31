@@ -19,7 +19,7 @@ public:
 
 	/* IContentPlugin */
 	QString shema() const;
-	virtual ::VFS::Node *open(const Path::Iterator &path, QModelIndex &selected) const;
+	virtual ::VFS::Node *open(const Uri::Iterator &path, QModelIndex &selected) const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;

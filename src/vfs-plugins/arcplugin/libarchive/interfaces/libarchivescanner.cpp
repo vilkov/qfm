@@ -1,7 +1,7 @@
 #include "libarchivescanner.h"
 #include "libarchivefileinfo.h"
 
-#include <vfs/tools/vfs_path.h>
+#include <vfs/tools/vfs_uri.h>
 #include <vfs/containers/vfs_snapshot.h>
 #include <vfs/interfaces/vfs_ifileaccessor.h>
 

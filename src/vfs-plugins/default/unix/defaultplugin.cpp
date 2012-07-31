@@ -33,7 +33,7 @@ public:
 		return m_path;
 	}
 
-	Node *viewChild(const Path::Iterator &path, QModelIndex &selected)
+	Node *viewChild(const Uri::Iterator &path, QModelIndex &selected)
 	{
 		return Node::viewChild(path, selected);
 	}
@@ -67,7 +67,7 @@ QString Plugin::shema() const
 	return QString::fromLatin1("file");
 }
 
-::VFS::Node *Plugin::open(const Path::Iterator &path, QModelIndex &selected) const
+::VFS::Node *Plugin::open(const Uri::Iterator &path, QModelIndex &selected) const
 {
 	if ((*path) == QLatin1String("/"))
 		if (rootNode)

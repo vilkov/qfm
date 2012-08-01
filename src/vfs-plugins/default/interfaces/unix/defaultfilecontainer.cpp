@@ -27,11 +27,12 @@ DEFAULT_PLUGIN_NS_BEGIN
 class App : public IApplication
 {
 public:
-	App(const QIcon &icon, const QString &name, const QString &description, const QByteArray &exec) :
+	App(const QIcon &icon, const QString &name, const QString &description, const QByteArray &exec, const QByteArray &iconName) :
 		m_icon(icon),
 		m_name(name),
 		m_description(description),
-		m_exec(exec)
+		m_exec(exec),
+		m_iconName(iconName)
 	{}
 
 	virtual const QIcon &icon() const
@@ -240,6 +241,7 @@ private:
 		const char *name = NULL;
 		const char *exec = NULL;
 		const char *gen_name = NULL;
+		const char *icon_name = NULL;
 
 		const XdgList *values;
 		const XdgAppGroup *group;
@@ -262,11 +264,11 @@ private:
 						exec = xdg_list_item_app_group_entry_value(values);
 
 					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
-						icon = Application::desktopService()->applicationIcon(xdg_list_item_app_group_entry_value(values));
+						icon = Application::desktopService()->applicationIcon(icon_name = xdg_list_item_app_group_entry_value(values));
 					else
 						icon = Application::desktopService()->applicationIcon();
 
-					res.push_back(app = new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec)));
+					res.push_back(app = new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec), QByteArray(icon_name)));
 				}
 		while (apps = xdg_joint_list_next(apps));
 

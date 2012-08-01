@@ -41,6 +41,7 @@ public:
 	static ::VFS::RootNode *rootNode() { return instance()->m_rootNode.data(); }
 
 	static void open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file);
+	static void open(const ::VFS::IApplication *application, const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file);
 
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);

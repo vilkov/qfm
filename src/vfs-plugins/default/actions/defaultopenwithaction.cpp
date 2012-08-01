@@ -1,4 +1,5 @@
 #include "defaultopenwithaction.h"
+#include "../../../application.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -15,7 +16,7 @@ OpenWithAction::OpenWithAction(const IApplication *application) :
 
 void OpenWithAction::process(const IFileContainer *container, const FilesList &files) const
 {
-
+	Application::open(m_application, container, files.at(0).second);
 }
 
 DEFAULT_PLUGIN_NS_END

@@ -149,6 +149,15 @@ void Application::open(const ::VFS::IFileContainer *container, const ::VFS::IFil
 					arg(file->fileType()->name()));
 }
 
+void Application::open(const ::VFS::IApplication *application, const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file)
+{
+	using namespace ::VFS;
+	QString error;
+
+	if (!application->exec(container, file, error))
+		QMessageBox::critical(Application::mainWindow(), tr("Failed to execute application..."), error);
+}
+
 void Application::handleException(const char *where)
 {
 //	m_log << QString::fromLatin1(where).append(QString::fromLatin1(" trows an unhandled exception!"));

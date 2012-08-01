@@ -61,18 +61,18 @@ public:
 	{}
 	~AppsCache()
 	{
-		qDeleteAll(m_cache);
+		qDeleteAll(m_applications);
 	}
 
 	IApplications::LinkedList findUserApplications(const IFileType *fileType)
 	{
-		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
+		if (IApplications::LinkedList *list = lockedRead(m_userCache, fileType->id()))
 			return *list;
 		else
 		{
 			QWriteLocker lock(&m_cacheLock);
 
-			if (list = read(fileType->id()))
+			if (list = read(m_userCache, fileType->id()))
 				return *list;
 			else
 			{
@@ -82,7 +82,7 @@ public:
 				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime.toUtf8())))
 					res = fill(apps);
 
-				write(fileType->id(), res);
+				write(m_userCache, fileType->id(), res);
 
 				return res;
 			}
@@ -91,13 +91,13 @@ public:
 
 	IApplications::LinkedList findSystemApplications(const IFileType *fileType)
 	{
-		if (IApplications::LinkedList *list = lockedRead(fileType->id()))
+		if (IApplications::LinkedList *list = lockedRead(m_systemCache, fileType->id()))
 			return *list;
 		else
 		{
 			QWriteLocker lock(&m_cacheLock);
 
-			if (list = read(fileType->id()))
+			if (list = read(m_systemCache, fileType->id()))
 				return *list;
 			else
 			{
@@ -107,66 +107,11 @@ public:
 				if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(fileType->id().mime.toUtf8())))
 					res = fill(apps);
 
-				write(fileType->id(), res);
+				write(m_systemCache, fileType->id(), res);
 
 				return res;
 			}
 		}
-	}
-
-private:
-	IApplications::LinkedList *read(const FileTypeId &index)
-	{
-		return m_cache.value(index);
-	}
-
-	IApplications::LinkedList *lockedRead(const FileTypeId &index)
-	{
-		QReadLocker lock(&m_cacheLock);
-		return read(index);
-	}
-
-	void write(const FileTypeId &index, const IApplications::LinkedList &list)
-	{
-		QScopedPointer<LinkedList> icon(new LinkedList(list));
-		m_cache.insert(index, icon.data());
-		icon.take();
-	}
-
-	IApplications::LinkedList fill(const XdgJointList *apps)
-	{
-		QIcon icon;
-		const char *name = NULL;
-		const char *exec = NULL;
-		const char *gen_name = NULL;
-
-		const XdgList *values;
-		const XdgAppGroup *group;
-		IApplications::LinkedList res;
-		DesktopEnvironment::Locale *locale = Application::locale();
-
-		do
-			if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
-			{
-				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier())))
-					name = xdg_list_item_app_group_entry_value(values);
-
-				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier())))
-					gen_name = xdg_list_item_app_group_entry_value(values);
-
-				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier())))
-					exec = xdg_list_item_app_group_entry_value(values);
-
-				if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
-					icon = Application::desktopService()->applicationIcon(xdg_list_item_app_group_entry_value(values));
-				else
-					icon = Application::desktopService()->applicationIcon();
-
-				res.push_back(new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec)));
-			}
-		while (apps = xdg_joint_list_next(apps));
-
-		return res;
 	}
 
 private:
@@ -183,9 +128,71 @@ private:
 		}
 	};
 
+	typedef QMap<FileTypeId, LinkedList *> Cache;
+
+private:
+	IApplications::LinkedList *read(Cache &cache, const FileTypeId &index)
+	{
+		return cache.value(index);
+	}
+
+	IApplications::LinkedList *lockedRead(Cache &cache, const FileTypeId &index)
+	{
+		QReadLocker lock(&m_cacheLock);
+		return read(cache, index);
+	}
+
+	void write(Cache &cache, const FileTypeId &index, const IApplications::LinkedList &list)
+	{
+		QScopedPointer<LinkedList> linkedList(new LinkedList(list));
+		cache.insert(index, linkedList.data());
+		linkedList.take();
+	}
+
+	IApplications::LinkedList fill(const XdgJointList *apps)
+	{
+		QIcon icon;
+		const char *name = NULL;
+		const char *exec = NULL;
+		const char *gen_name = NULL;
+
+		const XdgList *values;
+		const XdgAppGroup *group;
+		IApplications::LinkedList res;
+		DesktopEnvironment::Locale *locale = Application::locale();
+
+		do
+			if (App *&app = m_applications[QString::fromUtf8(xdg_joint_list_item_app_id(apps))])
+				res.push_back(app);
+			else
+				if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
+				{
+					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier())))
+						name = xdg_list_item_app_group_entry_value(values);
+
+					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier())))
+						gen_name = xdg_list_item_app_group_entry_value(values);
+
+					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier())))
+						exec = xdg_list_item_app_group_entry_value(values);
+
+					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
+						icon = Application::desktopService()->applicationIcon(xdg_list_item_app_group_entry_value(values));
+					else
+						icon = Application::desktopService()->applicationIcon();
+
+					res.push_back(app = new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec)));
+				}
+		while (apps = xdg_joint_list_next(apps));
+
+		return res;
+	}
+
 private:
 	QReadWriteLock m_cacheLock;
-	QMap<FileTypeId, LinkedList *> m_cache;
+	QMap<QString, App *> m_applications;
+	Cache m_userCache;
+	Cache m_systemCache;
 };
 static AppsCache appsCache;
 

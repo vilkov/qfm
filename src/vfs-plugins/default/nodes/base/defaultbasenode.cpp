@@ -12,6 +12,7 @@
 #include "../../actions/defaultpasteintofolderaction.h"
 #include "../../actions/defaultpropertiesaction.h"
 #include "../../actions/defaultpasteclipboardaction.h"
+#include "../../actions/defaultopenwithaction.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 
@@ -225,15 +226,20 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
 	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot>          ItemsIndexMap;
 	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
+	typedef QMap<const IApplication *, FileAction *>                  OpenWithActionsMap;
 
 	QMenu menu;
+	QMenu openWithMenu(tr("Open with"));
 	ItemsSet set;
-	ActionsMap map;
+	ActionsMap mapGlobalActions;
+	ActionsMap mapOpenWithActions;
 	ItemsList items;
 	QModelIndex index;
 	ItemsIndexMap itemsIndex;
 	NodeItem::Holder item;
 	FileActionsList actions;
+	OpenWithActionsMap openWithActions;
+	IApplications::LinkedList applications;
 
 	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
 		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()]).as<NodeItem>()->isRootItem() && !set.contains(item))
@@ -262,7 +268,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 			}
 			else
 			{
@@ -271,7 +277,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 			}
 		}
 		else
@@ -282,14 +288,43 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 			{
-				FileAction::FilesList &files = map[actions.at(i)];
+				FileAction::FilesList &files = mapGlobalActions[actions.at(i)];
 
 				for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 				{
 					item = items.at(i);
-					files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+					files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 				}
 			}
+		}
+
+		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
+		{
+			item = items.at(i);
+			applications = m_container->applications()->user(item.as<NodeItem>()->info()->fileType());
+
+			if (applications.isEmpty())
+				applications = m_container->applications()->system(item.as<NodeItem>()->info()->fileType());
+
+			for (IApplications::LinkedList::const_iterator i = applications.begin(), end = applications.end(); i != end; ++i)
+				if (FileAction *&action = openWithActions[*i])
+					mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
+				else
+				{
+					action = new OpenWithAction(*i);
+					mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
+				}
+		}
+
+		if (!mapOpenWithActions.isEmpty())
+		{
+			menu.addSeparator();
+
+			for (ActionsMap::const_iterator it = mapOpenWithActions.begin(), end = mapOpenWithActions.end(); it != end; ++it)
+				openWithMenu.addAction(const_cast<QAction *>(it.key()->action()));
+
+			menu.addMenu(&openWithMenu);
+			menu.addSeparator();
 		}
 
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
@@ -297,7 +332,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			actions = Application::globalMenu()->actions((item = items.at(i)).as<NodeItem>()->info()->fileType()->id());
 
 			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-				map[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+				mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 		}
 	}
 
@@ -305,21 +340,21 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 	{
-		FileAction::FilesList &files = map[actions.at(i)];
+		FileAction::FilesList &files = mapGlobalActions[actions.at(i)];
 
 		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 		{
 			item = items.at(i);
-			files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+			files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 		}
 	}
 
 	menu.addSeparator();
 
-	if (!map.isEmpty())
+	if (!mapGlobalActions.isEmpty())
 	{
-		for (ActionsMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
-			menu.addAction(const_cast<QAction*>(it.key()->action()));
+		for (ActionsMap::const_iterator it = mapGlobalActions.begin(), end = mapGlobalActions.end(); it != end; ++it)
+			menu.addAction(const_cast<QAction *>(it.key()->action()));
 
 		menu.addSeparator();
 	}
@@ -328,23 +363,23 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	if (FileAction *action = FileAction::fromQAction(menu.exec(QCursor::pos())))
 	{
-		FileAction::FilesList files = map.value(action);
+		FileAction::FilesList files = mapGlobalActions.value(action);
 
 		if (files.isEmpty())
 			for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
 			{
 				item = items.at(i);
-				files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info().data()));
+				files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
 			}
 
 		if (action->isAsynchronous())
 		{
 			PScopedPointer<PerformActionTask> task;
 
-			if (task = static_cast<AsyncFileAction *>(action)->process(this, m_container.data(), files))
+			if (task = static_cast<AsyncFileAction *>(action)->process(this, m_container, files))
 			{
 				Union update;
-				Snapshot::Files list(m_container.data());
+				Snapshot::Files list(m_container);
 
 				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 				{
@@ -360,7 +395,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			}
 		}
 		else
-			static_cast<SyncFileAction *>(action)->process(m_container.data(), files);
+			static_cast<SyncFileAction *>(action)->process(m_container, files);
 	}
 
 	menu.clear();

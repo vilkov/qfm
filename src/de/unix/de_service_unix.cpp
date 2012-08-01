@@ -1,7 +1,6 @@
 #include "../de_service.h"
 #include "../../application.h"
 
-#include <vfs/interfaces/vfs_ifileinfo.h>
 #include <xdg/xdg.h>
 
 #if defined(DESKTOP_ENVIRONMENT_IS_KDE)
@@ -12,9 +11,7 @@
 
 #include <QtCore/QCache>
 #include <QtCore/QReadWriteLock>
-#include <QtCore/QVarLengthArray>
 
-#include <paths.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -201,51 +198,6 @@ private:
 	QCache<IconIndex, QIcon> m_cache;
 };
 static IconCache *iconCache = 0;
-
-
-inline static bool findProgram(const char *mimeType, const char *(&args)[3], const char *lang, const char *country, const char *modifier)
-{
-	const XdgApp *app;
-	const XdgList *values;
-	const XdgAppGroup *group;
-	const XdgJointList *apps;
-
-	if (apps = xdg_joint_list_begin(xdg_apps_lookup(mimeType)))
-		do
-			if (group = xdg_app_group_lookup(app = xdg_joint_list_item_app(apps), "Desktop Entry"))
-				if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
-				{
-					args[0] = xdg_list_item_app_group_entry_value(values);
-
-					if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Icon")))
-						args[1] = xdg_list_item_app_group_entry_value(values);
-
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", lang, country, modifier)))
-						args[2] = xdg_list_item_app_group_entry_value(values);
-
-					return true;
-				}
-		while (apps = xdg_joint_list_next(apps));
-
-	if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(mimeType)))
-		do
-			if (group = xdg_app_group_lookup(app = xdg_joint_list_item_app(apps), "Desktop Entry"))
-				if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Exec")))
-				{
-					args[0] = xdg_list_item_app_group_entry_value(values);
-
-					if (values = xdg_list_begin(xdg_app_entry_lookup(group, "Icon")))
-						args[1] = xdg_list_item_app_group_entry_value(values);
-
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", lang, country, modifier)))
-						args[2] = xdg_list_item_app_group_entry_value(values);
-
-					return true;
-				}
-		while (apps = xdg_joint_list_next(apps));
-
-	return false;
-}
 
 
 DE_NS_BEGIN
@@ -442,89 +394,6 @@ QIcon Service::missingIcon(int iconSize) const
 		return fileTypeInfo(iconSize);
 	else
 		return fileTypeInfo(xdg_mime_get_mime_type_from_file_name(fileName.toUtf8()), iconSize);
-}
-
-void Service::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file) const
-{
-	typedef QList<QByteArray> List;
-	const char *args[3] = {NULL, NULL, NULL};
-
-	if (findProgram(file->fileType()->id().mime.toUtf8(), args, Application::locale()->lang(), Application::locale()->country(), Application::locale()->modifier()))
-	{
-		QByteArray absoluteFilePath = container->location(file);
-		QByteArray workingDirectory = absoluteFilePath.mid(0, absoluteFilePath.lastIndexOf(QChar(L'/')));
-
-		List arguments = QByteArray(args[0]).
-				replace("%d", QByteArray()).
-				replace("%D", QByteArray()).
-				replace("%n", QByteArray()).
-				replace("%N", QByteArray()).
-				replace("%k", QByteArray()).
-				replace("%v", QByteArray()).
-				replace("%m", QByteArray()).
-				trimmed().
-				split(' ');
-
-		QByteArray fileName = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar(L'/')) + 1).
-				replace('"', "\\\"").
-				replace('`', "\\`").
-				replace('$', "\\$").
-				replace('\\', "\\\\");
-
-		for (List::size_type i = 0, size = arguments.size(); i < size;)
-			if (arguments.at(i).indexOf('=') != -1)
-			{
-				arguments.removeAt(i);
-				--size;
-			}
-			else
-			{
-				arguments[i] = arguments.at(i).trimmed();
-
-				if (arguments.at(i).indexOf("%i") != -1)
-				{
-					arguments[i].replace("%i", args[1]);
-					arguments.insert(i, QByteArray("--icon"));
-					++i;
-					++size;
-				}
-				else
-					arguments[i].
-						replace("%f", fileName).
-						replace("%F", fileName).
-						replace("%u", fileName).
-						replace("%U", fileName).
-						replace("%c", args[2]);
-
-				++i;
-			}
-
-		if (pid_t pid = fork())
-		{
-			if (pid < 0)
-			{
-				/* The fork failed. */
-			}
-		}
-		else
-		{
-			QVarLengthArray<char *, 8> argv(arguments.size() + 1);
-
-			for (List::size_type i = 0, size = arguments.size(); i < size; ++i)
-				if (arguments.at(i).indexOf('=') == -1)
-				{
-					arguments[i] = arguments.at(i).trimmed();
-					argv.data()[i] = arguments[i].data();
-				}
-
-			argv.data()[arguments.size()] = NULL;
-
-			setsid();
-			chdir(workingDirectory);
-			execvp(argv.data()[0], argv.data());
-			exit(EXIT_FAILURE);
-		}
-	}
 }
 
 QByteArray Service::themeName() const

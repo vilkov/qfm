@@ -39,7 +39,7 @@ bool CompositeValuePossibleFileItem::isFile() const
 
 void CompositeValuePossibleFileItem::open() const
 {
-	Application::desktopService()->open(m_source->container(), m_source->info().data());
+	Application::open(m_source->container(), m_source->info());
 }
 
 IDM_PLUGIN_NS_END

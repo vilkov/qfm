@@ -7,6 +7,9 @@
 
 
 VFS_NS_BEGIN
+class IFileInfo;
+class IFileContainer;
+
 
 class IApplication
 {
@@ -16,6 +19,8 @@ public:
 	virtual const QIcon &icon() const = 0;
 	virtual const QString &name() const = 0;
 	virtual const QString &description() const = 0;
+
+	virtual bool exec(const IFileContainer *container, const IFileInfo *file, QString &error) const = 0;
 };
 
 VFS_NS_END

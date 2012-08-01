@@ -5,7 +5,6 @@
 #include "../../../../application.h"
 
 
-
 DEFAULT_PLUGIN_NS_BEGIN
 
 SearchNode::SearchNode(IFileContainer::Holder &container, IFileContainerScanner::Filter::Holder &filter, Node *parent) :
@@ -240,7 +239,7 @@ Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 				return entry->node();
 			else
 				if (entry->info()->isFile())
-					Application::desktopService()->open(entry->container(), entry->info().data());
+					Application::open(entry->container(), entry->info());
 		}
 
 	return NULL;

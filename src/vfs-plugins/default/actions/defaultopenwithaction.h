@@ -15,6 +15,9 @@ public:
 	OpenWithAction(const IApplication *application);
 
 	virtual void process(const IFileContainer *container, const FilesList &files) const;
+
+private:
+	const IApplication *m_application;
 };
 
 DEFAULT_PLUGIN_NS_END

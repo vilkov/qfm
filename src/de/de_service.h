@@ -1,7 +1,7 @@
 #ifndef DE_SERVICE_H_
 #define DE_SERVICE_H_
 
-#include <vfs/interfaces/vfs_ifilecontainer.h>
+#include <vfs/interfaces/vfs_ifileinfo.h>
 #include "de_ns.h"
 
 
@@ -56,8 +56,6 @@ public:
 
 	::VFS::FileTypeInfo fileTypeInfo(const QByteArray &absoluteFilePath, bool isDir, int iconSize = Small) const;
 	::VFS::FileTypeInfo fileTypeInfoFromFileName(const QString &fileName, bool isDir, int iconSize = Small) const;
-
-	void open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file) const;
 
 private:
 	QByteArray themeName() const;

@@ -33,7 +33,7 @@ void QueryResultRootPathValueItem::open() const
 	IFileContainer::Holder folder(m_container->create(error.mid(0, error.lastIndexOf(QChar(L'/'))), error));
 
 	if (folder)
-		Application::desktopService()->open(folder, info());
+		Application::open(folder, info());
 }
 
 void QueryResultRootPathValueItem::update(SnapshotItem *item)

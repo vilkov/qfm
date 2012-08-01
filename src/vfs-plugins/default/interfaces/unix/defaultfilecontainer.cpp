@@ -8,15 +8,18 @@
 #include <vfs/interfaces/vfs_inodeview.h>
 #include <xdg/xdg.h>
 
+#include <paths.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <stdio.h>
 
 #include <QtCore/QMap>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QVarLengthArray>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
@@ -46,11 +49,93 @@ public:
 		return m_description;
 	}
 
+	virtual bool exec(const IFileContainer *container, const IFileInfo *file, QString &error) const
+	{
+		typedef QList<QByteArray> List;
+		QByteArray workingDirectory = container->location();
+		QByteArray absoluteFilePath = container->location(file);
+
+		List arguments = QByteArray(m_exec).
+				replace("%d", QByteArray()).
+				replace("%D", QByteArray()).
+				replace("%n", QByteArray()).
+				replace("%N", QByteArray()).
+				replace("%k", QByteArray()).
+				replace("%v", QByteArray()).
+				replace("%m", QByteArray()).
+				trimmed().
+				split(' ');
+
+		QByteArray fileName = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar(L'/')) + 1).
+				replace('"', "\\\"").
+				replace('`', "\\`").
+				replace('$', "\\$").
+				replace('\\', "\\\\");
+
+		for (List::size_type i = 0, size = arguments.size(); i < size;)
+			if (arguments.at(i).indexOf('=') != -1)
+			{
+				arguments.removeAt(i);
+				--size;
+			}
+			else
+			{
+				arguments[i] = arguments.at(i).trimmed();
+
+				if (arguments.at(i).indexOf("%i") != -1)
+				{
+					arguments[i].replace("%i", m_iconName);
+					arguments.insert(i, QByteArray("--icon"));
+					++i;
+					++size;
+				}
+				else
+					arguments[i].
+						replace("%f", fileName).
+						replace("%F", fileName).
+						replace("%u", fileName).
+						replace("%U", fileName).
+						replace("%c", m_name.toUtf8());
+
+				++i;
+			}
+
+		if (pid_t pid = fork())
+		{
+			if (pid < 0)
+			{
+				error = Info::codec()->toUnicode(::strerror(errno));
+				return false;
+			}
+		}
+		else
+		{
+			QVarLengthArray<char *, 8> argv(arguments.size() + 1);
+
+			for (List::size_type i = 0, size = arguments.size(); i < size; ++i)
+				if (arguments.at(i).indexOf('=') == -1)
+				{
+					arguments[i] = arguments.at(i).trimmed();
+					argv.data()[i] = arguments[i].data();
+				}
+
+			argv.data()[arguments.size()] = NULL;
+
+			setsid();
+			chdir(workingDirectory);
+			execvp(argv.data()[0], argv.data());
+			exit(EXIT_FAILURE);
+		}
+
+		return true;
+	}
+
 private:
 	QIcon m_icon;
 	QString m_name;
 	QString m_description;
 	QByteArray m_exec;
+	QByteArray m_iconName;
 };
 
 

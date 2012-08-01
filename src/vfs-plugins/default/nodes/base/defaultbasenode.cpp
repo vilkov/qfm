@@ -573,7 +573,7 @@ Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 				return entry->node();
 			else
 				if (entry->info()->isFile())
-					Application::desktopService()->open(m_container.data(), entry->info().data());
+					Application::open(m_container, entry->info());
 		}
 
 	return NULL;

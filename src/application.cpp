@@ -8,6 +8,7 @@
 #include <QtCore/QLocale>
 #include <QtCore/QTranslator>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QMessageBox>
 
 #include "vfs-plugins/default/defaultplugin.h"
 #include "vfs-plugins/m3uplugin/m3uplugin.h"
@@ -127,6 +128,25 @@ qint32 Application::exec()
 		m_mainWindow.show();
 		return QApplication::exec();
 	}
+}
+
+void Application::open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file)
+{
+	using namespace ::VFS;
+	IApplications::LinkedList list = container->applications()->user(file->fileType());
+
+	if (!list.isEmpty() || !(list = container->applications()->system(file->fileType())).isEmpty())
+	{
+		QString error;
+
+		if (!list.front()->exec(container, file, error))
+			QMessageBox::critical(Application::mainWindow(), tr("Failed to execute application..."), error);
+	}
+	else
+		QMessageBox::critical(Application::mainWindow(),
+				tr("Failed to execute application..."),
+				tr("No applications able to handle \"%1\" files.").
+					arg(file->fileType()->name()));
 }
 
 void Application::handleException(const char *where)

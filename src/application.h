@@ -40,6 +40,8 @@ public:
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
 	static ::VFS::RootNode *rootNode() { return instance()->m_rootNode.data(); }
 
+	static void open(const ::VFS::IFileContainer *container, const ::VFS::IFileInfo *file);
+
 protected: /* ExceptionHandler */
 	virtual void handleException(const char *where);
 	virtual void handleException(const QString &message);

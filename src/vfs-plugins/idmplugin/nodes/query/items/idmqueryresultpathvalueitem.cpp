@@ -34,7 +34,7 @@ bool QueryResultPathValueItem::isRootPathValue()
 
 void QueryResultPathValueItem::open() const
 {
-	Application::desktopService()->open(m_container, info());
+	Application::open(m_container, info());
 }
 
 IDM_PLUGIN_NS_END

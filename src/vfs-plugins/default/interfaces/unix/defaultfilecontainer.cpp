@@ -387,7 +387,7 @@ const IFileContainerScanner *FileContainer::scanner() const
 
 const IApplications *FileContainer::applications() const
 {
-	return NULL;
+	return this;
 }
 
 FileContainer::LinkedList FileContainer::user(const IFileType *fileType) const

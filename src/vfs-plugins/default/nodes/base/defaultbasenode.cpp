@@ -398,6 +398,8 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			static_cast<SyncFileAction *>(action)->process(m_container, files);
 	}
 
+	qDeleteAll(openWithActions);
+	openWithMenu.clear();
 	menu.clear();
 }
 

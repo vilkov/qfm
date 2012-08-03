@@ -23,52 +23,13 @@ void Node::viewClosed(INodeView *nodeView)
 
 ::History::Entry *Node::viewChild(INodeView *nodeView, const QModelIndex &idx)
 {
-	QModelIndex selected;
-
-	if (Node *node = viewChild(idx, selected))
-	{
-		/* XXX: Add 2 links because of HistoryEntry */
-
-		if (node == parentNode())
-			node->viewThis(nodeView, m_parentEntryIndex, 2);
-		else
-		{
-			node->m_parentEntryIndex = idx;
-			node->viewThis(nodeView, selected, 2);
-		}
-
-		node->refresh();
-		removeView(nodeView);
-
-		return new HistoryEntry(node);
-	}
-
-	return NULL;
+	return viewChildInternal(nodeView, idx, false);
 }
 
 ::History::Entry *Node::viewInNewTab(INodeView *nodeView, const QModelIndex &idx)
 {
 	Q_ASSERT(nodeView->node() == NULL);
-	QModelIndex selected;
-
-	if (Node *node = viewChild(idx, selected))
-	{
-		/* XXX: Add 2 links because of HistoryEntry */
-
-		if (node == parentNode())
-			node->viewThis(nodeView, m_parentEntryIndex, 2);
-		else
-		{
-			node->m_parentEntryIndex = idx;
-			node->viewThis(nodeView, selected, 2);
-		}
-
-		node->refresh();
-
-		return new HistoryEntry(node);
-	}
-
-	return new HistoryEntry(this);
+	return viewChildInternal(nodeView, idx, true);
 }
 
 void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
@@ -187,6 +148,41 @@ void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 lin
 		nodeView->select(selected);
 	else
 		nodeView->select(rootIndex());
+}
+
+::History::Entry *Node::viewChildInternal(INodeView *nodeView, const QModelIndex &idx, bool newTab)
+{
+	QModelIndex selected;
+
+	if (Node *node = viewChild(idx, selected, newTab))
+	{
+		/* XXX: Add 2 links because of HistoryEntry */
+
+		if (node == parentNode())
+			node->viewThis(nodeView, m_parentEntryIndex, 2);
+		else
+		{
+			node->m_parentEntryIndex = idx;
+			node->viewThis(nodeView, selected, 2);
+		}
+
+		node->refresh();
+		removeView(nodeView);
+
+		return new HistoryEntry(node);
+	}
+
+	if (newTab)
+	{
+		/* XXX: Add 2 links because of HistoryEntry */
+
+		viewThis(nodeView, idx, 2);
+		refresh();
+
+		return new HistoryEntry(this);
+	}
+
+	return NULL;
 }
 
 bool Node::isLinked() const

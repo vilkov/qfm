@@ -235,7 +235,7 @@ QModelIndex ArcNode::rootIndex() const
 	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex).data()));
 }
 
-Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
+Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
 {
 	if (static_cast<NodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
 		return parentNode();

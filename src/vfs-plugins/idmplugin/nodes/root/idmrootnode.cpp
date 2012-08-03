@@ -254,7 +254,7 @@ QModelIndex IdmRootNode::rootIndex() const
 	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
 }
 
-Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
+Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
 {
 	RootNodeItem *item;
 

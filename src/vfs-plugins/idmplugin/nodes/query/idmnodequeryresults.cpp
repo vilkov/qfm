@@ -407,39 +407,34 @@ QModelIndex IdmNodeQueryResults::rootIndex() const
 	return QModelIndex();
 }
 
-Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &selected)
+Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
 {
-	if (idx.isValid())
-	{
-		QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
+	QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
 
-		if (!item->isLocked() && item->isPath())
+	if (!item->isLocked() && item->isPath())
 
-			if (Node *node = static_cast<QueryResultPathItem *>(item)->node())
-				return node;
-			else
+		if (Node *node = static_cast<QueryResultPathItem *>(item)->node())
+			return node;
+		else
+		{
+			if (static_cast<QueryResultPathItem *>(item)->info()->isDir())
 			{
-				if (static_cast<QueryResultPathItem *>(item)->info()->isDir())
-				{
-					QString error;
-					IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->info(), error));
+				QString error;
+				IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->info(), error));
 
-					if (folder)
-					{
-						node = new ::VFS::Plugins::Default::Node(folder, this);
-						static_cast<QueryResultPathItem *>(item)->setNode(node);
-						return node;
-					}
-					else
-						QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
+				if (folder)
+				{
+					node = new ::VFS::Plugins::Default::Node(folder, this);
+					static_cast<QueryResultPathItem *>(item)->setNode(node);
+					return node;
 				}
 				else
-					if (static_cast<QueryResultPathItem *>(item)->info()->isFile())
-						static_cast<QueryResultPathItem *>(item)->open();
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 			}
-	}
-	else
-		return parentNode();
+			else
+				if (!newTab && static_cast<QueryResultPathItem *>(item)->info()->isFile())
+					static_cast<QueryResultPathItem *>(item)->open();
+		}
 
 	return NULL;
 }

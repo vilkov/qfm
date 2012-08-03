@@ -37,7 +37,7 @@ public:
 
 protected:
 	virtual QModelIndex rootIndex() const = 0;
-	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected) = 0;
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab) = 0;
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected) = 0;
 	virtual void nodeRemoved(Node *node);
 
@@ -72,6 +72,7 @@ private:
 
 	void viewThis(INodeView *nodeView, const QModelIndex &selected);
 	void viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links);
+	::History::Entry *viewChildInternal(INodeView *nodeView, const QModelIndex &idx, bool newTab);
 
 private:
 	bool isLinked() const;

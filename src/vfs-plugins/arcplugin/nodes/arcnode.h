@@ -52,7 +52,7 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
-	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:

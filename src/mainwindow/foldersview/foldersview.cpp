@@ -34,7 +34,6 @@ void FoldersView::openInNewTab(::VFS::INode *node, const QModelIndex &index, con
 	m_doNotRefreshTab = true;
 	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget = new DirectoryView(this), QString()));
 	widget->setupModel(node, index, geometry);
-	widget->refresh();
 	widget->setFocus();
 }
 

@@ -227,19 +227,16 @@ Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 			SearchNodeItem *entry = static_cast<SearchNodeItem *>(index.internalPointer());
 
 			if (entry->node())
-				entry->node()->setParentEntryIndex(idx);
+				return entry->node();
 			else
 				if (Node *node = Application::rootNode()->open(entry->container(), entry->info(), const_cast<SearchNode *>(this)))
 				{
 					entry->setNode(node);
-					node->setParentEntryIndex(idx);
+					return node;
 				}
-
-			if (entry->node())
-				return entry->node();
-			else
-				if (entry->info()->isFile())
-					Application::open(entry->container(), entry->info());
+				else
+					if (entry->info()->isFile())
+						Application::open(entry->container(), entry->info());
 		}
 
 	return NULL;

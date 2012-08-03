@@ -557,19 +557,16 @@ Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 			NodeItem *entry = static_cast<NodeItem *>(index.internalPointer());
 
 			if (entry->node())
-				entry->node()->setParentEntryIndex(idx);
+				return entry->node();
 			else
 				if (Node *node = createNode(entry->info()))
 				{
 					entry->setNode(node);
-					node->setParentEntryIndex(idx);
+					return node;
 				}
-
-			if (entry->node())
-				return entry->node();
-			else
-				if (entry->info()->isFile())
-					Application::open(m_container, entry->info());
+				else
+					if (entry->info()->isFile())
+						Application::open(m_container, entry->info());
 		}
 
 	return NULL;

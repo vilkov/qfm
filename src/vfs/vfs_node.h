@@ -35,8 +35,6 @@ public:
 	virtual int columnsCount() const;
 	virtual QAbstractItemView::SelectionMode selectionMode() const;
 
-	void setParentEntryIndex(const QModelIndex &value) { m_parentEntryIndex = value; }
-
 protected:
 	virtual QModelIndex rootIndex() const = 0;
 	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected) = 0;

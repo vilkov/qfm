@@ -32,7 +32,10 @@ void Node::viewClosed(INodeView *nodeView)
 		if (node == parentNode())
 			node->viewThis(nodeView, m_parentEntryIndex, 2);
 		else
+		{
+			node->m_parentEntryIndex = idx;
 			node->viewThis(nodeView, selected, 2);
+		}
 
 		node->refresh();
 		removeView(nodeView);
@@ -55,7 +58,10 @@ void Node::viewClosed(INodeView *nodeView)
 		if (node == parentNode())
 			node->viewThis(nodeView, m_parentEntryIndex, 2);
 		else
+		{
+			node->m_parentEntryIndex = idx;
 			node->viewThis(nodeView, selected, 2);
+		}
 
 		node->refresh();
 
@@ -68,12 +74,7 @@ void Node::viewClosed(INodeView *nodeView)
 void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
 {
 	Node *node = static_cast<HistoryEntry *>(entry)->node();
-
-	if (node == parentNode())
-		node->viewThis(nodeView, m_parentEntryIndex);
-	else
-		node->viewThis(nodeView, QModelIndex());
-
+	node->viewThis(nodeView, QModelIndex());
 	node->refresh();
 	removeView(nodeView);
 }

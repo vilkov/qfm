@@ -263,7 +263,7 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 		{
 			EditableValueListDialog dialog(
 					m_container,
-					Select(static_cast<RootNodeEntityItem*>(item)->entity()),
+					Select(static_cast<RootNodeEntityItem *>(item)->entity()),
 					Application::mainWindow());
 
 			if (dialog.exec() == EditableValueListDialog::Accepted)
@@ -287,18 +287,14 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 		else
 			if (item->isFiles())
 			{
-				if (static_cast<RootNodeFilesItem *>(item)->node())
-					static_cast<RootNodeFilesItem *>(item)->node()->setParentEntryIndex(idx);
-				else
+				if (static_cast<RootNodeFilesItem *>(item)->node() == NULL)
 				{
 					IFileContainer::Holder folder(m_container.container()->open());
 					Node *node = new IdmFolderNode(folder, m_container, this);
-
-					node->setParentEntryIndex(idx);
-					static_cast<RootNodeFilesItem*>(item)->setNode(node);
+					static_cast<RootNodeFilesItem *>(item)->setNode(node);
 				}
 
-				return static_cast<RootNodeFilesItem*>(item)->node();
+				return static_cast<RootNodeFilesItem *>(item)->node();
 			}
 
 	return NULL;
@@ -306,8 +302,8 @@ Node *IdmRootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 
 Node *IdmRootNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
-	if (Node *node = static_cast<RootNodeFilesItem* >(m_items.at(FilesItemIndex))->node())
-		return static_cast<IdmFolderNode*>(node)->privateViewChild(fileName, selected);
+	if (Node *node = static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->node())
+		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, selected);
 	else
 	{
 		IFileContainer::Holder folder(m_container.container()->open());
@@ -321,7 +317,7 @@ Node *IdmRootNode::viewChild(const QString &fileName, QModelIndex &selected)
 
 void IdmRootNode::nodeRemoved(Node *node)
 {
-	static_cast<RootNodeFilesItem*>(m_items.at(FilesItemIndex))->setNode(0);
+	static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(0);
 }
 
 void IdmRootNode::updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed)
@@ -410,9 +406,9 @@ void IdmRootNode::createEntity()
 
 void IdmRootNode::removeEntity(const QModelIndex &index)
 {
-	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isEntity())
+	if (index.isValid() && static_cast<RootNodeItem *>(index.internalPointer())->isEntity())
 	{
-		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem *>(index.internalPointer());
 
 		if (QMessageBox::question(
 				Application::mainWindow(),
@@ -445,9 +441,9 @@ void IdmRootNode::removeEntity(const QModelIndex &index)
 
 void IdmRootNode::addProperty(const QModelIndex &index)
 {
-	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isEntity())
+	if (index.isValid() && static_cast<RootNodeItem *>(index.internalPointer())->isEntity())
 	{
-		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(index.internalPointer());
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem *>(index.internalPointer());
 
 		if (item->entity()->type() == Database::Composite)
 			if (m_container.transaction())
@@ -484,10 +480,10 @@ void IdmRootNode::addProperty(const QModelIndex &index)
 
 void IdmRootNode::removeProperty(const QModelIndex &index)
 {
-	if (index.isValid() && static_cast<RootNodeItem*>(index.internalPointer())->isProperty())
+	if (index.isValid() && static_cast<RootNodeItem *>(index.internalPointer())->isProperty())
 	{
-		RootNodePropertyItem *property = static_cast<RootNodePropertyItem*>(index.internalPointer());
-		RootNodeEntityItem *item = static_cast<RootNodeEntityItem*>(property->parent());
+		RootNodePropertyItem *property = static_cast<RootNodePropertyItem *>(index.internalPointer());
+		RootNodeEntityItem *item = static_cast<RootNodeEntityItem *>(property->parent());
 
 		if (QMessageBox::question(
 				Application::mainWindow(),
@@ -542,7 +538,7 @@ void IdmRootNode::doRemove(IdmEntity *entity)
 		beginRemoveRows(index, row, row);
 
 		if (parent = list.at(i)->parent())
-			static_cast<RootNodeEntityItem*>(parent)->remove(row);
+			static_cast<RootNodeEntityItem *>(parent)->remove(row);
 		else
 			delete m_items.takeAt(row);
 
@@ -554,8 +550,8 @@ void IdmRootNode::doAdd(const QModelIndex &index, Container::Item *item, IdmEnti
 {
 	RootNodeEntityItem *child;
 
-	beginInsertRows(index, static_cast<RootNodeEntityItem*>(item)->size(), static_cast<RootNodeEntityItem*>(item)->size());
-	static_cast<RootNodeEntityItem*>(item)->add(child = new RootNodePropertyItem(property, propertyName, item));
+	beginInsertRows(index, static_cast<RootNodeEntityItem *>(item)->size(), static_cast<RootNodeEntityItem *>(item)->size());
+	static_cast<RootNodeEntityItem *>(item)->add(child = new RootNodePropertyItem(property, propertyName, item));
 	m_entities[property].push_back(child);
 	expand(child);
 	endInsertRows();
@@ -566,16 +562,16 @@ void IdmRootNode::doRemove(const QModelIndex &index, Container::Item *item, Cont
 	Container::Item::size_type idx = item->indexOf(property);
 
 	beginRemoveRows(parent(index), idx, idx);
-	Container::List &items = m_entities[static_cast<RootNodeEntityItem*>(item)->entity()];
+	Container::List &items = m_entities[static_cast<RootNodeEntityItem *>(item)->entity()];
 	items.removeAt(items.indexOf(item));
-	static_cast<RootNodeEntityItem*>(item)->remove(idx);
+	static_cast<RootNodeEntityItem *>(item)->remove(idx);
 	endRemoveRows();
 }
 
 void IdmRootNode::expand(Container::Item *p)
 {
 	RootNodeEntityItem *item;
-	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem*>(p);
+	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem *>(p);
 
 	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{

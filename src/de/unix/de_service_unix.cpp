@@ -108,8 +108,6 @@ public:
 		m_themeName(themeName)
 	{}
 
-	void setThemeName(const QByteArray &themeName) { m_themeName = themeName; }
-
 	QIcon findIcon(const char *name, int iconSize, int context)
 	{
 		IconIndex index(QString::fromLatin1(name), iconSize, context);

@@ -227,22 +227,7 @@ private:
 	friend class CancelFunctor;
 
 
-	class RenameFunctor : public Functor
-	{
-	public:
-		RenameFunctor(const IFileContainer *container, Container &items) :
-			m_container(container),
-			m_items(items)
-		{}
-
-	protected:
-		virtual void call(Container::size_type index, NodeItem *item);
-
-	private:
-		const IFileContainer *m_container;
-		Container &m_items;
-	};
-
+	void renameFunctor(Container::size_type index, NodeItem *item);
 
 	void processIndexList(const QModelIndexList &list, Functor &functor);
 	void processLockedIndexList(const QModelIndexList &list, Functor &functor);
@@ -270,6 +255,7 @@ private:
 	void updateBothColumns(const Union &range);
 	void updateBothColumns(Container::size_type index, NodeItem *entry);
 	void updateColumns(const Union &range, int lastColumn);
+	void updateColumns(Container::size_type index, NodeItem *entry, int lastColumn);
 	void removeEntry(Container::size_type index);
 	void removeEntry(const QModelIndex &index);
 

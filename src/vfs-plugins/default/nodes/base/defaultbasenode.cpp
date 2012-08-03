@@ -463,16 +463,12 @@ void BaseNode::rename(const QModelIndex &index, INodeView *view)
 	NodeItem *entry = static_cast<NodeItem *>(m_proxy.mapToSource(index).internalPointer());
 
 	if (!entry->isRootItem() && !static_cast<NodeItem *>(entry)->isLocked())
-	{
-		RenameFunctor functor(m_container.data(), m_items);
-		functor(index.row(), entry);
-	}
+		renameFunctor(index.row(), entry);
 }
 
 void BaseNode::rename(const QModelIndexList &list, INodeView *view)
 {
-	RenameFunctor functor(m_container.data(), m_items);
-	processIndexList(list, functor);
+
 }
 
 void BaseNode::remove(const QModelIndexList &list, INodeView *view)
@@ -1068,7 +1064,7 @@ void BaseNode::CancelFunctor::call(Container::size_type index, NodeItem *item)
 	}
 }
 
-void BaseNode::RenameFunctor::call(Container::size_type index, NodeItem *item)
+void BaseNode::renameFunctor(Container::size_type index, NodeItem *item)
 {
 	StringDialog dialog(
 			item->info()->isDir() ?
@@ -1080,27 +1076,30 @@ void BaseNode::RenameFunctor::call(Container::size_type index, NodeItem *item)
 
 	if (dialog.exec() == QDialog::Accepted)
 	{
-//		QString error;
-//
-//		if (entry->info().rename(dialog.value(), error))
-//		{
-//			Info info(m_info->absoluteFilePath(dialog.value()));
-//
-//			m_items.replace(index, entry->info().fileName(), info.fileName());
-//			static_cast<FileSystemEntryItem*>(entry)->setInfo(info);
-//
-//			if (static_cast<FileSystemEntryItem*>(entry)->node())
-//			{
-////				static_cast<FileSystemEntryItem*>(entry)->node()->viewCloseAll();
-//				static_cast<FileSystemEntryItem*>(entry)->setNode(0);
-//			}
-//		}
-//		else
-//			QMessageBox::critical(Application::mainWindow(),
-//						entry->info().isDir() ?
-//							tr("Failed to rename directory \"%1\"").arg(entry->info().fileName()) :
-//							tr("Failed to rename file \"%1\"").arg(entry->info().fileName()),
-//						error);
+		QString error;
+
+		if (m_container->rename(item->info(), dialog.value(), error))
+		{
+			IFileInfo::Holder info(m_container->info(dialog.value(), error));
+
+			if (info)
+			{
+				item->update(info);
+				updateColumns(index, item, columnsCount());
+			}
+			else
+				QMessageBox::critical(Application::mainWindow(),
+							item->info()->isDir() ?
+								tr("Failed to rename directory \"%1\"").arg(item->info()->fileName()) :
+								tr("Failed to rename file \"%1\"").arg(item->info()->fileName()),
+							error);
+		}
+		else
+			QMessageBox::critical(Application::mainWindow(),
+						item->info()->isDir() ?
+							tr("Failed to rename directory \"%1\"").arg(item->info()->fileName()) :
+							tr("Failed to rename file \"%1\"").arg(item->info()->fileName()),
+						error);
 	}
 }
 
@@ -1292,6 +1291,11 @@ void BaseNode::updateColumns(const Union &range, int lastColumn)
 	for (Union::List::size_type i = 0, size = range.size(); i < size; ++i)
 		emit dataChanged(createIndex(range.at(i).top(), 0, m_items[range.at(i).top()].data()),
 						 createIndex(range.at(i).bottom(), lastColumn, m_items[range.at(i).bottom()].data()));
+}
+
+void BaseNode::updateColumns(Container::size_type index, NodeItem *entry, int lastColumn)
+{
+	emit dataChanged(createIndex(index, 0, entry), createIndex(index, lastColumn, entry));
 }
 
 void BaseNode::removeEntry(Container::size_type index)

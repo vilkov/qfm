@@ -152,14 +152,17 @@ public:
 
 	IApplications::LinkedList findUserApplications(const IFileType *fileType)
 	{
-		if (IApplications::LinkedList *list = lockedRead(m_userCache, fileType->id()))
-			return *list;
+		LinkedList list(lockedRead(m_userCache, fileType->id()));
+
+		if (list.isInitialized())
+			return list;
 		else
 		{
 			QWriteLocker lock(&m_cacheLock);
+			list = read(m_userCache, fileType->id());
 
-			if (list = read(m_userCache, fileType->id()))
-				return *list;
+			if (list.isInitialized())
+				return list;
 			else
 			{
 				const XdgJointList *apps;
@@ -177,14 +180,17 @@ public:
 
 	IApplications::LinkedList findSystemApplications(const IFileType *fileType)
 	{
-		if (IApplications::LinkedList *list = lockedRead(m_systemCache, fileType->id()))
-			return *list;
+		LinkedList list(lockedRead(m_systemCache, fileType->id()));
+
+		if (list.isInitialized())
+			return list;
 		else
 		{
 			QWriteLocker lock(&m_cacheLock);
+			list = read(m_systemCache, fileType->id());
 
-			if (list = read(m_systemCache, fileType->id()))
-				return *list;
+			if (list.isInitialized())
+				return list;
 			else
 			{
 				const XdgJointList *apps;
@@ -204,25 +210,30 @@ private:
 	class LinkedList : public IApplications::LinkedList
 	{
 	public:
-		LinkedList(const IApplications::LinkedList &other) :
-			IApplications::LinkedList(other)
+		LinkedList() :
+			m_initialized(false)
 		{}
 
-		~LinkedList()
-		{
-			qDeleteAll(*this);
-		}
+		LinkedList(const IApplications::LinkedList &other) :
+			IApplications::LinkedList(other),
+			m_initialized(true)
+		{}
+
+		bool isInitialized() const { return m_initialized; }
+
+	private:
+		bool m_initialized;
 	};
 
-	typedef QMap<FileTypeId, LinkedList *> Cache;
+	typedef QMap<FileTypeId, LinkedList> Cache;
 
 private:
-	IApplications::LinkedList *read(Cache &cache, const FileTypeId &index)
+	LinkedList read(Cache &cache, const FileTypeId &index)
 	{
 		return cache.value(index);
 	}
 
-	IApplications::LinkedList *lockedRead(Cache &cache, const FileTypeId &index)
+	LinkedList lockedRead(Cache &cache, const FileTypeId &index)
 	{
 		QReadLocker lock(&m_cacheLock);
 		return read(cache, index);
@@ -230,9 +241,7 @@ private:
 
 	void write(Cache &cache, const FileTypeId &index, const IApplications::LinkedList &list)
 	{
-		QScopedPointer<LinkedList> linkedList(new LinkedList(list));
-		cache.insert(index, linkedList.data());
-		linkedList.take();
+		cache.insert(index, LinkedList(list));
 	}
 
 	IApplications::LinkedList fill(const XdgJointList *apps)

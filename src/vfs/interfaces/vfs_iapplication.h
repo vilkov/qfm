@@ -18,6 +18,7 @@ public:
 
 	virtual const QIcon &icon() const = 0;
 	virtual const QString &name() const = 0;
+	virtual const QString &genericName() const = 0;
 	virtual const QString &description() const = 0;
 
 	virtual bool exec(const IFileContainer *container, const IFileInfo *file, QString &error) const = 0;

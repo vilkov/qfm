@@ -16,6 +16,9 @@ public:
 
 	virtual void process(const IFileContainer *container, const FilesList &files) const;
 
+protected:
+	static QString label(const IApplication *application);
+
 private:
 	const IApplication *m_application;
 };

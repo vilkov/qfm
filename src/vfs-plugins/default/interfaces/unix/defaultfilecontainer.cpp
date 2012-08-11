@@ -27,9 +27,10 @@ DEFAULT_PLUGIN_NS_BEGIN
 class App : public IApplication
 {
 public:
-	App(const QIcon &icon, const QString &name, const QString &description, const QByteArray &exec, const QByteArray &iconName) :
-		m_icon(icon),
+	App(const QString &name, const QString &genericName, const QString &description, const QByteArray &exec, const QByteArray &iconName) :
+		m_icon(Application::desktopService()->applicationIcon(iconName.data())),
 		m_name(name),
+		m_genericName(genericName),
 		m_description(description),
 		m_exec(exec),
 		m_iconName(iconName)
@@ -43,6 +44,11 @@ public:
 	virtual const QString &name() const
 	{
 		return m_name;
+	}
+
+	virtual const QString &genericName() const
+	{
+		return m_genericName;
 	}
 
 	virtual const QString &description() const
@@ -134,6 +140,7 @@ public:
 private:
 	QIcon m_icon;
 	QString m_name;
+	QString m_genericName;
 	QString m_description;
 	QByteArray m_exec;
 	QByteArray m_iconName;
@@ -246,10 +253,10 @@ private:
 
 	IApplications::LinkedList fill(const XdgJointList *apps)
 	{
-		QIcon icon;
 		const char *name = NULL;
 		const char *exec = NULL;
 		const char *gen_name = NULL;
+		const char *comment = NULL;
 		const char *icon_name = NULL;
 
 		const XdgList *values;
@@ -265,19 +272,30 @@ private:
 				{
 					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier())))
 						name = xdg_list_item_app_group_entry_value(values);
+					else
+						name = NULL;
 
 					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier())))
 						gen_name = xdg_list_item_app_group_entry_value(values);
+					else
+						gen_name = NULL;
+
+					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Comment", locale->lang(), locale->country(), locale->modifier())))
+						comment = xdg_list_item_app_group_entry_value(values);
+					else
+						comment = NULL;
 
 					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier())))
 						exec = xdg_list_item_app_group_entry_value(values);
+					else
+						exec = NULL;
 
 					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
-						icon = Application::desktopService()->applicationIcon(icon_name = xdg_list_item_app_group_entry_value(values));
+						icon_name = xdg_list_item_app_group_entry_value(values);
 					else
-						icon = Application::desktopService()->applicationIcon();
+						icon_name = NULL;
 
-					res.push_back(app = new App(icon, QString::fromUtf8(name), QString::fromUtf8(gen_name), QByteArray(exec), QByteArray(icon_name)));
+					res.push_back(app = new App(QString::fromUtf8(name), QString::fromUtf8(gen_name), QString::fromUtf8(comment), QByteArray(exec), QByteArray(icon_name)));
 				}
 		while (apps = xdg_joint_list_next(apps));
 

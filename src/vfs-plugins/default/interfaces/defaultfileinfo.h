@@ -7,6 +7,9 @@
 #include "../default_ns.h"
 
 
+VFS_NS(class IFileContainer)
+
+
 DEFAULT_PLUGIN_NS_BEGIN
 
 class Info : public IFileInfo, public IFileType
@@ -15,7 +18,6 @@ public:
 	template <int I> struct int_to_type {enum { value = I };};
 	typedef int_to_type<0> None;
 	typedef int_to_type<1> Refresh;
-	typedef int_to_type<2> Identify;
 
 public:
     explicit Info();
@@ -24,10 +26,14 @@ public:
     template <typename T>
     explicit Info(const QByteArray &filePath, T = T());
 
+    explicit Info(const QByteArray &filePath, const IFileContainer *container);
+
     template <typename T>
     explicit Info(const Info &other, T = T());
 
-	/* IFileInfo */
+    explicit Info(const Info &other, const IFileContainer *container);
+
+    /* IFileInfo */
 	virtual bool isDir() const;
 	virtual bool isFile() const;
 	virtual bool isLink() const;
@@ -52,7 +58,7 @@ public:
 #endif
 
 	void refresh();
-	void identify();
+	void identify(const IFileContainer *container);
 	bool isRoot() const { return m_isRoot; }
 	bool exists() const { return m_info.exists; }
 

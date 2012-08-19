@@ -1,7 +1,7 @@
 #ifndef VFS_FILETYPEID_UNIX_H_
 #define VFS_FILETYPEID_UNIX_H_
 
-#include <QtCore/QString>
+#include <QtCore/QByteArray>
 #include "../../vfs_ns.h"
 
 
@@ -16,7 +16,7 @@ struct FileTypeId_Unix
 	bool operator<(const FileTypeId_Unix &other) const { return mime < other.mime; }
 	bool isValid() const { return !mime.isEmpty(); }
 
-    QString mime;
+	QByteArray mime;
 };
 
 VFS_NS_END

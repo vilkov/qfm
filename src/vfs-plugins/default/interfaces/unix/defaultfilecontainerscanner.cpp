@@ -26,7 +26,8 @@ public:
 	};
 
 public:
-	Enumerator(const QByteArray &path) :
+	Enumerator(const QByteArray &path, const IFileContainer *container) :
+		m_container(container),
 		m_entry(NULL),
 		m_path(QByteArray(path).append('/')),
 		m_dir(opendir(m_path))
@@ -49,7 +50,7 @@ public:
 			}
 			else
 			{
-				m_info = Info(QByteArray(m_path).append(m_entry->d_name), Info::Identify());
+				m_info = Info(QByteArray(m_path).append(m_entry->d_name), m_container);
 
 				if (m_info.isFile() || m_info.isDir())
 					return &m_info;
@@ -77,6 +78,7 @@ public:
 	}
 
 protected:
+	const IFileContainer *m_container;
 	struct dirent *m_entry;
 	Buffer m_buffer;
 
@@ -152,7 +154,7 @@ FileContainerScanner::FileContainerScanner(const IFileContainer *container) :
 
 FileContainerScanner::IEnumerator *FileContainerScanner::enumerate(QString &error) const
 {
-	return new Enumerator(m_container->location());
+	return new Enumerator(m_container->location(), m_container);
 }
 
 void FileContainerScanner::scan(const ScanArguments &arguments, QString &error) const
@@ -169,7 +171,7 @@ void FileContainerScanner::scan(const ScanArguments &arguments, QString &error) 
 
 		for (Snapshot::iterator it = arguments.snapshot.begin(), end = arguments.snapshot.end(); it != end && !arguments.aborted; ++it)
 		{
-			info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
+			info = new Info(QByteArray(path).append(it.key().as<QByteArray>()), m_container);
 
 			if (info.as<Info>()->exists())
 			{
@@ -206,7 +208,7 @@ void FileContainerScanner::search(const SearchArguments &arguments, QString &err
 
 		for (Snapshot::iterator it = arguments.snapshot.begin(), end = arguments.snapshot.end(); it != end && !arguments.aborted; ++it)
 		{
-			info = Info(dir = QByteArray(path).append(it.key().as<QByteArray>()), Info::Identify());
+			info = Info(dir = QByteArray(path).append(it.key().as<QByteArray>()), m_container);
 
 			if (info.isDir())
 			{
@@ -256,7 +258,7 @@ void FileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborte
 			}
 			else
 			{
-				info = new Info(QByteArray(path).append(entry->d_name), Info::Identify());
+				info = new Info(QByteArray(path).append(entry->d_name), m_container);
 
 				if (info->isDir())
 				{
@@ -303,7 +305,7 @@ void FileContainerScanner::scan(SnapshotItem *root, const volatile Flags &aborte
 			}
 			else
 			{
-				info = new Info(QByteArray(path).append(entry->d_name), Info::Identify());
+				info = new Info(QByteArray(path).append(entry->d_name), m_container);
 
 				if (info->isDir())
 				{
@@ -354,7 +356,7 @@ void FileContainerScanner::search(const IFileContainer *container, const Callbac
 			}
 			else
 			{
-				info = Info(dirPath = QByteArray(path).append(entry->d_name), Info::Identify());
+				info = Info(dirPath = QByteArray(path).append(entry->d_name), m_container);
 
 				if (info.isDir())
 				{

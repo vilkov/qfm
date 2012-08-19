@@ -1,8 +1,10 @@
 #include "defaultmimeiconcache.h"
 #include "../defaultfileinfo.h"
 #include "../defaultfileaccessor.h"
+#include "../../settings/defaultpluginsettings.h"
 
 #include <desktop/theme/desktop_theme.h>
+#include <vfs/interfaces/vfs_ifilecontainer.h>
 #include <QtCore/QTextCodec>
 
 #include <sys/stat.h>
@@ -96,14 +98,13 @@ Info::Info<Info::Refresh>(const QByteArray &filePath, Refresh) :
 	refresh();
 }
 
-template <>
-Info::Info<Info::Identify>(const QByteArray &filePath, Identify) :
+Info::Info(const QByteArray &filePath, const IFileContainer *container) :
 	m_isRoot(false),
 	m_filePath(normalizeFilePath(filePath, m_isRoot)),
 	m_fileName(location(filePath.mid(filePath.lastIndexOf('/') + 1), codec()))
 {
 	refresh();
-	identify();
+	identify(container);
 }
 
 template <>
@@ -124,14 +125,13 @@ Info::Info<Info::Refresh>(const Info &other, Refresh) :
 	refresh();
 }
 
-template <>
-Info::Info<Info::Identify>(const Info &other, Identify) :
+Info::Info(const Info &other, const IFileContainer *container) :
 	m_isRoot(other.m_isRoot),
 	m_filePath(other.m_filePath),
 	m_fileName(other.m_fileName),
 	m_info(other.m_info)
 {
-	identify();
+	identify(container);
 }
 
 bool Info::isDir() const
@@ -206,7 +206,7 @@ FileTypeInfo Info::fileTypeInfoFromFileName(const QByteArray &fileName, bool isD
 	if (isDir)
 	{
 		type.icon = iconCache.findIcon("inode/directory", ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-		type.id.mime = QString::fromLatin1("inode/directory");
+		type.id.mime = QByteArray("inode/directory");
 		type.name = QString::fromLatin1("<DIR>");
 	}
 	else
@@ -220,8 +220,12 @@ FileTypeInfo Info::fileTypeInfoFromFileName(const QByteArray &fileName, bool isD
 			mimeType = XDG_MIME_TYPE_TEXTPLAIN;
 		}
 
+		type.id.mime = QByteArray(mimeType);
+		type.name = QString::fromUtf8(mimeType);
 		type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-		type.name = type.id.mime = QString::fromUtf8(mimeType);
+
+		if (type.icon.isNull())
+			type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
 	}
 
 	return type;
@@ -264,21 +268,17 @@ void Info::refresh()
 			}
 }
 
-void Info::identify()
+void Info::identify(const IFileContainer *container)
 {
 	if (m_info.isDir)
 	{
-		FileTypeInfo type;
-
-		type.icon = iconCache.findIcon("inode/directory", ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-		type.id.mime = QString::fromLatin1("inode/directory");
-		type.name = QString::fromLatin1("<DIR>");
-
-		 m_info.type = type;
+		m_info.type.icon = iconCache.findIcon("inode/directory", ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		m_info.type.id.mime = QByteArray("inode/directory");
+		m_info.type.name = QString::fromLatin1("<DIR>");
 	}
 	else
 	{
-		FileTypeInfo type;
+		Settings *settings = Settings::instance();
 		const char *mimeType = xdg_mime_get_mime_type_from_file_name(m_filePath);
 
 		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
@@ -291,10 +291,47 @@ void Info::identify()
 			mimeType = XDG_MIME_TYPE_TEXTPLAIN;
 		}
 
-		type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-		type.name = type.id.mime = QString::fromUtf8(mimeType);
+		m_info.type.id.mime = QByteArray(mimeType);
+		m_info.type.name = QString::fromUtf8(mimeType);
 
-		m_info.type = type;
+		if (settings->fileIcon().appIconIfNoTypeIcon().value())
+		{
+			m_info.type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+
+			if (m_info.type.icon.isNull())
+			{
+				IApplications::LinkedList apps(container->applications()->user(this));
+
+				if (apps.isEmpty())
+					if ((apps = container->applications()->system(this)).isEmpty())
+						m_info.type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+					else
+						m_info.type.icon = (*apps.constBegin())->icon();
+				else
+					m_info.type.icon = (*apps.constBegin())->icon();
+			}
+		}
+		else
+			if (settings->fileIcon().onlyAppIcon().value())
+			{
+				IApplications::LinkedList apps(container->applications()->user(this));
+
+				if (apps.isEmpty())
+					if ((apps = container->applications()->system(this)).isEmpty())
+						m_info.type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+					else
+						m_info.type.icon = (*apps.constBegin())->icon();
+				else
+					m_info.type.icon = (*apps.constBegin())->icon();
+			}
+			else
+				if (settings->fileIcon().onlyTypeIcon().value())
+				{
+					m_info.type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+
+					if (m_info.type.icon.isNull())
+						m_info.type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+				}
 	}
 }
 

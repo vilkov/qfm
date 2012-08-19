@@ -22,7 +22,7 @@ void Plugin::registered()
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
 	FileTypeId type;
-	type.mime = QString::fromLatin1("inode/directory");
+	type.mime = QByteArray("inode/directory");
 
 	return FileTypeIdList() << type;
 }

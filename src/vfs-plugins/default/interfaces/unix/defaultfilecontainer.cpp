@@ -183,7 +183,7 @@ public:
 				const XdgJointList *apps;
 				IApplications::LinkedList res;
 
-				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime.toUtf8())))
+				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime)))
 					res = fill(apps);
 
 				write(m_userCache, fileType->id(), res);
@@ -211,7 +211,7 @@ public:
 				const XdgJointList *apps;
 				IApplications::LinkedList res;
 
-				if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(fileType->id().mime.toUtf8())))
+				if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(fileType->id().mime)))
 					res = fill(apps);
 
 				write(m_systemCache, fileType->id(), res);
@@ -374,7 +374,7 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 	Info info(QByteArray(m_path).append('/').append(Info::codec()->fromUnicode(fileName)), Info::Refresh());
 
 	if (info.exists())
-		return new Info(info, Info::Identify());
+		return new Info(info, static_cast<const IFileContainer *>(this));
 	else
 		error = Info::codec()->toUnicode(::strerror(ENOENT));
 

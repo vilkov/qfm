@@ -35,12 +35,6 @@ public:
 					res = *write(index, QString::fromUtf8(icon_path));
 					free(icon_path);
 				}
-				else
-					if (icon_path = xdg_mime_type_icon_lookup(XDG_MIME_TYPE_TEXTPLAIN, iconSize, theme))
-					{
-						res = *write(index, QString::fromUtf8(icon_path));
-						free(icon_path);
-					}
 
 				return res;
 			}

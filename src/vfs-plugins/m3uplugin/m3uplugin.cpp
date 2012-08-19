@@ -23,7 +23,7 @@ void Plugin::registered()
 Plugin::FileTypeIdList Plugin::fileTypes() const
 {
 	FileTypeId type;
-	type.mime = QString::fromLatin1("audio/x-mpegurl");
+	type.mime = QByteArray("audio/x-mpegurl");
 
 	return FileTypeIdList() << type;
 }

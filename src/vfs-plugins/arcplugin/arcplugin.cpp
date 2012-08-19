@@ -37,58 +37,58 @@ LibArchivePlugin::FileTypeIdList LibArchivePlugin::fileTypes() const
 	FileTypeIdList res;
 	FileTypeId type;
 
-	type.mime = QString::fromLatin1("application/x-gzip");
+	type.mime = QByteArray("application/x-gzip");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-tar");
+	type.mime = QByteArray("application/x-tar");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-compressed-tar");
+	type.mime = QByteArray("application/x-compressed-tar");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-bzip-compressed-tar");
+	type.mime = QByteArray("application/x-bzip-compressed-tar");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/zip");
+	type.mime = QByteArray("application/zip");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-bzip");
+	type.mime = QByteArray("application/x-bzip");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-tarz");
+	type.mime = QByteArray("application/x-tarz");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-bzip2");
+	type.mime = QByteArray("application/x-bzip2");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-java-archive");
+	type.mime = QByteArray("application/x-java-archive");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-deb");
+	type.mime = QByteArray("application/x-deb");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-7z-compressed");
+	type.mime = QByteArray("application/x-7z-compressed");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-compress");
+	type.mime = QByteArray("application/x-compress");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-zip-compressed");
+	type.mime = QByteArray("application/x-zip-compressed");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-lzma");
+	type.mime = QByteArray("application/x-lzma");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-servicepack");
+	type.mime = QByteArray("application/x-servicepack");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-xz-compressed-tar");
+	type.mime = QByteArray("application/x-xz-compressed-tar");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-lzma-compressed-tar");
+	type.mime = QByteArray("application/x-lzma-compressed-tar");
 	res.push_back(type);
 
-	type.mime = QString::fromLatin1("application/x-cd-image");
+	type.mime = QByteArray("application/x-cd-image");
 	res.push_back(type);
 
 	return res;
@@ -120,7 +120,7 @@ LibUnRarPlugin::FileTypeIdList LibUnRarPlugin::fileTypes() const
 	FileTypeIdList res;
 	FileTypeId type;
 
-	type.mime = QString::fromLatin1("application/x-rar");
+	type.mime = QByteArray("application/x-rar");
 	res.push_back(type);
 
 	return res;

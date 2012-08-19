@@ -1,11 +1,11 @@
 #include "defaultpasteclipboardaction.h"
-#include "../../../application.h"
+#include <desktop/theme/desktop_theme.h>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
 PasteClipboardAction::PasteClipboardAction() :
-	SyncFileAction(Application::desktopService()->pasteActionIcon(), tr("Paste from clipboard"))
+	SyncFileAction(::Desktop::Theme::current()->pasteActionIcon(), tr("Paste from clipboard"))
 {}
 
 void PasteClipboardAction::process(const IFileContainer *container, const FilesList &files) const

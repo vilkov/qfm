@@ -221,12 +221,12 @@ ICopyControl *BaseNode::createControl(INodeView *view) const
 
 void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
-	typedef QSet<NodeItem::Holder>                                    ItemsSet;
-	typedef QList<NodeItem::Holder>                                   ItemsList;
-	typedef QMap<const FileAction *, FileAction::FilesList>           ActionsMap;
-	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot>          ItemsIndexMap;
-	typedef ::DesktopEnvironment::ContextMenuFactory::FileActionsList FileActionsList;
-	typedef QMap<const IApplication *, FileAction *>                  OpenWithActionsMap;
+	typedef QSet<NodeItem::Holder>                           ItemsSet;
+	typedef QList<NodeItem::Holder>                          ItemsList;
+	typedef QMap<const FileAction *, FileAction::FilesList>  ActionsMap;
+	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot> ItemsIndexMap;
+	typedef ::Desktop::ContextMenuFactory::FileActionsList   FileActionsList;
+	typedef QMap<const IApplication *, FileAction *>         OpenWithActionsMap;
 
 	QMenu menu;
 	QMenu openWithMenu(tr("Open with"));
@@ -265,7 +265,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			{
 				menu.addAction(const_cast<QAction*>(globalActions.pasteIntoFolderAction->action()));
 
-				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFolder);
+				actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::SingleFolder);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
@@ -274,7 +274,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			{
 				menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
 
-				actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::SingleFile);
+				actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::SingleFile);
 
 				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
@@ -284,7 +284,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
 
-			actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::MultipleFilesOrFolders);
+			actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::MultipleFilesOrFolders);
 
 			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 			{
@@ -336,7 +336,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		}
 	}
 
-	actions = Application::globalMenu()->actions(::DesktopEnvironment::ContextMenuFactory::AnyFilesOrFolders);
+	actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::AnyFilesOrFolders);
 
 	for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
 	{

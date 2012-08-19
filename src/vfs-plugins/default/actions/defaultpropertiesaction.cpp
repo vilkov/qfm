@@ -1,11 +1,11 @@
 #include "defaultpropertiesaction.h"
-#include "../../../application.h"
+#include <desktop/theme/desktop_theme.h>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
 PropertiesAction::PropertiesAction() :
-	SyncFileAction(Application::desktopService()->propertiesActionIcon(), tr("Properties..."))
+	SyncFileAction(::Desktop::Theme::current()->propertiesActionIcon(), tr("Properties..."))
 {}
 
 void PropertiesAction::process(const IFileContainer *container, const FilesList &files) const

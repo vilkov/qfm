@@ -8,7 +8,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
-#include "../de/mountpoints/mountpoints.h"
+#include "../desktop/mountpoints/mountpoints.h"
 #include "../tools/settings/options/settingswidgetscope.h"
 
 #include "view/dolphinitemlistcontainer.h"

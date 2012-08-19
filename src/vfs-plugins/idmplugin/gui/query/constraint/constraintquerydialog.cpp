@@ -1,8 +1,8 @@
 #include "constraintquerydialog.h"
 #include "../../value/list/static/staticvaluelistdialog.h"
 #include "../../../../../tools/templates/metatemplates.h"
-#include "../../../../../application.h"
 
+#include <desktop/theme/desktop_theme.h>
 #include <QtGui/QMessageBox>
 
 
@@ -14,7 +14,7 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	m_label(m_property.name, this),
 	m_operator(this),
 	m_edit(this),
-	m_choose(Application::desktopService()->openDataIcon(), QString(), this),
+	m_choose(::Desktop::Theme::current()->openDataIcon(), QString(), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
 {

@@ -1,13 +1,15 @@
-#include "kde_de_p.h"
+#include "desktop_kde_p.h"
+
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
+
 #include <stdlib.h>
 
 
-DesktopEnvironmentPrivate::DesktopEnvironmentPrivate()
+DesktopPrivate::DesktopPrivate()
 {}
 
-QString DesktopEnvironmentPrivate::iconThemeName(int version)
+QString DesktopPrivate::iconThemeName(int version)
 {
     QString result = version >= 4 ? QString::fromLatin1("oxygen") : QString::fromLatin1("crystalsvg");
     QSettings settings(kdeHome(version) + QString::fromLatin1("/share/config/kdeglobals"), QSettings::IniFormat);
@@ -18,7 +20,7 @@ QString DesktopEnvironmentPrivate::iconThemeName(int version)
     return result;
 }
 
-QString DesktopEnvironmentPrivate::kdeHome(int version)
+QString DesktopPrivate::kdeHome(int version)
 {
     static QString kdeHomePath;
 

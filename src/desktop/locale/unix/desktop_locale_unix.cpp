@@ -1,10 +1,12 @@
-#include "../de_locale.h"
+#include "../desktop_locale.h"
+#include "../../../tools/templates/templates_statemachine.h"
 
 #include <stdlib.h>
-#include "../../tools/templates/templates_statemachine.h"
 
 
-DE_NS_BEGIN
+DESKTOP_NS_BEGIN
+static Locale *instance;
+
 
 class Parser
 {
@@ -66,6 +68,8 @@ private:
 Locale::Locale() :
 	m_codec(NULL)
 {
+	Q_ASSERT(instance == NULL);
+
 	if (const char *locale = getenv("LANG"))
 	{
 		Parser parser(locale);
@@ -84,6 +88,14 @@ Locale::Locale() :
 	}
 	else
 		setDefaultLocale();
+
+	instance = this;
+}
+
+Locale *Locale::current()
+{
+	Q_ASSERT(instance);
+	return instance;
 }
 
 void Locale::setDefaultLocale()
@@ -93,4 +105,4 @@ void Locale::setDefaultLocale()
 	m_codec = QTextCodec::codecForName("UTF-8");
 }
 
-DE_NS_END
+DESKTOP_NS_END

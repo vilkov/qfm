@@ -1,31 +1,34 @@
-#include "gtk_de_p.h"
-#include <stdlib.h>
+#include "desktop_gtk_p.h"
+
 #include <QtCore/QFile>
 #include <QtCore/QLibrary>
 #include <QtCore/QTextStream>
 
+#include <stdlib.h>
 
-Ptr_gconf_client_get_default DesktopEnvironmentPrivate::gconf_client_get_default = 0;
-Ptr_gconf_client_get_string DesktopEnvironmentPrivate::gconf_client_get_string = 0;
-Ptr_gconf_client_get_bool DesktopEnvironmentPrivate::gconf_client_get_bool = 0;
+
+Ptr_gconf_client_get_default DesktopPrivate::gconf_client_get_default = 0;
+Ptr_gconf_client_get_string DesktopPrivate::gconf_client_get_string = 0;
+Ptr_gconf_client_get_bool DesktopPrivate::gconf_client_get_bool = 0;
+
 
 static bool resolveGConf()
 {
-    if (!DesktopEnvironmentPrivate::gconf_client_get_default)
+    if (!DesktopPrivate::gconf_client_get_default)
     {
-        DesktopEnvironmentPrivate::gconf_client_get_default = (Ptr_gconf_client_get_default)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_default");
-        DesktopEnvironmentPrivate::gconf_client_get_string =  (Ptr_gconf_client_get_string)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_string");
-        DesktopEnvironmentPrivate::gconf_client_get_bool =  (Ptr_gconf_client_get_bool)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_bool");
+        DesktopPrivate::gconf_client_get_default = (Ptr_gconf_client_get_default)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_default");
+        DesktopPrivate::gconf_client_get_string =  (Ptr_gconf_client_get_string)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_string");
+        DesktopPrivate::gconf_client_get_bool =  (Ptr_gconf_client_get_bool)QLibrary::resolve(QString::fromLatin1("gconf-2"), 4, "gconf_client_get_bool");
     }
 
-    return (DesktopEnvironmentPrivate::gconf_client_get_default != 0);
+    return (DesktopPrivate::gconf_client_get_default != 0);
 }
 
 
-DesktopEnvironmentPrivate::DesktopEnvironmentPrivate()
+DesktopPrivate::DesktopPrivate()
 {}
 
-bool DesktopEnvironmentPrivate::isKDE4Session()
+bool DesktopPrivate::isKDE4Session()
 {
     static int version = -1;
 
@@ -36,7 +39,7 @@ bool DesktopEnvironmentPrivate::isKDE4Session()
     return (version == 4);
 }
 
-QString DesktopEnvironmentPrivate::themeName()
+QString DesktopPrivate::themeName()
 {
     /**
      * We try to parse the gtkrc file first
@@ -89,12 +92,12 @@ QString DesktopEnvironmentPrivate::themeName()
     return themeName;
 }
 
-QString DesktopEnvironmentPrivate::iconThemeName()
+QString DesktopPrivate::iconThemeName()
 {
     return getGConfString(QString::fromLatin1("/desktop/gnome/interface/icon_theme"), QString::fromLatin1("gnome"));
 }
 
-bool DesktopEnvironmentPrivate::getGConfBool(const QString &key, bool fallback)
+bool DesktopPrivate::getGConfBool(const QString &key, bool fallback)
 {
     bool retVal = fallback;
 
@@ -117,7 +120,7 @@ bool DesktopEnvironmentPrivate::getGConfBool(const QString &key, bool fallback)
     return retVal;
 }
 
-QString DesktopEnvironmentPrivate::getGConfString(const QString &value, const QString &fallback)
+QString DesktopPrivate::getGConfString(const QString &value, const QString &fallback)
 {
     QString retVal = fallback;
 

@@ -2,8 +2,9 @@
 #include "../defaultfileaccessor.h"
 #include "../defaultcopycontrol.h"
 #include "../defaultfileinfo.h"
-#include "../../../../application.h"
 
+#include <desktop/theme/desktop_theme.h>
+#include <desktop/locale/desktop_locale.h>
 #include <vfs/tools/vfs_commontools.h>
 #include <vfs/interfaces/vfs_inodeview.h>
 #include <xdg/xdg.h>
@@ -28,13 +29,20 @@ class App : public IApplication
 {
 public:
 	App(const QString &name, const QString &genericName, const QString &description, const QByteArray &exec, const QByteArray &iconName) :
-		m_icon(Application::desktopService()->applicationIcon(iconName.data())),
 		m_name(name),
 		m_genericName(genericName),
 		m_description(description),
 		m_exec(exec),
 		m_iconName(iconName)
-	{}
+	{
+		if (char *icon_path = xdg_icon_lookup(m_iconName, ::Desktop::Theme::Small, XdgThemeApplications, ::Desktop::Theme::current()->name()))
+		{
+			m_icon.addFile(QString::fromUtf8(icon_path), QSize(::Desktop::Theme::Small, ::Desktop::Theme::Small));
+			free(icon_path);
+		}
+		else
+			m_icon = Info::fileTypeIcon(XDG_MIME_TYPE_UNKNOWN, ::Desktop::Theme::Small);
+	}
 
 	virtual const QIcon &icon() const
 	{
@@ -262,7 +270,7 @@ private:
 		const XdgList *values;
 		const XdgAppGroup *group;
 		IApplications::LinkedList res;
-		DesktopEnvironment::Locale *locale = Application::locale();
+		::Desktop::Locale *locale = ::Desktop::Locale::current();
 
 		do
 			if (App *&app = m_applications[QString::fromUtf8(xdg_joint_list_item_app_id(apps))])

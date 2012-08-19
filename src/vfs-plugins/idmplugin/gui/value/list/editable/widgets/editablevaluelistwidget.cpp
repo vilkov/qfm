@@ -2,7 +2,8 @@
 #include "../../../simple/widgets/simplevaluewidget.h"
 #include "../../../simple/rating/widgets/ratingvaluewidget.h"
 #include "../../../composite/widgets/compositevaluewidget.h"
-#include "../../../../../../../application.h"
+
+#include <desktop/theme/desktop_theme.h>
 
 
 template <Database::EntityType EntityType>
@@ -101,7 +102,7 @@ EditableValueListWidgetPrivate::EditableValueListWidgetPrivate(ICallback *callba
 	m_vLayout(this),
 	m_handler(this),
 	m_filter(&m_handler, this),
-	m_search(Application::desktopService()->searchIcon(), QString(), this),
+	m_search(::Desktop::Theme::current()->searchIcon(), QString(), this),
 	m_view(handler, this),
 	m_model(m_container, query)
 {

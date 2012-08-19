@@ -1,12 +1,12 @@
 #include "idminvalidfileinfo.h"
-#include "../../../application.h"
+#include <desktop/theme/desktop_theme.h>
 
 
 IDM_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo(const QString &fileName) :
 	m_fileName(IFileInfo::location(fileName, fileName.toUtf8())),
-	m_icon(Application::desktopService()->missingIcon())
+	m_icon(::Desktop::Theme::current()->missingIcon())
 {}
 
 bool InvalidInfo::isDir() const

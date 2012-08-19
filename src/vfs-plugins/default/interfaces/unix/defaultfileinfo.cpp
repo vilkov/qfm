@@ -1,7 +1,8 @@
+#include "defaultmimeiconcache.h"
 #include "../defaultfileinfo.h"
 #include "../defaultfileaccessor.h"
-#include "../../../../application.h"
 
+#include <desktop/theme/desktop_theme.h>
 #include <QtCore/QTextCodec>
 
 #include <sys/stat.h>
@@ -15,6 +16,7 @@ DEFAULT_PLUGIN_NS_BEGIN
 
 static uint userId = getuid();
 static uint groupId = getgid();
+static MimeIconCache iconCache;
 
 
 static int translatePermissions(const struct stat &st)
@@ -101,7 +103,7 @@ Info::Info<Info::Identify>(const QByteArray &filePath, Identify) :
 	m_fileName(location(filePath.mid(filePath.lastIndexOf('/') + 1), codec()))
 {
 	refresh();
-	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
+	identify();
 }
 
 template <>
@@ -129,7 +131,7 @@ Info::Info<Info::Identify>(const Info &other, Identify) :
 	m_fileName(other.m_fileName),
 	m_info(other.m_info)
 {
-	m_info.type = Application::desktopService()->fileTypeInfo(m_filePath, m_info.isDir);
+	identify();
 }
 
 bool Info::isDir() const
@@ -197,6 +199,39 @@ QTextCodec *Info::codec()
 	return QTextCodec::codecForLocale();
 }
 
+FileTypeInfo Info::fileTypeInfoFromFileName(const QByteArray &fileName, bool isDir)
+{
+	FileTypeInfo type;
+
+	if (isDir)
+	{
+		type.icon = iconCache.findIcon("inode/directory", ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		type.id.mime = QString::fromLatin1("inode/directory");
+		type.name = QString::fromLatin1("<DIR>");
+	}
+	else
+	{
+		const char *mimeType = xdg_mime_get_mime_type_from_file_name(fileName);
+
+		if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
+		{
+			mimeType = XDG_MIME_TYPE_TEXTPLAIN;
+		}
+
+		type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		type.name = type.id.mime = QString::fromUtf8(mimeType);
+	}
+
+	return type;
+}
+
+QIcon Info::fileTypeIcon(const char *mimeType, int size)
+{
+	return iconCache.findIcon(mimeType, size, ::Desktop::Theme::current()->name());
+}
+
 void Info::refresh()
 {
 	struct stat st;
@@ -227,6 +262,40 @@ void Info::refresh()
 						free(realName);
 					}
 			}
+}
+
+void Info::identify()
+{
+	if (m_info.isDir)
+	{
+		FileTypeInfo type;
+
+		type.icon = iconCache.findIcon("inode/directory", ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		type.id.mime = QString::fromLatin1("inode/directory");
+		type.name = QString::fromLatin1("<DIR>");
+
+		 m_info.type = type;
+	}
+	else
+	{
+		FileTypeInfo type;
+		const char *mimeType = xdg_mime_get_mime_type_from_file_name(m_filePath);
+
+		if (mimeType == XDG_MIME_TYPE_UNKNOWN)
+			mimeType = xdg_mime_get_mime_type_for_file(m_filePath, NULL);
+
+		if (strcmp(mimeType, XDG_MIME_TYPE_TEXTPLAIN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_UNKNOWN) == 0 ||
+			strcmp(mimeType, XDG_MIME_TYPE_EMPTY) == 0)
+		{
+			mimeType = XDG_MIME_TYPE_TEXTPLAIN;
+		}
+
+		type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		type.name = type.id.mime = QString::fromUtf8(mimeType);
+
+		m_info.type = type;
+	}
 }
 
 DEFAULT_PLUGIN_NS_END

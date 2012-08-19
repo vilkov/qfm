@@ -1,5 +1,5 @@
 #include "libarchivefileinfo.h"
-#include "../../../../application.h"
+#include "../../../default/interfaces/defaultfileinfo.h"
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN
@@ -10,7 +10,7 @@ Info::Info()
 Info::Info(const Data &data, bool isDir) :
 	m_data(data),
 	m_isDir(isDir),
-	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_data.fileName, m_isDir))
+	m_fileTypeInfo(Default::Info::fileTypeInfoFromFileName(m_data.fileName, m_isDir))
 {}
 
 bool Info::isDir() const

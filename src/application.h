@@ -12,9 +12,9 @@
 #include "settings/applicationsettings.h"
 #include "settings/applicationsettingscontainer.h"
 #include "mainwindow/mainwindow.h"
-#include "de/de_locale.h"
-#include "de/de_service.h"
-#include "de/contextmenu/decontextmenufactory.h"
+#include "desktop/locale/desktop_locale.h"
+#include "desktop/theme/desktop_theme.h"
+#include "desktop/contextmenu/desktop_contextmenufactory.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -32,10 +32,8 @@ public:
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 	static SettingsContainer *settings2() { return &instance()->m_settings2; };
-	static DesktopEnvironment::Locale *locale() { return &instance()->m_desktopLocale; }
-	static DesktopEnvironment::Service *desktopService() { return &instance()->m_desktopService; }
-    static DesktopEnvironment::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
-	static Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
+    static ::Desktop::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
+	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
 	static ::VFS::RootNode *rootNode() { return instance()->m_rootNode.data(); }
@@ -49,13 +47,13 @@ protected: /* ExceptionHandler */
 	virtual void handleException(const char *where, const char *what);
 
 private:
+	::Desktop::Locale m_locale;
+	::Desktop::Theme m_theme;
 	SettingsContainer m_settings2;
 
 	ApplicationSettings m_settings;
-	Tools::TasksPool::TaskPool m_taskPool;
-	DesktopEnvironment::Locale m_desktopLocale;
-	DesktopEnvironment::Service m_desktopService;
-    DesktopEnvironment::ContextMenuFactory m_globalMenu;
+	::Tools::TasksPool::TaskPool m_taskPool;
+    ::Desktop::ContextMenuFactory m_globalMenu;
     QScopedPointer<VFS::RootNode> m_rootNode;
 	MainWindow m_mainWindow;
 };

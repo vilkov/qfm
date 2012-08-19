@@ -1,6 +1,6 @@
 #include "directoryview.h"
 #include "foldersview.h"
-#include "../../de/contextmenu/decontextmenu.h"
+#include "../../desktop/contextmenu/desktop_contextmenu.h"
 #include "../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../application.h"
 

@@ -1,7 +1,7 @@
-#include "../decontextmenu.h"
+#include "../desktop_contextmenu.h"
 
 
-DE_NS_BEGIN
+DESKTOP_NS_BEGIN
 
 ContextMenu::ContextMenu()
 {
@@ -15,4 +15,4 @@ ContextMenu::ContextMenu()
 	m_menu.addAction(tr("Properties"));
 }
 
-DE_NS_END
+DESKTOP_NS_END

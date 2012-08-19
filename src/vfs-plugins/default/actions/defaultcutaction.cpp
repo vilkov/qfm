@@ -1,11 +1,11 @@
 #include "defaultcutaction.h"
-#include "../../../application.h"
+#include <desktop/theme/desktop_theme.h>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
 CutAction::CutAction() :
-	SyncFileAction(Application::desktopService()->cutActionIcon(), tr("Cut"))
+	SyncFileAction(::Desktop::Theme::current()->cutActionIcon(), tr("Cut"))
 {}
 
 void CutAction::process(const IFileContainer *container, const FilesList &files) const

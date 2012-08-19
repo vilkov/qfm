@@ -45,8 +45,14 @@ public:
 
 public:
 	static QTextCodec *codec();
+	static FileTypeInfo fileTypeInfoFromFileName(const QByteArray &fileName, bool isDir);
+
+#ifdef Q_OS_UNIX
+	static QIcon fileTypeIcon(const char *mimeType, int size);
+#endif
 
 	void refresh();
+	void identify();
 	bool isRoot() const { return m_isRoot; }
 	bool exists() const { return m_info.exists; }
 

@@ -1,7 +1,6 @@
 #ifndef VFS_NS_H_
 #define VFS_NS_H_
 
-
 #define VFS_NS_BEGIN namespace VFS {
 #define VFS_NS_END }
 

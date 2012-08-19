@@ -11,7 +11,7 @@ Plugin::Plugin(::Tools::Settings::Option *parentOption) :
 
 void Plugin::registered()
 {
-	Application::globalMenu()->registerAction(&m_createDbAction, ::DesktopEnvironment::ContextMenuFactory::SingleFolder);
+	Application::globalMenu()->registerAction(&m_createDbAction, ::Desktop::ContextMenuFactory::SingleFolder);
 }
 
 ::Tools::Settings::Page *Plugin::settings()

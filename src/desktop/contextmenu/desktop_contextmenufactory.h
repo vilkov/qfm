@@ -1,5 +1,5 @@
-#ifndef DECONTEXTMENUFACTORY_H_
-#define DECONTEXTMENUFACTORY_H_
+#ifndef DESKTOP_CONTEXTMENUFACTORY_H_
+#define DESKTOP_CONTEXTMENUFACTORY_H_
 
 #include <QtCore/QPoint>
 #include <QtCore/QList>
@@ -8,10 +8,10 @@
 #include <vfs/actions/vfs_fileaction.h>
 #include <vfs/filetypeinfo/vfs_filetypeinfo.h>
 
-#include "../de_ns.h"
+#include "../desktop_ns.h"
 
 
-DE_NS_BEGIN
+DESKTOP_NS_BEGIN
 
 class ContextMenuFactory
 {
@@ -48,6 +48,6 @@ private:
 	FileActionsList m_actions[TypeCount];
 };
 
-DE_NS_END
+DESKTOP_NS_END
 
-#endif /* DECONTEXTMENUFACTORY_H_ */
+#endif /* DESKTOP_CONTEXTMENUFACTORY_H_ */

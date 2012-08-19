@@ -1,5 +1,5 @@
-#ifndef GTK_DE_P_H_
-#define GTK_DE_P_H_
+#ifndef DESKTOP_GTK_P_H_
+#define DESKTOP_GTK_P_H_
 
 #include <QtCore/QString>
 
@@ -15,10 +15,10 @@ typedef char *(*Ptr_gconf_client_get_string)(GConfClient *, const char *, GError
 typedef bool (*Ptr_gconf_client_get_bool)(GConfClient *, const char *, GError **);
 
 
-class DesktopEnvironmentPrivate
+class DesktopPrivate
 {
 public:
-    DesktopEnvironmentPrivate();
+    DesktopPrivate();
 
     static bool isKDE4Session();
     static QString themeName();
@@ -33,4 +33,4 @@ private:
     static Ptr_gconf_client_get_bool gconf_client_get_bool;
 };
 
-#endif /* GTK_DE_P_H_ */
+#endif /* DESKTOP_GTK_P_H_ */

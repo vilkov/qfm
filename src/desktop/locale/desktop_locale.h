@@ -1,17 +1,19 @@
-#ifndef DE_LOCALE_H_
-#define DE_LOCALE_H_
+#ifndef DESKTOP_LOCALE_H_
+#define DESKTOP_LOCALE_H_
 
 #include <QtCore/QByteArray>
 #include <QtCore/QTextCodec>
-#include "de_ns.h"
+#include "../desktop_ns.h"
 
 
-DE_NS_BEGIN
+DESKTOP_NS_BEGIN
 
 class Locale
 {
 public:
 	Locale();
+
+	static Locale *current();
 
 	const QByteArray &lang() const { return m_lang; }
 	const QByteArray &country() const { return m_country; }
@@ -28,6 +30,6 @@ private:
 	QTextCodec *m_codec;
 };
 
-DE_NS_END
+DESKTOP_NS_END
 
-#endif /* DE_LOCALE_H_ */
+#endif /* DESKTOP_LOCALE_H_ */

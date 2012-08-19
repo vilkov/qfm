@@ -1,7 +1,5 @@
 #include "libunrarfileinfo.h"
-#include "../../../../application.h"
-
-#include <QtCore/QTextCodec>
+#include "../../../default/interfaces/defaultfileinfo.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN
@@ -9,7 +7,7 @@ LIBUNRAR_ARC_PLUGIN_NS_BEGIN
 Info::Info(const Data &data, bool isDir) :
 	m_data(data),
 	m_isDir(isDir),
-	m_fileTypeInfo(Application::desktopService()->fileTypeInfoFromFileName(m_data.fileName, m_isDir))
+	m_fileTypeInfo(Default::Info::fileTypeInfoFromFileName(m_data.fileName, m_isDir))
 {}
 
 bool Info::isDir() const

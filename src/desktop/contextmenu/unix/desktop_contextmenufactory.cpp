@@ -1,7 +1,7 @@
-#include "../decontextmenufactory.h"
+#include "../desktop_contextmenufactory.h"
 
 
-DE_NS_BEGIN
+DESKTOP_NS_BEGIN
 
 ContextMenuFactory::ContextMenuFactory()
 {}
@@ -17,4 +17,4 @@ void ContextMenuFactory::registerAction(const ::VFS::FileAction *action, const F
 		m_files[fileTypes.at(i)].push_back(action);
 }
 
-DE_NS_END
+DESKTOP_NS_END

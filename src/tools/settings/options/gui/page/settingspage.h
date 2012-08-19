@@ -1,37 +1,26 @@
 #ifndef SETTINGSPAGE_H_
 #define SETTINGSPAGE_H_
 
-#include "../settingsivisibleoption.h"
-#include "../../settingsscope.h"
+#include "../groupbox/settingsgroupbox.h"
 
 
 SETTINGS_NS_BEGIN
 
-class Page : public Scope, public IVisibleOption
+class Page : public GroupBox
 {
 public:
-	typedef QList<Page *>           Pages;
-	typedef QList<IVisibleOption *> Container;
+	typedef QList<Page *> Pages;
 
 public:
 	Page(const QString &title, const QString &id, Option *parent);
 
-	const QString &title() const { return m_title; }
 	const Pages &subpages() const { return m_subpages; }
 
+	using GroupBox::manage;
 	void manage(Page *page) { Scope::manage(page); m_subpages.push_back(page); }
-	void manage(Option *option, IVisibleOption *gui) { Scope::manage(option); m_guis.push_back(gui); }
-	void manage(IVisibleOption *gui) { m_guis.push_back(gui); }
-
-	virtual QWidget *createEditor();
-	virtual void restoreDefault();
-	virtual bool accept();
-	virtual void reject();
 
 protected:
-	QString m_title;
 	Pages m_subpages;
-	Container m_guis;
 };
 
 SETTINGS_NS_END

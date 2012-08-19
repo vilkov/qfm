@@ -19,7 +19,7 @@ QWidget *GroupBox::createEditor()
 
 	QGroupBox m_selectedPage;
 
-	layout->setSpacing(3);
+	layout->setSpacing(5);
 	layout->setMargin(5);
 
 	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)

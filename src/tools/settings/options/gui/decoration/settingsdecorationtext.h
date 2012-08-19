@@ -1,6 +1,7 @@
 #ifndef SETTINGSDECORATIONTEXT_H_
 #define SETTINGSDECORATIONTEXT_H_
 
+#include <QtCore/QString>
 #include "settingsdecoration.h"
 
 
@@ -9,7 +10,7 @@ SETTINGS_NS_BEGIN
 class DecorationText : public Decoration
 {
 public:
-	DecorationText(const QString &text, Option *parent);
+	DecorationText(const QString &text);
 
 	virtual QWidget *createEditor();
 

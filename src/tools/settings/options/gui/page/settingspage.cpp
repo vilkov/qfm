@@ -19,8 +19,8 @@ QWidget *Page::createEditor()
 
 	QGroupBox m_selectedPage;
 
-	layout->setSpacing(1);
-	layout->setMargin(1);
+	layout->setSpacing(3);
+	layout->setMargin(5);
 
 	for (Container::size_type i = 0, size = m_guis.size(); i < size; ++i)
 		layout->addWidget(m_guis.at(i)->createEditor());

@@ -5,8 +5,8 @@
 
 SETTINGS_NS_BEGIN
 
-DecorationText::DecorationText(const QString &text, Option *parent) :
-	Decoration(parent),
+DecorationText::DecorationText(const QString &text) :
+	Decoration(),
 	m_text(text)
 {}
 

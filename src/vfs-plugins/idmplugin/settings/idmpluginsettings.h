@@ -8,7 +8,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class Settings : public Tools::Settings::Page
+class Settings : public ::Tools::Settings::Page
 {
 	Q_DECLARE_TR_FUNCTIONS(Settings)
 

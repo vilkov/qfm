@@ -22,6 +22,7 @@ public:
 
 	void manage(Page *page) { Scope::manage(page); m_subpages.push_back(page); }
 	void manage(Option *option, IVisibleOption *gui) { Scope::manage(option); m_guis.push_back(gui); }
+	void manage(IVisibleOption *gui) { m_guis.push_back(gui); }
 
 	virtual QWidget *createEditor();
 	virtual void restoreDefault();

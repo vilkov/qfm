@@ -1,7 +1,6 @@
 #ifndef SETTINGSPAGE_H_
 #define SETTINGSPAGE_H_
 
-#include "settingstab.h"
 #include "../settingsivisibleoption.h"
 #include "../../settingsscope.h"
 

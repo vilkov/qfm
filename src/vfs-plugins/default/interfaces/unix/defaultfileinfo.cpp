@@ -222,10 +222,7 @@ FileTypeInfo Info::fileTypeInfoFromFileName(const QByteArray &fileName, bool isD
 
 		type.id.mime = QByteArray(mimeType);
 		type.name = QString::fromUtf8(mimeType);
-		type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-
-		if (type.icon.isNull())
-			type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
+		type.icon = iconCache.findIcon(mimeType, XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
 	}
 
 	return type;
@@ -326,12 +323,7 @@ void Info::identify(const IFileContainer *container)
 			}
 			else
 				if (settings->fileIcon().onlyTypeIcon().value())
-				{
-					m_info.type.icon = iconCache.findIcon(mimeType, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-
-					if (m_info.type.icon.isNull())
-						m_info.type.icon = iconCache.findIcon(XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
-				}
+					m_info.type.icon = iconCache.findIcon(mimeType, XDG_MIME_TYPE_TEXTPLAIN, ::Desktop::Theme::Small, ::Desktop::Theme::current()->name());
 	}
 }
 

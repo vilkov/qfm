@@ -72,6 +72,8 @@ public:
 					res = *write(index, QString::fromUtf8(icon_path));
 					::free(icon_path);
 				}
+				else
+					write(index);
 
 				return res;
 			}
@@ -88,6 +90,11 @@ protected:
 	{
 		QReadLocker lock(&m_cacheLock);
 		return read(index);
+	}
+
+	void write(const Index &index)
+	{
+		m_cache.insert(index, new QIcon());
 	}
 
 	QIcon *write(const Index &index, const QString &fileName)

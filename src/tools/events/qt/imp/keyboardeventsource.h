@@ -6,7 +6,7 @@
 
 EVENTS_NS_BEGIN
 
-#include "../../arguments/define.h"
+#include "../../../arguments/define.h"
 
 template <typename BaseClass = EventSourceBase<QWidget> >
 class KeyboardEventSource : public BaseClass
@@ -74,7 +74,7 @@ protected:
     }
 };
 
-#include "../../arguments/undefine.h"
+#include "../../../arguments/undefine.h"
 
 EVENTS_NS_END
 

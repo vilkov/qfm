@@ -8,8 +8,8 @@
 #include <QtGui/QDialogButtonBox>
 #include "model/entitiestreemodel.h"
 #include "../../containeres/idmcontainer.h"
-#include "../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../tools/events/qt/imp/keyboardeventhandler.h"
+#include "../../../../tools/events/qt/imp/keyboardeventsource.h"
 
 
 using namespace ::VFS::Plugins::Idm;

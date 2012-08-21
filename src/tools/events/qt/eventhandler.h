@@ -1,7 +1,7 @@
 #ifndef EVENTHANDLER_H_
 #define EVENTHANDLER_H_
 
-#include "events_ns.h"
+#include "../events_ns.h"
 
 
 class QMouseEvent;

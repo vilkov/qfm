@@ -2,7 +2,7 @@
 #define EVENTHANDLERBASE_H_
 
 #include "../eventhandler.h"
-#include "../../templates/metatemplates.h"
+#include "../../../templates/metatemplates.h"
 
 
 EVENTS_NS_BEGIN

@@ -13,10 +13,10 @@
 #include "model/queryconstraintsdelegate.h"
 #include "../../../containeres/idmcontainer.h"
 #include "../../../storage/queries/idmselectquery.h"
-#include "../../../../../tools/events/imp/mouseeventhandler.h"
-#include "../../../../../tools/events/imp/mouseeventsource.h"
-#include "../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../../tools/events/qt/imp/mouseeventhandler.h"
+#include "../../../../../tools/events/qt/imp/mouseeventsource.h"
+#include "../../../../../tools/events/qt/imp/keyboardeventhandler.h"
+#include "../../../../../tools/events/qt/imp/keyboardeventsource.h"
 
 
 using namespace ::VFS::Plugins::Idm;

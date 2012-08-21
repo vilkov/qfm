@@ -15,13 +15,13 @@
 
 #include "widgets/pathedit.h"
 #include "../../history/navigationhistory.h"
-#include "../../tools/events/imp/mouseeventhandler.h"
-#include "../../tools/events/imp/keyboardeventhandler.h"
-#include "../../tools/events/imp/contextmenueventhandler.h"
-#include "../../tools/events/imp/mouseeventsource.h"
-#include "../../tools/events/imp/keyboardeventsource.h"
-#include "../../tools/events/imp/contextmenueventsource.h"
-#include "../../tools/events/imp/focuseventhandler.h"
+#include "../../tools/events/qt/imp/mouseeventhandler.h"
+#include "../../tools/events/qt/imp/keyboardeventhandler.h"
+#include "../../tools/events/qt/imp/contextmenueventhandler.h"
+#include "../../tools/events/qt/imp/mouseeventsource.h"
+#include "../../tools/events/qt/imp/keyboardeventsource.h"
+#include "../../tools/events/qt/imp/contextmenueventsource.h"
+#include "../../tools/events/qt/imp/focuseventhandler.h"
 
 
 using namespace Tools::Events;

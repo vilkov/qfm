@@ -3,7 +3,7 @@
 
 #include "settingsivisibleoption.h"
 #include "../value/settingsoptionfont.h"
-#include "../../../events/imp/mouseeventhandler.h"
+#include "../../../events/qt/imp/mouseeventhandler.h"
 
 
 class QLabel;

@@ -3,12 +3,12 @@
 
 #include <QtGui/QWidget>
 #include "../eventhandler.h"
-#include "../../templates/metatemplates.h"
+#include "../../../templates/metatemplates.h"
 
 
 EVENTS_NS_BEGIN
 
-#include "../../arguments/define.h"
+#include "../../../arguments/define.h"
 #define INITIALISERS(Values) :         \
 		BaseClass(Values),             \
 	    m_eventHandler(eventHandler)   \
@@ -65,7 +65,7 @@ private:
 };
 
 #undef INITIALISERS
-#include "../../arguments/undefine.h"
+#include "../../../arguments/undefine.h"
 
 EVENTS_NS_END
 

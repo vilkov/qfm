@@ -1,6 +1,6 @@
 #include "settingsvisibleoptionfont.h"
 #include "../../../pointers/pscopedpointer.h"
-#include "../../../events/imp/mouseeventsource.h"
+#include "../../../events/qt/imp/mouseeventsource.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QHBoxLayout>

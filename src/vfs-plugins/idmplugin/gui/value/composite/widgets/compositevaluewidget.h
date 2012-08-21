@@ -4,10 +4,10 @@
 #include <QtGui/QTreeView>
 #include "../../model/compositevaluemodel.h"
 #include "../../../../containeres/idmcontainer.h"
-#include "../../../../../../tools/events/imp/mouseeventhandler.h"
-#include "../../../../../../tools/events/imp/mouseeventsource.h"
-#include "../../../../../../tools/events/imp/keyboardeventhandler.h"
-#include "../../../../../../tools/events/imp/keyboardeventsource.h"
+#include "../../../../../../tools/events/qt/imp/mouseeventhandler.h"
+#include "../../../../../../tools/events/qt/imp/mouseeventsource.h"
+#include "../../../../../../tools/events/qt/imp/keyboardeventhandler.h"
+#include "../../../../../../tools/events/qt/imp/keyboardeventsource.h"
 #include "../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 

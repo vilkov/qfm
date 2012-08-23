@@ -4,6 +4,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QLinkedList>
 #include "events_subscriber.h"
+#include "../../arguments/define.h"
 
 
 EVENTS_NS_BEGIN
@@ -39,12 +40,40 @@ public:
 	}
 
 protected:
-	void publish(int event)
+	inline void publish(int event)
+	{
+		Arguments arguments;
+		publish(event, arguments);
+	}
+
+	template <TEMPLATE_ARGS_1>
+	inline void publish(int event, ARGUMENTS_BY_VALUE_1)
+	{
+		Arguments1<ARGUMENTS_1> arguments(VALUES_1);
+		publish(event, static_cast<Arguments &>(arguments));
+	}
+
+	template <TEMPLATE_ARGS_2>
+	inline void publish(int event, ARGUMENTS_BY_VALUE_2)
+	{
+		Arguments2<ARGUMENTS_2> arguments(VALUES_2);
+		publish(event, static_cast<Arguments &>(arguments));
+	}
+
+	template <TEMPLATE_ARGS_3>
+	inline void publish(int event, ARGUMENTS_BY_VALUE_3)
+	{
+		Arguments3<ARGUMENTS_3> arguments(VALUES_3);
+		publish(event, static_cast<Arguments &>(arguments));
+	}
+
+private:
+	inline void publish(int event, Arguments &arguments)
 	{
 		List &list = m_subscribers[event];
 
 		for (List::iterator i = list.begin(), end = list.end(); i != end; ++i)
-			(*i)->receive();
+			(*i)->receive(arguments);
 	}
 
 private:
@@ -52,5 +81,8 @@ private:
 };
 
 EVENTS_NS_END
+
+
+#include "../../arguments/undefine.h"
 
 #endif /* EVENTS_PUBLISHER_H_ */

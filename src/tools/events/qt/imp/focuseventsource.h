@@ -17,52 +17,52 @@ public:
 	{}
 
     template <TEMPLATE_ARGS_1>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_1) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_1) :
 		BaseClass(eventHandler, VALUES_1)
 	{}
 
     template <TEMPLATE_ARGS_2>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_2) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_2) :
 		BaseClass(eventHandler, VALUES_2)
 	{}
 
     template <TEMPLATE_ARGS_3>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_3) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_3) :
 		BaseClass(eventHandler, VALUES_3)
 	{}
 
     template <TEMPLATE_ARGS_4>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_4) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_4) :
 		BaseClass(eventHandler, VALUES_4)
 	{}
 
     template <TEMPLATE_ARGS_5>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_5) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_5) :
 		BaseClass(eventHandler, VALUES_5)
 	{}
 
     template <TEMPLATE_ARGS_6>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_6) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_6) :
 		BaseClass(eventHandler, VALUES_6)
 	{}
 
     template <TEMPLATE_ARGS_7>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_7) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_7) :
 		BaseClass(eventHandler, VALUES_7)
 	{}
 
     template <TEMPLATE_ARGS_8>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_8) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_8) :
 		BaseClass(eventHandler, VALUES_8)
 	{}
 
     template <TEMPLATE_ARGS_9>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_9) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_9) :
 		BaseClass(eventHandler, VALUES_9)
 	{}
 
     template <TEMPLATE_ARGS_10>
-    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_10) :
+    FocusOutEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_10) :
 		BaseClass(eventHandler, VALUES_10)
 	{}
 
@@ -84,52 +84,52 @@ public:
 	{}
 
     template <TEMPLATE_ARGS_1>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_1) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_1) :
 		BaseClass(eventHandler, VALUES_1)
 	{}
 
     template <TEMPLATE_ARGS_2>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_2) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_2) :
 		BaseClass(eventHandler, VALUES_2)
 	{}
 
     template <TEMPLATE_ARGS_3>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_3) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_3) :
 		BaseClass(eventHandler, VALUES_3)
 	{}
 
     template <TEMPLATE_ARGS_4>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_4) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_4) :
 		BaseClass(eventHandler, VALUES_4)
 	{}
 
     template <TEMPLATE_ARGS_5>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_5) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_5) :
 		BaseClass(eventHandler, VALUES_5)
 	{}
 
     template <TEMPLATE_ARGS_6>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_6) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_6) :
 		BaseClass(eventHandler, VALUES_6)
 	{}
 
     template <TEMPLATE_ARGS_7>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_7) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_7) :
 		BaseClass(eventHandler, VALUES_7)
 	{}
 
     template <TEMPLATE_ARGS_8>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_8) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_8) :
 		BaseClass(eventHandler, VALUES_8)
 	{}
 
     template <TEMPLATE_ARGS_9>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_9) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_9) :
 		BaseClass(eventHandler, VALUES_9)
 	{}
 
     template <TEMPLATE_ARGS_10>
-    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_10) :
+    FocusInEventSource(EventHandler *eventHandler, ARGUMENTS_BY_REFERENCE_10) :
 		BaseClass(eventHandler, VALUES_10)
 	{}
 

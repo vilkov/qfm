@@ -25,34 +25,34 @@ public:
     T *construct() { return new (allocate(sizeof(T))) T(); }
 
     template <typename T, TEMPLATE_ARGS_1>
-    T *construct(ARGUMENTS_1) { return new (allocate(sizeof(T))) T(VALUES_1); }
+    T *construct(ARGUMENTS_BY_REFERENCE_1) { return new (allocate(sizeof(T))) T(VALUES_1); }
 
     template <typename T, TEMPLATE_ARGS_2>
-    T *construct(ARGUMENTS_2) { return new (allocate(sizeof(T))) T(VALUES_2); }
+    T *construct(ARGUMENTS_BY_REFERENCE_2) { return new (allocate(sizeof(T))) T(VALUES_2); }
 
     template <typename T, TEMPLATE_ARGS_3>
-    T *construct(ARGUMENTS_3) { return new (allocate(sizeof(T))) T(VALUES_3); }
+    T *construct(ARGUMENTS_BY_REFERENCE_3) { return new (allocate(sizeof(T))) T(VALUES_3); }
 
     template <typename T, TEMPLATE_ARGS_4>
-    T *construct(ARGUMENTS_4) { return new (allocate(sizeof(T))) T(VALUES_4); }
+    T *construct(ARGUMENTS_BY_REFERENCE_4) { return new (allocate(sizeof(T))) T(VALUES_4); }
 
     template <typename T, TEMPLATE_ARGS_5>
-    T *construct(ARGUMENTS_5) { return new (allocate(sizeof(T))) T(VALUES_5); }
+    T *construct(ARGUMENTS_BY_REFERENCE_5) { return new (allocate(sizeof(T))) T(VALUES_5); }
 
     template <typename T, TEMPLATE_ARGS_6>
-    T *construct(ARGUMENTS_6) { return new (allocate(sizeof(T))) T(VALUES_6); }
+    T *construct(ARGUMENTS_BY_REFERENCE_6) { return new (allocate(sizeof(T))) T(VALUES_6); }
 
     template <typename T, TEMPLATE_ARGS_7>
-    T *construct(ARGUMENTS_7) { return new (allocate(sizeof(T))) T(VALUES_7); }
+    T *construct(ARGUMENTS_BY_REFERENCE_7) { return new (allocate(sizeof(T))) T(VALUES_7); }
 
     template <typename T, TEMPLATE_ARGS_8>
-    T *construct(ARGUMENTS_8) { return new (allocate(sizeof(T))) T(VALUES_8); }
+    T *construct(ARGUMENTS_BY_REFERENCE_8) { return new (allocate(sizeof(T))) T(VALUES_8); }
 
     template <typename T, TEMPLATE_ARGS_9>
-    T *construct(ARGUMENTS_9) { return new (allocate(sizeof(T))) T(VALUES_9); }
+    T *construct(ARGUMENTS_BY_REFERENCE_9) { return new (allocate(sizeof(T))) T(VALUES_9); }
 
     template <typename T, TEMPLATE_ARGS_10>
-    T *construct(ARGUMENTS_10) { return new (allocate(sizeof(T))) T(VALUES_10); }
+    T *construct(ARGUMENTS_BY_REFERENCE_10) { return new (allocate(sizeof(T))) T(VALUES_10); }
 
     template <typename T>
     void destroy(T *p) { deallocate(p); }

@@ -7,6 +7,19 @@
 #include "../../arguments/define.h"
 
 
+#define PUBLISH_EVENT(Event) \
+	publish(Event)
+
+#define PUBLISH_EVENT_1(Event, arg1) \
+	publish<Event##Arguments::Argument1>(Event, arg1)
+
+#define PUBLISH_EVENT_2(Event, arg1, arg2) \
+	publish<Event##Arguments::Argument1, Event##Arguments::Argument2>(Event, arg1, arg2)
+
+#define PUBLISH_EVENT_3(Event, arg1, arg2, arg3) \
+	publish<Event##Arguments::Argument1, Event##Arguments::Argument2, Event##Arguments::Argument3>(Event, arg1, arg2, arg3)
+
+
 EVENTS_NS_BEGIN
 
 class Publisher

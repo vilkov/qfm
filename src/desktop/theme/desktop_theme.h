@@ -21,22 +21,17 @@ public:
 		DE_Gnome,
 		DE_Unknown
 	};
-
-	enum IconSize
-	{
-		Small = 16
-	};
 #elif defined(Q_OS_WIN32)
 	enum Type
 	{
 		DE_Win32
 	};
+#endif
 
 	enum IconSize
 	{
 		Small = 16
 	};
-#endif
 
 public:
 	Theme();
@@ -61,6 +56,14 @@ public:
 	QIcon openDataIcon(int iconSize = Small) const;
 
 	QIcon missingIcon(int iconSize = Small) const;
+
+	QIcon driveIcon(const char *iconName, int iconSize = Small) const;
+	QIcon driveIcon(const QByteArray &iconName, int iconSize = Small) const;
+	QIcon driveHarddisk(int iconSize = Small) const;
+	QIcon driveOptical(int iconSize = Small) const;
+	QIcon driveRemovableMedia(int iconSize = Small) const;
+	QIcon driveRemovableMediaUsb(int iconSize = Small) const;
+	QIcon driveRemovableMediaUsbPendrive(int iconSize = Small) const;
 
 private:
 	Type m_type;

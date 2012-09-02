@@ -212,4 +212,39 @@ QIcon Theme::missingIcon(int iconSize) const
 	return iconCache.findIcon("image-missing", iconSize, XdgThemeStatus, m_name);
 }
 
+QIcon Theme::driveIcon(const char *iconName, int iconSize) const
+{
+	return iconCache.findIcon(iconName, iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveIcon(const QByteArray &iconName, int iconSize) const
+{
+	return iconCache.findIcon(iconName, iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveHarddisk(int iconSize) const
+{
+	return iconCache.findIcon("drive-harddisk", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveOptical(int iconSize) const
+{
+	return iconCache.findIcon("drive-optical", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveRemovableMedia(int iconSize = Small) const
+{
+	return iconCache.findIcon("drive-removable-media", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveRemovableMediaUsb(int iconSize) const
+{
+	return iconCache.findIcon("drive-removable-media-usb", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::driveRemovableMediaUsbPendrive(int iconSize) const
+{
+	return iconCache.findIcon("drive-removable-media-usb-pendrive", iconSize, XdgThemeDevices, m_name);
+}
+
 DESKTOP_NS_END

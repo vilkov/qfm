@@ -158,22 +158,22 @@ void MainWindow::showMounts(FoldersView &view)
 	QMenu menu;
 	QString label = QString::fromLatin1("   [free %1 of %2]");
 
-	m_mounts.refresh();
-	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
-	{
-		const MountPoint &mount = m_mounts.at(i);
-
-		if (mount.totalSize() > 0 && mount.freeSize() <= mount.totalSize())
-			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(::VFS::Tools::humanReadableShortSize(mount.freeSize())).arg(::VFS::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
-		else
-			menu.addAction(mount.icon(), mount.label())->setData(i);
-	}
-
-	if (QAction *res = menu.exec(view.listPos()))
-	{
-		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
-		view.setFocus();
-	}
+//	m_mounts.refresh();
+//	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
+//	{
+//		const MountPoint &mount = m_mounts.at(i);
+//
+//		if (mount.totalSize() > 0 && mount.freeSize() <= mount.totalSize())
+//			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(::VFS::Tools::humanReadableShortSize(mount.freeSize())).arg(::VFS::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
+//		else
+//			menu.addAction(mount.icon(), mount.label())->setData(i);
+//	}
+//
+//	if (QAction *res = menu.exec(view.listPos()))
+//	{
+//		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
+//		view.setFocus();
+//	}
 }
 
 void MainWindow::save()

@@ -8,7 +8,6 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
 #include "foldersview/foldersview.h"
-#include "../desktop/mountpoints/mountpoints.h"
 #include "../tools/settings/options/settingswidgetscope.h"
 
 #include "view/dolphinitemlistcontainer.h"
@@ -103,7 +102,7 @@ private:
 
 private:
     Settings m_settings;
-    MountPoints m_mounts;
+//    MountPoints m_mounts;
 
     CentralWidgetEventHandler m_eventHandler;
     CentralWidget m_centralWidget;

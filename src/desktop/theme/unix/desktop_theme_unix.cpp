@@ -232,7 +232,7 @@ QIcon Theme::driveOptical(int iconSize) const
 	return iconCache.findIcon("drive-optical", iconSize, XdgThemeDevices, m_name);
 }
 
-QIcon Theme::driveRemovableMedia(int iconSize = Small) const
+QIcon Theme::driveRemovableMedia(int iconSize) const
 {
 	return iconCache.findIcon("drive-removable-media", iconSize, XdgThemeDevices, m_name);
 }

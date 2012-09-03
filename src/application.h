@@ -15,6 +15,7 @@
 #include "desktop/locale/desktop_locale.h"
 #include "desktop/theme/desktop_theme.h"
 #include "desktop/contextmenu/desktop_contextmenufactory.h"
+#include "desktop/devices/desktop_devices.h"
 
 
 class Application : public QApplication, protected ExceptionHandler
@@ -49,6 +50,7 @@ protected: /* ExceptionHandler */
 private:
 	::Desktop::Locale m_locale;
 	::Desktop::Theme m_theme;
+	::Desktop::Devices m_devices;
 	SettingsContainer m_settings2;
 
 	ApplicationSettings m_settings;

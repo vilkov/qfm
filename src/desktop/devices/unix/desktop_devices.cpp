@@ -20,6 +20,16 @@ Devices::~Devices()
 	delete d;
 }
 
+Devices::const_iterator Devices::begin() const
+{
+	return d->m_devices.constBegin();
+}
+
+Devices::const_iterator Devices::end() const
+{
+	return d->m_devices.constEnd();
+}
+
 Devices *Devices::instance()
 {
 	Q_ASSERT(s_instance);

@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include "../desktop/devices/desktop_device_partition.h"
+#include "../desktop/devices/drives/desktop_device_drive.h"
 #include "../application.h"
 
 #include <vfs/tools/vfs_commontools.h>
@@ -156,7 +158,22 @@ void MainWindow::showMountsForRight()
 void MainWindow::showMounts(FoldersView &view)
 {
 	QMenu menu;
-	QString label = QString::fromLatin1("   [free %1 of %2]");
+	QString tab = QString::fromLatin1("    %1 (%2)");
+	QString label = QString::fromLatin1("%1 (%2)");
+	::Desktop::Devices *devices = ::Desktop::Devices::instance();
+
+	for (::Desktop::Devices::const_iterator i = devices->begin(), end = devices->end(); i != end; ++i)
+		if ((*i)->isDrive())
+		{
+			const ::Desktop::Drive::Container &partitions = (*i)->as< ::Desktop::Drive >()->partitions();
+
+			menu.addAction((*i)->icon(), QString(label).arg((*i)->label()).arg(::VFS::Tools::humanReadableShortSize((*i)->as< ::Desktop::Drive >()->size())))->setData(qVariantFromValue(static_cast<void *>(*i)));
+
+			for (::Desktop::Drive::Container::const_iterator i = partitions.begin(), end = partitions.end(); i != end; ++i)
+				menu.addAction((*i)->icon(), QString(tab).arg((*i)->label()).arg(::VFS::Tools::humanReadableShortSize((*i)->size())))->setData(qVariantFromValue(static_cast<void *>(*i)));
+		}
+		else
+			menu.addAction((*i)->icon(), (*i)->label())->setData(qVariantFromValue(static_cast<void *>(*i)));
 
 //	m_mounts.refresh();
 //	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
@@ -168,12 +185,12 @@ void MainWindow::showMounts(FoldersView &view)
 //		else
 //			menu.addAction(mount.icon(), mount.label())->setData(i);
 //	}
-//
-//	if (QAction *res = menu.exec(view.listPos()))
-//	{
+
+	if (QAction *res = menu.exec(view.listPos()))
+	{
 //		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
-//		view.setFocus();
-//	}
+		view.setFocus();
+	}
 }
 
 void MainWindow::save()

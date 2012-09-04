@@ -3,7 +3,6 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QString>
-#include <QtCore/QScopedPointer>
 #include "desktop_device.h"
 #include "../../tools/events/publisher-subscribers/events_publisher.h"
 
@@ -16,7 +15,8 @@ DESKTOP_NS_BEGIN
 class Devices : public ::Tools::Events::Publisher
 {
 public:
-	typedef QMap<QString, Device *> Container;
+	typedef QMap<QString, Device *>   Container;
+	typedef Container::const_iterator const_iterator;
 
 public:
 	enum Events
@@ -33,6 +33,9 @@ public:
 public:
 	Devices();
 	virtual ~Devices();
+
+	const_iterator begin() const;
+	const_iterator end() const;
 
 	static Devices *instance();
 

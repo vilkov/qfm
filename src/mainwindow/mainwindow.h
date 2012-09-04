@@ -102,7 +102,6 @@ private:
 
 private:
     Settings m_settings;
-//    MountPoints m_mounts;
 
     CentralWidgetEventHandler m_eventHandler;
     CentralWidget m_centralWidget;

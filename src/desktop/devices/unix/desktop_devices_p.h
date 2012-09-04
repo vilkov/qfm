@@ -2,7 +2,6 @@
 #define DESKTOP_DEVICES_P_H_
 
 #include <QtCore/QScopedPointer>
-#include <vfs/tools/vfs_commontools.h>
 #include "desktop_devices_udisks.h"
 #include "../desktop_devices.h"
 #include "../desktop_device_partition.h"
@@ -65,6 +64,44 @@ public:
 	}
 
 public:
+	static QString driveLabel(const QDBusInterface &interface)
+	{
+		QString res = interface.property("DevicePresentationName").toString();
+
+		if (res.isEmpty())
+			res = interface.property("DriveModel").toString();
+
+		return res;
+	}
+
+	static QString partitionLabel(const QDBusInterface &interface, const QStringList &mountPaths)
+	{
+		QString res = interface.property("DevicePresentationName").toString();
+
+		if (res.isEmpty())
+		{
+			res = interface.property("PartitionLabel").toString();
+
+			if (res.isEmpty())
+			{
+				res = interface.property("IdLabel").toString();
+
+				if (res.isEmpty())
+					if (interface.property("DeviceIsMounted").toBool())
+						res = mountPaths.at(0);
+					else
+					{
+						res = interface.property("DeviceFilePresentation").toString();
+
+						if (res.isEmpty())
+							res = interface.property("DeviceFile").toString();
+					}
+			}
+		}
+
+		return res;
+	}
+
 	static ::Desktop::Drive *drive(const QString &path, const QDBusInterface &interface)
 	{
 		QIcon icon;
@@ -81,7 +118,7 @@ public:
 
 			return new ::Desktop::FlashDrive(path,
 											 icon,
-											 interface.property("DevicePresentationName").toString(),
+											 driveLabel(interface),
 											 interface.property("DevicePresentationHide").toBool(),
 											 NULL,
 											 interface.property("DeviceSize").toULongLong(),
@@ -96,7 +133,7 @@ public:
 
 			return new ::Desktop::FloppyDrive(path,
 											  icon,
-											  interface.property("DevicePresentationName").toString(),
+											  driveLabel(interface),
 											  interface.property("DevicePresentationHide").toBool(),
  											  NULL,
 											  interface.property("DeviceSize").toULongLong(),
@@ -111,7 +148,7 @@ public:
 
 			return new ::Desktop::OpticalDrive(path,
 					   	   	   	   	   	   	   icon,
-					   	   	   	   	   	   	   interface.property("DevicePresentationName").toString(),
+					   	   	   	   	   	   	   driveLabel(interface),
 					   	   	   	   	   	   	   interface.property("DevicePresentationHide").toBool(),
 											   NULL,
 					   	   	   	   	   	   	   interface.property("DeviceSize").toULongLong(),
@@ -126,7 +163,7 @@ public:
 
 			return new ::Desktop::HardDrive(path,
 											icon,
-											interface.property("DevicePresentationName").toString(),
+											driveLabel(interface),
 											interface.property("DevicePresentationHide").toBool(),
 											NULL,
 											interface.property("DeviceSize").toULongLong());
@@ -151,7 +188,7 @@ public:
 
 			return new ::Desktop::FlashDrive(path,
 											 icon,
-											 interface.property("DevicePresentationName").toString(),
+											 driveLabel(interface),
 											 interface.property("DevicePresentationHide").toBool(),
 											 NULL,
 											 interface.property("DeviceSize").toULongLong(),
@@ -166,7 +203,7 @@ public:
 
 			return new ::Desktop::FloppyDrive(path,
 											  icon,
-											  interface.property("DevicePresentationName").toString(),
+											  driveLabel(interface),
 											  interface.property("DevicePresentationHide").toBool(),
 											  NULL,
 											  interface.property("DeviceSize").toULongLong(),
@@ -181,7 +218,7 @@ public:
 
 			return new ::Desktop::OpticalDrive(path,
 					   	   	   	   	   	   	   icon,
-					   	   	   	   	   	   	   interface.property("DevicePresentationName").toString(),
+					   	   	   	   	   	   	   driveLabel(interface),
 					   	   	   	   	   	   	   interface.property("DevicePresentationHide").toBool(),
 											   NULL,
 					   	   	   	   	   	   	   interface.property("DeviceSize").toULongLong(),
@@ -196,7 +233,7 @@ public:
 
 			return new ::Desktop::RemovableDrive(path,
 											   	 icon,
-											   	 interface.property("DevicePresentationName").toString(),
+											   	 driveLabel(interface),
 											   	 interface.property("DevicePresentationHide").toBool(),
 												 NULL,
 											   	 interface.property("DeviceSize").toULongLong(),
@@ -219,7 +256,7 @@ public:
 
 		return new ::Desktop::OpticalDrive(path,
 		 	 							   icon,
-		 	 							   interface.property("DevicePresentationName").toString(),
+		 	 							   driveLabel(interface),
 		 	 							   interface.property("DevicePresentationHide").toBool(),
 		 	 							   NULL,
 		 	 							   interface.property("DeviceSize").toULongLong(),
@@ -239,12 +276,12 @@ public:
 			else if (interface.property("DeviceIsDrive").toBool())
 				return drive(path, interface);
 			else if (interface.property("DeviceIsPartition").toBool())
-				return partition(path, interface);
+				partition(path, interface);
 
 		return NULL;
 	}
 
-	::Desktop::Device *partition(const QString &path, const QDBusInterface &interface)
+	void partition(const QString &path, const QDBusInterface &interface)
 	{
 		QIcon icon;
 		QString string;
@@ -261,6 +298,7 @@ public:
 
 		if (parent)
 		{
+			QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
 			string = interface.property("DevicePresentationIconName").toString();
 
 			if (string.isEmpty() ||
@@ -271,18 +309,15 @@ public:
 
 			partition.reset(new ::Desktop::Partition(path,
 													 icon,
-													 interface.property("DevicePresentationName").toString(),
+													 partitionLabel(interface, mountPaths),
 													 interface.property("DevicePresentationHide").toBool(),
 													 static_cast< ::Desktop::Drive *>(parent),
 													 interface.property("PartitionNumber").toInt(),
 													 interface.property("PartitionSize").toULongLong(),
-													 interface.property("DeviceMountPaths").toStringList()));
+													 mountPaths));
 
-			parent->as< ::Desktop::Drive >()->addPartition(partition.data());
-			return partition.take();
+			parent->as< ::Desktop::Drive >()->addPartition(partition.take());
 		}
-
-		return NULL;
 	}
 
 	void refresh()

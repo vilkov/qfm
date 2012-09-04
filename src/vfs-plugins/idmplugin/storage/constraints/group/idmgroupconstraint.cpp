@@ -49,6 +49,9 @@ QString GroupConstraint::typeToString(Type type)
 
 		case GroupConstraint::Or:
 			return tr("OR");
+
+		default:
+			return QString();
 	}
 }
 

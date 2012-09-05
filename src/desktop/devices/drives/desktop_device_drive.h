@@ -3,6 +3,7 @@
 
 #include <QtCore/QLinkedList>
 #include "../desktop_device.h"
+#include "../../theme/desktop_theme.h"
 
 
 DESKTOP_NS_BEGIN
@@ -95,6 +96,7 @@ public:
 
 	virtual bool isDrive() const;
 
+	static QIcon mediaTypeIcon(MediaType mediaType, int iconSize = Theme::Small);
 	static MediaType stringToMeduaType(const QString &media);
 
 private:

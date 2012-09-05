@@ -10,7 +10,6 @@
 #include "../drives/desktop_device_floppydrive.h"
 #include "../drives/desktop_device_opticaldrive.h"
 #include "../drives/desktop_device_removabledrive.h"
-#include "../../theme/desktop_theme.h"
 
 
 class DevicesPrivate : public QObject
@@ -143,18 +142,25 @@ public:
 		}
 		else if (type >= ::Desktop::Drive::Optical && type <= ::Desktop::Drive::Optical_Mrw_W)
 		{
+			QScopedPointer< ::Desktop::OpticalDrive > drive;
+
 			if (icon.isNull())
 				icon = ::Desktop::Theme::current()->driveOptical();
 
-			return new ::Desktop::OpticalDrive(path,
-					   	   	   	   	   	   	   icon,
-					   	   	   	   	   	   	   driveLabel(interface),
-					   	   	   	   	   	   	   interface.property("DevicePresentationHide").toBool(),
-											   NULL,
-					   	   	   	   	   	   	   interface.property("DeviceSize").toULongLong(),
-					   	   	   	   	   	   	   type,
-					   	   	   	   	   	   	   ::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
-					   	   	   	   	   	   	   interface.property("DriveIsMediaEjectable").toBool());
+			drive.reset(new ::Desktop::OpticalDrive(path,
+					   	   	   	   	   	   	   	    icon,
+					   	   	   	   	   	   	   	    driveLabel(interface),
+					   	   	   	   	   	   	   	    interface.property("DevicePresentationHide").toBool(),
+					   	   	   	   	   	   	   	    NULL,
+					   	   	   	   	   	   	   	    interface.property("DeviceSize").toULongLong(),
+					   	   	   	   	   	   	   	    type,
+					   	   	   	   	   	   	   	    ::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
+					   	   	   	   	   	   	   	    interface.property("DriveIsMediaEjectable").toBool()));
+
+			if (interface.property("DeviceIsMediaAvailable").toBool())
+				opticalDrivePartition(drive.data(), path, interface);
+
+			return drive.take();
 		}
 		else
 		{
@@ -213,18 +219,25 @@ public:
 		}
 		else if (type >= ::Desktop::Drive::Optical && type <= ::Desktop::Drive::Optical_Mrw_W)
 		{
+			QScopedPointer< ::Desktop::OpticalDrive > drive;
+
 			if (icon.isNull())
 				icon = ::Desktop::Theme::current()->driveOptical();
 
-			return new ::Desktop::OpticalDrive(path,
-					   	   	   	   	   	   	   icon,
-					   	   	   	   	   	   	   driveLabel(interface),
-					   	   	   	   	   	   	   interface.property("DevicePresentationHide").toBool(),
-											   NULL,
-					   	   	   	   	   	   	   interface.property("DeviceSize").toULongLong(),
-					   	   	   	   	   	   	   type,
-					   	   	   	   	   	   	   ::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
-					   	   	   	   	   	   	   interface.property("DriveIsMediaEjectable").toBool());
+			drive.reset(new ::Desktop::OpticalDrive(path,
+					   	   	   	   	   	   	   	   	icon,
+					   	   	   	   	   	   	   	   	driveLabel(interface),
+					   	   	   	   	   	   	   	   	interface.property("DevicePresentationHide").toBool(),
+					   	   	   	   	   	   	   	   	NULL,
+					   	   	   	   	   	   	   	   	interface.property("DeviceSize").toULongLong(),
+					   	   	   	   	   	   	   	   	type,
+					   	   	   	   	   	   	   	   	::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
+					   	   	   	   	   	   	   	   	interface.property("DriveIsMediaEjectable").toBool()));
+
+			if (interface.property("DeviceIsMediaAvailable").toBool())
+				opticalDrivePartition(drive.data(), path, interface);
+
+			return drive.take();
 		}
 		else
 		{
@@ -243,10 +256,38 @@ public:
 		}
 	}
 
+	static void opticalDrivePartition(::Desktop::OpticalDrive *parent, const QString &path, const QDBusInterface &interface)
+	{
+		QIcon icon;
+		QString string;
+		QScopedPointer< ::Desktop::Partition > partition;
+
+		QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
+		string = interface.property("DevicePresentationIconName").toString();
+
+		if (string.isEmpty() ||
+			(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
+		{
+			icon = ::Desktop::Drive::mediaTypeIcon(parent->media());
+		}
+
+		partition.reset(new ::Desktop::Partition(path,
+												 icon,
+												 partitionLabel(interface, mountPaths),
+												 interface.property("DevicePresentationHide").toBool(),
+												 static_cast< ::Desktop::Drive *>(parent),
+												 interface.property("PartitionNumber").toInt(),
+												 interface.property("PartitionSize").toULongLong(),
+												 mountPaths));
+
+		parent->addPartition(partition.take());
+	}
+
 	static ::Desktop::OpticalDrive *opticalDrive(const QString &path, const QDBusInterface &interface)
 	{
 		QIcon icon;
 		QString string = interface.property("DevicePresentationIconName").toString();
+		QScopedPointer< ::Desktop::OpticalDrive > drive;
 
 		if (string.isEmpty() ||
 			(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
@@ -254,15 +295,20 @@ public:
 			icon = ::Desktop::Theme::current()->driveOptical();
 		}
 
-		return new ::Desktop::OpticalDrive(path,
-		 	 							   icon,
-		 	 							   driveLabel(interface),
-		 	 							   interface.property("DevicePresentationHide").toBool(),
-		 	 							   NULL,
-		 	 							   interface.property("DeviceSize").toULongLong(),
-		 	 							   ::Desktop::Drive::stringToMeduaType(interface.property("DriveMediaCompatibility").toString()),
-		 	 							   ::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
-		 	 							   interface.property("DriveIsMediaEjectable").toBool());
+		drive.reset(new ::Desktop::OpticalDrive(path,
+		 	 							   	    icon,
+		 	 							   	    driveLabel(interface),
+		 	 							   	    interface.property("DevicePresentationHide").toBool(),
+		 	 							   	    NULL,
+		 	 							   	    interface.property("DeviceSize").toULongLong(),
+		 	 							   	    ::Desktop::Drive::stringToMeduaType(interface.property("DriveMediaCompatibility").toString()),
+		 	 							   	    ::Desktop::Drive::stringToMeduaType(interface.property("DriveMedia").toString()),
+		 	 							   	    interface.property("DriveIsMediaEjectable").toBool()));
+
+		if (interface.property("DeviceIsMediaAvailable").toBool())
+			opticalDrivePartition(drive.data(), path, interface);
+
+		return drive.take();
 	}
 
 public:

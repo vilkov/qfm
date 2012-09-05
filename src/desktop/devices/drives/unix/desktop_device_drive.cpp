@@ -1,5 +1,6 @@
 #include "../desktop_device_drive.h"
 #include "../../desktop_device_partition.h"
+#include "../../../theme/desktop_theme.h"
 
 
 DESKTOP_NS_BEGIN
@@ -22,6 +23,64 @@ Drive::~Drive()
 bool Drive::isDrive() const
 {
 	return true;
+}
+
+QIcon Drive::mediaTypeIcon(MediaType mediaType, int iconSize)
+{
+	switch (mediaType)
+	{
+		case Flash:
+		case Flash_CompactFlash:
+			return Theme::current()->mediaFlash(iconSize);
+
+		case Flash_MemoryStick:
+			return Theme::current()->mediaFlashMemoryStick(iconSize);
+
+		case Flash_SmartMedia:
+			return Theme::current()->mediaFlashSmartMedia(iconSize);
+
+		case Flash_SecureDigital:
+		case Flash_SecureDigitalHighCapacity:
+		case Flash_MultiMediaCard:
+			return Theme::current()->mediaFlashSdMmc(iconSize);
+
+		case Floppy:
+		case Floppy_Zip:
+		case Floppy_Jaz:
+			return Theme::current()->mediaFloppy(iconSize);
+
+		case Optical:
+		case Optical_Cd:
+		case Optical_Cd_R:
+		case Optical_Cd_Rw:
+			return Theme::current()->mediaOptical(iconSize);
+
+		case Optical_Dvd:
+		case Optical_Dvd_R:
+		case Optical_Dvd_Rw:
+		case Optical_Dvd_Ram:
+		case Optical_Dvd_Plus_R:
+		case Optical_Dvd_Plus_Rw:
+		case Optical_Dvd_Plus_R_Dl:
+		case Optical_Dvd_Plus_Rw_Dl:
+			return Theme::current()->mediaOpticalDvd(iconSize);
+
+		case Optical_Bd:
+		case Optical_Bd_R:
+		case Optical_Bd_Re:
+		case Optical_HdDvd:
+		case Optical_HdDvd_R:
+		case Optical_HdDvd_Rw:
+			return Theme::current()->mediaOpticalBluRay(iconSize);
+
+		case Optical_Mo:
+		case Optical_Mrw:
+		case Optical_Mrw_W:
+			return Theme::current()->mediaOptical(iconSize);
+
+		default:
+			return QIcon();
+	}
 }
 
 Drive::MediaType Drive::stringToMeduaType(const QString &media)

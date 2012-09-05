@@ -14,6 +14,11 @@ Drive::Drive(const Id &id,
 	m_size(size)
 {}
 
+Drive::~Drive()
+{
+	qDeleteAll(m_partitions);
+}
+
 bool Drive::isDrive() const
 {
 	return true;

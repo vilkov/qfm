@@ -85,6 +85,7 @@ public:
 		  bool hidden,
 		  Device *parent,
 		  quint64 size);
+	virtual ~Drive();
 
 	quint64 size() const { return m_size; }
 	const Container &partitions() const { return m_partitions; }

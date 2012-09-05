@@ -65,6 +65,22 @@ public:
 	QIcon driveRemovableMediaUsb(int iconSize = Small) const;
 	QIcon driveRemovableMediaUsbPendrive(int iconSize = Small) const;
 
+	QIcon mediaFlashMemoryStick(int iconSize = Small) const;
+	QIcon mediaFlashSdMmc(int iconSize = Small) const;
+	QIcon mediaFlashSmartMedia(int iconSize = Small) const;
+	QIcon mediaFlash(int iconSize = Small) const;
+	QIcon mediaFloppy(int iconSize = Small) const;
+	QIcon mediaOpticalAudio(int iconSize = Small) const;
+	QIcon mediaOpticalBluRay(int iconSize = Small) const;
+	QIcon mediaOpticalData(int iconSize = Small) const;
+	QIcon mediaOpticalDvdVideo(int iconSize = Small) const;
+	QIcon mediaOpticalDvd(int iconSize = Small) const;
+	QIcon mediaOpticalMixedCd(int iconSize = Small) const;
+	QIcon mediaOpticalRecordable(int iconSize = Small) const;
+	QIcon mediaOpticalVideo(int iconSize = Small) const;
+	QIcon mediaOptical(int iconSize = Small) const;
+	QIcon mediaTape(int iconSize = Small) const;
+
 private:
 	Type m_type;
 	QByteArray m_name;

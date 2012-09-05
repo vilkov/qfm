@@ -247,4 +247,79 @@ QIcon Theme::driveRemovableMediaUsbPendrive(int iconSize) const
 	return iconCache.findIcon("drive-removable-media-usb-pendrive", iconSize, XdgThemeDevices, m_name);
 }
 
+QIcon Theme::mediaFlashMemoryStick(int iconSize) const
+{
+	return iconCache.findIcon("media-flash-memory-stick", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaFlashSdMmc(int iconSize) const
+{
+	return iconCache.findIcon("media-flash-sd-mmc", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaFlashSmartMedia(int iconSize) const
+{
+	return iconCache.findIcon("media-flash-smart-media", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaFlash(int iconSize) const
+{
+	return iconCache.findIcon("media-flash", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaFloppy(int iconSize) const
+{
+	return iconCache.findIcon("media-floppy", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalAudio(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-audio", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalBluRay(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-blu-ray", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalData(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-data", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalDvdVideo(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-dvd-video", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalDvd(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-dvd", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalMixedCd(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-mixed-cd", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalRecordable(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-recordable", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOpticalVideo(int iconSize) const
+{
+	return iconCache.findIcon("media-optical-video", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaOptical(int iconSize) const
+{
+	return iconCache.findIcon("media-optical", iconSize, XdgThemeDevices, m_name);
+}
+
+QIcon Theme::mediaTape(int iconSize) const
+{
+	return iconCache.findIcon("media-tape", iconSize, XdgThemeDevices, m_name);
+}
+
 DESKTOP_NS_END

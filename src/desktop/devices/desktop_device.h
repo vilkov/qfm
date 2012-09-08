@@ -26,9 +26,16 @@ public:
 	virtual ~Device();
 
     const Id &id() const { return m_id; }
-	const QIcon &icon() const { return m_icon; }
+
+    const QIcon &icon() const { return m_icon; }
+	void setIcon(const QIcon &icon) { m_icon = icon; }
+
 	const QString &label() const { return m_label; }
+	void setLabel(const QString &label) { m_label = label; }
+
 	bool isHidden() const { return m_hidden; }
+	void setHidden(bool hidden) { m_hidden = hidden; }
+
 	Device *parent() const { return m_parent; }
 
 	virtual bool isDrive() const;

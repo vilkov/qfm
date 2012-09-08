@@ -15,10 +15,11 @@ public:
 		  	   bool hidden,
 		  	   Device *parent,
 		  	   quint64 size,
-		   	   MediaType mediaCompatibility,
+		  	   MediaTypeSet mediaCompatibility,
 		   	   MediaType media,
 		   	   bool ejectable);
 
+	static const MediaTypeSet &mediaTypeSet();
 	virtual bool isFlashDrive() const;
 };
 

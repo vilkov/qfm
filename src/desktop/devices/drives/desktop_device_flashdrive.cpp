@@ -9,11 +9,24 @@ FlashDrive::FlashDrive(const Id &id,
 	  	   	   	   	   bool hidden,
 	  	   	   	   	   Device *parent,
 	  	   	   	   	   quint64 size,
-	  	   	   	   	   MediaType mediaCompatibility,
+	  	   	   	   	   MediaTypeSet mediaCompatibility,
 	  	   	   	   	   MediaType media,
 	  	   	   	   	   bool ejectable) :
 	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, ejectable)
 {}
+
+const FlashDrive::MediaTypeSet &FlashDrive::mediaTypeSet()
+{
+	static MediaTypeSet set = MediaTypeSet::fromList(
+			MediaTypeList() << Flash
+			                << Flash_CompactFlash
+			                << Flash_MemoryStick
+			                << Flash_SmartMedia
+			                << Flash_SecureDigital
+			                << Flash_SecureDigitalHighCapacity
+			                << Flash_MultiMediaCard);
+	return set;
+}
 
 bool FlashDrive::isFlashDrive() const
 {

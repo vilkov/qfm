@@ -20,6 +20,16 @@ Drive::~Drive()
 	qDeleteAll(m_partitions);
 }
 
+void Drive::addPartition(Partition *partition)
+{
+	m_partitions.insert(partition->id(), partition);
+}
+
+void Drive::removePartition(const Id &id)
+{
+	m_partitions.remove(id);
+}
+
 bool Drive::isDrive() const
 {
 	return true;
@@ -83,7 +93,7 @@ QIcon Drive::mediaTypeIcon(MediaType mediaType, int iconSize)
 	}
 }
 
-Drive::MediaType Drive::stringToMeduaType(const QString &media)
+Drive::MediaType Drive::stringToMediaType(const QString &media)
 {
 	static const QString types[NoMedia] =
 	{
@@ -125,6 +135,16 @@ Drive::MediaType Drive::stringToMeduaType(const QString &media)
 			return static_cast<MediaType>(i);
 
 	return NoMedia;
+}
+
+Drive::MediaTypeSet Drive::stringListToMediaTypeSet(const QStringList &media)
+{
+	Drive::MediaTypeSet res;
+
+	for (QStringList::size_type i = 0, size = media.size(); i < size; ++i)
+		res.insert(stringToMediaType(media.at(i)));
+
+	return res;
 }
 
 DESKTOP_NS_END

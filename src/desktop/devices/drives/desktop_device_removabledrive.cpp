@@ -9,7 +9,7 @@ RemovableDrive::RemovableDrive(const Id &id,
 	  	   	   	   	   	   	   bool hidden,
 	  	   	   	   	   	   	   Device *parent,
 	  	   	   	   	   	   	   quint64 size,
-	  	   	   	   	   	   	   MediaType mediaCompatibility,
+	  	   	   	   	   	   	   MediaTypeSet mediaCompatibility,
 	  	   	   	   	   	   	   MediaType media,
 	  	   	   	   	   	   	   bool ejectable) :
 	Drive(id, icon, label, hidden, parent, size),

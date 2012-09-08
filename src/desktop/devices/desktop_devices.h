@@ -15,8 +15,8 @@ DESKTOP_NS_BEGIN
 class Devices : public ::Tools::Events::Publisher
 {
 public:
-	typedef QMap<QString, Device *>   Container;
-	typedef Container::const_iterator const_iterator;
+	typedef QMap<Device::Id, Device *> Container;
+	typedef Container::const_iterator  const_iterator;
 
 public:
 	enum Events

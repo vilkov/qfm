@@ -1,7 +1,10 @@
 #ifndef DESKTOP_DEVICE_DRIVE_H_
 #define DESKTOP_DEVICE_DRIVE_H_
 
-#include <QtCore/QLinkedList>
+#include <QtCore/QMap>
+#include <QtCore/QSet>
+#include <QtCore/QList>
+#include <QtCore/QStringList>
 #include "../desktop_device.h"
 #include "../../theme/desktop_theme.h"
 
@@ -16,7 +19,7 @@ class Partition;
 class Drive : public Device
 {
 public:
-	typedef QLinkedList<Partition *> Container;
+	typedef QMap<Id, Partition *> Container;
 
 	enum MediaType
 	{
@@ -54,6 +57,9 @@ public:
 		NoMedia
 	};
 
+	typedef QSet<MediaType>  MediaTypeSet;
+	typedef QList<MediaType> MediaTypeList;
+
 	enum ConnectionInterface
 	{
 		Virtual, // Device is a composite device e.g. Software RAID or similar
@@ -72,6 +78,7 @@ public:
 	struct Details
 	{
 		QString vendor;
+		QString model;
 		QString revision;
 		QString serial;
 		QString wwn;
@@ -89,18 +96,20 @@ public:
 	virtual ~Drive();
 
 	quint64 size() const { return m_size; }
+	void setSize(quint64 size) { m_size = size; }
+
 	const Container &partitions() const { return m_partitions; }
 
-	void addPartition(Partition *partition) { m_partitions.push_back(partition); }
-	void removePartition(Partition *partition) { m_partitions.removeOne(partition); }
+	void addPartition(Partition *partition);
+	void removePartition(const Id &id);
 
 	virtual bool isDrive() const;
 
 	static QIcon mediaTypeIcon(MediaType mediaType, int iconSize = Theme::Small);
-	static MediaType stringToMeduaType(const QString &media);
+	static MediaType stringToMediaType(const QString &media);
+	static MediaTypeSet stringListToMediaTypeSet(const QStringList &media);
 
 private:
-	QString m_model;
 	quint64 m_size;
 	Container m_partitions;
 };

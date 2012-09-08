@@ -22,8 +22,13 @@ public:
 			  const QStringList &mountPaths);
 
 	int number() const { return m_number; }
+	void setNumber(int number) { m_number = number; }
+
 	quint64 size() const { return m_size; }
+	void setSize(quint64 size) { m_size = size; }
+
 	const QStringList &mountPaths() const { return m_mountPaths; }
+	void setMountPaths(const QStringList &mountPaths) { m_mountPaths = mountPaths; }
 
 	virtual bool isPartition() const;
 

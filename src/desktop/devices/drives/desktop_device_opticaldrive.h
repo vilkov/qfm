@@ -1,12 +1,12 @@
 #ifndef DESKTOP_DEVICE_OPTICALDRIVE_H_
 #define DESKTOP_DEVICE_OPTICALDRIVE_H_
 
-#include "desktop_device_drive.h"
+#include "desktop_device_removabledrive.h"
 
 
 DESKTOP_NS_BEGIN
 
-class OpticalDrive : public Drive
+class OpticalDrive : public RemovableDrive
 {
 public:
 	struct Details : public Drive::Details
@@ -29,20 +29,12 @@ public:
 			  	 bool hidden,
 			  	 Device *parent,
 			  	 quint64 size,
-			  	 MediaType mediaCompatibility,
+			  	 MediaTypeSet mediaCompatibility,
 			  	 MediaType media,
 			  	 bool ejectable);
 
-	MediaType mediaCompatibility() const { return m_mediaCompatibility; }
-	MediaType media() const { return m_media; }
-	bool ejectable() const { return m_ejectable; }
-
+	static const MediaTypeSet &mediaTypeSet();
 	virtual bool isOpticalDrive() const;
-
-private:
-	MediaType m_mediaCompatibility;
-	MediaType m_media;
-	bool m_ejectable;
 };
 
 DESKTOP_NS_END

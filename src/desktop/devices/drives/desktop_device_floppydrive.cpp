@@ -9,11 +9,20 @@ FloppyDrive::FloppyDrive(const Id &id,
   	    				 bool hidden,
   	    				 Device *parent,
   	    				 quint64 size,
-  	    				 MediaType mediaCompatibility,
+  	    				 MediaTypeSet mediaCompatibility,
   	    				 MediaType media,
   	    				 bool ejectable) :
 	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, ejectable)
 {}
+
+const FloppyDrive::MediaTypeSet &FloppyDrive::mediaTypeSet()
+{
+	static MediaTypeSet set = MediaTypeSet::fromList(
+			MediaTypeList() << Floppy
+			                << Floppy_Zip
+			                << Floppy_Jaz);
+	return set;
+}
 
 bool FloppyDrive::isFloppyDrive() const
 {

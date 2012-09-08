@@ -23,18 +23,22 @@ public:
 			  	   bool hidden,
 			  	   Device *parent,
 			  	   quint64 size,
-			   	   MediaType mediaCompatibility,
+			   	   MediaTypeSet mediaCompatibility,
 			   	   MediaType media,
 			   	   bool ejectable);
 
-	MediaType mediaCompatibility() const { return m_mediaCompatibility; }
+	const MediaTypeSet &mediaCompatibility() const { return m_mediaCompatibility; }
+
 	MediaType media() const { return m_media; }
+	void setMedia(MediaType media) { m_media = media; }
+
 	bool ejectable() const { return m_ejectable; }
+	void setEjectable(bool ejectable) { m_ejectable = ejectable; }
 
 	virtual bool isRemovableDrive() const;
 
 private:
-	MediaType m_mediaCompatibility;
+	MediaTypeSet m_mediaCompatibility;
 	MediaType m_media;
 	bool m_ejectable;
 };

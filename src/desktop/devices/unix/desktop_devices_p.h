@@ -1,7 +1,6 @@
 #ifndef DESKTOP_DEVICES_P_H_
 #define DESKTOP_DEVICES_P_H_
 
-#include <QtCore/QScopedPointer>
 #include "desktop_devices_udisks.h"
 #include "../desktop_devices.h"
 #include "../desktop_device_partition.h"
@@ -10,8 +9,8 @@
 #include "../drives/desktop_device_floppydrive.h"
 #include "../drives/desktop_device_opticaldrive.h"
 #include "../drives/desktop_device_removabledrive.h"
+#include "../../../tools/pointers/pscopedpointer.h"
 
-#include <QtCore/QDebug>
 
 class DevicesPrivate : public QObject
 {
@@ -102,6 +101,16 @@ public:
 		return res;
 	}
 
+	static QIcon mediaTypeIconByConnectionInterface(const QDBusInterface &interface)
+	{
+		static const QString usbInterface = QString::fromLatin1("usb");
+
+		if (interface.property("DriveConnectionInterface").toString() == usbInterface)
+			return ::Desktop::Theme::current()->driveRemovableMediaUsb();
+		else
+			return ::Desktop::Theme::current()->driveRemovableMedia();
+	}
+
 	::Desktop::Drive *drive(QIcon &icon, const QString &path, const QDBusInterface &interface)
 	{
 		QString string = interface.property("DevicePresentationIconName").toString();
@@ -115,7 +124,7 @@ public:
 			::Desktop::Drive::MediaType type = ::Desktop::Drive::stringToMediaType(interface.property("DriveMedia").toString());
 
 			if (icon.isNull() && (icon = ::Desktop::Drive::mediaTypeIcon(type)).isNull())
-				icon = ::Desktop::Theme::current()->driveRemovableMediaUsb();
+				icon = mediaTypeIconByConnectionInterface(interface);
 
 			return new ::Desktop::FlashDrive(path,
 											 icon,
@@ -129,7 +138,7 @@ public:
 		}
 		else if (!::Desktop::Drive::MediaTypeSet(typeSet).intersect(::Desktop::OpticalDrive::mediaTypeSet()).isEmpty())
 		{
-			QScopedPointer< ::Desktop::OpticalDrive > drive;
+			PScopedPointer< ::Desktop::OpticalDrive > drive;
 
 			if (icon.isNull())
 				icon = ::Desktop::Theme::current()->driveOptical();
@@ -154,7 +163,7 @@ public:
 			::Desktop::Drive::MediaType type = ::Desktop::Drive::stringToMediaType(interface.property("DriveMedia").toString());
 
 			if (icon.isNull() && (icon = ::Desktop::Drive::mediaTypeIcon(type)).isNull())
-				icon = ::Desktop::Theme::current()->driveRemovableMedia();
+				icon = mediaTypeIconByConnectionInterface(interface);
 
 			return new ::Desktop::FloppyDrive(path,
 											  icon,
@@ -194,7 +203,6 @@ public:
 	{
 		QIcon icon;
 		QString string = interface.property("DevicePresentationIconName").toString();
-		QScopedPointer< ::Desktop::OpticalDrive > drive;
 
 		if (string.isEmpty() ||
 			(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
@@ -219,7 +227,7 @@ public:
 		else
 		{
 			if (icon.isNull())
-				icon = ::Desktop::Theme::current()->driveRemovableMedia();
+				icon = mediaTypeIconByConnectionInterface(interface);
 
 			return new ::Desktop::RemovableDrive(path,
 											   	 icon,
@@ -237,7 +245,7 @@ public:
 	{
 		QIcon icon;
 		QString string = interface.property("DevicePresentationIconName").toString();
-		QScopedPointer< ::Desktop::OpticalDrive > drive;
+		PScopedPointer< ::Desktop::OpticalDrive > drive;
 
 		if (string.isEmpty() ||
 			(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
@@ -281,9 +289,9 @@ public:
 			else
 				if (!device->partitions().isEmpty())
 				{
-					QScopedPointer< ::Desktop::Partition > partition(*device->partitions().constBegin());
+					PScopedPointer< ::Desktop::Partition > partition(*device->partitions().constBegin());
 					device->removePartition(partition->id());
-					parent->slotDeviceRemoved(partition.data());
+					parent->slotDeviceRemoved(partition);
 				}
 
 		parent->slotDeviceChanged(device);
@@ -307,7 +315,7 @@ public:
 	{
 		QIcon icon;
 		QString string;
-		QScopedPointer< ::Desktop::Partition > partition;
+		PScopedPointer< ::Desktop::Partition > partition;
 
 		QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
 		string = interface.property("DevicePresentationIconName").toString();
@@ -335,7 +343,7 @@ public:
 	{
 		QIcon icon;
 		QString string;
-		QScopedPointer< ::Desktop::Partition > partition;
+		PScopedPointer< ::Desktop::Partition > partition;
 		::Desktop::Device *parent = m_devices.value(string = interface.property("PartitionSlave").value<QDBusObjectPath>().path());
 
 		if (parent == NULL)
@@ -377,7 +385,7 @@ public:
 		typedef QDBusReply<List>       Reply;
 
 		QString string;
-		::Desktop::Device *device;
+		PScopedPointer< ::Desktop::Device > device;
 		Reply reply = manager.call(QString::fromLatin1("EnumerateDevices"));
 
 		if (reply.isValid())
@@ -389,7 +397,10 @@ public:
 				QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), string = list.at(i).path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
 
 				if (interface.isValid() && (device = processDevice(string, interface)))
-					parent->slotDeviceAdded(m_devices[string] = device);
+				{
+					m_devices[string] = device.data();
+					parent->slotDeviceAdded(device.take());
+				}
 			}
 		}
 	}
@@ -397,21 +408,38 @@ public:
 public Q_SLOTS:
 	void slotDeviceAdded(const QDBusObjectPath &path)
 	{
-//		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
-//
-//		if (interface.isValid() && interface.property("DeviceIsPartition").toBool())
-//		{
-//			::Desktop::Device &dev = m_container[path.path()];
-//			parent->slotDeviceAdded(dev = device(path.path(), interface));
-//		}
+		PScopedPointer< ::Desktop::Device > device;
+		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
+
+		if (interface.isValid() && (device = processDevice(path.path(), interface)))
+		{
+			m_devices[path.path()] = device.data();
+			parent->slotDeviceAdded(device.take());
+		}
 	}
 
 	void slotDeviceRemoved(const QDBusObjectPath &path)
 	{
-//		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
-//
-//		if (interface.isValid() && interface.property("DeviceIsPartition").toBool())
-//			parent->slotDeviceRemoved(path.path());
+		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
+
+		if (interface.isValid())
+			if (interface.property("DeviceIsPartition").toBool())
+			{
+				if (::Desktop::Device *device = m_devices.value(interface.property("PartitionSlave").value<QDBusObjectPath>().path()))
+				{
+					PScopedPointer< ::Desktop::Partition > partition(device->as< ::Desktop::Drive >()->takePartition(path.path()));
+
+					if (partition)
+						parent->slotDeviceRemoved(partition);
+				}
+			}
+			else
+			{
+				PScopedPointer< ::Desktop::Device > device(m_devices.take(path.path()));
+
+				if (device)
+					parent->slotDeviceRemoved(device);
+			}
 	}
 
 	void slotDeviceChanged(const QDBusObjectPath &path)

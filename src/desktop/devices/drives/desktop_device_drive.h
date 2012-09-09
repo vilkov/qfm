@@ -102,6 +102,7 @@ public:
 
 	void addPartition(Partition *partition);
 	void removePartition(const Id &id);
+	Partition *takePartition(const Id &id);
 
 	virtual bool isDrive() const;
 

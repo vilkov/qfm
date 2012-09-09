@@ -30,6 +30,11 @@ void Drive::removePartition(const Id &id)
 	m_partitions.remove(id);
 }
 
+Partition *Drive::takePartition(const Id &id)
+{
+	return m_partitions.take(id);
+}
+
 bool Drive::isDrive() const
 {
 	return true;

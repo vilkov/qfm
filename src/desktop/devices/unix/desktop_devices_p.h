@@ -2,8 +2,8 @@
 #define DESKTOP_DEVICES_P_H_
 
 #include "desktop_devices_udisks.h"
+#include "desktop_device_partition_unix.h"
 #include "../desktop_devices.h"
-#include "../desktop_device_partition.h"
 #include "../drives/desktop_device_harddrive.h"
 #include "../drives/desktop_device_flashdrive.h"
 #include "../drives/desktop_device_floppydrive.h"
@@ -315,7 +315,7 @@ public:
 	{
 		QIcon icon;
 		QString string;
-		PScopedPointer< ::Desktop::Partition > partition;
+		PScopedPointer< ::Desktop::PartitionUnix > partition;
 
 		QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
 		string = interface.property("DevicePresentationIconName").toString();
@@ -326,7 +326,7 @@ public:
 			icon = ::Desktop::Drive::mediaTypeIcon(parent->media());
 		}
 
-		partition.reset(new ::Desktop::Partition(path,
+		partition.reset(new ::Desktop::PartitionUnix(path,
 												 icon,
 												 partitionLabel(interface, mountPaths),
 												 interface.property("DevicePresentationHide").toBool(),
@@ -343,7 +343,7 @@ public:
 	{
 		QIcon icon;
 		QString string;
-		PScopedPointer< ::Desktop::Partition > partition;
+		PScopedPointer< ::Desktop::PartitionUnix > partition;
 		::Desktop::Device *parent = m_devices.value(string = interface.property("PartitionSlave").value<QDBusObjectPath>().path());
 
 		if (parent == NULL)
@@ -365,7 +365,7 @@ public:
 				icon = parent->icon();
 			}
 
-			partition.reset(new ::Desktop::Partition(path,
+			partition.reset(new ::Desktop::PartitionUnix(path,
 													 icon,
 													 partitionLabel(interface, mountPaths),
 													 interface.property("DevicePresentationHide").toBool(),

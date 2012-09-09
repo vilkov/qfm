@@ -13,9 +13,9 @@ Partition::Partition(const Id &id,
 		  	  	  	 quint64 size,
 		  	  	  	 const QStringList &mountPaths) :
 	Device(id, icon, label, hidden, parent),
+	m_mountPaths(mountPaths),
 	m_number(number),
-	m_size(size),
-	m_mountPaths(mountPaths)
+	m_size(size)
 {}
 
 bool Partition::isPartition() const
@@ -25,6 +25,13 @@ bool Partition::isPartition() const
 
 bool Partition::mount(QString &error)
 {
+	error = tr("Not implemented");
+	return false;
+}
+
+bool Partition::unmount(QString &error)
+{
+	error = tr("Not implemented");
 	return false;
 }
 

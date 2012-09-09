@@ -175,20 +175,24 @@ void MainWindow::showMounts(FoldersView &view)
 		else
 			menu.addAction((*i)->icon(), (*i)->label())->setData(qVariantFromValue(static_cast<void *>(*i)));
 
-//	m_mounts.refresh();
-//	for (MountPoints::size_type i = 0, size = m_mounts.size(); i < size; ++i)
-//	{
-//		const MountPoint &mount = m_mounts.at(i);
-//
-//		if (mount.totalSize() > 0 && mount.freeSize() <= mount.totalSize())
-//			menu.addAction(mount.icon(), QString(mount.label()).append(QString(label).arg(::VFS::Tools::humanReadableShortSize(mount.freeSize())).arg(::VFS::Tools::humanReadableShortSize(mount.totalSize()))))->setData(i);
-//		else
-//			menu.addAction(mount.icon(), mount.label())->setData(i);
-//	}
-
 	if (QAction *res = menu.exec(view.listPos()))
 	{
-//		view.setCurrentDirectory(m_mounts.at(res->data().toInt()).path());
+		::Desktop::Device *device = static_cast< ::Desktop::Device *>(res->data().value<void *>());
+
+		if (device->isPartition())
+		{
+			QString error;
+			::Desktop::Partition *partition = device->as< ::Desktop::Partition >();
+
+			if (partition->mountPaths().isEmpty())
+				if (partition->mount(error))
+					view.setCurrentDirectory(partition->mountPaths().at(0));
+				else
+					QMessageBox::critical(this, tr("Error"), error);
+			else
+				view.setCurrentDirectory(partition->mountPaths().at(0));
+		}
+
 		view.setFocus();
 	}
 }

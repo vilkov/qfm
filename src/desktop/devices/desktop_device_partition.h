@@ -2,6 +2,7 @@
 #define DESKTOP_DEVICE_PARTITION_H_
 
 #include <QtCore/QStringList>
+#include <QtCore/QCoreApplication>
 #include "desktop_device.h"
 
 
@@ -11,6 +12,8 @@ class Drive;
 
 class Partition : public Device
 {
+	Q_DECLARE_TR_FUNCTIONS(Partition)
+
 public:
 	Partition(const Id &id,
 			  const QIcon &icon,
@@ -31,13 +34,15 @@ public:
 	void setMountPaths(const QStringList &mountPaths) { m_mountPaths = mountPaths; }
 
 	virtual bool isPartition() const;
+	virtual bool mount(QString &error);
+	virtual bool unmount(QString &error);
 
-	bool mount(QString &error);
+protected:
+	QStringList m_mountPaths;
 
 private:
 	int m_number;
 	quint64 m_size;
-	QStringList m_mountPaths;
 };
 
 DESKTOP_NS_END

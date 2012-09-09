@@ -31,10 +31,19 @@ public:
 			  	 quint64 size,
 			  	 MediaTypeSet mediaCompatibility,
 			  	 MediaType media,
+			  	 bool detachable,
 			  	 bool ejectable);
+
+	bool isEjectable() const { return m_ejectable; }
+	void setEjectable(bool ejectable) { m_ejectable = ejectable; }
 
 	static const MediaTypeSet &mediaTypeSet();
 	virtual bool isOpticalDrive() const;
+
+	bool eject(QString &error);
+
+private:
+	bool m_ejectable;
 };
 
 DESKTOP_NS_END

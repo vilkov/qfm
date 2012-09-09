@@ -1,6 +1,7 @@
 #ifndef DESKTOP_DEVICE_REMOVABLEDRIVE_H_
 #define DESKTOP_DEVICE_REMOVABLEDRIVE_H_
 
+#include <QtCore/QCoreApplication>
 #include "desktop_device_drive.h"
 
 
@@ -8,6 +9,8 @@ DESKTOP_NS_BEGIN
 
 class RemovableDrive : public Drive
 {
+	Q_DECLARE_TR_FUNCTIONS(RemovableDrives)
+
 public:
 	struct Details : public Drive::Details
 	{
@@ -25,22 +28,24 @@ public:
 			  	   quint64 size,
 			   	   MediaTypeSet mediaCompatibility,
 			   	   MediaType media,
-			   	   bool ejectable);
+			   	   bool detachable);
 
 	const MediaTypeSet &mediaCompatibility() const { return m_mediaCompatibility; }
 
 	MediaType media() const { return m_media; }
 	void setMedia(MediaType media) { m_media = media; }
 
-	bool ejectable() const { return m_ejectable; }
-	void setEjectable(bool ejectable) { m_ejectable = ejectable; }
+	bool isDetachable() const { return m_detachable; }
+	void setDetachable(bool detachable) { m_detachable = detachable; }
 
 	virtual bool isRemovableDrive() const;
+
+	bool detach(QString &error);
 
 private:
 	MediaTypeSet m_mediaCompatibility;
 	MediaType m_media;
-	bool m_ejectable;
+	bool m_detachable;
 };
 
 DESKTOP_NS_END

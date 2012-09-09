@@ -17,7 +17,7 @@ public:
 		  	   quint64 size,
 		  	   MediaTypeSet mediaCompatibility,
 		   	   MediaType media,
-		   	   bool ejectable);
+		   	   bool detachable);
 
 	static const MediaTypeSet &mediaTypeSet();
 	virtual bool isFlashDrive() const;

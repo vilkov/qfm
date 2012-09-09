@@ -134,7 +134,7 @@ public:
 											 interface.property("DeviceSize").toULongLong(),
 											 typeSet,
 											 type,
-											 interface.property("DriveIsMediaEjectable").toBool());
+											 interface.property("DriveCanDetach").toBool());
 		}
 		else if (!::Desktop::Drive::MediaTypeSet(typeSet).intersect(::Desktop::OpticalDrive::mediaTypeSet()).isEmpty())
 		{
@@ -151,6 +151,7 @@ public:
 					   	   	   	   	   	   	   	    interface.property("DeviceSize").toULongLong(),
 					   	   	   	   	   	   	   	    typeSet,
 					   	   	   	   	   	   	   	    ::Desktop::Drive::stringToMediaType(interface.property("DriveMedia").toString()),
+					   	   	   	   	   	   	   	    interface.property("DriveCanDetach").toBool(),
 					   	   	   	   	   	   	   	    interface.property("DriveIsMediaEjectable").toBool()));
 
 			if (interface.property("DeviceIsMediaAvailable").toBool())
@@ -173,7 +174,7 @@ public:
 											  interface.property("DeviceSize").toULongLong(),
 											  typeSet,
 											  type,
-											  interface.property("DriveIsMediaEjectable").toBool());
+											  interface.property("DriveCanDetach").toBool());
 		}
 
 		return NULL;
@@ -237,7 +238,7 @@ public:
 											   	 interface.property("DeviceSize").toULongLong(),
 											   	 ::Desktop::Drive::MediaTypeSet(),
 											   	 ::Desktop::Drive::NoMedia,
-											   	 interface.property("DriveIsMediaEjectable").toBool());
+											   	 interface.property("DriveCanDetach").toBool());
 		}
 	}
 
@@ -245,7 +246,6 @@ public:
 	{
 		QIcon icon;
 		QString string = interface.property("DevicePresentationIconName").toString();
-		PScopedPointer< ::Desktop::OpticalDrive > drive;
 
 		if (string.isEmpty() ||
 			(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
@@ -258,7 +258,8 @@ public:
 		device->setHidden(interface.property("DevicePresentationHide").toBool());
 		device->setSize(interface.property("DeviceSize").toULongLong());
 		device->setMedia(::Desktop::Drive::stringToMediaType(interface.property("DriveMedia").toString()));
-		device->setEjectable(interface.property("DriveIsMediaEjectable").toBool());
+		device->setDetachable(interface.property("DriveCanDetach").toBool());
+		device->as< ::Desktop::OpticalDrive >()->setEjectable(interface.property("DriveIsMediaEjectable").toBool());
 
 		if (device->isOpticalDrive())
 			if (interface.property("DeviceIsMediaAvailable").toBool())

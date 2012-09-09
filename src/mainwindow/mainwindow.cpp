@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "../desktop/devices/desktop_device_partition.h"
-#include "../desktop/devices/drives/desktop_device_drive.h"
+#include "../desktop/devices/drives/desktop_device_removabledrive.h"
+#include "../desktop/devices/drives/desktop_device_opticaldrive.h"
 #include "../application.h"
 
 #include <vfs/tools/vfs_commontools.h>
@@ -192,6 +193,24 @@ void MainWindow::showMounts(FoldersView &view)
 			else
 				view.setCurrentDirectory(partition->mountPaths().at(0));
 		}
+		else
+			if (device->isOpticalDrive())
+			{
+				QString error;
+
+				if (device->as< ::Desktop::OpticalDrive >()->isEjectable())
+					if (!device->as< ::Desktop::OpticalDrive >()->eject(error))
+						QMessageBox::critical(this, tr("Error"), error);
+			}
+			else
+				if (device->isRemovableDrive())
+				{
+					QString error;
+
+					if (device->as< ::Desktop::RemovableDrive >()->isDetachable())
+						if (!device->as< ::Desktop::RemovableDrive >()->detach(error))
+							QMessageBox::critical(this, tr("Error"), error);
+				}
 
 		view.setFocus();
 	}

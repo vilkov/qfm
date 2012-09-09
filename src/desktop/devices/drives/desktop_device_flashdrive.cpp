@@ -11,8 +11,8 @@ FlashDrive::FlashDrive(const Id &id,
 	  	   	   	   	   quint64 size,
 	  	   	   	   	   MediaTypeSet mediaCompatibility,
 	  	   	   	   	   MediaType media,
-	  	   	   	   	   bool ejectable) :
-	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, ejectable)
+	  	   	   	   	   bool detachable) :
+	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, detachable)
 {}
 
 const FlashDrive::MediaTypeSet &FlashDrive::mediaTypeSet()

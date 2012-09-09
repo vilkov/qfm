@@ -11,11 +11,11 @@ RemovableDrive::RemovableDrive(const Id &id,
 	  	   	   	   	   	   	   quint64 size,
 	  	   	   	   	   	   	   MediaTypeSet mediaCompatibility,
 	  	   	   	   	   	   	   MediaType media,
-	  	   	   	   	   	   	   bool ejectable) :
+	  	   	   	   	   	   	   bool detachable) :
 	Drive(id, icon, label, hidden, parent, size),
 	m_mediaCompatibility(mediaCompatibility),
 	m_media(media),
-	m_ejectable(ejectable)
+	m_detachable(detachable)
 {}
 
 bool RemovableDrive::isRemovableDrive() const

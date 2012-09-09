@@ -77,7 +77,10 @@ bool PartitionUnix::unmount(QString &error)
 	QDBusReply<void> reply = QDBusConnection::systemBus().call(message);
 
 	if (reply.isValid())
+	{
+		m_mountedByThis = false;
 		return true;
+	}
 	else
 		error = reply.error().message();
 

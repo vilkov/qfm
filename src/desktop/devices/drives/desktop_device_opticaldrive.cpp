@@ -11,8 +11,10 @@ OpticalDrive::OpticalDrive(const Id &id,
 	  	 	 	 	 	   quint64 size,
 	  	 	 	 	 	   MediaTypeSet mediaCompatibility,
 	  	 	 	 	 	   MediaType media,
+	  	 	 	 	 	   bool detachable,
 	  	 	 	 	 	   bool ejectable) :
-	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, ejectable)
+	RemovableDrive(id, icon, label, hidden, parent, size, mediaCompatibility, media, detachable),
+	m_ejectable(ejectable)
 {}
 
 const OpticalDrive::MediaTypeSet &OpticalDrive::mediaTypeSet()

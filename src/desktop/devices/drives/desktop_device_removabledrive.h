@@ -41,6 +41,7 @@ public:
 	virtual bool isRemovableDrive() const;
 
 	bool detach(QString &error);
+	bool eject(QString &error);
 
 private:
 	MediaTypeSet m_mediaCompatibility;

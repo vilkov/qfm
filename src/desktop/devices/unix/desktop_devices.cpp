@@ -22,12 +22,12 @@ Devices::~Devices()
 
 Devices::const_iterator Devices::begin() const
 {
-	return d->m_devices.constBegin();
+	return d->m_topLevelDevices.constBegin();
 }
 
 Devices::const_iterator Devices::end() const
 {
-	return d->m_devices.constEnd();
+	return d->m_topLevelDevices.constEnd();
 }
 
 Devices *Devices::instance()

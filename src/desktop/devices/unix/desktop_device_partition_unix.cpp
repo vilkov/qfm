@@ -78,6 +78,7 @@ bool PartitionUnix::unmount(QString &error)
 
 	if (reply.isValid())
 	{
+		m_mountPaths.clear();
 		m_mountedByThis = false;
 		return true;
 	}

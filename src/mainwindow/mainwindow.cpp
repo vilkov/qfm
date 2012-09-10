@@ -194,23 +194,14 @@ void MainWindow::showMounts(FoldersView &view)
 				view.setCurrentDirectory(partition->mountPaths().at(0));
 		}
 		else
-			if (device->isOpticalDrive())
+			if (device->isRemovableDrive())
 			{
 				QString error;
 
-				if (device->as< ::Desktop::OpticalDrive >()->isEjectable())
-					if (!device->as< ::Desktop::OpticalDrive >()->eject(error))
+				if (device->as< ::Desktop::RemovableDrive >()->isDetachable())
+					if (!device->as< ::Desktop::RemovableDrive >()->eject(error))
 						QMessageBox::critical(this, tr("Error"), error);
 			}
-			else
-				if (device->isRemovableDrive())
-				{
-					QString error;
-
-					if (device->as< ::Desktop::RemovableDrive >()->isDetachable())
-						if (!device->as< ::Desktop::RemovableDrive >()->detach(error))
-							QMessageBox::critical(this, tr("Error"), error);
-				}
 
 		view.setFocus();
 	}

@@ -59,7 +59,7 @@ public:
 	}
 	~DevicesPrivate()
 	{
-		qDeleteAll(m_devices);
+		qDeleteAll(m_topLevelDevices);
 	}
 
 public:
@@ -301,7 +301,7 @@ public:
 public:
 	::Desktop::Device *processDevice(const QString &path, const QDBusInterface &interface)
 	{
-		if (!m_devices.contains(path))
+		if (!m_topLevelDevices.contains(path))
 			if (interface.property("DeviceIsPartition").toBool())
 				partition(path, interface);
 			else if (interface.property("DeviceIsRemovable").toBool())
@@ -345,14 +345,14 @@ public:
 		QIcon icon;
 		QString string;
 		PScopedPointer< ::Desktop::PartitionUnix > partition;
-		::Desktop::Device *parent = m_devices.value(string = interface.property("PartitionSlave").value<QDBusObjectPath>().path());
+		::Desktop::Device *parent = m_topLevelDevices.value(string = interface.property("PartitionSlave").value<QDBusObjectPath>().path());
 
 		if (parent == NULL)
 		{
 			QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), string, QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
 
 			if (interface.isValid() && (parent = processDevice(string, interface)))
-				this->parent->slotDeviceAdded(m_devices[string] = parent);
+				this->parent->slotDeviceAdded(m_allDevices[string] = m_topLevelDevices[string] = parent);
 		}
 
 		if (parent)
@@ -375,6 +375,7 @@ public:
 													 interface.property("PartitionSize").toULongLong(),
 													 mountPaths));
 
+			m_allDevices[path] = partition.data();
 			parent->as< ::Desktop::Drive >()->addPartition(partition.data());
 			this->parent->slotDeviceAdded(partition.take());
 		}
@@ -399,7 +400,7 @@ public:
 
 				if (interface.isValid() && (device = processDevice(string, interface)))
 				{
-					m_devices[string] = device.data();
+					m_allDevices[string] = m_topLevelDevices[string] = device.data();
 					parent->slotDeviceAdded(device.take());
 				}
 			}
@@ -414,33 +415,26 @@ public Q_SLOTS:
 
 		if (interface.isValid() && (device = processDevice(path.path(), interface)))
 		{
-			m_devices[path.path()] = device.data();
+			m_allDevices[path.path()] = m_topLevelDevices[path.path()] = device.data();
 			parent->slotDeviceAdded(device.take());
 		}
 	}
 
 	void slotDeviceRemoved(const QDBusObjectPath &path)
 	{
-		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
-
-		if (interface.isValid())
-			if (interface.property("DeviceIsPartition").toBool())
+		if (::Desktop::Device *device = m_allDevices.take(path.path()))
+		{
+			if (device->isPartition())
 			{
-				if (::Desktop::Device *device = m_devices.value(interface.property("PartitionSlave").value<QDBusObjectPath>().path()))
-				{
-					PScopedPointer< ::Desktop::Partition > partition(device->as< ::Desktop::Drive >()->takePartition(path.path()));
-
-					if (partition)
-						parent->slotDeviceRemoved(partition);
-				}
+				PScopedPointer< ::Desktop::Partition > partition(device->parent()->as< ::Desktop::Drive >()->takePartition(device->id()));
+				parent->slotDeviceRemoved(partition);
 			}
 			else
 			{
-				PScopedPointer< ::Desktop::Device > device(m_devices.take(path.path()));
-
-				if (device)
-					parent->slotDeviceRemoved(device);
+				PScopedPointer< ::Desktop::Device > dev(m_topLevelDevices.take(device->id()));
+				parent->slotDeviceRemoved(dev);
 			}
+		}
 	}
 
 	void slotDeviceChanged(const QDBusObjectPath &path)
@@ -448,56 +442,51 @@ public Q_SLOTS:
 		QDBusInterface interface(QString::fromLatin1(UD_DBUS_SERVICE), path.path(), QString::fromLatin1(UD_DBUS_INTERFACE_DISKS_DEVICE), QDBusConnection::systemBus());
 
 		if (interface.isValid())
-		{
-			::Desktop::Device *device;
-
-			if (interface.property("DeviceIsPartition").toBool())
-			{
-				device = m_devices.value(interface.property("PartitionSlave").value<QDBusObjectPath>().path());
-
-				if (device)
-					if (::Desktop::Partition *partition = device->as< ::Desktop::Drive >()->partitions().value(path.path()))
-					{
-						QIcon icon;
-						QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
-						QString string = interface.property("DevicePresentationIconName").toString();
-
-						if (string.isEmpty() ||
-							(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
-						{
-							icon = device->icon();
-						}
-
-						partition->setIcon(icon);
-						partition->setLabel(partitionLabel(interface, mountPaths));
-						partition->setHidden(interface.property("DevicePresentationHide").toBool());
-						partition->setNumber(interface.property("PartitionNumber").toInt());
-						partition->setSize(interface.property("PartitionSize").toULongLong());
-						partition->setMountPaths(mountPaths);
-
-						parent->slotDeviceChanged(partition);
-					}
-					else
-						processDevice(path.path(), interface);
-				else
-					processDevice(path.path(), interface);
-			}
-			else
-				if (device = static_cast< ::Desktop::Drive *>(m_devices.value(path.path())))
+			if (::Desktop::Device *device = m_allDevices.value(path.path()))
+				if (device->isPartition())
 				{
-					if (interface.property("DeviceIsRemovable").toBool())
-						removableDriveChanged(device->as< ::Desktop::RemovableDrive >(), path.path(), interface);
-					else if (interface.property("DeviceIsDrive").toBool())
-						hardDriveChanged(device->as< ::Desktop::HardDrive >(), path.path(), interface);
+					QIcon icon;
+					QStringList mountPaths(interface.property("DeviceMountPaths").toStringList());
+					QString string = interface.property("DevicePresentationIconName").toString();
+					::Desktop::Partition *partition = device->as< ::Desktop::Partition >();
+
+					if (string.isEmpty() ||
+						(icon = ::Desktop::Theme::current()->driveIcon(string.toUtf8())).isNull())
+					{
+						icon = device->icon();
+					}
+
+					partition->setIcon(icon);
+					partition->setLabel(partitionLabel(interface, mountPaths));
+					partition->setHidden(interface.property("DevicePresentationHide").toBool());
+					partition->setNumber(interface.property("PartitionNumber").toInt());
+					partition->setSize(interface.property("PartitionSize").toULongLong());
+					partition->setMountPaths(mountPaths);
+
+					parent->slotDeviceChanged(partition);
 				}
 				else
-					if (device = processDevice(path.path(), interface))
-						parent->slotDeviceAdded(m_devices[path.path()] = device);
-		}
+				{
+					if (device->isRemovableDrive())
+						removableDriveChanged(device->as< ::Desktop::RemovableDrive >(), path.path(), interface);
+					else if (device->isDrive())
+						hardDriveChanged(device->as< ::Desktop::HardDrive >(), path.path(), interface);
+				}
+			else
+			{
+				PScopedPointer< ::Desktop::Device > device;
+
+				if (device = processDevice(path.path(), interface))
+				{
+					m_allDevices[path.path()] = m_topLevelDevices[path.path()] = device.data();
+					parent->slotDeviceAdded(device.take());
+				}
+			}
 	}
 
 public:
-	::Desktop::Devices::Container m_devices;
+	::Desktop::Devices::Container m_topLevelDevices;
+	::Desktop::Devices::Container m_allDevices;
 	::Desktop::Devices *parent;
 	QDBusInterface manager;
 };

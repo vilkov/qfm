@@ -40,8 +40,6 @@ public:
 	static const MediaTypeSet &mediaTypeSet();
 	virtual bool isOpticalDrive() const;
 
-	bool eject(QString &error);
-
 private:
 	bool m_ejectable;
 };

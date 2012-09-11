@@ -17,33 +17,28 @@ void OptionList::clear()
 
 void OptionList::save(QXmlStreamWriter &stream) const
 {
-	stream.writeStartElement(m_id);
+	stream.writeStartElement(id());
 
-	for (size_type i = 0, size = List::size(); i < size; ++i)
-		at(i)->save(stream);
+	for (const_iterator i = begin(), end = List::end(); i != end; ++i)
+		(*i)->save(stream);
 
 	stream.writeEndElement();
 }
 
 void OptionList::load(QXmlStreamReader &stream)
 {
-	if (stream.name() == m_id)
-	{
-		PScopedPointer<Option> option;
+	PScopedPointer<Option> option;
 
-		for (QXmlStreamReader::TokenType token = stream.readNext(); !stream.atEnd(); token = stream.readNext())
-			if (token == QXmlStreamReader::EndElement && stream.name() == m_id)
-				break;
-			else
-				if (token == QXmlStreamReader::StartElement && isSubOptionName(stream.name()))
-				{
-					option = create();
-					option->load(stream);
-					add(option.take());
-				}
-	}
-	else
-		loadDefault();
+	for (QXmlStreamReader::TokenType token = stream.readNext(); !stream.atEnd(); token = stream.readNext())
+		if (token == QXmlStreamReader::EndElement && stream.name() == id())
+			break;
+		else
+			if (token == QXmlStreamReader::StartElement && isSubOptionName(stream.name()))
+			{
+				option = create();
+				option->load(stream);
+				add(option.take());
+			}
 }
 
 void OptionList::loadDefault()

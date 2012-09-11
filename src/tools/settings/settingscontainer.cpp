@@ -1,5 +1,6 @@
 #include "settingscontainer.h"
 
+#include <QtCore/QSet>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QTextCodec>
@@ -9,7 +10,7 @@
 SETTINGS_NS_BEGIN
 
 Container::Container(const QString &storage) :
-	List(NULL),
+	List(QString::fromLatin1("QFM"), NULL),
 	m_storage(storage)
 {}
 
@@ -24,7 +25,7 @@ void Container::save() const
 		stream.setAutoFormatting(true);
 
 		stream.writeStartDocument(QString::fromLatin1("1.0"));
-		stream.writeStartElement(QString::fromLatin1("QFM"));
+		stream.writeStartElement(id());
 		save(stream);
 		stream.writeEndElement();
 		stream.writeEndDocument();
@@ -50,33 +51,36 @@ void Container::load()
 
 void Container::manage(Option *option)
 {
-	m_items.push_back(option);
+	m_items.push_back(&option->id(), option);
 }
 
 void Container::save(QXmlStreamWriter &stream) const
 {
-	for (size_type i = 0, size = Container::size(); i < size; ++i)
-		at(i)->save(stream);
+	for (Container::const_iterator i = begin(), end = Container::end(); i != end; ++i)
+		(*i)->save(stream);
 }
 
 void Container::load(QXmlStreamReader &stream)
 {
-	for (size_type i = 0, size = Container::size(); i < size; ++i)
-		if (readNextStartElement(stream))
-			at(i)->load(stream);
-		else
-		{
-			for (; i < size; ++i)
-				at(i)->loadDefault();
+	Option *option;
+	QSet<Option *> loaded;
 
-			break;
+	while (readNextStartElement(stream))
+		if (option = m_items.value(stream.name()))
+		{
+			option->load(stream);
+			loaded.insert(option);
 		}
+
+	for (Container::const_iterator i = begin(), end = Container::end(); i != end; ++i)
+		if (!loaded.contains(*i))
+			(*i)->loadDefault();
 }
 
 void Container::loadDefault()
 {
-	for (size_type i = 0, size = Container::size(); i < size; ++i)
-		at(i)->loadDefault();
+	for (Container::const_iterator i = begin(), end = Container::end(); i != end; ++i)
+		(*i)->loadDefault();
 }
 
 QString Container::storageLocation(const QString &applicationFolder)

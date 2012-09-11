@@ -1,8 +1,8 @@
 #ifndef SETTINGSLIST_H_
 #define SETTINGSLIST_H_
 
-#include <QtCore/QList>
 #include "settingsoption.h"
+#include "../../containers/orderedmap.h"
 
 
 SETTINGS_NS_BEGIN
@@ -10,20 +10,19 @@ SETTINGS_NS_BEGIN
 class List : public Option
 {
 public:
-	typedef QList<Option *>      Container;
-	typedef Container::size_type size_type;
-	enum { InvalidIndex = (size_type)-1 };
+	typedef Containers::OrderedMap<QStringRef, Option *> Container;
+	typedef Container::const_iterator                    const_iterator;
 
 public:
-	List(Option *parent = 0) :
-		Option(parent)
+	List(const Id &id, Option *parent = 0) :
+		Option(id, parent)
 	{}
 
 	bool isEmpty() const { return m_items.isEmpty(); }
 
-	Option *at(size_type index) const { return m_items.at(index); }
-	size_type size() const { return m_items.size(); }
-	size_type indexOf(Option *item) const { return m_items.indexOf(item); }
+	Option *find(const Id &id) const { return m_items.value(&id); }
+	const_iterator begin() const { return m_items.constBegin(); }
+	const_iterator end() const { return m_items.constEnd(); }
 
 protected:
 	Container m_items;

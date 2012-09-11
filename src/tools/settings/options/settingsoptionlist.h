@@ -9,14 +9,13 @@ SETTINGS_NS_BEGIN
 class OptionList : public List
 {
 public:
-	OptionList(const QString &id, Option *parent) :
-		List(parent),
-		m_id(id)
+	OptionList(const Id &id, Option *parent) :
+		List(id, parent)
 	{}
 	virtual ~OptionList();
 
-	void add(Option *option) { m_items.push_back(option); }
-	void remove(size_type index) { delete m_items.takeAt(index); }
+	void add(Option *option) { m_items.push_back(&option->id(), option); }
+	void remove(const Id &id) { delete m_items.take(&id); }
 	void clear();
 
 protected:
@@ -27,9 +26,6 @@ protected:
 protected:
 	virtual bool isSubOptionName(const QStringRef &name) const = 0;
 	virtual Option *create() = 0;
-
-protected:
-	QString m_id;
 };
 
 SETTINGS_NS_END

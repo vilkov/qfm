@@ -16,9 +16,8 @@ public:
 	enum { InvalidIndex = (size_type)-1 };
 
 public:
-	OptionValueList(const QString &id, Option *parent) :
-		Option(parent),
-		m_id(id)
+	OptionValueList(const Id &id, Option *parent) :
+		Option(id, parent)
 	{}
 
 	QString at(size_type index) const { return m_items.at(index); }
@@ -35,7 +34,6 @@ protected:
     virtual void loadDefault();
 
 protected:
-    QString m_id;
 	Container m_items;
 };
 

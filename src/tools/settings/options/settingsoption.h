@@ -1,6 +1,7 @@
 #ifndef SETTINGSOPTION_H_
 #define SETTINGSOPTION_H_
 
+#include <QtCore/QString>
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
 #include "../settings_ns.h"
@@ -11,11 +12,16 @@ SETTINGS_NS_BEGIN
 class Option
 {
 public:
-	Option(Option *parent = 0) :
+	typedef QString Id;
+
+public:
+	Option(const Id &id, Option *parent = 0) :
+	    m_id(id),
 		m_parent(parent)
 	{}
 	virtual ~Option();
 
+    const Id &id() const { return m_id; }
 	Option *parent() const { return m_parent; }
 
     template <typename R> inline
@@ -36,13 +42,14 @@ protected:
     inline bool readNextStartElement(QXmlStreamReader &stream) const
     {
     	for (QXmlStreamReader::TokenType token = stream.readNext(); token != QXmlStreamReader::StartElement; token = stream.readNext())
-    		if (token == QXmlStreamReader::NoToken || token == QXmlStreamReader::Invalid)
+    		if ((token == QXmlStreamReader::EndElement && stream.name() == id()) || token == QXmlStreamReader::NoToken || token == QXmlStreamReader::Invalid)
     			return false;
 
     	return true;
     }
 
 private:
+    Id m_id;
 	Option *m_parent;
 };
 

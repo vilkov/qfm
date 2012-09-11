@@ -9,9 +9,8 @@ SETTINGS_NS_BEGIN
 class Scope : public List
 {
 public:
-	Scope(const QString &id, Option *parent) :
-		List(parent),
-		m_id(id)
+	Scope(const Id &id, Option *parent) :
+		List(id, parent)
 	{}
 
 	void manage(Option *option);
@@ -20,9 +19,6 @@ protected:
 	virtual void save(QXmlStreamWriter &stream) const;
 	virtual void load(QXmlStreamReader &stream);
     virtual void loadDefault();
-
-protected:
-	QString m_id;
 };
 
 SETTINGS_NS_END

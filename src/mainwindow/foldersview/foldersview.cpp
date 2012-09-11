@@ -96,9 +96,9 @@ void FoldersView::load()
 		Tab *tab;
 		DirectoryView *widget;
 
-		for (Tabs::size_type i = 0, size = m_settings.tabs().size(); i < size; ++i)
+		for (Tabs::const_iterator i = m_settings.tabs().begin(), end = m_settings.tabs().end(); i != end; ++i)
 		{
-			tab = m_settings.tabs().at(i)->as<Tab>();
+			tab = (*i)->as<Tab>();
 			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
 			widget->setupModel(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry());
 		}

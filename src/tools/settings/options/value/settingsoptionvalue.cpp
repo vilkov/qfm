@@ -5,15 +5,12 @@ SETTINGS_NS_BEGIN
 
 void OptionValue::save(QXmlStreamWriter &stream) const
 {
-	stream.writeTextElement(m_id, m_value);
+	stream.writeTextElement(id(), m_value);
 }
 
 void OptionValue::load(QXmlStreamReader &stream)
 {
-	if (stream.name() == m_id)
-		m_value = stream.readElementText();
-	else
-		loadDefault();
+	m_value = stream.readElementText();
 }
 
 void OptionValue::loadDefault()

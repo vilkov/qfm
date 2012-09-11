@@ -10,9 +10,8 @@ SETTINGS_NS_BEGIN
 class OptionValue : public Option
 {
 public:
-	OptionValue(const QString &id, Option *parent, const QString &defaultValue = QString()) :
-		Option(parent),
-		m_id(id),
+	OptionValue(const Id &id, Option *parent, const QString &defaultValue = QString()) :
+		Option(id, parent),
 		m_defaultValue(defaultValue)
 	{}
 
@@ -28,7 +27,6 @@ protected:
     const QString &defaultValue() const { return m_defaultValue; }
 
 private:
-    QString m_id;
     QString m_value;
     QString m_defaultValue;
 };

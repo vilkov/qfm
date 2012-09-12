@@ -1,11 +1,11 @@
 #include "settingscontainer.h"
 
-#include <QtCore/QSet>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QTextCodec>
 #include <QtGui/QDesktopServices>
 
+#include <QtCore/QDebug>
 
 SETTINGS_NS_BEGIN
 
@@ -63,17 +63,17 @@ void Container::save(QXmlStreamWriter &stream) const
 void Container::load(QXmlStreamReader &stream)
 {
 	Option *option;
-	QSet<Option *> loaded;
+	List::Container uninitialized(m_items);
 
 	while (readNextStartElement(stream))
-		if (option = m_items.value(stream.name()))
+		if (option = uninitialized.value(stream.name()))
 		{
 			option->load(stream);
-			loaded.insert(option);
+			uninitialized.remove(&option->id());
 		}
 
-	for (Container::const_iterator i = begin(), end = Container::end(); i != end; ++i)
-		if (!loaded.contains(*i))
+	if (!uninitialized.isEmpty())
+		for (List::Container::const_iterator i = uninitialized.constBegin(), end = uninitialized.constEnd(); i != end; ++i)
 			(*i)->loadDefault();
 }
 

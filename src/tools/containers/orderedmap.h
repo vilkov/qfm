@@ -33,6 +33,8 @@ public:
         inline iterator(const iterator &o) : m_it(o.m_it) {}
         inline iterator(const typename List::iterator &o) : m_it(o) {}
         inline iterator &operator=(const iterator &o) { m_it = o.m_it; return *this; }
+        inline const Key &key() const { return m_it->first; }
+        inline T &value() const { return m_it->second; }
         inline T &operator*() const { return m_it->second; }
         inline T *operator->() const { return &m_it->second; }
         inline bool operator==(const iterator &o) const { return m_it == o.m_it; }
@@ -68,6 +70,8 @@ public:
         inline const_iterator(iterator ci) : m_it(ci.m_it) {}
         inline const_iterator(const typename List::const_iterator &o) : m_it(o) {}
         inline const_iterator &operator=(const const_iterator &o) { m_it = o.m_it; return *this; }
+        inline const Key &key() const { return m_it->first; }
+        inline T &value() const { return m_it->second; }
         inline const T &operator*() const { return m_it->second; }
         inline const T *operator->() const { return &m_it->second; }
         inline bool operator==(const const_iterator &o) const { return m_it == o.m_it; }
@@ -106,7 +110,15 @@ public:
 		return *this;
 	}
 
-    T &operator[](const Key &key) { return m_map[key]->second; }
+    T &operator[](const Key &key)
+    {
+    	typename List::iterator &i = m_map[key];
+
+    	if (i == typename List::iterator())
+    		return (i = m_list.insert(m_list.end(), Pair(key, T())))->second;
+    	else
+    		return i->second;
+    }
     const T operator[](const Key &key) const { return m_map[key]->second; }
 
     inline int size() const { return m_list.size(); }

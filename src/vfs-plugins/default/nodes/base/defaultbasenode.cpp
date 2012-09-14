@@ -13,6 +13,7 @@
 #include "../../actions/defaultpropertiesaction.h"
 #include "../../actions/defaultpasteclipboardaction.h"
 #include "../../actions/defaultopenwithaction.h"
+#include "../../../../tools/containers/orderedmap.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 
@@ -227,12 +228,13 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot> ItemsIndexMap;
 	typedef ::Desktop::ContextMenuFactory::FileActionsList   FileActionsList;
 	typedef QMap<const IApplication *, FileAction *>         OpenWithActionsMap;
+	typedef ::Tools::Containers::OrderedMap<const FileAction *, FileAction::FilesList> OrderedActionsMap;
 
 	QMenu menu;
 	QMenu openWithMenu(tr("Open with"));
 	ItemsSet set;
 	ActionsMap mapGlobalActions;
-	ActionsMap mapOpenWithActions;
+	OrderedActionsMap mapOpenWithActions;
 	ItemsList items;
 	QModelIndex index;
 	ItemsIndexMap itemsIndex;
@@ -320,7 +322,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 		{
 			menu.addSeparator();
 
-			for (ActionsMap::const_iterator it = mapOpenWithActions.begin(), end = mapOpenWithActions.end(); it != end; ++it)
+			for (OrderedActionsMap::const_iterator it = mapOpenWithActions.begin(), end = mapOpenWithActions.end(); it != end; ++it)
 				openWithMenu.addAction(const_cast<QAction *>(it.key()->action()));
 
 			menu.addMenu(&openWithMenu);

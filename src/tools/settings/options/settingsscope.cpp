@@ -30,9 +30,8 @@ void Scope::load(QXmlStreamReader &stream)
 			uninitialized.remove(&option->id());
 		}
 
-	if (!uninitialized.isEmpty())
-		for (List::Container::const_iterator i = uninitialized.constBegin(), end = uninitialized.constEnd(); i != end; ++i)
-			(*i)->loadDefault();
+	for (List::Container::const_iterator i = uninitialized.constBegin(), end = uninitialized.constEnd(); i != end; ++i)
+		(*i)->loadDefault();
 }
 
 void Scope::loadDefault()

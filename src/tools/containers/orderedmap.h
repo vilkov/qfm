@@ -89,6 +89,23 @@ public:
 	OrderedMap()
 	{}
 
+	OrderedMap(const OrderedMap &other)
+	{
+		for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
+			m_map[(*i).first] = m_list.insert(m_list.end(), *i);
+	}
+
+	OrderedMap &operator=(const OrderedMap &other)
+	{
+		m_map.clear();
+		m_list.clear();
+
+		for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
+			m_map[(*i).first] = m_list.insert(m_list.end(), *i);
+
+		return *this;
+	}
+
     T &operator[](const Key &key) { return m_map[key]->second; }
     const T operator[](const Key &key) const { return m_map[key]->second; }
 

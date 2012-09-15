@@ -68,7 +68,7 @@ public:
 	{
 		typedef QList<QByteArray> List;
 		QByteArray workingDirectory = container->location();
-		QByteArray absoluteFilePath = container->location(file);
+		QByteArray fileName(file->fileName());
 
 		List arguments = QByteArray(m_exec).
 				replace("%d", QByteArray()).
@@ -80,12 +80,6 @@ public:
 				replace("%m", QByteArray()).
 				trimmed().
 				split(' ');
-
-		QByteArray fileName = absoluteFilePath.mid(absoluteFilePath.lastIndexOf(QChar(L'/')) + 1).
-				replace('"', "\\\"").
-				replace('`', "\\`").
-				replace('$', "\\$").
-				replace('\\', "\\\\");
 
 		for (List::size_type i = 0, size = arguments.size(); i < size;)
 			if (arguments.at(i).indexOf('=') != -1)
@@ -128,11 +122,7 @@ public:
 			QVarLengthArray<char *, 8> argv(arguments.size() + 1);
 
 			for (List::size_type i = 0, size = arguments.size(); i < size; ++i)
-				if (arguments.at(i).indexOf('=') == -1)
-				{
-					arguments[i] = arguments.at(i).trimmed();
-					argv.data()[i] = arguments[i].data();
-				}
+				argv.data()[i] = arguments[i].data();
 
 			argv.data()[arguments.size()] = NULL;
 

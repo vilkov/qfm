@@ -14,10 +14,10 @@ class Functor;
 class QueryResultValueItem;
 
 
-class IdmNodeQueryResults : public TasksNode, public IQueryResultsUpdater
+class QueryResultsNode : public TasksNode, public IQueryResultsUpdater
 {
 public:
-	IdmNodeQueryResults(const IdmContainer &container, const Select &query, Node *parent = 0);
+	QueryResultsNode(const IdmContainer &container, const Select &query, Node *parent = 0);
 
 	/* QObject */
     virtual bool event(QEvent *event);
@@ -104,7 +104,7 @@ private:
 		virtual size_type indexOf(Item *item) const;
 
 	private:
-		friend class IdmNodeQueryResults;
+		friend class QueryResultsNode;
 		List m_container;
 	};
 
@@ -117,7 +117,7 @@ private:
     ItemsContainer m_itemsContainer;
     ItemsContainer::List &m_items;
     INodeView::MenuActionList m_actions;
-	IdmQueryResultsDelegate m_delegate;
+	QueryResultsDelegate m_delegate;
 	IdmContainer m_container;
 	IdmValueReader m_reader;
 	QVariant m_label;

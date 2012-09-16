@@ -9,7 +9,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesListDelegate::EntitiesListDelegate(const IdmContainer &container, QObject *parent) :
-	IdmDelegate(parent),
+	Delegate(parent),
     m_container(container)
 {}
 

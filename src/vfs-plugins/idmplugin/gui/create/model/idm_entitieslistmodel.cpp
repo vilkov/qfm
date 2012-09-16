@@ -5,7 +5,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesListModel::EntitiesListModel(QObject *parent) :
-	IdmModel(parent)
+	Model(parent)
 {}
 
 int EntitiesListModel::columnCount(const QModelIndex &parent) const

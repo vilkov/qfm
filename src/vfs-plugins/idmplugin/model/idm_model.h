@@ -7,10 +7,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmModel : public ::Tools::Models::Tree::Model
+class Model : public ::Tools::Models::Tree::Model
 {
 public:
-	IdmModel(QObject *parent = 0);
+	Model(QObject *parent = 0);
 
 protected:
 	class Container : public ::Tools::Models::Tree::Model::Container
@@ -27,9 +27,9 @@ protected:
 		virtual size_type indexOf(Item *item) const;
 
 	private:
-		friend class IdmModel;
-		friend class IdmRootNode;
-		friend class IdmNodeQueryResults;
+		friend class Model;
+		friend class RootNode;
+		friend class QueryResultsNode;
 		List m_container;
 	};
 

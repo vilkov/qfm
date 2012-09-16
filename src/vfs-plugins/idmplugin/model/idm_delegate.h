@@ -7,12 +7,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmDelegate : public QStyledItemDelegate
+class Delegate : public QStyledItemDelegate
 {
-	Q_DISABLE_COPY(IdmDelegate)
+	Q_DISABLE_COPY(Delegate)
 
 public:
-	IdmDelegate(QObject *parent = 0);
+	Delegate(QObject *parent = 0);
 
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;

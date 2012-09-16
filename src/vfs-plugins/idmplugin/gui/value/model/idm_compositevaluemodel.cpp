@@ -9,7 +9,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent) :
-	IdmModel(parent)
+	Model(parent)
 {
 	ValueList list;
 	CompositeValuePropertyItem *item;
@@ -28,7 +28,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QO
 }
 
 CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, const Files &files, QObject *parent) :
-	IdmModel(parent)
+	Model(parent)
 {
 	ValueList list;
 	const SnapshotItem *file;

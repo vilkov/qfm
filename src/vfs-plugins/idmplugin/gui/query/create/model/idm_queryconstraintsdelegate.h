@@ -6,7 +6,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class QueryConstraintsDelegate : public IdmDelegate
+class QueryConstraintsDelegate : public Delegate
 {
 	Q_DISABLE_COPY(QueryConstraintsDelegate)
 

@@ -32,7 +32,7 @@ Node *Plugin::open(const IFileContainer *container, const IFileInfo *file, Node 
 	IFileContainer::Holder folder(container->open(file, m_error));
 
 	if (folder && folder->contains(fileName()))
-		return new IdmRootNode(folder, parent);
+		return new RootNode(folder, parent);
 	else
 		return NULL;
 }

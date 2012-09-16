@@ -10,12 +10,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsDelegate::IdmQueryResultsDelegate(const IdmContainer &container, QObject *parent) :
-	IdmDelegate(parent),
+QueryResultsDelegate::QueryResultsDelegate(const IdmContainer &container, QObject *parent) :
+	Delegate(parent),
     m_container(container)
 {}
 
-QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *QueryResultsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
 	{
@@ -79,7 +79,7 @@ QWidget *IdmQueryResultsDelegate::createEditor(QWidget *parent, const QStyleOpti
 	return NULL;
 }
 
-void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void QueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
 	{
@@ -127,7 +127,7 @@ void IdmQueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &
 		EditorValue<QString>::setValue(editor, static_cast<QueryResultPropertyItem*>(index.internalPointer())->property().name);
 }
 
-void IdmQueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+void QueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
 	{

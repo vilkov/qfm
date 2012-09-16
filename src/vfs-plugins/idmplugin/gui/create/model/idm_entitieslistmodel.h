@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class EntitiesListModel : public IdmModel
+class EntitiesListModel : public Model
 {
 public:
 	typedef Container::size_type size_type;
@@ -15,7 +15,7 @@ public:
 public:
 	EntitiesListModel(QObject *parent = 0);
 
-    /* IdmModel */
+    /* Model */
 	virtual int columnCount(const QModelIndex &parent) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 

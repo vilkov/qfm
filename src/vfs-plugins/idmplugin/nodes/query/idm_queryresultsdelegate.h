@@ -7,12 +7,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmQueryResultsDelegate : public IdmDelegate
+class QueryResultsDelegate : public Delegate
 {
-	Q_DISABLE_COPY(IdmQueryResultsDelegate)
+	Q_DISABLE_COPY(QueryResultsDelegate)
 
 public:
-	IdmQueryResultsDelegate(const IdmContainer &container, QObject *parent = 0);
+	QueryResultsDelegate(const IdmContainer &container, QObject *parent = 0);
 
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;

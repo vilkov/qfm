@@ -21,7 +21,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Select &query, Node *parent) :
+QueryResultsNode::QueryResultsNode(const IdmContainer &container, const Select &query, Node *parent) :
 	TasksNode(m_itemsContainer, parent),
 	m_items(m_itemsContainer.m_container),
 	m_delegate(container),
@@ -30,7 +30,7 @@ IdmNodeQueryResults::IdmNodeQueryResults(const IdmContainer &container, const Se
 	m_label(tr("Found \"%1\" entities...").arg(query.entity()->name()))
 {}
 
-bool IdmNodeQueryResults::event(QEvent *e)
+bool QueryResultsNode::event(QEvent *e)
 {
 	switch (static_cast<ModelEvent::Type>(e->type()))
 	{
@@ -59,12 +59,12 @@ bool IdmNodeQueryResults::event(QEvent *e)
 	return TasksNode::event(e);
 }
 
-int IdmNodeQueryResults::columnCount(const QModelIndex &parent) const
+int QueryResultsNode::columnCount(const QModelIndex &parent) const
 {
 	return 1;
 }
 
-void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
+void QueryResultsNode::fetchMore(const QModelIndex &parent)
 {
 	IdmEntityValue::Holder item;
 	ItemsContainer::List list;
@@ -96,17 +96,17 @@ void IdmNodeQueryResults::fetchMore(const QModelIndex &parent)
 	}
 }
 
-bool IdmNodeQueryResults::canFetchMore(const QModelIndex &parent) const
+bool QueryResultsNode::canFetchMore(const QModelIndex &parent) const
 {
     return !parent.isValid() && !m_reader.eof();
 }
 
-Qt::ItemFlags IdmNodeQueryResults::flags(const QModelIndex &index) const
+Qt::ItemFlags QueryResultsNode::flags(const QModelIndex &index) const
 {
 	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant QueryResultsNode::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (section == 0 && orientation == Qt::Horizontal)
 		switch (role)
@@ -124,7 +124,7 @@ QVariant IdmNodeQueryResults::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
-ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
+ICopyControl *QueryResultsNode::createControl(INodeView *view) const
 {
 	QModelIndex index = view->currentIndex();
 
@@ -143,7 +143,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 							m_container,
 							static_cast<QueryResultRootItem *>(item->parent())->value(),
 							item->property(),
-							const_cast<IdmNodeQueryResults *>(this),
+							const_cast<QueryResultsNode *>(this),
 							index);
 			}
 			else
@@ -171,7 +171,7 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 								m_container,
 								static_cast<QueryResultRootItem *>(item->parent())->value(),
 								item->property(),
-								const_cast<IdmNodeQueryResults *>(this),
+								const_cast<QueryResultsNode *>(this),
 								index);
 					}
 					else
@@ -183,12 +183,12 @@ ICopyControl *IdmNodeQueryResults::createControl(INodeView *view) const
 	return NULL;
 }
 
-void IdmNodeQueryResults::contextMenu(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
+void QueryResultsNode::createFile(const QModelIndex &index, INodeView *view)
 {
 	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
 	{
@@ -235,22 +235,22 @@ void IdmNodeQueryResults::createFile(const QModelIndex &index, INodeView *view)
 	}
 }
 
-void IdmNodeQueryResults::createDirectory(const QModelIndex &index, INodeView *view)
+void QueryResultsNode::createDirectory(const QModelIndex &index, INodeView *view)
 {
 	createFile(index, view);
 }
 
-void IdmNodeQueryResults::rename(const QModelIndex &index, INodeView *view)
+void QueryResultsNode::rename(const QModelIndex &index, INodeView *view)
 {
 	view->edit(index);
 }
 
-void IdmNodeQueryResults::rename(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::rename(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
 {
 	if (m_container.transaction())
 	{
@@ -313,42 +313,42 @@ void IdmNodeQueryResults::remove(const QModelIndexList &list, INodeView *view)
 		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
-void IdmNodeQueryResults::cancel(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::calculateSize(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::calculateSize(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::pathToClipboard(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmNodeQueryResults::copy(const INodeView *source, INodeView *destination)
+void QueryResultsNode::copy(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void IdmNodeQueryResults::move(const INodeView *source, INodeView *destination)
+void QueryResultsNode::move(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void IdmNodeQueryResults::removeToTrash(const QModelIndexList &list, INodeView *view)
+void QueryResultsNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-::History::Entry *IdmNodeQueryResults::search(const QModelIndex &index, INodeView *view)
+::History::Entry *QueryResultsNode::search(const QModelIndex &index, INodeView *view)
 {
 	return NULL;
 }
 
-void IdmNodeQueryResults::refresh()
+void QueryResultsNode::refresh()
 {
 //	QueryResultItem *item;
 //	Snapshot::Files files(m_container.container());
@@ -361,53 +361,53 @@ void IdmNodeQueryResults::refresh()
 //			}
 }
 
-QString IdmNodeQueryResults::title() const
+QString QueryResultsNode::title() const
 {
 	QString res = m_container.container()->location();
 	return res.mid(res.lastIndexOf(QChar(L'/')));
 }
 
-QString IdmNodeQueryResults::location() const
+QString QueryResultsNode::location() const
 {
 	return m_container.container()->location();
 }
 
-IdmNodeQueryResults::Sorting IdmNodeQueryResults::sorting() const
+QueryResultsNode::Sorting QueryResultsNode::sorting() const
 {
 	return Sorting(0, Qt::AscendingOrder);
 }
 
-IdmNodeQueryResults::Geometry IdmNodeQueryResults::geometry() const
+QueryResultsNode::Geometry QueryResultsNode::geometry() const
 {
 	return Geometry() << 100;
 }
 
-QAbstractItemModel *IdmNodeQueryResults::model() const
+QAbstractItemModel *QueryResultsNode::model() const
 {
-	return const_cast<IdmNodeQueryResults *>(this);
+	return const_cast<QueryResultsNode *>(this);
 }
 
-QAbstractItemDelegate *IdmNodeQueryResults::delegate() const
+QAbstractItemDelegate *QueryResultsNode::delegate() const
 {
-	return const_cast<IdmQueryResultsDelegate *>(&m_delegate);
+	return const_cast<QueryResultsDelegate *>(&m_delegate);
 }
 
-const INodeView::MenuActionList &IdmNodeQueryResults::actions() const
+const INodeView::MenuActionList &QueryResultsNode::actions() const
 {
 	return m_actions;
 }
 
-::History::Entry *IdmNodeQueryResults::menuAction(QAction *action, INodeView *view)
+::History::Entry *QueryResultsNode::menuAction(QAction *action, INodeView *view)
 {
 	return NULL;
 }
 
-QModelIndex IdmNodeQueryResults::rootIndex() const
+QModelIndex QueryResultsNode::rootIndex() const
 {
 	return QModelIndex();
 }
 
-Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *QueryResultsNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
 {
 	QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
 
@@ -441,27 +441,27 @@ Node *IdmNodeQueryResults::viewChild(const QModelIndex &idx, QModelIndex &select
 	return NULL;
 }
 
-Node *IdmNodeQueryResults::viewChild(const QString &fileName, QModelIndex &selected)
+Node *QueryResultsNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	return NULL;
 }
 
-void IdmNodeQueryResults::updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed)
+void QueryResultsNode::updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::completedProgressEvent(const Item::Holder &item, quint64 timeElapsed)
+void QueryResultsNode::completedProgressEvent(const Item::Holder &item, quint64 timeElapsed)
 {
 
 }
 
-void IdmNodeQueryResults::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+void QueryResultsNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
 {
 
 }
 
-void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+void QueryResultsNode::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
 	QueryResultPathPropertyItem *item = static_cast<QueryResultPathPropertyItem *>(index.internalPointer());
 
@@ -470,12 +470,12 @@ void IdmNodeQueryResults::add(const QModelIndex &index, const IdmCompositeEntity
 	endInsertRows();
 }
 
-void IdmNodeQueryResults::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+void QueryResultsNode::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
 {
 
 }
 
-void IdmNodeQueryResults::refresh(const QModelIndex &index)
+void QueryResultsNode::refresh(const QModelIndex &index)
 {
 	Snapshot::Files files(m_container.container());
 	QueryResultItem *item = static_cast<QueryResultItem *>(index.internalPointer());
@@ -487,7 +487,7 @@ void IdmNodeQueryResults::refresh(const QModelIndex &index)
 		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
 }
 
-void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &functor)
+void QueryResultsNode::process(const QModelIndexList &list, const Functor &functor)
 {
 	QueryResultItem *item;
 
@@ -496,7 +496,7 @@ void IdmNodeQueryResults::process(const QModelIndexList &list, const Functor &fu
 			functor(list.at(i), static_cast<QueryResultValueItem *>(item));
 }
 
-void IdmNodeQueryResults::processRemove(const QModelIndexList &list, const Functor &functor)
+void QueryResultsNode::processRemove(const QModelIndexList &list, const Functor &functor)
 {
 	QueryResultItem *item;
 
@@ -505,7 +505,7 @@ void IdmNodeQueryResults::processRemove(const QModelIndexList &list, const Funct
 			functor(list.at(i), static_cast<QueryResultValueItem *>(item));
 }
 
-void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)
+void QueryResultsNode::doRemove(INodeView *view, const QModelIndex &index, QueryResultValueItem *value)
 {
 	if (m_container.transaction())
 	{
@@ -536,7 +536,7 @@ void IdmNodeQueryResults::doRemove(INodeView *view, const QModelIndex &index, Qu
 	}
 }
 
-void IdmNodeQueryResults::scanUpdates(const BaseTask::Event *e)
+void QueryResultsNode::scanUpdates(const BaseTask::Event *e)
 {
 	typedef const ScanFilesTask::UpdatesEvent *Event;
 	typedef ScanFilesTask::UpdatesEvent *NotConstEvent;
@@ -546,7 +546,7 @@ void IdmNodeQueryResults::scanUpdates(const BaseTask::Event *e)
 	taskHandled(event->task);
 }
 
-void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
+void QueryResultsNode::scanForRemove(const BaseTask::Event *e)
 {
 	typedef const ScanFilesTask::Event *Event;
 	typedef ScanFilesTask::Event *NotConstEvent;
@@ -603,7 +603,7 @@ void IdmNodeQueryResults::scanForRemove(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
+void QueryResultsNode::performRemove(const BaseTask::Event *e)
 {
 	typedef const PerformRemoveTask::Event *Event;
 	QueryResultPropertyItem::size_type idx;
@@ -658,7 +658,7 @@ void IdmNodeQueryResults::performRemove(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-void IdmNodeQueryResults::lock(const Snapshot &snapshot, const QString &reason)
+void QueryResultsNode::lock(const Snapshot &snapshot, const QString &reason)
 {
 	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
@@ -678,7 +678,7 @@ void IdmNodeQueryResults::lock(const Snapshot &snapshot, const QString &reason)
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
-void IdmNodeQueryResults::unlock(const Snapshot &snapshot)
+void QueryResultsNode::unlock(const Snapshot &snapshot)
 {
 	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
@@ -698,7 +698,7 @@ void IdmNodeQueryResults::unlock(const Snapshot &snapshot)
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
-void IdmNodeQueryResults::update(Snapshot &updates)
+void QueryResultsNode::update(Snapshot &updates)
 {
 	typedef QMap<QueryResultItem*, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
@@ -730,21 +730,21 @@ void IdmNodeQueryResults::update(Snapshot &updates)
 							 createIndex((*i).at(q).bottom(), lastColumn, i.key()->at((*i).at(q).bottom())));
 }
 
-IdmNodeQueryResults::ItemsContainer::ItemsContainer() :
+QueryResultsNode::ItemsContainer::ItemsContainer() :
 	TasksNode::Container()
 {}
 
-IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::size() const
+QueryResultsNode::ItemsContainer::size_type QueryResultsNode::ItemsContainer::size() const
 {
 	return m_container.size();
 }
 
-IdmNodeQueryResults::ItemsContainer::Item *IdmNodeQueryResults::ItemsContainer::at(size_type index) const
+QueryResultsNode::ItemsContainer::Item *QueryResultsNode::ItemsContainer::at(size_type index) const
 {
 	return m_container.at(index).data();
 }
 
-IdmNodeQueryResults::ItemsContainer::size_type IdmNodeQueryResults::ItemsContainer::indexOf(Item *item) const
+QueryResultsNode::ItemsContainer::size_type QueryResultsNode::ItemsContainer::indexOf(Item *item) const
 {
 	VFS::Item::Holder holder(static_cast<VFS::Item *>(item));
 	return m_container.indexOf(holder);

@@ -5,7 +5,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryEntitiesModel::QueryEntitiesModel(QObject *parent) :
-	IdmModel(parent)
+	Model(parent)
 {}
 
 void QueryEntitiesModel::add(const IdmEntity::Property &property)

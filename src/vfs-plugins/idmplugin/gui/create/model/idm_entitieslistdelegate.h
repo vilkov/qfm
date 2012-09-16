@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class EntitiesListDelegate : public IdmDelegate
+class EntitiesListDelegate : public Delegate
 {
 	Q_DISABLE_COPY(EntitiesListDelegate)
 

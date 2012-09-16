@@ -9,7 +9,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class CompositeValueModel : public IdmModel
+class CompositeValueModel : public Model
 {
 public:
 	typedef IdmCompositeEntityValue::List                    ValueList;

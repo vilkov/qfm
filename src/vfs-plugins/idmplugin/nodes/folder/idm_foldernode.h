@@ -25,7 +25,7 @@ protected:
 	virtual ::VFS::Node *createNode(const IFileInfo *file) const;
 
 private:
-	friend class IdmRootNode;
+	friend class RootNode;
 	::VFS::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
 
 private:

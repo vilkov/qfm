@@ -7,7 +7,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryConstraintsDelegate::QueryConstraintsDelegate(QObject *parent) :
-	IdmDelegate(parent)
+	Delegate(parent)
 {}
 
 QWidget *QueryConstraintsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const

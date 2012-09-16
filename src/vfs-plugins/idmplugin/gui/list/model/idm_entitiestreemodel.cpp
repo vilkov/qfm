@@ -5,7 +5,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesTreeModel::EntitiesTreeModel(QObject *parent) :
-	IdmModel(parent)
+	Model(parent)
 {}
 
 void EntitiesTreeModel::add(IdmEntity *entity)

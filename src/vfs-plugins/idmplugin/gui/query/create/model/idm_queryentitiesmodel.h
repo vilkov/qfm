@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class QueryEntitiesModel : public IdmModel
+class QueryEntitiesModel : public Model
 {
 public:
 	typedef Container::size_type size_type;

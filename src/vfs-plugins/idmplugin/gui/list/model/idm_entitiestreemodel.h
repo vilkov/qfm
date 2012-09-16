@@ -7,7 +7,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class EntitiesTreeModel : public IdmModel
+class EntitiesTreeModel : public Model
 {
 public:
 	EntitiesTreeModel(QObject *parent = 0);

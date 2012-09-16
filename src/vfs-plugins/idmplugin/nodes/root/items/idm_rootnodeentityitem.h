@@ -21,7 +21,7 @@ public:
 	IdmEntity *entity() const { return m_entity; }
 
 protected:
-	friend class IdmRootNode;
+	friend class RootNode;
 	void add(RootNodeItem *item) { m_items.push_back(item); }
 	void remove(size_type index) { delete m_items.takeAt(index); }
 

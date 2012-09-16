@@ -8,11 +8,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmRootNode : public TasksNode
+class RootNode : public TasksNode
 {
 public:
-	IdmRootNode(IFileContainer::Holder &container, Node *parent = 0);
-	virtual ~IdmRootNode();
+	RootNode(IFileContainer::Holder &container, Node *parent = 0);
+	virtual ~RootNode();
 
     /* FileSystemModel */
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -91,7 +91,7 @@ private:
 		virtual size_type indexOf(Item *item) const;
 
 	private:
-		friend class IdmRootNode;
+		friend class RootNode;
 		List m_container;
 	};
 
@@ -117,7 +117,7 @@ private:
 	Container::List &m_items;
 	EntitiesMap m_entities;
 	IdmContainer m_container;
-	IdmRootNodeDelegate m_delegate;
+	RootNodeDelegate m_delegate;
 };
 
 IDM_PLUGIN_NS_END

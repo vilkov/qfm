@@ -3,30 +3,30 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmModel::IdmModel(QObject *parent) :
-	Model(m_container, parent),
+Model::Model(QObject *parent) :
+	::Tools::Models::Tree::Model(m_container, parent),
 	m_items(m_container.m_container)
 {}
 
-IdmModel::Container::Container()
+Model::Container::Container()
 {}
 
-IdmModel::Container::~Container()
+Model::Container::~Container()
 {
 	qDeleteAll(m_container);
 }
 
-IdmModel::Container::size_type IdmModel::Container::size() const
+Model::Container::size_type Model::Container::size() const
 {
 	return m_container.size();
 }
 
-IdmModel::Container::Item *IdmModel::Container::at(size_type index) const
+Model::Container::Item *Model::Container::at(size_type index) const
 {
 	return m_container.at(index);
 }
 
-IdmModel::Container::size_type IdmModel::Container::indexOf(Item *item) const
+Model::Container::size_type Model::Container::indexOf(Item *item) const
 {
 	return m_container.indexOf(item);
 }

@@ -7,12 +7,12 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmRootNodeDelegate : public IdmDelegate
+class RootNodeDelegate : public Delegate
 {
-	Q_DISABLE_COPY(IdmRootNodeDelegate)
+	Q_DISABLE_COPY(RootNodeDelegate)
 
 public:
-	IdmRootNodeDelegate(const IdmContainer &container, QObject *parent = 0);
+	RootNodeDelegate(const IdmContainer &container, QObject *parent = 0);
 
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;

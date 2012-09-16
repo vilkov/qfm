@@ -104,7 +104,7 @@ public:
 						replace("%F", fileName).
 						replace("%u", fileName).
 						replace("%U", fileName).
-						replace("%c", Info::codec()->fromUnicode(m_name));
+						replace("%c", ::Desktop::Locale::current()->codec()->fromUnicode(m_name));
 
 				++i;
 			}

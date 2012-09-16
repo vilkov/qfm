@@ -13,7 +13,7 @@
 #include "vfs-plugins/default/default_plugin.h"
 #include "vfs-plugins/m3uplugin/m3uplugin.h"
 #include "vfs-plugins/idmplugin/idm_plugin.h"
-#include "vfs-plugins/arcplugin/arcplugin.h"
+#include "vfs-plugins/arcplugin/arc_plugin.h"
 
 
 VFS_PLUGINS_NS_BEGIN
@@ -48,8 +48,8 @@ public:
 private:
 	M3u::Plugin m_m3uplugin;
 	Idm::Plugin m_idmplugin;
-	Arc::LibArchivePlugin m_arcplugin1;
-	Arc::LibUnRarPlugin m_arcplugin2;
+	Arc::LibArchive::Plugin m_arcplugin1;
+	Arc::LibUnrar::Plugin m_arcplugin2;
 
 private:
 	Default::Plugin m_default;

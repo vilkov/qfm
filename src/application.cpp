@@ -12,7 +12,7 @@
 
 #include "vfs-plugins/default/default_plugin.h"
 #include "vfs-plugins/m3uplugin/m3uplugin.h"
-#include "vfs-plugins/idmplugin/idmplugin.h"
+#include "vfs-plugins/idmplugin/idm_plugin.h"
 #include "vfs-plugins/arcplugin/arcplugin.h"
 
 

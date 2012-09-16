@@ -3,7 +3,7 @@
 
 #include "../../idmplugin_ns.h"
 #include "../../containeres/idmcontainer.h"
-#include "../../../default/nodes/defaultnode.h"
+#include "../../../default/nodes/default_node.h"
 
 
 IDM_PLUGIN_NS_BEGIN

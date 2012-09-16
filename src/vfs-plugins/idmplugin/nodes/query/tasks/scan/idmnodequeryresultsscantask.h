@@ -2,7 +2,7 @@
 #define IDMNODEQUERYRESULTSSCANTASK_H_
 
 #include "../../events/idmqueryresultsmodelevents.h"
-#include "../../../../../default/tasks/defaultfilesbasetask.h"
+#include "../../../../../default/tasks/default_filesbasetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN

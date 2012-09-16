@@ -1,5 +1,5 @@
 #include "libarchivefileinfo.h"
-#include "../../../default/interfaces/defaultfileinfo.h"
+#include "../../../default/interfaces/default_fileinfo.h"
 
 
 LIBARCHIVE_ARC_PLUGIN_NS_BEGIN

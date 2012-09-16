@@ -2,7 +2,7 @@
 #define IDMNODEQUERYRESULTSPERFORMREMOVETASK_H_
 
 #include "../../events/idmqueryresultsmodelevents.h"
-#include "../../../../../default/tasks/perform/defaultperformremovetask.h"
+#include "../../../../../default/tasks/perform/default_performremovetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN

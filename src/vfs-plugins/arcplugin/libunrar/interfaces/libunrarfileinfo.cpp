@@ -1,5 +1,5 @@
 #include "libunrarfileinfo.h"
-#include "../../../default/interfaces/defaultfileinfo.h"
+#include "../../../default/interfaces/default_fileinfo.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN

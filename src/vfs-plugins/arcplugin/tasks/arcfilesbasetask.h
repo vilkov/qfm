@@ -2,7 +2,7 @@
 #define ARCFILESBASETASK_H_
 
 #include "../arcplugin_ns.h"
-#include "../../default/tasks/defaultfilesbasetask.h"
+#include "../../default/tasks/default_filesbasetask.h"
 
 
 ARC_PLUGIN_NS_BEGIN

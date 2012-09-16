@@ -10,7 +10,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMessageBox>
 
-#include "vfs-plugins/default/defaultplugin.h"
+#include "vfs-plugins/default/default_plugin.h"
 #include "vfs-plugins/m3uplugin/m3uplugin.h"
 #include "vfs-plugins/idmplugin/idmplugin.h"
 #include "vfs-plugins/arcplugin/arcplugin.h"

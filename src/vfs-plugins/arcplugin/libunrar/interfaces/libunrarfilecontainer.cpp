@@ -1,6 +1,6 @@
 #include "libunrarfilecontainer.h"
-#include "../../../default/interfaces/defaultfileinfo.h"
-#include "../../../default/interfaces/defaultfilecontainer.h"
+#include "../../../default/interfaces/default_fileinfo.h"
+#include "../../../default/interfaces/default_filecontainer.h"
 
 
 LIBUNRAR_ARC_PLUGIN_NS_BEGIN

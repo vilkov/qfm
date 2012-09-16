@@ -10,7 +10,7 @@
 #include "items/idmqueryresultpathpropertyitem.h"
 #include "items/idmqueryresultcompositerootitem.h"
 #include "../../gui/value/list/selectable/selectablevaluelistdialog.h"
-#include "../../../default/nodes/defaultnode.h"
+#include "../../../default/nodes/default_node.h"
 #include "../../../../tools/containers/union.h"
 #include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"

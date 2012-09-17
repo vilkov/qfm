@@ -79,7 +79,22 @@ bool UnPackIntoSubdirActionTask::OpenArchive::operator()(QString &error) const
 
 bool UnPackIntoSubdirActionTask::CreateDestination::operator()(QString &error) const
 {
-	return m_result = m_container->create(FileContainer::extractDirectoryName(m_file), error);
+	IFileInfo::Holder file;
+	QString name = FileContainer::extractDirectoryName(m_file);
+
+	if ((file = m_container->info(name, error)) && !file->isDir())
+	{
+		int i = 0;
+		QString tmp;
+
+		do
+			tmp = QString(name).append(QChar(L' ')).append(QString::number(++i));
+		while ((file = m_container->info(tmp, error)) && !file->isDir());
+
+		name = tmp;
+	}
+
+	return m_result = m_container->create(name, error);
 }
 
 bool UnPackIntoSubdirActionTask::OpenDestination::operator()(QString &error) const

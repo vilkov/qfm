@@ -1,4 +1,5 @@
 #include "vfs_proxymodel.h"
+#include "../../tools/strings/strnatcmp.h"
 
 
 VFS_NS_BEGIN
@@ -11,19 +12,19 @@ bool ProxyModel::compareByFileNames(const IFileInfo *v1, const IFileInfo *v2)
 {
 	if (v1->isFile())
 		if (v2->isFile())
-			return ProxyModel::compareFileNames(v1->fileName(), v2->fileName());
+			return compareFileNames(v1->fileName(), v2->fileName());
 		else
 			return false;
 	else
 		if (v2->isFile())
 			return true;
 		else
-			return ProxyModel::compareFileNames(v1->fileName(), v2->fileName());
+			return compareFileNames(v1->fileName(), v2->fileName());
 }
 
 bool ProxyModel::compareFileNames(const QString &str1, const QString &str2)
 {
-	return QString::compare(str1, str2, Qt::CaseInsensitive) < 0;
+	return strnatcasecmp(str1.data(), str2.data()) < 0;
 }
 
 VFS_NS_END

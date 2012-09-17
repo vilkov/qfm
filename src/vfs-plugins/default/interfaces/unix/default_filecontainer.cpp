@@ -468,7 +468,7 @@ IFileContainer *FileContainer::create(const QString &fileName, QString &error) c
 		if (S_ISDIR(st.st_mode))
 			return new FileContainer(name);
 		else
-			errno = ENOTDIR;
+			errno = EEXIST;
 	else
 		if (errno == ENOENT && ::mkdir(name, S_IRWXU | (S_IRGRP | S_IXGRP) | (S_IROTH | S_IXOTH)) == 0)
 			return new FileContainer(name);

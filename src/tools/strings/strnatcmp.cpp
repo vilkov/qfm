@@ -40,24 +40,24 @@
 
 /* These are defined as macros to make it easier to adapt this code to
  * different characters types or comparison functions. */
-static inline int
+static inline bool
 nat_isdigit(nat_char a)
 {
-     return isdigit((unsigned char) a);
+     return a.isDigit();
 }
 
 
-static inline int
+static inline bool
 nat_isspace(nat_char a)
 {
-     return isspace((unsigned char) a);
+     return a.isSpace();
 }
 
 
 static inline nat_char
 nat_toupper(nat_char a)
 {
-     return toupper((unsigned char) a);
+     return a.toUpper();
 }
 
 
@@ -71,7 +71,7 @@ compare_right(nat_char const *a, nat_char const *b)
 	value wins, but we can't know that it will until we've scanned
 	both numbers to know that they have the same magnitude, so we
 	remember it in BIAS. */
-     for (;; a++, b++) {
+     for (;; ++a, ++b) {
 	  if (!nat_isdigit(*a)  &&  !nat_isdigit(*b))
 	       return bias;
 	  else if (!nat_isdigit(*a))
@@ -84,7 +84,7 @@ compare_right(nat_char const *a, nat_char const *b)
 	  } else if (*a > *b) {
 	       if (!bias)
 		    bias = +1;
-	  } else if (!*a  &&  !*b)
+	  } else if ((*a) == 0 && (*b) == 0)
 	       return bias;
      }
 
@@ -97,7 +97,7 @@ compare_left(nat_char const *a, nat_char const *b)
 {
      /* Compare two left-aligned numbers: the first to have a
         different value wins. */
-     for (;; a++, b++) {
+     for (;; ++a, ++b) {
 	  if (!nat_isdigit(*a)  &&  !nat_isdigit(*b))
 	       return 0;
 	  else if (!nat_isdigit(*a))
@@ -134,7 +134,7 @@ static int strnatcmp0(nat_char const *a, nat_char const *b, int fold_case)
 
 	  /* process run of digits */
 	  if (nat_isdigit(ca)  &&  nat_isdigit(cb)) {
-	       fractional = (ca == '0' || cb == '0');
+	       fractional = (ca == L'0' || cb == L'0');
 
 	       if (fractional) {
 		    if ((result = compare_left(a+ai, b+bi)) != 0)
@@ -145,7 +145,7 @@ static int strnatcmp0(nat_char const *a, nat_char const *b, int fold_case)
 	       }
 	  }
 
-	  if (!ca && !cb) {
+	  if (ca == 0 && cb == 0) {
 	       /* The strings compare the same.  Perhaps the caller
                   will want to call strcmp to break the tie. */
 	       return 0;

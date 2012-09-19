@@ -1,8 +1,24 @@
 #include "idm_chooseentitydialog.h"
 
+#include <vfs/model/vfs_proxymodel.h>
+
 #include <QtCore/QSet>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMessageBox>
+
+
+template <>
+class qLess<IdmEntity *>
+{
+public:
+	typedef IdmEntity * value_type;
+
+public:
+    inline bool operator()(const value_type &t1, const value_type &t2) const
+    {
+        return ::VFS::ProxyModel::compareFileNames(t1->name(), t2->name());
+    }
+};
 
 
 class ChoosePropertyDialog : public ChooseEntityDialog
@@ -69,7 +85,7 @@ ChooseEntityDialog::ChooseEntityDialog(const QString &title, const IdmContainer 
 
 IdmEntity *ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget *parent)
 {
-	QSet<IdmEntity*> entities;
+	QSet<IdmEntity *> entities;
 
 	for (IdmContainer::size_type i = 0, size = container.size(); i < size; ++i)
 		if (container.at(i)->type() == Database::Path)
@@ -85,7 +101,12 @@ IdmEntity *ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget
 			return *entities.begin();
 		else
 		{
-			ChooseEntityDialog dialog(tr("Choose entity"), container, entities.toList(), parent);
+			List list(entities.toList());
+
+			entities.clear();
+			qSort(list);
+
+			ChooseEntityDialog dialog(tr("Choose entity"), container, list, parent);
 
 			if (dialog.exec() == ChooseEntityDialog::Accepted)
 				return dialog.value();
@@ -112,7 +133,12 @@ IdmEntity *ChooseEntityDialog::chooseProperty(const IdmContainer &container, Idm
 								 	 arg(entity->name()));
 	else
 	{
-		ChoosePropertyDialog dialog(tr("Choose a property for \"%1\"").arg(entity->name()), container, entities.toList(), parent);
+		List list(entities.toList());
+
+		entities.clear();
+		qSort(list);
+
+		ChoosePropertyDialog dialog(tr("Choose a property for \"%1\"").arg(entity->name()), container, list, parent);
 
 		if (dialog.exec() == ChooseEntityDialog::Accepted)
 		{

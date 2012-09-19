@@ -18,7 +18,7 @@ class ChooseEntityDialog : public QDialog
 	Q_OBJECT
 
 public:
-	typedef QList<IdmEntity*> List;
+	typedef QList<IdmEntity *> List;
 
 public:
 	IdmEntity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }

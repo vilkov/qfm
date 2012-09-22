@@ -63,7 +63,7 @@ QAbstractItemView::SelectionMode Node::selectionMode() const
 void Node::nodeRemoved(Node *node)
 {}
 
-::History::Entry *Node::switchTo(Node *node, INodeView *view)
+void Node::switchTo(Node *node, INodeView *view)
 {
 	/* XXX: Add 2 links because of HistoryEntry */
 
@@ -71,7 +71,7 @@ void Node::nodeRemoved(Node *node)
 	node->refresh();
 	removeView(view);
 
-	return new HistoryEntry(node);
+	view->save(new HistoryEntry(node));
 }
 
 Node *Node::viewChild(const Uri::Iterator &path, QModelIndex &selected)

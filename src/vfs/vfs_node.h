@@ -10,9 +10,8 @@
 
 VFS_NS_BEGIN
 
-/*
- *  Implements default file system tree navigation.
- *
+/**
+ * Implements default file system tree navigation.
  */
 
 class Node : public Model, public INode
@@ -44,7 +43,7 @@ protected:
 protected:
 	Node *parentNode() const { return static_cast<Node *>(QObject::parent()); }
 	bool isVisible() const { return !m_view.isEmpty(); }
-	::History::Entry *switchTo(Node *node, INodeView *view);
+	void switchTo(Node *node, INodeView *view);
 	Node *viewChild(const Uri::Iterator &path, QModelIndex &selected);
 
 private:

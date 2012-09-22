@@ -72,7 +72,7 @@ private:
 
 		QString path() const { return m_path.value(); }
 		const Sort &sort() const { return m_sort; }
-    	::VFS::INode::Geometry geometry() const;
+		DirectoryView::Geometry geometry() const;
 
     private:
 		Tools::Settings::OptionValue m_path;

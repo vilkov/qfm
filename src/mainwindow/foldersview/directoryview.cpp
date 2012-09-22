@@ -1,58 +1,74 @@
 #include "directoryview.h"
 #include "foldersview.h"
-#include "../../desktop/contextmenu/desktop_contextmenu.h"
-#include "../../tools/widgets/stringdialog/stringdialog.h"
-#include "../../application.h"
+
+#include <vfs/interfaces/vfs_inode.h>
+#include <desktop/contextmenu/desktop_contextmenu.h>
+#include <tools/widgets/stringdialog/stringdialog.h>
+#include <tools/optimizations/optimizations.h>
+#include <application.h>
 
 #include <QtGui/QHeaderView>
 #include <QtGui/QMessageBox>
 
 
-DirectoryView::DirectoryView(FoldersView *parent) :
-	QWidget(),
+DirectoryView::DirectoryView(const QString &absoluteFilePath, FoldersView *parent) :
+	BaseClass(),
 	m_parent(parent),
-    m_node(0),
+    m_node(NULL),
 	m_layout(this),
+    m_eventHandler(this),
     m_pathEventHandler(this),
     m_header(&m_pathEventHandler, this),
     m_toolBar(this),
-	m_view(&m_eventHandler, this),
-	m_eventHandler(this)
+	m_view(eventHandler(), this)
 {
-	m_layout.setMargin(3);
-	m_layout.setSpacing(1);
-	m_layout.addLayout(&m_header.layout);
-	m_layout.addWidget(&m_toolBar);
-	m_layout.addWidget(&m_view);
+	Q_ASSERT(m_parent);
+	initialize();
 
-	m_view.setSelectionMode(QAbstractItemView::ExtendedSelection);
-	m_view.setSortingEnabled(true);
-	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
+	if (::History::Entry *entry = Application::rootNode()->open(this, absoluteFilePath))
+		initializeHistory(entry);
+	else
+		initializeHistory(Application::rootNode()->open(this, defaultPath()));
+}
 
-	m_eventHandler.registerContextMenuEventHandler(&DirectoryView::contextMenu);
-	m_eventHandler.registerMouseDoubleClickEventHandler(&DirectoryView::activated);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Backspace, &DirectoryView::goUp);
-	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Left,      &DirectoryView::goBackward);
-	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Right,     &DirectoryView::goForward);
-	m_eventHandler.registerShortcut(Qt::ALT,            Qt::Key_Up,        &DirectoryView::editPath);
-	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_F5,        &DirectoryView::refresh);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Return,    &DirectoryView::activated);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Enter,     &DirectoryView::activated);
-	m_eventHandler.registerShortcut(Qt::ALT + Qt::CTRL, Qt::Key_X,         &DirectoryView::pathToClipboard);
-	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_Return,    &DirectoryView::openInNewTab);
-	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_W,         &DirectoryView::closeTab);
-	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_Down,      &DirectoryView::closeTab);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F2,        &DirectoryView::rename);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F8,        &DirectoryView::createFile);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F7,        &DirectoryView::createDirectory);
-	m_eventHandler.registerShortcut(Qt::SHIFT,          Qt::Key_Delete,    &DirectoryView::remove);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Space,     &DirectoryView::calculateSize);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F5,        &DirectoryView::copy);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_F6,        &DirectoryView::move);
-	m_eventHandler.registerShortcut(Qt::NoModifier,     Qt::Key_Escape,    &DirectoryView::cancel);
-	m_eventHandler.registerShortcut(Qt::CTRL,           Qt::Key_F,         &DirectoryView::search);
+DirectoryView::DirectoryView(::VFS::INode *node, const QModelIndex &index, const Geometry &geometry, FoldersView *parent) :
+	BaseClass(),
+	m_parent(parent),
+	m_node(NULL),
+	m_layout(this),
+	m_eventHandler(this),
+	m_pathEventHandler(this),
+	m_header(&m_pathEventHandler, this),
+	m_toolBar(this),
+	m_view(eventHandler(), this)
+{
+	Q_ASSERT(m_parent);
+	initialize();
 
-	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+	if (::History::Entry *entry = node->viewInNewTab(this, index))
+		initializeHistory(entry);
+	else
+		initializeHistory(Application::rootNode()->open(this, defaultPath()));
+}
+
+DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, FoldersView *parent) :
+	BaseClass(),
+	m_parent(parent),
+	m_node(NULL),
+	m_layout(this),
+	m_eventHandler(this),
+	m_pathEventHandler(this),
+	m_header(&m_pathEventHandler, this),
+	m_toolBar(this),
+	m_view(eventHandler(), this)
+{
+	Q_ASSERT(m_parent);
+	initialize();
+
+	if (::History::Entry *entry = Application::rootNode()->open(this, path))
+		initializeHistory(entry);
+	else
+		initializeHistory(Application::rootNode()->open(this, defaultPath()));
 }
 
 DirectoryView::~DirectoryView()
@@ -61,33 +77,14 @@ DirectoryView::~DirectoryView()
 		m_node->viewClosed(this);
 }
 
-void DirectoryView::setupModel(const QString &absoluteFilePath)
-{
-	if (::History::Entry *entry = Application::rootNode()->open(this, absoluteFilePath))
-		m_navigation.init(entry);
-	else
-		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
-}
-
-void DirectoryView::setupModel(::VFS::INode *node, const QModelIndex &index, const Geometry &geometry)
-{
-	if (::History::Entry *entry = node->viewInNewTab(this, index))
-		m_navigation.init(entry);
-	else
-		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
-}
-
-void DirectoryView::setupModel(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry)
-{
-	if (::History::Entry *entry = Application::rootNode()->open(this, path))
-		m_navigation.init(entry);
-	else
-		m_navigation.init(Application::rootNode()->open(this, defaultPath()));
-}
-
 ::VFS::INode *DirectoryView::node() const
 {
 	return m_node;
+}
+
+::VFS::INodeView *DirectoryView::opposite() const
+{
+	return static_cast<DirectoryView *>(m_parent->other().currentWidget());
 }
 
 QModelIndex DirectoryView::currentIndex() const
@@ -115,21 +112,27 @@ void DirectoryView::select(const QModelIndex &index)
 
 void DirectoryView::setNode(::VFS::INode *node)
 {
-    m_node = node;
-	m_view.setModel(node->model());
-	m_view.setItemDelegate(node->delegate());
-	m_view.setSelectionMode(node->selectionMode());
-	m_header.pathEdit.setText(m_node->location());
-	m_parent->updateTitle(this, m_node->title());
+	/**
+	 * m_node == NULL
+	 * only during construction of DirectoryView objects.
+	 */
+	if (LIKELY(m_node != NULL))
+		m_parent->updateTitle(this, node->title());
 
-	if (node->actions().isEmpty())
+    m_node = node;
+	m_view.setModel(m_node->model());
+	m_view.setItemDelegate(m_node->delegate());
+	m_view.setSelectionMode(m_node->selectionMode());
+	m_header.pathEdit.setText(m_node->location());
+
+	if (m_node->actions().isEmpty())
 	{
 		m_toolBar.setVisible(false);
 		m_toolBar.clear();
 	}
 	else
 	{
-		m_toolBar.addActions(node->actions());
+		m_toolBar.addActions(m_node->actions());
 		m_toolBar.setVisible(true);
 	}
 
@@ -161,6 +164,11 @@ QPoint DirectoryView::listPos() const
 	return mapToGlobal(m_view.pos());
 }
 
+QString DirectoryView::title() const
+{
+	return m_node->title();
+}
+
 DirectoryView::Tab DirectoryView::tab() const
 {
 	Geometry geometry;
@@ -182,97 +190,43 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-	if (::History::Entry *entry = Application::rootNode()->open(this, filePath))
-		m_navigation.save(entry);
+//	if (::History::Entry *entry = Application::rootNode()->open(this, filePath))
+//		navigation().save(entry);
 }
 
 void DirectoryView::goUp()
 {
-	if (::History::Entry *entry = m_node->viewParent(this))
-		m_navigation.save(entry);
+	BaseClass::goUp();
 }
 
 void DirectoryView::goBackward()
 {
-	if (History::Entry *entry = m_navigation.backward())
-		m_node->viewHistory(this, entry);
+	BaseClass::goBackward();
 }
 
 void DirectoryView::goForward()
 {
-	if (History::Entry *entry = m_navigation.forward())
-		m_node->viewHistory(this, entry);
+	BaseClass::goForward();
 }
 
 void DirectoryView::refresh()
 {
-	m_node->refresh();
-}
-
-void DirectoryView::activated()
-{
-	QModelIndex index = currentIndex();
-
-	if (index.isValid())
-		if (::History::Entry *entry = m_node->viewChild(this, index))
-			m_navigation.save(entry);
-}
-
-void DirectoryView::pathToClipboard()
-{
-	m_node->pathToClipboard(selectedIndexes(), this);
-}
-
-void DirectoryView::rename()
-{
-	m_node->rename(currentIndex(), this);
-}
-
-void DirectoryView::createFile()
-{
-	m_node->createFile(currentIndex(), this);
-}
-
-void DirectoryView::createDirectory()
-{
-	m_node->createDirectory(currentIndex(), this);
-}
-
-void DirectoryView::remove()
-{
-	m_node->remove(selectedIndexes(), this);
-}
-
-void DirectoryView::calculateSize()
-{
-	m_node->calculateSize(selectedIndexes(), this);
-}
-
-void DirectoryView::copy()
-{
-	m_node->copy(this, static_cast<DirectoryView*>(m_parent->other().currentWidget()));
-}
-
-void DirectoryView::move()
-{
-	m_node->move(this, static_cast<DirectoryView*>(m_parent->other().currentWidget()));
+	BaseClass::refresh();
 }
 
 void DirectoryView::cancel()
 {
-	m_node->cancel(selectedIndexes(), this);
+	BaseClass::cancel();
 }
 
-void DirectoryView::search()
+bool DirectoryView::handleShortcut(QEvent *event)
 {
-	if (::History::Entry *entry = m_node->search(currentIndex(), this))
-		m_navigation.save(entry);
+	return m_eventHandler.keyboardEvent(static_cast<QKeyEvent *>(event)) ? true : BaseClass::handleShortcut(event);
 }
 
 void DirectoryView::actionTriggered(QAction *action)
 {
-	if (::History::Entry *entry = m_node->menuAction(action, this))
-		m_navigation.save(entry);
+	m_node->menuAction(this, action);
 }
 
 void DirectoryView::openInNewTab()
@@ -292,16 +246,6 @@ void DirectoryView::editPath()
 		m_header.pathEditFlag = false;
 		m_header.pathEdit.startEdit();
 	}
-}
-
-void DirectoryView::contextMenu()
-{
-	m_node->contextMenu(selectedIndexes(), this);
-}
-
-void DirectoryView::refreshOther()
-{
-	static_cast<DirectoryView*>(m_parent->other().currentWidget())->refresh();
 }
 
 QList<qint32> DirectoryView::geometry() const
@@ -364,4 +308,24 @@ void DirectoryView::actHeaderFavorites()
 void DirectoryView::actHeaderHistory()
 {
 
+}
+
+void DirectoryView::initialize()
+{
+	m_layout.setMargin(3);
+	m_layout.setSpacing(1);
+	m_layout.addLayout(&m_header.layout);
+	m_layout.addWidget(&m_toolBar);
+	m_layout.addWidget(&m_view);
+
+	m_view.setSelectionMode(QAbstractItemView::ExtendedSelection);
+	m_view.setSortingEnabled(true);
+	m_view.setContextMenuPolicy(Qt::DefaultContextMenu);
+
+	m_eventHandler.registerShortcut(Qt::ALT,  Qt::Key_Up,     &DirectoryView::editPath);
+	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_Return, &DirectoryView::openInNewTab);
+	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_W,      &DirectoryView::closeTab);
+	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_Down,   &DirectoryView::closeTab);
+
+	connect(&m_toolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 }

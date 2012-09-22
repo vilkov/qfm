@@ -23,6 +23,10 @@ RootNode::RootNode(IFileContainer::Holder &container, Node *parent) :
 	m_container(container, false),
 	m_delegate(m_container)
 {
+	m_shortcuts[Qt::NoModifier + Qt::Key_F7]     = CreateShortcut;
+	m_shortcuts[Qt::SHIFT      + Qt::Key_Delete] = RemoveShortcut;
+	m_shortcuts[Qt::CTRL       + Qt::Key_F]      = SearchShortcut;
+
 	m_actions.push_back(new QAction(tr("Create"), 0));
 	m_actions.last()->setData(Create);
 
@@ -83,79 +87,9 @@ void RootNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void RootNode::createFile(const QModelIndex &index, INodeView *view)
-{
-//	RootNodeItem::Base *item;
-//
-//	if ((item = static_cast<RootNodeItem::Base*>(index.internalPointer()))->isList())
-//	{
-//
-//	}
-//	else
-//		createEntity();
-}
-
-void RootNode::createDirectory(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void RootNode::rename(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void RootNode::rename(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void RootNode::remove(const QModelIndexList &list, INodeView *view)
-{
-//	if (m_container.transaction())
-//		if (!processIndexList(list, IdmFunctors::callTo(this, &RootNode::processRemoveItem)))
-//			m_container.rollback();
-//		else
-//			if (!m_container.commit())
-//			{
-//				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-//				m_container.rollback();
-//			}
-}
-
 void RootNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 
-}
-
-void RootNode::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void RootNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void RootNode::copy(const INodeView *source, INodeView *destination)
-{
-
-}
-
-void RootNode::move(const INodeView *source, INodeView *destination)
-{
-
-}
-
-void RootNode::removeToTrash(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-::History::Entry *RootNode::search(const QModelIndex &index, INodeView *view)
-{
-	return NULL;
 }
 
 void RootNode::refresh()
@@ -172,6 +106,27 @@ QString RootNode::title() const
 QString RootNode::location() const
 {
 	return m_container.container()->location();
+}
+
+bool RootNode::shortcut(INodeView *view, QKeyEvent *event)
+{
+	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
+	{
+		case CreateShortcut:
+			create(view->currentIndex(), view);
+			return true;
+
+		case RemoveShortcut:
+			remove(view->selectedIndexes(), view);
+			return true;
+
+		case SearchShortcut:
+			search(view->currentIndex(), view);
+			return true;
+
+		default:
+			return false;
+	}
 }
 
 RootNode::Sorting RootNode::sorting() const
@@ -204,7 +159,7 @@ QAbstractItemView::SelectionMode RootNode::selectionMode() const
 	return QAbstractItemView::SingleSelection;
 }
 
-::History::Entry *RootNode::menuAction(QAction *action, INodeView *view)
+void RootNode::menuAction(INodeView *view, QAction *action)
 {
 	switch (static_cast<MenuId>(action->data().toInt()))
 	{
@@ -239,14 +194,12 @@ QAbstractItemView::SelectionMode RootNode::selectionMode() const
 				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
 
 				if (dialog.exec() == CreateQueryDialog::Accepted)
-					return switchTo(new QueryResultsNode(m_container, dialog.query(), this), view);
+					switchTo(new QueryResultsNode(m_container, dialog.query(), this), view);
 			}
 
 			break;
 		}
 	}
-
-	return NULL;
 }
 
 QModelIndex RootNode::rootIndex() const
@@ -331,6 +284,36 @@ void RootNode::completedProgressEvent(const Item::Holder &item, quint64 timeElap
 }
 
 void RootNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+{
+
+}
+
+void RootNode::create(const QModelIndex &index, INodeView *view)
+{
+//	RootNodeItem::Base *item;
+//
+//	if ((item = static_cast<RootNodeItem::Base*>(index.internalPointer()))->isList())
+//	{
+//
+//	}
+//	else
+//		createEntity();
+}
+
+void RootNode::remove(const QModelIndexList &list, INodeView *view)
+{
+//	if (m_container.transaction())
+//		if (!processIndexList(list, IdmFunctors::callTo(this, &RootNode::processRemoveItem)))
+//			m_container.rollback();
+//		else
+//			if (!m_container.commit())
+//			{
+//				QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+//				m_container.rollback();
+//			}
+}
+
+void RootNode::search(const QModelIndex &index, INodeView *view)
 {
 
 }

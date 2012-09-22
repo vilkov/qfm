@@ -22,30 +22,21 @@ public:
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
-	virtual void createFile(const QModelIndex &index, INodeView *view);
-	virtual void createDirectory(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndexList &list, INodeView *view);
-	virtual void remove(const QModelIndexList &list, INodeView *view);
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
-	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
-	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const INodeView *source, INodeView *destination);
-	virtual void move(const INodeView *source, INodeView *destination);
-	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
-	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view);
 
 	/* INode */
     virtual void refresh();
 	virtual QString title() const;
 	virtual QString location() const;
+	virtual bool shortcut(INodeView *view, QKeyEvent *event);
+
 	virtual Sorting sorting() const;
 	virtual Geometry geometry() const;
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
 	virtual QAbstractItemView::SelectionMode selectionMode() const;
-	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
+	virtual void menuAction(INodeView *view, QAction *action);
 
 protected:
 	/* Node */
@@ -59,6 +50,11 @@ protected:
 	virtual void updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const Item::Holder &item, quint64 timeElapsed);
 	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
+
+protected:
+	virtual void create(const QModelIndex &index, INodeView *view);
+	virtual void remove(const QModelIndexList &list, INodeView *view);
+	virtual void search(const QModelIndex &index, INodeView *view);
 
 private:
 	enum MenuId
@@ -109,6 +105,20 @@ private:
 	void expand(Container::Item *parent);
 
 private:
+	enum ShortcutType
+	{
+		NoShortcut,
+
+		CreateShortcut,
+		RemoveShortcut,
+		SearchShortcut,
+
+		SizeOf_ShortcutType
+	};
+
+	typedef QMap<quint32, ShortcutType> Shortcuts;
+
+private:
 	typedef QMap<IdmEntity*, Container::List> EntitiesMap;
 
 private:
@@ -116,6 +126,7 @@ private:
 	Container m_itemsContainer;
 	Container::List &m_items;
 	EntitiesMap m_entities;
+	Shortcuts m_shortcuts;
 	IdmContainer m_container;
 	RootNodeDelegate m_delegate;
 };

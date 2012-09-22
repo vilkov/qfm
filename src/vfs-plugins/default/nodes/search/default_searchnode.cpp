@@ -22,6 +22,9 @@ SearchNode::SearchNode(IFileContainer::Holder &container, IFileContainerScanner:
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
+
+	m_shortcuts[Qt::NoModifier + Qt::Key_F5] = CopyShortcut;
+	m_shortcuts[Qt::NoModifier + Qt::Key_F6] = MoveShortcut;
 }
 
 bool SearchNode::event(QEvent *e)
@@ -92,6 +95,23 @@ QString SearchNode::title() const
 	return tr("Search results");
 }
 
+bool SearchNode::shortcut(INodeView *view, QKeyEvent *event)
+{
+	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
+	{
+		case CopyShortcut:
+			copy(view, view->opposite());
+			return true;
+
+		case MoveShortcut:
+			move(view, view->opposite());
+			return true;
+
+		default:
+			return false;
+	}
+}
+
 QAbstractItemModel *SearchNode::model() const
 {
 	return const_cast<ProxyModel *>(&m_proxy);
@@ -107,9 +127,9 @@ const INodeView::MenuActionList &SearchNode::actions() const
 	return m_menuActions;
 }
 
-::History::Entry *SearchNode::menuAction(QAction *action, INodeView *view)
+void SearchNode::menuAction(INodeView *view, QAction *action)
 {
-	return NULL;
+
 }
 
 ICopyControl *SearchNode::createControl(INodeView *view) const
@@ -118,31 +138,6 @@ ICopyControl *SearchNode::createControl(INodeView *view) const
 }
 
 void SearchNode::contextMenu(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void SearchNode::createFile(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void SearchNode::createDirectory(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void SearchNode::rename(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void SearchNode::rename(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void SearchNode::remove(const QModelIndexList &list, INodeView *view)
 {
 
 }
@@ -164,16 +159,6 @@ void SearchNode::cancel(const QModelIndexList &list, INodeView *view)
 			updateFirstColumn(m_items.list.indexOf(items.at(i)), items.at(i).as<NodeItem>());
 		}
 	}
-}
-
-void SearchNode::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void SearchNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
-{
-
 }
 
 void SearchNode::copy(const INodeView *source, INodeView *destination)
@@ -198,16 +183,6 @@ void SearchNode::copy(const INodeView *source, INodeView *destination)
 void SearchNode::move(const INodeView *source, INodeView *destination)
 {
 
-}
-
-void SearchNode::removeToTrash(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-::History::Entry *SearchNode::search(const QModelIndex &index, INodeView *view)
-{
-	return NULL;
 }
 
 QModelIndex SearchNode::rootIndex() const

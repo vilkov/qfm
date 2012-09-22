@@ -209,9 +209,14 @@ QString M3uNode::location() const
 	return QString();
 }
 
-::History::Entry *M3uNode::menuAction(QAction *action, INodeView *view)
+bool M3uNode::shortcut(INodeView *view, QKeyEvent *event)
 {
-	return NULL;
+	return false;
+}
+
+void M3uNode::menuAction(INodeView *view, QAction *action)
+{
+
 }
 
 Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected)

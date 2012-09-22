@@ -30,11 +30,10 @@ void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 
 void FoldersView::openInNewTab(::VFS::INode *node, const QModelIndex &index, const QList<qint32> &geometry)
 {
-	DirectoryView *widget;
+	PScopedPointer<DirectoryView> widget(new DirectoryView(node, index, geometry, this));
 	m_doNotRefreshTab = true;
-	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget = new DirectoryView(this), QString()));
-	widget->setupModel(node, index, geometry);
-	widget->setFocus();
+	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget.data(), widget->title()));
+	widget.take()->setFocus();
 }
 
 void FoldersView::closeCurrentTab()
@@ -87,20 +86,21 @@ void FoldersView::load()
 {
 	if (m_settings.tabs().isEmpty())
 	{
-		DirectoryView *widget;
-		m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-		widget->setupModel(DirectoryView::defaultPath());
+		PScopedPointer<DirectoryView> widget(new DirectoryView(DirectoryView::defaultPath(), this));
+		m_tabWidget.addTab(widget.data(), widget->title());
+		widget.release();
 	}
 	else
 	{
 		Tab *tab;
-		DirectoryView *widget;
+		PScopedPointer<DirectoryView> widget;
 
 		for (Tabs::const_iterator i = m_settings.tabs().begin(), end = m_settings.tabs().end(); i != end; ++i)
 		{
 			tab = (*i)->as<Tab>();
-			m_tabWidget.addTab(widget = new DirectoryView(this), QString());
-			widget->setupModel(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry());
+			widget.reset(new DirectoryView(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry(), this));
+			m_tabWidget.addTab(widget.data(), widget->title());
+			widget.release();
 		}
 
 		m_tabWidget.setCurrentIndex(m_settings.activeTab());
@@ -156,9 +156,9 @@ FoldersView::Tab::Tab(const DirectoryView::Tab &tab, Option *parent) :
 		m_geometry.add(QString::number(tab.geometry.at(i)));
 }
 
-::VFS::INode::Geometry FoldersView::Tab::geometry() const
+DirectoryView::Geometry FoldersView::Tab::geometry() const
 {
-	::VFS::INode::Geometry res;
+	DirectoryView::Geometry res;
 	res.reserve(m_geometry.size());
 
 	for (Tools::Settings::OptionValueList::size_type i = 0, size = m_geometry.size(); i < size; ++i)

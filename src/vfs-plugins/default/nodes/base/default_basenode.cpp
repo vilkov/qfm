@@ -90,6 +90,16 @@ BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
+
+	m_shortcuts[Qt::ALT + Qt::CTRL + Qt::Key_X]      = PathToClipboardShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_F2]     = RenameShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_F8]     = CreateFileShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_F7]     = CreateDirectoryShortcut;
+	m_shortcuts[Qt::SHIFT          + Qt::Key_Delete] = RemoveShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_Space]  = CalculateSizeShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_F5]     = CopyShortcut;
+	m_shortcuts[Qt::NoModifier     + Qt::Key_F6]     = MoveShortcut;
+	m_shortcuts[Qt::CTRL           + Qt::Key_F]      = SearchShortcut;
 }
 
 BaseNode::~BaseNode()
@@ -195,6 +205,55 @@ QString BaseNode::location() const
 	return m_container->location();
 }
 
+bool BaseNode::shortcut(INodeView *view, QKeyEvent *event)
+{
+	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
+	{
+		case CreateFileShortcut:
+			createFile(view->currentIndex(), view);
+			return true;
+
+		case CreateDirectoryShortcut:
+			createDirectory(view->currentIndex(), view);
+			return true;
+
+		case RenameShortcut:
+			rename(view->currentIndex(), view);
+			return true;
+
+		case RemoveShortcut:
+			remove(view->selectedIndexes(), view);
+			return true;
+
+		case CalculateSizeShortcut:
+			calculateSize(view->selectedIndexes(), view);
+			return true;
+
+		case PathToClipboardShortcut:
+			pathToClipboard(view->selectedIndexes(), view);
+			return true;
+
+		case CopyShortcut:
+			copy(view, view->opposite());
+			return true;
+
+		case MoveShortcut:
+			move(view, view->opposite());
+			return true;
+
+		case RemoveToTrashShortcut:
+			removeToTrash(view->selectedIndexes(), view);
+			return true;
+
+		case SearchShortcut:
+			search(view->currentIndex(), view);
+			return true;
+
+		default:
+			return false;
+	}
+}
+
 QAbstractItemModel *BaseNode::model() const
 {
 	return const_cast<ProxyModel *>(&m_proxy);
@@ -210,9 +269,9 @@ const INodeView::MenuActionList &BaseNode::actions() const
 	return m_menuActions;
 }
 
-::History::Entry *BaseNode::menuAction(QAction *action, INodeView *view)
+void BaseNode::menuAction(INodeView *view, QAction *action)
 {
-	return NULL;
+
 }
 
 ICopyControl *BaseNode::createControl(INodeView *view) const
@@ -405,6 +464,104 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 	menu.clear();
 }
 
+QModelIndex BaseNode::rootIndex() const
+{
+	return QModelIndex();
+}
+
+Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+{
+	QModelIndex index = m_proxy.mapToSource(idx);
+
+	if (static_cast<NodeItem *>(index.internalPointer())->isRootItem())
+		return parentNode();
+	else
+		if (!static_cast<NodeItem *>(index.internalPointer())->isLocked())
+		{
+			NodeItem *entry = static_cast<NodeItem *>(index.internalPointer());
+
+			if (entry->node())
+				return entry->node();
+			else
+				if (Node *node = createNode(entry->info()))
+				{
+					entry->setNode(node);
+					return node;
+				}
+				else
+					if (!newTab && entry->info()->isFile())
+						Application::open(m_container, entry->info());
+		}
+
+	return NULL;
+}
+
+Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
+{
+	Container::size_type index = m_items.indexOf(fileName);
+
+	if (index == Container::InvalidIndex)
+	{
+		QString error;
+		IFileInfo::Holder info;
+
+		if (info = m_container->info(fileName, error))
+			if (Node *node = createNode(info))
+			{
+				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+				m_items.add(NodeItem::Holder(new NodeItem(info, node)));
+				endInsertRows();
+
+				return node;
+			}
+			else
+			{
+				if (info->isFile())
+				{
+					NodeItem *item;
+
+					beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+					m_items.add(NodeItem::Holder(item = new NodeItem(info)));
+					endInsertRows();
+
+					selected = indexForFile(item, m_items.lastIndex());
+				}
+
+				return this;
+			}
+	}
+	else
+	{
+		NodeItem *item = m_items[index].as<NodeItem>();
+
+		if (item->node())
+			return item->node();
+		else
+			if (Node *node = createNode(item->info()))
+			{
+				item->setNode(node);
+				return node;
+			}
+			else
+			{
+				if (item->info()->isFile())
+					selected = indexForFile(item, index);
+
+				return this;
+			}
+	}
+
+	return NULL;
+}
+
+void BaseNode::nodeRemoved(Node *node)
+{
+	Container::size_type index = m_items.indexOf(node);
+
+	if (index != Container::InvalidIndex)
+		m_items[index].as<NodeItem>()->setNode(NULL);
+}
+
 void BaseNode::createFile(const QModelIndex &index, INodeView *view)
 {
 	QString name;
@@ -528,7 +685,7 @@ void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 
 }
 
-::History::Entry *BaseNode::search(const QModelIndex &index, INodeView *view)
+void BaseNode::search(const QModelIndex &index, INodeView *view)
 {
 	SearchDialog dialog(Application::mainWindow());
 
@@ -536,108 +693,8 @@ void BaseNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 	{
 		IFileContainer::Holder container(m_container->open());
 		FileNameFilter::Holder filter(new FileNameFilter(dialog.pattern()));
-		return switchTo(new SearchNode(container, filter, this), view);
+		switchTo(new SearchNode(container, filter, this), view);
 	}
-
-	return NULL;
-}
-
-QModelIndex BaseNode::rootIndex() const
-{
-	return QModelIndex();
-}
-
-Node *BaseNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
-{
-	QModelIndex index = m_proxy.mapToSource(idx);
-
-	if (static_cast<NodeItem *>(index.internalPointer())->isRootItem())
-		return parentNode();
-	else
-		if (!static_cast<NodeItem *>(index.internalPointer())->isLocked())
-		{
-			NodeItem *entry = static_cast<NodeItem *>(index.internalPointer());
-
-			if (entry->node())
-				return entry->node();
-			else
-				if (Node *node = createNode(entry->info()))
-				{
-					entry->setNode(node);
-					return node;
-				}
-				else
-					if (!newTab && entry->info()->isFile())
-						Application::open(m_container, entry->info());
-		}
-
-	return NULL;
-}
-
-Node *BaseNode::viewChild(const QString &fileName, QModelIndex &selected)
-{
-	Container::size_type index = m_items.indexOf(fileName);
-
-	if (index == Container::InvalidIndex)
-	{
-		QString error;
-		IFileInfo::Holder info;
-
-		if (info = m_container->info(fileName, error))
-			if (Node *node = createNode(info))
-			{
-				beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-				m_items.add(NodeItem::Holder(new NodeItem(info, node)));
-				endInsertRows();
-
-				return node;
-			}
-			else
-			{
-				if (info->isFile())
-				{
-					NodeItem *item;
-
-					beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-					m_items.add(NodeItem::Holder(item = new NodeItem(info)));
-					endInsertRows();
-
-					selected = indexForFile(item, m_items.lastIndex());
-				}
-
-				return this;
-			}
-	}
-	else
-	{
-		NodeItem *item = m_items[index].as<NodeItem>();
-
-		if (item->node())
-			return item->node();
-		else
-			if (Node *node = createNode(item->info()))
-			{
-				item->setNode(node);
-				return node;
-			}
-			else
-			{
-				if (item->info()->isFile())
-					selected = indexForFile(item, index);
-
-				return this;
-			}
-	}
-
-	return NULL;
-}
-
-void BaseNode::nodeRemoved(Node *node)
-{
-	Container::size_type index = m_items.indexOf(node);
-
-	if (index != Container::InvalidIndex)
-		m_items[index].as<NodeItem>()->setNode(NULL);
 }
 
 void BaseNode::cleanup(Snapshot &snapshot)

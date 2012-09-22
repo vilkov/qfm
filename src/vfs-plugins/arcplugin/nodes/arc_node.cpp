@@ -90,31 +90,6 @@ void ArcNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void ArcNode::createFile(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void ArcNode::createDirectory(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void ArcNode::rename(const QModelIndex &index, INodeView *view)
-{
-
-}
-
-void ArcNode::rename(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void ArcNode::remove(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
 void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 	QString reason = tr("Canceling...");
@@ -134,50 +109,6 @@ void ArcNode::cancel(const QModelIndexList &list, INodeView *view)
 	}
 }
 
-void ArcNode::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void ArcNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void ArcNode::copy(const INodeView *source, INodeView *destination)
-{
-	QModelIndex index = m_proxy.mapToSource(source->currentIndex());
-
-	if (index.isValid())
-	{
-//		ICopyControl::Holder control(destination->node()->createControl(destination));
-//
-//		if (control)
-//		{
-//			ArcNodeItem *item = static_cast<ArcNodeItem *>(index.internalPointer());
-//
-//			item->lock(tr("Extracting..."));
-//			updateFirstColumn(item);
-//			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
-//		}
-	}
-}
-
-void ArcNode::move(const INodeView *source, INodeView *destination)
-{
-
-}
-
-void ArcNode::removeToTrash(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-::History::Entry *ArcNode::search(const QModelIndex &index, INodeView *view)
-{
-	return NULL;
-}
-
 void ArcNode::refresh()
 {
 	if (!isUpdating() && m_items.size() == 1)
@@ -193,6 +124,11 @@ QString ArcNode::title() const
 QString ArcNode::location() const
 {
 	return m_container->location();
+}
+
+bool ArcNode::shortcut(INodeView *view, QKeyEvent *event)
+{
+	return false;
 }
 
 ArcNode::Sorting ArcNode::sorting() const
@@ -225,9 +161,9 @@ QAbstractItemView::SelectionMode ArcNode::selectionMode() const
 	return QAbstractItemView::SingleSelection;
 }
 
-::History::Entry *ArcNode::menuAction(QAction *action, INodeView *view)
+void ArcNode::menuAction(INodeView *view, QAction *action)
 {
-	return NULL;
+
 }
 
 QModelIndex ArcNode::rootIndex() const
@@ -305,6 +241,25 @@ void ArcNode::copyCompleteEvent(BaseTask::Event *e)
 //
 //	updateFirstColumn(event->item);
 //	removeAllTaskLinks(event->task);
+}
+
+void ArcNode::copy(const INodeView *source, INodeView *destination)
+{
+	QModelIndex index = m_proxy.mapToSource(source->currentIndex());
+
+	if (index.isValid())
+	{
+//		ICopyControl::Holder control(destination->node()->createControl(destination));
+//
+//		if (control)
+//		{
+//			ArcNodeItem *item = static_cast<ArcNodeItem *>(index.internalPointer());
+//
+//			item->lock(tr("Extracting..."));
+//			updateFirstColumn(item);
+//			addTask(new PerformCopyTask(m_info.absoluteFilePath(), item, control, false, this), TasksItemList() << item);
+//		}
+	}
 }
 
 bool ArcNode::isUpdating() const

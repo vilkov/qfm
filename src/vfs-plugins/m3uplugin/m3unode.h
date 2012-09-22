@@ -46,8 +46,9 @@ public:
     virtual void refresh();
 	virtual QString title() const;
 	virtual QString location() const;
+	virtual bool shortcut(INodeView *view, QKeyEvent *event);
 
-	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
+	virtual void menuAction(INodeView *view, QAction *action);
 
 protected:
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }

@@ -22,27 +22,17 @@ public:
     virtual void refresh();
 	virtual QString location() const;
 	virtual QString title() const;
+	virtual bool shortcut(INodeView *view, QKeyEvent *event);
 
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
-	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
+	virtual void menuAction(INodeView *view, QAction *action);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
-	virtual void createFile(const QModelIndex &index, INodeView *view);
-	virtual void createDirectory(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndexList &list, INodeView *view);
-	virtual void remove(const QModelIndexList &list, INodeView *view);
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
-	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
-	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const INodeView *source, INodeView *destination);
-	virtual void move(const INodeView *source, INodeView *destination);
-	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
-	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view);
 
 protected:
 	/* Node */
@@ -58,6 +48,10 @@ protected:
 
 	void searchNewFileEvent(BaseTask::Event *event);
 	void searchCompleteEvent(BaseTask::Event *event);
+
+protected:
+	virtual void copy(const INodeView *source, INodeView *destination);
+	virtual void move(const INodeView *source, INodeView *destination);
 
 protected:
 	class Container : public TasksNode::Container
@@ -82,7 +76,21 @@ private:
 	void updateSecondColumn(Container::size_type index, NodeItem *entry);
 
 private:
+	enum ShortcutType
+	{
+		NoShortcut,
+
+		CopyShortcut,
+		MoveShortcut,
+
+		SizeOf_ShortcutType
+	};
+
+	typedef QMap<quint32, ShortcutType> Shortcuts;
+
+private:
 	IFileContainer::Holder m_container;
+	Shortcuts m_shortcuts;
 	Container m_items;
 	ProxyModel m_proxy;
 	Delegate m_delegate;

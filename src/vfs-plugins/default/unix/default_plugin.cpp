@@ -69,7 +69,9 @@ QString Plugin::shema() const
 
 ::VFS::Node *Plugin::open(const Uri::Iterator &path, QModelIndex &selected) const
 {
-	if ((*path) == QLatin1String("/"))
+	static const QString root(QString::fromLatin1("/"));
+
+	if ((*path) == root)
 		if (rootNode)
 			return rootNode->viewChild(++path, selected);
 		else

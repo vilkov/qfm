@@ -4,12 +4,11 @@
 #include <QtCore/QString>
 #include <QtCore/QModelIndex>
 #include "vfs_inodeview.h"
-#include "../../history/historyentry.h"
 
 
 VFS_NS_BEGIN
-
 class PluginsManager;
+
 
 class IFileNavigation
 {

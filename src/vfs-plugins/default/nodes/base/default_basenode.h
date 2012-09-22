@@ -32,26 +32,17 @@ public:
 	virtual void refresh();
 	virtual QString title() const;
 	virtual QString location() const;
+	virtual bool shortcut(INodeView *view, QKeyEvent *event);
+
 	virtual QAbstractItemModel *model() const;
 	virtual QAbstractItemDelegate *delegate() const;
 	virtual const INodeView::MenuActionList &actions() const;
-	virtual ::History::Entry *menuAction(QAction *action, INodeView *view);
+	virtual void menuAction(INodeView *view, QAction *action);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
-	virtual void createFile(const QModelIndex &index, INodeView *view);
-	virtual void createDirectory(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndexList &list, INodeView *view);
-	virtual void remove(const QModelIndexList &list, INodeView *view);
 	virtual void cancel(const QModelIndexList &list, INodeView *view);
-	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
-	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
-	virtual void copy(const INodeView *source, INodeView *destination);
-	virtual void move(const INodeView *source, INodeView *destination);
-	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
-	virtual ::History::Entry *search(const QModelIndex &index, INodeView *view);
 
 protected:
 	/* Node */
@@ -59,6 +50,19 @@ protected:
 	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 	virtual void nodeRemoved(Node *node);
+
+protected:
+	virtual void createFile(const QModelIndex &index, INodeView *view);
+	virtual void createDirectory(const QModelIndex &index, INodeView *view);
+	virtual void rename(const QModelIndex &index, INodeView *view);
+	virtual void rename(const QModelIndexList &list, INodeView *view);
+	virtual void remove(const QModelIndexList &list, INodeView *view);
+	virtual void calculateSize(const QModelIndexList &list, INodeView *view);
+	virtual void pathToClipboard(const QModelIndexList &list, INodeView *view);
+	virtual void copy(const INodeView *source, INodeView *destination);
+	virtual void move(const INodeView *source, INodeView *destination);
+	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
+	virtual void search(const QModelIndex &index, INodeView *view);
 
 protected:
 	typedef ::Tools::Templates::Functor3<Container::size_type, NodeItem *, SnapshotItem *> EventFunctor;
@@ -260,7 +264,29 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
+	enum ShortcutType
+	{
+		NoShortcut,
+
+		CreateFileShortcut,
+		CreateDirectoryShortcut,
+		RenameShortcut,
+		RemoveShortcut,
+		CalculateSizeShortcut,
+		PathToClipboardShortcut,
+		CopyShortcut,
+		MoveShortcut,
+		RemoveToTrashShortcut,
+		SearchShortcut,
+
+		SizeOf_ShortcutType
+	};
+
+	typedef QMap<quint32, ShortcutType> Shortcuts;
+
+private:
 	IFileContainer::Holder m_container;
+	Shortcuts m_shortcuts;
 	Container m_items;
 	bool m_updating;
 

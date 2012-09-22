@@ -28,7 +28,11 @@ QueryResultsNode::QueryResultsNode(const IdmContainer &container, const Select &
 	m_container(container),
 	m_reader(m_container, query),
 	m_label(tr("Found \"%1\" entities...").arg(query.entity()->name()))
-{}
+{
+	m_shortcuts[Qt::NoModifier + Qt::Key_F2]     = RenameShortcut;
+	m_shortcuts[Qt::NoModifier + Qt::Key_F7]     = CreateShortcut;
+	m_shortcuts[Qt::SHIFT      + Qt::Key_Delete] = RemoveShortcut;
+}
 
 bool QueryResultsNode::event(QEvent *e)
 {
@@ -188,164 +192,9 @@ void QueryResultsNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 }
 
-void QueryResultsNode::createFile(const QModelIndex &index, INodeView *view)
-{
-	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
-	{
-		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
-
-		if (m_container.transaction())
-		{
-			SelectableValueListDialog dialog(m_container, Select(item->property().entity), Application::mainWindow());
-
-			if (dialog.exec() == SelectableValueListDialog::Accepted)
-			{
-				IdmEntityValue::Holder value = dialog.takeValue();
-
-				if (m_container.addValue(static_cast<QueryResultRootItem *>(item->parent())->value(), value))
-					if (m_container.commit())
-						if (item->property().entity->type() == Database::Path)
-						{
-							beginInsertRows(index, item->size(), item->size());
-							static_cast<QueryResultPathPropertyItem *>(item)->add(m_container.container(), value);
-							endInsertRows();
-						}
-						else
-						{
-							beginInsertRows(index, item->size(), item->size());
-							item->add(value);
-							endInsertRows();
-						}
-					else
-					{
-						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-						m_container.rollback();
-					}
-				else
-				{
-					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-					m_container.rollback();
-				}
-			}
-			else
-				m_container.rollback();
-		}
-		else
-			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-	}
-}
-
-void QueryResultsNode::createDirectory(const QModelIndex &index, INodeView *view)
-{
-	createFile(index, view);
-}
-
-void QueryResultsNode::rename(const QModelIndex &index, INodeView *view)
-{
-	view->edit(index);
-}
-
-void QueryResultsNode::rename(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
-{
-	if (m_container.transaction())
-	{
-		QModelIndex index;
-		Snapshot::Files files(m_container.container());
-		QueryResultValueItem *valueItem;
-		QueryResultRootPathValueItem *pathItem;
-		QueryResultPropertyItem *property;
-		QueryResultPropertyItem::size_type idx;
-
-		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
-			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isRootPathValue())
-			{
-				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
-
-				if (!pathItem->isLocked())
-					files.add(pathItem->info()->fileName(), Item::Holder(pathItem));
-			}
-			else
-				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
-				{
-					valueItem = static_cast<QueryResultValueItem *>(index.internalPointer());
-
-					if (!valueItem->isLocked())
-					{
-						property = static_cast<QueryResultPropertyItem *>(valueItem->parent());
-
-						if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), valueItem->value()))
-						{
-							idx = property->indexOf(valueItem);
-
-							beginRemoveRows(Model::parent(index), idx, idx);
-							property->remove(idx);
-							endRemoveRows();
-						}
-						else
-						{
-							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-							m_container.rollback();
-							return;
-						}
-					}
-				}
-
-		if (m_container.commit())
-		{
-			if (!files.isEmpty())
-			{
-				lock(files, tr("Scanning for remove..."));
-				addTask(new ScanFilesTask(ModelEvent::ScanFilesForRemove, this, files), files);
-			}
-		}
-		else
-		{
-			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-			m_container.rollback();
-		}
-	}
-	else
-		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
-}
-
 void QueryResultsNode::cancel(const QModelIndexList &list, INodeView *view)
 {
 
-}
-
-void QueryResultsNode::calculateSize(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void QueryResultsNode::pathToClipboard(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-void QueryResultsNode::copy(const INodeView *source, INodeView *destination)
-{
-
-}
-
-void QueryResultsNode::move(const INodeView *source, INodeView *destination)
-{
-
-}
-
-void QueryResultsNode::removeToTrash(const QModelIndexList &list, INodeView *view)
-{
-
-}
-
-::History::Entry *QueryResultsNode::search(const QModelIndex &index, INodeView *view)
-{
-	return NULL;
 }
 
 void QueryResultsNode::refresh()
@@ -370,6 +219,27 @@ QString QueryResultsNode::title() const
 QString QueryResultsNode::location() const
 {
 	return m_container.container()->location();
+}
+
+bool QueryResultsNode::shortcut(INodeView *view, QKeyEvent *event)
+{
+	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
+	{
+		case CreateShortcut:
+			create(view->currentIndex(), view);
+			return true;
+
+		case RenameShortcut:
+			rename(view->currentIndex(), view);
+			return true;
+
+		case RemoveShortcut:
+			remove(view->selectedIndexes(), view);
+			return true;
+
+		default:
+			return false;
+	}
 }
 
 QueryResultsNode::Sorting QueryResultsNode::sorting() const
@@ -397,9 +267,9 @@ const INodeView::MenuActionList &QueryResultsNode::actions() const
 	return m_actions;
 }
 
-::History::Entry *QueryResultsNode::menuAction(QAction *action, INodeView *view)
+void QueryResultsNode::menuAction(INodeView *view, QAction *action)
 {
-	return NULL;
+
 }
 
 QModelIndex QueryResultsNode::rootIndex() const
@@ -485,6 +355,121 @@ void QueryResultsNode::refresh(const QModelIndex &index)
 
 	if (!files.isEmpty())
 		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
+}
+
+void QueryResultsNode::create(const QModelIndex &index, INodeView *view)
+{
+	if (static_cast<QueryResultItem *>(index.internalPointer())->isProperty())
+	{
+		QueryResultPropertyItem *item = static_cast<QueryResultPropertyItem *>(index.internalPointer());
+
+		if (m_container.transaction())
+		{
+			SelectableValueListDialog dialog(m_container, Select(item->property().entity), Application::mainWindow());
+
+			if (dialog.exec() == SelectableValueListDialog::Accepted)
+			{
+				IdmEntityValue::Holder value = dialog.takeValue();
+
+				if (m_container.addValue(static_cast<QueryResultRootItem *>(item->parent())->value(), value))
+					if (m_container.commit())
+						if (item->property().entity->type() == Database::Path)
+						{
+							beginInsertRows(index, item->size(), item->size());
+							static_cast<QueryResultPathPropertyItem *>(item)->add(m_container.container(), value);
+							endInsertRows();
+						}
+						else
+						{
+							beginInsertRows(index, item->size(), item->size());
+							item->add(value);
+							endInsertRows();
+						}
+					else
+					{
+						QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+						m_container.rollback();
+					}
+				else
+				{
+					QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+					m_container.rollback();
+				}
+			}
+			else
+				m_container.rollback();
+		}
+		else
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+	}
+}
+
+void QueryResultsNode::rename(const QModelIndex &index, INodeView *view)
+{
+	view->edit(index);
+}
+
+void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
+{
+	if (m_container.transaction())
+	{
+		QModelIndex index;
+		Snapshot::Files files(m_container.container());
+		QueryResultValueItem *valueItem;
+		QueryResultRootPathValueItem *pathItem;
+		QueryResultPropertyItem *property;
+		QueryResultPropertyItem::size_type idx;
+
+		for (QModelIndexList::size_type i = 0, size = list.size(); i < size; ++i)
+			if (static_cast<QueryResultItem *>((index = list.at(i)).internalPointer())->isRootPathValue())
+			{
+				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
+
+				if (!pathItem->isLocked())
+					files.add(pathItem->info()->fileName(), Item::Holder(pathItem));
+			}
+			else
+				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())
+				{
+					valueItem = static_cast<QueryResultValueItem *>(index.internalPointer());
+
+					if (!valueItem->isLocked())
+					{
+						property = static_cast<QueryResultPropertyItem *>(valueItem->parent());
+
+						if (m_container.removeValue(static_cast<QueryResultRootItem *>(property->parent())->value(), valueItem->value()))
+						{
+							idx = property->indexOf(valueItem);
+
+							beginRemoveRows(Model::parent(index), idx, idx);
+							property->remove(idx);
+							endRemoveRows();
+						}
+						else
+						{
+							QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+							m_container.rollback();
+							return;
+						}
+					}
+				}
+
+		if (m_container.commit())
+		{
+			if (!files.isEmpty())
+			{
+				lock(files, tr("Scanning for remove..."));
+				addTask(new ScanFilesTask(ModelEvent::ScanFilesForRemove, this, files), files);
+			}
+		}
+		else
+		{
+			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+			m_container.rollback();
+		}
+	}
+	else
+		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
 }
 
 void QueryResultsNode::process(const QModelIndexList &list, const Functor &functor)

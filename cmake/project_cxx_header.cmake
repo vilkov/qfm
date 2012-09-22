@@ -30,8 +30,11 @@ elseif (BORLAND)
 elseif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUC) 
 	message(STATUS "Compiler: GCC")
 	
+    # Use C++ 0x standard
+    set (PROJECT_COMP_FLAGS "-std=c++0x")
+	
 	# CXX Flags - turn on WARNINGS
-    set (PROJECT_COMP_FLAGS "-Wall -Wextra -pedantic -Wundef -Wcast-align -Wpointer-arith -Wformat")
+    set (PROJECT_COMP_FLAGS "${PROJECT_COMP_FLAGS} -Wall -Wextra -pedantic -Wundef -Wcast-align -Wpointer-arith -Wformat")
 
 	# CXX Flags - turn off WARNINGS
     set (PROJECT_COMP_FLAGS "${PROJECT_COMP_FLAGS} -Wno-unused-parameter -Wno-parentheses -Wno-shadow -Wno-overloaded-virtual -Wno-ignored-qualifiers")
@@ -53,4 +56,4 @@ message (STATUS "CMake generates " ${CMAKE_GENERATOR})
 
 
 # Set up compiler flags
-set (CMAKE_CXX_FLAGS "${PROJECT_COMP_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROJECT_COMP_FLAGS}")

@@ -9,6 +9,7 @@ EVENTS_NS_BEGIN
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
+	typename FallbackToBaseClass = Templates::bool_value<false>,
 	typename IntercepEvent = Templates::bool_value<true>
 >
 class ContextMenuEventHandler : public BaseClass
@@ -26,9 +27,15 @@ public:
     virtual bool contextMenuEvent(QContextMenuEvent *event)
     {
 		if (IntercepEvent::value)
-			return invokeMethod1(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod1(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
+			else
+				return invokeMethod1(m_handler, event);
 		else
-			return invokeMethod2(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod2(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
+			else
+				return invokeMethod2(m_handler, event);
     }
 
 	void registerContextMenuEventHandler(Method handler) { m_handler = handler; }

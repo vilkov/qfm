@@ -29,6 +29,8 @@ public:
     virtual bool contextMenuEvent(QContextMenuEvent *event) { return false; }
 
 protected:
+    inline Listener *listener() const { return m_object; }
+
     inline bool invokeMethod1(Method method, QEvent *event)
     {
 		if (method)
@@ -37,8 +39,8 @@ protected:
 			event->accept();
 			return true;
 		}
-		else
-			return false;
+
+		return false;
     }
     inline bool invokeMethod2(Method method, QEvent *event)
     {

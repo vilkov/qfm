@@ -4,6 +4,7 @@
 #include "../events_ns.h"
 
 
+class QEvent;
 class QMouseEvent;
 class QKeyEvent;
 class QFocusEvent;

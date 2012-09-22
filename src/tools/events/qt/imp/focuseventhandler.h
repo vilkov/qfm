@@ -9,6 +9,7 @@ EVENTS_NS_BEGIN
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
+	typename FallbackToBaseClass = Templates::bool_value<false>,
 	typename IntercepEvent = Templates::bool_value<false>
 >
 class FocusOutEventHandler : public BaseClass
@@ -26,9 +27,15 @@ public:
 	virtual bool focusOutEvent(QFocusEvent *event)
 	{
 		if (IntercepEvent::value)
-			return invokeMethod1(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod1(m_handler, event) ? true : BaseClass::focusOutEvent(event);
+			else
+				return invokeMethod1(m_handler, event);
 		else
-			return invokeMethod2(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod2(m_handler, event) ? true : BaseClass::focusOutEvent(event);
+			else
+				return invokeMethod2(m_handler, event);
 	}
 
 	void registerFocusOutEventHandler(Method handler) { m_handler = handler; }
@@ -41,6 +48,7 @@ private:
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
+	typename FallbackToBaseClass = Templates::bool_value<false>,
 	typename IntercepEvent = Templates::bool_value<false>
 >
 class FocusInEventHandler : public BaseClass
@@ -58,9 +66,15 @@ public:
 	virtual bool focusInEvent(QFocusEvent *event)
 	{
 		if (IntercepEvent::value)
-			return invokeMethod1(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod1(m_handler, event) ? true : BaseClass::focusInEvent(event);
+			else
+				return invokeMethod1(m_handler, event);
 		else
-			return invokeMethod2(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod2(m_handler, event) ? true : BaseClass::focusInEvent(event);
+			else
+				return invokeMethod2(m_handler, event);
 	}
 
 	void registerFocusInEventHandler(Method handler) { m_handler = handler; }

@@ -9,6 +9,7 @@ EVENTS_NS_BEGIN
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
+	typename FallbackToBaseClass = Templates::bool_value<false>,
 	typename IntercepEvent = Templates::bool_value<false>
 >
 class MouseReleaseEventHandler : public BaseClass
@@ -26,9 +27,15 @@ public:
 	virtual bool mouseReleaseEvent(QMouseEvent *event)
 	{
 		if (IntercepEvent::value)
-			return invokeMethod1(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod1(m_handler, event) ? true : BaseClass::mouseReleaseEvent(event);
+			else
+				return invokeMethod1(m_handler, event);
 		else
-			return invokeMethod2(m_handler, event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod2(m_handler, event) ? true : BaseClass::mouseReleaseEvent(event);
+			else
+				return invokeMethod2(m_handler, event);
 	}
 
 	void registerMouseReleaseEventHandler(Method handler) { m_handler = handler; }
@@ -58,9 +65,9 @@ public:
 	virtual bool mouseDoubleClickEvent(QMouseEvent *event)
 	{
 		if (IntercepEvent::value)
-			return invokeMethod1(m_handler, event);
+			return invokeMethod1(m_handler, event) ? true : BaseClass::mouseDoubleClickEvent(event);
 		else
-			return invokeMethod2(m_handler, event);
+			return invokeMethod2(m_handler, event) ? true : BaseClass::mouseDoubleClickEvent(event);
 	}
 
 	void registerMouseDoubleClickEventHandler(Method handler) { m_handler = handler; }

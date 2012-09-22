@@ -10,6 +10,7 @@ EVENTS_NS_BEGIN
 
 template <
 	typename BaseClass     = EventHandlerBase<Templates::null_type>,
+	typename FallbackToBaseClass = Templates::bool_value<false>,
 	typename IntercepEvent = Templates::bool_value<true>
 >
 class KeyboardEventHandler : public BaseClass
@@ -26,9 +27,15 @@ public:
 	virtual bool keyboardEvent(QKeyEvent *event)
 	{
 		if (IntercepEvent::value)
-			return invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), 0), event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), 0), event) ? true : BaseClass::keyboardEvent(event);
+			else
+				return invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), 0), event);
 		else
-			return invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), 0), event);
+			if (FallbackToBaseClass::value)
+				return invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), 0), event) ? true : BaseClass::keyboardEvent(event);
+			else
+				return invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), 0), event);
 	}
 
 	void registerShortcut(quint32 modifier, Qt::Key key, Method method)

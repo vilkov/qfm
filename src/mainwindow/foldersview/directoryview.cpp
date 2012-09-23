@@ -190,8 +190,8 @@ void DirectoryView::setFocus()
 
 void DirectoryView::setCurrentDirectory(const QString &filePath)
 {
-//	if (::History::Entry *entry = Application::rootNode()->open(this, filePath))
-//		navigation().save(entry);
+	if (::History::Entry *entry = Application::rootNode()->open(this, filePath))
+		save(entry);
 }
 
 void DirectoryView::goUp()

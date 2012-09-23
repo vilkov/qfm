@@ -37,7 +37,6 @@ void Node::viewHistory(INodeView *nodeView, ::History::Entry *entry)
 	Node *node = static_cast<HistoryEntry *>(entry)->node();
 	node->viewThis(nodeView, QModelIndex());
 	node->refresh();
-	removeView(nodeView);
 }
 
 Node::Sorting Node::sorting() const
@@ -69,7 +68,6 @@ void Node::switchTo(Node *node, INodeView *view)
 
 	node->viewThis(view, QModelIndex(), 2);
 	node->refresh();
-	removeView(view);
 
 	view->save(new HistoryEntry(node));
 }
@@ -142,6 +140,10 @@ void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links)
 {
 	addView(nodeView, links);
+
+	if (INode *node = nodeView->node())
+		node->viewClosed(nodeView);
+
 	nodeView->setNode(this);
 
 	if (selected.isValid())
@@ -167,7 +169,6 @@ void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 lin
 		}
 
 		node->refresh();
-		removeView(nodeView);
 
 		return new HistoryEntry(node);
 	}

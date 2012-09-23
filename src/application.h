@@ -56,7 +56,7 @@ private:
 	ApplicationSettings m_settings;
 	::Tools::TasksPool::TaskPool m_taskPool;
     ::Desktop::ContextMenuFactory m_globalMenu;
-    QScopedPointer<VFS::RootNode> m_rootNode;
+    QScopedPointer< ::VFS::RootNode > m_rootNode;
 	MainWindow m_mainWindow;
 };
 

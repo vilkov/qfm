@@ -7,6 +7,9 @@ VFS_NS_BEGIN
 RootNode::RootNode()
 {}
 
+RootNode::~RootNode()
+{}
+
 ::History::Entry *RootNode::open(INodeView *nodeView, const QString &uri) const
 {
 	Uri path(uri);

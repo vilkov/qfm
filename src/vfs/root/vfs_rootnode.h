@@ -16,6 +16,7 @@ class RootNode
 
 public:
 	RootNode();
+	virtual ~RootNode();
 
 	::History::Entry *open(INodeView *nodeView, const QString &uri) const;
 	Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;

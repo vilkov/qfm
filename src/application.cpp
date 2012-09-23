@@ -23,11 +23,11 @@ class AppRootNode : public RootNode
 public:
 	AppRootNode(::Tools::Settings::Page *pluginsPage) :
 		RootNode(),
+		m_default(pluginsPage),
 		m_m3uplugin(pluginsPage),
 		m_idmplugin(pluginsPage),
 		m_arcplugin1(pluginsPage),
-		m_arcplugin2(pluginsPage),
-		m_default(pluginsPage)
+		m_arcplugin2(pluginsPage)
 	{
 		registerStatic(&m_m3uplugin);
 		registerStatic(&m_idmplugin);
@@ -46,13 +46,13 @@ public:
 	}
 
 private:
+	Default::Plugin m_default;
+
+private:
 	M3u::Plugin m_m3uplugin;
 	Idm::Plugin m_idmplugin;
 	Arc::LibArchive::Plugin m_arcplugin1;
 	Arc::LibUnrar::Plugin m_arcplugin2;
-
-private:
-	Default::Plugin m_default;
 };
 
 VFS_PLUGINS_NS_END

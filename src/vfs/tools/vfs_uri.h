@@ -52,6 +52,7 @@ public:
 	Uri(const QByteArray &path);
 
 	bool isValid() const { return m_valid; }
+	bool isEmpty() const { return m_path.isEmpty(); }
 
 	const QString &shema() const { return m_shema; }
 	const QString &userName() const { return m_userName; }

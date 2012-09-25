@@ -100,7 +100,13 @@ private:
 
 	void path(const char *string, int size)
 	{
-		m_path.push_back(QString::fromUtf8(string, size));
+		if (size > 0)
+			m_path.push_back(QString::fromUtf8(string, size));
+#ifndef Q_OS_WIN32
+		else
+			if (m_path.isEmpty())
+				m_path.push_back(QChar(L'/'));
+#endif
 //		qDebug() << "m_path = "  << QString::fromUtf8(string, size);
 	}
 
@@ -196,14 +202,10 @@ Uri::Uri(const QString &path) :
 //	else
 //		qDebug() << "INVALID" << "/home/dav";
 
-	Parser parser(path.toUtf8());
+	const Parser parser(path.toUtf8());
 
 	if (parser.m_valid)
 	{
-#ifndef Q_OS_WIN32
-		if (!parser.m_path.isEmpty() && parser.m_path.at(0).isEmpty())
-			parser.m_path[0] = QChar(L'/');
-#endif
 		m_valid    = true;
 		m_shema    = parser.m_shema;
 		m_userName = parser.m_userName;
@@ -217,14 +219,10 @@ Uri::Uri(const QString &path) :
 Uri::Uri(const QByteArray &path) :
 	m_valid(false)
 {
-	Parser parser(path);
+	const Parser parser(path);
 
 	if (parser.m_valid)
 	{
-#ifndef Q_OS_WIN32
-		if (!parser.m_path.isEmpty() && parser.m_path.at(0).isEmpty())
-			parser.m_path[0] = QChar(L'/');
-#endif
 		m_valid    = true;
 		m_shema    = parser.m_shema;
 		m_userName = parser.m_userName;

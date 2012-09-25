@@ -14,7 +14,7 @@ RootNode::~RootNode()
 {
 	Uri path(uri);
 
-	if (path.isValid())
+	if (path.isValid() && !path.isEmpty())
 	{
 		QModelIndex selected;
 		IContainerPlugin *plugin;

@@ -619,10 +619,11 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 
 void BaseNode::rename(const QModelIndex &index, INodeView *view)
 {
-	NodeItem *entry = static_cast<NodeItem *>(m_proxy.mapToSource(index).internalPointer());
+	QModelIndex idx = m_proxy.mapToSource(index);
+	NodeItem *entry = static_cast<NodeItem *>(idx.internalPointer());
 
 	if (!entry->isRootItem() && !static_cast<NodeItem *>(entry)->isLocked())
-		renameFunctor(index.row(), entry);
+		renameFunctor(idx.row(), entry);
 }
 
 void BaseNode::rename(const QModelIndexList &list, INodeView *view)

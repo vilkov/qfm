@@ -90,16 +90,16 @@ public:
     };
 
 public:
-	OrderedMap()
+    inline OrderedMap()
 	{}
 
-	OrderedMap(const OrderedMap &other)
+	inline OrderedMap(const OrderedMap &other)
 	{
 		for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
 			m_map[(*i).first] = m_list.insert(m_list.end(), *i);
 	}
 
-	OrderedMap &operator=(const OrderedMap &other)
+	inline OrderedMap &operator=(const OrderedMap &other)
 	{
 		m_map.clear();
 		m_list.clear();
@@ -110,7 +110,7 @@ public:
 		return *this;
 	}
 
-    T &operator[](const Key &key)
+	inline T &operator[](const Key &key)
     {
     	typename List::iterator &i = m_map[key];
 
@@ -119,14 +119,26 @@ public:
     	else
     		return i->second;
     }
-    const T operator[](const Key &key) const { return m_map[key]->second; }
+    inline const T operator[](const Key &key) const
+    {
+    	const typename List::iterator i(m_map[key]);
+    	return i == typename List::iterator() ? T() : i->second;
+    }
 
     inline int size() const { return m_list.size(); }
     inline bool isEmpty() const { return m_list.isEmpty(); }
+    inline bool contains(const Key &key) const { return m_map.contains(key); }
 
-    bool contains(const Key &key) const { return m_map.contains(key); }
-    const T value(const Key &key) const { return m_map.value(key)->second; }
-    const T value(const Key &key, const T &defaultValue) const { iterator it = m_map.value(key); return m_list.end() == it ? defaultValue : it->second; }
+    inline const T value(const Key &key) const
+    {
+    	const typename List::iterator i(m_map.value(key));
+    	return i == typename List::iterator() ? T() : i->second;
+    }
+    inline const T value(const Key &key, const T &defaultValue) const
+    {
+    	const typename List::iterator i(m_map.value(key));
+    	return i == typename List::iterator() ? defaultValue : i->second;
+    }
 
     inline iterator begin() { return m_list.begin(); }
     inline const_iterator begin() const { return m_list.begin(); }
@@ -134,14 +146,42 @@ public:
     inline iterator end() { return m_list.end(); }
     inline const_iterator end() const { return m_list.end(); }
     inline const_iterator constEnd() const { return m_list.constEnd(); }
-    iterator erase(iterator it) { m_map.remove((*it).first); return m_list.erase(it); }
+    inline iterator erase(iterator it) { m_map.remove((*it).first); return m_list.erase(it); }
 
-    inline void push_back(const Key &key, const T &t) { m_map[key] = m_list.insert(m_list.end(), Pair(key, t)); }
-    inline void push_front(const Key &key, const T &t) { m_map[key] = m_list.insert(m_list.begin(), Pair(key, t)); }
+    inline void push_back(const Key &key, const T &t)
+    {
+    	m_map[key] = m_list.insert(m_list.end(), Pair(key, t));
+    }
+    inline void push_front(const Key &key, const T &t)
+    {
+    	m_map[key] = m_list.insert(m_list.begin(), Pair(key, t));
+    }
 
-    void clear() { m_map.clear(); m_list.clear(); }
-    void remove(const Key &key) { m_list.erase(m_map.take(key)); }
-    T take(const Key &key) { typename List::iterator it(m_map.take(key)); T res(it->second); m_list.erase(it); return res; }
+    inline void clear()
+    {
+    	m_map.clear();
+    	m_list.clear();
+    }
+    inline void remove(const Key &key)
+    {
+    	typename List::iterator i(m_map.take(key));
+
+    	if (i != typename List::iterator())
+    		m_list.erase(i);
+    }
+    inline T take(const Key &key)
+    {
+    	typename List::iterator i(m_map.take(key));
+
+    	if (i != typename List::iterator())
+    	{
+			T res(i->second);
+			m_list.erase(i);
+			return res;
+    	}
+
+    	return T();
+    }
 
 private:
 	Map m_map;

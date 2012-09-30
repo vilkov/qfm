@@ -8,16 +8,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QObject *parent) :
+CompositeValueModel::CompositeValueModel(const EntityValue::Holder &value, QObject *parent) :
 	Model(parent)
 {
 	ValueList list;
 	CompositeValuePropertyItem *item;
 
-	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
 		m_items.push_back(item = new CompositeValuePropertyItem(value->entity()->at(i)));
-		list = value.as<IdmCompositeEntityValue>()->values(value->entity()->at(i).entity);
+		list = value.as<CompositeEntityValue>()->values(value->entity()->at(i).entity);
 
 		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
 			if (list.at(i)->entity()->type() == Database::Path)
@@ -27,17 +27,17 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, QO
 	}
 }
 
-CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, const Files &files, QObject *parent) :
+CompositeValueModel::CompositeValueModel(const EntityValue::Holder &value, const Files &files, QObject *parent) :
 	Model(parent)
 {
 	ValueList list;
 	const SnapshotItem *file;
 	CompositeValuePropertyItem *item;
 
-	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
 		m_items.push_back(item = new CompositeValuePropertyItem(value->entity()->at(i)));
-		list = value.as<IdmCompositeEntityValue>()->values(value->entity()->at(i).entity);
+		list = value.as<CompositeEntityValue>()->values(value->entity()->at(i).entity);
 
 		for (ValueList::size_type i = 0, size = list.size(); i < size; ++i)
 			if (list.at(i)->entity()->type() == Database::Path)
@@ -54,7 +54,7 @@ CompositeValueModel::CompositeValueModel(const IdmEntityValue::Holder &value, co
 	}
 }
 
-void CompositeValueModel::add(const QModelIndex &index, const IdmEntityValue::Holder &value)
+void CompositeValueModel::add(const QModelIndex &index, const EntityValue::Holder &value)
 {
 	CompositeValuePropertyItem *item = static_cast<CompositeValuePropertyItem*>(index.internalPointer());
 

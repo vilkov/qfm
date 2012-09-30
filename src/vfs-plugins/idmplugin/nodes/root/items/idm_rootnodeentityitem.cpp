@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-RootNodeEntityItem::RootNodeEntityItem(IdmEntity *entity, Base *parent) :
+RootNodeEntityItem::RootNodeEntityItem(Entity *entity, Base *parent) :
 	RootNodeListItem(parent),
 	m_entity(entity)
 {}

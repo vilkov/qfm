@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntitiesListItem::IdmEntitiesListItem(const IdmEntity::Property &property, IdmItem *parent) :
+IdmEntitiesListItem::IdmEntitiesListItem(const Entity::Property &property, IdmItem *parent) :
 	IdmListItem(parent),
 	m_property(property)
 {}

@@ -29,7 +29,7 @@ public:
 	bool next() const { return sqlite3_step(m_data->statement) == SQLITE_ROW; }
 	ColumnType columnType(int column) const { return static_cast<ColumnType>(sqlite3_column_type(m_data->statement, column)); }
 	int columnCount() const { return sqlite3_column_count(m_data->statement); }
-	IdmEntity *entity() const { return m_data->entity; }
+	Entity *entity() const { return m_data->entity; }
 
 	double asDouble(int column) const { return sqlite3_column_double(m_data->statement, column); }
 	qint32 asInt(int column) const { return sqlite3_column_int(m_data->statement, column); }
@@ -40,7 +40,7 @@ public:
 private:
 	struct Data : public QSharedData
 	{
-		Data(IdmEntity *entity, sqlite3_stmt *statement) :
+		Data(Entity *entity, sqlite3_stmt *statement) :
 			entity(entity),
 			statement(statement)
 		{}
@@ -49,13 +49,13 @@ private:
 			sqlite3_finalize(statement);
 		}
 
-		IdmEntity *entity;
+		Entity *entity;
 		sqlite3_stmt *statement;
 	};
 
 private:
-	friend class IdmStorage;
-	QueryContext(IdmEntity *entity, sqlite3_stmt *statement) :
+	friend class Storage;
+	QueryContext(Entity *entity, sqlite3_stmt *statement) :
 		m_data(new Data(entity, statement))
 	{}
 

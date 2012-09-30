@@ -13,7 +13,7 @@ class SelectableValueListDialog : public EditableValueListDialog
 public:
 	SelectableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
-	IdmEntityValue::Holder takeValue() { return EditableValueListDialog::takeValue(); }
+	EntityValue::Holder takeValue() { return EditableValueListDialog::takeValue(); }
     virtual void accept();
 };
 

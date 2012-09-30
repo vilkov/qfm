@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueRealPathItem::CompositeValueRealPathItem(const IdmEntityValue::Holder &value, IdmItem *parent) :
+CompositeValueRealPathItem::CompositeValueRealPathItem(const EntityValue::Holder &value, IdmItem *parent) :
 	CompositeValuePathItem(value, parent)
 {}
 

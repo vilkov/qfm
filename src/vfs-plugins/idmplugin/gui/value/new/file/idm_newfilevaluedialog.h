@@ -10,7 +10,7 @@ class NewFileValueDialog : public NewCompositeValueDialog
 	Q_OBJECT
 
 public:
-	NewFileValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
+	NewFileValueDialog(const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
 
 protected:
 	virtual void addValue();

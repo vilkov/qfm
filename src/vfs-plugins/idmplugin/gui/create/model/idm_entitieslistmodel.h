@@ -19,11 +19,11 @@ public:
 	virtual int columnCount(const QModelIndex &parent) const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	IdmEntity *entityAt(size_type index) const;
+	Entity *entityAt(size_type index) const;
 	const QString &nameAt(size_type index) const;
 	size_type size() const { return m_items.size(); }
 
-	void add(IdmEntity *entity, const QString &name);
+	void add(Entity *entity, const QString &name);
 	void remove(const QModelIndex &index);
 };
 

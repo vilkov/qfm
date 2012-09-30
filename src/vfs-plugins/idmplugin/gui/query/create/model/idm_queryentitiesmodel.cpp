@@ -8,7 +8,7 @@ QueryEntitiesModel::QueryEntitiesModel(QObject *parent) :
 	Model(parent)
 {}
 
-void QueryEntitiesModel::add(const IdmEntity::Property &property)
+void QueryEntitiesModel::add(const Entity::Property &property)
 {
 	QueryEntitiesModelItem *item;
 
@@ -31,7 +31,7 @@ void QueryEntitiesModel::expand(IdmItem *p)
 	QueryEntitiesModelItem *item;
 	QueryEntitiesModelItem *parent = static_cast<QueryEntitiesModelItem*>(p);
 
-	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{
 		parent->add(item = new QueryEntitiesModelItem(parent->entity()->at(i), parent));
 		expand(item);

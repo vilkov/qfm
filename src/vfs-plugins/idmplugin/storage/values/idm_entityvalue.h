@@ -11,7 +11,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmEntityValue : public QSharedData
+class EntityValue : public QSharedData
 {
 private:
 	template <typename T>
@@ -46,54 +46,54 @@ private:
 	};
 
 public:
-	typedef IdmEntity::id_type id_type;
-	enum { InvalidId = IdmEntity::InvalidId };
-	typedef InternalHolder<IdmEntityValue> Holder;
+	typedef Entity::id_type id_type;
+	enum { InvalidId = Entity::InvalidId };
+	typedef InternalHolder<EntityValue> Holder;
 
 public:
-	IdmEntityValue(IdmEntity *entity, id_type id);
-	virtual ~IdmEntityValue();
+	EntityValue(Entity *entity, id_type id);
+	virtual ~EntityValue();
 
-	IdmEntity *entity() const { return m_entity; }
+	Entity *entity() const { return m_entity; }
 
 	id_type id() const { return m_id; }
 	virtual QVariant value() const = 0;
 
 private:
-	IdmEntity *m_entity;
+	Entity *m_entity;
 	id_type m_id;
 };
 
 
-class IdmCompositeEntityValue : public IdmEntityValue
+class CompositeEntityValue : public EntityValue
 {
 public:
-	typedef QList<IdmEntityValue::Holder> List;
+	typedef QList<EntityValue::Holder> List;
 
 public:
-	IdmCompositeEntityValue(IdmEntity *entity, id_type id);
+	CompositeEntityValue(Entity *entity, id_type id);
 
-	List values(IdmEntity *property) const { return m_items.value(property).values(); }
-	bool contains(const IdmEntityValue::Holder &value) const;
-	bool contains(const List &values, IdmEntityValue::Holder &propertyValue) const;
+	List values(Entity *property) const { return m_items.value(property).values(); }
+	bool contains(const EntityValue::Holder &value) const;
+	bool contains(const List &values, EntityValue::Holder &propertyValue) const;
 
 protected:
-	typedef ::Tools::Containers::HashedList<id_type, IdmEntityValue::Holder> InternalList;
-	typedef QMap<IdmEntity*, InternalList> Map;
+	typedef ::Tools::Containers::HashedList<id_type, EntityValue::Holder> InternalList;
+	typedef QMap<Entity*, InternalList> Map;
 	Map m_items;
 };
 
 
 /* Meta-function "EntityValueType" */
 template <Database::EntityType EntityType> struct EntityValueType {};
-template <> struct EntityValueType<Database::Int>       { typedef int       type; };
-template <> struct EntityValueType<Database::String>    { typedef QString   type; };
-template <> struct EntityValueType<Database::Date>      { typedef QDate     type; };
-template <> struct EntityValueType<Database::Time>      { typedef QTime     type; };
-template <> struct EntityValueType<Database::DateTime>  { typedef QDateTime type; };
-template <> struct EntityValueType<Database::Memo>      { typedef QString   type; };
-template <> struct EntityValueType<Database::Rating>    { typedef int       type; };
-template <> struct EntityValueType<Database::Path>      { typedef QString   type; };
+template <> struct EntityValueType<Database::Int>      { typedef int       type; };
+template <> struct EntityValueType<Database::String>   { typedef QString   type; };
+template <> struct EntityValueType<Database::Date>     { typedef QDate     type; };
+template <> struct EntityValueType<Database::Time>     { typedef QTime     type; };
+template <> struct EntityValueType<Database::DateTime> { typedef QDateTime type; };
+template <> struct EntityValueType<Database::Memo>     { typedef QString   type; };
+template <> struct EntityValueType<Database::Rating>   { typedef int       type; };
+template <> struct EntityValueType<Database::Path>     { typedef QString   type; };
 
 
 /* Function "contextValue" */

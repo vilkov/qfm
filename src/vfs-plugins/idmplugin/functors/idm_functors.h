@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 /**
  *  Closed namespace "IdmFunctors"
  */
-struct IdmFunctors
+struct Functors
 {
 	class Functor
 	{

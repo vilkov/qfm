@@ -20,12 +20,12 @@ class IdmContainer
 	Q_DECLARE_TR_FUNCTIONS(IdmContainer)
 
 public:
-	typedef IdmStorage::id_type   id_type;
-	typedef IdmStorage::size_type size_type;
-	typedef IdmStorage::IdsList   IdsList;
-	typedef IdmStorage::IdsMap    IdsMap;
-	enum { InvalidId = IdmStorage::InvalidId };
-	enum { InvalidIndex = IdmStorage::InvalidIndex };
+	typedef Storage::id_type   id_type;
+	typedef Storage::size_type size_type;
+	typedef Storage::IdsList   IdsList;
+	typedef Storage::IdsMap    IdsMap;
+	enum { InvalidId = Storage::InvalidId };
+	enum { InvalidIndex = Storage::InvalidIndex };
 
 	enum MenuId
 	{
@@ -39,13 +39,13 @@ public:
 
 	const IFileContainer *container() const { return m_data->container.data(); }
 	const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
-	const IdmEntityTypes &entityTypes() const { return m_data->entityTypes; }
+	const EntityTypes &entityTypes() const { return m_data->entityTypes; }
 
 	/* IdmStorage */
 	bool isValid() const { return m_data->storage.isValid(); }
 	const QString &lastError() const { return m_data->storage.lastError(); }
 
-	IdmEntity *at(size_type index) const { return m_data->storage.at(index); }
+	Entity *at(size_type index) const { return m_data->storage.at(index); }
 	size_type size() const { return m_data->storage.size(); }
 	size_type indexOf(id_type id) const { return m_data->storage.indexOf(id); }
 
@@ -59,22 +59,22 @@ public:
 
 	QueryContext prepare(const Query &query, QString &error) const { return m_data->storage.prepare(query, error); }
 
-	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat) { return m_data->storage.createEntity(name, type, shortFormat); }
-	bool updateEditorGeometry(IdmEntity *entity, const QRect &geometry) { return m_data->storage.updateEditorGeometry(entity, geometry); }
-	bool updateListGeometry(IdmEntity *entity, const QRect &geometry) { return m_data->storage.updateListGeometry(entity, geometry); }
-	bool removeEntity(IdmEntity *entity) { return m_data->storage.removeEntity(entity); }
+	Entity *createEntity(const QString &name, Entity::Type type, const ShortFormat &shortFormat) { return m_data->storage.createEntity(name, type, shortFormat); }
+	bool updateEditorGeometry(Entity *entity, const QRect &geometry) { return m_data->storage.updateEditorGeometry(entity, geometry); }
+	bool updateListGeometry(Entity *entity, const QRect &geometry) { return m_data->storage.updateListGeometry(entity, geometry); }
+	bool removeEntity(Entity *entity) { return m_data->storage.removeEntity(entity); }
 
-	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
-	bool renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name) { return m_data->storage.renameProperty(entity, property, name); }
-	bool removeProperty(IdmEntity *entity, IdmEntity *property) { return m_data->storage.removeProperty(entity, property); }
+	bool addProperty(Entity *entity, Entity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
+	bool renameProperty(Entity *entity, Entity *property, const QString &name) { return m_data->storage.renameProperty(entity, property, name); }
+	bool removeProperty(Entity *entity, Entity *property) { return m_data->storage.removeProperty(entity, property); }
 
-	IdmEntityValue::Holder addValue(IdmEntity *entity) const { return m_data->storage.addValue(entity); }
-	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const { return m_data->storage.addValue(entityValue, propertyValue); }
-	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues) const { return m_data->storage.addValue(entityValue, propertyValues); }
-	IdmEntityValue::Holder addValue(IdmEntity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
-	bool updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
-	bool removeValue(IdmEntity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
-	bool removeValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const { return m_data->storage.removeValue(entityValue, propertyValue); }
+	EntityValue::Holder addValue(Entity *entity) const { return m_data->storage.addValue(entity); }
+	bool addValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const { return m_data->storage.addValue(entityValue, propertyValue); }
+	bool addValue(const EntityValue::Holder &entityValue, const CompositeEntityValue::List &propertyValues) const { return m_data->storage.addValue(entityValue, propertyValues); }
+	EntityValue::Holder addValue(Entity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
+	bool updateValue(const EntityValue::Holder &value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
+	bool removeValue(Entity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
+	bool removeValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const { return m_data->storage.removeValue(entityValue, propertyValue); }
 
 private:
 	struct Data : public QSharedData
@@ -82,8 +82,8 @@ private:
 		Data(IFileContainer::Holder &container, bool create);
 		~Data();
 
-		IdmStorage storage;
-		IdmEntityTypes entityTypes;
+		Storage storage;
+		EntityTypes entityTypes;
 		IFileContainer::Holder container;
 		INodeView::MenuActionList menuActions;
 	};

@@ -7,16 +7,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoRemoveValue : public IdmStorageUndoCommand
+class StorageUndoRemoveValue : public StorageUndoCommand
 {
 public:
-	IdmStorageUndoRemoveValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue);
+	StorageUndoRemoveValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue);
 
-	virtual void undo(IdmEntityRoot &root);
+	virtual void undo(RootEntity &root);
 
 private:
-	IdmEntityValue::Holder m_entityValue;
-	IdmEntityValue::Holder m_propertyValue;
+	EntityValue::Holder m_entityValue;
+	EntityValue::Holder m_propertyValue;
 };
 
 IDM_PLUGIN_NS_END

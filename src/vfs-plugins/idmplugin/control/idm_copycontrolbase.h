@@ -7,10 +7,10 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmCopyControlBase : public ICopyControl
+class CopyControlBase : public ICopyControl
 {
 public:
-	IdmCopyControlBase(ICopyControl::Holder &dest, const IdmContainer &container);
+	CopyControlBase(ICopyControl::Holder &dest, const IdmContainer &container);
 
 	/* IFileContainer */
 	virtual bool isDefault() const;

@@ -7,21 +7,21 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoRemoveEntity : public IdmStorageUndoCommand
+class StorageUndoRemoveEntity : public StorageUndoCommand
 {
 public:
-	typedef QList<IdmEntity::Property> Parents;
+	typedef QList<Entity::Property> Parents;
 
 public:
-	IdmStorageUndoRemoveEntity(IdmEntity *entity);
-	virtual ~IdmStorageUndoRemoveEntity();
+	StorageUndoRemoveEntity(Entity *entity);
+	virtual ~StorageUndoRemoveEntity();
 
-	virtual void undo(IdmEntityRoot &root);
+	virtual void undo(RootEntity &root);
 
-	void addParent(IdmEntity *entity, const QString &name) { m_parents.push_back(IdmEntity::Property(entity, name)); }
+	void addParent(Entity *entity, const QString &name) { m_parents.push_back(Entity::Property(entity, name)); }
 
 private:
-	IdmEntity *m_entity;
+	Entity *m_entity;
 	Parents m_parents;
 };
 

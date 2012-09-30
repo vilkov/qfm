@@ -3,20 +3,20 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntityValue::IdmEntityValue(IdmEntity *entity, id_type id) :
+EntityValue::EntityValue(Entity *entity, id_type id) :
 	QSharedData(),
 	m_entity(entity),
 	m_id(id)
 {}
 
-IdmEntityValue::~IdmEntityValue()
+EntityValue::~EntityValue()
 {}
 
-IdmCompositeEntityValue::IdmCompositeEntityValue(IdmEntity *entity, id_type id) :
-	IdmEntityValue(entity, id)
+CompositeEntityValue::CompositeEntityValue(Entity *entity, id_type id) :
+	EntityValue(entity, id)
 {}
 
-bool IdmCompositeEntityValue::contains(const IdmEntityValue::Holder &value) const
+bool CompositeEntityValue::contains(const EntityValue::Holder &value) const
 {
 	const List list = values(value->entity());
 
@@ -27,11 +27,11 @@ bool IdmCompositeEntityValue::contains(const IdmEntityValue::Holder &value) cons
 	return false;
 }
 
-bool IdmCompositeEntityValue::contains(const List &values, IdmEntityValue::Holder &propertyValue) const
+bool CompositeEntityValue::contains(const List &values, EntityValue::Holder &propertyValue) const
 {
 	if (!values.isEmpty())
 	{
-		const List list = IdmCompositeEntityValue::values(values.at(0)->entity());
+		const List list = CompositeEntityValue::values(values.at(0)->entity());
 
 		for (List::size_type i = 0, size = list.size(); i < size; ++i)
 			for (List::size_type q = 0, size = values.size(); q < size; ++q)

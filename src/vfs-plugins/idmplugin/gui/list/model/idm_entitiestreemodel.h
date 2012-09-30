@@ -12,17 +12,17 @@ class EntitiesTreeModel : public Model
 public:
 	EntitiesTreeModel(QObject *parent = 0);
 
-	void add(IdmEntity *entity);
+	void add(Entity *entity);
 	void remove(const QModelIndex &index);
 
 private:
-	void doAdd(IdmEntity *entity);
-	void doAdd(IdmItem *item, IdmEntity *property);
+	void doAdd(Entity *entity);
+	void doAdd(IdmItem *item, Entity *property);
 	void doRemove(IdmItem *item, Container::size_type index);
 	void expand(IdmItem *parent);
 
 private:
-	typedef QMap<IdmEntity*, Container::List> Map;
+	typedef QMap<Entity*, Container::List> Map;
 	Map m_entities;
 };
 

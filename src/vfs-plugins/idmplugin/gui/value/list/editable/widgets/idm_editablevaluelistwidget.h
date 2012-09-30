@@ -83,7 +83,7 @@ private:
 private:
 	ICallback *m_callback;
 	IdmContainer m_container;
-	IdmEntity *m_entity;
+	Entity *m_entity;
 
 	QVBoxLayout m_vLayout;
 	QHBoxLayout m_hLayout;
@@ -117,7 +117,7 @@ public:
 	IdmContainer &container() { return m_private.container(); }
 
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
-	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
+	EntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
 	void closeDbContext() { m_private.model().close(); }
 
@@ -149,7 +149,7 @@ public:
 	IdmContainer &container() { return m_private.container(); }
 
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
-	IdmEntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
+	EntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
 
     void addValue();
 	void removeValue();

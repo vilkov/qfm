@@ -3,9 +3,9 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntity::IdmEntity(Type type, id_type id,
+Entity::Entity(Type type, id_type id,
 		const QString &name,
-		const IdmShortFormat &shortFormat,
+		const ShortFormat &shortFormat,
 		const QByteArray &editorGeometry,
 		const QByteArray &listGeometry) :
 	m_type(type),
@@ -16,10 +16,10 @@ IdmEntity::IdmEntity(Type type, id_type id,
 	m_listGeometry(listGeometry.isEmpty() ? QRect() : geometryFromByteArray(listGeometry))
 {}
 
-IdmEntity::~IdmEntity()
+Entity::~Entity()
 {}
 
-QByteArray IdmEntity::geometryToByteArray(const QRect &geometry)
+QByteArray Entity::geometryToByteArray(const QRect &geometry)
 {
 	QByteArray buffer(sizeof(int) * 4, Qt::Uninitialized);
 	int *data = (int *)buffer.data();
@@ -32,7 +32,7 @@ QByteArray IdmEntity::geometryToByteArray(const QRect &geometry)
 	return buffer;
 }
 
-QRect IdmEntity::geometryFromByteArray(const QByteArray &buffer)
+QRect Entity::geometryFromByteArray(const QByteArray &buffer)
 {
 	const int *data = (const int *)buffer.data();
 	return QRect(QPoint(data[0], data[1]), QPoint(data[2], data[3]));

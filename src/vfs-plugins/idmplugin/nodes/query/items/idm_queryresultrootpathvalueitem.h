@@ -13,7 +13,7 @@ class QueryResultRootPathValueItem : public QueryResultPathItem
 	Q_DECLARE_TR_FUNCTIONS(QueryResultPathValueItem)
 
 public:
-	QueryResultRootPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent);
+	QueryResultRootPathValueItem(const IFileContainer *container, const EntityValue::Holder &value, Base *parent);
 
 	/* QueryResultItem */
 	virtual bool isRootPathValue();
@@ -22,10 +22,10 @@ public:
 	virtual void open() const;
 
 	void update(SnapshotItem *item);
-	const IdmEntityValue::Holder &value() const { return m_value; }
+	const EntityValue::Holder &value() const { return m_value; }
 
 private:
-	IdmEntityValue::Holder m_value;
+	EntityValue::Holder m_value;
 	const IFileContainer *m_container;
 	IFileContainer::Holder m_thisContainer;
 };

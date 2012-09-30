@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValuePathItem : public CompositeValueItem
 {
 public:
-	CompositeValuePathItem(const IdmEntityValue::Holder &value, IdmItem *parent = 0);
+	CompositeValuePathItem(const EntityValue::Holder &value, IdmItem *parent = 0);
 
 	/* CompositeValueItem */
 	virtual bool isPath() const;
@@ -18,11 +18,11 @@ public:
 	virtual bool isFile() const = 0;
 	virtual void open() const = 0;
 
-	const IdmEntityValue::Holder &value() const { return m_value; }
-	IdmEntityValue::Holder take() { IdmEntityValue::Holder res(m_value); m_value.reset(); return res; }
+	const EntityValue::Holder &value() const { return m_value; }
+	EntityValue::Holder take() { EntityValue::Holder res(m_value); m_value.reset(); return res; }
 
 protected:
-	IdmEntityValue::Holder m_value;
+	EntityValue::Holder m_value;
 };
 
 IDM_PLUGIN_NS_END

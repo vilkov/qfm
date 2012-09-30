@@ -21,7 +21,7 @@ public:
 
 
 template <Database::EntityType EntityType>
-inline IdmEntityValue::Holder processAddValue(NestedDialog *parent, const QString &title, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline EntityValue::Holder processAddValue(NestedDialog *parent, const QString &title, IdmContainer &container, Entity *entity, bool &declined)
 {
 	typedef NewValueDialog<EntityType> NewValueDialog;
 	NewValueDialog dialog(parent, title);
@@ -31,24 +31,24 @@ inline IdmEntityValue::Holder processAddValue(NestedDialog *parent, const QStrin
 	else
 		declined = true;
 
-	return IdmEntityValue::Holder();
+	return EntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue::Holder processAddValue<Database::Memo>(NestedDialog *parent, const QString &title, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline EntityValue::Holder processAddValue<Database::Memo>(NestedDialog *parent, const QString &title, IdmContainer &container, Entity *entity, bool &declined)
 {
 	declined = false;
-	return IdmEntityValue::Holder();
+	return EntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue::Holder processAddValue<Database::Composite>(NestedDialog *parent, const QString &title, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline EntityValue::Holder processAddValue<Database::Composite>(NestedDialog *parent, const QString &title, IdmContainer &container, Entity *entity, bool &declined)
 {
 	QByteArray name = Database::savepoint("processAddValue<Database::Composite>::");
 
 	if (container.savepoint(name))
 	{
-		IdmEntityValue::Holder value(container.addValue(entity));
+		EntityValue::Holder value(container.addValue(entity));
 
 		if (value)
 		{
@@ -67,11 +67,11 @@ inline IdmEntityValue::Holder processAddValue<Database::Composite>(NestedDialog 
 		}
 	}
 
-	return IdmEntityValue::Holder();
+	return EntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue::Holder processAddValue<Database::Rating>(NestedDialog *parent, const QString &title, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline EntityValue::Holder processAddValue<Database::Rating>(NestedDialog *parent, const QString &title, IdmContainer &container, Entity *entity, bool &declined)
 {
 	RatingValueWidget widget(parent, title);
 
@@ -80,14 +80,14 @@ inline IdmEntityValue::Holder processAddValue<Database::Rating>(NestedDialog *pa
 	else
 		declined = true;
 
-	return IdmEntityValue::Holder();
+	return EntityValue::Holder();
 }
 
 template <>
-inline IdmEntityValue::Holder processAddValue<Database::Path>(NestedDialog *parent, const QString &title, IdmContainer &container, IdmEntity *entity, bool &declined)
+inline EntityValue::Holder processAddValue<Database::Path>(NestedDialog *parent, const QString &title, IdmContainer &container, Entity *entity, bool &declined)
 {
 	declined = false;
-	return IdmEntityValue::Holder();
+	return EntityValue::Holder();
 }
 
 
@@ -145,7 +145,7 @@ void EditableValueListWidgetPrivate::addValue()
 {
 	bool declined = false;
 	QString title = tr("New value for \"%1\"").arg(m_entity->name());
-	IdmEntityValue::Holder value;
+	EntityValue::Holder value;
 
 	switch (m_entity->type())
 	{
@@ -204,7 +204,7 @@ void EditableValueListWidgetPrivate::removeValue()
 	QModelIndex index = currentIndex();
 
 	if (index.isValid())
-		if (m_container.removeValue(m_entity, IdmStorage::IdsList() << m_model.at(index.row())->id()))
+		if (m_container.removeValue(m_entity, Storage::IdsList() << m_model.at(index.row())->id()))
 			m_model.remove(index);
 		else
 			m_callback->critical(m_container.lastError());

@@ -8,11 +8,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmEntityValueImp : public IdmEntityValue
+class EntityValueImp : public EntityValue
 {
 public:
-	IdmEntityValueImp(IdmEntity *entity, id_type id, const QVariant &value) :
-		IdmEntityValue(entity, id),
+	EntityValueImp(Entity *entity, id_type id, const QVariant &value) :
+		EntityValue(entity, id),
 		m_value(value)
 	{}
 
@@ -24,13 +24,13 @@ private:
 };
 
 
-class IdmEntityCompositeValueImp : public IdmCompositeEntityValue
+class CompositeEntityValueImp : public CompositeEntityValue
 {
-	Q_DECLARE_TR_FUNCTIONS(IdmEntityCompositeValueImp)
+	Q_DECLARE_TR_FUNCTIONS(CompositeEntityValueImp)
 
 public:
-	IdmEntityCompositeValueImp(IdmEntity *entity, id_type id) :
-		IdmCompositeEntityValue(entity, id)
+	CompositeEntityValueImp(Entity *entity, id_type id) :
+		CompositeEntityValue(entity, id)
 	{}
 
 	virtual QVariant value() const
@@ -40,21 +40,21 @@ public:
 		else
 		{
 			QString val;
-			const IdmShortFormat &format = entity()->shortFormat();
+			const ShortFormat &format = entity()->shortFormat();
 
-			for (IdmShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
+			for (ShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
 				switch (format.at(i).type())
 				{
-					case IdmShortFormat::Token::Text:
+					case ShortFormat::Token::Text:
 					{
 						val.append(format.at(i).string());
 						break;
 					}
-					case IdmShortFormat::Token::Property:
+					case ShortFormat::Token::Property:
 					{
-						IdmEntity::size_type index = entity()->indexOf(format.at(i).string());
+						Entity::size_type index = entity()->indexOf(format.at(i).string());
 
-						if (index == IdmEntity::InvalidIndex)
+						if (index == Entity::InvalidIndex)
 							val.append(tr("Property \"%1\" does not exists").arg(format.at(i).string()));
 						else
 						{
@@ -74,7 +74,7 @@ public:
 		}
 	}
 
-	void add(const IdmEntityValue::Holder &value)
+	void add(const EntityValue::Holder &value)
 	{
 		m_items[value->entity()].add(value->id(), value);
 		m_value.clear();
@@ -90,14 +90,14 @@ public:
 		m_value.clear();
 	}
 
-	void take(const IdmEntityValue::Holder &value)
+	void take(const EntityValue::Holder &value)
 	{
 		InternalList &list = m_items[value->entity()];
 		list.remove(value->id());
 		m_value.clear();
 	}
 
-	void remove(const IdmEntityValue::Holder &value)
+	void remove(const EntityValue::Holder &value)
 	{
 		InternalList &list = m_items[value->entity()];
 		list.take(value->id());
@@ -114,13 +114,13 @@ public:
 		m_value.clear();
 	}
 
-	IdmEntityValue::Holder value(IdmEntity *property, id_type id)
+	EntityValue::Holder value(Entity *property, id_type id)
 	{
 		InternalList &list = m_items[property];
 		InternalList::size_type index = list.indexOf(id);
 
 		if (index == InternalList::InvalidIndex)
-			return IdmEntityValue::Holder();
+			return EntityValue::Holder();
 		else
 			return list.at(index);
 	}

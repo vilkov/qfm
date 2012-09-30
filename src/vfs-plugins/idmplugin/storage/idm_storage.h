@@ -10,7 +10,7 @@
 
 #include <vfs/location/vfs_location.h>
 
-#include "entities/idm_entityroot.h"
+#include "entities/idm_rootentity.h"
 #include "queries/idm_query.h"
 #include "queries/idm_querycontext.h"
 #include "undo/idm_storage_undocommand.h"
@@ -25,28 +25,28 @@ typedef struct sqlite3_stmt sqlite3_stmt;
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorage
+class Storage
 {
-	Q_DECLARE_TR_FUNCTIONS(IdmStorage)
+	Q_DECLARE_TR_FUNCTIONS(Storage)
 
 public:
-	typedef IdmEntity::id_type        id_type;
-	typedef IdmEntity::size_type      size_type;
-	typedef Database::IdsSet          IdsSet;
-	typedef Database::IdsList         IdsList;
-	typedef QMap<IdmEntity*, IdsList> IdsMap;
-	enum { InvalidId = IdmEntity::InvalidId };
-	enum { InvalidIndex = IdmEntity::InvalidIndex };
+	typedef Entity::id_type        id_type;
+	typedef Entity::size_type      size_type;
+	typedef Database::IdsSet       IdsSet;
+	typedef Database::IdsList      IdsList;
+	typedef QMap<Entity*, IdsList> IdsMap;
+	enum { InvalidId = Entity::InvalidId };
+	enum { InvalidIndex = Entity::InvalidIndex };
 
 public:
-	IdmStorage(const Location &storage, bool create);
-	IdmStorage(const Location &newStorage, const Location &oldStorage);
-	~IdmStorage();
+	Storage(const Location &storage, bool create);
+	Storage(const Location &newStorage, const Location &oldStorage);
+	~Storage();
 
 	bool isValid() const { return m_valid; }
 	const QString &lastError() const { return m_lastError; }
 
-	IdmEntity *at(size_type index) const { return m_entities.at(index).entity; }
+	Entity *at(size_type index) const { return m_entities.at(index).entity; }
 	size_type size() const { return m_entities.size(); }
 	size_type indexOf(id_type id) const { return m_entities.indexOf(id); }
 
@@ -60,44 +60,44 @@ public:
 
 	QueryContext prepare(const Query &query, QString &error) const;
 
-	IdmEntity *createEntity(const QString &name, IdmEntity::Type type, const IdmShortFormat &shortFormat);
-	bool updateEditorGeometry(IdmEntity *entity, const QRect &geometry);
-	bool updateListGeometry(IdmEntity *entity, const QRect &geometry);
-	bool removeEntity(IdmEntity *entity);
+	Entity *createEntity(const QString &name, Entity::Type type, const ShortFormat &shortFormat);
+	bool updateEditorGeometry(Entity *entity, const QRect &geometry);
+	bool updateListGeometry(Entity *entity, const QRect &geometry);
+	bool removeEntity(Entity *entity);
 
-	bool addProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
-	bool renameProperty(IdmEntity *entity, IdmEntity *property, const QString &name);
-	bool removeProperty(IdmEntity *entity, IdmEntity *property);
+	bool addProperty(Entity *entity, Entity *property, const QString &name);
+	bool renameProperty(Entity *entity, Entity *property, const QString &name);
+	bool removeProperty(Entity *entity, Entity *property);
 
-	IdmEntityValue::Holder addValue(IdmEntity *entity) const;
-	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const;
-	bool addValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues) const;
-	IdmEntityValue::Holder addValue(IdmEntity *entity, const QVariant &value) const;
-	bool updateValue(const IdmEntityValue::Holder &value, const QVariant &newValue) const;
-	bool removeValue(IdmEntity *entity, const IdsList &ids) const;
-	bool removeValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) const;
+	EntityValue::Holder addValue(Entity *entity) const;
+	bool addValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const;
+	bool addValue(const EntityValue::Holder &entityValue, const CompositeEntityValue::List &propertyValues) const;
+	EntityValue::Holder addValue(Entity *entity, const QVariant &value) const;
+	bool updateValue(const EntityValue::Holder &value, const QVariant &newValue) const;
+	bool removeValue(Entity *entity, const IdsList &ids) const;
+	bool removeValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const;
 
 private:
 	id_type loadId(const QString &tableName) const;
-	bool isThereCycles(IdmEntity *entity, IdmEntity *property) const;
-	bool removeEntityValue(IdmEntity *entity, id_type id) const;
-	bool removeEntityValues(IdmEntity *entity, const IdsList &ids) const;
-	bool removeOverlappingIds(IdmEntity *entity, IdmEntity *property, IdsSet &ids) const;
-	bool removeSelfOverlappingIds(IdmEntity *entity, const IdsList &entityIds, IdmEntity *property, IdsSet &propertyIds) const;
-	bool cleanupParentsValues(IdmEntity *entity) const;
-	bool cleanupParentsValues(IdmEntity *entity, const IdsList &ids) const;
-	bool cleanupPropertyValues(IdmEntity *entity) const;
-	bool cleanupPropertyValues(IdmEntity *entity, const IdsList &ids) const;
-	bool cleanupPropertyValues(IdmEntity *entity, IdmEntity *property) const;
+	bool isThereCycles(Entity *entity, Entity *property) const;
+	bool removeEntityValue(Entity *entity, id_type id) const;
+	bool removeEntityValues(Entity *entity, const IdsList &ids) const;
+	bool removeOverlappingIds(Entity *entity, Entity *property, IdsSet &ids) const;
+	bool removeSelfOverlappingIds(Entity *entity, const IdsList &entityIds, Entity *property, IdsSet &propertyIds) const;
+	bool cleanupParentsValues(Entity *entity) const;
+	bool cleanupParentsValues(Entity *entity, const IdsList &ids) const;
+	bool cleanupPropertyValues(Entity *entity) const;
+	bool cleanupPropertyValues(Entity *entity, const IdsList &ids) const;
+	bool cleanupPropertyValues(Entity *entity, Entity *property) const;
 
 	void loadEntities();
 	void loadProperties();
-	void loadEntities(sqlite3_stmt *statement, IdmEntity *parent);
+	void loadEntities(sqlite3_stmt *statement, Entity *parent);
 	void copyEntities(sqlite3 *oldDb, QByteArray &sqlQuery);
 	void copyProperties(sqlite3 *oldDb, QByteArray &sqlQuery);
-	void copySingleEntityValues(sqlite3 *oldDb, IdmEntity *entity, QByteArray &sqlQuery);
-	void copyCompositeEntityValues(sqlite3 *oldDb, IdmEntity *entity, QByteArray &sqlQuery);
-	void copyPropertyValues(sqlite3 *oldDb, IdmEntity *entity, IdmEntity *property, QByteArray &sqlQuery);
+	void copySingleEntityValues(sqlite3 *oldDb, Entity *entity, QByteArray &sqlQuery);
+	void copyCompositeEntityValues(sqlite3 *oldDb, Entity *entity, QByteArray &sqlQuery);
+	void copyPropertyValues(sqlite3 *oldDb, Entity *entity, Entity *property, QByteArray &sqlQuery);
 
 private:
 	void performUndo();
@@ -118,7 +118,7 @@ private:
 	void setLastError(const QString &error) const;
 
 private:
-	typedef QList<IdmStorageUndoCommand*>                         UndoList;
+	typedef QList<StorageUndoCommand*>                         UndoList;
 	typedef ::Tools::Containers::HashedList<QByteArray, UndoList> UndoStack;
 
 private:
@@ -126,7 +126,7 @@ private:
 	bool m_valid;
 	sqlite3 *m_db;
 	mutable UndoStack m_undo;
-	IdmEntityRoot m_entities;
+	RootEntity m_entities;
 	mutable QString m_lastError;
 };
 

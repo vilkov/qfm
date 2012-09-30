@@ -3,7 +3,7 @@
 #include "../model/items/idm_compositevaluepropertyitem.h"
 
 
-CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, QWidget *parent) :
+CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const EntityValue::Holder &value, QWidget *parent) :
 	NestedPlainDialog(parent),
 	m_handler(this),
 	m_mainWidget(&m_handler, container, value, this)
@@ -23,7 +23,7 @@ CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const 
 	setCentralWidget(&m_mainWidget);
 }
 
-CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent) :
+CompositeValueDialog::CompositeValueDialog(const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent) :
 	NestedPlainDialog(parent),
 	m_handler(this),
 	m_mainWidget(&m_handler, container, value, files, this)

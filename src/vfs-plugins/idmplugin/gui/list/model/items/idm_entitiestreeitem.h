@@ -10,12 +10,12 @@ IDM_PLUGIN_NS_BEGIN
 class IdmEntitiesTreeItem : public IdmListItem
 {
 public:
-	IdmEntitiesTreeItem(IdmEntity *entity, IdmItem *parent = 0);
+	IdmEntitiesTreeItem(Entity *entity, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;
 
-	IdmEntity *entity() const { return m_entity; }
+	Entity *entity() const { return m_entity; }
 
 protected:
 	friend class EntitiesTreeModel;
@@ -23,7 +23,7 @@ protected:
 	void remove(size_type index) { m_items.removeAt(index); }
 
 private:
-	IdmEntity *m_entity;
+	Entity *m_entity;
 };
 
 IDM_PLUGIN_NS_END

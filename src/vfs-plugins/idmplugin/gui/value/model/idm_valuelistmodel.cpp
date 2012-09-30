@@ -42,7 +42,7 @@ QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, in
 void ValueListModel::fetchMore(const QModelIndex &parent)
 {
 	List list;
-	IdmEntityValue::Holder item;
+	EntityValue::Holder item;
 
 	list.reserve(PrefetchLimit);
 
@@ -74,9 +74,9 @@ QModelIndex ValueListModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-IdmEntityValue::Holder ValueListModel::take(const QModelIndex &index)
+EntityValue::Holder ValueListModel::take(const QModelIndex &index)
 {
-	IdmEntityValue::Holder res;
+	EntityValue::Holder res;
 
 	beginRemoveRows(QModelIndex(), index.row(), index.row());
 	res = m_items.takeAt(index.row());
@@ -92,7 +92,7 @@ void ValueListModel::add(const List &list)
 	endInsertRows();
 }
 
-QModelIndex ValueListModel::add(const IdmEntityValue::Holder &value)
+QModelIndex ValueListModel::add(const EntityValue::Holder &value)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 	m_items.push_back(value);

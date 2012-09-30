@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntitiesTreeItem::IdmEntitiesTreeItem(IdmEntity *entity, IdmItem *parent) :
+IdmEntitiesTreeItem::IdmEntitiesTreeItem(Entity *entity, IdmItem *parent) :
 	IdmListItem(parent),
 	m_entity(entity)
 {}

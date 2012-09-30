@@ -14,7 +14,7 @@ class StaticValueListDialog : public NestedPlainDialog
 public:
 	StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
 
-	IdmEntityValue::Holder takeValue();
+	EntityValue::Holder takeValue();
     virtual void accept();
 
 protected:

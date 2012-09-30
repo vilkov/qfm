@@ -14,7 +14,7 @@ public:
 
 public:
 	CompositeValueFakePossibleDirItem(const SnapshotItem *source, IdmItem *parent = 0) :
-		CompositeValuePossibleDirItem(IdmEntityValue::Holder(), source, parent)
+		CompositeValuePossibleDirItem(EntityValue::Holder(), source, parent)
 	{}
 
 	/* IdmItem */
@@ -42,7 +42,7 @@ class CompositeValueFakePossibleFileItem : public CompositeValuePossibleFileItem
 {
 public:
 	CompositeValueFakePossibleFileItem(const SnapshotItem *source, IdmItem *parent = 0) :
-		CompositeValuePossibleFileItem(IdmEntityValue::Holder(), source, parent)
+		CompositeValuePossibleFileItem(EntityValue::Holder(), source, parent)
 	{}
 
 	/* IdmItem */
@@ -79,7 +79,7 @@ static bool lessThan(CompositeValuePossibleDirItem::Container::value_type v1, Co
 			return ProxyModel::compareFileNames(static_cast<CompositeValuePathItem *>(v1)->fileName(), static_cast<CompositeValuePathItem *>(v2)->fileName());
 }
 
-CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent) :
+CompositeValuePossibleDirItem::CompositeValuePossibleDirItem(const EntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
 	m_source(source)
 {

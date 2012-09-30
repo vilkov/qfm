@@ -14,7 +14,7 @@ inline static bool compareByFileNames(const Item::Holder &v1, const Item::Holder
 }
 
 
-QueryResultRootPathValueItem::QueryResultRootPathValueItem(const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
+QueryResultRootPathValueItem::QueryResultRootPathValueItem(const IFileContainer *container, const EntityValue::Holder &value, Base *parent) :
 	QueryResultPathItem(container, value->value().toString(), parent),
 	m_value(value),
 	m_container(container)

@@ -8,13 +8,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmFolderNode : public Default::Node
+class FolderNode : public Default::Node
 {
 public:
-	IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent = 0);
+	FolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent = 0);
 
 	/* IFileOperations */
 	virtual ICopyControl *createControl(INodeView *view) const;
+
+protected:
+	/* Default::BaseNode */
 	virtual void rename(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndexList &list, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);

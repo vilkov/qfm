@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryEntitiesModelItem::QueryEntitiesModelItem(const IdmEntity::Property &property, IdmItem *parent) :
+QueryEntitiesModelItem::QueryEntitiesModelItem(const Entity::Property &property, IdmItem *parent) :
 	IdmListItem(parent),
 	m_property(property)
 {}

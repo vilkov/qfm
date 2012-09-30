@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Constraint::Constraint(const IdmEntity::Property &property, Operator op, const IdmEntityValue::Holder &value, BaseConstraint *parent) :
+Constraint::Constraint(const Entity::Property &property, Operator op, const EntityValue::Holder &value, BaseConstraint *parent) :
 	BaseConstraint(parent),
 	m_property(property),
 	m_op(op),
@@ -17,7 +17,7 @@ bool Constraint::isGroup() const
 
 QString Constraint::toString() const
 {
-	if (m_value->id() == IdmEntityValue::InvalidId)
+	if (m_value->id() == EntityValue::InvalidId)
 		return QString::fromLatin1("ENTITY_%1.VALUE").
 				arg(QString::number(m_property.entity->id())).
 				append(operatorToString(m_op, m_property.entity->type(), m_value->value()));

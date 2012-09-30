@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmShortFormat::IdmShortFormat(const QString &format) :
+ShortFormat::ShortFormat(const QString &format) :
 	m_format(format)
 {
 	QString token;
@@ -22,12 +22,12 @@ IdmShortFormat::IdmShortFormat(const QString &format) :
 	}
 }
 
-bool IdmShortFormat::isValid() const
+bool ShortFormat::isValid() const
 {
 	return !m_items.isEmpty();
 }
 
-void IdmShortFormat::dollarToken(size_type &pos, QString &token, const QString &source)
+void ShortFormat::dollarToken(size_type &pos, QString &token, const QString &source)
 {
 	if (pos + 1 < source.size())
 		if (source.at(pos + 1) == QChar(L'{'))
@@ -38,7 +38,7 @@ void IdmShortFormat::dollarToken(size_type &pos, QString &token, const QString &
 		token.append(source.at(pos));
 }
 
-void IdmShortFormat::nameToken(size_type &pos, QString &token, const QString &source)
+void ShortFormat::nameToken(size_type &pos, QString &token, const QString &source)
 {
 	if (pos + 2 < source.size())
 	{

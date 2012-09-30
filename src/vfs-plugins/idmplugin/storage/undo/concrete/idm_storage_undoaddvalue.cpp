@@ -4,20 +4,20 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorageUndoAddValue::IdmStorageUndoAddValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue) :
+StorageUndoAddValue::StorageUndoAddValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) :
 	m_entityValue(entityValue)
 {
 	m_propertyValues.push_back(propertyValue);
 }
 
-IdmStorageUndoAddValue::IdmStorageUndoAddValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues) :
+StorageUndoAddValue::StorageUndoAddValue(const EntityValue::Holder &entityValue, const CompositeEntityValue::List &propertyValues) :
 	m_entityValue(entityValue),
 	m_propertyValues(propertyValues)
 {}
 
-void IdmStorageUndoAddValue::undo(IdmEntityRoot &root)
+void StorageUndoAddValue::undo(RootEntity &root)
 {
-	IdmValueReader::removeValue(m_entityValue, m_propertyValues);
+	ValueReader::removeValue(m_entityValue, m_propertyValues);
 }
 
 IDM_PLUGIN_NS_END

@@ -13,7 +13,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValuePossibleDirItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleDirItem(const EntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
 	virtual ~CompositeValuePossibleDirItem();
 
 	/* Base */

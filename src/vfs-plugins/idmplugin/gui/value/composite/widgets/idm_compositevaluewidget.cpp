@@ -9,7 +9,7 @@
 CompositeValueWidgetPrivate::ICallback::~ICallback()
 {}
 
-CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value) :
+CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value) :
 	m_callback(callback),
 	m_container(container),
 	m_value(value),
@@ -20,7 +20,7 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
 	m_view.setModel(&m_model);
 }
 
-CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files) :
+CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files) :
 	m_callback(callback),
 	m_container(container),
 	m_value(value),
@@ -38,7 +38,7 @@ void CompositeValueWidgetPrivate::open(const QModelIndex &index)
 
 void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 {
-	IdmEntity *entity = static_cast<CompositeValuePropertyItem *>(index.internalPointer())->entity();
+	Entity *entity = static_cast<CompositeValuePropertyItem *>(index.internalPointer())->entity();
 	QByteArray name = Database::savepoint("CompositeValueDialog::doAddValue::");
 
 	if (m_container.savepoint(name))
@@ -47,7 +47,7 @@ void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 
 		if (dialog.exec() == SelectableValueListWidget::Accepted)
 		{
-			IdmEntityValue::Holder value;
+			EntityValue::Holder value;
 
 			if (m_container.addValue(m_value, value = dialog.takeValue()))
 				if (m_container.release(name))
@@ -72,7 +72,7 @@ void CompositeValueWidgetPrivate::addValue(const QModelIndex &index)
 
 void CompositeValueWidgetPrivate::removeValue(const QModelIndex &index)
 {
-	IdmEntityValue::Holder value(static_cast<CompositeValueValueItem *>(index.internalPointer())->value());
+	EntityValue::Holder value(static_cast<CompositeValueValueItem *>(index.internalPointer())->value());
 	QByteArray name = Database::savepoint("CompositeValueDialog::doRemoveValue::");
 
 	if (m_container.savepoint(name))
@@ -93,12 +93,12 @@ void CompositeValueWidgetPrivate::removeValue(const QModelIndex &index)
 		m_callback->critical(m_container.lastError());
 }
 
-MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent) :
+MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent) :
 	BaseNestedWidget(parent),
 	m_private(this, handler, container, value)
 {}
 
-MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent) :
+MainCompositeValueWidget::MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent) :
 	BaseNestedWidget(parent),
 	m_private(this, handler, container, value, files)
 {}
@@ -128,7 +128,7 @@ void MainCompositeValueWidget::critical(const QString &text)
 	BaseNestedWidget::critical(text);
 }
 
-CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent, const QString &title) :
+CompositeValueWidget::CompositeValueWidget(const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent, const QString &title) :
 	NestedWidget(parent, title),
 	m_handler(this),
 	m_private(this, &m_handler, container, value)

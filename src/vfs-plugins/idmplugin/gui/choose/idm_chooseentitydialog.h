@@ -18,12 +18,12 @@ class ChooseEntityDialog : public QDialog
 	Q_OBJECT
 
 public:
-	typedef QList<IdmEntity *> List;
+	typedef QList<Entity *> List;
 
 public:
-	IdmEntity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }
-	static IdmEntity *chooseFile(const IdmContainer &container, QWidget *parent = 0);
-	static IdmEntity *chooseProperty(const IdmContainer &container, IdmEntity *entity, QString &propertyName, QWidget *parent = 0);
+	Entity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }
+	static Entity *chooseFile(const IdmContainer &container, QWidget *parent = 0);
+	static Entity *chooseProperty(const IdmContainer &container, Entity *entity, QString &propertyName, QWidget *parent = 0);
 
 protected:
 	ChooseEntityDialog(const QString &title, const IdmContainer &container, const List &list, QWidget *parent = 0);

@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Query::Query(IdmEntity *entity) :
+Query::Query(Entity *entity) :
 	m_entity(entity)
 {}
 

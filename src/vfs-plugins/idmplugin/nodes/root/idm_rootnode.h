@@ -98,9 +98,9 @@ private:
 	void removeProperty(const QModelIndex &index);
 
 private:
-	void doAdd(IdmEntity *entity);
-	void doRemove(IdmEntity *entity);
-	void doAdd(const QModelIndex &index, Container::Item *item, IdmEntity *property, const QString &propertyName);
+	void doAdd(Entity *entity);
+	void doRemove(Entity *entity);
+	void doAdd(const QModelIndex &index, Container::Item *item, Entity *property, const QString &propertyName);
 	void doRemove(const QModelIndex &index, Container::Item *item, Container::Item *property);
 	void expand(Container::Item *parent);
 
@@ -119,7 +119,7 @@ private:
 	typedef QMap<quint32, ShortcutType> Shortcuts;
 
 private:
-	typedef QMap<IdmEntity*, Container::List> EntitiesMap;
+	typedef QMap<Entity*, Container::List> EntitiesMap;
 
 private:
 	INodeView::MenuActionList m_actions;

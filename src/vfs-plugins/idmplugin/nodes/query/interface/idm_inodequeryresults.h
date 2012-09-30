@@ -12,8 +12,8 @@ class IQueryResultsUpdater
 public:
 	virtual ~IQueryResultsUpdater();
 
-	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values) = 0;
-	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values) = 0;
+	virtual void add(const QModelIndex &index, const CompositeEntityValue::List &values) = 0;
+	virtual void remove(const QModelIndex &index, const CompositeEntityValue::List &values) = 0;
 	virtual void refresh(const QModelIndex &index) = 0;
 };
 

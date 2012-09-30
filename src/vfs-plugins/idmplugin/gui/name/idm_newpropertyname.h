@@ -13,7 +13,7 @@ class NewPropertyNameDialog : public StringDialog
     Q_OBJECT
 
 public:
-    typedef QList<IdmEntity::Property> Properties;
+    typedef QList<Entity::Property> Properties;
 
 public:
     NewPropertyNameDialog(const Properties &properties, QWidget *parent = 0);

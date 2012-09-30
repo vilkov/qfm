@@ -7,28 +7,28 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmCopyControl::IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, IdmEntity *entity) :
-	IdmCopyControlBase(dest, container),
+CopyControl::CopyControl(ICopyControl::Holder &dest, const IdmContainer &container, Entity *entity) :
+	CopyControlBase(dest, container),
 	m_entity(entity)
 {}
 
-bool IdmCopyControl::start(const Snapshot &files, bool move)
+bool CopyControl::start(const Snapshot &files, bool move)
 {
 	if (m_dest->start(files, move) && m_container.transaction())
 	{
-		IdmEntityValue::Holder value(m_container.addValue(m_entity));
+		EntityValue::Holder value(m_container.addValue(m_entity));
 
 		if (value)
 		{
-			IdmEntity *path;
+			Entity *path;
     		CompositeValueModel::Files possibleFiles;
     		CompositeValueModel::ValueList list;
     		list.reserve(files.size());
 
-			for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
+			for (Entity::size_type i = 0, size = m_entity->size(); i < size; ++i)
 		    	if ((path = m_entity->at(i).entity)->type() == Database::Path)
 		    	{
-		    		IdmEntityValue::Holder localValue;
+		    		EntityValue::Holder localValue;
 
 		    		for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
 						if (localValue = m_container.addValue(path, QString(m_storage).append((*i).second->info()->fileName())))

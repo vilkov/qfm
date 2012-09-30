@@ -18,7 +18,7 @@ Qt::ItemFlags EntitiesListModel::flags(const QModelIndex &index) const
 	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-IdmEntity *EntitiesListModel::entityAt(size_type index) const
+Entity *EntitiesListModel::entityAt(size_type index) const
 {
 	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
 }
@@ -28,10 +28,10 @@ const QString &EntitiesListModel::nameAt(size_type index) const
 	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->property().name;
 }
 
-void EntitiesListModel::add(IdmEntity *entity, const QString &name)
+void EntitiesListModel::add(Entity *entity, const QString &name)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntitiesListItem(IdmEntity::Property(entity, name)));
+	m_items.push_back(new IdmEntitiesListItem(Entity::Property(entity, name)));
 	endInsertRows();
 }
 

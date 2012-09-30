@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValuePossibleFileItem : public CompositeValuePathItem
 {
 public:
-	CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
+	CompositeValuePossibleFileItem(const EntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

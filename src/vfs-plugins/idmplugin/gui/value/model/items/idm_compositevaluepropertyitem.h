@@ -12,7 +12,7 @@ public:
 	typedef QList<IdmItem *> Container;
 
 public:
-	CompositeValuePropertyItem(const IdmEntity::Property &property, IdmItem *parent = 0);
+	CompositeValuePropertyItem(const Entity::Property &property, IdmItem *parent = 0);
 	virtual ~CompositeValuePropertyItem();
 
 	/* Base */
@@ -25,7 +25,7 @@ public:
 	/* CompositeValueItem */
 	virtual bool isProperty() const;
 
-	IdmEntity *entity() const { return m_property.entity; }
+	Entity *entity() const { return m_property.entity; }
 
 protected:
 	friend class CompositeValueModel;
@@ -33,7 +33,7 @@ protected:
 	void remove(size_type index) { delete m_items.takeAt(index); }
 
 private:
-	IdmEntity::Property m_property;
+	Entity::Property m_property;
 	Container m_items;
 };
 

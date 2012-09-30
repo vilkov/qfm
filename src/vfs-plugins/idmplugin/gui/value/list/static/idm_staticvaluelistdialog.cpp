@@ -19,7 +19,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
     setCentralWidget(&m_widget);
 }
 
-IdmEntityValue::Holder StaticValueListDialog::takeValue()
+EntityValue::Holder StaticValueListDialog::takeValue()
 {
 	return m_widget.takeValue();
 }

@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValuePossibleFileItem::CompositeValuePossibleFileItem(const IdmEntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent) :
+CompositeValuePossibleFileItem::CompositeValuePossibleFileItem(const EntityValue::Holder &value, const SnapshotItem *source, IdmItem *parent) :
 	CompositeValuePathItem(value, parent),
 	m_source(source)
 {}

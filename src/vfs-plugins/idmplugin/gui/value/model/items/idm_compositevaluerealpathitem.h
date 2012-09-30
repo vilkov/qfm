@@ -9,7 +9,7 @@ IDM_PLUGIN_NS_BEGIN
 class CompositeValueRealPathItem : public CompositeValuePathItem
 {
 public:
-	CompositeValueRealPathItem(const IdmEntityValue::Holder &value, IdmItem *parent = 0);
+	CompositeValueRealPathItem(const EntityValue::Holder &value, IdmItem *parent = 0);
 
 	/* IdmItem */
 	virtual QVariant data(qint32 column, qint32 role) const;

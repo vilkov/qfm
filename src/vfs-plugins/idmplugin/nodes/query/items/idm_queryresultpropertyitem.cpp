@@ -4,7 +4,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultPropertyItem::QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent) :
+QueryResultPropertyItem::QueryResultPropertyItem(const Entity::Property &property, Base *parent) :
 	QueryResultItem(parent),
 	m_property(property)
 {}
@@ -58,14 +58,14 @@ bool QueryResultPropertyItem::isRootPathValue()
 	return false;
 }
 
-void QueryResultPropertyItem::add(const IdmEntityValue::Holder &value)
+void QueryResultPropertyItem::add(const EntityValue::Holder &value)
 {
 	m_items.push_back(QueryResultItem::Holder(new QueryResultValueItem(value, this)));
 }
 
-void QueryResultPropertyItem::add(const IdmCompositeEntityValue::List &values)
+void QueryResultPropertyItem::add(const CompositeEntityValue::List &values)
 {
-	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
+	for (CompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 		m_items.push_back(QueryResultItem::Holder(new QueryResultValueItem(values.at(i), this)));
 }
 

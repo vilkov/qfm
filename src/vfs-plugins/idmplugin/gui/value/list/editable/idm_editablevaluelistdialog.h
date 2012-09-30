@@ -19,7 +19,7 @@ public:
 
 protected:
 	void closeDbContext();
-	IdmEntityValue::Holder takeValue();
+	EntityValue::Holder takeValue();
     QModelIndex currentIndex() const;
 
 private:

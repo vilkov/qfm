@@ -27,7 +27,7 @@ class CreateQueryDialog : public QDialog
 	Q_OBJECT
 
 public:
-	CreateQueryDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent = 0);
+	CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent = 0);
 
 	Select query();
     virtual void accept();
@@ -68,7 +68,7 @@ private:
 	QHBoxLayout m_horizontalLayout;
 	QSplitter m_splitter;
 	IdmContainer m_container;
-	IdmEntity *m_entity;
+	Entity *m_entity;
 	EntitiesTreeViewHandler m_handler;
 	QToolBar m_toolBar1;
 	QToolBar m_toolBar2;

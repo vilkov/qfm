@@ -11,7 +11,7 @@ IDM_PLUGIN_NS_BEGIN
 class ValueListModel : public QAbstractItemModel
 {
 public:
-	typedef QList<IdmEntityValue::Holder> List;
+	typedef QList<EntityValue::Holder> List;
 	typedef List::size_type               size_type;
 
 public:
@@ -32,8 +32,8 @@ public:
 	const QString &lastError() const { return m_reader.lastError(); }
 
 	size_type size() const { return m_items.size(); }
-	const IdmEntityValue::Holder &at(size_type index) const { return m_items.at(index); }
-	IdmEntityValue::Holder take(const QModelIndex &index);
+	const EntityValue::Holder &at(size_type index) const { return m_items.at(index); }
+	EntityValue::Holder take(const QModelIndex &index);
 
 	void close() { m_reader.close(); }
 
@@ -42,11 +42,11 @@ protected:
 
 protected:
     void add(const List &list);
-    QModelIndex add(const IdmEntityValue::Holder &value);
+    QModelIndex add(const EntityValue::Holder &value);
 	void remove(const QModelIndex &index);
 
 protected:
-	IdmValueReader m_reader;
+	ValueReader m_reader;
 	List m_items;
 };
 

@@ -61,8 +61,8 @@ protected:
 
 protected:
 	/* IQueryResultsUpdater */
-	virtual void add(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
-	virtual void remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values);
+	virtual void add(const QModelIndex &index, const CompositeEntityValue::List &values);
+	virtual void remove(const QModelIndex &index, const CompositeEntityValue::List &values);
 	virtual void refresh(const QModelIndex &index);
 
 protected:
@@ -129,7 +129,7 @@ private:
     INodeView::MenuActionList m_actions;
 	QueryResultsDelegate m_delegate;
 	IdmContainer m_container;
-	IdmValueReader m_reader;
+	ValueReader m_reader;
 	Shortcuts m_shortcuts;
 	QVariant m_label;
 };

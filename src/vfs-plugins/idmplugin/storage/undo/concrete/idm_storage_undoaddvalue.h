@@ -7,17 +7,17 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoAddValue : public IdmStorageUndoCommand
+class StorageUndoAddValue : public StorageUndoCommand
 {
 public:
-	IdmStorageUndoAddValue(const IdmEntityValue::Holder &entityValue, const IdmEntityValue::Holder &propertyValue);
-	IdmStorageUndoAddValue(const IdmEntityValue::Holder &entityValue, const IdmCompositeEntityValue::List &propertyValues);
+	StorageUndoAddValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue);
+	StorageUndoAddValue(const EntityValue::Holder &entityValue, const CompositeEntityValue::List &propertyValues);
 
-	virtual void undo(IdmEntityRoot &root);
+	virtual void undo(RootEntity &root);
 
 private:
-	IdmEntityValue::Holder m_entityValue;
-	IdmCompositeEntityValue::List m_propertyValues;
+	EntityValue::Holder m_entityValue;
+	CompositeEntityValue::List m_propertyValues;
 };
 
 IDM_PLUGIN_NS_END

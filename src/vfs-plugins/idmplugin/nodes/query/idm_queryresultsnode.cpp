@@ -70,7 +70,7 @@ int QueryResultsNode::columnCount(const QModelIndex &parent) const
 
 void QueryResultsNode::fetchMore(const QModelIndex &parent)
 {
-	IdmEntityValue::Holder item;
+	EntityValue::Holder item;
 	ItemsContainer::List list;
 	Snapshot::Files files(m_container.container());
 
@@ -331,7 +331,7 @@ void QueryResultsNode::performActionEvent(const AsyncFileAction::FilesList &file
 
 }
 
-void QueryResultsNode::add(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+void QueryResultsNode::add(const QModelIndex &index, const CompositeEntityValue::List &values)
 {
 	QueryResultPathPropertyItem *item = static_cast<QueryResultPathPropertyItem *>(index.internalPointer());
 
@@ -340,7 +340,7 @@ void QueryResultsNode::add(const QModelIndex &index, const IdmCompositeEntityVal
 	endInsertRows();
 }
 
-void QueryResultsNode::remove(const QModelIndex &index, const IdmCompositeEntityValue::List &values)
+void QueryResultsNode::remove(const QModelIndex &index, const CompositeEntityValue::List &values)
 {
 
 }
@@ -369,7 +369,7 @@ void QueryResultsNode::create(const QModelIndex &index, INodeView *view)
 
 			if (dialog.exec() == SelectableValueListDialog::Accepted)
 			{
-				IdmEntityValue::Holder value = dialog.takeValue();
+				EntityValue::Holder value = dialog.takeValue();
 
 				if (m_container.addValue(static_cast<QueryResultRootItem *>(item->parent())->value(), value))
 					if (m_container.commit())

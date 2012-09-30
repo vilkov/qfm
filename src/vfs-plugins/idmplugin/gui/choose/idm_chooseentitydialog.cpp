@@ -8,10 +8,10 @@
 
 
 template <>
-class qLess<IdmEntity *>
+class qLess<Entity *>
 {
 public:
-	typedef IdmEntity * value_type;
+	typedef Entity * value_type;
 
 public:
     inline bool operator()(const value_type &t1, const value_type &t2) const
@@ -83,9 +83,9 @@ ChooseEntityDialog::ChooseEntityDialog(const QString &title, const IdmContainer 
 	m_comboBox.setCurrentIndex(0);
 }
 
-IdmEntity *ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget *parent)
+Entity *ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget *parent)
 {
-	QSet<IdmEntity *> entities;
+	QSet<Entity *> entities;
 
 	for (IdmContainer::size_type i = 0, size = container.size(); i < size; ++i)
 		if (container.at(i)->type() == Database::Path)
@@ -115,15 +115,15 @@ IdmEntity *ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget
 	return NULL;
 }
 
-IdmEntity *ChooseEntityDialog::chooseProperty(const IdmContainer &container, IdmEntity *entity, QString &propertyName, QWidget *parent)
+Entity *ChooseEntityDialog::chooseProperty(const IdmContainer &container, Entity *entity, QString &propertyName, QWidget *parent)
 {
-	QSet<IdmEntity*> entities;
+	QSet<Entity*> entities;
 
 	for (IdmContainer::size_type i = 0, size = container.size(); i < size; ++i)
 		if (container.at(i) != entity)
 			entities.insert(container.at(i));
 
-	for (IdmEntity::size_type i = 0, size = entity->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = entity->size(); i < size; ++i)
 		entities.remove(entity->at(i).entity);
 
 	if (entities.isEmpty())

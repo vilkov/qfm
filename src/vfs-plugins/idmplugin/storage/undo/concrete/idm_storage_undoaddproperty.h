@@ -6,16 +6,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoAddProperty : public IdmStorageUndoCommand
+class StorageUndoAddProperty : public StorageUndoCommand
 {
 public:
-	IdmStorageUndoAddProperty(IdmEntity *entity, IdmEntity *property);
+	StorageUndoAddProperty(Entity *entity, Entity *property);
 
-	virtual void undo(IdmEntityRoot &root);
+	virtual void undo(RootEntity &root);
 
 private:
-	IdmEntity *m_entity;
-	IdmEntity *m_property;
+	Entity *m_entity;
+	Entity *m_property;
 };
 
 IDM_PLUGIN_NS_END

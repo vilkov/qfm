@@ -6,8 +6,8 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const IdmEntityValue::Holder &value, const IdmEntity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
-	IdmCopyControlBase(dest, container),
+IdmQueryResultsCopyControl::IdmQueryResultsCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const EntityValue::Holder &value, const Entity::Property &property, IQueryResultsUpdater *model, const QModelIndex &index) :
+	CopyControlBase(dest, container),
 	m_value(value),
 	m_property(property),
 	m_model(model),
@@ -18,8 +18,8 @@ bool IdmQueryResultsCopyControl::start(const Snapshot &files, bool move)
 {
 	if (m_dest->start(files, move) && m_container.transaction())
 	{
-		IdmEntityValue::Holder localValue;
-		IdmCompositeEntityValue::List list;
+		EntityValue::Holder localValue;
+		CompositeEntityValue::List list;
 		list.reserve(files.size());
 
 		for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)

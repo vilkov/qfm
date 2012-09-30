@@ -7,11 +7,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-struct IdmEntityTypeDescription
+struct EntityTypeDescription
 {
-	IdmEntityTypeDescription()
+	EntityTypeDescription()
 	{}
-	IdmEntityTypeDescription(const QString &label, const QString &description) :
+	EntityTypeDescription(const QString &label, const QString &description) :
 		label(label),
 		description(description)
 	{}
@@ -20,7 +20,7 @@ struct IdmEntityTypeDescription
 	QString description;
 };
 
-typedef QMap<IdmEntity::Type, IdmEntityTypeDescription> IdmEntityTypes;
+typedef QMap<Entity::Type, EntityTypeDescription> EntityTypes;
 
 IDM_PLUGIN_NS_END
 

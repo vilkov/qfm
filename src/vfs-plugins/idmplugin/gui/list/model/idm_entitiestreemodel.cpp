@@ -8,7 +8,7 @@ EntitiesTreeModel::EntitiesTreeModel(QObject *parent) :
 	Model(parent)
 {}
 
-void EntitiesTreeModel::add(IdmEntity *entity)
+void EntitiesTreeModel::add(Entity *entity)
 {
 	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
 	doAdd(entity);
@@ -23,7 +23,7 @@ void EntitiesTreeModel::remove(const QModelIndex &index)
 //	endRemoveRows();
 }
 
-void EntitiesTreeModel::doAdd(IdmEntity *entity)
+void EntitiesTreeModel::doAdd(Entity *entity)
 {
 	IdmEntitiesTreeItem *item;
 
@@ -32,7 +32,7 @@ void EntitiesTreeModel::doAdd(IdmEntity *entity)
 	expand(item);
 }
 
-void EntitiesTreeModel::doAdd(IdmItem *item, IdmEntity *property)
+void EntitiesTreeModel::doAdd(IdmItem *item, Entity *property)
 {
 	IdmEntitiesTreeItem *child;
 
@@ -50,11 +50,11 @@ void EntitiesTreeModel::doRemove(IdmItem *item, Container::size_type index)
 
 void EntitiesTreeModel::expand(IdmItem *p)
 {
-	IdmEntity *entity;
+	Entity *entity;
 	IdmEntitiesTreeItem *item;
 	IdmEntitiesTreeItem *parent = static_cast<IdmEntitiesTreeItem *>(p);
 
-	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{
 		parent->add(item = new IdmEntitiesTreeItem(entity = parent->entity()->at(i).entity, parent));
 		m_entities[entity].push_back(item);

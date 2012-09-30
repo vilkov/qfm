@@ -38,7 +38,7 @@ void EditableValueListDialog::closeDbContext()
 	m_widget.closeDbContext();
 }
 
-IdmEntityValue::Holder EditableValueListDialog::takeValue()
+EntityValue::Holder EditableValueListDialog::takeValue()
 {
 	return m_widget.takeValue();
 }

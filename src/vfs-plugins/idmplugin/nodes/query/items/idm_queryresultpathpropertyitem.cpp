@@ -12,29 +12,29 @@ inline static bool lessThan(const QueryResultItem::Holder &v1, const QueryResult
 }
 
 
-QueryResultPathPropertyItem::QueryResultPathPropertyItem(const IdmEntity::Property &property, Base *parent) :
+QueryResultPathPropertyItem::QueryResultPathPropertyItem(const Entity::Property &property, Base *parent) :
 	QueryResultPropertyItem(property, parent)
 {}
 
-void QueryResultPathPropertyItem::add(const IFileContainer *container, const IdmEntityValue::Holder &value)
+void QueryResultPathPropertyItem::add(const IFileContainer *container, const EntityValue::Holder &value)
 {
 	m_items.push_back(Holder(new QueryResultRootPathValueItem(container, value, this)));
 	qSort(m_items.begin(), m_items.end(), lessThan);
 }
 
-void QueryResultPathPropertyItem::add(const IFileContainer *container, const IdmCompositeEntityValue::List &values)
+void QueryResultPathPropertyItem::add(const IFileContainer *container, const CompositeEntityValue::List &values)
 {
-	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
+	for (CompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 		m_items.push_back(Holder(new QueryResultRootPathValueItem(container, values.at(i), this)));
 
 	qSort(m_items.begin(), m_items.end(), lessThan);
 }
 
-void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContainer *container, const IdmCompositeEntityValue::List &values)
+void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContainer *container, const CompositeEntityValue::List &values)
 {
 	Holder item;
 
-	for (IdmCompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
+	for (CompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 	{
 		m_items.push_back(item = new QueryResultRootPathValueItem(container, values.at(i), this));
 		files.add(item.as<QueryResultRootPathValueItem>()->info()->fileName(), item);

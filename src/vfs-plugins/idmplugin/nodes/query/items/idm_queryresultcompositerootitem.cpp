@@ -5,25 +5,25 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const IdmEntityValue::Holder &value, Base *parent) :
+QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const EntityValue::Holder &value, Base *parent) :
 	QueryResultRootItem(value, parent),
 	m_items(value->entity()->size())
 {
 	QueryResultPropertyItem::Holder item;
 
-	for (IdmEntity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
 	{
-		const IdmEntity::Property &poperty = value->entity()->at(i);
+		const Entity::Property &poperty = value->entity()->at(i);
 
 		if (poperty.entity->type() == Database::Path)
 		{
 			item = new QueryResultPathPropertyItem(poperty, this);
-			item.as<QueryResultPathPropertyItem>()->add(files, container, value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+			item.as<QueryResultPathPropertyItem>()->add(files, container, value.as<CompositeEntityValue>()->values(poperty.entity));
 		}
 		else
 		{
 			item = new QueryResultPropertyItem(poperty, this);
-			item.as<QueryResultPropertyItem>()->add(value.as<IdmCompositeEntityValue>()->values(poperty.entity));
+			item.as<QueryResultPropertyItem>()->add(value.as<CompositeEntityValue>()->values(poperty.entity));
 		}
 
 		m_items[i] = item;

@@ -5,7 +5,7 @@
 #include <QtGui/QMessageBox>
 
 
-CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *entity, QWidget *parent) :
+CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent) :
 	QDialog(parent),
 	m_verticatLayout(this),
 	m_splitter(this),
@@ -42,7 +42,7 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, IdmEntity *e
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    for (IdmEntity::size_type i = 0, size = m_entity->size(); i < size; ++i)
+    for (Entity::size_type i = 0, size = m_entity->size(); i < size; ++i)
     	m_model.add(m_entity->at(i));
 
     m_view.setHeaderHidden(true);

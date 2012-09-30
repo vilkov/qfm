@@ -10,7 +10,7 @@ IDM_PLUGIN_NS_BEGIN
 class QueryResultRootItem : public QueryResultItem
 {
 public:
-	QueryResultRootItem(const IdmEntityValue::Holder &value, Base *parent = 0);
+	QueryResultRootItem(const EntityValue::Holder &value, Base *parent = 0);
 
 	/* Base */
 	virtual QVariant data(qint32 column, qint32 role) const;
@@ -20,10 +20,10 @@ public:
 	virtual bool isPath();
 	virtual bool isRootPathValue();
 
-	const IdmEntityValue::Holder &value() const { return m_value; }
+	const EntityValue::Holder &value() const { return m_value; }
 
 private:
-	IdmEntityValue::Holder m_value;
+	EntityValue::Holder m_value;
 };
 
 IDM_PLUGIN_NS_END

@@ -35,8 +35,8 @@ public:
 			> TreeView;
 
 public:
-	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value);
-	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files);
+	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value);
+	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files);
 
 	const IdmContainer &container() const { return m_container; }
 	IdmContainer &container() { return m_container; }
@@ -54,7 +54,7 @@ public:
 private:
 	ICallback *m_callback;
 	IdmContainer m_container;
-	IdmEntityValue::Holder m_value;
+	EntityValue::Holder m_value;
 	TreeView m_view;
 	CompositeValueModel m_model;
 };
@@ -63,8 +63,8 @@ private:
 class MainCompositeValueWidget : public BaseNestedWidget, public CompositeValueWidgetPrivate::ICallback
 {
 public:
-	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent);
-	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const IdmEntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent);
+	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent);
+	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent);
 
 	/* BaseNestedWidget */
 	virtual QWidget *centralWidget();
@@ -96,7 +96,7 @@ private:
 class CompositeValueWidget : public NestedWidget, public CompositeValueWidgetPrivate::ICallback
 {
 public:
-	CompositeValueWidget(const IdmContainer &container, const IdmEntityValue::Holder &value, NestedDialog *parent, const QString &title);
+	CompositeValueWidget(const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent, const QString &title);
 
 	/* BaseNestedWidget */
 	virtual void setFocus();

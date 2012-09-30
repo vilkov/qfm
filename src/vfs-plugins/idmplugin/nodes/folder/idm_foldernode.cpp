@@ -8,50 +8,50 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmFolderNode::IdmFolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent) :
+FolderNode::FolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent) :
 	Default::Node(container, parent),
 	m_container(storage)
 {}
 
-ICopyControl *IdmFolderNode::createControl(INodeView *view) const
+ICopyControl *FolderNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+	if (Entity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 	{
 		ICopyControl::Holder dest(container()->createControl(view));
 
 		if (dest)
-			return new IdmCopyControl(dest, m_container, entity);
+			return new CopyControl(dest, m_container, entity);
 	}
 
 	return NULL;
 }
 
-void IdmFolderNode::rename(const QModelIndex &index, INodeView *view)
+void FolderNode::rename(const QModelIndex &index, INodeView *view)
 {
 
 }
 
-void IdmFolderNode::rename(const QModelIndexList &list, INodeView *view)
+void FolderNode::rename(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmFolderNode::remove(const QModelIndexList &list, INodeView *view)
+void FolderNode::remove(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-void IdmFolderNode::move(const INodeView *source, INodeView *destination)
+void FolderNode::move(const INodeView *source, INodeView *destination)
 {
 
 }
 
-void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
+void FolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 {
 
 }
 
-::VFS::Node *IdmFolderNode::createNode(const IFileInfo *file) const
+::VFS::Node *FolderNode::createNode(const IFileInfo *file) const
 {
 	if (file->isDir())
 	{
@@ -59,7 +59,7 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 		IFileContainer::Holder folder(container()->open(file, error));
 
 		if (folder)
-			return new IdmFolderNode(folder, m_container, const_cast<IdmFolderNode *>(this));
+			return new FolderNode(folder, m_container, const_cast<FolderNode *>(this));
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 	}
@@ -70,7 +70,7 @@ void IdmFolderNode::removeToTrash(const QModelIndexList &list, INodeView *view)
 	return NULL;
 }
 
-::VFS::Node *IdmFolderNode::privateViewChild(const QString &fileName, QModelIndex &selected)
+::VFS::Node *FolderNode::privateViewChild(const QString &fileName, QModelIndex &selected)
 {
 	return Node::viewChild(fileName, selected);
 }

@@ -6,7 +6,7 @@
 #include <QtGui/QMessageBox>
 
 
-ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const IdmEntity::Property &property, QWidget *parent) :
+ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, const Entity::Property &property, QWidget *parent) :
 	QDialog(parent),
 	m_container(container),
 	m_property(property),
@@ -86,7 +86,7 @@ Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 		return new Constraint(
 				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
-				IdmValueReader::createValue(m_property.entity, IdmEntityValue::InvalidId, m_edit.text()),
+				ValueReader::createValue(m_property.entity, EntityValue::InvalidId, m_edit.text()),
 				parent);
 }
 
@@ -119,7 +119,7 @@ void ConstraintQueryDialog::updateValue(const QString &text)
 	m_value.reset();
 }
 
-void ConstraintQueryDialog::updateValue(const IdmEntityValue::Holder &value)
+void ConstraintQueryDialog::updateValue(const EntityValue::Holder &value)
 {
 	if (m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt() == Constraint::Equal)
 		m_value.reset();

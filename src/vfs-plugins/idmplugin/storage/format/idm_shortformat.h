@@ -8,7 +8,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmShortFormat
+class ShortFormat
 {
 public:
 	class Token
@@ -38,7 +38,7 @@ public:
 	typedef Container::size_type size_type;
 
 public:
-	IdmShortFormat(const QString &format);
+	ShortFormat(const QString &format);
 
 	bool isValid() const;
 	const QString &format() const { return m_format; }

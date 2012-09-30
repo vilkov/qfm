@@ -6,16 +6,16 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoRenameProperty : public IdmStorageUndoCommand
+class StorageUndoRenameProperty : public StorageUndoCommand
 {
 public:
-	IdmStorageUndoRenameProperty(IdmEntity *entity, IdmEntity *property);
+	StorageUndoRenameProperty(Entity *entity, Entity *property);
 
-	virtual void undo(IdmEntityRoot &root);
+	virtual void undo(RootEntity &root);
 
 private:
-	IdmEntity *m_entity;
-	IdmEntity *m_property;
+	Entity *m_entity;
+	Entity *m_property;
 	QString m_name;
 };
 

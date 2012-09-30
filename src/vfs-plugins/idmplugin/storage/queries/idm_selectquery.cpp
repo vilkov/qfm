@@ -3,11 +3,11 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-Select::Select(IdmEntity *entity) :
+Select::Select(Entity *entity) :
 	Query(entity)
 {}
 
-Select::Select(IdmEntity *entity, BaseConstraint *where) :
+Select::Select(Entity *entity, BaseConstraint *where) :
 	Query(entity),
 	m_where(where)
 {}
@@ -18,7 +18,7 @@ QByteArray Select::compile() const
 	QString joinedFields;
 	QString selectedFields = format.select(entity());
 
-	for (IdmEntity::size_type i = 0, size = entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = entity()->size(); i < size; ++i)
 		join(format, selectedFields, joinedFields, entity(), entity()->at(i).entity);
 
 	if (m_where)
@@ -34,7 +34,7 @@ Select::Format::Format() :
 	valueField(QString::fromLatin1("ENTITY_%1.VALUE"))
 {}
 
-QString Select::Format::select(IdmEntity *entity) const
+QString Select::Format::select(Entity *entity) const
 {
 	if (entity->type() == Database::Composite)
 		return QString(format2).
@@ -86,12 +86,12 @@ QString Select::Format::complete(Database::id_type entity, QString &selectedFiel
 	}
 }
 
-void Select::join(const Format &format, QString &selectedFields, QString &joinedFields, IdmEntity *entity, IdmEntity *property) const
+void Select::join(const Format &format, QString &selectedFields, QString &joinedFields, Entity *entity, Entity *property) const
 {
 	selectedFields += format.select(property);
 	joinedFields += format.join(entity->id(), property->id());
 
-	for (IdmEntity::size_type i = 0, size = property->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = property->size(); i < size; ++i)
 		join(format, selectedFields, joinedFields, property, property->at(i).entity);
 }
 

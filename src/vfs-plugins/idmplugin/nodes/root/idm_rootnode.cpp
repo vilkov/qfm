@@ -71,12 +71,12 @@ QVariant RootNode::headerData(int section, Qt::Orientation orientation, int role
 
 ICopyControl *RootNode::createControl(INodeView *view) const
 {
-	if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+	if (Entity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 	{
 		ICopyControl::Holder dest(m_container.container()->createControl(view));
 
 		if (dest)
-			return new IdmCopyControl(dest, m_container, entity);
+			return new CopyControl(dest, m_container, entity);
 	}
 
 	return NULL;
@@ -189,7 +189,7 @@ void RootNode::menuAction(INodeView *view, QAction *action)
 
 		case Find:
 		{
-			if (IdmEntity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
+			if (Entity *entity = ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()))
 			{
 				CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
 
@@ -243,7 +243,7 @@ Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool ne
 				if (static_cast<RootNodeFilesItem *>(item)->node() == NULL)
 				{
 					IFileContainer::Holder folder(m_container.container()->open());
-					Node *node = new IdmFolderNode(folder, m_container, this);
+					Node *node = new FolderNode(folder, m_container, this);
 					static_cast<RootNodeFilesItem *>(item)->setNode(node);
 				}
 
@@ -256,13 +256,13 @@ Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool ne
 Node *RootNode::viewChild(const QString &fileName, QModelIndex &selected)
 {
 	if (Node *node = static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->node())
-		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, selected);
+		return static_cast<FolderNode *>(node)->privateViewChild(fileName, selected);
 	else
 	{
 		IFileContainer::Holder folder(m_container.container()->open());
 
-		static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(node = new IdmFolderNode(folder, m_container, this));
-		return static_cast<IdmFolderNode *>(node)->privateViewChild(fileName, selected);
+		static_cast<RootNodeFilesItem *>(m_items.at(FilesItemIndex))->setNode(node = new FolderNode(folder, m_container, this));
+		return static_cast<FolderNode *>(node)->privateViewChild(fileName, selected);
 	}
 
 	return NULL;
@@ -347,7 +347,7 @@ void RootNode::createEntity()
 
 	if (dialog.exec() == CreateEntityDialog::Accepted)
 		if (m_container.transaction())
-			if (IdmEntity *entity = m_container.createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
+			if (Entity *entity = m_container.createEntity(dialog.name(), dialog.type(), dialog.shortFormat()))
 				if (entity->type() == Database::Composite)
 				{
 					bool ok = true;
@@ -433,7 +433,7 @@ void RootNode::addProperty(const QModelIndex &index)
 			{
 				QString propertyName;
 
-				if (IdmEntity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
+				if (Entity *property = ChooseEntityDialog::chooseProperty(m_container, item->entity(), propertyName, Application::mainWindow()))
 					if (m_container.addProperty(item->entity(), property, propertyName))
 						if (m_container.commit())
 							doAdd(index, item, property, propertyName);
@@ -497,7 +497,7 @@ void RootNode::removeProperty(const QModelIndex &index)
 	}
 }
 
-void RootNode::doAdd(IdmEntity *entity)
+void RootNode::doAdd(Entity *entity)
 {
 	RootNodeEntityItem *item;
 
@@ -508,7 +508,7 @@ void RootNode::doAdd(IdmEntity *entity)
 	endInsertRows();
 }
 
-void RootNode::doRemove(IdmEntity *entity)
+void RootNode::doRemove(Entity *entity)
 {
 	Container::size_type row;
 	Container::Item *parent;
@@ -529,7 +529,7 @@ void RootNode::doRemove(IdmEntity *entity)
 	}
 }
 
-void RootNode::doAdd(const QModelIndex &index, Container::Item *item, IdmEntity *property, const QString &propertyName)
+void RootNode::doAdd(const QModelIndex &index, Container::Item *item, Entity *property, const QString &propertyName)
 {
 	RootNodeEntityItem *child;
 
@@ -556,7 +556,7 @@ void RootNode::expand(Container::Item *p)
 	RootNodeEntityItem *item;
 	RootNodeEntityItem *parent = static_cast<RootNodeEntityItem *>(p);
 
-	for (IdmEntity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
+	for (Entity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
 	{
 		parent->add(item = new RootNodePropertyItem(parent->entity()->at(i), parent));
 		m_entities[item->entity()].push_back(item);

@@ -13,7 +13,7 @@ public:
 	typedef QList<QueryResultItem::Holder> Container;
 
 public:
-	QueryResultPropertyItem(const IdmEntity::Property &property, Base *parent);
+	QueryResultPropertyItem(const Entity::Property &property, Base *parent);
 
 	/* Base */
 	virtual Base *at(size_type index) const;
@@ -28,14 +28,14 @@ public:
 	virtual bool isPath();
 	virtual bool isRootPathValue();
 
-	const IdmEntity::Property &property() const { return m_property; }
+	const Entity::Property &property() const { return m_property; }
 
-	void add(const IdmEntityValue::Holder &value);
-	void add(const IdmCompositeEntityValue::List &values);
+	void add(const EntityValue::Holder &value);
+	void add(const CompositeEntityValue::List &values);
 	void remove(size_type index);
 
 protected:
-	IdmEntity::Property m_property;
+	Entity::Property m_property;
 	Container m_items;
 };
 

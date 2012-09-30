@@ -51,7 +51,7 @@ void CreateDbAction::process(const IFileContainer *container, const FilesList &f
 						if (folder->rename(info, oldName, error))
 							if (res == QMessageBox::Yes)
 							{
-								IdmStorage storage(folder->location(Plugin::fileName()), folder->location(oldName));
+								Storage storage(folder->location(Plugin::fileName()), folder->location(oldName));
 
 								if (storage.isValid())
 									QMessageBox::information(
@@ -67,7 +67,7 @@ void CreateDbAction::process(const IFileContainer *container, const FilesList &f
 							}
 							else
 							{
-								IdmStorage storage(folder->location(Plugin::fileName()), true);
+								Storage storage(folder->location(Plugin::fileName()), true);
 
 								if (storage.isValid())
 									QMessageBox::information(
@@ -91,7 +91,7 @@ void CreateDbAction::process(const IFileContainer *container, const FilesList &f
 				}
 				else
 				{
-					IdmStorage storage(folder->location(Plugin::fileName()), true);
+					Storage storage(folder->location(Plugin::fileName()), true);
 
 					if (storage.isValid())
 						QMessageBox::information(

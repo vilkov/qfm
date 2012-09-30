@@ -8,18 +8,18 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmCopyControl : public IdmCopyControlBase
+class CopyControl : public CopyControlBase
 {
-	Q_DECLARE_TR_FUNCTIONS(IdmCopyControl)
+	Q_DECLARE_TR_FUNCTIONS(CopyControl)
 
 public:
-	IdmCopyControl(ICopyControl::Holder &dest, const IdmContainer &container, IdmEntity *entity);
+	CopyControl(ICopyControl::Holder &dest, const IdmContainer &container, Entity *entity);
 
 	/* ICopyControl */
 	virtual bool start(const Snapshot &files, bool move);
 
 private:
-	IdmEntity *m_entity;
+	Entity *m_entity;
 };
 
 IDM_PLUGIN_NS_END

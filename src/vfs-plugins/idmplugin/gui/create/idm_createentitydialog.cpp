@@ -66,7 +66,7 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QStr
 
     m_lineEdit.selectAll();
 
-    for (IdmEntityTypes::const_iterator it = container.entityTypes().constBegin(), end = container.entityTypes().constEnd(); it != end; ++it)
+    for (EntityTypes::const_iterator it = container.entityTypes().constBegin(), end = container.entityTypes().constEnd(); it != end; ++it)
     	m_comboBox.addItem(it->label, it.key());
 
     m_comboBox.setCurrentIndex(0);
@@ -81,14 +81,14 @@ void CreateEntityDialog::accept()
 	{
 		if (m_lineEdit2.isEnabled())
 		{
-			IdmShortFormat format = shortFormat();
+			ShortFormat format = shortFormat();
 
 			if (format.isValid())
 			{
 				bool ok;
 
-				for (IdmShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
-					if (format.at(i).type() == IdmShortFormat::Token::Property)
+				for (ShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
+					if (format.at(i).type() == ShortFormat::Token::Property)
 					{
 						ok = false;
 

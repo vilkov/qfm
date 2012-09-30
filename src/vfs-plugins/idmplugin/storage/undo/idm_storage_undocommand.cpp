@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmStorageUndoCommand::~IdmStorageUndoCommand()
+StorageUndoCommand::~StorageUndoCommand()
 {}
 
 IDM_PLUGIN_NS_END

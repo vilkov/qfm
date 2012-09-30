@@ -3,7 +3,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValuePropertyItem::CompositeValuePropertyItem(const IdmEntity::Property &property, IdmItem *parent) :
+CompositeValuePropertyItem::CompositeValuePropertyItem(const Entity::Property &property, IdmItem *parent) :
 	CompositeValueItem(parent),
 	m_property(property)
 {}

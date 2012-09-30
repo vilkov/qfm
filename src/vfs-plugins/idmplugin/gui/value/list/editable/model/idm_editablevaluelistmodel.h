@@ -12,7 +12,7 @@ public:
 	EditableValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
 
 	void add(const List &list);
-	QModelIndex add(const IdmEntityValue::Holder &value);
+	QModelIndex add(const EntityValue::Holder &value);
 	void remove(const QModelIndex &index);
 };
 

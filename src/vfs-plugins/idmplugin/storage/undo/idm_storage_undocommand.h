@@ -1,16 +1,16 @@
 #ifndef IDM_STORAGE_UNDOCOMMAND_H_
 #define IDM_STORAGE_UNDOCOMMAND_H_
 
-#include "../entities/idm_entityroot.h"
+#include "../entities/idm_rootentity.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class IdmStorageUndoCommand
+class StorageUndoCommand
 {
 public:
-	virtual ~IdmStorageUndoCommand();
-	virtual void undo(IdmEntityRoot &root) = 0;
+	virtual ~StorageUndoCommand();
+	virtual void undo(RootEntity &root) = 0;
 };
 
 IDM_PLUGIN_NS_END

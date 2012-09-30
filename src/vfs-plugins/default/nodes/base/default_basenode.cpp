@@ -205,6 +205,16 @@ QString BaseNode::location() const
 	return m_container->location();
 }
 
+QString BaseNode::fileName(const QModelIndex &index) const
+{
+	QModelIndex idx = m_proxy.mapToSource(index);
+
+	if (idx.isValid() && !static_cast<NodeItem *>(idx.internalPointer())->isRootItem())
+		return static_cast<NodeItem *>(idx.internalPointer())->info()->fileName();
+	else
+		return QString();
+}
+
 bool BaseNode::shortcut(INodeView *view, QKeyEvent *event)
 {
 	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
@@ -466,6 +476,32 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 QModelIndex BaseNode::rootIndex() const
 {
+	return QModelIndex();
+}
+
+QModelIndex BaseNode::childIndex(const QString &fileName)
+{
+	Container::size_type index = m_items.indexOf(fileName);
+
+	if (index == Container::InvalidIndex)
+	{
+		QString error;
+		IFileInfo::Holder info;
+
+		if (info = m_container->info(fileName, error))
+		{
+			NodeItem *item;
+
+			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+			m_items.add(NodeItem::Holder(item = new NodeItem(info)));
+			endInsertRows();
+
+			return indexForFile(item, m_items.lastIndex());
+		}
+	}
+	else
+		return indexForFile(m_items[index].as<NodeItem>(), index);
+
 	return QModelIndex();
 }
 

@@ -13,7 +13,7 @@ class TasksMap
 {
 public:
 	typedef QList<Item::Holder>            List;
-	typedef QMap<BaseTask *, List>             Tasks;
+	typedef QMap<BaseTask *, List>         Tasks;
 	typedef QMap<Item::Holder, BaseTask *> Items;
 
 public:

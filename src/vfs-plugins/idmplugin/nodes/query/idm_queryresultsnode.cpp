@@ -221,6 +221,11 @@ QString QueryResultsNode::location() const
 	return m_container.container()->location();
 }
 
+QString QueryResultsNode::fileName(const QModelIndex &index) const
+{
+	return QString();
+}
+
 bool QueryResultsNode::shortcut(INodeView *view, QKeyEvent *event)
 {
 	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
@@ -273,6 +278,11 @@ void QueryResultsNode::menuAction(INodeView *view, QAction *action)
 }
 
 QModelIndex QueryResultsNode::rootIndex() const
+{
+	return QModelIndex();
+}
+
+QModelIndex QueryResultsNode::childIndex(const QString &fileName)
 {
 	return QModelIndex();
 }

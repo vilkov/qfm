@@ -80,22 +80,22 @@ bool TasksNode::event(QEvent *e)
 void TasksNode::addTask(BaseTask *task, const Item::Holder &item)
 {
 	m_tasks.add(task, item);
-	addLink();
+	addLinks(1);
 	Application::taskPool()->handle(task);
 }
 
 void TasksNode::addTask(BaseTask *task, const Snapshot &snapshot)
 {
 	m_tasks.add(task, snapshot);
-	addLink();
+	addLinks(1);
 	Application::taskPool()->handle(task);
 }
 
 void TasksNode::addTask(BaseTask *task, const ICopyControl *destanation, const Snapshot &snapshot)
 {
 	m_tasks.add(task, snapshot);
-	addLink();
-	destanation->node()->addLink();
+	addLinks(1);
+	destanation->node()->addLinks(1);
 	Application::taskPool()->handle(task);
 }
 
@@ -114,14 +114,14 @@ void TasksNode::resetTask(BaseTask *task, BaseTask *oldTask, const ICopyControl 
 
 void TasksNode::handleTask(BaseTask *task)
 {
-	addLink();
+	addLinks(1);
 	Application::taskPool()->handle(task);
 }
 
 void TasksNode::handleTask(BaseTask *task, const ICopyControl *destanation)
 {
-	addLink();
-	destanation->node()->addLink();
+	addLinks(1);
+	destanation->node()->addLinks(1);
 	Application::taskPool()->handle(task);
 }
 

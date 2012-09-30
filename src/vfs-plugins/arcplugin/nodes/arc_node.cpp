@@ -126,6 +126,11 @@ QString ArcNode::location() const
 	return m_container->location();
 }
 
+QString ArcNode::fileName(const QModelIndex &index) const
+{
+	return QString();
+}
+
 bool ArcNode::shortcut(INodeView *view, QKeyEvent *event)
 {
 	return false;
@@ -169,6 +174,11 @@ void ArcNode::menuAction(INodeView *view, QAction *action)
 QModelIndex ArcNode::rootIndex() const
 {
 	return m_proxy.mapFromSource(createIndex(0, 0, m_items.at(RootItemIndex).data()));
+}
+
+QModelIndex ArcNode::childIndex(const QString &fileName)
+{
+	return QModelIndex();
 }
 
 Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)

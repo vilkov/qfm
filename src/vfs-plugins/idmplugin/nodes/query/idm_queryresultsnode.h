@@ -38,6 +38,7 @@ public:
     virtual void refresh();
 	virtual QString title() const;
 	virtual QString location() const;
+	virtual QString fileName(const QModelIndex &index) const;
 	virtual bool shortcut(INodeView *view, QKeyEvent *event);
 
 	virtual Sorting sorting() const;
@@ -50,6 +51,7 @@ public:
 protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
+	virtual QModelIndex childIndex(const QString &fileName);
 	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 

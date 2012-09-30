@@ -108,6 +108,11 @@ QString RootNode::location() const
 	return m_container.container()->location();
 }
 
+QString RootNode::fileName(const QModelIndex &index) const
+{
+	return QString();
+}
+
 bool RootNode::shortcut(INodeView *view, QKeyEvent *event)
 {
 	switch (m_shortcuts.value(event->modifiers() + event->key(), NoShortcut))
@@ -205,6 +210,11 @@ void RootNode::menuAction(INodeView *view, QAction *action)
 QModelIndex RootNode::rootIndex() const
 {
 	return createIndex(RootItemIndex, 0, m_items.at(RootItemIndex));
+}
+
+QModelIndex RootNode::childIndex(const QString &fileName)
+{
+	return QModelIndex();
 }
 
 Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)

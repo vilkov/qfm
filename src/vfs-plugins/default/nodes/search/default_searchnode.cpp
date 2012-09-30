@@ -85,14 +85,19 @@ void SearchNode::refresh()
 
 }
 
+QString SearchNode::title() const
+{
+	return tr("Search results");
+}
+
 QString SearchNode::location() const
 {
 	return m_container->location();
 }
 
-QString SearchNode::title() const
+QString SearchNode::fileName(const QModelIndex &index) const
 {
-	return tr("Search results");
+	return QString();
 }
 
 bool SearchNode::shortcut(INodeView *view, QKeyEvent *event)
@@ -188,6 +193,11 @@ void SearchNode::move(const INodeView *source, INodeView *destination)
 QModelIndex SearchNode::rootIndex() const
 {
 	return m_proxy.mapFromSource(createIndex(0, 0, m_items.list.at(RootItemIndex).data()));
+}
+
+QModelIndex SearchNode::childIndex(const QString &fileName)
+{
+	return QModelIndex();
 }
 
 Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)

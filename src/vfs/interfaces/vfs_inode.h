@@ -22,6 +22,7 @@ public:
     virtual void refresh() = 0;
 	virtual QString title() const = 0;
 	virtual QString location() const = 0;
+	virtual QString fileName(const QModelIndex &index) const = 0;
 	virtual bool shortcut(INodeView *view, QKeyEvent *event) = 0;
 
 	virtual Sorting sorting() const = 0;
@@ -37,7 +38,6 @@ public:
 private:
 	friend class Node;
 	friend class TasksNode;
-	virtual void addLink() = 0;
 	virtual void addLinks(qint32 count) = 0;
 	virtual void removeLink() = 0;
 };

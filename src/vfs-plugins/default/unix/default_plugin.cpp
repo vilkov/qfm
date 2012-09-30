@@ -64,7 +64,8 @@ void Plugin::registered()
 
 QString Plugin::shema() const
 {
-	return QString::fromLatin1("file");
+	static const QString res(QString::fromLatin1("file"));
+	return res;
 }
 
 ::VFS::Node *Plugin::open(const Uri::Iterator &path, QModelIndex &selected) const

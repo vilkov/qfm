@@ -18,7 +18,7 @@
 #include "widgets/pathedit.h"
 
 
-using namespace Tools::Events;
+using namespace ::Tools::Events;
 class FoldersView;
 
 class DirectoryView : public ::VFS::NodeView
@@ -40,12 +40,13 @@ public:
     	QString path;
     	Sort sort;
     	Geometry geometry;
+    	QString currentFile;
     };
 
 public:
     DirectoryView(const QString &absoluteFilePath, FoldersView *parent);
     DirectoryView(::VFS::INode *node, const QModelIndex &index, const Geometry &geometry, FoldersView *parent);
-    DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, FoldersView *parent);
+    DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, const QString &currentFile, FoldersView *parent);
     virtual ~DirectoryView();
 
 public:

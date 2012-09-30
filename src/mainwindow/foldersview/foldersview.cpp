@@ -2,7 +2,7 @@
 #include "../../tools/pointers/pscopedpointer.h"
 
 
-FoldersView::FoldersView(const QString &id, Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent) :
+FoldersView::FoldersView(const QString &id, ::Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent) :
 	QWidget(parent),
     m_settings(id, settings, this, &FoldersView::save, &FoldersView::load),
 	m_doNotRefreshTab(true),
@@ -98,7 +98,7 @@ void FoldersView::load()
 		for (Tabs::const_iterator i = m_settings.tabs().begin(), end = m_settings.tabs().end(); i != end; ++i)
 		{
 			tab = (*i)->as<Tab>();
-			widget.reset(new DirectoryView(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry(), this));
+			widget.reset(new DirectoryView(tab->path(), tab->sort().column(), tab->sort().order(), tab->geometry(), tab->currentFile(), this));
 			m_tabWidget.addTab(widget.data(), widget->title());
 			widget.release();
 		}
@@ -133,24 +133,29 @@ FoldersView::Tab::Tab(Option *parent) :
 	Scope(QString::fromLatin1("Tab"), parent),
 	m_path(QString::fromLatin1("Path"), this),
 	m_sort(this),
-	m_geometry(QString::fromLatin1("Geometry"), this)
+	m_geometry(QString::fromLatin1("Geometry"), this),
+	m_currentFile(QString::fromLatin1("CurrentFile"), this)
 {
 	manage(&m_path);
 	manage(&m_sort);
 	manage(&m_geometry);
+	manage(&m_currentFile);
 }
 
 FoldersView::Tab::Tab(const DirectoryView::Tab &tab, Option *parent) :
 	Scope(QString::fromLatin1("Tab"), parent),
 	m_path(QString::fromLatin1("Path"), this),
 	m_sort(tab.sort, this),
-	m_geometry(QString::fromLatin1("Geometry"), this)
+	m_geometry(QString::fromLatin1("Geometry"), this),
+	m_currentFile(QString::fromLatin1("CurrentFile"), this)
 {
 	manage(&m_path);
 	manage(&m_sort);
 	manage(&m_geometry);
+	manage(&m_currentFile);
 
 	m_path.setValue(tab.path);
+	m_currentFile.setValue(tab.currentFile);
 
 	for (DirectoryView::Geometry::size_type i = 0, size = tab.geometry.size(); i < size; ++i)
 		m_geometry.add(QString::number(tab.geometry.at(i)));
@@ -161,7 +166,7 @@ DirectoryView::Geometry FoldersView::Tab::geometry() const
 	DirectoryView::Geometry res;
 	res.reserve(m_geometry.size());
 
-	for (Tools::Settings::OptionValueList::size_type i = 0, size = m_geometry.size(); i < size; ++i)
+	for (::Tools::Settings::OptionValueList::size_type i = 0, size = m_geometry.size(); i < size; ++i)
 		res.push_back(m_geometry.at(i).toInt());
 
 	return res;
@@ -182,7 +187,7 @@ bool FoldersView::Tabs::isSubOptionName(const QStringRef &name) const
 	return name == optionName;
 }
 
-Tools::Settings::Option *FoldersView::Tabs::create()
+::Tools::Settings::Option *FoldersView::Tabs::create()
 {
 	return new Tab(this);
 }

@@ -51,7 +51,7 @@ DirectoryView::DirectoryView(::VFS::INode *node, const QModelIndex &index, const
 		initializeHistory(Application::rootNode()->open(this, defaultPath()));
 }
 
-DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, FoldersView *parent) :
+DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, const QString &currentFile, FoldersView *parent) :
 	BaseClass(),
 	m_parent(parent),
 	m_node(NULL),
@@ -65,10 +65,10 @@ DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder o
 	Q_ASSERT(m_parent);
 	initialize();
 
-	if (::History::Entry *entry = Application::rootNode()->open(this, path))
+	if (::History::Entry *entry = Application::rootNode()->open(this, path, currentFile))
 		initializeHistory(entry);
 	else
-		initializeHistory(Application::rootNode()->open(this, defaultPath()));
+		initializeHistory(Application::rootNode()->open(this, defaultPath(), currentFile));
 }
 
 DirectoryView::~DirectoryView()
@@ -113,8 +113,8 @@ void DirectoryView::select(const QModelIndex &index)
 void DirectoryView::setNode(::VFS::INode *node)
 {
 	/**
-	 * m_node == NULL
-	 * only during construction of DirectoryView objects.
+	 * XXX: "m_node == NULL" will be true only during
+	 * construction of DirectoryView object.
 	 */
 	if (LIKELY(m_node != NULL))
 		m_parent->updateTitle(this, node->title());
@@ -177,8 +177,13 @@ DirectoryView::Tab DirectoryView::tab() const
 	for (qint32 i = 0, size = m_node->columnsCount(); i < size; ++i)
 		geometry.push_back(m_view.columnWidth(i));
 
+	QModelIndex index = currentIndex();
+
+	while (index.parent().isValid())
+		index = index.parent();
+
 	DirectoryView::Tab res =
-	{m_node->location(), {m_view.header()->sortIndicatorSection(), m_view.header()->sortIndicatorOrder()}, geometry};
+	{m_node->location(), {m_view.header()->sortIndicatorSection(), m_view.header()->sortIndicatorOrder()}, geometry, m_node->fileName(currentIndex())};
 
 	return res;
 }

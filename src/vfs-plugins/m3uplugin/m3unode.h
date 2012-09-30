@@ -26,6 +26,7 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	/* IFileOperations */
+	virtual QString fileName(const QModelIndex &idx) const;
 	virtual IFileInfo *info(const QModelIndex &idx) const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 	virtual void contextMenu(const QModelIndexList &list, INodeView *view);
@@ -52,11 +53,12 @@ public:
 
 protected:
 	virtual QModelIndex rootIndex() const { return QModelIndex(); }
+	virtual QModelIndex childIndex(const QString &fileName) { return QModelIndex(); }
 	virtual QAbstractItemModel *proxyModel() const { return &((M3uNode *)this)->m_proxy; }
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((M3uNode *)this)->m_delegate; }
 	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
-	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:

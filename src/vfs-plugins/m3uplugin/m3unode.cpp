@@ -80,6 +80,11 @@ QModelIndex M3uNode::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
+QString M3uNode::fileName(const QModelIndex &idx) const
+{
+	return QString();
+}
+
 IFileInfo *M3uNode::info(const QModelIndex &idx) const
 {
 	return 0;
@@ -219,7 +224,7 @@ void M3uNode::menuAction(INodeView *view, QAction *action)
 
 }
 
-Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
+Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
 {
 	return 0;
 }

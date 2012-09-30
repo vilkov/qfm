@@ -1,4 +1,5 @@
 #include "vfs_node.h"
+#include "../tools/optimizations/optimizations.h"
 
 
 VFS_NS_BEGIN
@@ -85,14 +86,6 @@ Node *Node::viewChild(const Uri::Iterator &path, QModelIndex &selected)
 	return current;
 }
 
-void Node::addLink()
-{
-	++m_links;
-
-	if (Node *parent = parentNode())
-		parent->addLink();
-}
-
 void Node::addLinks(qint32 count)
 {
 	m_links += count;
@@ -126,22 +119,21 @@ bool Node::HistoryEntry::isEqual(const Entry *entry) const
 	return m_node == static_cast<const HistoryEntry *>(entry)->node();
 }
 
-void Node::viewThis(INodeView *nodeView, const QModelIndex &selected)
+void Node::viewThis(INodeView *nodeView, const QString &selected, qint32 links)
 {
-	addView(nodeView);
-	nodeView->setNode(this);
-
-	if (selected.isValid())
-		nodeView->select(selected);
-	else
-		nodeView->select(rootIndex());
+	viewThis(nodeView, childIndex(selected), links);
 }
 
 void Node::viewThis(INodeView *nodeView, const QModelIndex &selected, qint32 links)
 {
 	addView(nodeView, links);
 
-	if (INode *node = nodeView->node())
+	/**
+	 * XXX: Assumption: navigation will occur
+	 * more frequently than creating new tabs.
+	 */
+	INode *node = nodeView->node();
+	if (LIKELY(node != NULL))
 		node->viewClosed(nodeView);
 
 	nodeView->setNode(this);
@@ -218,12 +210,6 @@ void Node::allChildLinksRemoved(Node *child)
 			delete child;
 			delete this;
 		}
-}
-
-void Node::addView(INodeView *view)
-{
-	m_view.insert(view);
-	addLink();
 }
 
 void Node::addView(INodeView *view, qint32 links)

@@ -22,7 +22,7 @@ public:
     typedef const FoldersView & FoldersViewRef;
 
 public:
-    FoldersView(const QString &id, Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent = 0);
+    FoldersView(const QString &id, ::Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent = 0);
 
     void refresh();
     void updateTitle(QWidget *widget, const QString &fileName);
@@ -49,7 +49,7 @@ private:
 	void load();
 
 private:
-	class Sort : public Tools::Settings::Scope
+	class Sort : public ::Tools::Settings::Scope
 	{
 	public:
 		Sort(Option *parent);
@@ -59,12 +59,12 @@ private:
 		Qt::SortOrder order() const { return static_cast<Qt::SortOrder>(m_order.value().toInt()); }
 
 	private:
-		Tools::Settings::OptionValue m_column;
-		Tools::Settings::OptionValue m_order;
+		::Tools::Settings::OptionValue m_column;
+		::Tools::Settings::OptionValue m_order;
 	};
 
 
-	class Tab : public Tools::Settings::Scope
+	class Tab : public ::Tools::Settings::Scope
     {
     public:
     	Tab(Option *parent);
@@ -73,15 +73,17 @@ private:
 		QString path() const { return m_path.value(); }
 		const Sort &sort() const { return m_sort; }
 		DirectoryView::Geometry geometry() const;
+		const QString &currentFile() const { return m_currentFile.value(); }
 
     private:
-		Tools::Settings::OptionValue m_path;
+		::Tools::Settings::OptionValue m_path;
 		Sort m_sort;
-		Tools::Settings::OptionValueList m_geometry;
+		::Tools::Settings::OptionValueList m_geometry;
+		::Tools::Settings::OptionValue m_currentFile;
     };
 
 
-    class Tabs : public Tools::Settings::OptionList
+    class Tabs : public ::Tools::Settings::OptionList
     {
     public:
     	Tabs(Option *parent);
@@ -94,7 +96,7 @@ private:
     };
 
 
-    class Settings : public Tools::Settings::Scope
+    class Settings : public ::Tools::Settings::Scope
     {
     public:
     	typedef void (FoldersView::*Method)();
@@ -114,7 +116,7 @@ private:
         virtual void loadDefault();
 
     private:
-    	Tools::Settings::OptionValue m_activeTab;
+    	::Tools::Settings::OptionValue m_activeTab;
     	Tabs m_tabs;
     	FoldersView *m_object;
     	Method m_save;

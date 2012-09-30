@@ -10,7 +10,7 @@ RootNode::RootNode()
 RootNode::~RootNode()
 {}
 
-::History::Entry *RootNode::open(INodeView *nodeView, const QString &uri) const
+::History::Entry *RootNode::open(INodeView *nodeView, const QString &uri, const QString &currentFile) const
 {
 	Uri path(uri);
 
@@ -29,7 +29,10 @@ RootNode::~RootNode()
 		if (Node *node = plugin->open(path.begin(), selected))
 		{
 			/* XXX: Add 2 links because of HistoryEntry */
-			node->viewThis(nodeView, selected, 2);
+			if (selected.isValid() || currentFile.isEmpty())
+				node->viewThis(nodeView, selected, 2);
+			else
+				node->viewThis(nodeView, currentFile, 2);
 
 			node->refresh();
 

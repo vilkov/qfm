@@ -71,6 +71,9 @@ Plugin::FileTypeIdList Plugin::fileTypes() const
 	type.mime = QByteArray("application/x-deb");
 	res.push_back(type);
 
+	type.mime = QByteArray("application/x-rpm");
+	res.push_back(type);
+
 	type.mime = QByteArray("application/x-7z-compressed");
 	res.push_back(type);
 

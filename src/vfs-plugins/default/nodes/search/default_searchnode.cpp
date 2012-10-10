@@ -200,7 +200,7 @@ QModelIndex SearchNode::childIndex(const QString &fileName)
 	return QModelIndex();
 }
 
-Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	QModelIndex index = m_proxy.mapToSource(idx);
 
@@ -220,7 +220,7 @@ Node *SearchNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool 
 					return node;
 				}
 				else
-					if (!newTab && entry->info()->isFile())
+					if (entry->info()->isFile())
 						Application::open(entry->container(), entry->info());
 		}
 

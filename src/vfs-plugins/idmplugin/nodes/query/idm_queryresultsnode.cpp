@@ -287,7 +287,7 @@ QModelIndex QueryResultsNode::childIndex(const QString &fileName)
 	return QModelIndex();
 }
 
-Node *QueryResultsNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *QueryResultsNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	QueryResultItem *item = static_cast<QueryResultItem *>(idx.internalPointer());
 
@@ -314,7 +314,7 @@ Node *QueryResultsNode::viewChild(const QModelIndex &idx, QModelIndex &selected,
 						QMessageBox::critical(Application::mainWindow(), tr("Error"), error);
 				}
 				else
-					if (!newTab && static_cast<QueryResultPathItem *>(item)->info()->isFile())
+					if (static_cast<QueryResultPathItem *>(item)->info()->isFile())
 						static_cast<QueryResultPathItem *>(item)->open();
 			}
 

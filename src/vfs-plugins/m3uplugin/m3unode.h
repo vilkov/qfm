@@ -58,7 +58,7 @@ protected:
 	virtual QAbstractItemDelegate *itemDelegate() const { return &((M3uNode *)this)->m_delegate; }
 	virtual const INodeView::MenuActionList &menuActions() const { return m_menuActions; }
 
-	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:

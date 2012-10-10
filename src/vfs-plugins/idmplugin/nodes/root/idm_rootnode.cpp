@@ -217,7 +217,7 @@ QModelIndex RootNode::childIndex(const QString &fileName)
 	return QModelIndex();
 }
 
-Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	RootNodeItem *item;
 

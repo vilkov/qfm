@@ -181,7 +181,7 @@ QModelIndex ArcNode::childIndex(const QString &fileName)
 	return QModelIndex();
 }
 
-Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *ArcNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	if (static_cast<NodeItem *>(m_proxy.mapToSource(idx).internalPointer())->isRoot())
 		return parentNode();

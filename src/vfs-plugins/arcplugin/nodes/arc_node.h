@@ -45,7 +45,7 @@ protected:
 	/* Node */
 	virtual QModelIndex rootIndex() const;
 	virtual QModelIndex childIndex(const QString &fileName);
-	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab);
+	virtual Node *viewChild(const QModelIndex &idx, QModelIndex &selected);
 	virtual Node *viewChild(const QString &fileName, QModelIndex &selected);
 
 protected:

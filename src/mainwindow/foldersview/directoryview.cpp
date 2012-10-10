@@ -329,6 +329,7 @@ void DirectoryView::initialize()
 
 	m_eventHandler.registerShortcut(Qt::ALT,  Qt::Key_Up,     &DirectoryView::editPath);
 	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_Return, &DirectoryView::openInNewTab);
+	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_T,      &DirectoryView::openInNewTab);
 	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_W,      &DirectoryView::closeTab);
 	m_eventHandler.registerShortcut(Qt::CTRL, Qt::Key_Down,   &DirectoryView::closeTab);
 

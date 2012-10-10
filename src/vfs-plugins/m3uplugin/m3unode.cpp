@@ -224,7 +224,7 @@ void M3uNode::menuAction(INodeView *view, QAction *action)
 
 }
 
-Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected, bool newTab)
+Node *M3uNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 {
 	return 0;
 }

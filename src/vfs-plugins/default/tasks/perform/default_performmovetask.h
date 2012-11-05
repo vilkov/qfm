@@ -32,7 +32,10 @@ public:
 	PerformMoveTask(TasksNode *receiver, ICopyControl::Holder &destination, const Snapshot &snapshot);
 
 protected:
-	virtual void copyFile(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+    virtual void copyFile(const IFileContainer *destination, SnapshotItem *entry, const volatile Flags &aborted);
+
+private:
+    QString m_lastError;
 };
 
 DEFAULT_PLUGIN_NS_END

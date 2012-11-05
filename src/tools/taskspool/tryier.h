@@ -31,8 +31,29 @@ public:
 	typedef T Object;
 	typedef bool (Object::*Method)(const QString &error, bool &flag, const volatile Task::Flags &aborted);
 
+	class Scope
+	{
+	public:
+        Scope(Tryier<T> *tryier) :
+            m_tryier(*tryier)
+        {}
+	    Scope(Tryier<T> &tryier) :
+	        m_tryier(tryier)
+	    {}
+	    ~Scope()
+	    {
+	        m_tryier.m_res = true;
+	        m_tryier.m_error.clear();
+	    }
+
+	private:
+	    Tryier<T> &m_tryier;
+	};
+	friend class Scope;
+
 public:
 	inline Tryier(Object *object, Method method, const volatile Task::Flags &aborted) :
+	    m_res(false),
 		m_flag(false),
 		object(object),
 		m_method(method),
@@ -42,22 +63,50 @@ public:
 	template <typename F>
 	inline bool tryTo(F functor)
 	{
-		bool res;
-
 		do
-			if (res = functor(m_error))
+			if (m_res = functor(m_error))
 				break;
 			else
 				if (m_flag)
 					break;
 				else
-					res = (object->*m_method)(m_error, m_flag, m_aborted);
-		while (res && !m_aborted);
+					m_res = (object->*m_method)(m_error, m_flag, m_aborted);
+		while (m_res && !m_aborted);
 
-		return res;
+		return m_res;
 	}
 
+
+    /**
+     * This two methods is needed for constructions like:
+     *      {
+     *          Tryier<T>::Scope scope(tryier);
+     *
+     *          do
+     *              if (tryier.tryTo(...))
+     *                  if (do_something(...))
+     *                      break;
+     *                  else
+     *                      tryier.failed(...);
+     *          while (tryier.tryAgain());
+     *       }
+     */
+	inline void failed(const QString &error)
+    {
+        m_res = false;
+        m_error = error;
+    }
+
+    inline bool tryAgain()
+    {
+        if (m_res || m_flag || m_aborted)
+            return false;
+        else
+            return (object->*m_method)(m_error, m_flag, m_aborted);
+    }
+
 private:
+    bool m_res;
 	bool m_flag;
 	Object *object;
 	Method m_method;

@@ -21,6 +21,8 @@
 
 #include <QtCore/QCoreApplication>
 #include <vfs/tasks/tools/vfs_taskprogress.h>
+#include <tools/taskspool/tryier.h>
+#include <tools/taskspool/questioner.h>
 #include "../default_filesbasetask.h"
 
 
@@ -51,25 +53,95 @@ public:
 protected:
 	virtual void run(const volatile Flags &aborted);
 
-	void copyEntry(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
-	virtual void copyFile(const IFileContainer *destination, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+protected:
+    typedef ::Tools::TasksPool::Tryier<PerformCopyTask>     Tryier;
+    typedef ::Tools::TasksPool::Questioner<PerformCopyTask> Questioner;
+
+    class CreateDestinationFolder
+    {
+    public:
+        CreateDestinationFolder(const IFileContainer *container, const QString &fileName, IFileContainer::Holder &result) :
+            m_container(container),
+            m_fileName(fileName),
+            m_result(result)
+        {}
+
+        inline bool operator()(QString &error) const;
+
+    private:
+        const IFileContainer *m_container;
+        const QString &m_fileName;
+        IFileContainer::Holder &m_result;
+    };
+
+    class OverwriteFile
+    {
+        Q_DECLARE_TR_FUNCTIONS(PerformCopyTask::OverwriteFile)
+
+    public:
+        OverwriteFile(const IFileContainer *source, const IFileContainer *destination, const QString &fileName) :
+            m_source(source),
+            m_destination(destination),
+            m_fileName(fileName)
+        {}
+
+        inline bool operator()() const;
+        inline void operator()(QString &error) const;
+
+    private:
+        const IFileContainer *m_source;
+        const IFileContainer *m_destination;
+        const QString &m_fileName;
+    };
+
+    class OpenSourceFile
+    {
+    public:
+        OpenSourceFile(const IFileContainer *container, const IFileInfo *file, PScopedPointer<IFileAccessor> &result) :
+            m_container(container),
+            file(file),
+            m_result(result)
+        {}
+
+        inline bool operator()(QString &error) const;
+
+    private:
+        const IFileContainer *m_container;
+        const IFileInfo *file;
+        PScopedPointer<IFileAccessor> &m_result;
+    };
+
+    class CreateDestinationFile
+    {
+    public:
+        CreateDestinationFile(const IFileContainer *container, const IFileInfo *file, PScopedPointer<IFileAccessor> &result) :
+            m_container(container),
+            file(file),
+            m_result(result)
+        {}
+
+        inline bool operator()(QString &error) const;
+
+    private:
+        const IFileContainer *m_container;
+        const IFileInfo *file;
+        PScopedPointer<IFileAccessor> &m_result;
+    };
 
 protected:
-	void askForOverwrite(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
-	void askForSkipIfNotCopy(const QString &title, const QString &text, volatile bool &tryAgain, const volatile Flags &aborted);
+    void copyEntry(const IFileContainer *destination, SnapshotItem *entry, const volatile Flags &aborted);
+    virtual void copyFile(const IFileContainer *destination, SnapshotItem *entry, const volatile Flags &aborted);
+
+    bool askForSkipIfNotCopy(const QString &error, bool &flag, const volatile Task::Flags &aborted);
+    bool askForOverwrite(const QString &error, Questioner::Tristate &flag, const volatile Task::Flags &aborted);
 
 protected:
-	QString m_lastError;
+    bool m_move;
+    Snapshot m_snapshot;
+
+    Tryier *m_tryier;
+    Questioner *m_questioner;
 	TaskProgress m_progress;
-
-private:
-	Snapshot m_snapshot;
-	bool m_move;
-
-	bool m_skipAllIfNotCreate;
-	bool m_skipAllIfNotCopy;
-	bool m_doNotOverwriteAll;
-	bool m_overwriteAll;
 
 	PScopedPointer<IFileAccessor> m_destFile;
 	PScopedPointer<IFileAccessor> m_sourceFile;

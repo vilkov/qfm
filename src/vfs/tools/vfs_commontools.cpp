@@ -40,66 +40,66 @@ QString Tools::humanReadableTime(quint64 msecs)
 {
 	if (quint64 hours = msecs / (1000 * 60 * 60))
 		if (quint64 min = (msecs - hours * 1000 * 60 * 60) / (1000 * 60))
-			return QString::number(hours).append(QChar(L':')).append(QString::number(min)).append(QString::fromLatin1(" h"));
+			return QString::number(hours).append(QChar(L':')).append(QString::number(min)).append(QLatin1String(" h"));
 		else
-			return QString::number(hours).append(QString::fromLatin1(" h"));
+			return QString::number(hours).append(QLatin1String(" h"));
 	else
 		if (hours = msecs / (1000 * 60))
 			if (quint64 secs = (msecs - hours * 1000 * 60) / (1000))
-				return QString::number(hours).append(QChar(L':')).append(QString::number(secs)).append(QString::fromLatin1(" m"));
+				return QString::number(hours).append(QChar(L':')).append(QString::number(secs)).append(QLatin1String(" m"));
 			else
-				return QString::number(hours).append(QString::fromLatin1(" m"));
+				return QString::number(hours).append(QLatin1String(" m"));
 		else
 			if (hours = msecs / (1000))
-				return QString::number(hours).append(QString::fromLatin1(" s"));
+				return QString::number(hours).append(QLatin1String(" s"));
 			else
-				return QString();
+                return QString::number(hours).append(QLatin1String(" ms"));
 }
 
 QString Tools::humanReadableSize(quint64 size)
 {
 	if (quint64 gigabytes = size / (1024 * 1024 * 1024))
 		if (quint64 megabytes = (size - gigabytes * 1024 * 1024 * 1024) / (1024 * 1024))
-			return QString::number(gigabytes).append(QChar(L',')).append(QString::number(megabytes)).append(QString::fromLatin1(" Gb"));
+			return QString::number(gigabytes).append(QChar(L',')).append(QString::number(megabytes)).append(QLatin1String(" Gb"));
 		else
-			return QString::number(gigabytes).append(QString::fromLatin1(" Gb"));
+			return QString::number(gigabytes).append(QLatin1String(" Gb"));
 	else
 		if (gigabytes = size / (1024 * 1024))
 			if (quint64 kilobytes = (size - gigabytes * 1024 * 1024) / (1024))
-				return QString::number(gigabytes).append(QChar(L',')).append(QString::number(kilobytes)).append(QString::fromLatin1(" Mb"));
+				return QString::number(gigabytes).append(QChar(L',')).append(QString::number(kilobytes)).append(QLatin1String(" Mb"));
 			else
-				return QString::number(gigabytes).append(QString::fromLatin1(" Mb"));
+				return QString::number(gigabytes).append(QLatin1String(" Mb"));
 		else
 			if (gigabytes = size / (1024))
 				if (quint64 bytes = (size - gigabytes * 1024) / (1024))
-					return QString::number(gigabytes).append(QChar(L',')).append(QString::number(bytes)).append(QString::fromLatin1(" Kb"));
+					return QString::number(gigabytes).append(QChar(L',')).append(QString::number(bytes)).append(QLatin1String(" Kb"));
 				else
-					return QString::number(gigabytes).append(QString::fromLatin1(" Kb"));
+					return QString::number(gigabytes).append(QLatin1String(" Kb"));
 			else
-				return QString::number(size).append(QString::fromLatin1(" b"));
+				return QString::number(size).append(QLatin1String(" b"));
 }
 
 QString Tools::humanReadableShortSize(quint64 size)
 {
 	if (quint64 gigabytes = size / (1024 * 1024 * 1024))
 		if (quint64 megabytes = (size - gigabytes * 1024 * 1024 * 1024) / (1024 * 1024))
-			return QString::number(gigabytes).append(QChar(L',')).append(QString::number(megabytes)).append(QString::fromLatin1(" Gb"));
+			return QString::number(gigabytes).append(QChar(L',')).append(QString::number(megabytes)).append(QLatin1String(" Gb"));
 		else
-			return QString::number(gigabytes).append(QString::fromLatin1(" Gb"));
+			return QString::number(gigabytes).append(QLatin1String(" Gb"));
 	else
 		if (gigabytes = size / (1024 * 1024))
 			if (quint64 kilobytes = (size - gigabytes * 1024 * 1024) / (1024))
-				return QString::number(gigabytes).append(QChar(L',')).append(QString::number(kilobytes).mid(0, 1)).append(QString::fromLatin1(" Mb"));
+				return QString::number(gigabytes).append(QChar(L',')).append(QString::number(kilobytes).mid(0, 1)).append(QLatin1String(" Mb"));
 			else
-				return QString::number(gigabytes).append(QString::fromLatin1(" Mb"));
+				return QString::number(gigabytes).append(QLatin1String(" Mb"));
 		else
 			if (gigabytes = size / (1024))
 				if (quint64 bytes = (size - gigabytes * 1024) / (1024))
-					return QString::number(gigabytes).append(QChar(L',')).append(QString::number(bytes).mid(0, 1)).append(QString::fromLatin1(" Kb"));
+					return QString::number(gigabytes).append(QChar(L',')).append(QString::number(bytes).mid(0, 1)).append(QLatin1String(" Kb"));
 				else
-					return QString::number(gigabytes).append(QString::fromLatin1(" Kb"));
+					return QString::number(gigabytes).append(QLatin1String(" Kb"));
 			else
-				return QString::number(size).append(QString::fromLatin1(" b"));
+				return QString::number(size).append(QLatin1String(" b"));
 }
 
 Tools::DestinationFromPathList::DestinationFromPathList() :

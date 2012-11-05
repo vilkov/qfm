@@ -67,6 +67,9 @@ DirectoryView::DirectoryView(::VFS::INode *node, const QModelIndex &index, const
 		initializeHistory(entry);
 	else
 		initializeHistory(Application::rootNode()->open(this, defaultPath()));
+
+    for (qint32 i = 0, size = geometry.size() < m_node->columnsCount() ? geometry.size() : m_node->columnsCount(); i < size; ++i)
+        m_view.setColumnWidth(i, geometry.at(i));
 }
 
 DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder order, const Geometry &geometry, const QString &currentFile, FoldersView *parent) :
@@ -87,6 +90,9 @@ DirectoryView::DirectoryView(const QString &path, qint32 column, Qt::SortOrder o
 		initializeHistory(entry);
 	else
 		initializeHistory(Application::rootNode()->open(this, defaultPath(), currentFile));
+
+    for (qint32 i = 0, size = geometry.size() < m_node->columnsCount() ? geometry.size() : m_node->columnsCount(); i < size; ++i)
+        m_view.setColumnWidth(i, geometry.at(i));
 }
 
 DirectoryView::~DirectoryView()

@@ -125,19 +125,18 @@ bool UnPackIntoSubdirActionTask::OpenArchiveFile::operator()(QString &error) con
 	return m_result = m_enumerator->open(IFileAccessor::ReadOnly, error);
 }
 
-bool UnPackIntoSubdirActionTask::OverwriteFile::operator()(QString &error) const
+bool UnPackIntoSubdirActionTask::OverwriteFile::operator()() const
 {
-	if (m_container->contains(m_fileName))
-	{
-		error = tr("File \"%1\" already exists in \"%2\".").
-				arg(m_fileName).
-				arg(m_container->location()).
-				append(QChar(L'\n')).
-				append(tr("Overwrite it?"));
-		return false;
-	}
-	else
-		return true;
+    return !m_container->contains(m_fileName);
+}
+
+void UnPackIntoSubdirActionTask::OverwriteFile::operator()(QString &error) const
+{
+    error = tr("File \"%1\" already exists in \"%2\".").
+            arg(m_fileName).
+            arg(m_container->location()).
+            append(QChar(L'\n')).
+            append(tr("Overwrite it?"));
 }
 
 bool UnPackIntoSubdirActionTask::CreateFile::operator()(QString &error) const

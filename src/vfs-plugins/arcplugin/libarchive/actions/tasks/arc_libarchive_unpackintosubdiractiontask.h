@@ -40,8 +40,8 @@ protected:
 	virtual void process(const volatile Flags &aborted, QString &error);
 
 private:
-	typedef Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask>     Tryier;
-	typedef Tools::TasksPool::Questioner<UnPackIntoSubdirActionTask> Questioner;
+	typedef ::Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask>     Tryier;
+	typedef ::Tools::TasksPool::Questioner<UnPackIntoSubdirActionTask> Questioner;
 
 	class OpenArchive
 	{
@@ -119,7 +119,8 @@ private:
 			m_fileName(fileName)
 		{}
 
-		inline bool operator()(QString &error) const;
+        inline bool operator()() const;
+		inline void operator()(QString &error) const;
 
 	private:
 		const IFileContainer *m_container;

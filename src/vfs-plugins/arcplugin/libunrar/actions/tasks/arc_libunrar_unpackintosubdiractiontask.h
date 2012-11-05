@@ -39,7 +39,7 @@ protected:
 	virtual void process(const volatile Flags &aborted, QString &error);
 
 private:
-	typedef Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask> Tryier;
+	typedef ::Tools::TasksPool::Tryier<UnPackIntoSubdirActionTask> Tryier;
 
 	class CreateDestination
 	{

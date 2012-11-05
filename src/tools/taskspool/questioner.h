@@ -63,11 +63,14 @@ public:
 	{
 		bool res;
 
-		if (!(res = functor(m_error)))
+		if (!(res = functor()))
 			if (m_flag.isInitialized())
 				return m_flag;
 			else
+			{
+			    functor(m_error);
 				res = (m_object->*m_method)(m_error, m_flag, m_aborted);
+			}
 
 		return res;
 	}

@@ -20,8 +20,8 @@
 #define M3UPLUGINSETTINGS_H_
 
 #include <QtCore/QCoreApplication>
+#include <tools/settings/options/gui/page/settingspage.h>
 #include "../m3uplugin_ns.h"
-#include "../../../tools/settings/options/gui/page/settingspage.h"
 
 
 M3U_PLUGIN_NS_BEGIN

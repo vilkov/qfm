@@ -20,12 +20,12 @@
 #define APPLICATIONSETTINGSCONTAINER_H_
 
 #include <QtCore/QObject>
+#include <tools/settings/settingsvisiblecontainer.h>
+#include <tools/settings/options/value/settingsoptionvalue.h>
 #include "pages/applicationsettingshelppage.h"
 #include "pages/applicationsettingsgeneralpage.h"
 #include "pages/applicationsettingspluginspage.h"
 #include "dialog/applicationsettingsdialogsettings.h"
-#include "../tools/settings/settingsvisiblecontainer.h"
-#include "../tools/settings/options/value/settingsoptionvalue.h"
 
 
 class SettingsContainer : public QObject, public ::Tools::Settings::VisibleContainer

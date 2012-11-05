@@ -17,8 +17,8 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "../desktop_locale.h"
-#include "../../../tools/templates/templates_statemachine.h"
 
+#include <tools/templates/templates_statemachine.h>
 #include <stdlib.h>
 
 

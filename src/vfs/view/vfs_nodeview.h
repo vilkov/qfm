@@ -20,16 +20,16 @@
 #define VFS_NODEVIEW_H_
 
 #include <QtGui/QWidget>
+#include <tools/events/qt/imp/mouseeventhandler.h>
+#include <tools/events/qt/imp/keyboardeventhandler.h>
+#include <tools/events/qt/imp/contextmenueventhandler.h>
+#include <tools/events/qt/imp/mouseeventsource.h>
+#include <tools/events/qt/imp/keyboardeventsource.h>
+#include <tools/events/qt/imp/contextmenueventsource.h>
+#include <tools/events/qt/imp/focuseventhandler.h>
+#include <tools/events/qt/imp/eventhandlerdefault.h>
 #include "../interfaces/vfs_inodeview.h"
 #include "../../history/navigationhistory.h"
-#include "../../tools/events/qt/imp/mouseeventhandler.h"
-#include "../../tools/events/qt/imp/keyboardeventhandler.h"
-#include "../../tools/events/qt/imp/contextmenueventhandler.h"
-#include "../../tools/events/qt/imp/mouseeventsource.h"
-#include "../../tools/events/qt/imp/keyboardeventsource.h"
-#include "../../tools/events/qt/imp/contextmenueventsource.h"
-#include "../../tools/events/qt/imp/focuseventhandler.h"
-#include "../../tools/events/qt/imp/eventhandlerdefault.h"
 
 
 VFS_NS_BEGIN

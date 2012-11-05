@@ -25,7 +25,7 @@
 #include <QtGui/QColor>
 #include <QtGui/QSplitter>
 #include <QtGui/QAbstractItemView>
-#include "../tools/settings/settings.h"
+#include <tools/settings/settings.h>
 
 
 class ApplicationSettings : public QObject, public ::Tools::Settings::Settings

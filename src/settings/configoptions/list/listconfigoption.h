@@ -25,9 +25,9 @@
 #include <QtGui/QVBoxLayout>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QCoreApplication>
+#include <tools/settings/configoptions/configoptionvaluedefault.h>
 #include "model/listconfigoptionmodel.h"
 #include "model/listconfigoptiondelegate.h"
-#include "../../../tools/settings/configoptions/configoptionvaluedefault.h"
 
 
 class ListConfigOption: public ::Tools::Settings::ConfigOptionValueDefault

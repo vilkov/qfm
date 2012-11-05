@@ -20,8 +20,8 @@
 #define IDM_NEWPROPERTYNAME_H_
 
 #include <QtCore/QList>
+#include <tools/widgets/stringdialog/stringdialog.h>
 #include "../../storage/entities/idm_entity.h"
-#include "../../../../tools/widgets/stringdialog/stringdialog.h"
 
 
 using namespace ::VFS::Plugins::Idm;

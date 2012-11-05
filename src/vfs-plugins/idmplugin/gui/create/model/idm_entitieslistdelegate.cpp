@@ -18,7 +18,8 @@
  */
 #include "idm_entitieslistdelegate.h"
 #include "items/idm_entitieslistmodelitem.h"
-#include "../../../../../tools/pointers/pscopedpointer.h"
+
+#include <tools/pointers/pscopedpointer.h>
 
 #include <QtGui/QComboBox>
 #include <QtGui/QLineEdit>

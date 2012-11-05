@@ -19,8 +19,8 @@
 #ifndef VFS_MODEL_H_
 #define VFS_MODEL_H_
 
+#include <tools/models/tree/treemodel.h>
 #include "../vfs_ns.h"
-#include "../../tools/models/tree/treemodel.h"
 
 
 VFS_NS_BEGIN

@@ -19,8 +19,8 @@
 #ifndef IDM_EDITABLEVALUELISTDIALOG_H_
 #define IDM_EDITABLEVALUELISTDIALOG_H_
 
+#include <tools/widgets/nestedplaindialog/nestedplaindialog.h>
 #include "widgets/idm_editablevaluelistwidget.h"
-#include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 using namespace ::VFS::Plugins::Idm;

@@ -21,8 +21,8 @@
 
 #include <QtGui/QWidget>
 #include <QtCore/QString>
+#include <tools/strings/hierarchy/stringshierarchytree.h>
 #include "../vfs_ns.h"
-#include "../../tools/strings/hierarchy/stringshierarchytree.h"
 
 
 VFS_NS_BEGIN

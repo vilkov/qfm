@@ -22,9 +22,9 @@
 #include <QtCore/QCoreApplication>
 #include <vfs/tools/vfs_filestree.h>
 #include <vfs/tasks/vfs_performactiontask.h>
+#include <tools/taskspool/tryier.h>
+#include <tools/taskspool/questioner.h>
 #include "../../arc_libarchive_ns.h"
-#include "../../../../../tools/taskspool/tryier.h"
-#include "../../../../../tools/taskspool/questioner.h"
 
 
 ARC_PLUGIN_LIBARCHIVE_NS_BEGIN

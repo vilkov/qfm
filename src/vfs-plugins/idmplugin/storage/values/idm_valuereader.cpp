@@ -18,7 +18,8 @@
  */
 #include "idm_valuereader.h"
 #include "idm_valuereader_p.h"
-#include "../../../../tools/pointers/pscopedpointer.h"
+
+#include <tools/pointers/pscopedpointer.h>
 
 
 IDM_PLUGIN_NS_BEGIN

@@ -17,7 +17,8 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "arc_performcopytask.h"
-#include "../../../tools/pointers/pscopedpointer.h"
+
+#include <tools/pointers/pscopedpointer.h>
 #include <QtGui/QMessageBox>
 
 

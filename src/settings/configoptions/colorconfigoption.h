@@ -27,7 +27,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QCoreApplication>
-#include "../../tools/settings/configoptions/configoptionvalue.h"
+#include <tools/settings/configoptions/configoptionvalue.h>
 
 
 class ColorConfigOption: public ::Tools::Settings::ConfigOptionValue

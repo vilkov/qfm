@@ -17,8 +17,9 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs_commontools.h"
-#include "../../tools/os/osdependent.h"
-#include "../../tools/widgets/choosedialog/choosedialog.h"
+
+#include <tools/os/osdependent.h>
+#include <tools/widgets/choosedialog/choosedialog.h>
 
 #include <QtCore/QStringList>
 #include <QtCore/QFileInfo>

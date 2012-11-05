@@ -19,11 +19,11 @@
 
 #include "dolphinitemlistcontainer.h"
 
-#include "../../tools/models/ng/kfileitemlistview.h"
-#include "../../tools/models/ng/kfileitemmodel.h"
-#include "../../tools/models/ng/kitemlistcontroller.h"
-#include "../../tools/models/ng/kitemliststyleoption.h"
-#include "../../tools/models/ng/kfileitemlistwidget.h"
+#include <tools/models/ng/kfileitemlistview.h>
+#include <tools/models/ng/kfileitemmodel.h>
+#include <tools/models/ng/kitemlistcontroller.h>
+#include <tools/models/ng/kitemliststyleoption.h>
+#include <tools/models/ng/kfileitemlistwidget.h>
 
 
 DolphinItemListContainer::DolphinItemListContainer(QWidget* parent) :

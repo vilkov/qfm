@@ -20,7 +20,7 @@
 #define APPLICATIONSETTINGSHELPPAGE_H_
 
 #include <QtCore/QCoreApplication>
-#include "../../tools/settings/options/gui/page/settingspage.h"
+#include <tools/settings/options/gui/page/settingspage.h>
 
 
 SETTINGS_NS_BEGIN

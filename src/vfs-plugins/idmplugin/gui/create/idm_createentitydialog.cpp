@@ -17,7 +17,8 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_createentitydialog.h"
-#include "../../../../tools/widgets/stringdialog/stringdialog.h"
+
+#include <tools/widgets/stringdialog/stringdialog.h>
 
 #include <QtGui/QMessageBox>
 

@@ -20,11 +20,11 @@
 #define IDM_QUERYRESULTS_NODE_H_
 
 #include <vfs/tasks/vfs_tasksnode.h>
+#include <tools/containers/union.h>
 #include "idm_queryresultsdelegate.h"
 #include "interface/idm_inodequeryresults.h"
 #include "../../containeres/idm_container.h"
 #include "../../storage/values/idm_valuereader.h"
-#include "../../../../tools/containers/union.h"
 
 
 IDM_PLUGIN_NS_BEGIN

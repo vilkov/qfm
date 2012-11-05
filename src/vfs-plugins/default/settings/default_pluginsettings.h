@@ -20,11 +20,11 @@
 #define DEFAULT_PLUGINSETTINGS_H_
 
 #include <QtCore/QCoreApplication>
+#include <tools/settings/options/gui/page/settingspage.h>
+#include <tools/settings/options/gui/decoration/settingsdecorationtext.h>
+#include <tools/settings/options/gui/groupbox/settingsgroupbox.h>
+#include <tools/settings/options/gui/radiobutton/settingsradiobutton.h>
 #include "../default_ns.h"
-#include "../../../tools/settings/options/gui/page/settingspage.h"
-#include "../../../tools/settings/options/gui/decoration/settingsdecorationtext.h"
-#include "../../../tools/settings/options/gui/groupbox/settingsgroupbox.h"
-#include "../../../tools/settings/options/gui/radiobutton/settingsradiobutton.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

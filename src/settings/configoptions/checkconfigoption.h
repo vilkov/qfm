@@ -21,7 +21,7 @@
 
 #include <QtCore/QList>
 #include <QtGui/QCheckBox>
-#include "../../tools/settings/configoptions/configoptionvaluedefault.h"
+#include <tools/settings/configoptions/configoptionvaluedefault.h>
 
 
 class CheckConfigOption: public ::Tools::Settings::ConfigOptionValueDefault

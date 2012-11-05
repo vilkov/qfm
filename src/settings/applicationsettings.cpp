@@ -22,14 +22,16 @@
 #include "configoptions/checkconfigoption.h"
 #include "configoptions/passwordconfigoption.h"
 #include "../mainwindow/foldersview/foldersview.h"
-#include "../tools/settings/configoptions/configoptionvalue.h"
-#include "../tools/settings/configoptions/configoptiongroup.h"
-#include "../tools/settings/constraints/configoptionconstraintrange.h"
-#include "../tools/settings/constraints/configoptionconstrainturl.h"
-#include "../tools/settings/constraints/configoptionconstraintlessthan.h"
-#include "../tools/settings/constraints/configoptionconstraintempty.h"
-#include "../tools/settings/constraints/configoptionconstraintemail.h"
 #include "../application.h"
+
+#include <tools/settings/configoptions/configoptionvalue.h>
+#include <tools/settings/configoptions/configoptiongroup.h>
+#include <tools/settings/constraints/configoptionconstraintrange.h>
+#include <tools/settings/constraints/configoptionconstrainturl.h>
+#include <tools/settings/constraints/configoptionconstraintlessthan.h>
+#include <tools/settings/constraints/configoptionconstraintempty.h>
+#include <tools/settings/constraints/configoptionconstraintemail.h>
+
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>
 #include <QtGui/QColorDialog>

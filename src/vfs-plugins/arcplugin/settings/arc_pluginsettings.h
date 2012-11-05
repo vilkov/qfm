@@ -20,8 +20,8 @@
 #define ARC_PLUGINSETTINGS_H_
 
 #include <QtCore/QCoreApplication>
+#include <tools/settings/options/gui/page/settingspage.h>
 #include "../arc_ns.h"
-#include "../../../tools/settings/options/gui/page/settingspage.h"
 
 
 ARC_PLUGIN_NS_BEGIN

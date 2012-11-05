@@ -21,9 +21,9 @@
 
 #include <QtCore/QDateTime>
 #include <QtCore/QTextCodec>
+#include <tools/pointers/pscopedpointer.h>
 #include "vfs_ifiletype.h"
 #include "../location/vfs_location.h"
-#include "../../tools/pointers/pscopedpointer.h"
 
 
 VFS_NS_BEGIN

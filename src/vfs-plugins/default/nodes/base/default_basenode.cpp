@@ -31,13 +31,14 @@
 #include "../../actions/default_propertiesaction.h"
 #include "../../actions/default_pasteclipboardaction.h"
 #include "../../actions/default_openwithaction.h"
-#include "../../../../tools/containers/orderedmap.h"
-#include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 
 #include <vfs/filters/vfs_filters.h>
 #include <vfs/tasks/vfs_performactiontask.h>
 #include <vfs/tools/vfs_commontools.h>
+
+#include <tools/containers/orderedmap.h>
+#include <tools/widgets/stringdialog/stringdialog.h>
 
 #include <QtGui/QClipboard>
 #include <QtGui/QMessageBox>

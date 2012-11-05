@@ -24,10 +24,10 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
+#include <tools/events/qt/imp/keyboardeventhandler.h>
+#include <tools/events/qt/imp/keyboardeventsource.h>
 #include "model/idm_entitiestreemodel.h"
 #include "../../containeres/idm_container.h"
-#include "../../../../tools/events/qt/imp/keyboardeventhandler.h"
-#include "../../../../tools/events/qt/imp/keyboardeventsource.h"
 
 
 using namespace ::VFS::Plugins::Idm;

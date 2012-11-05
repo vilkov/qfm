@@ -17,7 +17,8 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs_uri.h"
-#include "../../tools/templates/templates_statemachine.h"
+
+#include <tools/templates/templates_statemachine.h>
 
 //#include <QtCore/QDebug>
 #include <stdlib.h>

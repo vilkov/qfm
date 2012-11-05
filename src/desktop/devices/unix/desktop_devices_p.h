@@ -19,6 +19,7 @@
 #ifndef DESKTOP_DEVICES_P_H_
 #define DESKTOP_DEVICES_P_H_
 
+#include <tools/pointers/pscopedpointer.h>
 #include "desktop_devices_udisks.h"
 #include "desktop_device_partition_unix.h"
 #include "../desktop_devices.h"
@@ -27,7 +28,6 @@
 #include "../drives/desktop_device_floppydrive.h"
 #include "../drives/desktop_device_opticaldrive.h"
 #include "../drives/desktop_device_removabledrive.h"
-#include "../../../tools/pointers/pscopedpointer.h"
 
 
 class DevicesPrivate : public QObject

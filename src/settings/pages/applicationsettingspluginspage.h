@@ -20,8 +20,8 @@
 #define APPLICATIONSETTINGSPLUGINSPAGE_H_
 
 #include <QtCore/QCoreApplication>
-#include "../../tools/settings/options/gui/page/settingspage.h"
-#include "../../tools/settings/options/gui/decoration/settingsdecorationtext.h"
+#include <tools/settings/options/gui/page/settingspage.h>
+#include <tools/settings/options/gui/decoration/settingsdecorationtext.h>
 
 
 SETTINGS_NS_BEGIN

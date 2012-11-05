@@ -23,9 +23,9 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
+#include <tools/containers/hashedlist.h>
 #include "../format/idm_shortformat.h"
 #include "../structure/idm_databasetypes.h"
-#include "../../../../tools/containers/hashedlist.h"
 
 
 IDM_PLUGIN_NS_BEGIN

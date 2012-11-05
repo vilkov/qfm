@@ -24,9 +24,9 @@
 //#include <QtSingleInstance/QSingleApplication>
 
 #include <vfs/root/vfs_rootnode.h>
+#include <tools/exceptionshandler/exceptionshandler.h>
+#include <tools/taskspool/taskpool.h>
 
-#include "tools/exceptionshandler/exceptionshandler.h"
-#include "tools/taskspool/taskpool.h"
 #include "settings/applicationsettings.h"
 #include "settings/applicationsettingscontainer.h"
 #include "mainwindow/mainwindow.h"

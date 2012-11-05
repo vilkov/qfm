@@ -23,13 +23,13 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtCore/QCoreApplication>
+#include <tools/events/qt/imp/keyboardeventhandler.h>
+#include <tools/events/qt/imp/keyboardeventsource.h>
+#include <tools/widgets/nestedplaindialog/widgets/nestedwidget.h>
 #include "../model/idm_editablevaluelistmodel.h"
 #include "../../../model/idm_valuelistproxymodel.h"
 #include "../../../../../containeres/idm_container.h"
 #include "../../../../../storage/queries/idm_selectquery.h"
-#include "../../../../../../../tools/events/qt/imp/keyboardeventhandler.h"
-#include "../../../../../../../tools/events/qt/imp/keyboardeventsource.h"
-#include "../../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 
 using namespace ::VFS::Plugins::Idm;

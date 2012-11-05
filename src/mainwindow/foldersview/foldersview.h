@@ -25,11 +25,11 @@
 #include <QtGui/QTabWidget>
 #include <QtXml/QXmlStreamWriter>
 #include <QtXml/QXmlStreamReader>
+#include <tools/settings/options/settingsscope.h>
+#include <tools/settings/options/settingsoptionlist.h>
+#include <tools/settings/options/value/settingsoptionvalue.h>
+#include <tools/settings/options/value/settingsoptionvaluelist.h>
 #include "directoryview.h"
-#include "../../tools/settings/options/settingsscope.h"
-#include "../../tools/settings/options/settingsoptionlist.h"
-#include "../../tools/settings/options/value/settingsoptionvalue.h"
-#include "../../tools/settings/options/value/settingsoptionvaluelist.h"
 
 
 class FoldersView : public QWidget

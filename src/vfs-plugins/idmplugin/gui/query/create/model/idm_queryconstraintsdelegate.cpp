@@ -18,7 +18,8 @@
  */
 #include "idm_queryconstraintsdelegate.h"
 #include "../../../../storage/constraints/group/idm_groupconstraint.h"
-#include "../../../../../../tools/pointers/pscopedpointer.h"
+
+#include <tools/pointers/pscopedpointer.h>
 #include <QtGui/QComboBox>
 
 

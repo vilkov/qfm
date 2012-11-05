@@ -26,15 +26,15 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
+#include <tools/events/qt/imp/mouseeventhandler.h>
+#include <tools/events/qt/imp/mouseeventsource.h>
+#include <tools/events/qt/imp/keyboardeventhandler.h>
+#include <tools/events/qt/imp/keyboardeventsource.h>
 #include "model/idm_queryentitiesmodel.h"
 #include "model/idm_queryconstraintsmodel.h"
 #include "model/idm_queryconstraintsdelegate.h"
 #include "../../../containeres/idm_container.h"
 #include "../../../storage/queries/idm_selectquery.h"
-#include "../../../../../tools/events/qt/imp/mouseeventhandler.h"
-#include "../../../../../tools/events/qt/imp/mouseeventsource.h"
-#include "../../../../../tools/events/qt/imp/keyboardeventhandler.h"
-#include "../../../../../tools/events/qt/imp/keyboardeventsource.h"
 
 
 using namespace ::VFS::Plugins::Idm;

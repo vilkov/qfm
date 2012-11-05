@@ -20,7 +20,7 @@
 #define PATHEDIT_H_
 
 #include <QtGui/QLineEdit>
-#include "../../../tools/events/qt/eventhandler.h"
+#include <tools/events/qt/eventhandler.h>
 
 
 class PathEdit : public QLineEdit

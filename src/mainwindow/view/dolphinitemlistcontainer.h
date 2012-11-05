@@ -20,8 +20,8 @@
 #ifndef DOLPHINITEMLISTCONTAINER_H
 #define DOLPHINITEMLISTCONTAINER_H
 
-#include "../../tools/models/ng/kfileitemlistview.h"
-#include "../../tools/models/ng/kitemlistcontainer.h"
+#include <tools/models/ng/kfileitemlistview.h>
+#include <tools/models/ng/kitemlistcontainer.h>
 
 
 class KFileItemListView;

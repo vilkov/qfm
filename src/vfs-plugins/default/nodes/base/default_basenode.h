@@ -21,12 +21,12 @@
 
 #include <vfs/tasks/vfs_tasksnode.h>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
+#include <tools/containers/hashedlist.h>
+#include <tools/containers/union.h>
+#include <tools/templates/functors.h>
 #include "../../model/default_delegate.h"
 #include "../../model/default_proxymodel.h"
 #include "../../model/items/default_nodeitem.h"
-#include "../../../../tools/containers/hashedlist.h"
-#include "../../../../tools/containers/union.h"
-#include "../../../../tools/templates/functors.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN

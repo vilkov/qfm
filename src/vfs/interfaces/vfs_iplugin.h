@@ -20,9 +20,9 @@
 #define VFS_IPLUGIN_H_
 
 #include <QtCore/QModelIndex>
+#include <tools/settings/options/gui/page/settingspage.h>
 #include "vfs_ifilecontainer.h"
 #include "../tools/vfs_uri.h"
-#include "../../tools/settings/options/gui/page/settingspage.h"
 
 
 VFS_NS_BEGIN

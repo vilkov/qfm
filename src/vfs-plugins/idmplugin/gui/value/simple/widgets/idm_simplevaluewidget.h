@@ -19,8 +19,8 @@
 #ifndef SIMPLEVALUEWIDGET_H_
 #define SIMPLEVALUEWIDGET_H_
 
-#include "../../../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
-#include "../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
+#include <tools/widgets/valuedialog/valuedialogmetafunctions.h>
+#include <tools/widgets/nestedplaindialog/widgets/nestedwidget.h>
 
 
 template <typename T>

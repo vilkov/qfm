@@ -20,9 +20,9 @@
 #define ARC_PLUGIN_H_
 
 #include <vfs/interfaces/vfs_iplugin.h>
+#include <tools/settings/options/settingsoption.h>
 #include "libarchive/actions/arc_libarchive_unpackintosubdiraction.h"
 #include "libunrar/actions/arc_libunrar_unpackintosubdiraction.h"
-#include "../../tools/settings/options/settingsoption.h"
 
 
 ARC_PLUGIN_NS_BEGIN

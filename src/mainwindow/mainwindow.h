@@ -25,8 +25,8 @@
 #include <QtGui/QSplitter>
 #include <QtGui/QPushButton>
 #include <QtGui/QAction>
+#include <tools/settings/options/settingswidgetscope.h>
 #include "foldersview/foldersview.h"
-#include "../tools/settings/options/settingswidgetscope.h"
 
 #include "view/dolphinitemlistcontainer.h"
 

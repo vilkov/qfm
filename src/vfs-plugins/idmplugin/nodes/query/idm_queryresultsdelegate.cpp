@@ -22,7 +22,9 @@
 #include "items/idm_queryresultpathvalueitem.h"
 #include "items/idm_queryresultcompositerootitem.h"
 #include "../../gui/value/edit/idm_editcompositevaluedialog.h"
-#include "../../../../tools/widgets/valuedialog/valuedialogmetafunctions.h"
+
+#include <tools/widgets/valuedialog/valuedialogmetafunctions.h>
+
 #include <QtGui/QMessageBox>
 
 

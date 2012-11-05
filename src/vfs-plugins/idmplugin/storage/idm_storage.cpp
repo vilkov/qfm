@@ -28,7 +28,8 @@
 #include "undo/concrete/idm_storage_undoaddvalue.h"
 #include "undo/concrete/idm_storage_undoremovevalue.h"
 #include "undo/concrete/idm_storage_undorenameproperty.h"
-#include "../../../tools/pointers/pscopedpointer.h"
+
+#include <tools/pointers/pscopedpointer.h>
 #include <sqlite3.h>
 
 

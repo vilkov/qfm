@@ -19,8 +19,8 @@
 #ifndef IDM_MODEL_H_
 #define IDM_MODEL_H_
 
+#include <tools/models/tree/treemodel.h>
 #include "items/idm_item.h"
-#include "../../../tools/models/tree/treemodel.h"
 
 
 IDM_PLUGIN_NS_BEGIN

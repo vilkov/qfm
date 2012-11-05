@@ -24,7 +24,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QCoreApplication>
-#include "../../tools/settings/configoptions/configoptionvaluedefault.h"
+#include <tools/settings/configoptions/configoptionvaluedefault.h>
 
 
 class EmailConfigOption: public ::Tools::Settings::ConfigOptionValueDefault

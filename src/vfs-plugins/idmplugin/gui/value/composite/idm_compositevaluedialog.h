@@ -19,8 +19,8 @@
 #ifndef IDM_COMPOSITEVALUEDIALOG_H_
 #define IDM_COMPOSITEVALUEDIALOG_H_
 
+#include <tools/widgets/nestedplaindialog/nestedplaindialog.h>
 #include "widgets/idm_compositevaluewidget.h"
-#include "../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 class CompositeValueDialog : public NestedPlainDialog

@@ -19,7 +19,7 @@
 #ifndef APPLICATIONSETTINGSOPTIONFONT_H_
 #define APPLICATIONSETTINGSOPTIONFONT_H_
 
-#include "../../tools/settings/options/gui/settingsvisibleoptionfont.h"
+#include <tools/settings/options/gui/settingsvisibleoptionfont.h>
 
 
 SETTINGS_NS_BEGIN

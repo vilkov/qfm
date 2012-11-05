@@ -22,8 +22,8 @@
 #include <QtCore/QCoreApplication>
 #include <vfs/tools/vfs_filestree.h>
 #include <vfs/tasks/vfs_performactiontask.h>
+#include <tools/taskspool/tryier.h>
 #include "../../arc_libunrar_ns.h"
-#include "../../../../../tools/taskspool/tryier.h"
 
 
 ARC_PLUGIN_LIBUNRAR_NS_BEGIN

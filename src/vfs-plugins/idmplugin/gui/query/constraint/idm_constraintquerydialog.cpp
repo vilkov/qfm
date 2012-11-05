@@ -18,9 +18,10 @@
  */
 #include "idm_constraintquerydialog.h"
 #include "../../value/list/static/idm_staticvaluelistdialog.h"
-#include "../../../../../tools/templates/metatemplates.h"
 
+#include <tools/templates/metatemplates.h>
 #include <desktop/theme/desktop_theme.h>
+
 #include <QtGui/QMessageBox>
 
 

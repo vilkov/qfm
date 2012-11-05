@@ -20,9 +20,9 @@
 #define ARC_NODE_H_
 
 #include <vfs/tasks/vfs_tasksnode.h>
+#include <tools/containers/union.h>
 #include "arc_proxymodel.h"
 #include "../model/arc_delegate.h"
-#include "../../../tools/containers/union.h"
 
 
 ARC_PLUGIN_NS_BEGIN

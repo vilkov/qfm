@@ -19,9 +19,9 @@
 #ifndef SIMPLEVALUEDIALOG_H_
 #define SIMPLEVALUEDIALOG_H_
 
+#include <tools/widgets/nestedplaindialog/nestedplaindialog.h>
 #include "widgets/simplevaluewidget.h"
 #include "../../../storage/structure/idm_databasetypes.h"
-#include "../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 using namespace ::VFS::Plugins::Idm;

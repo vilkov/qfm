@@ -22,8 +22,8 @@
 #include <QtGui/QIcon>
 #include <QtCore/QString>
 #include <QtCore/QSharedData>
+#include <tools/models/tree/items/treemodelitem.h>
 #include "../../vfs_ns.h"
-#include "../../../tools/models/tree/items/treemodelitem.h"
 
 
 VFS_NS_BEGIN

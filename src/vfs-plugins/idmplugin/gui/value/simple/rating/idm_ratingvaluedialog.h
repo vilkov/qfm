@@ -19,8 +19,8 @@
 #ifndef IDM_RATINGVALUEDIALOG_H_
 #define IDM_RATINGVALUEDIALOG_H_
 
+#include <tools/widgets/nestedplaindialog/nestedplaindialog.h>
 #include "widgets/idm_ratingvaluewidget.h"
-#include "../../../../../../tools/widgets/nestedplaindialog/nestedplaindialog.h"
 
 
 class RatingValueDialog : public NestedPlainDialog

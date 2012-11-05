@@ -21,8 +21,8 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QString>
+#include <tools/events/publisher-subscribers/events_publisher.h>
 #include "desktop_device.h"
-#include "../../tools/events/publisher-subscribers/events_publisher.h"
 
 
 class DevicesPrivate;

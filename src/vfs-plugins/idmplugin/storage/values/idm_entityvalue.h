@@ -22,9 +22,9 @@
 #include <QtCore/QVariant>
 #include <QtCore/QDateTime>
 #include <QtCore/QSharedData>
+#include <tools/containers/hashedlist.h>
 #include "../entities/idm_entity.h"
 #include "../queries/idm_querycontext.h"
-#include "../../../../tools/containers/hashedlist.h"
 
 
 IDM_PLUGIN_NS_BEGIN

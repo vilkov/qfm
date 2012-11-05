@@ -29,11 +29,12 @@
 #include "items/idm_queryresultcompositerootitem.h"
 #include "../../gui/value/list/selectable/idm_selectablevaluelistdialog.h"
 #include "../../../default/nodes/default_node.h"
-#include "../../../../tools/containers/union.h"
-#include "../../../../tools/widgets/stringdialog/stringdialog.h"
 #include "../../../../application.h"
 
 #include <vfs/tools/vfs_commontools.h>
+#include <tools/containers/union.h>
+#include <tools/widgets/stringdialog/stringdialog.h>
+
 #include <QtGui/QMessageBox>
 
 

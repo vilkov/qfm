@@ -19,8 +19,8 @@
 #ifndef LOKI_MEMORY_ALLOCATOR_H_
 #define LOKI_MEMORY_ALLOCATOR_H_
 
+#include <tools/memory/memorymanagerbase.h>
 #include "SmallObj.h"
-#include "../../tools/memory/memorymanagerbase.h"
 
 
 class LokiAllocator : public ::Tools::Memory::Allocator

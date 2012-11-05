@@ -20,8 +20,8 @@
 #define IDM_RATINGVALUEWIDGET_H_
 
 #include <QtGui/QRadioButton>
+#include <tools/widgets/nestedplaindialog/widgets/nestedwidget.h>
 #include "../../../../../storage/values/idm_entityvalue.h"
-#include "../../../../../../../tools/widgets/nestedplaindialog/widgets/nestedwidget.h"
 
 
 using namespace ::VFS::Plugins::Idm;

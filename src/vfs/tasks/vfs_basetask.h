@@ -21,8 +21,8 @@
 
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
+#include <tools/taskspool/task.h>
 #include "../interfaces/vfs_icopycontrol.h"
-#include "../../tools/taskspool/task.h"
 
 
 VFS_NS_BEGIN

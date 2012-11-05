@@ -20,8 +20,8 @@
 #define IDM_PLUGINSETTINGS_H_
 
 #include <QtCore/QCoreApplication>
+#include <tools/settings/options/gui/page/settingspage.h>
 #include "../idm_ns.h"
-#include "../../../tools/settings/options/gui/page/settingspage.h"
 
 
 IDM_PLUGIN_NS_BEGIN

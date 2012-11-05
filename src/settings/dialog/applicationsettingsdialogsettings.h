@@ -19,7 +19,7 @@
 #ifndef APPLICATIONSETTINGSDIALOGSETTINGS_H_
 #define APPLICATIONSETTINGSDIALOGSETTINGS_H_
 
-#include "../../tools/settings/dialog/settings/settingsdialogsettings.h"
+#include <tools/settings/dialog/settings/settingsdialogsettings.h>
 
 
 SETTINGS_NS_BEGIN

@@ -19,8 +19,8 @@
 #ifndef VFS_IFILECONTAINERSCANNER_H_
 #define VFS_IFILECONTAINERSCANNER_H_
 
+#include <tools/taskspool/task.h>
 #include "vfs_ifileinfo.h"
-#include "../../tools/taskspool/task.h"
 
 
 VFS_NS_BEGIN

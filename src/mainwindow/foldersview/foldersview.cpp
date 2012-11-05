@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "foldersview.h"
-#include "../../tools/pointers/pscopedpointer.h"
+#include <tools/pointers/pscopedpointer.h>
 
 
 FoldersView::FoldersView(const QString &id, ::Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent) :

@@ -20,7 +20,7 @@
 #define QT_MEMORY_ALLOCATOR_H_
 
 #include <QtCore/QGlobalStatic>
-#include "../../tools/memory/memorymanagerbase.h"
+#include <tools/memory/memorymanagerbase.h>
 
 
 class QtAllocator : public ::Tools::Memory::Allocator

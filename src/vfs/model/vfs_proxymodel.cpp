@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs_proxymodel.h"
-#include "../../tools/strings/strnatcmp.h"
+#include <tools/strings/strnatcmp.h>
 
 
 VFS_NS_BEGIN

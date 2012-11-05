@@ -20,8 +20,8 @@
 #define M3UITEM_H_
 
 #include <vfs/interfaces/vfs_ifileinfo.h>
+#include <tools/models/tree/items/treemodelitem.h>
 #include "../m3uplugin_ns.h"
-#include "../../../tools/models/tree/items/treemodelitem.h"
 
 
 M3U_PLUGIN_NS_BEGIN

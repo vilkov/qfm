@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs_node.h"
-#include "../tools/optimizations/optimizations.h"
+#include <tools/optimizations/optimizations.h>
 
 
 VFS_NS_BEGIN

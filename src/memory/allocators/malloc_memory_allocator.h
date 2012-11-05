@@ -20,7 +20,7 @@
 #define MALLOC_MEMORY_ALLOCATOR_H_
 
 #include <stdlib.h>
-#include "../../tools/memory/memorymanagerbase.h"
+#include <tools/memory/memorymanagerbase.h>
 
 
 class MallocAllocator : public ::Tools::Memory::Allocator

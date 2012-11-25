@@ -19,12 +19,14 @@
 #ifndef PBYTEARRAY_IMP_H_
 #define PBYTEARRAY_IMP_H_
 
+#include <stddef.h>
+
 
 class PByteArrayImplementation
 {
 public:
-	typedef char         value_type;
-	typedef unsigned int size_type;
+	typedef char   value_type;
+	typedef size_t size_type;
 
 public:
 	virtual ~PByteArrayImplementation() {}

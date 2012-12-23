@@ -177,9 +177,9 @@ ICopyControl *QueryResultsNode::createControl(INodeView *view) const
 
 				for (QueryResultPropertyItem::size_type i = 0, size = item->size(); i < size; ++i)
 					if (static_cast<QueryResultPathItem *>(item->at(i))->info()->isFile())
-						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName(), 1);
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->location(), 1);
 					else
-						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName());
+						tree.add(static_cast<QueryResultPathItem *>(item->at(i))->location());
 
 				if (!(destination = tree.choose(tr("Choose a directory"), Application::mainWindow())).isEmpty())
 				{
@@ -363,7 +363,7 @@ void QueryResultsNode::add(const QModelIndex &index, const CompositeEntityValue:
 {
 	QueryResultPathPropertyItem *item = static_cast<QueryResultPathPropertyItem *>(index.internalPointer());
 
-	beginInsertRows(index, item->size(), item->size() + values.size() - 1);
+    beginInsertRows(index, item->size(), item->size() + values.size() - 1);
 	item->add(m_container.container(), values);
 	endInsertRows();
 }
@@ -379,7 +379,7 @@ void QueryResultsNode::refresh(const QModelIndex &index)
 	QueryResultItem *item = static_cast<QueryResultItem *>(index.internalPointer());
 
 	for (QueryResultItem::size_type i = 0, size = item->size(); i < size; ++i)
-		files.add(static_cast<QueryResultPathItem *>(item->at(i))->info()->fileName(), Item::Holder(static_cast<QueryResultItem *>(item->at(i))));
+		files.add(static_cast<QueryResultPathItem *>(item->at(i))->location(), Item::Holder(static_cast<QueryResultItem *>(item->at(i))));
 
 	if (!files.isEmpty())
 		handleTask(new ScanFilesTask(ModelEvent::UpdateFiles, this, files));
@@ -454,7 +454,7 @@ void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
 				pathItem = static_cast<QueryResultRootPathValueItem *>(index.internalPointer());
 
 				if (!pathItem->isLocked())
-					files.add(pathItem->info()->fileName(), Item::Holder(pathItem));
+					files.add(pathItem->location(), Item::Holder(pathItem));
 			}
 			else
 				if (static_cast<QueryResultItem *>(index.internalPointer())->isValue())

@@ -107,7 +107,7 @@ protected:
 	virtual void scanForSizeEvent(bool canceled, Snapshot &snapshot);
 	virtual bool scanForCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move);
 	virtual bool scanForRemoveEvent(bool canceled, Snapshot &snapshot);
-	virtual bool performCopyEvent(bool canceled, Snapshot &snapshot, bool move);
+	virtual bool performCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move);
 	virtual void performRemoveEvent(bool canceled, Snapshot &snapshot);
 
 protected:

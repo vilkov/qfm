@@ -74,6 +74,11 @@ bool CopyControlBase::remove(const IFileInfo *info, QString &error) const
 	return m_dest->remove(info, error);
 }
 
+bool CopyControlBase::remove(const Location &fileName, QString &error) const
+{
+    return m_dest->remove(fileName, error);
+}
+
 bool CopyControlBase::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
 	return m_dest->rename(info, fileName, error);

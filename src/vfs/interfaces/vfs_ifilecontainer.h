@@ -50,6 +50,7 @@ public:
 	virtual IFileInfo *info(const QString &fileName, QString &error) const = 0;
 
 	virtual bool remove(const IFileInfo *info, QString &error) const = 0;
+    virtual bool remove(const Location &fileName, QString &error) const = 0;
 	virtual bool rename(const IFileInfo *info, const QString &fileName, QString &error) const = 0;
 	virtual bool move(const IFileContainer *source, const IFileInfo *info, QString &error) const = 0;
 

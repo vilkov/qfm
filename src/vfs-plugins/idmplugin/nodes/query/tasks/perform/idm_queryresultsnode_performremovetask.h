@@ -19,19 +19,37 @@
 #ifndef IDM_QUERYRESULTSNODE_PERFORMREMOVETASK_H_
 #define IDM_QUERYRESULTSNODE_PERFORMREMOVETASK_H_
 
+#include <QtCore/QCoreApplication>
+#include <vfs/tasks/tools/vfs_taskprogress.h>
 #include "../../events/idm_queryresultsmodelevents.h"
-#include "../../../../../default/tasks/perform/default_performremovetask.h"
+#include "../../../../../default/tasks/default_filesbasetask.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class PerformRemoveTask : public ::VFS::Plugins::Default::PerformRemoveTask
+class PerformRemoveTask : public ::VFS::Plugins::Default::FilesBaseTask
 {
+    Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
+
 public:
 	PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
+
+protected:
+    void removeEntry(const Location &location, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+    void doRemove(const Location &location, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+    void removeEntry(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+    void doRemove(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);
+
+protected:
+    Snapshot m_snapshot;
+    TaskProgress m_progress;
+
+private:
+    QString m_error;
+    bool m_skipAllIfNotRemove;
 };
 
 IDM_PLUGIN_NS_END

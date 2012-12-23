@@ -848,22 +848,27 @@ bool BaseNode::scanForRemoveEvent(bool canceled, Snapshot &snapshot)
 	return false;
 }
 
-bool BaseNode::performCopyEvent(bool canceled, Snapshot &snapshot, bool move)
+bool BaseNode::performCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move)
 {
-	if (!canceled && move)
-	{
-		PerformCopyEventFunctor functor(tr("Removing..."));
-		processPerformEventSnapshot(snapshot, functor);
-		updateSecondColumn(functor.updateRange);
-
-		return true;
-	}
+	if (canceled)
+	    control->canceled();
 	else
 	{
-		PerformCopyEventFunctor_canceled functor;
-		processPerformEventSnapshot(snapshot, functor);
-		updateBothColumns(functor.updateRange);
+        control->done(false);
+
+        if (move)
+        {
+            PerformCopyEventFunctor functor(tr("Removing..."));
+            processPerformEventSnapshot(snapshot, functor);
+            updateSecondColumn(functor.updateRange);
+
+            return true;
+        }
 	}
+
+    PerformCopyEventFunctor_canceled functor;
+    processPerformEventSnapshot(snapshot, functor);
+    updateBothColumns(functor.updateRange);
 
 	return false;
 }
@@ -1029,9 +1034,7 @@ void BaseNode::performCopy(const BaseTask::Event *e)
 	typedef const PerformCopyTask::ExtendedEvent * Event;
 	NotConstEvent event = const_cast<NotConstEvent>(static_cast<Event>(e));
 
-	event->destination->node()->refresh();
-
-	if (performCopyEvent(event->canceled, event->snapshot, event->move))
+	if (performCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
 		performRemove(event->task, event->destination.data(), event->snapshot);
 	else
 		removeAllTaskLinks(event->task, event->destination.data());

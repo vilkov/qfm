@@ -19,6 +19,7 @@
 #include "default_copycontrol.h"
 #include "../../../application.h"
 
+#include <vfs/interfaces/vfs_inode.h>
 #include <vfs/tools/vfs_commontools.h>
 #include <QtGui/QMessageBox>
 
@@ -73,6 +74,11 @@ IFileInfo *CopyControl::info(const QString &fileName, QString &error) const
 bool CopyControl::remove(const IFileInfo *info, QString &error) const
 {
 	return m_container.remove(info, error);
+}
+
+bool CopyControl::remove(const Location &fileName, QString &error) const
+{
+    return m_container.remove(fileName, error);
 }
 
 bool CopyControl::rename(const IFileInfo *info, const QString &fileName, QString &error) const
@@ -142,9 +148,13 @@ bool CopyControl::start(const Snapshot &files, bool move)
 }
 
 void CopyControl::done(bool error)
-{}
+{
+    m_node->refresh();
+}
 
 void CopyControl::canceled()
-{}
+{
+    m_node->refresh();
+}
 
 DEFAULT_PLUGIN_NS_END

@@ -96,6 +96,11 @@ bool FileContainer::remove(const IFileInfo *info, QString &error) const
 	return false;
 }
 
+bool FileContainer::remove(const Location &fileName, QString &error) const
+{
+    return false;
+}
+
 bool FileContainer::rename(const IFileInfo *info, const QString &fileName, QString &error) const
 {
 	return false;

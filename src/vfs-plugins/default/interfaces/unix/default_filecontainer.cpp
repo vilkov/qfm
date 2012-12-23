@@ -391,26 +391,31 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 
 bool FileContainer::remove(const IFileInfo *info, QString &error) const
 {
+    return remove(info->fileName(), error);
+}
+
+bool FileContainer::remove(const Location &fileName, QString &error) const
+{
 #ifdef Q_OS_WIN
-	DWORD attr = GetFileAttributesW((const wchar_t*)filePath.utf16());
-	if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
-		SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
+    DWORD attr = GetFileAttributesW((const wchar_t*)filePath.utf16());
+    if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY)
+        SetFileAttributesW((const wchar_t*)filePath.utf16(), attr &= ~FILE_ATTRIBUTE_READONLY);
 #endif
-	struct stat st;
-	QByteArray name = QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>());
+    struct stat st;
+    QByteArray name = QByteArray(m_path).append('/').append(fileName.as<QByteArray>());
 
-	if (::stat(name, &st) == 0)
-		if (S_ISDIR(st.st_mode))
-		{
-			if (::rmdir(name) == 0)
-				return true;
-		}
-		else
-			if (::unlink(name) == 0)
-				return true;
+    if (::stat(name, &st) == 0)
+        if (S_ISDIR(st.st_mode))
+        {
+            if (::rmdir(name) == 0)
+                return true;
+        }
+        else
+            if (::unlink(name) == 0)
+                return true;
 
-	error = Info::codec()->toUnicode(::strerror(errno));
-	return false;
+    error = Info::codec()->toUnicode(::strerror(errno));
+    return false;
 }
 
 bool FileContainer::rename(const IFileInfo *info, const QString &fileName, QString &error) const

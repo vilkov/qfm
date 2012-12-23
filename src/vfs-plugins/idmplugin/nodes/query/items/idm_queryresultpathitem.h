@@ -48,6 +48,7 @@ public:
 
 	const IFileInfo::Holder &info() const { return m_info; }
 	IFileInfo::Holder &info() { return m_info; }
+	const Location location() const { return m_location; }
 
 	virtual void open() const = 0;
 
@@ -56,6 +57,7 @@ public:
 
 protected:
 	IFileInfo::Holder m_info;
+    Location m_location;
 	Node *m_node;
 	Container m_items;
 };

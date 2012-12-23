@@ -25,12 +25,14 @@ IDM_PLUGIN_NS_BEGIN
 QueryResultPathItem::QueryResultPathItem(IFileInfo::Holder &info, Base *parent) :
 	QueryResultItem(parent),
 	m_info(info.take()),
+    m_location(m_info->fileName()),
 	m_node(NULL)
 {}
 
 QueryResultPathItem::QueryResultPathItem(const IFileContainer *container, const QString &fileName, Base *parent) :
 	QueryResultItem(parent),
 	m_info(new InvalidInfo(fileName)),
+    m_location(m_info->fileName()),
 	m_node(NULL)
 {}
 

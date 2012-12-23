@@ -55,7 +55,7 @@ void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContain
 	for (CompositeEntityValue::List::size_type i = 0, size = values.size(); i < size; ++i)
 	{
 		m_items.push_back(item = new QueryResultRootPathValueItem(container, values.at(i), this));
-		files.add(item.as<QueryResultRootPathValueItem>()->info()->fileName(), item);
+		files.add(item.as<QueryResultRootPathValueItem>()->location(), item);
 	}
 
 	qSort(m_items.begin(), m_items.end(), lessThan);

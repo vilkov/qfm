@@ -49,8 +49,9 @@ QueryResultsNode::QueryResultsNode(const IdmContainer &container, const Select &
 	m_label(tr("Found \"%1\" entities...").arg(query.entity()->name()))
 {
 	m_shortcuts[Qt::NoModifier + Qt::Key_F2]     = RenameShortcut;
-	m_shortcuts[Qt::NoModifier + Qt::Key_F7]     = CreateShortcut;
+	m_shortcuts[Qt::NoModifier + Qt::Key_Insert] = CreateShortcut;
 	m_shortcuts[Qt::SHIFT      + Qt::Key_Delete] = RemoveShortcut;
+    m_shortcuts[Qt::NoModifier + Qt::Key_Delete] = RemoveShortcut;
 }
 
 bool QueryResultsNode::event(QEvent *e)

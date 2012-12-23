@@ -24,6 +24,7 @@
 //#include <QtSingleInstance/QSingleApplication>
 
 #include <vfs/root/vfs_rootnode.h>
+#include <vfs/actions/vfs_actions.h>
 #include <tools/exceptionshandler/exceptionshandler.h>
 #include <tools/taskspool/taskpool.h>
 
@@ -32,7 +33,6 @@
 #include "mainwindow/mainwindow.h"
 #include "desktop/locale/desktop_locale.h"
 #include "desktop/theme/desktop_theme.h"
-#include "desktop/contextmenu/desktop_contextmenufactory.h"
 #include "desktop/devices/desktop_devices.h"
 
 
@@ -51,7 +51,7 @@ public:
 
 	static Application *instance() { return static_cast<Application*>(QApplication::instance()); }
 	static SettingsContainer *settings2() { return &instance()->m_settings2; };
-    static ::Desktop::ContextMenuFactory *globalMenu() { return &instance()->m_globalMenu; }
+	static ::VFS::Actions *globalActions() { return &instance()->m_globalActions; }
 	static ::Tools::TasksPool::TaskPool *taskPool() { return &instance()->m_taskPool; }
 	static ApplicationSettings *config() { return &instance()->m_settings; }
 	static MainWindow *mainWindow() { return &instance()->m_mainWindow; }
@@ -72,8 +72,8 @@ private:
 	SettingsContainer m_settings2;
 
 	ApplicationSettings m_settings;
+	::VFS::Actions m_globalActions;
 	::Tools::TasksPool::TaskPool m_taskPool;
-    ::Desktop::ContextMenuFactory m_globalMenu;
     QScopedPointer< ::VFS::RootNode > m_rootNode;
 	MainWindow m_mainWindow;
 };

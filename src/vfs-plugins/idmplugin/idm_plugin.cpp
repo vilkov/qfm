@@ -29,7 +29,10 @@ Plugin::Plugin(::Tools::Settings::Option *parentOption) :
 
 void Plugin::registered()
 {
-	Application::globalMenu()->registerAction(&m_createDbAction, ::Desktop::ContextMenuFactory::SingleFolder);
+    FileTypeId type;
+    type.mime = QByteArray("inode/directory");
+
+    Application::globalActions()->registerAction(&m_createDbAction, type, Actions::ForSingleFile);
 }
 
 ::Tools::Settings::Page *Plugin::settings()

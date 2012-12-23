@@ -27,7 +27,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 CreateDbAction::CreateDbAction() :
-	SyncFileAction(QIcon(), tr("Create database..."))
+	SyncAction(QIcon(), tr("Create database..."))
 {}
 
 void CreateDbAction::process(const IFileContainer *container, const FilesList &files) const

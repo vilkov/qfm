@@ -20,13 +20,13 @@
 #define DEFAULT_PASTEACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include <vfs/actions/asynchronous/vfs_asyncfileaction.h>
+#include <vfs/actions/asynchronous/vfs_asyncaction.h>
 #include "../default_ns.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class PasteAction : public AsyncFileAction
+class PasteAction : public AsyncAction
 {
 	Q_DECLARE_TR_FUNCTIONS(PasteAction)
 

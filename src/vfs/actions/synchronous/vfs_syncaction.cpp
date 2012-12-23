@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "vfs_syncfileaction.h"
+#include "vfs_syncaction.h"
 
 
 VFS_NS_BEGIN
 
-SyncFileAction::SyncFileAction(const QIcon &icon, const QString &text) :
-	FileAction(icon, text)
+SyncAction::SyncAction(const QIcon &icon, const QString &text) :
+	Action(icon, text)
 {}
 
-bool SyncFileAction::isAsynchronous() const
+bool SyncAction::isAsynchronous() const
 {
 	return false;
 }

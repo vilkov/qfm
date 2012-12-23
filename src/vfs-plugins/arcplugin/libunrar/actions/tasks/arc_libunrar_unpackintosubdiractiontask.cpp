@@ -30,7 +30,7 @@
 
 ARC_PLUGIN_LIBUNRAR_NS_BEGIN
 
-UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
+UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncAction::FilesList &files) :
 	PerformActionTask(receiver, files),
 	m_file(NULL),
 	m_container(container),
@@ -50,7 +50,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 
 	m_aborted = &aborted;
 
-	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
+	for (AsyncAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 		if (tryier.tryTo(CreateDestination(m_container, m_file = files().at(i).second, destination)))
 		{
 			fileName = m_container->location(m_file);

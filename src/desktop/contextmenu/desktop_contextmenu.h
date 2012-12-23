@@ -24,7 +24,7 @@
 #include <QtCore/QList>
 #include <QtGui/QMenu>
 
-#include <vfs/actions/vfs_fileaction.h>
+#include <vfs/actions/vfs_action.h>
 #include <vfs/filetypeinfo/vfs_filetypeinfo.h>
 
 #include "../desktop_ns.h"
@@ -37,16 +37,24 @@ class ContextMenu
 	Q_DECLARE_TR_FUNCTIONS(ContextMenu)
 
 public:
+	enum Sections
+	{
+	    GeneralSection,
+	    ActionsSection,
+	    OpenWithSection,
+	    PropertiesSection
+	};
+
 	typedef ::VFS::FileTypeId FileTypeId;
-	typedef QList<FileTypeId>        FileTypesList;
+	typedef QList<FileTypeId> FileTypesList;
 
 public:
 	ContextMenu();
 
-	void registerAction(const ::VFS::FileAction *action);
+	void registerAction(const ::VFS::Action *action);
 
 private:
-	typedef QList<const ::VFS::FileAction *> FileActionsList;
+	typedef QList<const ::VFS::Action *> FileActionsList;
 	typedef QMap<FileTypeId, FileActionsList>       Map;
 
 private:

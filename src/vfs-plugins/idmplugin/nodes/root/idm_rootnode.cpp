@@ -311,7 +311,7 @@ void RootNode::completedProgressEvent(const Item::Holder &item, quint64 timeElap
 
 }
 
-void RootNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+void RootNode::performActionEvent(const AsyncAction::FilesList &files, const QString &error)
 {
 
 }

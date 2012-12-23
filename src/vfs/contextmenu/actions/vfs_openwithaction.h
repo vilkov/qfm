@@ -21,12 +21,12 @@
 
 #include <QtCore/QCoreApplication>
 #include "../../interfaces/vfs_iapplication.h"
-#include "../../actions/synchronous/vfs_syncfileaction.h"
+#include "../../actions/synchronous/vfs_syncaction.h"
 
 
 VFS_NS_BEGIN
 
-class OpenWithAction : public SyncFileAction
+class OpenWithAction : public SyncAction
 {
 public:
 	OpenWithAction(const IApplication *application);

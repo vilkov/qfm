@@ -353,7 +353,7 @@ void QueryResultsNode::completedProgressEvent(const Item::Holder &item, quint64 
 
 }
 
-void QueryResultsNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+void QueryResultsNode::performActionEvent(const AsyncAction::FilesList &files, const QString &error)
 {
 
 }

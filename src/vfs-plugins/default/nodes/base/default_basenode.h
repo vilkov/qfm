@@ -114,7 +114,7 @@ protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(const NodeItem::Holder &item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const NodeItem::Holder &item, quint64 timeElapsed);
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
+	virtual void performActionEvent(const AsyncAction::FilesList &files, const QString &error);
 
 protected:
 	const IFileContainer::Holder &container() const { return m_container; }

@@ -16,38 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef VFS_FILEACTION_H_
-#define VFS_FILEACTION_H_
-
-#include <QtCore/QList>
-#include <QtGui/QAction>
-#include "../model/items/vfs_item.h"
-#include "../interfaces/vfs_ifilecontainer.h"
+#include "vfs_actions.h"
 
 
 VFS_NS_BEGIN
 
-class FileAction
+Actions::Actions()
+{}
+
+void Actions::registerAction(const Action *action, const FileTypeList &filesTypes, ActionsType type)
 {
-public:
-	typedef QPair<Item::Holder, const IFileInfo *> FileItem;
-	typedef QList<FileItem>                        FilesList;
+    for (FileTypeList::size_type i = 0, size = filesTypes.size(); i < size; ++i)
+        m_actions[filesTypes.at(i)][type].push_back(action);
+}
 
-public:
-	FileAction(const QIcon &icon, const QString &text);
-	virtual ~FileAction();
-
-	const QAction *action() const { return &m_action; }
-
-	static const FileAction *fromQAction(const QAction *action);
-	static FileAction *fromQAction(QAction *action);
-
-	virtual bool isAsynchronous() const = 0;
-
-private:
-	QAction m_action;
-};
+void Actions::registerAction(const Action *action, const FileTypeId &fileType, ActionsType type)
+{
+    m_actions[fileType][type].push_back(action);
+}
 
 VFS_NS_END
-
-#endif /* VFS_FILEACTION_H_ */

@@ -23,7 +23,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PasteClipboardAction::PasteClipboardAction() :
-	SyncFileAction(::Desktop::Theme::current()->pasteActionIcon(), tr("Paste from clipboard"))
+	SyncAction(::Desktop::Theme::current()->pasteActionIcon(), tr("Paste from clipboard"))
 {}
 
 void PasteClipboardAction::process(const IFileContainer *container, const FilesList &files) const

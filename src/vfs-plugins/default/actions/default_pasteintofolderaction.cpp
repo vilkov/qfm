@@ -23,7 +23,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PasteIntoFolderAction::PasteIntoFolderAction() :
-	AsyncFileAction(::Desktop::Theme::current()->pasteActionIcon(), tr("Paste into folder")),
+	AsyncAction(::Desktop::Theme::current()->pasteActionIcon(), tr("Paste into folder")),
 	m_lockReason(tr("Copying..."))
 {}
 

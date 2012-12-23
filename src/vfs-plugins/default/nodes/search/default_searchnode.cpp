@@ -260,7 +260,7 @@ void SearchNode::completedProgressEvent(const Item::Holder &item, quint64 timeEl
 
 }
 
-void SearchNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+void SearchNode::performActionEvent(const AsyncAction::FilesList &files, const QString &error)
 {
 
 }

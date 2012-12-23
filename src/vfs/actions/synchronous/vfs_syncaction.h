@@ -16,31 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DEFAULT_OPENWITHACTION_H_
-#define DEFAULT_OPENWITHACTION_H_
+#ifndef VFS_SYNCACTION_H_
+#define VFS_SYNCACTION_H_
 
-#include <QtCore/QCoreApplication>
-#include <vfs/interfaces/vfs_iapplication.h>
-#include <vfs/actions/synchronous/vfs_syncfileaction.h>
-#include "../default_ns.h"
+#include "../vfs_action.h"
 
 
-DEFAULT_PLUGIN_NS_BEGIN
+VFS_NS_BEGIN
 
-class OpenWithAction : public SyncFileAction
+class SyncAction : public Action
 {
 public:
-	OpenWithAction(const IApplication *application);
+	SyncAction(const QIcon &icon, const QString &text);
 
-	virtual void process(const IFileContainer *container, const FilesList &files) const;
-
-protected:
-	static QString label(const IApplication *application);
-
-private:
-	const IApplication *m_application;
+	virtual bool isAsynchronous() const;
+	virtual void process(const IFileContainer *container, const FilesList &files) const = 0;
 };
 
-DEFAULT_PLUGIN_NS_END
+VFS_NS_END
 
-#endif /* DEFAULT_OPENWITHACTION_H_ */
+#endif /* VFS_SYNCACTION_H_ */

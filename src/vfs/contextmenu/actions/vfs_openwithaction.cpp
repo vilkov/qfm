@@ -23,7 +23,7 @@
 VFS_NS_BEGIN
 
 OpenWithAction::OpenWithAction(const IApplication *application) :
-	SyncFileAction(application->icon(), label(application)),
+	SyncAction(application->icon(), label(application)),
 	m_application(application)
 {}
 

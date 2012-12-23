@@ -16,30 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "default_openwithaction.h"
-#include "../../../application.h"
+#include "vfs_action.h"
 
 
-DEFAULT_PLUGIN_NS_BEGIN
+VFS_NS_BEGIN
 
-OpenWithAction::OpenWithAction(const IApplication *application) :
-	SyncFileAction(application->icon(), label(application)),
-	m_application(application)
+Action::Action(const QIcon &icon, const QString &text) :
+	m_action(icon, text, NULL)
+{
+	m_action.setData(qVariantFromValue(static_cast<void *>(this)));
+}
+
+Action::~Action()
 {}
 
-void OpenWithAction::process(const IFileContainer *container, const FilesList &files) const
+const Action *Action::fromQAction(const QAction *action)
 {
-	Application::open(m_application, container, files.at(0).second);
-}
-
-QString OpenWithAction::label(const IApplication *application)
-{
-	QString description = application->genericName().isEmpty() ? application->description() : application->genericName();
-
-	if (description.isEmpty())
-		return application->name();
+	if (action)
+		return static_cast<const Action *>(action->data().value<void *>());
 	else
-		return QString::fromLatin1("%1 (%2)").arg(application->name()).arg(description);
+		return NULL;
 }
 
-DEFAULT_PLUGIN_NS_END
+Action *Action::fromQAction(QAction *action)
+{
+	if (action)
+		return static_cast<Action *>(action->data().value<void *>());
+	else
+		return NULL;
+}
+
+VFS_NS_END

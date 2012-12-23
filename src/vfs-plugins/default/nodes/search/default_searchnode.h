@@ -64,7 +64,7 @@ protected:
 	/* TasksNode */
 	virtual void updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed);
 	virtual void completedProgressEvent(const Item::Holder &item, quint64 timeElapsed);
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error);
+	virtual void performActionEvent(const AsyncAction::FilesList &files, const QString &error);
 
 	void searchNewFileEvent(BaseTask::Event *event);
 	void searchCompleteEvent(BaseTask::Event *event);

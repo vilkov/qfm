@@ -21,7 +21,7 @@
 
 VFS_NS_BEGIN
 
-PerformActionTask::PerformActionTask(TasksNode *receiver, const AsyncFileAction::FilesList &files) :
+PerformActionTask::PerformActionTask(TasksNode *receiver, const AsyncAction::FilesList &files) :
 	BaseTask(receiver),
 	m_files(files)
 {}

@@ -16,23 +16,38 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef VFS_SYNCFILEACTION_H_
-#define VFS_SYNCFILEACTION_H_
+#ifndef VFS_ACTION_H_
+#define VFS_ACTION_H_
 
-#include "../vfs_fileaction.h"
+#include <QtCore/QList>
+#include <QtGui/QAction>
+#include "../model/items/vfs_item.h"
+#include "../interfaces/vfs_ifilecontainer.h"
 
 
 VFS_NS_BEGIN
 
-class SyncFileAction : public FileAction
+class Action
 {
 public:
-	SyncFileAction(const QIcon &icon, const QString &text);
+	typedef QPair<Item::Holder, const IFileInfo *> FileItem;
+	typedef QList<FileItem>                        FilesList;
 
-	virtual bool isAsynchronous() const;
-	virtual void process(const IFileContainer *container, const FilesList &files) const = 0;
+public:
+	Action(const QIcon &icon, const QString &text);
+	virtual ~Action();
+
+	const QAction *action() const { return &m_action; }
+
+	static const Action *fromQAction(const QAction *action);
+	static Action *fromQAction(QAction *action);
+
+	virtual bool isAsynchronous() const = 0;
+
+private:
+	QAction m_action;
 };
 
 VFS_NS_END
 
-#endif /* VFS_SYNCFILEACTION_H_ */
+#endif /* VFS_ACTION_H_ */

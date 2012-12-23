@@ -51,7 +51,7 @@ Plugin::Plugin(::Tools::Settings::Option *parentOption) :
 void Plugin::registered()
 {
 	FileTypeIdList list = fileTypes();
-	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
+	Application::globalActions()->registerAction(&m_unPackIntoSubdirAction, list);
 }
 
 Plugin::FileTypeIdList Plugin::fileTypes() const
@@ -142,7 +142,7 @@ Plugin::Plugin(::Tools::Settings::Option *parentOption) :
 void Plugin::registered()
 {
 	FileTypeIdList list = fileTypes();
-	Application::globalMenu()->registerAction(&m_unPackIntoSubdirAction, list);
+	Application::globalActions()->registerAction(&m_unPackIntoSubdirAction, list);
 }
 
 Plugin::FileTypeIdList Plugin::fileTypes() const

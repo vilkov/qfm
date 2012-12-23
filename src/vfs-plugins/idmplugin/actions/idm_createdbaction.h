@@ -20,13 +20,13 @@
 #define IDM_CREATEDBACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include <vfs/actions/synchronous/vfs_syncfileaction.h>
+#include <vfs/actions/synchronous/vfs_syncaction.h>
 #include "../idm_ns.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-class CreateDbAction : public SyncFileAction
+class CreateDbAction : public SyncAction
 {
 	Q_DECLARE_TR_FUNCTIONS(FolderCopyAction)
 

@@ -20,13 +20,13 @@
 #define DEFAULT_PASTEINTOFOLDERACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include <vfs/actions/asynchronous/vfs_asyncfileaction.h>
+#include <vfs/actions/asynchronous/vfs_asyncaction.h>
 #include "../default_ns.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class PasteIntoFolderAction : public AsyncFileAction
+class PasteIntoFolderAction : public AsyncAction
 {
 	Q_DECLARE_TR_FUNCTIONS(PasteIntoFolderAction)
 

@@ -21,7 +21,7 @@
 
 #include "vfs_basetask.h"
 #include "tools/vfs_taskprogress.h"
-#include "../actions/asynchronous/vfs_asyncfileaction.h"
+#include "../actions/asynchronous/vfs_asyncaction.h"
 
 
 VFS_NS_BEGIN
@@ -35,28 +35,28 @@ public:
 		typedef BaseTask::Event::Type Type;
 
 	public:
-		Event(BaseTask *task, Type type, const AsyncFileAction::FilesList &files, bool canceled, const QString &error) :
+		Event(BaseTask *task, Type type, const AsyncAction::FilesList &files, bool canceled, const QString &error) :
 			BaseTask::Event(task, static_cast<Type>(type), canceled),
 			files(files),
 			error(error)
 		{}
 
-		AsyncFileAction::FilesList files;
+		AsyncAction::FilesList files;
 		QString error;
 	};
 
 public:
-	PerformActionTask(TasksNode *receiver, const AsyncFileAction::FilesList &files);
+	PerformActionTask(TasksNode *receiver, const AsyncAction::FilesList &files);
 
 protected:
 	virtual void run(const volatile Flags &aborted);
 	virtual void process(const volatile Flags &aborted, QString &error) = 0;
 
 protected:
-	const AsyncFileAction::FilesList &files() const { return m_files; }
+	const AsyncAction::FilesList &files() const { return m_files; }
 
 private:
-	AsyncFileAction::FilesList m_files;
+	AsyncAction::FilesList m_files;
 };
 
 VFS_NS_END

@@ -21,7 +21,7 @@
 
 #include "vfs_basetask.h"
 #include "containers/vfs_tasksmap.h"
-#include "../actions/asynchronous/vfs_asyncfileaction.h"
+#include "../actions/asynchronous/vfs_asyncaction.h"
 #include "../vfs_node.h"
 
 
@@ -45,7 +45,7 @@ public:
 protected:
 	virtual void updateProgressEvent(const Item::Holder &item, quint64 progress, quint64 timeElapsed) = 0;
 	virtual void completedProgressEvent(const Item::Holder &item, quint64 timeElapsed) = 0;
-	virtual void performActionEvent(const AsyncFileAction::FilesList &files, const QString &error) = 0;
+	virtual void performActionEvent(const AsyncAction::FilesList &files, const QString &error) = 0;
 
 protected:
 	void addTask(BaseTask *task, const Item::Holder &item);

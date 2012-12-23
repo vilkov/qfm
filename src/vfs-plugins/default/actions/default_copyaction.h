@@ -20,13 +20,13 @@
 #define DEFAULT_COPYACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include <vfs/actions/synchronous/vfs_syncfileaction.h>
+#include <vfs/actions/synchronous/vfs_syncaction.h>
 #include "../default_ns.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class CopyAction : public SyncFileAction
+class CopyAction : public SyncAction
 {
 	Q_DECLARE_TR_FUNCTIONS(CopyAction)
 

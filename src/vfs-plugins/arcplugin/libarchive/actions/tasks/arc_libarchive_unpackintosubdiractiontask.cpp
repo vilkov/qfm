@@ -24,7 +24,7 @@
 
 ARC_PLUGIN_LIBARCHIVE_NS_BEGIN
 
-UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files) :
+UnPackIntoSubdirActionTask::UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncAction::FilesList &files) :
 	PerformActionTask(receiver, files),
 	m_container(container)
 {}
@@ -45,7 +45,7 @@ void UnPackIntoSubdirActionTask::process(const volatile Flags &aborted, QString 
 	Tryier tryier(this, &UnPackIntoSubdirActionTask::askForSkipIfNotCopy, aborted);
 	Questioner questioner(this, &UnPackIntoSubdirActionTask::askForOverwrite, aborted);
 
-	for (AsyncFileAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
+	for (AsyncAction::FilesList::size_type i = 0, size = files().size(); i < size && !aborted; ++i)
 		if (tryier.tryTo(OpenArchive(m_container, file = files().at(i).second, archive)))
 			if (tryier.tryTo(CreateDestination(m_container, file, destination)))
 			{

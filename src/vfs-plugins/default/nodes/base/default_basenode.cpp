@@ -30,16 +30,17 @@
 #include "../../actions/default_pasteintofolderaction.h"
 #include "../../actions/default_propertiesaction.h"
 #include "../../actions/default_pasteclipboardaction.h"
-#include "../../actions/default_openwithaction.h"
-#include "../../../../application.h"
 
+#include <application.h>
 #include <vfs/filters/vfs_filters.h>
+#include <vfs/contextmenu/vfs_contextmenu.h>
 #include <vfs/tasks/vfs_performactiontask.h>
 #include <vfs/tools/vfs_commontools.h>
 
 #include <tools/containers/orderedmap.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
 
+#include <QtGui/QMenu>
 #include <QtGui/QClipboard>
 #include <QtGui/QMessageBox>
 
@@ -312,170 +313,59 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
 	typedef QSet<NodeItem::Holder>                           ItemsSet;
 	typedef QList<NodeItem::Holder>                          ItemsList;
-	typedef QMap<const FileAction *, FileAction::FilesList>  ActionsMap;
 	typedef QMap<NodeItem::Holder, ::Tools::Containers::Dot> ItemsIndexMap;
-	typedef ::Desktop::ContextMenuFactory::FileActionsList   FileActionsList;
-	typedef QMap<const IApplication *, FileAction *>         OpenWithActionsMap;
-	typedef ::Tools::Containers::OrderedMap<const FileAction *, FileAction::FilesList> OrderedActionsMap;
 
-	QMenu menu;
-	QMenu openWithMenu(tr("Open with"));
 	ItemsSet set;
-	ActionsMap mapGlobalActions;
-	OrderedActionsMap mapOpenWithActions;
 	ItemsList items;
 	QModelIndex index;
-	ItemsIndexMap itemsIndex;
 	NodeItem::Holder item;
-	FileActionsList actions;
-	OpenWithActionsMap openWithActions;
-	IApplications::LinkedList applications;
+	ItemsIndexMap itemsIndex;
+    ContextMenu contextMenu(m_container.data());
 
 	for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
 		if (!(item = m_items[(index = m_proxy.mapToSource(list.at(i))).row()]).as<NodeItem>()->isRootItem() && !set.contains(item))
 		{
 			set.insert(item);
 			itemsIndex[item] = index.row();
+			contextMenu.add(item, item.as<NodeItem>()->info());
 		}
 
 	items = set.toList();
 
-	menu.addAction(const_cast<QAction*>(globalActions.copyAction->action()));
-	menu.addAction(const_cast<QAction*>(globalActions.cutAction->action()));
+	contextMenu.add(globalActions.copyAction, ContextMenu::GeneralSection);
+    contextMenu.add(globalActions.cutAction, ContextMenu::GeneralSection);
 
 	if (items.isEmpty())
-	{
-		menu.addAction(const_cast<QAction*>(globalActions.pasteClipboardAction->action()));
-	}
+	    contextMenu.add(globalActions.pasteClipboardAction, ContextMenu::GeneralSection);
 	else
-	{
 		if (items.size() == 1)
-		{
 			if ((item = items.at(0)).as<NodeItem>()->info()->isDir())
-			{
-				menu.addAction(const_cast<QAction*>(globalActions.pasteIntoFolderAction->action()));
-
-				actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::SingleFolder);
-
-				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-			}
+			    contextMenu.add(globalActions.pasteIntoFolderAction, ContextMenu::GeneralSection);
 			else
-			{
-				menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
-
-				actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::SingleFile);
-
-				for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-					mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-			}
-		}
+                contextMenu.add(globalActions.pasteAction, ContextMenu::GeneralSection);
 		else
-		{
-			menu.addAction(const_cast<QAction*>(globalActions.pasteAction->action()));
+            contextMenu.add(globalActions.pasteAction, ContextMenu::GeneralSection);
 
-			actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::MultipleFilesOrFolders);
+    contextMenu.add(globalActions.propertiesAction, ContextMenu::PropertiesSection);
 
-			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-			{
-				FileAction::FilesList &files = mapGlobalActions[actions.at(i)];
-
-				for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
-				{
-					item = items.at(i);
-					files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-				}
-			}
-		}
-
-		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
-		{
-			item = items.at(i);
-			applications = m_container->applications()->user(item.as<NodeItem>()->info()->fileType());
-
-			if (applications.isEmpty())
-				applications = m_container->applications()->system(item.as<NodeItem>()->info()->fileType());
-
-			for (IApplications::LinkedList::const_iterator i = applications.begin(), end = applications.end(); i != end; ++i)
-				if (FileAction *&action = openWithActions[*i])
-					mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-				else
-				{
-					action = new OpenWithAction(*i);
-					mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-				}
-		}
-
-		if (!mapOpenWithActions.isEmpty())
-		{
-			menu.addSeparator();
-
-			for (OrderedActionsMap::const_iterator it = mapOpenWithActions.begin(), end = mapOpenWithActions.end(); it != end; ++it)
-				openWithMenu.addAction(const_cast<QAction *>(it.key()->action()));
-
-			menu.addMenu(&openWithMenu);
-			menu.addSeparator();
-		}
-
-		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
-		{
-			actions = Application::globalMenu()->actions((item = items.at(i)).as<NodeItem>()->info()->fileType()->id());
-
-			for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
-				mapGlobalActions[actions.at(i)].push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-		}
-	}
-
-	actions = Application::globalMenu()->actions(::Desktop::ContextMenuFactory::AnyFilesOrFolders);
-
-	for (FileActionsList::size_type i = 0, size = actions.size(); i < size; ++i)
+	if (const Action *action = contextMenu.exec())
 	{
-		FileAction::FilesList &files = mapGlobalActions[actions.at(i)];
-
-		for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
-		{
-			item = items.at(i);
-			files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-		}
-	}
-
-	menu.addSeparator();
-
-	if (!mapGlobalActions.isEmpty())
-	{
-		for (ActionsMap::const_iterator it = mapGlobalActions.begin(), end = mapGlobalActions.end(); it != end; ++it)
-			menu.addAction(const_cast<QAction *>(it.key()->action()));
-
-		menu.addSeparator();
-	}
-
-	menu.addAction(const_cast<QAction*>(globalActions.propertiesAction->action()));
-
-	if (FileAction *action = FileAction::fromQAction(menu.exec(QCursor::pos())))
-	{
-		FileAction::FilesList files = mapGlobalActions.value(action);
-
-		if (files.isEmpty())
-			for (ItemsList::size_type i = 0, size = items.size(); i < size; ++i)
-			{
-				item = items.at(i);
-				files.push_back(FileAction::FilesList::value_type(item, item.as<NodeItem>()->info()));
-			}
+		Action::FilesList files = contextMenu.files(action);
 
 		if (action->isAsynchronous())
 		{
 			PScopedPointer<PerformActionTask> task;
 
-			if (task = static_cast<AsyncFileAction *>(action)->process(this, m_container, files))
+			if (task = static_cast<const AsyncAction *>(action)->process(this, m_container, files))
 			{
 				Union update;
 				Snapshot::Files list(m_container);
 
-				for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
+				for (Action::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 				{
 					item = files.at(i).first;
 
-					item->lock(static_cast<AsyncFileAction *>(action)->lockReason());
+					item->lock(static_cast<const AsyncAction *>(action)->lockReason());
 					update.add(itemsIndex.value(item));
 					list.add(item.as<NodeItem>()->info()->fileName(), item);
 				}
@@ -485,12 +375,8 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 			}
 		}
 		else
-			static_cast<SyncFileAction *>(action)->process(m_container, files);
+			static_cast<const SyncAction *>(action)->process(m_container, files);
 	}
-
-	qDeleteAll(openWithActions);
-	openWithMenu.clear();
-	menu.clear();
 }
 
 QModelIndex BaseNode::rootIndex() const
@@ -987,12 +873,12 @@ void BaseNode::completedProgressEvent(const NodeItem::Holder &item, quint64 time
 	updateSecondColumn(m_items.indexOf(item.as<NodeItem>()->info()->fileName()), item.as<NodeItem>());
 }
 
-void BaseNode::performActionEvent(const AsyncFileAction::FilesList &files, const QString &error)
+void BaseNode::performActionEvent(const AsyncAction::FilesList &files, const QString &error)
 {
 	Union update;
 	NodeItem::Holder item;
 
-	for (FileAction::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
+	for (Action::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
 	{
 		item = files.at(i).first;
 

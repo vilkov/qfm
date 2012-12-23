@@ -33,7 +33,7 @@ class UnPackIntoSubdirActionTask : public PerformActionTask
 	Q_DECLARE_TR_FUNCTIONS(UnPackIntoSubdirActionTask)
 
 public:
-	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncFileAction::FilesList &files);
+	UnPackIntoSubdirActionTask(TasksNode *receiver, const IFileContainer *container, const AsyncAction::FilesList &files);
 
 protected:
 	virtual void process(const volatile Flags &aborted, QString &error);

@@ -24,7 +24,7 @@
 #include <QtCore/QList>
 #include <QtCore/QCoreApplication>
 #include <tools/containers/orderedmap.h>
-#include "../actions/vfs_fileaction.h"
+#include "../actions/vfs_action.h"
 
 
 VFS_NS_BEGIN
@@ -47,36 +47,36 @@ public:
     ContextMenu(const IFileContainer *container);
     ~ContextMenu();
 
-    FileAction::FilesList files(const FileAction *action) const;
+    Action::FilesList files(const Action *action) const;
 
-    void add(const FileAction *action, Section section);
+    void add(const Action *action, Section section);
     void add(const Item::Holder &item, const IFileInfo *info);
-    void add(const FileAction *action, const FileAction::FilesList &files, Section section);
+    void add(const Action *action, const Action::FilesList &files, Section section);
 
-    const FileAction *exec();
+    const Action *exec();
 
 private:
     const IFileContainer *m_container;
 
 private:
-    typedef QMap<const FileAction *, FileAction::FilesList> Contaier;
+    typedef QMap<const Action *, Action::FilesList> Contaier;
     Contaier m_files;
 
 private:
-    typedef QList<const FileAction *> FileActions;
+    typedef QList<const Action *> FileActions;
     FileActions m_actions[PropertiesSection + 1];
 
 private:
-    typedef QMap<FileTypeId, FileAction::FilesList> FilesByTypeMap;
+    typedef QMap<FileTypeId, Action::FilesList> FilesByTypeMap;
     FilesByTypeMap m_filesByType;
-    FileAction::FilesList m_allFiles;
+    Action::FilesList m_allFiles;
 
 private:
-    typedef QMap<const IApplication *, FileAction *> OpenWithActionsMap;
+    typedef QMap<const IApplication *, Action *> OpenWithActionsMap;
     OpenWithActionsMap m_openWithActions;
 
 private:
-    typedef ::Tools::Containers::OrderedMap<const FileAction *, FileAction::FilesList> OrderedActionsMap;
+    typedef ::Tools::Containers::OrderedMap<const Action *, Action::FilesList> OrderedActionsMap;
     OrderedActionsMap m_mapOpenWithActions;
 };
 

@@ -24,12 +24,12 @@ DESKTOP_NS_BEGIN
 ContextMenuFactory::ContextMenuFactory()
 {}
 
-void ContextMenuFactory::registerAction(const ::VFS::FileAction *action, Type type)
+void ContextMenuFactory::registerAction(const ::VFS::Action *action, Type type)
 {
 	m_actions[type].push_back(action);
 }
 
-void ContextMenuFactory::registerAction(const ::VFS::FileAction *action, const FileTypesList &fileTypes)
+void ContextMenuFactory::registerAction(const ::VFS::Action *action, const FileTypesList &fileTypes)
 {
 	for (FileTypesList::size_type i = 0, size = fileTypes.size(); i < size; ++i)
 		m_files[fileTypes.at(i)].push_back(action);

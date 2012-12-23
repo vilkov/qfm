@@ -37,20 +37,20 @@ ContextMenu::~ContextMenu()
     qDeleteAll(m_openWithActions);
 }
 
-FileAction::FilesList ContextMenu::files(const FileAction *action) const
+Action::FilesList ContextMenu::files(const Action *action) const
 {
     return m_files.value(action);
 }
 
-void ContextMenu::add(const FileAction *action, Section section)
+void ContextMenu::add(const Action *action, Section section)
 {
     m_actions[section].push_back(action);
 }
 
 void ContextMenu::add(const Item::Holder &item, const IFileInfo *info)
 {
-    m_allFiles.push_back(FileAction::FilesList::value_type(item, info));
-    m_filesByType[info->fileType()->id()].push_back(FileAction::FilesList::value_type(item, info));
+    m_allFiles.push_back(Action::FilesList::value_type(item, info));
+    m_filesByType[info->fileType()->id()].push_back(Action::FilesList::value_type(item, info));
 
     IApplications::LinkedList applications = m_container->applications()->user(info->fileType());
 
@@ -58,22 +58,22 @@ void ContextMenu::add(const Item::Holder &item, const IFileInfo *info)
         applications = m_container->applications()->system(info->fileType());
 
     for (IApplications::LinkedList::const_iterator i = applications.begin(), end = applications.end(); i != end; ++i)
-        if (FileAction *&action = m_openWithActions[*i])
-            m_mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, info));
+        if (Action *&action = m_openWithActions[*i])
+            m_mapOpenWithActions[action].push_back(Action::FilesList::value_type(item, info));
         else
         {
             action = new OpenWithAction(*i);
-            m_mapOpenWithActions[action].push_back(FileAction::FilesList::value_type(item, info));
+            m_mapOpenWithActions[action].push_back(Action::FilesList::value_type(item, info));
         }
 }
 
-void ContextMenu::add(const FileAction *action, const FileAction::FilesList &files, Section section)
+void ContextMenu::add(const Action *action, const Action::FilesList &files, Section section)
 {
     m_actions[section].push_back(action);
     m_files[action] = files;
 }
 
-const FileAction *ContextMenu::exec()
+const Action *ContextMenu::exec()
 {
     typedef ::VFS::Actions::FileActionList FileActionsList;
     FileActionsList actions;
@@ -127,7 +127,7 @@ const FileAction *ContextMenu::exec()
         }
     }
 
-    FileAction *res = FileAction::fromQAction(menu.exec(QCursor::pos()));
+    Action *res = Action::fromQAction(menu.exec(QCursor::pos()));
 
     openWithMenu.clear();
     menu.clear();

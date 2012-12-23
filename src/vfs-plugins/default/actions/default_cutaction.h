@@ -20,13 +20,13 @@
 #define DEFAULT_MCUTACTION_H_
 
 #include <QtCore/QCoreApplication>
-#include <vfs/actions/synchronous/vfs_syncfileaction.h>
+#include <vfs/actions/synchronous/vfs_syncaction.h>
 #include "../default_ns.h"
 
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-class CutAction : public SyncFileAction
+class CutAction : public SyncAction
 {
 	Q_DECLARE_TR_FUNCTIONS(CutAction)
 

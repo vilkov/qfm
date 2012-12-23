@@ -23,7 +23,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 CutAction::CutAction() :
-	SyncFileAction(::Desktop::Theme::current()->cutActionIcon(), tr("Cut"))
+	SyncAction(::Desktop::Theme::current()->cutActionIcon(), tr("Cut"))
 {}
 
 void CutAction::process(const IFileContainer *container, const FilesList &files) const

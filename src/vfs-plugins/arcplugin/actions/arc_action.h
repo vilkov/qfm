@@ -20,12 +20,12 @@
 #define ARC_ACTION_H_
 
 #include "../arc_ns.h"
-#include <vfs/actions/asynchronous/vfs_asyncfileaction.h>
+#include <vfs/actions/asynchronous/vfs_asyncaction.h>
 
 
 ARC_PLUGIN_NS_BEGIN
 
-class Action : public AsyncFileAction
+class Action : public AsyncAction
 {
 public:
 	Action(const QString &lockReason, const QIcon &icon, const QString &text);

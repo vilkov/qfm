@@ -22,7 +22,7 @@
 ARC_PLUGIN_NS_BEGIN
 
 Action::Action(const QString &lockReason, const QIcon &icon, const QString &text) :
-	AsyncFileAction(icon, text),
+	AsyncAction(icon, text),
 	m_lockReason(lockReason)
 {}
 

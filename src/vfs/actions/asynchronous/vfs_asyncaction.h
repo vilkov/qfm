@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef VFS_ASYNCFILEACTION_H_
-#define VFS_ASYNCFILEACTION_H_
+#ifndef VFS_ASYNCACTION_H_
+#define VFS_ASYNCACTION_H_
 
-#include "../vfs_fileaction.h"
+#include "../vfs_action.h"
 #include "../../tasks/vfs_basetask.h"
 
 
@@ -31,13 +31,13 @@ class PerformActionTask;
 /**
  * This class and subclasses must be reentrant!
  */
-class AsyncFileAction : public FileAction
+class AsyncAction : public Action
 {
 public:
 	typedef BaseTask::Flags Flags;
 
 public:
-	AsyncFileAction(const QIcon &icon, const QString &text);
+	AsyncAction(const QIcon &icon, const QString &text);
 
 	virtual bool isAsynchronous() const;
 
@@ -47,4 +47,4 @@ public:
 
 VFS_NS_END
 
-#endif /* VFS_ASYNCFILEACTION_H_ */
+#endif /* VFS_ASYNCACTION_H_ */

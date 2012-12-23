@@ -23,7 +23,7 @@
 DEFAULT_PLUGIN_NS_BEGIN
 
 PropertiesAction::PropertiesAction() :
-	SyncFileAction(::Desktop::Theme::current()->propertiesActionIcon(), tr("Properties..."))
+	SyncAction(::Desktop::Theme::current()->propertiesActionIcon(), tr("Properties..."))
 {}
 
 void PropertiesAction::process(const IFileContainer *container, const FilesList &files) const

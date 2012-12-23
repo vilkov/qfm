@@ -264,6 +264,7 @@ private:
 private:
 	QModelIndex index(int column, NodeItem *item) const;
 	QModelIndex indexForFile(NodeItem *item) const;
+    QModelIndex indexForFile(Container::size_type index) const;
 	QModelIndex indexForFile(NodeItem *item, Container::size_type index) const;
 
 private:

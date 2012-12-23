@@ -538,24 +538,44 @@ void BaseNode::createDirectory(const QModelIndex &index, INodeView *view)
 	StringDialog dialog(tr("Enter name for new directory"), tr("Name"), name, Application::mainWindow());
 
 	if (dialog.exec() == QDialog::Accepted)
-	{
-		QString error;
-		IFileContainer::Holder folder(m_container->create(dialog.value(), error));
+	    if (m_container->contains(dialog.value()))
+	    {
+	        Container::size_type index = m_items.indexOf(dialog.value());
 
-		if (folder)
-		{
-			NodeItem *item;
-			IFileInfo::Holder info(m_container->info(dialog.value(), error));
+	        if (index == Container::InvalidIndex)
+	        {
+                QString error;
+                NodeItem *item;
+                IFileInfo::Holder info(m_container->info(dialog.value(), error));
 
-			beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-			m_items.add(NodeItem::Holder(item = new NodeItem(info)));
-			endInsertRows();
+                beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+                m_items.add(NodeItem::Holder(item = new NodeItem(info)));
+                endInsertRows();
 
-			view->select(indexForFile(item, m_items.size() - 1));
-		}
-		else
-			QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);
-	}
+                view->select(indexForFile(item, m_items.size() - 1));
+            }
+	        else
+                view->select(indexForFile(index));
+	    }
+	    else
+	    {
+            QString error;
+            IFileContainer::Holder folder(m_container->create(dialog.value(), error));
+
+            if (folder)
+            {
+                NodeItem *item;
+                IFileInfo::Holder info(m_container->info(dialog.value(), error));
+
+                beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+                m_items.add(NodeItem::Holder(item = new NodeItem(info)));
+                endInsertRows();
+
+                view->select(indexForFile(item, m_items.size() - 1));
+            }
+            else
+                QMessageBox::critical(Application::mainWindow(), tr("Failed to create directory..."), error);
+	    }
 }
 
 void BaseNode::rename(const QModelIndex &index, INodeView *view)
@@ -1224,6 +1244,11 @@ QModelIndex BaseNode::indexForFile(NodeItem *item) const
 	Q_ASSERT(m_items.indexOf(item) != Container::InvalidIndex);
 	Container::size_type index = m_items.indexOf(item);
 	return m_proxy.mapFromSource(createIndex(index, 0, item));
+}
+
+QModelIndex BaseNode::indexForFile(Container::size_type index) const
+{
+    return m_proxy.mapFromSource(createIndex(index, 0, m_items[index].data()));
 }
 
 QModelIndex BaseNode::indexForFile(NodeItem *item, Container::size_type index) const

@@ -19,8 +19,11 @@
 #include "idm_createquerydialog.h"
 #include "model/items/idm_queryentitiesmodelitem.h"
 #include "../constraint/idm_constraintquerydialog.h"
+#include "../../../settings/idm_pluginsettings.h"
 
+#include <application.h>
 #include <QtGui/QMessageBox>
+#include <QtGui/QDesktopWidget>
 
 
 CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent) :
@@ -73,6 +76,13 @@ CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, Entity *enti
     m_handler.registerMouseDoubleClickEventHandler(&CreateQueryDialog::addConstraint);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &CreateQueryDialog::addConstraint);
     m_view.setToolTip(tr("INS/Mouse double click - add constraint"));
+
+    load();
+}
+
+CreateQueryDialog::~CreateQueryDialog()
+{
+    save();
 }
 
 Select CreateQueryDialog::query()
@@ -83,6 +93,35 @@ Select CreateQueryDialog::query()
 void CreateQueryDialog::accept()
 {
 	QDialog::accept();
+}
+
+void CreateQueryDialog::save()
+{
+    Settings::instance()->createQueryDialog().setGeometry(saveGeometry());
+    Settings::instance()->createQueryDialog().setSplitterState(m_splitter.saveState());
+    Settings::instance()->createQueryDialog().setColumn1(m_view2.columnWidth(0));
+    Settings::instance()->createQueryDialog().setColumn2(m_view2.columnWidth(1));
+}
+
+void CreateQueryDialog::load()
+{
+    QByteArray geometry = Settings::instance()->createQueryDialog().geometry();
+
+    if (geometry.isEmpty())
+        setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), Application::instance()->desktop()->availableGeometry()));
+    else
+        restoreGeometry(geometry);
+
+    geometry = Settings::instance()->createQueryDialog().splitterState();
+
+    if (!geometry.isEmpty())
+        m_splitter.restoreState(geometry);
+
+    if (int column = Settings::instance()->createQueryDialog().column1())
+        m_view2.setColumnWidth(0, column);
+
+    if (int column = Settings::instance()->createQueryDialog().column2())
+        m_view2.setColumnWidth(1, column);
 }
 
 void CreateQueryDialog::actionTriggered(QAction *action)

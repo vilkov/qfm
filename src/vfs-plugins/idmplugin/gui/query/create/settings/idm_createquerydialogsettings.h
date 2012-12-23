@@ -16,27 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "idm_pluginsettings.h"
+#ifndef IDM_CREATEQUERYDIALOGSETTINGS_H_
+#define IDM_CREATEQUERYDIALOGSETTINGS_H_
+
+#include <tools/settings/options/settingssplittedwidgetscope.h>
+#include "../../../../idm_ns.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-static Settings *s_instance;
-
-
-Settings::Settings(Option *parent) :
-	Page(tr("Idm"), QString::fromLatin1("Idm"), parent),
-    m_createQueryDialog(this)
+class CreateQueryDialogSettings : public ::Tools::Settings::SplittedWidgetScope
 {
-    Q_ASSERT(s_instance == NULL);
-    s_instance = this;
-    Scope::manage(&m_createQueryDialog);
-}
+public:
+    CreateQueryDialogSettings(Option *parent);
 
-Settings *Settings::instance()
-{
-    Q_ASSERT(s_instance);
-    return s_instance;
-}
+    int column1() const { return m_column1.value().toInt(); }
+    void setColumn1(int value) { m_column1.setValue(QString::number(value)); }
+
+    int column2() const { return m_column2.value().toInt(); }
+    void setColumn2(int value) { m_column2.setValue(QString::number(value)); }
+
+private:
+    ::Tools::Settings::OptionValue m_column1;
+    ::Tools::Settings::OptionValue m_column2;
+};
 
 IDM_PLUGIN_NS_END
+
+#endif /* IDM_CREATEQUERYDIALOGSETTINGS_H_ */

@@ -46,9 +46,14 @@ class CreateQueryDialog : public QDialog
 
 public:
 	CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent = 0);
+	virtual ~CreateQueryDialog();
 
 	Select query();
     virtual void accept();
+
+private:
+    void save();
+    void load();
 
 private:
 	enum ActionId

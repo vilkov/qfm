@@ -16,27 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "idm_pluginsettings.h"
+#include "idm_createquerydialogsettings.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-static Settings *s_instance;
-
-
-Settings::Settings(Option *parent) :
-	Page(tr("Idm"), QString::fromLatin1("Idm"), parent),
-    m_createQueryDialog(this)
+CreateQueryDialogSettings::CreateQueryDialogSettings(Option *parent) :
+    SplittedWidgetScope(QString::fromLatin1("CreateQueryDialog"), parent),
+    m_column1(QString::fromLatin1("Column1"), this),
+    m_column2(QString::fromLatin1("Column2"), this)
 {
-    Q_ASSERT(s_instance == NULL);
-    s_instance = this;
-    Scope::manage(&m_createQueryDialog);
-}
-
-Settings *Settings::instance()
-{
-    Q_ASSERT(s_instance);
-    return s_instance;
+    manage(&m_column1);
+    manage(&m_column2);
 }
 
 IDM_PLUGIN_NS_END

@@ -21,6 +21,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <tools/settings/options/gui/page/settingspage.h>
+#include "../gui/query/create/settings/idm_createquerydialogsettings.h"
 #include "../idm_ns.h"
 
 
@@ -32,6 +33,14 @@ class Settings : public ::Tools::Settings::Page
 
 public:
 	Settings(Option *parent);
+
+    static Settings *instance();
+
+    const CreateQueryDialogSettings &createQueryDialog() const { return m_createQueryDialog; }
+    CreateQueryDialogSettings &createQueryDialog() { return m_createQueryDialog; }
+
+private:
+    CreateQueryDialogSettings m_createQueryDialog;
 };
 
 IDM_PLUGIN_NS_END

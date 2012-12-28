@@ -128,8 +128,6 @@ void ConstraintQueryDialog::chooseValue()
 	}
 	else
 		m_edit.setFocus();
-
-	m_container.updateListGeometry(m_property.entity, dialog.geometry());
 }
 
 void ConstraintQueryDialog::updateValue(const QString &text)

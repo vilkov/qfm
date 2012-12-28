@@ -24,12 +24,12 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 	m_handler(this),
 	m_widget(&m_handler, container, query, this)
 {
-	const QRect &geometry = query.entity()->listGeometry();
+	const QRect &geometry = m_widget.entity()->listGeometry();
 
 	if (geometry.isValid())
 		setGeometry(geometry);
 
-	setWindowTitle(tr("Values of \"%1\"").arg(query.entity()->name()));
+	setWindowTitle(tr("Values of \"%1\"").arg(m_widget.entity()->name()));
 
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListDialog::removeValue);
@@ -37,6 +37,12 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
     m_widget.setViewToolTip(tr("INS - add value\nDEL - remove value\nCTRL+F - activate filter field"));
 
     setCentralWidget(&m_widget);
+}
+
+EditableValueListDialog::~EditableValueListDialog()
+{
+    if (m_widget.entity()->listGeometry() != geometry())
+        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
 }
 
 void EditableValueListDialog::accept()

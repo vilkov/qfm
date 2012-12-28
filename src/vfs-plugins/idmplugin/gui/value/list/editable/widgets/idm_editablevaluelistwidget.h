@@ -74,7 +74,9 @@ public:
 	const IdmContainer &container() const { return m_container; }
 	IdmContainer &container() { return m_container; }
 
-	const TreeView &view() const { return m_view; }
+    Entity *entity() const { return m_entity; }
+
+    const TreeView &view() const { return m_view; }
 	TreeView &view() { return m_view; }
 
 	const EditableValueListModel &model() const { return m_model; }
@@ -133,6 +135,8 @@ public:
 
     const IdmContainer &container() const { return m_private.container(); }
 	IdmContainer &container() { return m_private.container(); }
+
+    Entity *entity() const { return m_private.entity(); }
 
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
 	EntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }

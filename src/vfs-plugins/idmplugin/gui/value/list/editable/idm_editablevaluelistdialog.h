@@ -31,6 +31,7 @@ class EditableValueListDialog : public NestedPlainDialog
 
 public:
 	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
+	virtual ~EditableValueListDialog();
 
     virtual void accept();
 	virtual void reject();

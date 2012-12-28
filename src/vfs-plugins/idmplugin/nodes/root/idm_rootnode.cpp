@@ -257,8 +257,6 @@ Node *RootNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 			}
 			else
 				m_container.rollback();
-
-			m_container.updateListGeometry(static_cast<RootNodeEntityItem *>(item)->entity(), dialog.geometry());
 		}
 		else
 			QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());

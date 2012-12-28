@@ -507,9 +507,8 @@ void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
 
 void QueryResultsNode::refresh(INodeView *view)
 {
-    m_reader.refresh();
-
     beginRemoveRows(QModelIndex(), 0, m_items.size() - 1);
+    m_reader.refresh();
     m_items.clear();
     endRemoveRows();
 }

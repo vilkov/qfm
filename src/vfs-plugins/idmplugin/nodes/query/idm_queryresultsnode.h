@@ -89,6 +89,7 @@ protected:
 	virtual void create(const QModelIndex &index, INodeView *view);
 	virtual void rename(const QModelIndex &index, INodeView *view);
 	virtual void remove(const QModelIndexList &list, INodeView *view);
+	virtual void refresh(INodeView *view);
 
 private:
 	void process(const QModelIndexList &list, const Functor &functor);
@@ -137,6 +138,7 @@ private:
 		CreateShortcut,
 		RenameShortcut,
 		RemoveShortcut,
+		RefreshShortcut,
 
 		SizeOf_ShortcutType
 	};

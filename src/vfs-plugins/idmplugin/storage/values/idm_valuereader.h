@@ -39,6 +39,7 @@ public:
 	bool eof() const { return m_afterLast; }
 	bool bof() const { return m_beforeFirst; }
 	void close() { m_afterLast = true; m_context = QueryContext(); }
+	void refresh();
 
 	static void addValue(const EntityValue::Holder &value, const EntityValue::Holder &property);
 	static void addValue(const EntityValue::Holder &value, const CompositeEntityValue::List &values);
@@ -57,6 +58,8 @@ private:
 
 private:
 	QString m_lastError;
+	Select m_query;
+	IdmContainer m_container;
 	QueryContext m_context;
 	mutable bool m_afterLast;
 	mutable bool m_beforeFirst;

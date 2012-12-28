@@ -25,7 +25,9 @@
 IDM_PLUGIN_NS_BEGIN
 
 ValueReader::ValueReader(const IdmContainer &container, const Select &query) :
-	m_context(container.prepare(query, m_lastError)),
+    m_query(query),
+    m_container(container),
+	m_context(m_container.prepare(m_query, m_lastError)),
 	m_afterLast(!isValid()),
 	m_beforeFirst(isValid())
 {}
@@ -49,6 +51,13 @@ EntityValue::Holder ValueReader::next() const
 			return EntityValue::Holder();
 		else
 			return doNext();
+}
+
+void ValueReader::refresh()
+{
+    m_context = m_container.prepare(m_query, m_lastError);
+    m_afterLast = !isValid();
+    m_beforeFirst = isValid();
 }
 
 void ValueReader::addValue(const EntityValue::Holder &value, const EntityValue::Holder &property)

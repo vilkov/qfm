@@ -52,6 +52,7 @@ QueryResultsNode::QueryResultsNode(const IdmContainer &container, const Select &
 	m_shortcuts[Qt::NoModifier + Qt::Key_Insert] = CreateShortcut;
 	m_shortcuts[Qt::SHIFT      + Qt::Key_Delete] = RemoveShortcut;
     m_shortcuts[Qt::NoModifier + Qt::Key_Delete] = RemoveShortcut;
+    m_shortcuts[Qt::CTRL       + Qt::Key_R]      = RefreshShortcut;
 }
 
 bool QueryResultsNode::event(QEvent *e)
@@ -261,6 +262,10 @@ bool QueryResultsNode::shortcut(INodeView *view, QKeyEvent *event)
 		case RemoveShortcut:
 			remove(view->selectedIndexes(), view);
 			return true;
+
+		case RefreshShortcut:
+		    refresh(view);
+		    return true;
 
 		default:
 			return false;
@@ -498,6 +503,15 @@ void QueryResultsNode::remove(const QModelIndexList &list, INodeView *view)
 	}
 	else
 		QMessageBox::critical(Application::mainWindow(), tr("Error"), m_container.lastError());
+}
+
+void QueryResultsNode::refresh(INodeView *view)
+{
+    m_reader.refresh();
+
+    beginRemoveRows(QModelIndex(), 0, m_items.size() - 1);
+    m_items.clear();
+    endRemoveRows();
 }
 
 void QueryResultsNode::process(const QModelIndexList &list, const Functor &functor)

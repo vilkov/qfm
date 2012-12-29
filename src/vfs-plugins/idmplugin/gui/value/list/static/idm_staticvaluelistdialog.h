@@ -40,11 +40,13 @@ protected:
     QModelIndex currentIndex() const;
 
 private:
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					StaticValueListDialog
-				>
-			> TreeViewHandler;
+	typedef MouseDoubleClickEventHandler<
+                KeyboardEventHandler<
+                    EventHandlerBase<
+                        StaticValueListDialog
+                    >
+                >
+	        > TreeViewHandler;
 
 	void setFocusToFilter();
 

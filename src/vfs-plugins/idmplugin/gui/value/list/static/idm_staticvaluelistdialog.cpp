@@ -31,6 +31,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 	setWindowTitle(tr("Values of \"%1\"").arg(m_widget.entity()->name()));
 
+	m_handler.registerMouseDoubleClickEventHandler(&StaticValueListDialog::accept);
     m_handler.registerShortcut(Qt::CTRL, Qt::Key_F, &StaticValueListDialog::setFocusToFilter);
     m_widget.setViewToolTip(tr("CTRL+F - activate filter field"));
 

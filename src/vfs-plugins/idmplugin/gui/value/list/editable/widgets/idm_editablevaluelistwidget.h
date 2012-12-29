@@ -23,6 +23,8 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtCore/QCoreApplication>
+#include <tools/events/qt/imp/mouseeventhandler.h>
+#include <tools/events/qt/imp/mouseeventsource.h>
 #include <tools/events/qt/imp/keyboardeventhandler.h>
 #include <tools/events/qt/imp/keyboardeventsource.h>
 #include <tools/widgets/nestedplaindialog/widgets/nestedwidget.h>
@@ -50,11 +52,13 @@ public:
 		virtual void critical(const QString &text) = 0;
 	};
 
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QTreeView
-				>
-			> TreeView;
+	typedef MouseDoubleClickEventSource<
+                KeyboardEventSource<
+                    EventSourceBase<
+                        QTreeView
+                    >
+                >
+	        > TreeView;
 
 	typedef KeyboardEventSource<
 				EventSourceBase<

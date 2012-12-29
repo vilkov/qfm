@@ -42,11 +42,13 @@ protected:
     QModelIndex currentIndex() const;
 
 private:
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					EditableValueListDialog
-				>
-			> TreeViewHandler;
+	typedef MouseDoubleClickEventHandler<
+                KeyboardEventHandler<
+                    EventHandlerBase<
+                        EditableValueListDialog
+                    >
+                >
+	        > TreeViewHandler;
 
 	void addValue();
 	void removeValue();

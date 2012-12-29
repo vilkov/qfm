@@ -31,6 +31,7 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 
 	setWindowTitle(tr("Values of \"%1\"").arg(m_widget.entity()->name()));
 
+	m_handler.registerMouseDoubleClickEventHandler(&EditableValueListDialog::accept);
 	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListDialog::removeValue);
     m_handler.registerShortcut(Qt::CTRL, Qt::Key_F, &EditableValueListDialog::setFocusToFilter);

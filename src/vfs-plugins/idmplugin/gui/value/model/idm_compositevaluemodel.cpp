@@ -72,6 +72,11 @@ CompositeValueModel::CompositeValueModel(const EntityValue::Holder &value, const
 	}
 }
 
+Qt::ItemFlags CompositeValueModel::flags(const QModelIndex &index) const
+{
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
 void CompositeValueModel::add(const QModelIndex &index, const EntityValue::Holder &value)
 {
 	CompositeValuePropertyItem *item = static_cast<CompositeValuePropertyItem*>(index.internalPointer());
@@ -100,6 +105,11 @@ void CompositeValueModel::remove(const QModelIndex &index)
 	beginRemoveRows(parent(index), index.row(), index.row());
 	static_cast<CompositeValuePropertyItem*>(item->parent())->remove(index.row());
 	endRemoveRows();
+}
+
+void CompositeValueModel::update(const QModelIndex &index)
+{
+    emit dataChanged(index, index);
 }
 
 IDM_PLUGIN_NS_END

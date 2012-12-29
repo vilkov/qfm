@@ -21,6 +21,7 @@
 
 #include <QtGui/QTreeView>
 #include "../../model/idm_compositevaluemodel.h"
+#include "../../model/idm_compositevaluedelegate.h"
 #include "../../../../containeres/idm_container.h"
 
 #include <tools/events/qt/imp/mouseeventhandler.h>
@@ -76,6 +77,7 @@ private:
 	EntityValue::Holder m_value;
 	TreeView m_view;
 	CompositeValueModel m_model;
+	CompositeValueDelegate m_delegate;
 };
 
 
@@ -103,6 +105,7 @@ public:
 	CompositeValueModel &model() { return m_private.model(); }
 
 	void open(const QModelIndex &index) { m_private.open(index); }
+	void edit(const QModelIndex &index) { m_private.view().edit(index); }
 	void addValue(const QModelIndex &index) { m_private.addValue(index); }
 	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
 	void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }

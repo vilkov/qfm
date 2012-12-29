@@ -44,6 +44,7 @@ public:
 	virtual bool isProperty() const;
 
 	Entity *entity() const { return m_property.entity; }
+	const QString &name() const { return m_property.name; }
 
 protected:
 	friend class CompositeValueModel;

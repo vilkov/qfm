@@ -32,7 +32,7 @@ class Functor;
 class QueryResultValueItem;
 
 
-class QueryResultsNode : public TasksNode, public IQueryResultsUpdater
+class QueryResultsNode : public TasksNode, protected IQueryResultsUpdater
 {
 public:
 	QueryResultsNode(const IdmContainer &container, const Select &query, Node *parent = 0);

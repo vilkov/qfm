@@ -32,10 +32,12 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
 	m_container(container),
 	m_value(value),
 	m_view(handler),
-	m_model(m_value)
+	m_model(m_value),
+    m_delegate(m_value, m_container)
 {
 	m_view.setHeaderHidden(true);
 	m_view.setModel(&m_model);
+    m_view.setItemDelegate(&m_delegate);
 }
 
 CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files) :
@@ -43,10 +45,12 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
 	m_container(container),
 	m_value(value),
 	m_view(handler),
-	m_model(m_value, files)
+	m_model(m_value, files),
+    m_delegate(m_value, m_container)
 {
 	m_view.setHeaderHidden(true);
 	m_view.setModel(&m_model);
+    m_view.setItemDelegate(&m_delegate);
 }
 
 void CompositeValueWidgetPrivate::open(const QModelIndex &index)

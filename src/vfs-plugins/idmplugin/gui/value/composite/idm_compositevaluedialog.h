@@ -47,10 +47,12 @@ protected:
 	void doOpenFile(const QModelIndex &index) { m_mainWidget.open(index); }
 	void doAddValue(const QModelIndex &index) { m_mainWidget.addValue(index); }
 	void doRemoveValue(const QModelIndex &index) { m_mainWidget.removeValue(index); }
+	void doEdit(const QModelIndex &index) { m_mainWidget.edit(index); }
 
 private:
 	void openFile1();
 	void openFile2();
+	void edit();
 
 private:
 	typedef MouseDoubleClickEventHandler<

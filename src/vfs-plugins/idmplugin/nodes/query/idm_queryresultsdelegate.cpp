@@ -70,7 +70,9 @@ QWidget *QueryResultsDelegate::createEditor(QWidget *parent, const QStyleOptionV
 					if (dialog.exec() != EditCompositeValueDialog::Accepted)
 						m_container.rollback();
 					else
-						if (!m_container.commit())
+						if (m_container.commit())
+						    item->value().as<CompositeEntityValue>()->resetValue();
+						else
 						{
 							m_container.rollback();
 							QMessageBox::critical(parent, tr("Error"), m_container.lastError());
@@ -79,7 +81,7 @@ QWidget *QueryResultsDelegate::createEditor(QWidget *parent, const QStyleOptionV
 				else
 					QMessageBox::critical(parent, tr("Error"), m_container.lastError());
 
-				return 0;
+				break;
 			}
 
 			case Database::Rating:
@@ -139,12 +141,13 @@ void QueryResultsDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 //				EditorValue<typename EntityValueType<Database::Path>::type>::setValue(editor, static_cast<QueryResultPathValueItem*>(item)->info().fileName());
 //				break;
 
+            case Database::Composite:
 			default:
 				break;
 		}
 	}
 	else
-		EditorValue<QString>::setValue(editor, static_cast<QueryResultPropertyItem*>(index.internalPointer())->property().name);
+		EditorValue<QString>::setValue(editor, static_cast<QueryResultPropertyItem *>(index.internalPointer())->property().name);
 }
 
 void QueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -188,6 +191,7 @@ void QueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 				value = EditorValue<typename EntityValueType<Database::Path>::type>::value(editor);
 				break;
 
+            case Database::Composite:
 			default:
 				break;
 		}
@@ -248,7 +252,7 @@ void QueryResultsDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 	else
 		if (m_container.transaction())
 		{
-			QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem*>(index.internalPointer());
+			QueryResultPropertyItem *property = static_cast<QueryResultPropertyItem *>(index.internalPointer());
 
 			if (m_container.renameProperty(
 					static_cast<QueryResultRootItem *>(property->parent())->value()->entity(),

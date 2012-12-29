@@ -95,6 +95,8 @@ public:
 	bool contains(const EntityValue::Holder &value) const;
 	bool contains(const List &values, EntityValue::Holder &propertyValue) const;
 
+	virtual void resetValue() = 0;
+
 protected:
 	typedef ::Tools::Containers::HashedList<id_type, EntityValue::Holder> InternalList;
 	typedef QMap<Entity*, InternalList> Map;

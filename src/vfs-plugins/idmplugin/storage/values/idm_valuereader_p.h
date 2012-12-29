@@ -92,7 +92,12 @@ public:
 		}
 	}
 
-	void add(const EntityValue::Holder &value)
+    virtual void resetValue()
+    {
+        m_value.clear();
+    }
+
+    void add(const EntityValue::Holder &value)
 	{
 		m_items[value->entity()].add(value->id(), value);
 		m_value.clear();

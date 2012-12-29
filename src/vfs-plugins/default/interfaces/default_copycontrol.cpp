@@ -71,11 +71,6 @@ IFileInfo *CopyControl::info(const QString &fileName, QString &error) const
 	return m_container.info(fileName, error);
 }
 
-bool CopyControl::remove(const IFileInfo *info, QString &error) const
-{
-	return m_container.remove(info, error);
-}
-
 bool CopyControl::remove(const Location &fileName, QString &error) const
 {
     return m_container.remove(fileName, error);
@@ -96,9 +91,9 @@ IFileContainer *CopyControl::open() const
 	return m_container.open();
 }
 
-IFileContainer *CopyControl::open(const IFileInfo *info, QString &error) const
+IFileContainer *CopyControl::open(const Location &fileName, QString &error) const
 {
-	return m_container.open(info, error);
+    return m_container.open(fileName, error);
 }
 
 IFileAccessor *CopyControl::open(const IFileInfo *info, int flags, QString &error) const

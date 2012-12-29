@@ -389,11 +389,6 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 	return NULL;
 }
 
-bool FileContainer::remove(const IFileInfo *info, QString &error) const
-{
-    return remove(info->fileName(), error);
-}
-
 bool FileContainer::remove(const Location &fileName, QString &error) const
 {
 #ifdef Q_OS_WIN
@@ -452,19 +447,19 @@ IFileContainer *FileContainer::open() const
 	return new FileContainer(m_path);
 }
 
-IFileContainer *FileContainer::open(const IFileInfo *info, QString &error) const
+IFileContainer *FileContainer::open(const Location &fileName, QString &error) const
 {
-	struct stat st;
-	QByteArray name = QByteArray(m_path).append('/').append(info->fileName().as<QByteArray>());
+    struct stat st;
+    QByteArray name = QByteArray(m_path).append('/').append(fileName.as<QByteArray>());
 
-	if (::stat(name, &st) == 0)
-		if (S_ISDIR(st.st_mode))
-			return new FileContainer(name);
-		else
-			errno = ENOTDIR;
+    if (::stat(name, &st) == 0)
+        if (S_ISDIR(st.st_mode))
+            return new FileContainer(name);
+        else
+            errno = ENOTDIR;
 
-	error = Info::codec()->toUnicode(::strerror(errno));
-	return NULL;
+    error = Info::codec()->toUnicode(::strerror(errno));
+    return NULL;
 }
 
 IFileAccessor *FileContainer::open(const IFileInfo *info, int flags, QString &error) const

@@ -48,6 +48,7 @@ public:
 	virtual const Location &fileName() const;
 	virtual const IFileType *fileType() const;
 	virtual const QDateTime &lastModified() const;
+    virtual IFileContainer *open(QString &error) const;
 	virtual int permissions() const;
 
 	/* IFileType */

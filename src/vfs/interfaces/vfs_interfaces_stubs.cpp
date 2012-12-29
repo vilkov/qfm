@@ -53,6 +53,16 @@ IApplications::~IApplications()
 IFileContainer::~IFileContainer()
 {}
 
+bool IFileContainer::remove(const IFileInfo *info, QString &error) const
+{
+    return remove(info->fileName(), error);
+}
+
+IFileContainer *IFileContainer::open(const IFileInfo *info, QString &error) const
+{
+    return open(info->fileName(), error);
+}
+
 IFileOperations::~IFileOperations()
 {}
 

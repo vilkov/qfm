@@ -99,6 +99,11 @@ IFileContainer *CopyControlBase::open(const IFileInfo *info, QString &error) con
 	return m_dest->open(info, error);
 }
 
+IFileContainer *CopyControlBase::open(const Location &fileName, QString &error) const
+{
+    return m_dest->open(fileName, error);
+}
+
 IFileAccessor *CopyControlBase::open(const IFileInfo *info, int flags, QString &error) const
 {
 	return m_dest->open(info, flags, error);

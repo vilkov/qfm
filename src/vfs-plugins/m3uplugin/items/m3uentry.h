@@ -49,13 +49,10 @@ public:
 	virtual bool isDir() const { return m_info.isDir(); }
 	virtual bool isFile() const { return m_info.isFile(); }
 	virtual bool isLink() const { return false; }
-	virtual bool exists() const { return m_info.exists(); }
 	virtual IFileInfo::size_type fileSize() const { return 0; }
 	virtual const Location &fileName() const { return m_fileName; }
-	virtual QString absolutePath() const { return m_info.absolutePath(); }
-	virtual QString absoluteFilePath() const { return m_info.absoluteFilePath(); }
-	virtual QString absoluteFilePath(const QString &fileName) const { return QString(); }
 	virtual const QDateTime &lastModified() const { return m_info.lastModified(); }
+    virtual IFileContainer *open(QString &error) const { return NULL; }
 	virtual int permissions() const { return 0; }
 	virtual void refresh() {}
 

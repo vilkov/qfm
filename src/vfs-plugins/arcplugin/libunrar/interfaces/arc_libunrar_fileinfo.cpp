@@ -63,6 +63,11 @@ const QDateTime &Info::lastModified() const
 	return m_data.lastModified;
 }
 
+IFileContainer *Info::open(QString &error) const
+{
+    return NULL;
+}
+
 int Info::permissions() const
 {
 	return 0;

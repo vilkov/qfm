@@ -91,11 +91,6 @@ IFileInfo *FileContainer::info(const QString &fileName, QString &error) const
 	return NULL;
 }
 
-bool FileContainer::remove(const IFileInfo *info, QString &error) const
-{
-	return false;
-}
-
 bool FileContainer::remove(const Location &fileName, QString &error) const
 {
     return false;
@@ -116,9 +111,9 @@ IFileContainer *FileContainer::open() const
 	return new FileContainer(*this);
 }
 
-IFileContainer *FileContainer::open(const IFileInfo *info, QString &error) const
+IFileContainer *FileContainer::open(const Location &fileName, QString &error) const
 {
-	return NULL;
+    return NULL;
 }
 
 IFileAccessor *FileContainer::open(const IFileInfo *info, int flags, QString &error) const

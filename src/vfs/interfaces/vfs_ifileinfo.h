@@ -27,6 +27,8 @@
 
 
 VFS_NS_BEGIN
+class IFileContainer;
+
 
 class IFileInfo
 {
@@ -48,6 +50,7 @@ public:
 	virtual const Location &fileName() const = 0;
 	virtual const IFileType *fileType() const = 0;
 	virtual const QDateTime &lastModified() const = 0;
+    virtual IFileContainer *open(QString &error) const = 0;
 	virtual int permissions() const = 0;
 
 protected:

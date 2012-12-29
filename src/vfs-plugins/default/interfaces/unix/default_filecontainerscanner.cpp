@@ -197,7 +197,7 @@ void FileContainerScanner::scan(const ScanArguments &arguments, QString &error) 
 
 				if (subnode->info()->isDir())
 				{
-					subnode->thisContainer() = subnode->container()->open(subnode->info(), error);
+					subnode->thisContainer() = subnode->container()->open(it.key(), error);
 
 					if (subnode->thisContainer())
 						scan(subnode.data(), arguments.aborted, error);

@@ -19,6 +19,7 @@
 #include "default_mimeiconcache.h"
 #include "../default_fileinfo.h"
 #include "../default_fileaccessor.h"
+#include "../default_filecontainer.h"
 #include "../../settings/default_pluginsettings.h"
 
 #include <desktop/theme/desktop_theme.h>
@@ -185,6 +186,11 @@ const IFileType *Info::fileType() const
 const QDateTime &Info::lastModified() const
 {
 	return m_info.lastModified;
+}
+
+IFileContainer *Info::open(QString &error) const
+{
+    return new FileContainer(m_filePath);
 }
 
 int Info::permissions() const

@@ -49,13 +49,14 @@ public:
 	virtual bool contains(const QString &fileName) const = 0;
 	virtual IFileInfo *info(const QString &fileName, QString &error) const = 0;
 
-	virtual bool remove(const IFileInfo *info, QString &error) const = 0;
+	virtual bool remove(const IFileInfo *info, QString &error) const;
     virtual bool remove(const Location &fileName, QString &error) const = 0;
 	virtual bool rename(const IFileInfo *info, const QString &fileName, QString &error) const = 0;
 	virtual bool move(const IFileContainer *source, const IFileInfo *info, QString &error) const = 0;
 
 	virtual IFileContainer *open() const = 0;
-	virtual IFileContainer *open(const IFileInfo *info, QString &error) const = 0;
+	virtual IFileContainer *open(const IFileInfo *info, QString &error) const;
+    virtual IFileContainer *open(const Location &fileName, QString &error) const = 0;
 	virtual IFileAccessor *open(const IFileInfo *info, int flags, QString &error) const = 0;
 	virtual IFileContainer *create(const QString &fileName, QString &error) const = 0;
 	virtual IFileAccessor *create(const QString &fileName, int flags, QString &error) const = 0;

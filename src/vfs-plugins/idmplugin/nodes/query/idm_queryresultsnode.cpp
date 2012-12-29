@@ -27,8 +27,8 @@
 #include "items/idm_queryresultrootpathvalueitem.h"
 #include "items/idm_queryresultpathpropertyitem.h"
 #include "items/idm_queryresultcompositerootitem.h"
+#include "../folder/idm_foldernode.h"
 #include "../../gui/value/list/selectable/idm_selectablevaluelistdialog.h"
-#include "../../../default/nodes/default_node.h"
 #include "../../../../application.h"
 
 #include <vfs/tools/vfs_commontools.h>
@@ -326,11 +326,11 @@ Node *QueryResultsNode::viewChild(const QModelIndex &idx, QModelIndex &selected)
 				if (static_cast<QueryResultPathItem *>(item)->info()->isDir())
 				{
 					QString error;
-					IFileContainer::Holder folder(m_container.container()->open(static_cast<QueryResultPathItem *>(item)->info(), error));
+					IFileContainer::Holder folder(static_cast<QueryResultPathItem *>(item)->info()->open(error));
 
 					if (folder)
 					{
-						node = new ::VFS::Plugins::Default::Node(folder, this);
+						node = new FolderNode(folder, m_container, this);
 						static_cast<QueryResultPathItem *>(item)->setNode(node);
 						return node;
 					}

@@ -27,11 +27,16 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QDialogButtonBox>
+#include <tools/events/qt/imp/mouseeventhandler.h>
+#include <tools/events/qt/imp/mouseeventsource.h>
+#include <tools/events/qt/imp/keyboardeventhandler.h>
+#include <tools/events/qt/imp/keyboardeventsource.h>
 #include "../../../containeres/idm_container.h"
 #include "../../../storage/constraints/value/idm_constraint.h"
 
 
 using namespace ::VFS::Plugins::Idm;
+using namespace ::Tools::Events;
 
 class ConstraintQueryDialog : public QDialog
 {
@@ -53,12 +58,25 @@ private:
     void setEditFont(bool italic);
 
 private:
+    typedef KeyboardEventSource<
+                EventSourceBase<
+                    QLineEdit
+                >
+            > LineEdit;
+    typedef KeyboardEventHandler<
+                EventHandlerBase<
+                    ConstraintQueryDialog
+                >
+            > LineEditHandler;
+
+private:
 	IdmContainer m_container;
 	const Entity::Property &m_property;
 	EntityValue::Holder m_value;
+	LineEditHandler m_handler;
 	QLabel m_label;
 	QComboBox m_operator;
-	QLineEdit m_edit;
+	LineEdit m_edit;
 	QPushButton m_choose;
 	QDialogButtonBox m_buttonBox;
 	QVBoxLayout m_verticatLayout;

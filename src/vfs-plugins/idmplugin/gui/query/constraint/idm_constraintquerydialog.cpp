@@ -30,9 +30,10 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
 	m_container(container),
 	m_property(property),
 	m_value(0),
+    m_handler(this),
 	m_label(m_property.name, this),
 	m_operator(this),
-	m_edit(this),
+	m_edit(&m_handler, this),
 	m_choose(::Desktop::Theme::current()->openDataIcon(), QString(), this),
 	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
 	m_verticatLayout(this)
@@ -49,6 +50,9 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     connect(&m_choose, SIGNAL(clicked()), this, SLOT(chooseValue()));
     connect(&m_edit, SIGNAL(textEdited(QString)), this, SLOT(updateValue(QString)));
     connect(&m_operator, SIGNAL(currentIndexChanged(int)), this, SLOT(updateValue(int)));
+
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &ConstraintQueryDialog::chooseValue);
+    m_edit.setToolTip(tr("INS - choose a value"));
 
     m_verticatLayout.setMargin(3);
 	m_verticatLayout.setSpacing(1);

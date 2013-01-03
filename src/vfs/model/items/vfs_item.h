@@ -22,6 +22,7 @@
 #include <QtGui/QIcon>
 #include <QtCore/QString>
 #include <QtCore/QSharedData>
+#include <tools/memory/memory_holder.h>
 #include <tools/models/tree/items/treemodelitem.h>
 #include "../../vfs_ns.h"
 
@@ -33,22 +34,7 @@ class Item : public ::Tools::Models::Tree::Item, public QSharedData
 	Q_DISABLE_COPY(Item)
 
 public:
-	class Holder : public QExplicitlySharedDataPointer<Item>
-	{
-	public:
-	    inline Holder() :
-	    	QExplicitlySharedDataPointer<Item>()
-	    {}
-
-	    inline explicit Holder(Item *data) :
-			QExplicitlySharedDataPointer<Item>(data)
-	    {}
-
-	    inline Holder &operator=(Item *o) { QExplicitlySharedDataPointer<Item>::operator=(o); return *this; }
-
-	    template <typename R> inline
-	    R *as() const { return static_cast<R *>(data()); }
-	};
+    typedef ::Tools::Memory::Holder<Item> Holder;
 
 public:
 	Item(Base *parent);

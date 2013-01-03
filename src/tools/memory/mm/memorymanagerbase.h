@@ -19,13 +19,13 @@
 #ifndef MEMORYMANAGERBASE_H_
 #define MEMORYMANAGERBASE_H_
 
-#include "memory_ns.h"
-#include "../templates/metatemplates.h"
+#include "../memory_ns.h"
+#include "../../templates/metatemplates.h"
 
 
 MEMORY_NS_BEGIN
 
-#include "../arguments/define.h"
+#include "../../arguments/define.h"
 
 class Allocator
 {
@@ -133,7 +133,7 @@ private:
 	Allocator *m_allocator;
 };
 
-#include "../arguments/undefine.h"
+#include "../../arguments/undefine.h"
 
 MEMORY_NS_END
 

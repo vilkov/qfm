@@ -19,7 +19,7 @@
 #ifndef MEMORYMANAGER_H_
 #define MEMORYMANAGER_H_
 
-#include <tools/memory/memorymanagerbase.h>
+#include <tools/memory/mm/memorymanagerbase.h>
 
 
 class MemoryManager : public ::Tools::Memory::ManagerBase<3>

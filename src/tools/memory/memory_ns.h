@@ -1,7 +1,7 @@
 /**
  * This file is part of QFM.
  *
- * Copyright (C) 2011-2012 Dmitriy Vilkov, <dav.daemon@gmail.com>
+ * Copyright (C) 2011-2013 Dmitriy Vilkov, <dav.daemon@gmail.com>
  *
  * QFM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #define MEMORY_NS_H_
 
 #include "../tools_ns.h"
-
 
 #define MEMORY_NS_BEGIN TOOLS_NS_BEGIN namespace Memory {
 #define MEMORY_NS_END } TOOLS_NS_END

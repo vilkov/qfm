@@ -19,7 +19,7 @@
 #ifndef LOKI_MEMORY_ALLOCATOR_H_
 #define LOKI_MEMORY_ALLOCATOR_H_
 
-#include <tools/memory/memorymanagerbase.h>
+#include <tools/memory/mm/memorymanagerbase.h>
 #include "SmallObj.h"
 
 

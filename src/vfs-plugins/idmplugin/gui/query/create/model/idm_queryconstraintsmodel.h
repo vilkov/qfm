@@ -41,7 +41,7 @@ public:
 	virtual QModelIndex parent(const QModelIndex &child) const;
 
 	void add(const QModelIndex &index);
-	void add(Constraint *constraint, const QModelIndex &index);
+	void add(const Constraint::Holder &constraint, const QModelIndex &index);
 	void remove(const QModelIndex &index);
 
 	GroupConstraint *take();

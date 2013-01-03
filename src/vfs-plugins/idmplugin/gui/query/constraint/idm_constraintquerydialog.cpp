@@ -93,20 +93,20 @@ ConstraintQueryDialog::ConstraintQueryDialog(const IdmContainer &container, cons
     m_edit.setFocus();
 }
 
-Constraint *ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
+Constraint::Holder ConstraintQueryDialog::takeConstraint(BaseConstraint *parent)
 {
 	if (m_value)
-		return new Constraint(
+		return Constraint::Holder(new Constraint(
 				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
 				m_value,
-				parent);
+				parent));
 	else
-		return new Constraint(
+		return Constraint::Holder(new Constraint(
 				m_property,
 				static_cast<Constraint::Operator>(m_operator.itemData(m_operator.currentIndex(), Qt::UserRole).toInt()),
 				ValueReader::createValue(m_property.entity, EntityValue::InvalidId, m_edit.text()),
-				parent);
+				parent));
 }
 
 void ConstraintQueryDialog::accept()

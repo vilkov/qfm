@@ -31,8 +31,8 @@ QueryConstraintsModel::QueryConstraintsModel(QObject *parent) :
 int QueryConstraintsModel::rowCount(const QModelIndex &parent) const
 {
 	if (parent.isValid())
-		if (static_cast<BaseConstraint*>(parent.internalPointer())->isGroup())
-			return static_cast<GroupConstraint*>(parent.internalPointer())->size();
+		if (static_cast<BaseConstraint *>(parent.internalPointer())->isGroup())
+			return static_cast<GroupConstraint *>(parent.internalPointer())->size();
 		else
 			return 0;
 	else
@@ -47,9 +47,9 @@ int QueryConstraintsModel::columnCount(const QModelIndex &parent) const
 QVariant QueryConstraintsModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid())
-    	return data(static_cast<BaseConstraint*>(index.internalPointer()), index.column(), role);
+    	return data(static_cast<BaseConstraint *>(index.internalPointer()), index.column(), role);
     else
-    	return data(const_cast<QueryConstraintsRootItem*>(&m_root), index.column(), role);
+    	return data(const_cast<QueryConstraintsRootItem *>(&m_root), index.column(), role);
 }
 
 Qt::ItemFlags QueryConstraintsModel::flags(const QModelIndex &index) const
@@ -87,12 +87,12 @@ QModelIndex QueryConstraintsModel::index(int row, int column, const QModelIndex 
 {
 	if (hasIndex(row, column, parent))
 		if (parent.isValid())
-			if (static_cast<BaseConstraint*>(parent.internalPointer())->isGroup())
-				return createIndex(row, column, static_cast<GroupConstraint*>(parent.internalPointer())->at(row));
+			if (static_cast<BaseConstraint *>(parent.internalPointer())->isGroup())
+				return createIndex(row, column, static_cast<GroupConstraint *>(parent.internalPointer())->at(row));
 		    else
 				return createIndex(row, column, m_root.at(row));
 		else
-			return createIndex(row, column, const_cast<QueryConstraintsRootItem*>(&m_root));
+			return createIndex(row, column, const_cast<QueryConstraintsRootItem *>(&m_root));
     else
         return QModelIndex();
 }
@@ -100,11 +100,11 @@ QModelIndex QueryConstraintsModel::index(int row, int column, const QModelIndex 
 QModelIndex QueryConstraintsModel::parent(const QModelIndex &child) const
 {
     if (child.isValid())
-		if (BaseConstraint *parent = static_cast<BaseConstraint*>(child.internalPointer())->parent())
+		if (BaseConstraint *parent = static_cast<BaseConstraint *>(child.internalPointer())->parent())
 			if (parent->parent())
-				return createIndex(static_cast<GroupConstraint*>(parent->parent())->indexOf(parent), 0, parent);
+				return createIndex(static_cast<GroupConstraint *>(parent->parent())->indexOf(parent), 0, parent);
 			else
-				return createIndex(0, 0, const_cast<QueryConstraintsRootItem*>(&m_root));
+				return createIndex(0, 0, const_cast<QueryConstraintsRootItem *>(&m_root));
 
     return QModelIndex();
 }
@@ -114,34 +114,42 @@ void QueryConstraintsModel::add(const QModelIndex &index)
 	if (!index.isValid())
 	{
 		beginInsertRows(QModelIndex(), m_root.size(), m_root.size());
-		m_root.add(new GroupConstraint(GroupConstraint::And, &m_root));
+		m_root.add(GroupConstraint::Holder(new GroupConstraint(GroupConstraint::And, &m_root)));
 		endInsertRows();
 	}
 	else
-		if (static_cast<BaseConstraint*>(index.internalPointer())->isGroup())
+		if (static_cast<BaseConstraint *>(index.internalPointer())->isGroup())
 		{
-			beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
-			static_cast<GroupConstraint*>(index.internalPointer())->add(new GroupConstraint(GroupConstraint::And, static_cast<GroupConstraint*>(index.internalPointer())));
+			beginInsertRows(index, static_cast<GroupConstraint *>(index.internalPointer())->size(), static_cast<GroupConstraint *>(index.internalPointer())->size());
+			static_cast<GroupConstraint *>(index.internalPointer())->add(GroupConstraint::Holder(new GroupConstraint(GroupConstraint::And, static_cast<GroupConstraint *>(index.internalPointer()))));
 			endInsertRows();
 		}
 }
 
-void QueryConstraintsModel::add(Constraint *constraint, const QModelIndex &index)
+void QueryConstraintsModel::add(const Constraint::Holder &constraint, const QModelIndex &index)
 {
 	if (index.isValid() && constraint)
 	{
-		beginInsertRows(index, static_cast<GroupConstraint*>(index.internalPointer())->size(), static_cast<GroupConstraint*>(index.internalPointer())->size());
-		static_cast<GroupConstraint*>(index.internalPointer())->add(constraint);
+		beginInsertRows(index, static_cast<GroupConstraint *>(index.internalPointer())->size(), static_cast<GroupConstraint *>(index.internalPointer())->size());
+		static_cast<GroupConstraint *>(index.internalPointer())->add(constraint);
 		endInsertRows();
 	}
 }
 
 void QueryConstraintsModel::remove(const QModelIndex &index)
 {
-//	beginRemoveRows(QModelIndex(), index.row(), index.row());
-//	delete m_items.at(index.row());
-//	m_items.remove(index.row());
-//	endRemoveRows();
+    QModelIndex parentIndex = parent(index);
+    GroupConstraint *parent = &m_root;
+
+    if (parentIndex.isValid())
+        parent = static_cast<GroupConstraint *>(parentIndex.internalPointer());
+    else
+        if (static_cast<BaseConstraint *>(index.internalPointer()) == &m_root)
+            return;
+
+	beginRemoveRows(parentIndex, index.row(), index.row());
+	parent->remove(index.row());
+	endRemoveRows();
 }
 
 GroupConstraint *QueryConstraintsModel::take()
@@ -159,7 +167,7 @@ QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role)
 		{
 			if (role == Qt::DisplayRole)
 				if (item->isGroup())
-					switch (static_cast<GroupConstraint*>(item)->type())
+					switch (static_cast<GroupConstraint *>(item)->type())
 					{
 						case GroupConstraint::And:
 							return m_andTypeLabel;
@@ -182,7 +190,7 @@ QVariant QueryConstraintsModel::data(BaseConstraint *item, int column, int role)
 				switch (role)
 				{
 					case Qt::DisplayRole:
-						return GroupConstraint::typeToString(static_cast<GroupConstraint*>(item)->type());
+						return GroupConstraint::typeToString(static_cast<GroupConstraint *>(item)->type());
 
 					case Qt::TextAlignmentRole:
 						return Qt::AlignCenter;

@@ -40,7 +40,7 @@ class ConstraintQueryDialog : public QDialog
 public:
 	ConstraintQueryDialog(const IdmContainer &container, const Entity::Property &property, QWidget *parent = 0);
 
-	Constraint *takeConstraint(BaseConstraint *parent);
+	Constraint::Holder takeConstraint(BaseConstraint *parent);
     virtual void accept();
 
 private Q_SLOTS:

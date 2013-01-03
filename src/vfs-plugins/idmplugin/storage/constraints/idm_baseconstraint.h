@@ -20,6 +20,7 @@
 #define IDM_BASECONSTRAINT_H_
 
 #include <QtCore/QSharedData>
+#include <tools/memory/memory_holder.h>
 #include "../entities/idm_entity.h"
 
 
@@ -28,7 +29,7 @@ IDM_PLUGIN_NS_BEGIN
 class BaseConstraint : public QSharedData
 {
 public:
-	typedef QExplicitlySharedDataPointer<BaseConstraint> Holder;
+    typedef ::Tools::Memory::Holder<BaseConstraint> Holder;
 
 public:
 	BaseConstraint(BaseConstraint *parent = 0);

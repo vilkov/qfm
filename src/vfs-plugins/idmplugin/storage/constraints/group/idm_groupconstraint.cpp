@@ -26,11 +26,6 @@ GroupConstraint::GroupConstraint(Type type, BaseConstraint *parent) :
 	m_type(type)
 {}
 
-GroupConstraint::~GroupConstraint()
-{
-	qDeleteAll(m_items);
-}
-
 bool GroupConstraint::isGroup() const
 {
 	return true;
@@ -73,12 +68,12 @@ QString GroupConstraint::typeToString(Type type)
 	}
 }
 
-void GroupConstraint::add(BaseConstraint *constraint)
+void GroupConstraint::add(const BaseConstraint::Holder &constraint)
 {
 	m_items.push_back(constraint);
 }
 
-void GroupConstraint::insert(size_type index, BaseConstraint *constraint)
+void GroupConstraint::insert(size_type index, const BaseConstraint::Holder &constraint)
 {
 	m_items.insert(index, constraint);
 }
@@ -90,7 +85,7 @@ void GroupConstraint::swap(size_type index1, size_type index2)
 
 void GroupConstraint::remove(size_type index)
 {
-	delete m_items.takeAt(index);
+	m_items.takeAt(index);
 }
 
 IDM_PLUGIN_NS_END

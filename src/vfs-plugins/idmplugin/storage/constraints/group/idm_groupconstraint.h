@@ -30,7 +30,7 @@ class GroupConstraint : public BaseConstraint
 	Q_DECLARE_TR_FUNCTIONS(GroupConstraint)
 
 public:
-	typedef QList<BaseConstraint*> Container;
+	typedef QList<BaseConstraint::Holder> Container;
 	typedef Container::size_type   size_type;
 	enum { InvalidIndex = (size_type)-1 };
 	enum Type
@@ -41,7 +41,6 @@ public:
 
 public:
 	GroupConstraint(Type type, BaseConstraint *parent = 0);
-	virtual ~GroupConstraint();
 
 	/* BaseConstraint */
 	virtual bool isGroup() const;
@@ -53,11 +52,12 @@ public:
 	void setType(Type type) { m_type = type; }
 
 	size_type size() const { return m_items.size(); }
-	BaseConstraint *at(size_type index) const { return m_items.at(index); }
-	size_type indexOf(BaseConstraint *item) const { return m_items.indexOf(item); }
+	BaseConstraint *at(size_type index) const { return m_items.at(index).data(); }
+	size_type indexOf(BaseConstraint *item) const { return Holder::indexOf(m_items, item, InvalidIndex); }
+    size_type indexOf(const BaseConstraint::Holder &item) const { return m_items.indexOf(item); }
 
-	void add(BaseConstraint *constraint);
-	void insert(size_type index, BaseConstraint *constraint);
+	void add(const BaseConstraint::Holder &constraint);
+	void insert(size_type index, const BaseConstraint::Holder &constraint);
 	void swap(size_type index1, size_type index2);
 	void remove(size_type index);
 

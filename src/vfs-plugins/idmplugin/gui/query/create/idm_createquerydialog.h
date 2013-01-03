@@ -59,7 +59,8 @@ private:
 	enum ActionId
 	{
 		AddGroup,
-		AddConstraint
+		AddConstraint,
+        RemoveGroupOrConstraint
 	};
 
 private Q_SLOTS:
@@ -85,6 +86,7 @@ private:
 	QModelIndex currentIndex1();
 	QModelIndex currentIndex2();
 	void addConstraint();
+    void removeGroupOrConstraint();
 
 private:
 	QVBoxLayout m_verticatLayout;
@@ -92,12 +94,13 @@ private:
 	QSplitter m_splitter;
 	IdmContainer m_container;
 	Entity *m_entity;
-	EntitiesTreeViewHandler m_handler;
+	EntitiesTreeViewHandler m_handler1;
+    EntitiesTreeViewHandler m_handler2;
 	QToolBar m_toolBar1;
 	QToolBar m_toolBar2;
-	EntitiesTreeView m_view;
+	EntitiesTreeView m_view1;
 	QueryEntitiesModel m_model;
-	QTreeView m_view2;
+	EntitiesTreeView m_view2;
 	QueryConstraintsModel m_model2;
 	QueryConstraintsDelegate m_delegate2;
 	QDialogButtonBox m_buttonBox;

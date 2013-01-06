@@ -29,9 +29,17 @@
 #include "items/idm_queryresultcompositerootitem.h"
 #include "../folder/idm_foldernode.h"
 #include "../../gui/value/list/selectable/idm_selectablevaluelistdialog.h"
-#include "../../../../application.h"
 
+#include "../../../default/actions/default_globalactions.h"
+
+#include <application.h>
 #include <vfs/tools/vfs_commontools.h>
+#include <vfs/contextmenu/vfs_contextmenu.h>
+
+#include <vfs/tasks/vfs_performactiontask.h>
+#include <vfs/actions/synchronous/vfs_syncaction.h>
+#include <vfs/actions/asynchronous/vfs_asyncaction.h>
+
 #include <tools/containers/union.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
 
@@ -210,7 +218,63 @@ ICopyControl *QueryResultsNode::createControl(INodeView *view) const
 
 void QueryResultsNode::contextMenu(const QModelIndexList &list, INodeView *view)
 {
+    typedef QSet<QueryResultItem::Holder>              ItemsSet;
+    typedef QList<QueryResultItem::Holder>             ItemsList;
+    typedef QMap<QueryResultItem::Holder, QModelIndex> ItemsIndexMap;
 
+    ItemsSet set;
+    ItemsList items;
+    QueryResultItem::Holder item;
+    ItemsIndexMap itemsIndex;
+    ContextMenu contextMenu(m_container.container());
+
+    for (ItemsList::size_type i = 0, size = list.size(); i < size; ++i)
+        if ((item = static_cast<QueryResultItem *>(list.at(i).internalPointer())).as<QueryResultItem>()->isPath() && !set.contains(item))
+        {
+            set.insert(item);
+            itemsIndex[item] = list.at(i);
+            contextMenu.add(item, item.as<QueryResultPathItem>()->info());
+        }
+
+    items = set.toList();
+
+    contextMenu.add(Default::GlobalActions::instance()->copyAction(), ContextMenu::GeneralSection);
+    contextMenu.add(Default::GlobalActions::instance()->cutAction(), ContextMenu::GeneralSection);
+
+    if (items.size() == 1 && items.at(0).as<QueryResultPathItem>()->info()->isDir())
+        contextMenu.add(Default::GlobalActions::instance()->pasteIntoFolderAction(), ContextMenu::GeneralSection);
+
+    contextMenu.add(Default::GlobalActions::instance()->propertiesAction(), ContextMenu::PropertiesSection);
+
+    if (const Action *action = contextMenu.exec())
+    {
+        Action::FilesList files = contextMenu.files(action);
+
+        if (action->isAsynchronous())
+        {
+            PScopedPointer<PerformActionTask> task;
+
+            if (task = static_cast<const AsyncAction *>(action)->process(this, m_container.container(), files))
+            {
+                Union update;
+                Snapshot::Files list(m_container.container());
+
+                for (Action::FilesList::size_type i = 0, size = files.size(); i < size; ++i)
+                {
+                    item = files.at(i).first;
+
+//                    item->lock(static_cast<const AsyncAction *>(action)->lockReason());
+//                    update.add(itemsIndex.value(item));
+                    list.add(item.as<QueryResultPathItem>()->info()->fileName(), item);
+                }
+
+//                addTask(task.take(), list);
+//                updateFirstColumn(update);
+            }
+        }
+        else
+            static_cast<const SyncAction *>(action)->process(m_container.container(), files);
+    }
 }
 
 void QueryResultsNode::cancel(const QModelIndexList &list, INodeView *view)
@@ -686,7 +750,7 @@ void QueryResultsNode::performRemove(const BaseTask::Event *e)
 
 void QueryResultsNode::lock(const Snapshot &snapshot, const QString &reason)
 {
-	typedef QMap<QueryResultItem*, Union> Map;
+	typedef QMap<QueryResultItem *, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	Map map;
@@ -706,7 +770,7 @@ void QueryResultsNode::lock(const Snapshot &snapshot, const QString &reason)
 
 void QueryResultsNode::unlock(const Snapshot &snapshot)
 {
-	typedef QMap<QueryResultItem*, Union> Map;
+	typedef QMap<QueryResultItem *, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	Map map;
@@ -726,7 +790,7 @@ void QueryResultsNode::unlock(const Snapshot &snapshot)
 
 void QueryResultsNode::update(Snapshot &updates)
 {
-	typedef QMap<QueryResultItem*, Union> Map;
+	typedef QMap<QueryResultItem *, Union> Map;
 	qint32 lastColumn = columnCount(QModelIndex()) - 1;
 	QueryResultPropertyItem *property;
 	QueryResultItem *item;

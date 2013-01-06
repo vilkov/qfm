@@ -3,7 +3,7 @@ project (qfm)
 
 
 # Custom modules
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 
 # Project header
@@ -11,8 +11,8 @@ include (project_cxx_header)
 
 
 # Main settings
-set (USE_GPROF    NO)
-set (UNIT_TESTING NO CACHE BOOL "Compile binary executable for unit testing?")
+option (USE_GPROF    "Use GProf for profiling?"                    NO)
+option (UNIT_TESTING "Compile binary executable for unit testing?" NO)
 
 if (UNIX)
     set (DESKTOP_ENVIRONMENT "KDE" CACHE STRING "Desktop environment")
@@ -27,12 +27,10 @@ endif ()
 set (PROJECT_GENERATED_FILES_DIR "${PROJECT_BINARY_DIR}/generated")
 
 
-
 # Fix path delimeters
 if (WIN32)
     file (TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX} CMAKE_INSTALL_PREFIX)
 endif ()
-
 
 
 # 3rdparty
@@ -42,33 +40,30 @@ else (UNIX)
     find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml QtDbus REQUIRED)
 endif ()
 include (${QT_USE_FILE})
-set (qfm_LIBS ${qfm_LIBS} ${QT_LIBRARIES})
+list (APPEND ${PROJECT_NAME}_LIBS ${QT_LIBRARIES})
 add_definitions (${QT_DEFINITIONS})
-
-find_package (Stlsoft REQUIRED)
-include_directories (${STLSOFT_INCLUDE})
 
 find_package (Sqlite REQUIRED)
 include_directories (${SQLITE_INCLUDE})
-set (qfm_LIBS ${qfm_LIBS} ${SQLITE_LIBRARY})
+list (APPEND ${PROJECT_NAME}_LIBS ${SQLITE_LIBRARY})
 
 if (UNIX)
     find_package (X11 REQUIRED)
     include_directories (${X11_INCLUDE_DIR})
-    set (qfm_LIBS ${qfm_LIBS} ${X11_LIBRARIES})
+    list (APPEND ${PROJECT_NAME}_LIBS ${X11_LIBRARIES})
     
     find_package (XDG REQUIRED)
     include_directories (${XDG_INCLUDE})
-    set (qfm_LIBS ${qfm_LIBS} ${XDG_LIBRARY})
+    list (APPEND ${PROJECT_NAME}_LIBS ${XDG_LIBRARY})
 endif ()
 
 find_package (LibArchive REQUIRED)
 include_directories (${LIBARCHIVE_INCLUDE_DIR})
-set (qfm_LIBS ${qfm_LIBS} ${LIBARCHIVE_LIBRARY})
+list (APPEND ${PROJECT_NAME}_LIBS ${LIBARCHIVE_LIBRARY})
 
 find_package (LibUnrar REQUIRED)
 include_directories (${LIBUNRAR_INCLUDE})
-set (qfm_LIBS ${qfm_LIBS} ${LIBUNRAR_LIBRARY})
+list (APPEND ${PROJECT_NAME}_LIBS ${LIBUNRAR_LIBRARY})
 
 
 # Includes
@@ -78,7 +73,7 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Libs
 if (USE_GPROF)
-	set (qfm_LIBS ${qfm_LIBS} gmon)
+	list (APPEND ${PROJECT_NAME}_LIBS gmon)
 endif (USE_GPROF)
  
 # Definitions
@@ -113,16 +108,16 @@ endif ()
 
 
 # Sources
-add_subdirectory("src")
-QT4_WRAP_UI(qfm_UIS_HEADERS ${qfm_UIS})
-QT4_WRAP_CPP (qfm_MOC_SOURCES ${qfm_HEADERS} OPTIONS "-nw")
-set (qfm_SOURCES ${qfm_SOURCES} ${qfm_MOC_SOURCES} ${qfm_UIS_HEADERS})
+add_subdirectory (src)
+QT4_WRAP_UI (${PROJECT_NAME}_UIS_HEADERS ${${PROJECT_NAME}_UIS})
+QT4_WRAP_CPP (${PROJECT_NAME}_MOC_SOURCES ${${PROJECT_NAME}_HEADERS} OPTIONS "-nw")
+list (APPEND ${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_MOC_SOURCES} ${${PROJECT_NAME}_UIS_HEADERS})
 
 
 # Resources
-add_subdirectory("resources")
-QT4_ADD_RESOURCES(qfm_RESOURCES_BIN ${qfm_RESOURCES})
-set (qfm_SOURCES ${qfm_SOURCES} ${qfm_RESOURCES_BIN})
+add_subdirectory (resources)
+QT4_ADD_RESOURCES (${PROJECT_NAME}_RESOURCES_BIN ${${PROJECT_NAME}_RESOURCES})
+list (APPEND ${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_RESOURCES_BIN})
 
 
 # Set some OS specific settings
@@ -134,16 +129,16 @@ endif ()
 
 
 # Target - qfm
-add_executable (qfm ${GUI_TYPE} ${qfm_SOURCES})
-target_link_libraries (qfm ${qfm_LIBS})
+add_executable (qfm ${GUI_TYPE} ${${PROJECT_NAME}_SOURCES})
+target_link_libraries (qfm ${${PROJECT_NAME}_LIBS})
 
 # It is because of Qt (qglobal.h)
 set_target_properties (qfm PROPERTIES COMPILE_FLAGS "-Wno-long-long")
 
 # Compiler flags
 if (USE_GPROF)
-    set (CMAKE_CXX_FLAGS        ${CMAKE_CXX_FLAGS}        -pg)
-    set (CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -pg)
+    list (CMAKE_CXX_FLAGS        APPEND -pg)
+    list (CMAKE_EXE_LINKER_FLAGS APPEND -pg)
 endif (USE_GPROF)
 
 

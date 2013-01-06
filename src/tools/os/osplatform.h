@@ -19,7 +19,7 @@
 #ifndef OSPLATFORM_H_
 #define OSPLATFORM_H_
 
-#include <platformstl/platformstl.hpp>
+//#include <platformstl/platformstl.hpp>
 
 
 #if defined(PLATFORMSTL_OS_IS_WINDOWS)

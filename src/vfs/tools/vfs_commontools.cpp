@@ -18,16 +18,16 @@
  */
 #include "vfs_commontools.h"
 
-#include <tools/os/osdependent.h>
+#include <tools/platform/platform.h>
 #include <tools/widgets/choosedialog/choosedialog.h>
 
 #include <QtCore/QStringList>
 #include <QtCore/QFileInfo>
 #include <QtCore/QSet>
 
-#if defined(PLATFORMSTL_OS_IS_WINDOWS)
+#if PLATFORM_OS(WINDOWS)
 #	include <windows.h>
-#elif defined(PLATFORMSTL_OS_IS_UNIX)
+#elif PLATFORM_OS(UNIX)
 #	include <sys/statvfs.h>
 #else
 #	error OS is unknown!

@@ -24,18 +24,16 @@
 #include "../../tasks/perform/default_performcopytask.h"
 #include "../../tasks/perform/default_performmovetask.h"
 #include "../../tasks/perform/default_performremovetask.h"
-#include "../../actions/default_copyaction.h"
-#include "../../actions/default_cutaction.h"
-#include "../../actions/default_pasteaction.h"
-#include "../../actions/default_pasteintofolderaction.h"
-#include "../../actions/default_propertiesaction.h"
-#include "../../actions/default_pasteclipboardaction.h"
+#include "../../actions/default_globalactions.h"
 
 #include <application.h>
 #include <vfs/filters/vfs_filters.h>
 #include <vfs/contextmenu/vfs_contextmenu.h>
-#include <vfs/tasks/vfs_performactiontask.h>
 #include <vfs/tools/vfs_commontools.h>
+
+#include <vfs/tasks/vfs_performactiontask.h>
+#include <vfs/actions/synchronous/vfs_syncaction.h>
+#include <vfs/actions/asynchronous/vfs_asyncaction.h>
 
 #include <tools/containers/orderedmap.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
@@ -47,58 +45,6 @@
 
 DEFAULT_PLUGIN_NS_BEGIN
 
-struct GlobalActions
-{
-	GlobalActions() :
-		copyAction(NULL),
-		cutAction(NULL),
-		pasteAction(NULL),
-		pasteIntoFolderAction(NULL),
-		propertiesAction(NULL),
-		pasteClipboardAction(NULL),
-		m_ref(0)
-	{}
-
-	void addRef()
-	{
-		if (m_ref++ == 0)
-		{
-			copyAction = new CopyAction();
-			cutAction = new CutAction();
-			pasteAction = new PasteAction();
-			pasteIntoFolderAction = new PasteIntoFolderAction();
-			propertiesAction = new PropertiesAction();
-			pasteClipboardAction = new PasteClipboardAction();
-		}
-	}
-
-	void release()
-	{
-		if (--m_ref == 0)
-		{
-			delete copyAction;
-			delete cutAction;
-			delete pasteAction;
-			delete pasteIntoFolderAction;
-			delete propertiesAction;
-			delete pasteClipboardAction;
-		}
-	}
-
-	CopyAction *copyAction;
-	CutAction *cutAction;
-	PasteAction *pasteAction;
-	PasteIntoFolderAction *pasteIntoFolderAction;
-	PropertiesAction *propertiesAction;
-	PasteClipboardAction *pasteClipboardAction;
-
-private:
-	int m_ref;
-};
-
-static GlobalActions globalActions;
-
-
 BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_items, parent),
 	m_container(container.take()),
@@ -106,7 +52,7 @@ BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 	m_proxy(this),
 	m_delegate(&m_proxy)
 {
-	globalActions.addRef();
+    GlobalActions::instance()->addRef();
 
 	m_proxy.setDynamicSortFilter(true);
 	m_proxy.setSourceModel(this);
@@ -124,7 +70,7 @@ BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 
 BaseNode::~BaseNode()
 {
-	globalActions.release();
+    GlobalActions::instance()->release();
 }
 
 int BaseNode::columnCount(const QModelIndex &parent) const
@@ -332,21 +278,21 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 	items = set.toList();
 
-	contextMenu.add(globalActions.copyAction, ContextMenu::GeneralSection);
-    contextMenu.add(globalActions.cutAction, ContextMenu::GeneralSection);
+	contextMenu.add(GlobalActions::instance()->copyAction(), ContextMenu::GeneralSection);
+    contextMenu.add(GlobalActions::instance()->cutAction(), ContextMenu::GeneralSection);
 
 	if (items.isEmpty())
-	    contextMenu.add(globalActions.pasteClipboardAction, ContextMenu::GeneralSection);
+	    contextMenu.add(GlobalActions::instance()->pasteClipboardAction(), ContextMenu::GeneralSection);
 	else
 		if (items.size() == 1)
 			if ((item = items.at(0)).as<NodeItem>()->info()->isDir())
-			    contextMenu.add(globalActions.pasteIntoFolderAction, ContextMenu::GeneralSection);
+			    contextMenu.add(GlobalActions::instance()->pasteIntoFolderAction(), ContextMenu::GeneralSection);
 			else
-                contextMenu.add(globalActions.pasteAction, ContextMenu::GeneralSection);
+                contextMenu.add(GlobalActions::instance()->pasteAction(), ContextMenu::GeneralSection);
 		else
-            contextMenu.add(globalActions.pasteAction, ContextMenu::GeneralSection);
+            contextMenu.add(GlobalActions::instance()->pasteAction(), ContextMenu::GeneralSection);
 
-    contextMenu.add(globalActions.propertiesAction, ContextMenu::PropertiesSection);
+    contextMenu.add(GlobalActions::instance()->propertiesAction(), ContextMenu::PropertiesSection);
 
 	if (const Action *action = contextMenu.exec())
 	{

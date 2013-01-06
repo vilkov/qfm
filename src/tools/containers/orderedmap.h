@@ -1,7 +1,7 @@
 /**
  * This file is part of QFM.
  *
- * Copyright (C) 2011-2012 Dmitriy Vilkov, <dav.daemon@gmail.com>
+ * Copyright (C) 2011-2013 Dmitriy Vilkov, <dav.daemon@gmail.com>
  *
  * QFM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QtCore/QPair>
 #include <QtCore/QLinkedList>
 #include "containers_ns.h"
+#include "../platform/platform.h"
 
 
 CONTAINERS_NS_BEGIN
@@ -31,9 +32,9 @@ template <typename Key, typename T>
 class OrderedMap
 {
 public:
-	typedef QPair<Key, T>                      Pair;
-	typedef QLinkedList<Pair>                  List;
-	typedef QMap<Key, typename List::iterator> Map;
+    typedef QPair<Key, T>                      Pair;
+    typedef QLinkedList<Pair>                  List;
+    typedef QMap<Key, typename List::iterator> Map;
 
     class const_iterator;
     class iterator
@@ -69,6 +70,7 @@ public:
         inline iterator &operator-=(int j) { return *this = *this - j; }
 
     private:
+        friend class OrderedMap<Key, T>;
         typename List::iterator m_it;
     };
 
@@ -89,7 +91,7 @@ public:
         inline const_iterator(const typename List::const_iterator &o) : m_it(o) {}
         inline const_iterator &operator=(const const_iterator &o) { m_it = o.m_it; return *this; }
         inline const Key &key() const { return m_it->first; }
-        inline T &value() const { return m_it->second; }
+        inline const T &value() const { return m_it->second; }
         inline const T &operator*() const { return m_it->second; }
         inline const T *operator->() const { return &m_it->second; }
         inline bool operator==(const const_iterator &o) const { return m_it == o.m_it; }
@@ -104,58 +106,78 @@ public:
         inline const_iterator &operator-=(int j) { return *this = *this - j; }
 
     private:
+        friend class OrderedMap<Key, T>;
         typename List::const_iterator m_it;
     };
 
 public:
     inline OrderedMap()
-	{}
+    {}
 
-	inline OrderedMap(const OrderedMap &other)
-	{
-		for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
-			m_map[(*i).first] = m_list.insert(m_list.end(), *i);
-	}
+#if PLATFORM_COMPILER_SUPPORTS(MOVE_SEMANTIC)
+    inline OrderedMap(OrderedMap &&other) :
+        m_map(std::move(other.m_map)),
+        m_list(std::move(other.m_list))
+    {}
+#endif
 
-	inline OrderedMap &operator=(const OrderedMap &other)
-	{
-		m_map.clear();
-		m_list.clear();
-
-		for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
-			m_map[(*i).first] = m_list.insert(m_list.end(), *i);
-
-		return *this;
-	}
-
-	inline T &operator[](const Key &key)
+    inline OrderedMap(const OrderedMap &other)
     {
-    	typename List::iterator &i = m_map[key];
+        for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
+            m_map[(*i).first] = m_list.insert(m_list.end(), *i);
+    }
 
-    	if (i == typename List::iterator())
-    		return (i = m_list.insert(m_list.end(), Pair(key, T())))->second;
-    	else
-    		return i->second;
+    inline bool operator==(const OrderedMap &other) const
+    {
+        if (size() != other.size())
+            return false;
+        else
+            for (typename List::const_iterator other_i = other.m_list.begin(), this_i = m_list.begin(), end = m_list.end(); this_i != end; ++this_i, ++other_i)
+                if ((*this_i) != (*other_i))
+                    return false;
+
+        return true;
+    }
+
+    inline OrderedMap &operator=(const OrderedMap &other)
+    {
+        m_map.clear();
+        m_list.clear();
+
+        for (typename List::const_iterator i = other.m_list.begin(), end = other.m_list.end(); i != end; ++i)
+            m_map[(*i).first] = m_list.insert(m_list.end(), *i);
+
+        return *this;
+    }
+
+    inline T &operator[](const Key &key)
+    {
+        typename List::iterator &i = m_map[key];
+
+        if (i == typename List::iterator())
+            return (i = m_list.insert(m_list.end(), Pair(key, T())))->second;
+        else
+            return i->second;
     }
     inline const T operator[](const Key &key) const
     {
-    	const typename List::iterator i(m_map[key]);
-    	return i == typename List::iterator() ? T() : i->second;
+        const typename List::iterator i(m_map[key]);
+        return i == typename List::iterator() ? T() : i->second;
     }
 
-    inline int size() const { return m_list.size(); }
+    inline int size() const { return m_map.size(); }
     inline bool isEmpty() const { return m_list.isEmpty(); }
     inline bool contains(const Key &key) const { return m_map.contains(key); }
 
     inline const T value(const Key &key) const
     {
-    	const typename List::iterator i(m_map.value(key));
-    	return i == typename List::iterator() ? T() : i->second;
+        const typename List::iterator i(m_map.value(key));
+        return i == typename List::iterator() ? T() : i->second;
     }
     inline const T value(const Key &key, const T &defaultValue) const
     {
-    	const typename List::iterator i(m_map.value(key));
-    	return i == typename List::iterator() ? defaultValue : i->second;
+        const typename List::iterator i(m_map.value(key));
+        return i == typename List::iterator() ? defaultValue : i->second;
     }
 
     inline iterator begin() { return m_list.begin(); }
@@ -164,46 +186,57 @@ public:
     inline iterator end() { return m_list.end(); }
     inline const_iterator end() const { return m_list.end(); }
     inline const_iterator constEnd() const { return m_list.constEnd(); }
-    inline iterator erase(iterator it) { m_map.remove((*it).first); return m_list.erase(it); }
+    inline iterator erase(iterator it) { m_map.erase(m_map.find(it.key())); return m_list.erase(it.m_it); }
 
     inline void push_back(const Key &key, const T &t)
     {
-    	m_map[key] = m_list.insert(m_list.end(), Pair(key, t));
+        m_map[key] = m_list.insert(m_list.end(), Pair(key, t));
     }
     inline void push_front(const Key &key, const T &t)
     {
-    	m_map[key] = m_list.insert(m_list.begin(), Pair(key, t));
+        m_map[key] = m_list.insert(m_list.begin(), Pair(key, t));
     }
+
+#if PLATFORM_COMPILER_SUPPORTS(MOVE_SEMANTIC)
+    inline void push_back(const Key &key, T &&t)
+    {
+        m_map[key] = m_list.insert(m_list.end(), Pair(key, std::move(t)));
+    }
+    inline void push_front(const Key &key, T &&t)
+    {
+        m_map[key] = m_list.insert(m_list.begin(), Pair(key, std::move(t)));
+    }
+#endif
 
     inline void clear()
     {
-    	m_map.clear();
-    	m_list.clear();
+        m_map.clear();
+        m_list.clear();
     }
     inline void remove(const Key &key)
     {
-    	typename List::iterator i(m_map.take(key));
+        typename List::iterator i(m_map.take(key));
 
-    	if (i != typename List::iterator())
-    		m_list.erase(i);
+        if (i != typename List::iterator())
+            m_list.erase(i);
     }
     inline T take(const Key &key)
     {
-    	typename List::iterator i(m_map.take(key));
+        typename List::iterator i(m_map.take(key));
 
-    	if (i != typename List::iterator())
-    	{
-			T res(i->second);
-			m_list.erase(i);
-			return res;
-    	}
+        if (i != typename List::iterator())
+        {
+            T res(i->second);
+            m_list.erase(i);
+            return res;
+        }
 
-    	return T();
+        return T();
     }
 
 private:
-	Map m_map;
-	List m_list;
+    Map m_map;
+    List m_list;
 };
 
 CONTAINERS_NS_END

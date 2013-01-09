@@ -46,9 +46,11 @@
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
 
 /* PLATFORM_USE() - use a particular third-party library or optional OS service */
-#define PLATFORM_USE(PLATFORM_FEATURE) (defined PLATFORM_USE_##PLATFORM_FEATURE  && PLATFORM_USE_##PLATFORM_FEATURE)
+#define PLATFORM_USE(PLATFORM_FEATURE) PLATFORM_IS_SET(PLATFORM_USE_##PLATFORM_FEATURE)
 /* PLATFORM_ENABLE() - turn on a specific feature of WebKit */
-#define PLATFORM_ENABLE(PLATFORM_FEATURE) (defined PLATFORM_ENABLE_##PLATFORM_FEATURE  && PLATFORM_ENABLE_##PLATFORM_FEATURE)
+#define PLATFORM_ENABLE(PLATFORM_FEATURE) PLATFORM_IS_SET(PLATFORM_ENABLE_##PLATFORM_FEATURE)
+/* PLATFORM_DE() - which desktop environment is used (i.e. KDE, Gnome etc.) */
+#define PLATFORM_DE(PLATFORM_FEATURE) PLATFORM_IS_SET(PLATFORM_ENABLE_##PLATFORM_FEATURE)
 
 
 /* ==== PLATFORM_CPU() - the target CPU architecture ==== */

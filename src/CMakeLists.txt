@@ -7,7 +7,7 @@ collect_sources (src_HEADERS src_SOURCES ${CMAKE_SOURCE_DIR})
 
 # Regex
 if (UNIX)
-    if (DESKTOP_ENVIRONMENT_IS_KDE)
+    if (DE_KDE)
         # Headers
         set (tmp_src_HEADERS)
         foreach (src_HEADER ${src_HEADERS})

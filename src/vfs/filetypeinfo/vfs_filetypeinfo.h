@@ -20,8 +20,9 @@
 #define VFS_FILETYPEINFO_H_
 
 #include <QtGui/QIcon>
+#include <tools/platform/platform.h>
 
-#if !defined(DESKTOP_ENVIRONMENT_IS_WINDOWS)
+#if PLATFORM_OS(UNIX)
 #	include "unix/vfs_filetypeid_unix.h"
 	VFS_NS(typedef ::VFS::FileTypeId_Unix FileTypeId)
 #else

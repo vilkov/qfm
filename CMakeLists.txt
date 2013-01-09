@@ -75,21 +75,6 @@ if (USE_GPROF)
 endif (USE_GPROF)
  
 # Definitions
-if (UNIX)
-    if (DESKTOP_ENVIRONMENT STREQUAL "KDE")
-        set (DESKTOP_ENVIRONMENT_IS_KDE YES)
-        add_definitions (-DDESKTOP_ENVIRONMENT_IS_KDE)
-    else ()
-        set (DESKTOP_ENVIRONMENT_IS_GTK YES)
-        add_definitions (-DDESKTOP_ENVIRONMENT_IS_GTK)
-    endif ()
-
-    add_definitions (-D_FILE_OFFSET_BITS=64)
-elseif (WIN32)
-    set (DESKTOP_ENVIRONMENT_IS_WINDOWS YES)
-    add_definitions (-DDESKTOP_ENVIRONMENT_IS_WINDOWS)
-endif ()
-
 add_definitions (
     -DUNICODE
     -DTOOLS_THREADS_BACKEND_QT

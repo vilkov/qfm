@@ -19,9 +19,11 @@
 #include "../desktop_theme.h"
 #include "desktop_iconcache.h"
 
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
+#include <tools/platform/platform.h>
+
+#if PLATFORM_DE(KDE)
 #	include "kde/desktop_kde_p.h"
-#elif defined(DESKTOP_ENVIRONMENT_IS_GTK)
+#elif PLATFORM_DE(GNOME) || PLATFORM_DE(XFCE4)
 #	include "gtk/desktop_gtk_p.h"
 #endif
 
@@ -52,7 +54,7 @@ static const char *x11_atomnames[NAtoms] =
 };
 
 
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
+#if PLATFORM_DE(KDE)
 	static int kde_version = 0;
 #endif
 
@@ -89,7 +91,7 @@ Theme::Theme() :
 			{
 				m_type = DE_Kde;
 
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
+#if PLATFORM_DE(KDE)
 				if (var = ::getenv("KDE_SESSION_VERSION"))
 					kde_version = atoi(var);
 #endif
@@ -153,7 +155,7 @@ Theme::Theme() :
 		::XCloseDisplay(display);
     }
 
-#if defined(DESKTOP_ENVIRONMENT_IS_KDE)
+#if PLATFORM_DE(KDE)
 	m_name = DesktopPrivate::iconThemeName(kde_version).toUtf8();
 #else
 	m_name = DesktopPrivate::iconThemeName().toUtf8();

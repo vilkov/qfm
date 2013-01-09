@@ -10,20 +10,18 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include (project_cxx_header)
 
 
-# Main settings
-option (USE_GPROF    "Use GProf for profiling?"                    NO)
-option (UNIT_TESTING "Compile binary executable for unit testing?" NO)
-
+# Platform definition
+include (platform)
 if (UNIX)
-    set (DESKTOP_ENVIRONMENT "KDE" CACHE STRING "Desktop environment")
-    set_property(CACHE DESKTOP_ENVIRONMENT PROPERTY STRINGS
-        "KDE"
-        "GNOME"
-        "Xfce4")
+    PLATFORM_OPTIONS_BEGIN (cmake/options_common.cmake cmake/options_unix.cmake)
+    PLATFORM_OPTION_VALUE (DE_KDE ON)
 else (WIN32)
-    set (DESKTOP_ENVIRONMENT "Windows")
+    PLATFORM_OPTIONS_BEGIN (cmake/options_common.cmake cmake/options_win32.cmake)
 endif ()
+PLATFORM_OPTIONS_END ()
 
+
+# Main settings
 set (PROJECT_GENERATED_FILES_DIR "${PROJECT_BINARY_DIR}/generated")
 
 

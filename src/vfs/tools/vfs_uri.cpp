@@ -18,6 +18,7 @@
  */
 #include "vfs_uri.h"
 
+#include <tools/platform/platform.h>
 #include <tools/templates/templates_statemachine.h>
 
 //#include <QtCore/QDebug>
@@ -52,7 +53,7 @@ public:
 		 */
 		typedef RULE(Shema,    '/', Path,      Parser, path)      Rule1;
 		typedef RULE(Shema,      0, Stoped,    Parser, path)      Rule2;
-		typedef RULE(Shema,    ':', Colon,     Parser, shema)     Rule3;
+		typedef RULE(Shema,    ':', Colon,     Parser, schema)    Rule3;
 		typedef RULE(Colon,    '/', Slash,     Parser, doNothing) Rule4;
 		typedef RULE(Slash,    '/', UserName,  Parser, doNothing) Rule5;
 
@@ -87,9 +88,9 @@ private:
 	void doNothing(const char *string, int size)
 	{}
 
-	void shema(const char *string, int size)
+	void schema(const char *string, int size)
 	{
-		m_shema = QString::fromUtf8(string, size);
+		m_schema = QString::fromUtf8(string, size);
 //		qDebug() << "m_shema = " << m_shema;
 	}
 
@@ -107,7 +108,12 @@ private:
 
 	void domain(const char *string, int size)
 	{
-		m_domain = QString::fromUtf8(string, size);
+#if PLATFORM_OS(UNIX)
+	    if (size == 0)
+            m_path.push_back(QChar(L'/'));
+	    else
+#endif
+	        m_domain = QString::fromUtf8(string, size);
 //		qDebug() << "m_domain = "  << m_domain;
 	}
 
@@ -121,7 +127,7 @@ private:
 	{
 		if (size > 0)
 			m_path.push_back(QString::fromUtf8(string, size));
-#ifndef Q_OS_WIN32
+#if PLATFORM_OS(UNIX)
 		else
 			if (m_path.isEmpty())
 				m_path.push_back(QChar(L'/'));
@@ -140,7 +146,7 @@ private:
 private:
 	friend class Uri;
 	bool m_valid;
-	QString m_shema;
+	QString m_schema;
 	QString m_userName;
 	QString m_password;
 	ushort m_port;
@@ -226,7 +232,7 @@ Uri::Uri(const QString &path) :
 	if (parser.m_valid)
 	{
 		m_valid    = true;
-		m_shema    = parser.m_shema;
+		m_schema    = parser.m_schema;
 		m_userName = parser.m_userName;
 		m_password = parser.m_password;
 		m_port     = parser.m_port;
@@ -243,7 +249,7 @@ Uri::Uri(const QByteArray &path) :
 	if (parser.m_valid)
 	{
 		m_valid    = true;
-		m_shema    = parser.m_shema;
+		m_schema    = parser.m_schema;
 		m_userName = parser.m_userName;
 		m_password = parser.m_password;
 		m_port     = parser.m_port;

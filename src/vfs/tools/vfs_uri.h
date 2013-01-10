@@ -53,6 +53,7 @@ public:
 		const QString &operator*() const { return m_list[m_pos]; }
 
 		bool atEnd() const { return m_pos == m_list.size(); }
+        bool isLast() const { return m_pos == m_list.size() - 1; }
 
 	private:
 		Iterator(QStringList &list, qint32 pos = 0) :
@@ -72,7 +73,7 @@ public:
 	bool isValid() const { return m_valid; }
 	bool isEmpty() const { return m_path.isEmpty(); }
 
-	const QString &shema() const { return m_shema; }
+	const QString &schema() const { return m_schema; }
 	const QString &userName() const { return m_userName; }
 	const QString &password() const { return m_password; }
 	ushort port() const { return m_port; }
@@ -84,7 +85,7 @@ public:
 
 private:
 	bool m_valid;
-	QString m_shema;
+	QString m_schema;
 	QString m_userName;
 	QString m_password;
 	ushort m_port;

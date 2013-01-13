@@ -24,6 +24,7 @@ VFS_NS_BEGIN
 SnapshotItem::SnapshotItem() :
 	m_container(NULL),
 	m_totalSize(0),
+    m_parent(NULL),
 	m_removed(true)
 {}
 

@@ -56,6 +56,11 @@ bool FileContainer::isDefault() const
 	return false;
 }
 
+const Location &FileContainer::schema() const
+{
+    return m_data->container->schema();
+}
+
 IFileInfo::size_type FileContainer::freeSpace() const
 {
 	return m_data->container->freeSpace();

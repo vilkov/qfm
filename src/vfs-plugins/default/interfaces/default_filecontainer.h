@@ -27,10 +27,12 @@ DEFAULT_PLUGIN_NS_BEGIN
 class FileContainer : public IFileContainer, public IApplications
 {
 public:
-	FileContainer(const QByteArray &path);
+	FileContainer(const QString &path);
+    FileContainer(const QByteArray &path);
 
 	/* IFileContainer */
 	virtual bool isDefault() const;
+    virtual const Location &schema() const;
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 
@@ -56,6 +58,10 @@ public:
 
 	virtual LinkedList user(const IFileType *fileType) const;
 	virtual LinkedList system(const IFileType *fileType) const;
+
+protected:
+	friend class Info;
+    FileContainer(const Location &path);
 
 protected:
 	Location m_path;

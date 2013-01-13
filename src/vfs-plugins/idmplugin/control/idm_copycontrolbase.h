@@ -32,6 +32,7 @@ public:
 
 	/* IFileContainer */
 	virtual bool isDefault() const;
+    virtual const Location &schema() const;
 	virtual IFileInfo::size_type freeSpace() const;
 	virtual ICopyControl *createControl(INodeView *view) const;
 

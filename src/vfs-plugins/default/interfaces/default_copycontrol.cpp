@@ -36,6 +36,11 @@ bool CopyControl::isDefault() const
 	return m_container.isDefault();
 }
 
+const Location &CopyControl::schema() const
+{
+    return m_container.schema();
+}
+
 IFileInfo::size_type CopyControl::freeSpace() const
 {
 	return m_container.freeSpace();

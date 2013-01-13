@@ -34,6 +34,11 @@ bool CopyControlBase::isDefault() const
 	return m_dest->isDefault();
 }
 
+const Location &CopyControlBase::schema() const
+{
+    return m_dest->schema();
+}
+
 IFileInfo::size_type CopyControlBase::freeSpace() const
 {
 	return m_dest->freeSpace();

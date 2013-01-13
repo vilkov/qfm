@@ -20,6 +20,7 @@
 #include "../default_fileaccessor.h"
 #include "../default_copycontrol.h"
 #include "../default_fileinfo.h"
+#include "../../default_plugin.h"
 
 #include <desktop/theme/desktop_theme.h>
 #include <desktop/locale/desktop_locale.h>
@@ -327,6 +328,11 @@ private:
 static AppsCache appsCache;
 
 
+FileContainer::FileContainer(const QString &path) :
+    m_path(IFileContainer::location(path, Info::codec()->fromUnicode(path))),
+    m_scanner(this)
+{}
+
 FileContainer::FileContainer(const QByteArray &path) :
 	m_path(IFileContainer::location(Info::codec()->toUnicode(path), path)),
 	m_scanner(this)
@@ -335,6 +341,11 @@ FileContainer::FileContainer(const QByteArray &path) :
 bool FileContainer::isDefault() const
 {
 	return true;
+}
+
+const Location &FileContainer::schema() const
+{
+    return Plugin::instance()->schema();
 }
 
 IFileInfo::size_type FileContainer::freeSpace() const
@@ -529,5 +540,10 @@ FileContainer::LinkedList FileContainer::system(const IFileType *fileType) const
 {
 	return appsCache.findSystemApplications(fileType);
 }
+
+FileContainer::FileContainer(const Location &path) :
+    m_path(path),
+    m_scanner(this)
+{}
 
 DEFAULT_PLUGIN_NS_END

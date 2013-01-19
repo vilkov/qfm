@@ -44,6 +44,7 @@ public:
     inline bool operator==(const Holder<T> &other) const { return QExplicitlySharedDataPointer<T>::data() == other.data(); }
 
     inline Holder<T> &operator=(T *o) { QExplicitlySharedDataPointer<T>::operator=(o); return *this; }
+    inline Holder<T> &operator=(const Holder<T> &o) { QExplicitlySharedDataPointer<T>::operator=(o); return *this; }
 
     template <typename R> inline
     R *as() const { return static_cast<R *>(QExplicitlySharedDataPointer<T>::data()); }

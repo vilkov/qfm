@@ -36,6 +36,7 @@ public:
     T &operator*() const { return *m_data; }
     T *operator->() const { return m_data.operator->(); }
     T *data() const { return m_data.data(); }
+    const T *const_data() const { return m_data.data(); }
     operator bool() const { return !m_data.isNull(); }
     operator const T *() const { return m_data.data(); }
 

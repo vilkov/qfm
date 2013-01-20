@@ -31,13 +31,16 @@ public:
 	Plugin(::Tools::Settings::Option *parentOption);
 	virtual ~Plugin();
 
+	static Plugin *instance();
+
 	/* IPlugin */
 	virtual void registered();
 	virtual ::Tools::Settings::Page *settings();
 
-	/* IContentPlugin */
-	QString shema() const;
-	virtual ::VFS::Node *open(const Uri::Iterator &path, QModelIndex &selected) const;
+	/* IContainerPlugin */
+	virtual const Location &schema() const;
+	virtual ::VFS::Node *open(const Uri &path, QModelIndex &selected) const;
+    virtual void container(const Uri &path, IFileContainer::Holder &container, IFileInfo::Holder &info, QString &error) const;
 
 	/* IFilePlugin */
 	virtual FileTypeIdList fileTypes() const;

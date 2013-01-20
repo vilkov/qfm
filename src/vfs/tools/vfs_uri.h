@@ -30,40 +30,39 @@ VFS_NS_BEGIN
 class Uri
 {
 public:
-	class Iterator
+	class iterator
 	{
 		friend class Uri;
 
 	public:
-		Iterator &operator=(const Iterator &other) { m_pos = other.m_pos; return *this; }
+		iterator &operator=(const iterator &other) { m_pos = other.m_pos; return *this; }
 
-		const Iterator &operator++() const { ++m_pos; return *this; }
-		Iterator &operator++() { ++m_pos; return *this; }
+		const iterator &operator++() const { ++m_pos; return *this; }
+		iterator &operator++() { ++m_pos; return *this; }
 
-		const Iterator &operator++(int) const { ++m_pos; return *this; }
-		Iterator &operator++(int) { ++m_pos; return *this; }
+		const iterator &operator++(int) const { ++m_pos; return *this; }
+		iterator &operator++(int) { ++m_pos; return *this; }
 
-		const Iterator &operator--() const { --m_pos; return *this; }
-		Iterator &operator--() { --m_pos; return *this; }
+		const iterator &operator--() const { --m_pos; return *this; }
+		iterator &operator--() { --m_pos; return *this; }
 
-		const Iterator &operator--(int) const { --m_pos; return *this; }
-		Iterator &operator--(int) { --m_pos; return *this; }
+		const iterator &operator--(int) const { --m_pos; return *this; }
+		iterator &operator--(int) { --m_pos; return *this; }
 
-		QString &operator*() { return m_list[m_pos]; }
 		const QString &operator*() const { return m_list[m_pos]; }
 
 		bool atEnd() const { return m_pos == m_list.size(); }
         bool isLast() const { return m_pos == m_list.size() - 1; }
 
 	private:
-		Iterator(QStringList &list, qint32 pos = 0) :
+		iterator(const QStringList &list, qint32 pos = 0) :
 			m_pos(pos),
 			m_list(list)
 		{}
 
 	private:
 		mutable qint32 m_pos;
-		QStringList &m_list;
+		const QStringList &m_list;
 	};
 
 public:
@@ -79,8 +78,8 @@ public:
 	ushort port() const { return m_port; }
 	const QString &domain() const { return m_domain; }
 
-	Iterator begin() { return Iterator(m_path); }
-	Iterator erase(const Iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
+	iterator begin() const { return iterator(m_path); }
+	iterator erase(const iterator &iterator) { m_path.removeAt(iterator.m_pos); return iterator; }
 	QString toString() const { return m_path.join(QChar(L'/')); }
 
 private:

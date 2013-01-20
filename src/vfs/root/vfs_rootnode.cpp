@@ -22,6 +22,9 @@
 
 VFS_NS_BEGIN
 
+static const QString fileSchema(QString::fromLatin1("file"));
+
+
 RootNode::RootNode()
 {}
 
@@ -37,14 +40,13 @@ RootNode::~RootNode()
 		QModelIndex selected;
 		IContainerPlugin *plugin;
 
-		if (path.shema().isEmpty() ||
-			(plugin = m_containerPlugins.value(path.shema())) == NULL)
+		if (path.schema().isEmpty() ||
+			(plugin = m_containerPlugins.value(path.schema())) == NULL)
 		{
-			static const QString shema(QString::fromLatin1("file"));
-			plugin = m_containerPlugins.value(shema);
+			plugin = m_containerPlugins.value(fileSchema);
 		}
 
-		if (Node *node = plugin->open(path.begin(), selected))
+		if (Node *node = plugin->open(path, selected))
 		{
 			/* XXX: Add 2 links because of HistoryEntry */
 			if (selected.isValid() || currentFile.isEmpty())
@@ -61,16 +63,35 @@ RootNode::~RootNode()
 	return NULL;
 }
 
+void RootNode::container(const QString &uri, IFileContainer::Holder &container, IFileInfo::Holder &info, QString &error) const
+{
+    Uri path(uri);
+
+    if (path.isValid() && !path.isEmpty())
+    {
+        QModelIndex selected;
+        IContainerPlugin *plugin;
+
+        if (path.schema().isEmpty() ||
+            (plugin = m_containerPlugins.value(path.schema())) == NULL)
+        {
+            plugin = m_containerPlugins.value(fileSchema);
+        }
+
+        plugin->container(path, container, info, error);
+    }
+}
+
 Node *RootNode::open(const IFileContainer *container, const IFileInfo *file, Node *parent) const
 {
-	Node *res;
-	const PluginsList list = m_fileTypePlugins.value(file->fileType()->id());
+    Node *res;
+    const PluginsList list = m_fileTypePlugins.value(file->fileType()->id());
 
-	for (PluginsList::size_type i = 0, size = list.size(); i < size; ++i)
-		if (res = list.at(i)->open(container, file, parent))
-			return res;
+    for (PluginsList::size_type i = 0, size = list.size(); i < size; ++i)
+        if (res = list.at(i)->open(container, file, parent))
+            return res;
 
-	return NULL;
+    return NULL;
 }
 
 void RootNode::registerStatic(IFilePlugin *plugin)
@@ -85,7 +106,7 @@ void RootNode::registerStatic(IFilePlugin *plugin)
 
 void RootNode::registerStatic(IContainerPlugin *plugin)
 {
-	m_containerPlugins[plugin->shema()] = plugin;
+	m_containerPlugins[plugin->schema()] = plugin;
 }
 
 VFS_NS_END

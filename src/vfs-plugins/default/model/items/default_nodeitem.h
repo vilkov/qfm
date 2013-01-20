@@ -37,13 +37,14 @@ public:
 	virtual QVariant data(qint32 column, qint32 role) const;
 
 	virtual bool isRootItem() const;
+    virtual bool isTmpItem() const;
 
 	const IFileInfo::Holder &info() const { return m_info; }
 
 	Node *node() const { return m_node; }
 	void setNode(Node *node) { m_node = node; }
 
-	void update(IFileInfo::Holder &info) { m_info = info.take(); }
+	void update(IFileInfo::Holder &info) { m_info.reset(info); }
 
 	void lock(const QString &reason, quint64 totalSize);
 	void lock(const QString &reason);

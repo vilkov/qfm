@@ -31,7 +31,7 @@ public:
 	{
 	public:
 		UpdatesEvent(BaseTask *task, bool isLastEvent, const Snapshot &snapshot, bool canceled) :
-			Event(task, static_cast<Type>(Event::UpdateFiles), canceled, snapshot),
+			Event(task, UpdateFiles, canceled, snapshot),
 			isLastEvent(isLastEvent)
 		{}
 
@@ -57,8 +57,7 @@ protected:
 	virtual void run(const volatile Flags &aborted);
 
 protected:
-	Snapshot takeUpdates(Snapshot &snapshot);
-	Snapshot takeAllUpdates(Snapshot &snapshot);
+    Snapshot takeUpdates(Snapshot &snapshot);
 	inline bool isObsolete(const IFileInfo *oldInfo, const IFileInfo *newInfo);
 
 private:

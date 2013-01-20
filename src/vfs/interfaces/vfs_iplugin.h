@@ -42,8 +42,15 @@ public:
 class IContainerPlugin : public virtual IPlugin
 {
 public:
-	virtual QString shema() const = 0;
-	virtual Node *open(const Uri::Iterator &path, QModelIndex &selected) const = 0;
+	virtual const Location &schema() const = 0;
+	virtual Node *open(const Uri &path, QModelIndex &selected) const = 0;
+    virtual void container(const Uri &path, IFileContainer::Holder &container, IFileInfo::Holder &info, QString &error) const = 0;
+
+protected:
+    static Location location(const QString &label, const QByteArray &location)
+    {
+        return Location(label, location);
+    }
 };
 
 

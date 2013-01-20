@@ -63,7 +63,7 @@ protected:
 	Node *parentNode() const { return static_cast<Node *>(QObject::parent()); }
 	bool isVisible() const { return !m_view.isEmpty(); }
 	void switchTo(Node *node, INodeView *view);
-	Node *viewChild(const Uri::Iterator &path, QModelIndex &selected);
+	Node *viewChild(const Uri::iterator &path, QModelIndex &selected);
 
 private:
 	friend class TasksNode;

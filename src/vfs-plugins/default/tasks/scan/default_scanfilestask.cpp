@@ -110,18 +110,18 @@ void ScanFilesTask::run(const volatile Flags &aborted)
 
 Snapshot ScanFilesTask::takeUpdates(Snapshot &snapshot)
 {
-	Snapshot::Updates res(snapshot);
+    Snapshot::Updates res(snapshot);
 
-	for (Snapshot::iterator it = snapshot.begin(), end = snapshot.end(); it != end;)
-		if ((*it).second)
-		{
-			res.add(it.key(), (*it));
-			it = snapshot.remove(it);
-		}
-		else
-			++it;
+    for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
+        if ((*i).second)
+        {
+            res.add(i.key(), (*i));
+            i = snapshot.remove(i);
+        }
+        else
+            ++i;
 
-	return res;
+    return res;
 }
 
 bool ScanFilesTask::isObsolete(const IFileInfo *oldInfo, const IFileInfo *newInfo)

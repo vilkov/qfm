@@ -65,7 +65,10 @@ public:
 	{
 		Q_DISABLE_COPY(ExtendedEvent)
 
-	public:
+    public:
+        typedef BaseTask::Event::Type Type;
+
+    public:
 		ICopyControl::Holder destination;
 
 	protected:

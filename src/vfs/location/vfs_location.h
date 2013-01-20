@@ -46,6 +46,7 @@ public:
 protected:
 	friend class IFileInfo;
 	friend class IFileContainer;
+	friend class IContainerPlugin;
 	Location(const QString &label, const QByteArray &location) :
 		m_label(label),
 		m_location(location)

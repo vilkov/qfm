@@ -159,7 +159,7 @@ QString CopyControlBase::difference(const QString &path1, const QString &path2)
 	Uri current(path1);
 	Uri other(path2);
 
-	for (Uri::Iterator otherIt = other.begin(), currentIt = current.begin();
+	for (Uri::iterator otherIt = other.begin(), currentIt = current.begin();
 		!otherIt.atEnd() && !currentIt.atEnd();
 		++otherIt)
 	{

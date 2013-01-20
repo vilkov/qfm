@@ -85,7 +85,7 @@ protected:
 	virtual void search(const QModelIndex &index, INodeView *view);
 
 protected:
-	typedef ::Tools::Templates::Functor3<Container::size_type, NodeItem *, SnapshotItem *> EventFunctor;
+	typedef ::Tools::Templates::Functor3<Container::size_type, const NodeItem::Holder &, SnapshotItem *> EventFunctor;
 
 	class ScanForSizeEventFunctor;
 	class ScanForSizeEventFunctor_canceled;
@@ -105,7 +105,7 @@ protected:
 	virtual Snapshot updateFilesList() const;
 	virtual void updateFilesEvent(Snapshot &updates);
 	virtual void scanForSizeEvent(bool canceled, Snapshot &snapshot);
-	virtual bool scanForCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move);
+    virtual bool scanForCopyEvent(Snapshot &snapshot, ICopyControl *control, bool move);
 	virtual bool scanForRemoveEvent(bool canceled, Snapshot &snapshot);
 	virtual bool performCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move);
 	virtual void performRemoveEvent(bool canceled, Snapshot &snapshot);
@@ -134,6 +134,7 @@ protected:
 		virtual size_type indexOf(Item *item) const;
 
 		const value_type &operator[](size_type index) const { return m_container.at(index); }
+        value_type &operator[](size_type index) { return m_container[index]; }
 
 		const value_type &last() const { return m_container.last(); }
 		value_type &last() { return m_container.last(); }
@@ -149,6 +150,7 @@ protected:
 			return InvalidIndex;
 		}
 		size_type indexOf(const QString &fileName) const { return m_container.indexOf(fileName); }
+        size_type indexOf(const value_type &item) const { return m_container.indexOf(item); }
 
 		void add(const value_type &item) { m_container.add(item.as<NodeItem>()->info()->fileName(), item); }
 		void add(const QString &fileName, const value_type &item) { m_container.add(fileName, item); }
@@ -190,8 +192,12 @@ private:
 	void scanForSize(const BaseTask::Event *event);
 	void scanForCopy(const BaseTask::Event *event);
 	void scanForRemove(const BaseTask::Event *event);
+	void scanClipboardFiles(const BaseTask::Event *event);
 	void performCopy(const BaseTask::Event *event);
 	void performRemove(const BaseTask::Event *event);
+
+	void copyThroughClipboard(INodeView *view, const QModelIndexList &list, bool move);
+    void pasteThroughClipboard(INodeView *view);
 
 private:
 	bool isUpdating() const { return m_updating; }
@@ -204,10 +210,7 @@ private:
 	class ProcessedList : public Functor, public QList<ProcessedValue>
 	{
 	protected:
-		virtual void call(Container::size_type index, NodeItem *item)
-		{
-			push_back(ProcessedValue(index, item));
-		}
+		virtual void call(Container::size_type index, NodeItem *item);
 	};
 
 
@@ -219,17 +222,36 @@ private:
 		{}
 
 	protected:
-		virtual void call(Container::size_type index, NodeItem *item)
-		{
-			push_back(m_container->location(item->info()));
-		}
+		virtual void call(Container::size_type index, NodeItem *item);
 
 	private:
 		const IFileContainer *m_container;
 	};
 
 
-	class CancelFunctor : public Functor
+    class CopyFilesThroughClipboard : public Functor
+    {
+    public:
+	    CopyFilesThroughClipboard(const IFileContainer *container, const QByteArray &prefix, const QByteArray &suffix) :
+            m_container(container),
+            m_prefix(prefix),
+            m_suffix(suffix)
+        {}
+
+        const QByteArray &data() const { return m_data; }
+
+    protected:
+        virtual void call(Container::size_type index, NodeItem *item);
+
+    private:
+        QByteArray m_data;
+        const IFileContainer *m_container;
+        QByteArray m_prefix;
+        QByteArray m_suffix;
+    };
+
+
+    class CancelFunctor : public Functor
 	{
 	public:
 		CancelFunctor(BaseNode *node, const QString &reason) :
@@ -285,7 +307,7 @@ private:
 	void removeEntry(const QModelIndex &index);
 
 private:
-	enum ShortcutType
+	enum Shortcut
 	{
 		NoShortcut,
 
@@ -299,11 +321,14 @@ private:
 		MoveShortcut,
 		RemoveToTrashShortcut,
 		SearchShortcut,
+        CopyThroughClipboardShortcut,
+        CutThroughClipboardShortcut,
+        PasteThroughClipboardShortcut,
 
-		SizeOf_ShortcutType
+		SizeOf_Shortcut
 	};
 
-	typedef QMap<quint32, ShortcutType> Shortcuts;
+	typedef QMap<quint32, Shortcut> Shortcuts;
 
 private:
 	IFileContainer::Holder m_container;

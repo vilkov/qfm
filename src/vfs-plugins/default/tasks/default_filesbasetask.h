@@ -43,7 +43,8 @@ public:
 			RemoveFiles = BaseTask::Event::User + 4,
 			CopyFiles = BaseTask::Event::User + 5,
 			SearchFiles_NewFile = BaseTask::Event::User + 6,
-			SearchFiles_Done = BaseTask::Event::User + 7
+			SearchFiles_Done = BaseTask::Event::User + 7,
+			ScanClipboardFiles_Update = BaseTask::Event::User + 8
 		};
 
 	public:
@@ -60,11 +61,11 @@ public:
 		Q_DISABLE_COPY(ExtendedEvent)
 
 	public:
-		typedef FilesBaseTask::Event::Type Type;
+        typedef FilesBaseTask::Event::Type Type;
 
-	public:
-		ExtendedEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot) :
-			BaseTask::ExtendedEvent(task, static_cast<BaseTask::Event::Type>(type), destination, canceled),
+    public:
+        ExtendedEvent(BaseTask *task, Type type, ICopyControl::Holder &destination, bool canceled, const Snapshot &snapshot) :
+            BaseTask::ExtendedEvent(task, static_cast<BaseTask::Event::Type>(type), destination, canceled),
 			snapshot(snapshot)
 		{}
 

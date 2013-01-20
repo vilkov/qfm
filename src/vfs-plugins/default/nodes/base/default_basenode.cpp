@@ -21,10 +21,13 @@
 #include "../search/default_searchnode.h"
 #include "../../search/dialog/default_searchdialog.h"
 #include "../../tasks/scan/default_scanfilestask.h"
+#include "../../tasks/scan/default_scanclipboardfilestask.h"
 #include "../../tasks/perform/default_performcopytask.h"
 #include "../../tasks/perform/default_performmovetask.h"
 #include "../../tasks/perform/default_performremovetask.h"
 #include "../../actions/default_globalactions.h"
+#include "../../interfaces/default_invalidfileinfo.h"
+#include "../../model/items/default_tmpnodeitem.h"
 
 #include <application.h>
 #include <vfs/filters/vfs_filters.h>
@@ -35,15 +38,67 @@
 #include <vfs/actions/synchronous/vfs_syncaction.h>
 #include <vfs/actions/asynchronous/vfs_asyncaction.h>
 
+#include <tools/platform/platform.h>
 #include <tools/containers/orderedmap.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
 
 #include <QtGui/QMenu>
 #include <QtGui/QClipboard>
 #include <QtGui/QMessageBox>
+#include <QtCore/QMimeData>
 
 
 DEFAULT_PLUGIN_NS_BEGIN
+
+static const QString uriListMimetype = QString::fromLatin1("text/uri-list");
+#if PLATFORM_DE(KDE)
+    static const QString kdeCutMimetype = QString::fromLatin1("application/x-kde-cutselection");
+#endif
+
+
+class ClipboardMimeData : public QMimeData
+{
+    Q_DISABLE_COPY(ClipboardMimeData)
+
+public:
+    ClipboardMimeData(bool move) :
+        QMimeData(),
+        m_move(move)
+    {}
+
+    void setData(const QByteArray &data)
+    {
+        QMimeData::setData(uriListMimetype, data);
+    }
+
+#if PLATFORM_DE(KDE)
+    virtual bool hasFormat(const QString &mimetype) const
+    {
+        return (m_move && mimetype == kdeCutMimetype) || QMimeData::hasFormat(mimetype);
+    }
+
+    virtual QStringList formats() const
+    {
+        if (m_move)
+            return QMimeData::formats() << kdeCutMimetype;
+
+        return QMimeData::formats();
+    }
+
+protected:
+    virtual QVariant retrieveData(const QString &mimetype, QVariant::Type preferredType) const
+    {
+        if (mimetype == kdeCutMimetype && m_move)
+            return QByteArray("1");
+
+        return QMimeData::retrieveData(mimetype, preferredType);
+    }
+#endif
+
+private:
+    bool m_move;
+};
+
 
 BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 	TasksNode(m_items, parent),
@@ -66,6 +121,9 @@ BaseNode::BaseNode(IFileContainer::Holder &container, Node *parent) :
 	m_shortcuts[Qt::NoModifier     + Qt::Key_F5]     = CopyShortcut;
 	m_shortcuts[Qt::NoModifier     + Qt::Key_F6]     = MoveShortcut;
 	m_shortcuts[Qt::CTRL           + Qt::Key_F]      = SearchShortcut;
+    m_shortcuts[Qt::CTRL           + Qt::Key_C]      = CopyThroughClipboardShortcut;
+    m_shortcuts[Qt::CTRL           + Qt::Key_X]      = CutThroughClipboardShortcut;
+    m_shortcuts[Qt::CTRL           + Qt::Key_V]      = PasteThroughClipboardShortcut;
 }
 
 BaseNode::~BaseNode()
@@ -110,46 +168,53 @@ bool BaseNode::event(QEvent *e)
 		case FilesBaseTask::Event::UpdateFiles:
 		{
 			e->accept();
-			updateFiles(static_cast<BaseTask::Event*>(e));
+			updateFiles(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
 		case FilesBaseTask::Event::ScanFilesForRemove:
 		{
 			e->accept();
-			scanForRemove(static_cast<BaseTask::Event*>(e));
+			scanForRemove(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
 		case FilesBaseTask::Event::RemoveFiles:
 		{
 			e->accept();
-			performRemove(static_cast<BaseTask::Event*>(e));
+			performRemove(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
 		case FilesBaseTask::Event::ScanFilesForSize:
 		{
 			e->accept();
-			scanForSize(static_cast<BaseTask::Event*>(e));
+			scanForSize(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
 		case FilesBaseTask::Event::ScanFilesForCopy:
 		{
 			e->accept();
-			scanForCopy(static_cast<BaseTask::Event*>(e));
+			scanForCopy(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
 		case FilesBaseTask::Event::CopyFiles:
 		{
 			e->accept();
-			performCopy(static_cast<BaseTask::Event*>(e));
+			performCopy(static_cast<BaseTask::Event *>(e));
 			return true;
 		}
 
-		default:
+        case FilesBaseTask::Event::ScanClipboardFiles_Update:
+        {
+            e->accept();
+            scanClipboardFiles(static_cast<BaseTask::Event *>(e));
+            return true;
+        }
+
+        default:
 			return TasksNode::event(e);
 	}
 }
@@ -224,6 +289,18 @@ bool BaseNode::shortcut(INodeView *view, QKeyEvent *event)
 		case SearchShortcut:
 			search(view->currentIndex(), view);
 			return true;
+
+		case CopyThroughClipboardShortcut:
+		    copyThroughClipboard(view, view->selectedIndexes(), false);
+            return true;
+
+		case CutThroughClipboardShortcut:
+            copyThroughClipboard(view, view->selectedIndexes(), true);
+            return true;
+
+		case PasteThroughClipboardShortcut:
+            pasteThroughClipboard(view);
+            return true;
 
 		default:
 			return false;
@@ -612,7 +689,7 @@ void BaseNode::cleanup(Snapshot &snapshot)
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
 		if (snapshot.isRemoved(i))
 		{
-			if ((index = m_items.indexOf((*i).first.as<NodeItem>()->info()->fileName())) != Container::InvalidIndex)
+			if ((index = m_items.indexOf((*i).first)) != Container::InvalidIndex)
 				removeEntry(index);
 
 			i = snapshot.erase(i);
@@ -623,15 +700,12 @@ void BaseNode::cleanup(Snapshot &snapshot)
 
 void BaseNode::processScanEventSnapshot(Snapshot &snapshot, EventFunctor &functor)
 {
-	NodeItem *entry;
 	Container::size_type index;
 
-	cleanup(snapshot);
-
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
-		if ((index = m_items.indexOf((entry = (*i).first.as<NodeItem>())->info()->fileName())) != Container::InvalidIndex)
+		if ((index = m_items.indexOf((*i).first)) != Container::InvalidIndex)
 		{
-			functor(index, entry, (*i).second);
+			functor(index, m_items[index], (*i).second);
 			++i;
 		}
 		else
@@ -640,13 +714,12 @@ void BaseNode::processScanEventSnapshot(Snapshot &snapshot, EventFunctor &functo
 
 void BaseNode::processPerformEventSnapshot(Snapshot &snapshot, EventFunctor &functor)
 {
-	NodeItem *entry;
 	Container::size_type index;
 
 	for (Snapshot::iterator i = snapshot.begin(), end = snapshot.end(); i != end;)
-		if ((index = m_items.indexOf((entry = (*i).first.as<NodeItem>())->info()->fileName())) != Container::InvalidIndex)
+		if ((index = m_items.indexOf((*i).first)) != Container::InvalidIndex)
 		{
-			functor(index, entry, (*i).second);
+			functor(index, m_items[index], (*i).second);
 			++i;
 		}
 		else
@@ -658,7 +731,7 @@ Snapshot BaseNode::updateFilesList() const
 	Snapshot::Files files(m_container.data());
 
 	for (Container::size_type i = 0, size = m_items.size(); i < size; ++i)
-		files.add(m_items[i].as<NodeItem>()->info()->fileName(), m_items[i]);
+        files.add(m_items[i].as<NodeItem>()->info()->fileName(), m_items[i]);
 
 	return files;
 }
@@ -682,18 +755,15 @@ void BaseNode::updateFilesEvent(Snapshot &updates)
 				++update;
 		}
 		else
-			if (updates.isRemoved(update))
-			{
-				if ((index = m_items.indexOf((*update).first.as<NodeItem>()->info()->fileName())) != Container::InvalidIndex)
-				{
-					if (!m_items[index].as<NodeItem>()->isLocked())
-						removeEntry(index);
-				}
+		{
+            if (updates.isRemoved(update) && (index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+            {
+                if (!m_items[index].as<NodeItem>()->isLocked())
+                    removeEntry(index);
+            }
 
-				update = updates.erase(update);
-			}
-			else
-				update = updates.erase(update);
+			update = updates.erase(update);
+		}
 
 	updateColumns(updateRange, columnCount(QModelIndex()) - 1);
 
@@ -722,36 +792,24 @@ void BaseNode::scanForSizeEvent(bool canceled, Snapshot &snapshot)
 	}
 }
 
-bool BaseNode::scanForCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move)
+bool BaseNode::scanForCopyEvent(Snapshot &snapshot, ICopyControl *control, bool move)
 {
-	if (canceled)
-	{
-		ScanForCopyEventFunctor_canceled functor;
-		processScanEventSnapshot(snapshot, functor);
+    ScanForCopyEventFunctor functor(move ? tr("Moving...") : tr("Copying..."));
+    processScanEventSnapshot(snapshot, functor);
 
-		control->canceled();
-		updateBothColumns(functor.updateRange);
-	}
-	else
-	{
-		ScanForCopyEventFunctor functor(move ? tr("Moving...") : tr("Copying..."));
-		processScanEventSnapshot(snapshot, functor);
+    if (control->start(snapshot, move))
+    {
+        updateBothColumns(functor.updateRange);
+        return true;
+    }
+    else
+        control->done(false);
 
-		if (control->start(snapshot, move))
-		{
-			updateBothColumns(functor.updateRange);
-			return true;
-		}
-		else
-			control->done(false);
+    for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
+        (*i).first.as<NodeItem>()->unlock();
 
-		for (Snapshot::const_iterator i = snapshot.begin(), end = snapshot.end(); i != end; ++i)
-			(*i).first.as<NodeItem>()->unlock();
-
-		updateBothColumns(functor.updateRange);
-	}
-
-	return false;
+    updateBothColumns(functor.updateRange);
+    return false;
 }
 
 bool BaseNode::scanForRemoveEvent(bool canceled, Snapshot &snapshot)
@@ -797,7 +855,18 @@ bool BaseNode::scanForRemoveEvent(bool canceled, Snapshot &snapshot)
 bool BaseNode::performCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move)
 {
 	if (canceled)
-	    control->canceled();
+	{
+        Container::size_type index;
+
+        control->canceled();
+
+        for (Snapshot::iterator update = snapshot.begin(), end = snapshot.end(); update != end; update = snapshot.erase(update))
+            if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex && m_items[index].as<NodeItem>()->isTmpItem())
+                if (m_items[index].as<TmpNodeItem>()->originalItem())
+                    m_items[index] = m_items[index].as<TmpNodeItem>()->originalItem();
+                else
+                    removeEntry(index);
+	}
 	else
 	{
         control->done(false);
@@ -868,6 +937,28 @@ Node *BaseNode::createNode(const IFileInfo *file) const
 	return Application::rootNode()->open(m_container.data(), file, const_cast<BaseNode *>(this));
 }
 
+BaseNode::Container::Container()
+{}
+
+BaseNode::Container::size_type BaseNode::Container::size() const
+{
+    return m_container.size();
+}
+
+BaseNode::Container::Item *BaseNode::Container::at(size_type index) const
+{
+    return m_container.at(index).data();
+}
+
+BaseNode::Container::size_type BaseNode::Container::indexOf(Item *item) const
+{
+    for (List::size_type i = 0, size = m_container.size(); i < size; ++i)
+        if (static_cast<Item *>(m_container.at(i).data()) == item)
+            return i;
+
+    return InvalidIndex;
+}
+
 void BaseNode::updateFiles()
 {
 	if (isVisible())
@@ -887,7 +978,7 @@ void BaseNode::scanForSize(const Snapshot &snapshot)
 void BaseNode::scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
 	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForCopy, this, destination, snapshot, move));
-	addTask(task.data(), const_cast<const ScanFilesTask *>(task.data())->destination().data(), snapshot);
+	addTask(task.data(), task.const_data()->destination().data(), snapshot);
 	task.take();
 }
 
@@ -956,10 +1047,23 @@ void BaseNode::scanForCopy(const BaseTask::Event *e)
 	typedef const ScanFilesTask::CopyEvent * Event;
 	NotConstEvent event = const_cast<NotConstEvent>(static_cast<Event>(e));
 
-	if (scanForCopyEvent(event->canceled, event->snapshot, event->destination.data(), event->move))
-		performCopy(event->task, event->snapshot, const_cast<NotConstEvent>(event)->destination, event->move);
-	else
-		removeAllTaskLinks(event->task, event->destination.data());
+    if (event->canceled)
+    {
+        ScanForCopyEventFunctor_canceled functor;
+        processScanEventSnapshot(event->snapshot, functor);
+
+        const_cast<NotConstEvent>(event)->destination->canceled();
+        updateBothColumns(functor.updateRange);
+    }
+    else
+    {
+        cleanup(event->snapshot);
+
+        if (scanForCopyEvent(event->snapshot, event->destination.data(), event->move))
+            performCopy(event->task, event->snapshot, const_cast<NotConstEvent>(event)->destination, event->move);
+        else
+            removeAllTaskLinks(event->task, event->destination.data());
+    }
 }
 
 void BaseNode::scanForRemove(const BaseTask::Event *e)
@@ -972,6 +1076,91 @@ void BaseNode::scanForRemove(const BaseTask::Event *e)
 		performRemove(event->task, event->snapshot);
 	else
 		removeAllTaskLinks(event->task);
+}
+
+void BaseNode::scanClipboardFiles(const BaseTask::Event *e)
+{
+    typedef ScanClipboardFilesTask::CopyEvent * NotConstEvent;
+    NotConstEvent event = static_cast<NotConstEvent>(const_cast<BaseTask::Event *>(e));
+
+    if (event->canceled)
+    {
+        Container::size_type index;
+
+        for (Snapshot::iterator update = event->snapshot.begin(), end = event->snapshot.end(); update != end; update = event->snapshot.erase(update))
+            if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+                removeEntry(index);
+
+        removeAllTaskLinks(event->task, event->destination.data());
+    }
+    else
+    {
+        Container::size_type index;
+        Container::size_type index2;
+
+        for (Snapshot::iterator update = event->snapshot.begin(), end = event->snapshot.end(); update != end;)
+            if (event->snapshot.isRemoved(update))
+            {
+                if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+                    removeEntry(index);
+
+                update = event->snapshot.erase(update);
+            }
+            else
+                if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+                {
+                    index2 = m_items.indexOf((*update).second->info()->fileName());
+
+                    if (index2 == Container::InvalidIndex)
+                        ++update;
+                    else
+                        if (m_items[index2]->isLocked())
+                            if (QMessageBox::question(Application::mainWindow(),
+                                    tr("File already exists"),
+                                    tr("File \"%1\" is locked because of \"%2\" and therefore can not be replaced.").
+                                        arg((*update).second->info()->fileName()).
+                                        arg(m_items[index2]->lockReason()).
+                                        append(QChar(L'\n')).
+                                        append(tr("Skip it?")),
+                                    QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+                            {
+                                removeEntry(index);
+                                update = event->snapshot.erase(update);
+                            }
+                            else
+                            {
+                                for (update = event->snapshot.begin(); update != end; update = event->snapshot.erase(update))
+                                    if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+                                        removeEntry(index);
+
+                                removeAllTaskLinks(event->task, event->destination.data());
+                                return;
+                            }
+                        else
+                        {
+                            (*update).first.as<TmpNodeItem>()->originalItem() = m_items[index2];
+                            m_items[index2] = (*update).first;
+                            removeEntry(index);
+                            ++update;
+                        }
+                }
+                else
+                    update = event->snapshot.erase(update);
+
+        if (scanForCopyEvent(event->snapshot, event->destination.data(), event->move))
+            performCopy(event->task, event->snapshot, const_cast<NotConstEvent>(event)->destination, event->move);
+        else
+        {
+            for (Snapshot::iterator update = event->snapshot.begin(), end = event->snapshot.end(); update != end; update = event->snapshot.erase(update))
+                if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
+                    if (m_items[index].as<TmpNodeItem>()->originalItem())
+                        m_items[index] = m_items[index].as<TmpNodeItem>()->originalItem();
+                    else
+                        removeEntry(index);
+
+            removeAllTaskLinks(event->task, event->destination.data());
+        }
+    }
 }
 
 void BaseNode::performCopy(const BaseTask::Event *e)
@@ -996,39 +1185,91 @@ void BaseNode::performRemove(const BaseTask::Event *e)
 	removeAllTaskLinks(event->task);
 }
 
-BaseNode::Container::Container()
-{}
-
-BaseNode::Container::size_type BaseNode::Container::size() const
+void BaseNode::copyThroughClipboard(INodeView *view, const QModelIndexList &list, bool move)
 {
-	return m_container.size();
+#if PLATFORM_DE(KDE)
+    static const char suffix[] = "\r\n";
+#else
+    static const char suffix[] = "\n";
+#endif
+
+    PScopedPointer<ClipboardMimeData> data(new ClipboardMimeData(move));
+
+    CopyFilesThroughClipboard functor(m_container,
+            QByteArray(m_container->schema()).append("://"),
+            QByteArray::fromRawData(suffix, qstrlen(suffix)));
+
+    processIndexList(list, functor);
+
+    data->setData(functor.data());
+    Application::clipboard()->setMimeData(data.take(), QClipboard::Clipboard);
 }
 
-BaseNode::Container::Item *BaseNode::Container::at(size_type index) const
+void BaseNode::pasteThroughClipboard(INodeView *view)
 {
-	return m_container.at(index).data();
+    QList<QByteArray> files = Application::clipboard()->mimeData()->data(uriListMimetype).split('\n');
+
+    if (!files.isEmpty())
+    {
+        ICopyControl::Holder dest(m_container->createControl(view));
+
+        if (dest)
+        {
+            Snapshot::Files snapshot(m_container.data());
+            IFileInfo::Holder info;
+            NodeItem::Holder item;
+            bool move = false;
+#if PLATFORM_DE(KDE)
+            move = !Application::clipboard()->mimeData()->data(kdeCutMimetype).isEmpty();
+#endif
+
+            beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + files.size() - 1);
+            for (QList<QByteArray>::size_type i = 0, size = files.size(); i < size; ++i)
+            {
+#if PLATFORM_DE(KDE)
+                files[i] = QByteArray::fromPercentEncoding(files.at(i)).trimmed();
+#endif
+                info = new InvalidInfo(files.at(i));
+                item = new TmpNodeItem(info);
+                item->lock(move ? tr("Scanning for move...") : tr("Scanning for copy..."));
+                snapshot.add(item.as<NodeItem>()->info()->fileName(), item);
+                m_items.add(item);
+            }
+            endInsertRows();
+
+            PScopedPointer<ScanClipboardFilesTask> task(new ScanClipboardFilesTask(this, dest, snapshot, move));
+            addTask(task.data(), task.const_data()->destination().data(), snapshot);
+            task.take();
+        }
+    }
 }
 
-BaseNode::Container::size_type BaseNode::Container::indexOf(Item *item) const
+void BaseNode::ProcessedList::call(Container::size_type index, NodeItem *item)
 {
-	for (List::size_type i = 0, size = m_container.size(); i < size; ++i)
-		if (static_cast<Item *>(m_container.at(i).data()) == item)
-			return i;
+    push_back(ProcessedValue(index, item));
+}
 
-	return InvalidIndex;
+void BaseNode::AbsoluteFilePathList::call(Container::size_type index, NodeItem *item)
+{
+    push_back(m_container->location(item->info()));
+}
+
+void BaseNode::CopyFilesThroughClipboard::call(Container::size_type index, NodeItem *item)
+{
+    m_data.append(m_prefix).append(m_container->location(item->info()).as<QByteArray>()).append(m_suffix);
 }
 
 void BaseNode::CancelFunctor::call(Container::size_type index, NodeItem *item)
 {
-	m_items = m_node->cancelTaskAndTakeItems(NodeItem::Holder(item));
+    m_items = m_node->cancelTaskAndTakeItems(NodeItem::Holder(item));
 
-	if (!m_items.isEmpty())
-	{
-		m_union.add(index);
+    if (!m_items.isEmpty())
+    {
+        m_union.add(index);
 
-		for (TasksMap::List::size_type i = 0, size = m_items.size(); i < size; ++i)
-			m_items.at(i).as<TasksNodeItem>()->cancel(m_reason);
-	}
+        for (TasksMap::List::size_type i = 0, size = m_items.size(); i < size; ++i)
+            m_items.at(i).as<TasksNodeItem>()->cancel(m_reason);
+    }
 }
 
 void BaseNode::renameFunctor(Container::size_type index, NodeItem *item)

@@ -31,10 +31,10 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
-		item->setTotalSize(entry->totalSize());
+		item.as<NodeItem>()->setTotalSize(entry->totalSize());
 		item->unlock();
 	}
 };
@@ -49,10 +49,10 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
-		item->clearTotalSize();
+		item.as<NodeItem>()->clearTotalSize();
 		item->unlock();
 	}
 };
@@ -69,10 +69,10 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
-		item->lock(lockReason, entry->totalSize());
+		item.as<NodeItem>()->lock(lockReason, entry->totalSize());
 	}
 };
 
@@ -86,10 +86,10 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
-		item->setTotalSize(entry->totalSize());
+		item.as<NodeItem>()->setTotalSize(entry->totalSize());
 		item->unlock();
 	}
 };
@@ -108,7 +108,7 @@ public:
 	QStringList files;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 
@@ -117,7 +117,7 @@ protected:
 		else
 			files.push_back(entry->info()->fileName());
 
-		item->lock(lockReason, entry->totalSize());
+		item.as<NodeItem>()->lock(lockReason, entry->totalSize());
 	}
 };
 
@@ -131,10 +131,10 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
-		item->setTotalSize(entry->totalSize());
+		item.as<NodeItem>()->setTotalSize(entry->totalSize());
 		item->unlock();
 	}
 };
@@ -151,12 +151,12 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 
 		if (entry->info()->isDir())
-			item->lock(lockReason, entry->totalSize());
+			item.as<NodeItem>()->lock(lockReason, entry->totalSize());
 		else
 			item->lock(lockReason);
 	}
@@ -172,7 +172,7 @@ public:
 	Union updateRange;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		updateRange.add(index);
 		item->unlock();
@@ -191,19 +191,19 @@ public:
 		method(method)
 	{}
 
-	mutable QStringList list;
+	mutable QList<NodeItem::Holder> list;
 	BaseNode *node;
 	Method method;
 
 protected:
-	virtual void call(Container::size_type index, NodeItem *item, SnapshotItem *entry)
+	virtual void call(Container::size_type index, const NodeItem::Holder &item, SnapshotItem *entry)
 	{
 		if (entry->isRemoved())
 			(node->*method)(index);
 		else
 		{
-			list.push_back(item->info()->fileName());
-			item->clearTotalSize();
+			list.push_back(item);
+			item.as<NodeItem>()->clearTotalSize();
 			item->unlock();
 		}
 	}

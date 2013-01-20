@@ -36,6 +36,7 @@ public:
 	RootNode();
 	virtual ~RootNode();
 
+	void container(const QString &uri, IFileContainer::Holder &container, IFileInfo::Holder &info, QString &error) const;
 	::History::Entry *open(INodeView *nodeView, const QString &uri, const QString &currentFile = QString()) const;
 	Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 

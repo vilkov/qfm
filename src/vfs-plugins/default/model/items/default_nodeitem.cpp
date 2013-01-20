@@ -102,6 +102,11 @@ bool NodeItem::isRootItem() const
 	return false;
 }
 
+bool NodeItem::isTmpItem() const
+{
+    return false;
+}
+
 void NodeItem::lock(const QString &reason, quint64 totalSize)
 {
 	m_totalSize = totalSize;

@@ -116,7 +116,7 @@ void Node::switchTo(Node *node, INodeView *view)
 	view->save(new HistoryEntry(node));
 }
 
-Node *Node::viewChild(const Uri::Iterator &path, QModelIndex &selected)
+Node *Node::viewChild(const Uri::iterator &path, QModelIndex &selected)
 {
 	Node *current = this;
 

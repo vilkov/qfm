@@ -25,6 +25,8 @@ DEFAULT_PLUGIN_NS_BEGIN
 
 class LocalRootFolderNode;
 static LocalRootFolderNode *rootNode = NULL;
+static const QString root(QString::fromLatin1("/"));
+static Plugin *s_instance;
 
 
 class LocalRootFolderNode : public BaseNode
@@ -51,7 +53,7 @@ public:
 		return m_path;
 	}
 
-	Node *viewChild(const Uri::Iterator &path, QModelIndex &selected)
+	Node *viewChild(const Uri::iterator &path, QModelIndex &selected)
 	{
 		return Node::viewChild(path, selected);
 	}
@@ -64,12 +66,20 @@ private:
 Plugin::Plugin(::Tools::Settings::Option *parentOption) :
 	m_settings(parentOption)
 {
+    Q_ASSERT(s_instance == NULL);
 	Q_ASSERT(rootNode == NULL);
+    s_instance = this;
 }
 
 Plugin::~Plugin()
 {
 	Q_ASSERT_X(rootNode == NULL, "Plugin::~Plugin", "Bad links counting!");
+}
+
+Plugin *Plugin::instance()
+{
+    Q_ASSERT(s_instance);
+    return s_instance;
 }
 
 void Plugin::registered()
@@ -80,28 +90,50 @@ void Plugin::registered()
 	return &m_settings;
 }
 
-QString Plugin::shema() const
+const Location &Plugin::schema() const
 {
-	static const QString res(QString::fromLatin1("file"));
+    static const char schema[] = "file";
+    static const Location res(location(QString::fromLatin1(schema), QByteArray::fromRawData(schema, qstrlen(schema))));
 	return res;
 }
 
-::VFS::Node *Plugin::open(const Uri::Iterator &path, QModelIndex &selected) const
+::VFS::Node *Plugin::open(const Uri &path, QModelIndex &selected) const
 {
-	static const QString root(QString::fromLatin1("/"));
+    Uri::iterator i(path.begin());
 
-	if ((*path) == root)
+	if ((*i) == root)
 		if (rootNode)
-			return rootNode->viewChild(++path, selected);
+			return rootNode->viewChild(++i, selected);
 		else
 		{
 			IFileContainer::Holder container(new FileContainer(QByteArray()));
 			rootNode = new LocalRootFolderNode(container);
 
-			return rootNode->viewChild(++path, selected);
+			return rootNode->viewChild(++i, selected);
 		}
 	else
 		return NULL;
+}
+
+void Plugin::container(const Uri &path, IFileContainer::Holder &container, IFileInfo::Holder &info, QString &error) const
+{
+    Uri::iterator i(path.begin());
+
+    if ((*i) == root)
+    {
+        QString p;
+        QString res;
+
+        if (!(++i).atEnd())
+            for (p = (*i); !(++i).atEnd(); p = (*i))
+                res.append(QChar(L'/')).append(p);
+
+        if (!p.isEmpty())
+        {
+            container = new FileContainer(res);
+            info = container->info(p, error);
+        }
+    }
 }
 
 Plugin::FileTypeIdList Plugin::fileTypes() const

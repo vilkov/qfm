@@ -23,7 +23,6 @@
 #include <QtCore/QTextCodec>
 #include <QtGui/QDesktopServices>
 
-#include <QtCore/QDebug>
 
 SETTINGS_NS_BEGIN
 

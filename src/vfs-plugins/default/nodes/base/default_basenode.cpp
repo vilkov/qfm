@@ -758,7 +758,7 @@ void BaseNode::updateFilesEvent(Snapshot &updates)
 		{
             if (updates.isRemoved(update) && (index = m_items.indexOf((*update).first)) != Container::InvalidIndex)
             {
-                if (!m_items[index].as<NodeItem>()->isLocked())
+                if (!m_items[index]->isLocked())
                     removeEntry(index);
             }
 
@@ -854,32 +854,46 @@ bool BaseNode::scanForRemoveEvent(bool canceled, Snapshot &snapshot)
 
 bool BaseNode::performCopyEvent(bool canceled, Snapshot &snapshot, ICopyControl *control, bool move)
 {
-	if (canceled)
+    Container::size_type index;
+
+    if (canceled)
 	{
-        Container::size_type index;
-
-        control->canceled();
-
         for (Snapshot::iterator update = snapshot.begin(), end = snapshot.end(); update != end; update = snapshot.erase(update))
             if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex && m_items[index].as<NodeItem>()->isTmpItem())
                 if (m_items[index].as<TmpNodeItem>()->originalItem())
                     m_items[index] = m_items[index].as<TmpNodeItem>()->originalItem();
                 else
                     removeEntry(index);
+
+        control->canceled();
 	}
 	else
-	{
-        control->done(false);
-
         if (move)
         {
+            for (Snapshot::iterator update = snapshot.begin(), end = snapshot.end(); update != end; ++update)
+                if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex && m_items[index].as<NodeItem>()->isTmpItem())
+                    if (m_items[index].as<TmpNodeItem>()->originalItem())
+                        m_items[index] = m_items[index].as<TmpNodeItem>()->originalItem();
+
+            control->done(false);
+
             PerformCopyEventFunctor functor(tr("Removing..."));
             processPerformEventSnapshot(snapshot, functor);
             updateSecondColumn(functor.updateRange);
 
             return true;
         }
-	}
+        else
+        {
+            for (Snapshot::iterator update = snapshot.begin(), end = snapshot.end(); update != end; ++update)
+                if ((index = m_items.indexOf((*update).first)) != Container::InvalidIndex && m_items[index].as<NodeItem>()->isTmpItem())
+                    if (m_items[index].as<TmpNodeItem>()->originalItem())
+                        m_items[index] = m_items[index].as<TmpNodeItem>()->originalItem();
+                    else
+                        removeEntry(index);
+
+            control->done(false);
+        }
 
     PerformCopyEventFunctor_canceled functor;
     processPerformEventSnapshot(snapshot, functor);

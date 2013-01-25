@@ -87,11 +87,20 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, SnapshotItem 
 
         if (m_tryier->tryTo(CreateDestinationFolder(destination, entry->info()->fileName(), dest)))
             for (SnapshotItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)
+            {
                 copyEntry(dest.data(), (*i), aborted);
+
+                if (!(*i)->isRemoved())
+                    entry->setRemoved(false);
+            }
+        else
+            entry->setRemoved(false);
     }
     else
         if (m_questioner->askFor(OverwriteFile(entry->container(), destination, entry->info()->fileName())))
             copyFile(destination, entry, aborted);
+        else
+            entry->setRemoved(false);
 }
 
 void PerformCopyTask::copyFile(const IFileContainer *destination, SnapshotItem *entry, const volatile Flags &aborted)
@@ -119,6 +128,8 @@ void PerformCopyTask::copyFile(const IFileContainer *destination, SnapshotItem *
                     break;
                 }
         }
+        else
+            entry->setRemoved(m_tryier->tryAgain());
     while (m_tryier->tryAgain());
 }
 

@@ -82,7 +82,7 @@ void PerformRemoveTask::removeEntry(SnapshotItem *entry, volatile bool &tryAgain
 
 void PerformRemoveTask::doRemove(SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)
 {
-	if (!entry->container()->remove(entry->info(), m_error))
+	if (entry->isRemoved() && !entry->container()->remove(entry->info(), m_error))
 		if (m_skipAllIfNotRemove)
 			entry->setRemoved(false);
 		else

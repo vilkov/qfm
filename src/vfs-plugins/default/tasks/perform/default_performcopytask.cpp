@@ -83,7 +83,7 @@ void PerformCopyTask::copyEntry(const IFileContainer *destination, SnapshotItem 
 {
     if (entry->info()->isDir())
     {
-        PScopedPointer<IFileContainer> dest;
+        ::Tools::Memory::ScopedPointer<IFileContainer> dest;
 
         if (m_tryier->tryTo(CreateDestinationFolder(destination, entry->info()->fileName(), dest)))
             for (SnapshotItem::const_iterator i = entry->begin(), end = entry->end(); i != end && !aborted; ++i)

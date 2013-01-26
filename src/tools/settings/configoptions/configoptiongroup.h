@@ -47,7 +47,7 @@ public:
 	virtual void setEnabled(bool value) { m_container->setEnabled(value); }
 	virtual QWidget *createGroup(const QFont &font)
 	{
-		PScopedPointer<QWidget> parent(m_container = new QWidget());
+		::Tools::Memory::ScopedPointer<QWidget> parent(m_container = new QWidget());
 		QGridLayout *layout = new QGridLayout(parent.data());
 
 		for (size_type i = 0, size = m_settings.size(); i < size; ++i)
@@ -69,7 +69,7 @@ public:
 
 	ConfigOptionGroup *add(const QString &title)
 	{
-		PScopedPointer<ConfigOptionGroup> group(new ConfigOptionGroup(title, this));
+		::Tools::Memory::ScopedPointer<ConfigOptionGroup> group(new ConfigOptionGroup(title, this));
 		m_settings.push_back(group.data());
 		return group.take();
 	}
@@ -77,7 +77,7 @@ public:
 	template <typename UserConfigOptionClass>
 	ConfigOptionValue *add(const qint32 &id, const QString &title)
 	{
-		PScopedPointer<UserConfigOptionClass> setting(new UserConfigOptionClass(id, title, this));
+		::Tools::Memory::ScopedPointer<UserConfigOptionClass> setting(new UserConfigOptionClass(id, title, this));
 		m_settings.push_back(setting.data());
 		return setting.take();
 	}
@@ -85,7 +85,7 @@ public:
 	template <typename Editor>
 	ConfigOptionValue *add(const qint32 &id, const QString &title, const QVariant &defaultValue)
 	{
-		PScopedPointer<ConfigOptionValueTemplate<Editor> > setting(new ConfigOptionValueTemplate<Editor>(id, title, defaultValue, this));
+		::Tools::Memory::ScopedPointer<ConfigOptionValueTemplate<Editor> > setting(new ConfigOptionValueTemplate<Editor>(id, title, defaultValue, this));
 		m_settings.push_back(setting.data());
 		return setting.take();
 	}
@@ -93,7 +93,7 @@ public:
 protected:
 	QWidget *createChildGroup(QWidget *parentWidget, const QFont &font)
 	{
-		PScopedPointer<QGroupBox> parent(static_cast<QGroupBox*>(m_container = new QGroupBox(title(), parentWidget)));
+		::Tools::Memory::ScopedPointer<QGroupBox> parent(static_cast<QGroupBox*>(m_container = new QGroupBox(title(), parentWidget)));
 		QGridLayout *layout = new QGridLayout(parent.data());
 
 		for (size_type i = 0, size = m_settings.size(); i < size; ++i)

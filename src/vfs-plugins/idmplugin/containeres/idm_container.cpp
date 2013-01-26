@@ -19,7 +19,7 @@
 #include "idm_container.h"
 #include "../idm_plugin.h"
 
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 
 
 IDM_PLUGIN_NS_BEGIN

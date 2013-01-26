@@ -30,7 +30,7 @@ class INode;
 class ICopyControl : public IFileContainer
 {
 public:
-	typedef PScopedPointer<ICopyControl> Holder;
+	typedef ::Tools::Memory::ScopedPointer<ICopyControl> Holder;
 
 public:
 	virtual INode *node() const = 0;

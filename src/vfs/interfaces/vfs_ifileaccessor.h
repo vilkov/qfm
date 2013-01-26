@@ -28,9 +28,9 @@ VFS_NS_BEGIN
 class IFileAccessor
 {
 public:
-	typedef PScopedPointer<IFileAccessor> Holder;
-	typedef uchar                         value_type;
-	typedef IFileInfo::size_type          size_type;
+	typedef ::Tools::Memory::ScopedPointer<IFileAccessor> Holder;
+	typedef uchar                                         value_type;
+	typedef IFileInfo::size_type                          size_type;
 	enum OpenMode
 	{
 		ReadOnly  = 0x00000001,

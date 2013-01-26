@@ -29,7 +29,7 @@
 #include "undo/concrete/idm_storage_undoremovevalue.h"
 #include "undo/concrete/idm_storage_undorenameproperty.h"
 
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 #include <sqlite3.h>
 
 
@@ -393,7 +393,7 @@ bool Storage::removeEntity(Entity *entity)
 			(entity->type() != Database::Composite || cleanupPropertyValues(entity)))
 		{
 			Entity *parent;
-			PScopedPointer<StorageUndoRemoveEntity> command(new StorageUndoRemoveEntity(entity));
+			::Tools::Memory::ScopedPointer<StorageUndoRemoveEntity> command(new StorageUndoRemoveEntity(entity));
 			const Entity::Parents &parents = entity->parents();
 
 			for (Entity::Parents::size_type i = 0, size = parents.size(); i < size; ++i)
@@ -491,7 +491,7 @@ bool Storage::removeProperty(Entity *entity, Entity *property)
 
 				if (sqlite3_exec(m_db, sqlQuery.data(), NULL, NULL, &errorMsg) == SQLITE_OK)
 				{
-					PScopedPointer<StorageUndoRemoveProperty> command(new StorageUndoRemoveProperty(entity, property, entity->at(entity->indexOf(property)).name));
+					::Tools::Memory::ScopedPointer<StorageUndoRemoveProperty> command(new StorageUndoRemoveProperty(entity, property, entity->at(entity->indexOf(property)).name));
 					entity->remove(property);
 					property->removeParent(entity);
 					m_undo.last().push_back(command.take());

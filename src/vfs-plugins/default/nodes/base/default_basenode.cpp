@@ -377,7 +377,7 @@ void BaseNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
 		if (action->isAsynchronous())
 		{
-			PScopedPointer<PerformActionTask> task;
+			::Tools::Memory::ScopedPointer<PerformActionTask> task;
 
 			if (task = static_cast<const AsyncAction *>(action)->process(this, m_container, files))
 			{
@@ -977,7 +977,7 @@ void BaseNode::updateFiles()
 {
 	if (isVisible())
 	{
-		PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::UpdateFiles, this, updateFilesList()));
+		::Tools::Memory::ScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::UpdateFiles, this, updateFilesList()));
 		setUpdating(true);
 		handleTask(task.take());
 	}
@@ -985,20 +985,20 @@ void BaseNode::updateFiles()
 
 void BaseNode::scanForSize(const Snapshot &snapshot)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForSize, this, snapshot));
+	::Tools::Memory::ScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForSize, this, snapshot));
 	addTask(task.take(), snapshot);
 }
 
 void BaseNode::scanForCopy(const Snapshot &snapshot, ICopyControl::Holder &destination, bool move)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForCopy, this, destination, snapshot, move));
+	::Tools::Memory::ScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForCopy, this, destination, snapshot, move));
 	addTask(task.data(), task.const_data()->destination().data(), snapshot);
 	task.take();
 }
 
 void BaseNode::scanForRemove(const Snapshot &snapshot)
 {
-	PScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForRemove, this, snapshot));
+	::Tools::Memory::ScopedPointer<ScanFilesTask> task(new ScanFilesTask(FilesBaseTask::Event::ScanFilesForRemove, this, snapshot));
 	addTask(task.take(), snapshot);
 }
 
@@ -1006,13 +1006,13 @@ void BaseNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyCon
 {
 	if (destination->isDefault() && move)
 	{
-		PScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
+		::Tools::Memory::ScopedPointer<PerformMoveTask> task(new PerformMoveTask(this, destination, snapshot));
 		resetTask(task.data(), oldTask);
 		task.take();
 	}
 	else
 	{
-		PScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
+		::Tools::Memory::ScopedPointer<PerformCopyTask> task(new PerformCopyTask(this, destination, snapshot, move));
 		resetTask(task.data(), oldTask);
 		task.take();
 	}
@@ -1020,13 +1020,13 @@ void BaseNode::performCopy(BaseTask *oldTask, const Snapshot &snapshot, ICopyCon
 
 void BaseNode::performRemove(BaseTask *oldTask, const Snapshot &snapshot)
 {
-	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
+	::Tools::Memory::ScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
 	resetTask(task.take(), oldTask);
 }
 
 void BaseNode::performRemove(BaseTask *oldTask, const ICopyControl *destination, const Snapshot &snapshot)
 {
-	PScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
+	::Tools::Memory::ScopedPointer<PerformRemoveTask> task(new PerformRemoveTask(this, snapshot));
 	resetTask(task.take(), oldTask, destination);
 }
 
@@ -1207,7 +1207,7 @@ void BaseNode::copyThroughClipboard(INodeView *view, const QModelIndexList &list
     static const char suffix[] = "\n";
 #endif
 
-    PScopedPointer<ClipboardMimeData> data(new ClipboardMimeData(move));
+    ::Tools::Memory::ScopedPointer<ClipboardMimeData> data(new ClipboardMimeData(move));
 
     CopyFilesThroughClipboard functor(m_container,
             QByteArray(m_container->schema()).append("://"),
@@ -1251,7 +1251,7 @@ void BaseNode::pasteThroughClipboard(INodeView *view)
             }
             endInsertRows();
 
-            PScopedPointer<ScanClipboardFilesTask> task(new ScanClipboardFilesTask(this, dest, snapshot, move));
+            ::Tools::Memory::ScopedPointer<ScanClipboardFilesTask> task(new ScanClipboardFilesTask(this, dest, snapshot, move));
             addTask(task.data(), task.const_data()->destination().data(), snapshot);
             task.take();
         }

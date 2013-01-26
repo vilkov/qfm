@@ -97,7 +97,7 @@ protected:
     class OpenSourceFile
     {
     public:
-        OpenSourceFile(const IFileContainer *container, const IFileInfo *file, PScopedPointer<IFileAccessor> &result) :
+        OpenSourceFile(const IFileContainer *container, const IFileInfo *file, ::Tools::Memory::ScopedPointer<IFileAccessor> &result) :
             m_container(container),
             file(file),
             m_result(result)
@@ -108,13 +108,13 @@ protected:
     private:
         const IFileContainer *m_container;
         const IFileInfo *file;
-        PScopedPointer<IFileAccessor> &m_result;
+        ::Tools::Memory::ScopedPointer<IFileAccessor> &m_result;
     };
 
     class CreateDestinationFile
     {
     public:
-        CreateDestinationFile(const IFileContainer *container, const IFileInfo *file, PScopedPointer<IFileAccessor> &result) :
+        CreateDestinationFile(const IFileContainer *container, const IFileInfo *file, ::Tools::Memory::ScopedPointer<IFileAccessor> &result) :
             m_container(container),
             file(file),
             m_result(result)
@@ -125,7 +125,7 @@ protected:
     private:
         const IFileContainer *m_container;
         const IFileInfo *file;
-        PScopedPointer<IFileAccessor> &m_result;
+        ::Tools::Memory::ScopedPointer<IFileAccessor> &m_result;
     };
 
 protected:
@@ -143,8 +143,8 @@ protected:
     Questioner *m_questioner;
 	TaskProgress m_progress;
 
-	PScopedPointer<IFileAccessor> m_destFile;
-	PScopedPointer<IFileAccessor> m_sourceFile;
+	::Tools::Memory::ScopedPointer<IFileAccessor> m_destFile;
+	::Tools::Memory::ScopedPointer<IFileAccessor> m_sourceFile;
 	IFileAccessor::size_type m_readed;
 	IFileAccessor::size_type m_written;
 	IFileAccessor::value_type m_buffer[FileReadWriteGranularity];

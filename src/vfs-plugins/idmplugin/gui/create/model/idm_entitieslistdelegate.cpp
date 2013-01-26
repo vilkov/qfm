@@ -19,7 +19,7 @@
 #include "idm_entitieslistdelegate.h"
 #include "items/idm_entitieslistmodelitem.h"
 
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 
 #include <QtGui/QComboBox>
 #include <QtGui/QLineEdit>
@@ -42,7 +42,7 @@ QWidget *EntitiesListDelegate::createEditor(QWidget *parent, const QStyleOptionV
 		}
 		case 1:
 		{
-			PScopedPointer<QComboBox> editor(new QComboBox(parent));
+			::Tools::Memory::ScopedPointer<QComboBox> editor(new QComboBox(parent));
 
 			for (IdmContainer::size_type i = 0, size = m_container.size(); i < size; ++i)
 		    	editor->addItem(m_container.at(i)->name(), m_container.at(i)->id());

@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "settingsvisibleoptionfont.h"
-#include "../../../pointers/pscopedpointer.h"
+#include "../../../memory/memory_scopedpointer.h"
 #include "../../../events/qt/imp/mouseeventsource.h"
 
 #include <QtGui/QLabel>
@@ -38,7 +38,7 @@ VisibleOptioinFont::VisibleOptioinFont(const QString &label, const QString &id, 
 QWidget *VisibleOptioinFont::createEditor()
 {
 	typedef Events::MouseReleaseEventSource<Events::EventSourceBase<QPushButton> > Button;
-	PScopedPointer<QWidget> page(new QWidget());
+	::Tools::Memory::ScopedPointer<QWidget> page(new QWidget());
 	QHBoxLayout *layout(new QHBoxLayout(page.data()));
 
 	layout->setSpacing(3);

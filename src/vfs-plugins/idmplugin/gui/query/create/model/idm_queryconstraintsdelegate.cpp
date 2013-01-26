@@ -19,7 +19,7 @@
 #include "idm_queryconstraintsdelegate.h"
 #include "../../../../storage/constraints/group/idm_groupconstraint.h"
 
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 #include <QtGui/QComboBox>
 
 
@@ -38,7 +38,7 @@ QWidget *QueryConstraintsDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 		case 1:
 		{
-			PScopedPointer<QComboBox> editor(new QComboBox(parent));
+			::Tools::Memory::ScopedPointer<QComboBox> editor(new QComboBox(parent));
 
 			editor->addItem(GroupConstraint::typeToString(GroupConstraint::And), GroupConstraint::And);
 	    	editor->addItem(GroupConstraint::typeToString(GroupConstraint::Or), GroupConstraint::Or);

@@ -38,7 +38,7 @@ public:
 	class IEnumerator
 	{
 	public:
-		typedef PScopedPointer<IEnumerator> Holder;
+		typedef ::Tools::Memory::ScopedPointer<IEnumerator> Holder;
 
 	public:
 		virtual ~IEnumerator();
@@ -51,7 +51,7 @@ public:
 	class Filter
 	{
 	public:
-		typedef PScopedPointer<Filter> Holder;
+		typedef ::Tools::Memory::ScopedPointer<Filter> Holder;
 
 	public:
 		virtual ~Filter();

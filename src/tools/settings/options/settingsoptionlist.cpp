@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "settingsoptionlist.h"
-#include "../../pointers/pscopedpointer.h"
+#include "../../memory/memory_scopedpointer.h"
 
 
 SETTINGS_NS_BEGIN
@@ -45,7 +45,7 @@ void OptionList::save(QXmlStreamWriter &stream) const
 
 void OptionList::load(QXmlStreamReader &stream)
 {
-	PScopedPointer<Option> option;
+	::Tools::Memory::ScopedPointer<Option> option;
 
 	for (QXmlStreamReader::TokenType token = stream.readNext(); !stream.atEnd(); token = stream.readNext())
 		if (token == QXmlStreamReader::EndElement && stream.name() == id())

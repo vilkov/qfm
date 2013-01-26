@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "settingsvisibleoptionvalue.h"
-#include "../../../pointers/pscopedpointer.h"
+#include "../../../memory/memory_scopedpointer.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
@@ -33,7 +33,7 @@ VisibleOptionValue::VisibleOptionValue(const QString &label, const QString &id, 
 
 QWidget *VisibleOptionValue::createEditor()
 {
-	PScopedPointer<QWidget> page(new QWidget());
+	::Tools::Memory::ScopedPointer<QWidget> page(new QWidget());
 	QHBoxLayout *layout(new QHBoxLayout(page.data()));
 
 	layout->setSpacing(1);

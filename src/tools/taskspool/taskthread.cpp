@@ -18,7 +18,7 @@
  */
 #include "taskthread.h"
 #include "taskpool.h"
-#include "../pointers/pscopedpointer.h"
+#include "../memory/memory_scopedpointer.h"
 #include "../exceptionshandler/exceptionshandler.h"
 
 
@@ -67,7 +67,7 @@ void TaskThread::run()
 				m_condition.wait(m_mutex);
 			else
 			{
-				PScopedPointer<Task> task(m_task);
+				::Tools::Memory::ScopedPointer<Task> task(m_task);
 				Task::Bit bit(m_abort, 0, task->flags());
 				m_task = 0;
 

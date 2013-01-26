@@ -45,7 +45,7 @@ QWidget *ColorConfigOption::createLabel(QWidget *parent, const QFont &font)
 
 QWidget *ColorConfigOption::createEditor(QWidget *parent)
 {
-	QScopedPointer<QWidget> widget(new QWidget(parent));
+	::Tools::Memory::ScopedPointer<QWidget> widget(new QWidget(parent));
 	QHBoxLayout *layout = new QHBoxLayout(widget.data());
 
 	layout->setMargin(1);

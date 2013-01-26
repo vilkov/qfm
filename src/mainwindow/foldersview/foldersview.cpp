@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "foldersview.h"
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 
 
 FoldersView::FoldersView(const QString &id, ::Tools::Settings::Scope *settings, FoldersViewRef other, QWidget *parent) :
@@ -48,7 +48,7 @@ void FoldersView::updateTitle(QWidget *widget, const QString &fileName)
 
 void FoldersView::openInNewTab(::VFS::INode *node, const QModelIndex &index, const QList<qint32> &geometry)
 {
-	PScopedPointer<DirectoryView> widget(new DirectoryView(node, index, geometry, this));
+	::Tools::Memory::ScopedPointer<DirectoryView> widget(new DirectoryView(node, index, geometry, this));
 	m_doNotRefreshTab = true;
 	m_tabWidget.setCurrentIndex(m_tabWidget.addTab(widget.data(), widget->title()));
 	widget.take()->setFocus();
@@ -58,7 +58,7 @@ void FoldersView::closeCurrentTab()
 {
 	if (m_tabWidget.count() > 1)
 	{
-		PScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
+		::Tools::Memory::ScopedPointer<QWidget> widget(m_tabWidget.currentWidget());
 		m_tabWidget.removeTab(m_tabWidget.currentIndex());
 		static_cast<DirectoryView *>(m_tabWidget.currentWidget())->setFocus();
 	}
@@ -104,14 +104,14 @@ void FoldersView::load()
 {
 	if (m_settings.tabs().isEmpty())
 	{
-		PScopedPointer<DirectoryView> widget(new DirectoryView(DirectoryView::defaultPath(), this));
+		::Tools::Memory::ScopedPointer<DirectoryView> widget(new DirectoryView(DirectoryView::defaultPath(), this));
 		m_tabWidget.addTab(widget.data(), widget->title());
 		widget.release();
 	}
 	else
 	{
 		Tab *tab;
-		PScopedPointer<DirectoryView> widget;
+		::Tools::Memory::ScopedPointer<DirectoryView> widget;
 
 		for (Tabs::const_iterator i = m_settings.tabs().begin(), end = m_settings.tabs().end(); i != end; ++i)
 		{

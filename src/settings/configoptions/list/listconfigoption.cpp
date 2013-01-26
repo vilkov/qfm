@@ -41,7 +41,7 @@ void ListConfigOption::setEnabled(bool value)
 
 QWidget *ListConfigOption::createEditor(QWidget *parent)
 {
-	QScopedPointer<QWidget> widget(m_widget = new QWidget(parent));
+	::Tools::Memory::ScopedPointer<QWidget> widget(m_widget = new QWidget(parent));
 	QVBoxLayout *vertical = new QVBoxLayout(widget.data());
 	QHBoxLayout *horizontal = new QHBoxLayout();
 	QPushButton *button;

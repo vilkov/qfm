@@ -22,7 +22,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 #include "../settings_ns.h"
-#include "../../pointers/pscopedpointer.h"
+#include "../../memory/memory_scopedpointer.h"
 
 
 SETTINGS_NS_BEGIN

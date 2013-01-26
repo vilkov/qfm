@@ -77,9 +77,9 @@ endif (USE_GPROF)
 # Definitions
 add_definitions (
     -DUNICODE
+    -D_UNICODE
     -DTOOLS_THREADS_BACKEND_QT
     -DTOOLS_TYPES_BACKEND_QT
-    -DTOOLS_POINTERS_BACKEND_QT
     
     -DQT_NO_CAST_FROM_ASCII
 )

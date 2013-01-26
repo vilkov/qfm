@@ -252,7 +252,7 @@ void QueryResultsNode::contextMenu(const QModelIndexList &list, INodeView *view)
 
         if (action->isAsynchronous())
         {
-            PScopedPointer<PerformActionTask> task;
+            ::Tools::Memory::ScopedPointer<PerformActionTask> task;
 
             if (task = static_cast<const AsyncAction *>(action)->process(this, m_container.container(), files))
             {

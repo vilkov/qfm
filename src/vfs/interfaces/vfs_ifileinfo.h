@@ -21,7 +21,7 @@
 
 #include <QtCore/QDateTime>
 #include <QtCore/QTextCodec>
-#include <tools/pointers/pscopedpointer.h>
+#include <tools/memory/memory_scopedpointer.h>
 #include "vfs_ifiletype.h"
 #include "../location/vfs_location.h"
 
@@ -33,8 +33,8 @@ class IFileContainer;
 class IFileInfo
 {
 public:
-	typedef PScopedPointer<IFileInfo> Holder;
-	typedef qint64                    size_type;
+	typedef ::Tools::Memory::ScopedPointer<IFileInfo> Holder;
+	typedef qint64                                    size_type;
     enum Permissions
     {
         Read = 0x0004, Write = 0x0002, Exec = 0x0001

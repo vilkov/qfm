@@ -178,7 +178,7 @@ FileContainerScanner::IEnumerator *FileContainerScanner::enumerate(QString &erro
 void FileContainerScanner::scan(const ScanArguments &arguments, QString &error) const
 {
 	IFileInfo::Holder info;
-	PScopedPointer<SnapshotItem> subnode;
+	::Tools::Memory::ScopedPointer<SnapshotItem> subnode;
 
 	if (arguments.snapshot.isEmpty())
 		fill(arguments.snapshot, arguments.aborted, error);
@@ -264,7 +264,7 @@ void FileContainerScanner::fill(Snapshot &snapshot, const volatile Flags &aborte
 		Enumerator::Buffer buffer;
 
 		IFileInfo::Holder info;
-		PScopedPointer<SnapshotItem> subtree;
+		::Tools::Memory::ScopedPointer<SnapshotItem> subtree;
 
 		path.append('/');
 
@@ -311,7 +311,7 @@ void FileContainerScanner::scan(SnapshotItem *root, const volatile Flags &aborte
 		Enumerator::Buffer buffer;
 
 		IFileInfo::Holder info;
-		PScopedPointer<SnapshotItem> subtree;
+		::Tools::Memory::ScopedPointer<SnapshotItem> subtree;
 
 		path.append('/');
 
@@ -362,7 +362,7 @@ void FileContainerScanner::search(const IFileContainer *container, const Callbac
 		QList<QByteArray> dirs;
 		IFileInfo::Holder infoHolder;
 		IFileContainer::Holder containerHolder;
-		PScopedPointer<SnapshotItem> subtree;
+		::Tools::Memory::ScopedPointer<SnapshotItem> subtree;
 
 		path.append('/');
 

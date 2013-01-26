@@ -33,7 +33,7 @@ class INodeView;
 class IFileContainer
 {
 public:
-	typedef PScopedPointer<IFileContainer> Holder;
+	typedef ::Tools::Memory::ScopedPointer<IFileContainer> Holder;
 
 public:
 	virtual ~IFileContainer();

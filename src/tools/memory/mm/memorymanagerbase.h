@@ -93,7 +93,7 @@ template <typename T>
 class ScopedPointer
 {
 public:
-	typedef ScopedPointer<T>                               class_type;
+	typedef ::Tools::Memory::ScopedPointer<T>                               class_type;
 	typedef typename Templates::remove_qualifiers<T>::type type;
 
 public:

@@ -54,7 +54,7 @@ void TaskProgress::complete()
 {
 	typedef CompletedProgressEvent Event;
 
-	PScopedPointer<Event> event(new Event(m_item, m_startTime.msecsTo(QDateTime::currentDateTime())));
+	::Tools::Memory::ScopedPointer<Event> event(new Event(m_item, m_startTime.msecsTo(QDateTime::currentDateTime())));
 	Application::postEvent(m_receiver, event.take());
 }
 
@@ -67,7 +67,7 @@ void TaskProgress::postEvent()
 {
 	typedef UpdateProgressEvent Event;
 
-	PScopedPointer<Event> event(new Event(m_item, m_progress, m_startTime.msecsTo(m_currentTime)));
+	::Tools::Memory::ScopedPointer<Event> event(new Event(m_item, m_progress, m_startTime.msecsTo(m_currentTime)));
 	Application::postEvent(m_receiver, event.take());
 }
 

@@ -30,7 +30,7 @@ class SnapshotItem
 	Q_DISABLE_COPY(SnapshotItem)
 
 public:
-	typedef PScopedPointer<SnapshotItem> Holder;
+	typedef ::Tools::Memory::ScopedPointer<SnapshotItem> Holder;
 	typedef QList<SnapshotItem *>        Container;
 	typedef Container::iterator          iterator;
 	typedef Container::const_iterator    const_iterator;

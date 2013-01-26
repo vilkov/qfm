@@ -24,6 +24,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QByteArray>
 #include <QtCore/QReadWriteLock>
+#include <tools/memory/memory_scopedpointer.h>
 #include "../../desktop_ns.h"
 
 
@@ -117,7 +118,7 @@ protected:
 
 	QIcon *write(const Index &index, const QString &fileName)
 	{
-		QScopedPointer<QIcon> icon(new QIcon());
+		::Tools::Memory::ScopedPointer<QIcon> icon(new QIcon());
 
 		icon->addFile(fileName, QSize(index.size, index.size));
 		m_cache.insert(index, icon.data());

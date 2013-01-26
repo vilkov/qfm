@@ -74,7 +74,7 @@ private:
 	ApplicationSettings m_settings;
 	::VFS::Actions m_globalActions;
 	::Tools::TasksPool::TaskPool m_taskPool;
-    QScopedPointer< ::VFS::RootNode > m_rootNode;
+    ::Tools::Memory::ScopedPointer< ::VFS::RootNode > m_rootNode;
 	MainWindow m_mainWindow;
 };
 

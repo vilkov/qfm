@@ -17,7 +17,7 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "settingsgroupbox.h"
-#include "../../../../pointers/pscopedpointer.h"
+#include "../../../../memory/memory_scopedpointer.h"
 
 #include <QtGui/QGroupBox>
 #include <QtGui/QVBoxLayout>
@@ -32,7 +32,7 @@ GroupBox::GroupBox(const QString &title, const QString &id, Option *parent) :
 
 QWidget *GroupBox::createEditor()
 {
-	PScopedPointer<QGroupBox> page(new QGroupBox(title()));
+	::Tools::Memory::ScopedPointer<QGroupBox> page(new QGroupBox(title()));
 	QVBoxLayout *layout(new QVBoxLayout(page.data()));
 
 	QGroupBox m_selectedPage;

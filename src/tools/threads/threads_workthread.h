@@ -16,44 +16,42 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PTHREAD_QT_H_
-#define PTHREAD_QT_H_
+#ifndef THREADS_WORKTHREAD_H_
+#define THREADS_WORKTHREAD_H_
 
-#include <QtCore/QThread>
-#include "../threadbase.h"
+#include "threads_mutex.h"
+#include "threads_thread.h"
+#include "threads_condition.h"
 
 
-class PThread : public ThreadBase
+THREADS_NS_BEGIN
+
+class WorkThread : public Thread
 {
 public:
-	PThread() :
-		m_holder(this)
-	{}
+	WorkThread();
 
-	virtual void start() { m_holder.start(Holder::InheritPriority); }
-	virtual void terminate() { m_holder.terminate(); }
+	volatile bool isStoped() const { return m_stoped; }
+	void start(Priority priority);
+	void stop();
+	void stop(bool wait);
+    void terminate();
 
-	void wait() { m_holder.wait(); }
+protected:
+	const volatile bool &stopedFlag() const { return m_stoped; }
 
-private:
-    class Holder : public QThread
-    {
-    public:
-    	Holder(PThread *thread) :
-    		QThread(),
-        	m_thread(thread)
-    	{}
-
-    protected:
-        virtual void run() { m_thread->run(); }
-
-    private:
-    	PThread *m_thread;
-    };
-    friend class Holder;
+protected:
+	virtual void run();
+	virtual void execute() = 0;
 
 private:
-    Holder m_holder;
+	bool m_stoped;
+	bool m_abortRequested;
+	Mutex m_mutex;
+	Condition m_condStoped;
+	Condition m_condStopAccepted;
 };
 
-#endif /* PTHREAD_QT_H_ */
+THREADS_NS_END
+
+#endif /* THREADS_WORKTHREAD_H_ */

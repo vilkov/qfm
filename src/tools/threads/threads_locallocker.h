@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALLOCKER_H_
-#define LOCALLOCKER_H_
+#ifndef THREADS_LOCALLOCKER_H_
+#define THREADS_LOCALLOCKER_H_
 
 /**
  * This methods should be implemented
@@ -95,4 +95,4 @@
 	};                                                             \
 	friend class Locker
 
-#endif /* LOCALLOCKER_H_ */
+#endif /* THREADS_LOCALLOCKER_H_ */

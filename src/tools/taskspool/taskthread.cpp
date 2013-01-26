@@ -25,7 +25,7 @@
 TASKSPOOL_NS_BEGIN
 
 TaskThread::TaskThread(TaskPool *pool, Task *task) :
-	PThread(),
+	Thread(),
 	m_task(task),
 	m_pool(pool)
 {
@@ -39,14 +39,14 @@ TaskThread::~TaskThread()
 
 void TaskThread::handle(Task *task)
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 	m_task = task;
     m_condition.wakeOne();
 }
 
 void TaskThread::terminate()
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 	m_abort = true;
 	m_condition.wakeOne();
 	locker.unlock();
@@ -56,7 +56,7 @@ void TaskThread::terminate()
 
 void TaskThread::run()
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker lock(m_mutex);
 
     for (;;)
     {
@@ -71,9 +71,9 @@ void TaskThread::run()
 				Task::Bit bit(m_abort, 0, task->flags());
 				m_task = 0;
 
-				locker.unlock();
 				TRY
 				{
+				    Mutex::Unlocker unlock(lock);
 					task->run(task->flags());
 				}
 				CATCH_ALL
@@ -81,7 +81,6 @@ void TaskThread::run()
 					"TaskThread::run",
 					DO_NOTHING
 				)
-				locker.lock();
 
 				m_task = m_pool->nextTask(this);
 			}

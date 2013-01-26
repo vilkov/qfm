@@ -1,7 +1,7 @@
 /**
  * This file is part of QFM.
  *
- * Copyright (C) 2011-2012 Dmitriy Vilkov, <dav.daemon@gmail.com>
+ * Copyright (C) 2011-2013 Dmitriy Vilkov, <dav.daemon@gmail.com>
  *
  * QFM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,40 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef TASKPOOL_H_
-#define TASKPOOL_H_
+#ifndef THREADS_CONDITION_H_
+#define THREADS_CONDITION_H_
 
-#include <list>
-#include <stdint.h>
-#include "taskthread.h"
-#include "../threads/threads_mutex.h"
+#include <QtCore/QWaitCondition>
+#include "threads_mutex.h"
 
 
-TASKSPOOL_NS_BEGIN
+THREADS_NS_BEGIN
 
-class TaskPool
+class Condition
 {
 public:
-	TaskPool(int32_t maxThreads);
-	~TaskPool();
+    Condition()
+    {}
 
-	bool handleImmediately(Task *task);
-	void handle(Task *task);
-	bool remove(Task *task);
-	void clear();
-
-protected:
-	friend class TaskThread;
-	Task *nextTask(TaskThread *thread);
+    void wait(Mutex &mutex) { m_condition.wait(&mutex.m_mutex); }
+    bool wait(Mutex &mutex, unsigned long time) { return m_condition.wait(&mutex.m_mutex, time); }
+    void wakeOne() { m_condition.wakeOne(); }
+    void wakeAll() { m_condition.wakeAll(); }
 
 private:
-	Mutex m_mutex;
-    uint32_t m_maxThreads;
-    std::list<Task*> m_tasks;
-	std::list<TaskThread*> m_threads;
-	std::list<TaskThread*> m_freeThreads;
+    QWaitCondition m_condition;
 };
 
-TASKSPOOL_NS_END
+THREADS_NS_END
 
-#endif /* TASKPOOL_H_ */
+#endif /* THREADS_CONDITION_H_ */

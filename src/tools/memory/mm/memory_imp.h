@@ -34,7 +34,7 @@ namespace Memory
 
 void *operator new(size_t size) throw (std::bad_alloc)
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
 	++Memory::statistics[size];
 	Memory::leaks += size;
     return malloc(size);
@@ -42,7 +42,7 @@ void *operator new(size_t size) throw (std::bad_alloc)
 
 void *operator new[](size_t size) throw (std::bad_alloc)
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
 	++Memory::statistics[size];
 	Memory::leaks += size;
     return malloc(size);
@@ -50,26 +50,26 @@ void *operator new[](size_t size) throw (std::bad_alloc)
 
 void operator delete(void *ptr) throw ()
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
     free(ptr);
 }
 
 void operator delete(void *ptr, size_t size) throw ()
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
 	Memory::leaks -= size;
     free(ptr);
 }
 
 void operator delete[](void *ptr) throw ()
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
     free(ptr);
 }
 
 void operator delete[](void *ptr, size_t size) throw ()
 {
-	QMutexLocker locker(&Memory::mutex);
+	QMutex::Locker locker(&Memory::mutex);
 	Memory::leaks -= size;
     free(ptr);
 }

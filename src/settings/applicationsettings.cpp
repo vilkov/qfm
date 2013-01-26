@@ -46,7 +46,7 @@ ApplicationSettings::ApplicationSettings(QObject *parent) :
 
 QVariant ApplicationSettings::readValue(const qint32 &settingId)
 {
-	QMutexLocker locker(&m_mutex);
+    ::Tools::Mutex::Locker locker(m_mutex);
 	return Settings::readValue(settingId);
 }
 

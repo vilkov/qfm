@@ -82,7 +82,7 @@ MemoryManager::~MemoryManager()
 
 void *MemoryManager::allocate(std::size_t size)
 {
-	QMutexLocker locker(&m_mutex);
+	QMutex::Locker locker(&m_mutex);
 //	++m_leaks;
 //	++m_statistics[size];
 	return m_allocator.allocate(size);
@@ -90,14 +90,14 @@ void *MemoryManager::allocate(std::size_t size)
 
 void MemoryManager::deallocate(void *p, std::size_t size)
 {
-	QMutexLocker locker(&m_mutex);
+	QMutex::Locker locker(&m_mutex);
 //	--m_leaks;
 	m_allocator.deallocate(p, size);
 }
 
 void MemoryManager::deallocate(void *p)
 {
-	QMutexLocker locker(&m_mutex);
+	QMutex::Locker locker(&m_mutex);
 //	--m_leaks;
 	m_allocator.deallocate(p);
 }

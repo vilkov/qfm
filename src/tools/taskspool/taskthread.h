@@ -20,16 +20,16 @@
 #define TASKTHREAD_H_
 
 #include "task.h"
-#include "../threads/pmutex.h"
-#include "../threads/pthread.h"
-#include "../threads/pcondition.h"
+#include "../threads/threads_mutex.h"
+#include "../threads/threads_thread.h"
+#include "../threads/threads_condition.h"
 
 
 TASKSPOOL_NS_BEGIN
 class TaskPool;
 
 
-class TaskThread : public PThread
+class TaskThread : public Thread
 {
 public:
     TaskThread(TaskPool *pool, Task *task);
@@ -45,8 +45,8 @@ private:
     Task *m_task;
     TaskPool *m_pool;
     Task::Flag m_abort;
-    PMutex m_mutex;
-    PCondition m_condition;
+    Mutex m_mutex;
+    Condition m_condition;
 };
 
 TASKSPOOL_NS_END

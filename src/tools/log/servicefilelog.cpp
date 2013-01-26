@@ -19,6 +19,8 @@
 #include "servicefilelog.h"
 
 
+TOOLS_NS_BEGIN
+
 ServiceFileLog *ServiceFileLog::m_instance = 0;
 
 ServiceFileLog::ServiceFileLog(const PString &fileName) :
@@ -29,3 +31,5 @@ ServiceFileLog::ServiceFileLog(const PString &fileName) :
 
 	m_instance = this;
 }
+
+TOOLS_NS_END

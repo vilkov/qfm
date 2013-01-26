@@ -23,8 +23,9 @@
 #include <fstream>
 #include <stdarg.h>
 #include <string.h>
-#include "../threads/pmutex.h"
+#include "../threads/threads_mutex.h"
 #include "../pstrings/pstring.h"
+#include "../tools_ns.h"
 
 
 /*
@@ -35,6 +36,8 @@
  *
  */
 
+TOOLS_NS_BEGIN
+
 class ServiceFileLog
 {
 public:
@@ -42,7 +45,7 @@ public:
 
 	ServiceFileLog &operator<<(const PString &string)
 	{
-		PMutexLocker locker(m_mutex);
+		Mutex::Locker locker(m_mutex);
 
 		printTime();
 
@@ -59,7 +62,7 @@ public:
 
 	void print(const PString &format, ...)
 	{
-		PMutexLocker locker(m_mutex);
+		Mutex::Locker locker(m_mutex);
 
 		printTime();
 
@@ -113,10 +116,12 @@ private:
 	}
 
 private:
-	PMutex m_mutex;
+	Mutex m_mutex;
 	std::ofstream m_file;
 	PString m_lastError;
 	static ServiceFileLog *m_instance;
 };
+
+TOOLS_NS_END
 
 #endif /* SERVICEFILELOG_H_ */

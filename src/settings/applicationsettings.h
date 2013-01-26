@@ -26,6 +26,7 @@
 #include <QtGui/QSplitter>
 #include <QtGui/QAbstractItemView>
 #include <tools/settings/settings.h>
+#include <tools/threads/threads_mutex.h>
 
 
 class ApplicationSettings : public QObject, public ::Tools::Settings::Settings
@@ -78,7 +79,7 @@ private:
 	::Tools::Settings::ConfigOptionValue *m_thumbnailerUseProxy;
 	::Tools::Settings::ConfigOptionValue *m_alertsEnabled;
 	::Tools::Settings::ConfigOptionValue *m_phishingEnabled;
-	QMutex m_mutex;
+	::Tools::Mutex m_mutex;
 };
 
 #endif /* APPLICATIONSETTINGS_H_ */

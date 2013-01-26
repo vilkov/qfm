@@ -47,7 +47,7 @@ TaskPool::~TaskPool()
 
 bool TaskPool::handleImmediately(Task *task)
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 
 	if (m_freeThreads.empty())
 		if (m_threads.size() < m_maxThreads)
@@ -65,7 +65,7 @@ bool TaskPool::handleImmediately(Task *task)
 
 void TaskPool::handle(Task *task)
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 
 	if (m_freeThreads.empty())
 		if (m_threads.size() < m_maxThreads)
@@ -81,7 +81,7 @@ void TaskPool::handle(Task *task)
 
 bool TaskPool::remove(Task *task)
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 
 	for (std::list<Task*>::iterator it = m_tasks.begin(), end = m_tasks.end(); it != end; ++it)
 		if ((*it) == task)
@@ -95,13 +95,13 @@ bool TaskPool::remove(Task *task)
 
 void TaskPool::clear()
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 	m_tasks.clear();
 }
 
 Task *TaskPool::nextTask(TaskThread *thread)
 {
-	PMutexLocker locker(m_mutex);
+	Mutex::Locker locker(m_mutex);
 
 	if (m_tasks.empty())
 		m_freeThreads.push_back(thread);

@@ -19,10 +19,10 @@
 #ifndef VFS_TASKDIALOG_H_
 #define VFS_TASKDIALOG_H_
 
-#include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
 #include <QtGui/QWidget>
 #include <QtGui/QMessageBox>
+#include <tools/threads/threads_mutex.h>
+#include <tools/threads/threads_condition.h>
 #include "../vfs_basetask.h"
 
 
@@ -41,20 +41,20 @@ public:
 
 		void waitFor(const volatile BaseTask::Flags &aborted)
 		{
-			QMutexLocker lock(&m_mutex);
+		    ::Tools::Mutex::Locker lock(m_mutex);
 
 			while (!m_done && !aborted)
-				m_condition.wait(&m_mutex, 1000);
+				m_condition.wait(m_mutex, 1000);
 		}
 
 		qint32 answer() const { return m_answer; }
 
 	private:
 		friend class QuestionEvent;
-		QMutex m_mutex;
 		qint32 m_answer;
 		volatile bool m_done;
-		QWaitCondition m_condition;
+		::Tools::Mutex m_mutex;
+		::Tools::Condition m_condition;
 	};
 
 public:
@@ -92,10 +92,10 @@ public:
 
 		void waitFor(const volatile BaseTask::Flags &aborted)
 		{
-			QMutexLocker lock(&m_mutex);
+		    ::Tools::Mutex::Locker lock(m_mutex);
 
 			while (!m_done && !aborted)
-				m_condition.wait(&m_mutex, 1000);
+				m_condition.wait(m_mutex, 1000);
 		}
 
 		qint32 answer() const { return m_answer; }
@@ -103,11 +103,11 @@ public:
 
 	private:
 		friend class UserInputEvent;
-		QMutex m_mutex;
 		qint32 m_answer;
 		QString m_value;
 		volatile bool m_done;
-		QWaitCondition m_condition;
+		::Tools::Mutex m_mutex;
+		::Tools::Condition m_condition;
 	};
 
 public:

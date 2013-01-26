@@ -78,7 +78,6 @@ endif (USE_GPROF)
 add_definitions (
     -DUNICODE
     -D_UNICODE
-    -DTOOLS_THREADS_BACKEND_QT
     -DTOOLS_TYPES_BACKEND_QT
     
     -DQT_NO_CAST_FROM_ASCII

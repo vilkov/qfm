@@ -9,17 +9,17 @@
 
 set (_PLATFORM_AVAILABLE_OPTIONS "")
 
-macro (PLATFORM_OPTION_DEFINE _name _description _initialvalue)
+macro (platform_option_define _name _description _initialvalue)
     set (_PLATFORM_AVAILABLE_OPTIONS_INITALVALUE_${_name} ${_initialvalue})
     set (_PLATFORM_AVAILABLE_OPTIONS_DESCRIPTION_${_name} ${_description})
     list (APPEND _PLATFORM_AVAILABLE_OPTIONS ${_name})
 endmacro ()
 
-macro (PLATFORM_OPTION_VALUE _name _value)
+macro (platform_option_value _name _value)
     set (_PLATFORM_AVAILABLE_OPTIONS_INITALVALUE_${_name} ${_value})
 endmacro ()
 
-macro (PLATFORM_OPTIONS_BEGIN ...)
+macro (platform_options_begin ...)
     foreach (_file_name ${ARGV})
         file (STRINGS ${_file_name} _OPTIONS_LIST)
     
@@ -40,7 +40,9 @@ macro (PLATFORM_OPTIONS_BEGIN ...)
     endforeach ()
 endmacro ()
 
-macro (PLATFORM_OPTIONS_END)
+macro (platform_options_end)
+    list (REMOVE_DUPLICATES _PLATFORM_AVAILABLE_OPTIONS)
+    
     foreach (_name ${_PLATFORM_AVAILABLE_OPTIONS})
         option (${_name} "${_PLATFORM_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_PLATFORM_AVAILABLE_OPTIONS_INITALVALUE_${_name}})
         

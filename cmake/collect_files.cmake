@@ -1,11 +1,10 @@
 # Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
 #
 # Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+# see accompanying file LICENSE for details.
 #
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
 
 function (collect_files THIS_FILES FILES_MASK RELATIVE_DIR)
     # "THIS_FILES" and "RELATIVE_DIR" contains names of the actual variables passed into here.

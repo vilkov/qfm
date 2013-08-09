@@ -1,11 +1,10 @@
-# Copyright (C) 2012  Dmitriy Vilkov <dav.daemon@gmail.com>
+# Copyright (C) 2012-2013  Dmitriy Vilkov <dav.daemon@gmail.com>
 #
 # Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file COPYING-CMAKE-SCRIPTS for details.
+# see accompanying file LICENSE for details.
 #
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
 #
 #
 # Project build type identification
@@ -25,24 +24,24 @@ if (DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE STREQUAL "")
     if (BUILD_TYPE STREQUAL "DEBUG")
     
         set (CMAKE_BUILD_TYPE "Debug")
-        set (BUILD_TYPE_IS_DEBUG "YES")
+        set (BUILD_TYPE_IS_DEBUG YES)
         
     elseif (BUILD_TYPE STREQUAL "RELEASE")
     
         set (CMAKE_BUILD_TYPE "Release")
-        set (BUILD_TYPE_IS_RELEASE "YES")
+        set (BUILD_TYPE_IS_RELEASE YES)
         
     elseif (BUILD_TYPE STREQUAL "RELWITHDEBINFO")
 
         set (CMAKE_BUILD_TYPE "RelWithDebInfo")
-        set (BUILD_TYPE_IS_RELEASE "YES")
-        set (BUILD_TYPE_WITH_DEBUG_INFO "YES")
+        set (BUILD_TYPE_IS_RELEASE YES)
+        set (BUILD_TYPE_WITH_DEBUG_INFO YES)
 
     elseif (BUILD_TYPE STREQUAL "MINSIZEREL")
 
         set (CMAKE_BUILD_TYPE "MinSizeRel")
-        set (BUILD_TYPE_IS_RELEASE "YES")
-        set (BUILD_TYPE_MIN_SIZE "YES")
+        set (BUILD_TYPE_IS_RELEASE YES)
+        set (BUILD_TYPE_MIN_SIZE YES)
         
     else ()
     
@@ -51,7 +50,7 @@ if (DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE STREQUAL "")
     endif ()
 else ()
 
-    set (BUILD_TYPE_IS_NOT_SET "YES")
+    set (BUILD_TYPE_IS_NOT_SET YES)
 
 endif ()
 

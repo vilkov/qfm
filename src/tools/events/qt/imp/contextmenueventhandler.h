@@ -46,14 +46,14 @@ public:
     {
 		if (IntercepEvent::value)
 			if (FallbackToBaseClass::value)
-				return invokeMethod1(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
+				return this->invokeMethod1(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
 			else
-				return invokeMethod1(m_handler, event);
+				return this->invokeMethod1(m_handler, event);
 		else
 			if (FallbackToBaseClass::value)
-				return invokeMethod2(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
+				return this->invokeMethod2(m_handler, event) ? true : BaseClass::contextMenuEvent(event);
 			else
-				return invokeMethod2(m_handler, event);
+				return this->invokeMethod2(m_handler, event);
     }
 
 	void registerContextMenuEventHandler(Method handler) { m_handler = handler; }

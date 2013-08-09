@@ -46,14 +46,14 @@ public:
 	{
 		if (IntercepEvent::value)
 			if (FallbackToBaseClass::value)
-				return invokeMethod1(m_handler, event) ? true : BaseClass::focusOutEvent(event);
+				return this->invokeMethod1(m_handler, event) ? true : BaseClass::focusOutEvent(event);
 			else
-				return invokeMethod1(m_handler, event);
+				return this->invokeMethod1(m_handler, event);
 		else
 			if (FallbackToBaseClass::value)
-				return invokeMethod2(m_handler, event) ? true : BaseClass::focusOutEvent(event);
+				return this->invokeMethod2(m_handler, event) ? true : BaseClass::focusOutEvent(event);
 			else
-				return invokeMethod2(m_handler, event);
+				return this->invokeMethod2(m_handler, event);
 	}
 
 	void registerFocusOutEventHandler(Method handler) { m_handler = handler; }
@@ -85,14 +85,14 @@ public:
 	{
 		if (IntercepEvent::value)
 			if (FallbackToBaseClass::value)
-				return invokeMethod1(m_handler, event) ? true : BaseClass::focusInEvent(event);
+				return this->invokeMethod1(m_handler, event) ? true : BaseClass::focusInEvent(event);
 			else
-				return invokeMethod1(m_handler, event);
+				return this->invokeMethod1(m_handler, event);
 		else
 			if (FallbackToBaseClass::value)
-				return invokeMethod2(m_handler, event) ? true : BaseClass::focusInEvent(event);
+				return this->invokeMethod2(m_handler, event) ? true : BaseClass::focusInEvent(event);
 			else
-				return invokeMethod2(m_handler, event);
+				return this->invokeMethod2(m_handler, event);
 	}
 
 	void registerFocusInEventHandler(Method handler) { m_handler = handler; }

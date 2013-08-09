@@ -46,14 +46,14 @@ public:
 	{
 		if (IntercepEvent::value)
 			if (FallbackToBaseClass::value)
-				return invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), NULL), event) ? true : BaseClass::keyboardEvent(event);
+				return this->invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), NULL), event) ? true : BaseClass::keyboardEvent(event);
 			else
-				return invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), NULL), event);
+				return this->invokeMethod1(m_hotkeys.value(event->modifiers() + event->key(), NULL), event);
 		else
 			if (FallbackToBaseClass::value)
-				return invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), NULL), event) ? true : BaseClass::keyboardEvent(event);
+				return this->invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), NULL), event) ? true : BaseClass::keyboardEvent(event);
 			else
-				return invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), NULL), event);
+				return this->invokeMethod2(m_hotkeys.value(event->modifiers() + event->key(), NULL), event);
 	}
 
 	void registerShortcut(quint32 modifier, Qt::Key key, Method method)

@@ -51,7 +51,7 @@ public:
 public:
 	EventHandlerDefault(Listener *object) :
 		BaseClass(object),
-		m_handlers({})
+		m_handlers()
 	{}
 
 	void setDefaultHandler(Event event, DefaultMethod method) { m_handlers[event] = method; }

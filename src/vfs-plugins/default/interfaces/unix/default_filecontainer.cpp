@@ -54,7 +54,7 @@ public:
 		m_exec(exec),
 		m_iconName(iconName)
 	{
-		if (char *icon_path = xdg_icon_lookup(m_iconName, ::Desktop::Theme::Small, XdgThemeApplications, ::Desktop::Theme::current()->name()))
+		if (char *icon_path = ::xdg_icon_lookup(m_iconName, ::Desktop::Theme::Small, XdgThemeApplications, ::Desktop::Theme::current()->name()))
 		{
 			m_icon.addFile(QString::fromUtf8(icon_path), QSize(::Desktop::Theme::Small, ::Desktop::Theme::Small));
 			free(icon_path);
@@ -189,10 +189,10 @@ public:
 				return list;
 			else
 			{
-				const XdgJointList *apps;
+				const XdgJointListItem *apps;
 				IApplications::LinkedList res;
 
-				if (apps = xdg_joint_list_begin(xdg_apps_lookup(fileType->id().mime)))
+				if (apps = ::xdg_apps_lookup(fileType->id().mime))
 					res = fill(apps);
 
 				write(m_userCache, fileType->id(), res);
@@ -217,10 +217,10 @@ public:
 				return list;
 			else
 			{
-				const XdgJointList *apps;
+				const XdgJointListItem *apps;
 				IApplications::LinkedList res;
 
-				if (apps = xdg_joint_list_begin(xdg_known_apps_lookup(fileType->id().mime)))
+				if (apps = ::xdg_known_apps_lookup(fileType->id().mime))
 					res = fill(apps);
 
 				write(m_systemCache, fileType->id(), res);
@@ -268,7 +268,7 @@ private:
 		cache.insert(index, LinkedList(list));
 	}
 
-	IApplications::LinkedList fill(const XdgJointList *apps)
+	IApplications::LinkedList fill(const XdgJointListItem *apps)
 	{
 		const char *name = NULL;
 		const char *exec = NULL;
@@ -276,45 +276,45 @@ private:
 		const char *comment = NULL;
 		const char *icon_name = NULL;
 
-		const XdgList *values;
+		const XdgListItem *values;
 		const XdgAppGroup *group;
 		IApplications::LinkedList res;
 		::Desktop::Locale *locale = ::Desktop::Locale::current();
 
 		do
-			if (App *&app = m_applications[QString::fromUtf8(xdg_joint_list_item_app_id(apps))])
+			if (App *&app = m_applications[QString::fromUtf8(::xdg_joint_list_item_app_id(apps))])
 				res.push_back(app);
 			else
-				if (group = xdg_app_group_lookup(xdg_joint_list_item_app(apps), "Desktop Entry"))
+				if (group = ::xdg_app_group_lookup(::xdg_joint_list_item_app(apps), "Desktop Entry"))
 				{
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier())))
-						name = xdg_list_item_app_group_entry_value(values);
+					if (values = ::xdg_app_localized_entry_lookup(group, "Name", locale->lang(), locale->country(), locale->modifier()))
+						name = ::xdg_list_item_app_group_entry_value(values);
 					else
 						name = NULL;
 
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier())))
-						gen_name = xdg_list_item_app_group_entry_value(values);
+					if (values = ::xdg_app_localized_entry_lookup(group, "GenericName", locale->lang(), locale->country(), locale->modifier()))
+						gen_name = ::xdg_list_item_app_group_entry_value(values);
 					else
 						gen_name = NULL;
 
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Comment", locale->lang(), locale->country(), locale->modifier())))
-						comment = xdg_list_item_app_group_entry_value(values);
+					if (values = ::xdg_app_localized_entry_lookup(group, "Comment", locale->lang(), locale->country(), locale->modifier()))
+						comment = ::xdg_list_item_app_group_entry_value(values);
 					else
 						comment = NULL;
 
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier())))
-						exec = xdg_list_item_app_group_entry_value(values);
+					if (values = ::xdg_app_localized_entry_lookup(group, "Exec", locale->lang(), locale->country(), locale->modifier()))
+						exec = ::xdg_list_item_app_group_entry_value(values);
 					else
 						exec = NULL;
 
-					if (values = xdg_list_begin(xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier())))
-						icon_name = xdg_list_item_app_group_entry_value(values);
+					if (values = ::xdg_app_localized_entry_lookup(group, "Icon", locale->lang(), locale->country(), locale->modifier()))
+						icon_name = ::xdg_list_item_app_group_entry_value(values);
 					else
 						icon_name = NULL;
 
 					res.push_back(app = new App(QString::fromUtf8(name), QString::fromUtf8(gen_name), QString::fromUtf8(comment), QByteArray(exec), QByteArray(icon_name)));
 				}
-		while (apps = xdg_joint_list_next(apps));
+		while (apps = ::xdg_joint_list_next(apps));
 
 		return res;
 	}

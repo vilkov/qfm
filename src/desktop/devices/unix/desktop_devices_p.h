@@ -492,12 +492,12 @@ public Q_SLOTS:
 				}
 			else
 			{
-				::Tools::Memory::ScopedPointer< ::Desktop::Device > device;
+				::Tools::Memory::ScopedPointer< ::Desktop::Device > deviceHolder;
 
-				if (device = processDevice(path.path(), interface))
+				if (deviceHolder = processDevice(path.path(), interface))
 				{
-					m_allDevices[path.path()] = m_topLevelDevices[path.path()] = device.data();
-					parent->slotDeviceAdded(device.take());
+					m_allDevices[path.path()] = m_topLevelDevices[path.path()] = deviceHolder.data();
+					parent->slotDeviceAdded(deviceHolder.take());
 				}
 			}
 	}

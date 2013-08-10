@@ -1,3 +1,6 @@
 [submodule "workspace/platform"]
 	path = workspace/platform
 	url = git@github.com:vilkov/platform.git
+[submodule "workspace/xdg"]
+	path = workspace/xdg
+	url = git@github.com:vilkov/libxdg.git

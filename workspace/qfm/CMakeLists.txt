@@ -1,35 +1,7 @@
-cmake_minimum_required (VERSION 2.8)
 project (qfm)
 
-
-# Custom modules
-list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-
 # Project header
-include (project_cxx_header)
-
-
-# Platform definition
-include (platform)
-if (UNIX)
-    PLATFORM_OPTIONS_BEGIN (cmake/options_common.cmake cmake/options_unix.cmake)
-    PLATFORM_OPTION_VALUE (DE_KDE ON)
-else (WIN32)
-    PLATFORM_OPTIONS_BEGIN (cmake/options_common.cmake cmake/options_win32.cmake)
-endif ()
-PLATFORM_OPTIONS_END ()
-
-
-# Main settings
-set (PROJECT_GENERATED_FILES_DIR "${PROJECT_BINARY_DIR}/generated")
-
-
-# Fix path delimeters
-if (WIN32)
-    file (TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX} CMAKE_INSTALL_PREFIX)
-endif ()
-
+project_cxx_executable_header_default ()
 
 # 3rdparty
 if (WIN32)
@@ -39,7 +11,7 @@ else (UNIX)
 endif ()
 include (${QT_USE_FILE})
 list (APPEND ${PROJECT_NAME}_LIBS ${QT_LIBRARIES})
-add_definitions (${QT_DEFINITIONS})
+add_definitions (${QT_DEFINITIONS} -DQT_NO_CAST_FROM_ASCII)
 
 find_package (Sqlite REQUIRED)
 include_directories (${SQLITE_INCLUDE})
@@ -49,10 +21,6 @@ if (UNIX)
     find_package (X11 REQUIRED)
     include_directories (${X11_INCLUDE_DIR})
     list (APPEND ${PROJECT_NAME}_LIBS ${X11_LIBRARIES})
-    
-    find_package (XDG REQUIRED)
-    include_directories (${XDG_INCLUDE})
-    list (APPEND ${PROJECT_NAME}_LIBS ${XDG_LIBRARY})
 endif ()
 
 find_package (LibArchive REQUIRED)
@@ -63,29 +31,10 @@ find_package (LibUnrar REQUIRED)
 include_directories (${LIBUNRAR_INCLUDE})
 list (APPEND ${PROJECT_NAME}_LIBS ${LIBUNRAR_LIBRARY})
 
+list (APPEND ${PROJECT_NAME}_LIBS xdg)
 
 # Includes
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
-
-# Link directories
-
-# Libs
-if (USE_GPROF)
-	list (APPEND ${PROJECT_NAME}_LIBS gmon)
-endif (USE_GPROF)
- 
-# Definitions
-add_definitions (
-    -DUNICODE
-    -D_UNICODE
-    -DQT_NO_CAST_FROM_ASCII
-)
-
-# We're require at least Windows 2000 (http://msdn.microsoft.com/en-us/library/Aa383745)
-if (WIN32)
-    add_definitions (-D_WIN32_WINNT=0x0500 -DWINVER=0x0500)
-endif ()
-
 
 # Sources
 add_subdirectory (src)
@@ -93,12 +42,10 @@ QT4_WRAP_UI (${PROJECT_NAME}_UIS_HEADERS ${${PROJECT_NAME}_UIS})
 QT4_WRAP_CPP (${PROJECT_NAME}_MOC_SOURCES ${${PROJECT_NAME}_HEADERS} OPTIONS "-nw")
 list (APPEND ${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_MOC_SOURCES} ${${PROJECT_NAME}_UIS_HEADERS})
 
-
 # Resources
 add_subdirectory (resources)
 QT4_ADD_RESOURCES (${PROJECT_NAME}_RESOURCES_BIN ${${PROJECT_NAME}_RESOURCES})
 list (APPEND ${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_RESOURCES_BIN})
-
 
 # Set some OS specific settings
 if (WIN32)
@@ -107,20 +54,16 @@ elseif (APPLE)
     set (GUI_TYPE MACOSX_BUNDLE)
 endif ()
 
-
 # Target - qfm
 add_executable (qfm ${GUI_TYPE} ${${PROJECT_NAME}_SOURCES})
 target_link_libraries (qfm ${${PROJECT_NAME}_LIBS})
+add_dependencies (qfm platform)
 
 # It is because of Qt (qglobal.h)
 set_target_properties (qfm PROPERTIES COMPILE_FLAGS "-Wno-long-long")
 
-# Compiler flags
-if (USE_GPROF)
-    list (CMAKE_CXX_FLAGS        APPEND -pg)
-    list (CMAKE_EXE_LINKER_FLAGS APPEND -pg)
-endif (USE_GPROF)
+# Version
+build_version_file (qfm 0.1.0)
 
-
-# Install
-include ("cmake/Install.cmake")
+# Documentation
+add_documentation ("QFM" 0.1.0 "Qt File Manager")

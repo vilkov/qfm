@@ -18,7 +18,7 @@
  */
 #include "vfs_uri.h"
 
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
 #include <tools/templates/templates_statemachine.h>
 
 //#include <QtCore/QDebug>

@@ -22,7 +22,7 @@
 #include <vfs/interfaces/vfs_inode.h>
 #include <desktop/contextmenu/desktop_contextmenu.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
 #include <application.h>
 
 #include <QtGui/QHeaderView>

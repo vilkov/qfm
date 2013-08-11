@@ -22,8 +22,8 @@
 #include <QtCore/QMap>
 #include <QtCore/QPair>
 #include <QtCore/QLinkedList>
+#include <platform/platform.h>
 #include "containers_ns.h"
-#include "../platform/platform.h"
 
 
 CONTAINERS_NS_BEGIN

@@ -19,12 +19,15 @@
 #include "../desktop_theme.h"
 #include "desktop_iconcache.h"
 
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
+#define PLATFORM_DE(PLATFORM_FEATURE) PLATFORM_IS_SET(PLATFORM_DE_##PLATFORM_FEATURE)
 
 #if PLATFORM_DE(KDE)
 #	include "kde/desktop_kde_p.h"
 #elif PLATFORM_DE(GNOME) || PLATFORM_DE(XFCE4)
 #	include "gtk/desktop_gtk_p.h"
+#else
+#error Unknown desktop environment!
 #endif
 
 #include <sys/stat.h>

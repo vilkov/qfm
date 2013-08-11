@@ -18,7 +18,7 @@
  */
 #include "vfs_commontools.h"
 
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
 #include <tools/widgets/choosedialog/choosedialog.h>
 
 #include <QtCore/QStringList>

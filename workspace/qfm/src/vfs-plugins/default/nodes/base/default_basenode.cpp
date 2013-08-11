@@ -38,7 +38,7 @@
 #include <vfs/actions/synchronous/vfs_syncaction.h>
 #include <vfs/actions/asynchronous/vfs_asyncaction.h>
 
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
 #include <tools/containers/orderedmap.h>
 #include <tools/widgets/stringdialog/stringdialog.h>
 

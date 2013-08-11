@@ -20,7 +20,7 @@
 #define VFS_FILETYPEINFO_H_
 
 #include <QtGui/QIcon>
-#include <tools/platform/platform.h>
+#include <platform/platform.h>
 
 #if PLATFORM_OS(UNIX)
 #	include "unix/vfs_filetypeid_unix.h"

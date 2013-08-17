@@ -47,6 +47,9 @@
 #include <QtGui/QMessageBox>
 #include <QtCore/QMimeData>
 
+#include <platform/platform.h>
+#define PLATFORM_DE(PLATFORM_FEATURE) PLATFORM_IS_SET(PLATFORM_DE_##PLATFORM_FEATURE)
+
 
 DEFAULT_PLUGIN_NS_BEGIN
 

@@ -5,12 +5,6 @@ cmake_minimum_required (VERSION 2.8)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/platform/cmake")
 
 
-# Fix path delimeters
-if (WIN32)
-    file (TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX} CMAKE_INSTALL_PREFIX)
-endif ()
-
-
 # Versioning
 include (version)
 
@@ -56,6 +50,9 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # 3rdparty
 add_subdirectory (platform)
+add_subdirectory (brolly)
+add_subdirectory (efc)
+add_subdirectory (liquiddb)
 add_subdirectory (xdg)
 
 

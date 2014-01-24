@@ -31,7 +31,9 @@ find_package (LibUnrar REQUIRED)
 include_directories (${LIBUNRAR_INCLUDE})
 list (APPEND ${PROJECT_NAME}_LIBS ${LIBUNRAR_LIBRARY})
 
+list (APPEND ${PROJECT_NAME}_LIBS liquiddb)
 list (APPEND ${PROJECT_NAME}_LIBS xdg)
+list (APPEND ${PROJECT_NAME}_LIBS efc)
 
 # Includes
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)

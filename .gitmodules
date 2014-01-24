@@ -4,3 +4,12 @@
 [submodule "workspace/xdg"]
 	path = workspace/xdg
 	url = git@github.com:vilkov/libxdg.git
+[submodule "workspace/liquiddb"]
+	path = workspace/liquiddb
+	url = git@github.com:vilkov/liquiddb.git
+[submodule "workspace/brolly"]
+	path = workspace/brolly
+	url = git@github.com:vilkov/brolly.git
+[submodule "workspace/efc"]
+	path = workspace/efc
+	url = git@github.com:vilkov/efc.git

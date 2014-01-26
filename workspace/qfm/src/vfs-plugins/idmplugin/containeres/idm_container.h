@@ -23,91 +23,107 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QCoreApplication>
 #include <QtGui/QAction>
+#include <liquiddb/Storage>
+#include <liquiddb/EntityConstraint>
+#include <liquiddb/EntityValueReader>
 
 #include <vfs/interfaces/vfs_inodeview.h>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
 
 #include "idm_entitytypes.h"
-#include "../storage/idm_storage.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
+
+QByteArray fromUnicode(const QString &string);
+QString toUnicode(const ::EFC::String &string);
+QVariant toQVariant(const ::EFC::Variant &value);
+
+/* Meta-function "EntityValueType" */
+template <Entity::Type EntityType> struct EntityValueType {};
+template <> struct EntityValueType<Entity::Int>      { typedef int       type; };
+template <> struct EntityValueType<Entity::String>   { typedef QString   type; };
+template <> struct EntityValueType<Entity::Date>     { typedef QDate     type; };
+template <> struct EntityValueType<Entity::Time>     { typedef QTime     type; };
+template <> struct EntityValueType<Entity::DateTime> { typedef QDateTime type; };
+template <> struct EntityValueType<Entity::Memo>     { typedef QString   type; };
+//template <> struct EntityValueType<Entity::Rating>   { typedef int       type; };
+//template <> struct EntityValueType<Entity::Path>     { typedef QString   type; };
+
+/* Meta-function "EntityValueType" */
+inline ::EFC::Variant toVariant(int value) { return ::EFC::Variant(static_cast<uint32_t>(value)); }
+inline ::EFC::Variant toVariant(const QString &value) { return fromUnicode(value).data(); }
+inline ::EFC::Variant toVariant(const QDate &value) { return ::EFC::Variant(QDateTime(value, QTime()).toTime_t()); }
+inline ::EFC::Variant toVariant(const QTime &value) { return ::EFC::Variant(QDateTime(QDate::currentDate(), value).toTime_t()); }
+inline ::EFC::Variant toVariant(const QDateTime &value) { return ::EFC::Variant(value.toTime_t()); }
+
+
 
 class IdmContainer
 {
-	Q_DECLARE_TR_FUNCTIONS(IdmContainer)
+    Q_DECLARE_TR_FUNCTIONS(IdmContainer)
 
 public:
-	typedef Storage::id_type   id_type;
-	typedef Storage::size_type size_type;
-	typedef Storage::IdsList   IdsList;
-	typedef Storage::IdsMap    IdsMap;
-	enum { InvalidId = Storage::InvalidId };
-	enum { InvalidIndex = Storage::InvalidIndex };
-
-	enum MenuId
-	{
-		Create,
-		Find,
-		List
-	};
+    enum MenuId
+    {
+        Create,
+        Find,
+        List
+    };
 
 public:
-	IdmContainer(IFileContainer::Holder &container, bool create);
+    IdmContainer(IFileContainer::Holder &container, bool create);
 
-	const IFileContainer *container() const { return m_data->container.data(); }
-	const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
-	const EntityTypes &entityTypes() const { return m_data->entityTypes; }
+    const IFileContainer *container() const { return m_data->container.data(); }
+    const INodeView::MenuActionList &menuActions() const { return m_data->menuActions; }
+    const EntityTypes &entityTypes() const { return m_data->entityTypes; }
 
-	/* IdmStorage */
-	bool isValid() const { return m_data->storage.isValid(); }
-	const QString &lastError() const { return m_data->storage.lastError(); }
+    /* IdmStorage */
+    bool isValid() const { return m_data->storage.isValid(); }
+    ::EFC::String lastError() const { return ::EFC::String(); }
 
-	Entity *at(size_type index) const { return m_data->storage.at(index); }
-	size_type size() const { return m_data->storage.size(); }
-	size_type indexOf(id_type id) const { return m_data->storage.indexOf(id); }
+    const Storage::Entities entities() const { return m_data->storage.entities(); };
 
-	bool transaction() { return m_data->storage.transaction(); }
-	bool commit() { return m_data->storage.commit(); }
-	void rollback() { m_data->storage.rollback(); }
+    bool transaction() { return m_data->storage.transaction(); }
+    bool commit() { return m_data->storage.commit(); }
+    void rollback() { m_data->storage.rollback(); }
 
-	bool savepoint(const QByteArray &name) { return m_data->storage.savepoint(name); }
-	bool release(const QByteArray &name) { return m_data->storage.release(name); }
-	void rollback(const QByteArray &name) { return m_data->storage.rollback(name); }
+    EntityValueReader entityValues(const Entity &entity) const;
+    EntityValueReader entityValues(const Entity &entity, const Constraint &constraint) const;
 
-	QueryContext prepare(const Query &query, QString &error) const { return m_data->storage.prepare(query, error); }
+    Entity createEntity(Entity::Type type, const ::EFC::String &name, const ::EFC::String &title);
+    bool updateEditorGeometry(const Entity &entity, const QRect &geometry);
+    bool updateListGeometry(const Entity &entity, const QRect &geometry);
+    bool removeEntity(const Entity &entity);
 
-	Entity *createEntity(const QString &name, Entity::Type type, const ShortFormat &shortFormat) { return m_data->storage.createEntity(name, type, shortFormat); }
-	bool updateEditorGeometry(Entity *entity, const QRect &geometry) { return m_data->storage.updateEditorGeometry(entity, geometry); }
-	bool updateListGeometry(Entity *entity, const QRect &geometry) { return m_data->storage.updateListGeometry(entity, geometry); }
-	bool removeEntity(Entity *entity) { return m_data->storage.removeEntity(entity); }
+    bool addProperty(const Entity &entity, const Entity &property, const ::EFC::String &name);
+    bool renameProperty(const Entity &entity, const Entity &property, const ::EFC::String &name);
+    bool removeProperty(const Entity &entity, const Entity &property);
 
-	bool addProperty(Entity *entity, Entity *property, const QString &name) { return m_data->storage.addProperty(entity, property, name); }
-	bool renameProperty(Entity *entity, Entity *property, const QString &name) { return m_data->storage.renameProperty(entity, property, name); }
-	bool removeProperty(Entity *entity, Entity *property) { return m_data->storage.removeProperty(entity, property); }
-
-	EntityValue::Holder addValue(Entity *entity) const { return m_data->storage.addValue(entity); }
-	bool addValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const { return m_data->storage.addValue(entityValue, propertyValue); }
-	bool addValue(const EntityValue::Holder &entityValue, const CompositeEntityValue::List &propertyValues) const { return m_data->storage.addValue(entityValue, propertyValues); }
-	EntityValue::Holder addValue(Entity *entity, const QVariant &value) const { return m_data->storage.addValue(entity, value); }
-	bool updateValue(const EntityValue::Holder &value, const QVariant &newValue) const { return m_data->storage.updateValue(value, newValue); }
-	bool removeValue(Entity *entity, const IdsList &ids) const { return m_data->storage.removeValue(entity, ids); }
-	bool removeValue(const EntityValue::Holder &entityValue, const EntityValue::Holder &propertyValue) const { return m_data->storage.removeValue(entityValue, propertyValue); }
+    EntityValue addValue(const Entity &entity) const;
+    bool addValue(const EntityValue &entityValue, const EntityValue &propertyValue) const;
+    bool addValue(const EntityValue &entityValue, const EntityValue::List &propertyValues) const;
+    EntityValue addValue(const Entity &entity, const ::EFC::Variant &value) const;
+    bool updateValue(const EntityValue &value, const ::EFC::Variant &newValue) const;
+    bool removeValue(const Entity &entity, const Entity::IdsList &ids) const;
+    bool removeValue(const EntityValue &entityValue, const EntityValue &propertyValue) const;
 
 private:
-	struct Data : public QSharedData
-	{
-		Data(IFileContainer::Holder &container, bool create);
-		~Data();
+    struct Data : public QSharedData
+    {
+        Data(IFileContainer::Holder &container, bool create);
+        ~Data();
 
-		Storage storage;
-		EntityTypes entityTypes;
-		IFileContainer::Holder container;
-		INodeView::MenuActionList menuActions;
-	};
+        Storage storage;
+        EntityTypes entityTypes;
+        IFileContainer::Holder container;
+        INodeView::MenuActionList menuActions;
+    };
 
 private:
-	QExplicitlySharedDataPointer<Data> m_data;
+    QExplicitlySharedDataPointer<Data> m_data;
 };
 
 IDM_PLUGIN_NS_END

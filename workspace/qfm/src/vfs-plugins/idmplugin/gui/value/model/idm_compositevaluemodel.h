@@ -20,32 +20,34 @@
 #define IDM_COMPOSITEVALUEMODEL_H_
 
 #include <QtCore/QMap>
+#include <liquiddb/EntityValue>
 #include <vfs/containers/vfs_snapshot.h>
 #include "../../../model/idm_model.h"
-#include "../../../storage/values/idm_entityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class CompositeValueModel : public Model
 {
 public:
-	typedef CompositeEntityValue::List                    ValueList;
-	typedef Container::size_type                          size_type;
-	typedef QMap<Database::id_type, const SnapshotItem *> Files;
+    typedef EntityValue::Values                    ValueList;
+    typedef Container::size_type                   size_type;
+    typedef QMap<Entity::Id, const SnapshotItem *> Files;
 
 public:
-	CompositeValueModel(const EntityValue::Holder &value, QObject *parent = 0);
-	CompositeValueModel(const EntityValue::Holder &value, const Files &files, QObject *parent = 0);
+    CompositeValueModel(const EntityValue &value, QObject *parent = 0);
+    CompositeValueModel(const EntityValue &value, const Files &files, QObject *parent = 0);
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
     IdmItem *at(size_type index) const { return m_items.at(index); }
-	size_type size() const { return m_items.size(); }
+    size_type size() const { return m_items.size(); }
 
-	void add(const QModelIndex &index, const EntityValue::Holder &value);
-	void add(const QModelIndex &index, const ValueList &values);
-	void remove(const QModelIndex &index);
+    void add(const QModelIndex &index, const EntityValue &value);
+    void add(const QModelIndex &index, const ValueList &values);
+    void remove(const QModelIndex &index);
     void update(const QModelIndex &index);
 };
 

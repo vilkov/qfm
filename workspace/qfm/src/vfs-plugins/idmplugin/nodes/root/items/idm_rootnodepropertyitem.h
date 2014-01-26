@@ -27,20 +27,20 @@ IDM_PLUGIN_NS_BEGIN
 class RootNodePropertyItem : public RootNodeEntityItem
 {
 public:
-	RootNodePropertyItem(const Entity::Property &property, Base *parent);
-	RootNodePropertyItem(Entity *property, const QString &name, Base *parent);
+    RootNodePropertyItem(const Entity::Property &property, Base *parent);
+    RootNodePropertyItem(const Entity &property, const ::EFC::String &name, Base *parent);
 
-	/* Base */
-	virtual QVariant data(qint32 column, qint32 role) const;
+    /* Base */
+    virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* RootNodeItem */
-	virtual bool isProperty();
+    /* RootNodeItem */
+    virtual bool isProperty();
 
-	const QString &name() const { return m_property.name; }
+    QString name() const;
 
 private:
-	Entity::Property m_property;
-	QVariant m_label;
+    Entity::Property m_property;
+    QVariant m_label;
 };
 
 IDM_PLUGIN_NS_END

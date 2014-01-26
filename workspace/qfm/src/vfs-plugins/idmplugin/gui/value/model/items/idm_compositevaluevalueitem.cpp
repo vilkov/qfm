@@ -17,26 +17,27 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_compositevaluevalueitem.h"
+#include "../../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueValueItem::CompositeValueValueItem(const EntityValue::Holder &value, IdmItem *parent) :
-	CompositeValueItem(parent),
-	m_value(value)
+CompositeValueValueItem::CompositeValueValueItem(const EntityValue &value, IdmItem *parent) :
+    CompositeValueItem(parent),
+    m_value(value)
 {}
 
 QVariant CompositeValueValueItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_value->value();
-	else
-		return QVariant();
+    if (role == Qt::DisplayRole)
+        return toQVariant(m_value.value());
+    else
+        return QVariant();
 }
 
 bool CompositeValueValueItem::isValue() const
 {
-	return true;
+    return true;
 }
 
 IDM_PLUGIN_NS_END

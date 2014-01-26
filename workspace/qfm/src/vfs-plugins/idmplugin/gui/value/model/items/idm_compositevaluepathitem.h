@@ -23,24 +23,26 @@
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class CompositeValuePathItem : public CompositeValueItem
 {
 public:
-	CompositeValuePathItem(const EntityValue::Holder &value, IdmItem *parent = 0);
+    CompositeValuePathItem(const EntityValue &value, IdmItem *parent = 0);
 
-	/* CompositeValueItem */
-	virtual bool isPath() const;
+    /* CompositeValueItem */
+    virtual bool isPath() const;
 
-	virtual QString fileName() const = 0;
-	virtual bool isFile() const = 0;
-	virtual void open() const = 0;
+    virtual QString fileName() const = 0;
+    virtual bool isFile() const = 0;
+    virtual void open() const = 0;
 
-	const EntityValue::Holder &value() const { return m_value; }
-	EntityValue::Holder take() { EntityValue::Holder res(m_value); m_value.reset(); return res; }
+    const EntityValue &value() const { return m_value; }
+    EntityValue take() { EntityValue res(m_value); m_value = EntityValue(); return res; }
 
 protected:
-	EntityValue::Holder m_value;
+    EntityValue m_value;
 };
 
 IDM_PLUGIN_NS_END

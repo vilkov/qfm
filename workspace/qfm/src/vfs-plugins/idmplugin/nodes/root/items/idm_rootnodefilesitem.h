@@ -28,23 +28,23 @@ IDM_PLUGIN_NS_BEGIN
 
 class RootNodeFilesItem : public RootNodeItem
 {
-	Q_DECLARE_TR_FUNCTIONS(RootNodeFilesItem)
+    Q_DECLARE_TR_FUNCTIONS(RootNodeFilesItem)
 
 public:
-	RootNodeFilesItem();
+    RootNodeFilesItem();
 
-	/* Base */
-	virtual QVariant data(qint32 column, qint32 role) const;
+    /* Base */
+    virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* IRootNodeItem */
-	virtual bool isFiles();
+    /* IRootNodeItem */
+    virtual bool isFiles();
 
-	Node *node() const { return m_node; }
-	void setNode(Node *node) { m_node = node; }
+    Node *node() const { return m_node; }
+    void setNode(Node *node) { m_node = node; }
 
 private:
-	QVariant m_label;
-	Node *m_node;
+    QVariant m_label;
+    Node *m_node;
 };
 
 IDM_PLUGIN_NS_END

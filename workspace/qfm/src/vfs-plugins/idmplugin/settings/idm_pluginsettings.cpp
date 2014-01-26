@@ -25,7 +25,7 @@ static Settings *s_instance;
 
 
 Settings::Settings(Option *parent) :
-	Page(tr("Idm"), QString::fromLatin1("Idm"), parent),
+    Page(tr("Idm"), QString::fromLatin1("Idm"), parent),
     m_createQueryDialog(this)
 {
     Q_ASSERT(s_instance == NULL);

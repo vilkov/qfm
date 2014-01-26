@@ -34,7 +34,6 @@
 #include "model/idm_queryconstraintsmodel.h"
 #include "model/idm_queryconstraintsdelegate.h"
 #include "../../../containeres/idm_container.h"
-#include "../../../storage/queries/idm_selectquery.h"
 
 
 using namespace ::VFS::Plugins::Idm;
@@ -42,13 +41,14 @@ using namespace ::Tools::Events;
 
 class CreateQueryDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent = 0);
-	virtual ~CreateQueryDialog();
+    CreateQueryDialog(const IdmContainer &container, const Entity &entity, QWidget *parent = 0);
+    virtual ~CreateQueryDialog();
 
-	Select query();
+    const Entity &entity() const { return m_entity; }
+    BaseConstraint::Holder constraint();
     virtual void accept();
 
 private:
@@ -56,54 +56,54 @@ private:
     void load();
 
 private:
-	enum ActionId
-	{
-		AddGroup,
-		AddConstraint,
+    enum ActionId
+    {
+        AddGroup,
+        AddConstraint,
         RemoveGroupOrConstraint
-	};
+    };
 
 private Q_SLOTS:
-	void actionTriggered(QAction *action);
+    void actionTriggered(QAction *action);
 
 private:
-	typedef KeyboardEventSource<
-				MouseDoubleClickEventSource<
-					EventSourceBase<
-						QTreeView
-					>
-				>
-			> EntitiesTreeView;
-	typedef KeyboardEventHandler<
-				MouseDoubleClickEventHandler<
-					EventHandlerBase<
-						CreateQueryDialog
-					>
-				>
-			> EntitiesTreeViewHandler;
+    typedef KeyboardEventSource<
+                MouseDoubleClickEventSource<
+                    EventSourceBase<
+                        QTreeView
+                    >
+                >
+            > EntitiesTreeView;
+    typedef KeyboardEventHandler<
+                MouseDoubleClickEventHandler<
+                    EventHandlerBase<
+                        CreateQueryDialog
+                    >
+                >
+            > EntitiesTreeViewHandler;
 
 private:
-	QModelIndex currentIndex1();
-	QModelIndex currentIndex2();
-	void addConstraint();
+    QModelIndex currentIndex1();
+    QModelIndex currentIndex2();
+    void addConstraint();
     void removeGroupOrConstraint();
 
 private:
-	QVBoxLayout m_verticatLayout;
-	QHBoxLayout m_horizontalLayout;
-	QSplitter m_splitter;
-	IdmContainer m_container;
-	Entity *m_entity;
-	EntitiesTreeViewHandler m_handler1;
+    QVBoxLayout m_verticatLayout;
+    QHBoxLayout m_horizontalLayout;
+    QSplitter m_splitter;
+    IdmContainer m_container;
+    const Entity &m_entity;
+    EntitiesTreeViewHandler m_handler1;
     EntitiesTreeViewHandler m_handler2;
-	QToolBar m_toolBar1;
-	QToolBar m_toolBar2;
-	EntitiesTreeView m_view1;
-	QueryEntitiesModel m_model;
-	EntitiesTreeView m_view2;
-	QueryConstraintsModel m_model2;
-	QueryConstraintsDelegate m_delegate2;
-	QDialogButtonBox m_buttonBox;
+    QToolBar m_toolBar1;
+    QToolBar m_toolBar2;
+    EntitiesTreeView m_view1;
+    QueryEntitiesModel m_model;
+    EntitiesTreeView m_view2;
+    QueryConstraintsModel m_model2;
+    QueryConstraintsDelegate m_delegate2;
+    QDialogButtonBox m_buttonBox;
 };
 
 #endif /* IDM_CREATEQUERYDIALOG_H_ */

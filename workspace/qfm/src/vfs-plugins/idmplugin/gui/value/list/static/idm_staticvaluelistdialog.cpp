@@ -19,19 +19,19 @@
 #include "idm_staticvaluelistdialog.h"
 
 
-StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
-	NestedPlainDialog(parent),
-	m_handler(this),
-	m_widget(&m_handler, container, query, this)
+StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, const EntityValueReader &reader, QWidget *parent) :
+    NestedPlainDialog(parent),
+    m_handler(this),
+    m_widget(&m_handler, container, reader, this)
 {
-	const QRect &geometry = m_widget.entity()->listGeometry();
+//    const QRect &geometry = m_widget.entity()->listGeometry();
+//
+//    if (geometry.isValid())
+//        setGeometry(geometry);
 
-	if (geometry.isValid())
-		setGeometry(geometry);
+    setWindowTitle(tr("Values of \"%1\"").arg(toUnicode(m_widget.entity().name())));
 
-	setWindowTitle(tr("Values of \"%1\"").arg(m_widget.entity()->name()));
-
-	m_handler.registerMouseDoubleClickEventHandler(&StaticValueListDialog::accept);
+    m_handler.registerMouseDoubleClickEventHandler(&StaticValueListDialog::accept);
     m_handler.registerShortcut(Qt::CTRL, Qt::Key_F, &StaticValueListDialog::setFocusToFilter);
     m_widget.setViewToolTip(tr("CTRL+F - activate filter field"));
 
@@ -40,29 +40,29 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 StaticValueListDialog::~StaticValueListDialog()
 {
-    if (m_widget.entity()->listGeometry() != geometry())
-        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
+//    if (m_widget.entity()->listGeometry() != geometry())
+//        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
 }
 
-EntityValue::Holder StaticValueListDialog::takeValue()
+EntityValue StaticValueListDialog::takeValue()
 {
-	return m_widget.takeValue();
+    return m_widget.takeValue();
 }
 
 void StaticValueListDialog::accept()
 {
-	if (currentIndex().isValid())
-		QDialog::accept();
-	else
-		warning(windowTitle(), tr("You must select a value."));
+    if (currentIndex().isValid())
+        QDialog::accept();
+    else
+        warning(windowTitle(), tr("You must select a value."));
 }
 
 QModelIndex StaticValueListDialog::currentIndex() const
 {
-	return m_widget.currentIndex();
+    return m_widget.currentIndex();
 }
 
 void StaticValueListDialog::setFocusToFilter()
 {
-	m_widget.setFocusToFilter();
+    m_widget.setFocusToFilter();
 }

@@ -24,11 +24,11 @@
 
 class NewCompositeValueDialog : public CompositeValueDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	NewCompositeValueDialog(const IdmContainer &container, const EntityValue::Holder &value, QWidget *parent = 0);
-	NewCompositeValueDialog(const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
+    NewCompositeValueDialog(const IdmContainer &container, const EntityValue &value, QWidget *parent = 0);
+    NewCompositeValueDialog(const IdmContainer &container, const EntityValue &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
 };
 
 #endif /* IDM_NEWCOMPOSITEVALUEDIALOG_H_ */

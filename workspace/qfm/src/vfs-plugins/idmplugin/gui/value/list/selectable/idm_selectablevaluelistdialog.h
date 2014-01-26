@@ -26,12 +26,12 @@ using namespace ::VFS::Plugins::Idm;
 
 class SelectableValueListDialog : public EditableValueListDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SelectableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
+    SelectableValueListDialog(const IdmContainer &container, const EntityValueReader &reader, QWidget *parent = 0);
 
-	EntityValue::Holder takeValue() { return EditableValueListDialog::takeValue(); }
+    EntityValue takeValue() { return EditableValueListDialog::takeValue(); }
     virtual void accept();
 };
 

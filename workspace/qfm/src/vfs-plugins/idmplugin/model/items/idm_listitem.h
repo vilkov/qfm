@@ -27,18 +27,18 @@ IDM_PLUGIN_NS_BEGIN
 class IdmListItem : public IdmItem
 {
 public:
-	typedef QList<IdmItem *> Container;
+    typedef QList<IdmItem *> Container;
 
 public:
-	IdmListItem(Base *parent);
+    IdmListItem(Base *parent);
 
-	/* Base */
-	virtual Base *at(size_type index) const;
-	virtual size_type size() const;
-	virtual size_type indexOf(Base *item) const;
+    /* Base */
+    virtual Base *at(size_type index) const;
+    virtual size_type size() const;
+    virtual size_type indexOf(Base *item) const;
 
 protected:
-	Container m_items;
+    Container m_items;
 };
 
 IDM_PLUGIN_NS_END

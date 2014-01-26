@@ -30,22 +30,22 @@ IDM_PLUGIN_NS_BEGIN
 class Plugin : public IFilePlugin
 {
 public:
-	Plugin(::Tools::Settings::Option *parentOption);
+    Plugin(::Tools::Settings::Option *parentOption);
 
-	/* IPlugin */
-	virtual void registered();
-	virtual ::Tools::Settings::Page *settings();
+    /* IPlugin */
+    virtual void registered();
+    virtual ::Tools::Settings::Page *settings();
 
-	/* IFilePlugin */
-	virtual FileTypeIdList fileTypes() const;
-	virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
+    /* IFilePlugin */
+    virtual FileTypeIdList fileTypes() const;
+    virtual Node *open(const IFileContainer *container, const IFileInfo *file, Node *parent) const;
 
-	static const QString &fileName();
+    static const QString &fileName();
 
 private:
-	Settings m_settings;
-	mutable QString m_error;
-	CreateDbAction m_createDbAction;
+    Settings m_settings;
+    mutable QString m_error;
+    CreateDbAction m_createDbAction;
 };
 
 IDM_PLUGIN_NS_END

@@ -19,14 +19,14 @@
 #include "idm_selectablevaluelistdialog.h"
 
 
-SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
-	EditableValueListDialog(container, query, parent)
+SelectableValueListDialog::SelectableValueListDialog(const IdmContainer &container, const EntityValueReader &reader, QWidget *parent) :
+    EditableValueListDialog(container, reader, parent)
 {}
 
 void SelectableValueListDialog::accept()
 {
-	if (currentIndex().isValid())
-		EditableValueListDialog::accept();
-	else
-		warning(tr("You must choose one of the values."));
+    if (currentIndex().isValid())
+        EditableValueListDialog::accept();
+    else
+        warning(tr("You must choose one of the values."));
 }

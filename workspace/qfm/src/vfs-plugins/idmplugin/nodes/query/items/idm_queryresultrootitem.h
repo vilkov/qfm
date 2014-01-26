@@ -19,29 +19,31 @@
 #ifndef IDM_QUERYRESULTROOTITEM_H_
 #define IDM_QUERYRESULTROOTITEM_H_
 
+#include <liquiddb/EntityValue>
 #include "idm_queryresultitem.h"
-#include "../../../storage/values/idm_entityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class QueryResultRootItem : public QueryResultItem
 {
 public:
-	QueryResultRootItem(const EntityValue::Holder &value, Base *parent = 0);
+    QueryResultRootItem(const EntityValue &value, Base *parent = 0);
 
-	/* Base */
-	virtual QVariant data(qint32 column, qint32 role) const;
-	virtual bool isRoot();
-	virtual bool isProperty();
-	virtual bool isValue();
-	virtual bool isPath();
-	virtual bool isRootPathValue();
+    /* Base */
+    virtual QVariant data(qint32 column, qint32 role) const;
+    virtual bool isRoot();
+    virtual bool isProperty();
+    virtual bool isValue();
+    virtual bool isPath();
+    virtual bool isRootPathValue();
 
-	const EntityValue::Holder &value() const { return m_value; }
+    const EntityValue &value() const { return m_value; }
 
 private:
-	EntityValue::Holder m_value;
+    EntityValue m_value;
 };
 
 IDM_PLUGIN_NS_END

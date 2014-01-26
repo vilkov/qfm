@@ -17,46 +17,47 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_queryresultvalueitem.h"
+#include "../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultValueItem::QueryResultValueItem(const EntityValue::Holder &value, Base *parent) :
-	QueryResultItem(parent),
-	m_value(value)
+QueryResultValueItem::QueryResultValueItem(const EntityValue &value, Base *parent) :
+    QueryResultItem(parent),
+    m_value(value)
 {}
 
 QVariant QueryResultValueItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_value->value();
-	else
-		return QVariant();
+    if (role == Qt::DisplayRole)
+        return toQVariant(m_value.value());
+    else
+        return QVariant();
 }
 
 bool QueryResultValueItem::isRoot()
 {
-	return false;
+    return false;
 }
 
 bool QueryResultValueItem::isProperty()
 {
-	return false;
+    return false;
 }
 
 bool QueryResultValueItem::isValue()
 {
-	return true;
+    return true;
 }
 
 bool QueryResultValueItem::isPath()
 {
-	return false;
+    return false;
 }
 
 bool QueryResultValueItem::isRootPathValue()
 {
-	return false;
+    return false;
 }
 
 IDM_PLUGIN_NS_END

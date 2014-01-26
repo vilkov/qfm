@@ -27,10 +27,10 @@ IDM_PLUGIN_NS_BEGIN
 
 class EntitiesListDelegate : public Delegate
 {
-	Q_DISABLE_COPY(EntitiesListDelegate)
+    Q_DISABLE_COPY(EntitiesListDelegate)
 
 public:
-	EntitiesListDelegate(const IdmContainer &container, QObject *parent = 0);
+    EntitiesListDelegate(const IdmContainer &container, QObject *parent = 0);
 
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;

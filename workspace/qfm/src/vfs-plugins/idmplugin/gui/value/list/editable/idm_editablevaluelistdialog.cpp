@@ -19,20 +19,20 @@
 #include "idm_editablevaluelistdialog.h"
 
 
-EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent) :
-	NestedPlainDialog(parent),
-	m_handler(this),
-	m_widget(&m_handler, container, query, this)
+EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, const EntityValueReader &reader, QWidget *parent) :
+    NestedPlainDialog(parent),
+    m_handler(this),
+    m_widget(&m_handler, container, reader, this)
 {
-	const QRect &geometry = m_widget.entity()->listGeometry();
+//    const QRect &geometry = m_widget.entity()->listGeometry();
+//
+//    if (geometry.isValid())
+//        setGeometry(geometry);
 
-	if (geometry.isValid())
-		setGeometry(geometry);
+    setWindowTitle(tr("Values of \"%1\"").arg(toUnicode(m_widget.entity().name())));
 
-	setWindowTitle(tr("Values of \"%1\"").arg(m_widget.entity()->name()));
-
-	m_handler.registerMouseDoubleClickEventHandler(&EditableValueListDialog::accept);
-	m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);
+    m_handler.registerMouseDoubleClickEventHandler(&EditableValueListDialog::accept);
+    m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Insert, &EditableValueListDialog::addValue);
     m_handler.registerShortcut(Qt::NoModifier, Qt::Key_Delete, &EditableValueListDialog::removeValue);
     m_handler.registerShortcut(Qt::CTRL, Qt::Key_F, &EditableValueListDialog::setFocusToFilter);
     m_widget.setViewToolTip(tr("INS - add value\nDEL - remove value\nCTRL+F - activate filter field"));
@@ -42,48 +42,48 @@ EditableValueListDialog::EditableValueListDialog(const IdmContainer &container, 
 
 EditableValueListDialog::~EditableValueListDialog()
 {
-    if (m_widget.entity()->listGeometry() != geometry())
-        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
+//    if (m_widget.entity()->listGeometry() != geometry())
+//        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
 }
 
 void EditableValueListDialog::accept()
 {
-	closeDbContext();
-	NestedPlainDialog::accept();
+    closeDbContext();
+    NestedPlainDialog::accept();
 }
 
 void EditableValueListDialog::reject()
 {
-	closeDbContext();
-	NestedPlainDialog::reject();
+    closeDbContext();
+    NestedPlainDialog::reject();
 }
 
 void EditableValueListDialog::closeDbContext()
 {
-	m_widget.closeDbContext();
+    m_widget.closeDbContext();
 }
 
-EntityValue::Holder EditableValueListDialog::takeValue()
+EntityValue EditableValueListDialog::takeValue()
 {
-	return m_widget.takeValue();
+    return m_widget.takeValue();
 }
 
 QModelIndex EditableValueListDialog::currentIndex() const
 {
-	return m_widget.currentIndex();
+    return m_widget.currentIndex();
 }
 
 void EditableValueListDialog::addValue()
 {
-	m_widget.addValue();
+    m_widget.addValue();
 }
 
 void EditableValueListDialog::removeValue()
 {
-	m_widget.removeValue();
+    m_widget.removeValue();
 }
 
 void EditableValueListDialog::setFocusToFilter()
 {
-	m_widget.setFocusToFilter();
+    m_widget.setFocusToFilter();
 }

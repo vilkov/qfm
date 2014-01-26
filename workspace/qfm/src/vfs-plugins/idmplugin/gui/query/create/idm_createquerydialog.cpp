@@ -20,6 +20,7 @@
 #include "model/items/idm_queryentitiesmodelitem.h"
 #include "../constraint/idm_constraintquerydialog.h"
 #include "../../value/list/static/idm_staticvaluelistdialog.h"
+#include "../../../constraints/value/idm_valueconstraint.h"
 #include "../../../settings/idm_pluginsettings.h"
 
 #include <application.h>
@@ -27,47 +28,47 @@
 #include <QtGui/QDesktopWidget>
 
 
-CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, Entity *entity, QWidget *parent) :
-	QDialog(parent),
-	m_verticatLayout(this),
-	m_splitter(this),
-	m_container(container),
-	m_entity(entity),
-	m_handler1(this),
+CreateQueryDialog::CreateQueryDialog(const IdmContainer &container, const Entity &entity, QWidget *parent) :
+    QDialog(parent),
+    m_verticatLayout(this),
+    m_splitter(this),
+    m_container(container),
+    m_entity(entity),
+    m_handler1(this),
     m_handler2(this),
-	m_toolBar1(this),
-	m_view1(&m_handler1, this),
-	m_view2(&m_handler2, this),
-	m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
+    m_toolBar1(this),
+    m_view1(&m_handler1, this),
+    m_view2(&m_handler2, this),
+    m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this)
 {
-	setWindowTitle(tr("Find \"%1\"").arg(m_entity->name()));
+    setWindowTitle(tr("Find \"%1\"").arg(toUnicode(m_entity.name())));
 
     m_toolBar1.addAction(tr("Add constraint"))->setData(AddConstraint);
     m_toolBar2.addAction(tr("Add group"))->setData(AddGroup);
     m_toolBar2.addAction(tr("Remove"))->setData(RemoveGroupOrConstraint);
 
-	connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
-	connect(&m_toolBar2, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+    connect(&m_toolBar1, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+    connect(&m_toolBar2, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 
-	m_splitter.addWidget(&m_view1);
-	m_splitter.addWidget(&m_view2);
+    m_splitter.addWidget(&m_view1);
+    m_splitter.addWidget(&m_view2);
 
-	m_horizontalLayout.setMargin(3);
-	m_horizontalLayout.setSpacing(1);
-	m_horizontalLayout.addWidget(&m_toolBar1);
-	m_horizontalLayout.addWidget(&m_toolBar2);
+    m_horizontalLayout.setMargin(3);
+    m_horizontalLayout.setSpacing(1);
+    m_horizontalLayout.addWidget(&m_toolBar1);
+    m_horizontalLayout.addWidget(&m_toolBar2);
 
-	m_verticatLayout.setMargin(3);
-	m_verticatLayout.setSpacing(1);
-	m_verticatLayout.addLayout(&m_horizontalLayout);
-	m_verticatLayout.addWidget(&m_splitter);
-	m_verticatLayout.addWidget(&m_buttonBox);
+    m_verticatLayout.setMargin(3);
+    m_verticatLayout.setSpacing(1);
+    m_verticatLayout.addLayout(&m_horizontalLayout);
+    m_verticatLayout.addWidget(&m_splitter);
+    m_verticatLayout.addWidget(&m_buttonBox);
 
     connect(&m_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(&m_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    for (Entity::size_type i = 0, size = m_entity->size(); i < size; ++i)
-    	m_model.add(m_entity->at(i));
+    for (auto i : m_entity.properties())
+        m_model.add(i.second);
 
     m_view1.setHeaderHidden(true);
     m_view1.setModel(&m_model);
@@ -91,14 +92,14 @@ CreateQueryDialog::~CreateQueryDialog()
     save();
 }
 
-Select CreateQueryDialog::query()
+BaseConstraint::Holder CreateQueryDialog::constraint()
 {
-	return Select(m_entity, m_model2.take());
+    return m_model2.constraint();
 }
 
 void CreateQueryDialog::accept()
 {
-	QDialog::accept();
+    QDialog::accept();
 }
 
 void CreateQueryDialog::save()
@@ -132,75 +133,76 @@ void CreateQueryDialog::load()
 
 void CreateQueryDialog::actionTriggered(QAction *action)
 {
-	switch (static_cast<ActionId>(action->data().toInt()))
-	{
-		case AddGroup:
-		{
-			m_model2.add(currentIndex2());
-			break;
-		}
+    switch (static_cast<ActionId>(action->data().toInt()))
+    {
+        case AddGroup:
+        {
+            m_model2.add(currentIndex2());
+            break;
+        }
 
         case AddConstraint:
-		{
-			addConstraint();
-			break;
-		}
+        {
+            addConstraint();
+            break;
+        }
 
         case RemoveGroupOrConstraint:
         {
             removeGroupOrConstraint();
             break;
         }
-	}
+    }
 }
 
 QModelIndex CreateQueryDialog::currentIndex1()
 {
-	return m_view1.selectionModel()->currentIndex();
+    return m_view1.selectionModel()->currentIndex();
 }
 
 QModelIndex CreateQueryDialog::currentIndex2()
 {
-	return m_view2.selectionModel()->currentIndex();
+    return m_view2.selectionModel()->currentIndex();
 }
 
 void CreateQueryDialog::addConstraint()
 {
-	QModelIndex index1 = currentIndex1();
+    QModelIndex index1 = currentIndex1();
 
-	if (index1.isValid())
-	{
-		QModelIndex index2 = currentIndex2();
+    if (index1.isValid())
+    {
+        QModelIndex index2 = currentIndex2();
 
-		if (index2.isValid() && static_cast<BaseConstraint *>(index2.internalPointer())->isGroup())
-		    if (static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property().entity->type() == Database::Composite)
-		    {
-		        StaticValueListDialog dialog(m_container, Select(static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property().entity), this);
+        if (index2.isValid() && static_cast<BaseConstraint *>(index2.internalPointer())->isGroup())
+            if (static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property().entity.type() == Entity::Composite)
+            {
+                EntityValueReader reader(m_container.entityValues(static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property().entity));
+                StaticValueListDialog dialog(m_container, reader, this);
 
-		        if (dialog.exec() == StaticValueListDialog::Accepted)
-		        {
-		            Constraint::Holder constraint(
-		                    new Constraint(
-		                            static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property(),
-		                            Constraint::Equal,
-		                            dialog.takeValue(),
-		                            static_cast<BaseConstraint *>(index2.internalPointer())));
+                if (dialog.exec() == StaticValueListDialog::Accepted)
+                {
+                    BaseConstraint::Holder constraint(
+                            new ValueConstraint(
+                                    static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property(),
+                                    Constraint::Equal,
+                                    dialog.takeValue(),
+                                    static_cast<BaseConstraint *>(index2.internalPointer())));
 
                     m_model2.add(constraint, index2);
-		        }
-		    }
-		    else
-		    {
+                }
+            }
+            else
+            {
                 ConstraintQueryDialog dialog(m_container, static_cast<QueryEntitiesModelItem *>(index1.internalPointer())->property(), this);
 
                 if (dialog.exec() == ConstraintQueryDialog::Accepted)
                     m_model2.add(dialog.takeConstraint(static_cast<BaseConstraint *>(index2.internalPointer())), index2);
-		    }
-		else
-			QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
-	}
-	else
-		QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
+            }
+        else
+            QMessageBox::warning(this, windowTitle(), tr("You must select a destination group!"));
+    }
+    else
+        QMessageBox::warning(this, windowTitle(), tr("You must select a property!"));
 }
 
 void CreateQueryDialog::removeGroupOrConstraint()

@@ -17,33 +17,39 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_rootnodepropertyitem.h"
+#include "../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 RootNodePropertyItem::RootNodePropertyItem(const Entity::Property &property, Base *parent) :
-	RootNodeEntityItem(property.entity, parent),
-	m_property(property),
-	m_label(QString(m_property.name).append(QString::fromLatin1(" (")).append(m_property.entity->name()).append(QChar(L')')))
+    RootNodeEntityItem(property.entity, parent),
+    m_property(property),
+    m_label(QString(toUnicode(m_property.name)).append(QString::fromLatin1(" (")).append(toUnicode(m_property.entity.name())).append(QChar(L')')))
 {}
 
-RootNodePropertyItem::RootNodePropertyItem(Entity *property, const QString &name, Base *parent) :
-	RootNodeEntityItem(property, parent),
-	m_property(property, name),
-	m_label(QString(m_property.name).append(QString::fromLatin1(" (")).append(m_property.entity->name()).append(QChar(L')')))
+RootNodePropertyItem::RootNodePropertyItem(const Entity &property, const ::EFC::String &name, Base *parent) :
+    RootNodeEntityItem(property, parent),
+    m_property(property, name),
+    m_label(QString(toUnicode(m_property.name)).append(QString::fromLatin1(" (")).append(toUnicode(m_property.entity.name())).append(QChar(L')')))
 {}
 
 QVariant RootNodePropertyItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_label;
-	else
-		return QVariant();
+    if (role == Qt::DisplayRole)
+        return m_label;
+    else
+        return QVariant();
 }
 
 bool RootNodePropertyItem::isProperty()
 {
-	return true;
+    return true;
+}
+
+QString RootNodePropertyItem::name() const
+{
+    return toUnicode(m_property.name);
 }
 
 IDM_PLUGIN_NS_END

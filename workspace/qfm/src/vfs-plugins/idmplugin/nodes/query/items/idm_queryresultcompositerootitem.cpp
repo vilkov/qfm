@@ -23,45 +23,44 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const EntityValue::Holder &value, Base *parent) :
-	QueryResultRootItem(value, parent),
-	m_items(value->entity()->size())
+QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const EntityValue &value, Base *parent) :
+    QueryResultRootItem(value, parent),
+    m_items(value.entity().properties().size())
 {
-	QueryResultPropertyItem::Holder item;
+    int pos = 0;
+    QueryResultPropertyItem::Holder item;
 
-	for (Entity::size_type i = 0, size = value->entity()->size(); i < size; ++i)
-	{
-		const Entity::Property &poperty = value->entity()->at(i);
+    for (auto i : value.entity().properties())
+    {
+//        if (i.second.entity.type() == Database::Path)
+//        {
+//            item = new QueryResultPathPropertyItem(i.second, this);
+//            item.as<QueryResultPathPropertyItem>()->add(files, container, CompositeEntityValue(value).values(i.second.entity));
+//        }
+//        else
+        {
+            item = new QueryResultPropertyItem(i.second, this);
+            item.as<QueryResultPropertyItem>()->add(CompositeEntityValue(value).values(i.second.entity));
+        }
 
-		if (poperty.entity->type() == Database::Path)
-		{
-			item = new QueryResultPathPropertyItem(poperty, this);
-			item.as<QueryResultPathPropertyItem>()->add(files, container, value.as<CompositeEntityValue>()->values(poperty.entity));
-		}
-		else
-		{
-			item = new QueryResultPropertyItem(poperty, this);
-			item.as<QueryResultPropertyItem>()->add(value.as<CompositeEntityValue>()->values(poperty.entity));
-		}
-
-		m_items[i] = item;
-	}
+        m_items[pos++] = item;
+    }
 }
 
 QueryResultCompositeRootItem::Base *QueryResultCompositeRootItem::at(size_type index) const
 {
-	return m_items.at(index).data();
+    return m_items.at(index).data();
 }
 
 QueryResultCompositeRootItem::size_type QueryResultCompositeRootItem::size() const
 {
-	return m_items.size();
+    return m_items.size();
 }
 
 QueryResultCompositeRootItem::size_type QueryResultCompositeRootItem::indexOf(Base *item) const
 {
-	Holder holder(static_cast<QueryResultItem *>(item));
-	return m_items.indexOf(holder);
+    Holder holder(static_cast<QueryResultItem *>(item));
+    return m_items.indexOf(holder);
 }
 
 IDM_PLUGIN_NS_END

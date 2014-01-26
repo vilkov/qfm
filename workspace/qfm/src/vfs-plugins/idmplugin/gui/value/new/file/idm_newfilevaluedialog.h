@@ -25,14 +25,14 @@
 
 class NewFileValueDialog : public NewCompositeValueDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	NewFileValueDialog(const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
+    NewFileValueDialog(const IdmContainer &container, const EntityValue &value, const CompositeValueModel::Files &files, QWidget *parent = 0);
 
 protected:
-	virtual void addValue();
-	virtual void removeValue();
+    virtual void addValue();
+    virtual void removeValue();
 };
 
 #endif /* IDM_NEWFILEVALUEDIALOG_H_ */

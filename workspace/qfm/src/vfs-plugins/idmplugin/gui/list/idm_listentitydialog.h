@@ -35,55 +35,55 @@ using namespace ::Tools::Events;
 
 class ListEntityDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ListEntityDialog(const IdmContainer &container, QWidget *parent = 0);
+    ListEntityDialog(const IdmContainer &container, QWidget *parent = 0);
 
     virtual void accept();
 
 private:
-	enum ActionId
-	{
-		Create,
-		Remove,
-		AddProperty,
-		RemoveProperty
-	};
+    enum ActionId
+    {
+        Create,
+        Remove,
+        AddProperty,
+        RemoveProperty
+    };
 
 private Q_SLOTS:
-	void actionTriggered(QAction *action);
+    void actionTriggered(QAction *action);
 
 private:
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QTreeView
-				>
-			> EntitiesTreeView;
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					ListEntityDialog
-				>
-			> EntitiesTreeViewHandler;
+    typedef KeyboardEventSource<
+                EventSourceBase<
+                    QTreeView
+                >
+            > EntitiesTreeView;
+    typedef KeyboardEventHandler<
+                EventHandlerBase<
+                    ListEntityDialog
+                >
+            > EntitiesTreeViewHandler;
 
-	void removeEntity(const QModelIndex &index);
-	void removeEntity();
-	void insertProperty();
-
-private:
-	void createEntity();
+    void removeEntity(const QModelIndex &index);
+    void removeEntity();
+    void insertProperty();
 
 private:
-	QModelIndex currentIndex();
+    void createEntity();
 
 private:
-	IdmContainer m_container;
-	EntitiesTreeViewHandler m_handler;
-	QToolBar m_toolBar;
-	EntitiesTreeView m_view;
-	EntitiesTreeModel m_model;
-	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
+    QModelIndex currentIndex();
+
+private:
+    IdmContainer m_container;
+    EntitiesTreeViewHandler m_handler;
+    QToolBar m_toolBar;
+    EntitiesTreeView m_view;
+    EntitiesTreeModel m_model;
+    QDialogButtonBox m_buttonBox;
+    QVBoxLayout m_verticatLayout;
 };
 
 #endif /* IDM_LISTENTITYDIALOG_H_ */

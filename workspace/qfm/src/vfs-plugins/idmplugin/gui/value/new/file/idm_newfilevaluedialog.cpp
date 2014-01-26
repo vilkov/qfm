@@ -20,24 +20,24 @@
 #include "../../model/items/idm_compositevaluepropertyitem.h"
 
 
-NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, QWidget *parent) :
-	NewCompositeValueDialog(container, value, files, parent)
+NewFileValueDialog::NewFileValueDialog(const IdmContainer &container, const EntityValue &value, const CompositeValueModel::Files &files, QWidget *parent) :
+    NewCompositeValueDialog(container, value, files, parent)
 {}
 
 void NewFileValueDialog::addValue()
 {
-	QModelIndex index = currentIndex();
+    QModelIndex index = currentIndex();
 
-	if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
-		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
-		doAddValue(index);
+//    if (index.isValid() && static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
+//        static_cast<CompositeValuePropertyItem *>(index.internalPointer())->entity().type() != Entity::Path)
+        doAddValue(index);
 }
 
 void NewFileValueDialog::removeValue()
 {
-	QModelIndex index = currentIndex();
+    QModelIndex index = currentIndex();
 
-	if (index.isValid() && !static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
-		static_cast<CompositeValuePropertyItem*>(index.internalPointer())->entity()->type() != Database::Path)
-		doRemoveValue(index);
+//    if (index.isValid() && !static_cast<CompositeValueItem *>(index.internalPointer())->isProperty() &&
+//        static_cast<CompositeValuePropertyItem *>(index.internalPointer())->entity()->type() != Database::Path)
+        doRemoveValue(index);
 }

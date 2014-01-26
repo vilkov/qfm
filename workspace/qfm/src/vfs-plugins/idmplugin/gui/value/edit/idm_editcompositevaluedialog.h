@@ -24,10 +24,10 @@
 
 class EditCompositeValueDialog : public CompositeValueDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	EditCompositeValueDialog(const IdmContainer &container, const EntityValue::Holder &value, QWidget *parent = 0);
+    EditCompositeValueDialog(const IdmContainer &container, const EntityValue &value, QWidget *parent = 0);
 };
 
 #endif /* IDM_EDITCOMPOSITEVALUEDIALOG_H_ */

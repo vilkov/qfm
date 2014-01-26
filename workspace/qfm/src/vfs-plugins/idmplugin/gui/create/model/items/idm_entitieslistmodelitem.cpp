@@ -17,25 +17,26 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_entitieslistmodelitem.h"
+#include "../../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 IdmEntitiesListItem::IdmEntitiesListItem(const Entity::Property &property, IdmItem *parent) :
-	IdmListItem(parent),
-	m_property(property)
+    IdmListItem(parent),
+    m_property(property)
 {}
 
 QVariant IdmEntitiesListItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		switch (column)
-		{
-			case 0: return m_property.name;
-			case 1: return m_property.entity->name();
-		}
+    if (role == Qt::DisplayRole)
+        switch (column)
+        {
+            case 0: return toUnicode(m_property.name);
+            case 1: return toUnicode(m_property.entity.name());
+        }
 
-	return QVariant();
+    return QVariant();
 }
 
 IDM_PLUGIN_NS_END

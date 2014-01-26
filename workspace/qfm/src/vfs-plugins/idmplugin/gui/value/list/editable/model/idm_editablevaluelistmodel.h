@@ -27,11 +27,11 @@ IDM_PLUGIN_NS_BEGIN
 class EditableValueListModel : public ValueListModel
 {
 public:
-	EditableValueListModel(const IdmContainer &container, const Select &query, QObject *parent = 0);
+    EditableValueListModel(const EntityValueReader &reader, QObject *parent = 0);
 
-	void add(const List &list);
-	QModelIndex add(const EntityValue::Holder &value);
-	void remove(const QModelIndex &index);
+    void add(const List &list);
+    QModelIndex add(const EntityValue &value);
+    void remove(const QModelIndex &index);
 };
 
 IDM_PLUGIN_NS_END

@@ -27,19 +27,19 @@ IDM_PLUGIN_NS_BEGIN
 
 class ValueListProxyModel : public QSortFilterProxyModel
 {
-	Q_DISABLE_COPY(ValueListProxyModel)
+    Q_DISABLE_COPY(ValueListProxyModel)
 
 public:
-	ValueListProxyModel(QObject *parent = 0);
+    ValueListProxyModel(QObject *parent = 0);
 
-	void setFilter(const QString &filter);
+    void setFilter(const QString &filter);
 
 protected:
-	virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 
 private:
-	QString m_filter;
+    QString m_filter;
 };
 
 IDM_PLUGIN_NS_END

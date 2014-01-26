@@ -17,21 +17,22 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_entitiestreeitem.h"
+#include "../../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-IdmEntitiesTreeItem::IdmEntitiesTreeItem(Entity *entity, IdmItem *parent) :
-	IdmListItem(parent),
-	m_entity(entity)
+IdmEntitiesTreeItem::IdmEntitiesTreeItem(const Entity &entity, IdmItem *parent) :
+    IdmListItem(parent),
+    m_entity(entity)
 {}
 
 QVariant IdmEntitiesTreeItem::data(qint32 column, qint32 role) const
 {
-	if (column == 0 && role == Qt::DisplayRole)
-		return m_entity->name();
-	else
-		return QVariant();
+    if (column == 0 && role == Qt::DisplayRole)
+        return toUnicode(m_entity.name());
+    else
+        return QVariant();
 }
 
 IDM_PLUGIN_NS_END

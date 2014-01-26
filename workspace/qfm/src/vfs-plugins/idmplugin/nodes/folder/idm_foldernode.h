@@ -29,28 +29,28 @@ IDM_PLUGIN_NS_BEGIN
 class FolderNode : public Default::Node
 {
 public:
-	FolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent = 0);
+    FolderNode(IFileContainer::Holder &container, const IdmContainer &storage, ::VFS::Node *parent = 0);
 
-	/* IFileOperations */
-	virtual ICopyControl *createControl(INodeView *view) const;
-
-protected:
-	/* Default::BaseNode */
-	virtual void rename(const QModelIndex &index, INodeView *view);
-	virtual void rename(const QModelIndexList &list, INodeView *view);
-	virtual void remove(const QModelIndexList &list, INodeView *view);
-	virtual void move(const INodeView *source, INodeView *destination);
-	virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
+    /* IFileOperations */
+    virtual ICopyControl *createControl(INodeView *view) const;
 
 protected:
-	virtual ::VFS::Node *createNode(const IFileInfo *file) const;
+    /* Default::BaseNode */
+    virtual void rename(const QModelIndex &index, INodeView *view);
+    virtual void rename(const QModelIndexList &list, INodeView *view);
+    virtual void remove(const QModelIndexList &list, INodeView *view);
+    virtual void move(const INodeView *source, INodeView *destination);
+    virtual void removeToTrash(const QModelIndexList &list, INodeView *view);
+
+protected:
+    virtual ::VFS::Node *createNode(const IFileInfo *file) const;
 
 private:
-	friend class RootNode;
-	::VFS::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
+    friend class RootNode;
+    ::VFS::Node *privateViewChild(const QString &fileName, QModelIndex &selected);
 
 private:
-	IdmContainer m_container;
+    IdmContainer m_container;
 };
 
 IDM_PLUGIN_NS_END

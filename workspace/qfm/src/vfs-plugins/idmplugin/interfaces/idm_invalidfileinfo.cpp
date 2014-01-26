@@ -23,43 +23,43 @@
 IDM_PLUGIN_NS_BEGIN
 
 InvalidInfo::InvalidInfo(const QString &fileName) :
-	m_fileName(IFileInfo::location(fileName, fileName.toUtf8())),
-	m_icon(::Desktop::Theme::current()->missingIcon())
+    m_fileName(IFileInfo::location(fileName, fileName.toUtf8())),
+    m_icon(::Desktop::Theme::current()->missingIcon())
 {}
 
 bool InvalidInfo::isDir() const
 {
-	return false;
+    return false;
 }
 
 bool InvalidInfo::isFile() const
 {
-	return false;
+    return false;
 }
 
 bool InvalidInfo::isLink() const
 {
-	return false;
+    return false;
 }
 
 InvalidInfo::size_type InvalidInfo::fileSize() const
 {
-	return 0;
+    return 0;
 }
 
 const Location &InvalidInfo::fileName() const
 {
-	return m_fileName;
+    return m_fileName;
 }
 
 const IFileType *InvalidInfo::fileType() const
 {
-	return this;
+    return this;
 }
 
 const QDateTime &InvalidInfo::lastModified() const
 {
-	return m_lastModified;
+    return m_lastModified;
 }
 
 IFileContainer *InvalidInfo::open(QString &error) const
@@ -69,27 +69,27 @@ IFileContainer *InvalidInfo::open(QString &error) const
 
 int InvalidInfo::permissions() const
 {
-	return 0;
+    return 0;
 }
 
 const FileTypeId &InvalidInfo::id() const
 {
-	return m_id;
+    return m_id;
 }
 
 const QIcon &InvalidInfo::icon() const
 {
-	return m_icon;
+    return m_icon;
 }
 
 const QString &InvalidInfo::name() const
 {
-	return m_name;
+    return m_name;
 }
 
 const QString &InvalidInfo::description() const
 {
-	return m_description;
+    return m_description;
 }
 
 IDM_PLUGIN_NS_END

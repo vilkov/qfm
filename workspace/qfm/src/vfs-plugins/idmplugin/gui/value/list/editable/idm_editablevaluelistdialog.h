@@ -27,36 +27,36 @@ using namespace ::VFS::Plugins::Idm;
 
 class EditableValueListDialog : public NestedPlainDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	EditableValueListDialog(const IdmContainer &container, const Select &query, QWidget *parent = 0);
-	virtual ~EditableValueListDialog();
+    EditableValueListDialog(const IdmContainer &container, const EntityValueReader &reader, QWidget *parent = 0);
+    virtual ~EditableValueListDialog();
 
     virtual void accept();
-	virtual void reject();
+    virtual void reject();
 
 protected:
-	void closeDbContext();
-	EntityValue::Holder takeValue();
+    void closeDbContext();
+    EntityValue takeValue();
     QModelIndex currentIndex() const;
 
 private:
-	typedef MouseDoubleClickEventHandler<
+    typedef MouseDoubleClickEventHandler<
                 KeyboardEventHandler<
                     EventHandlerBase<
                         EditableValueListDialog
                     >
                 >
-	        > TreeViewHandler;
+            > TreeViewHandler;
 
-	void addValue();
-	void removeValue();
-	void setFocusToFilter();
+    void addValue();
+    void removeValue();
+    void setFocusToFilter();
 
 private:
-	TreeViewHandler m_handler;
-	MainEditableValueListWidget m_widget;
+    TreeViewHandler m_handler;
+    MainEditableValueListWidget m_widget;
 };
 
 #endif /* IDM_EDITABLEVALUELISTDIALOG_H_ */

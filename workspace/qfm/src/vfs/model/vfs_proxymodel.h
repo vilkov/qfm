@@ -34,6 +34,7 @@ public:
 
 	static bool compareByFileNames(const IFileInfo *v1, const IFileInfo *v2);
 	static bool compareFileNames(const QString &str1, const QString &str2);
+    static bool compareFileNames(const char *str1, const char *str2);
 };
 
 VFS_NS_END

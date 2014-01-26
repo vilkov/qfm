@@ -29,10 +29,10 @@ IDM_PLUGIN_NS_BEGIN
 
 class Settings : public ::Tools::Settings::Page
 {
-	Q_DECLARE_TR_FUNCTIONS(Settings)
+    Q_DECLARE_TR_FUNCTIONS(Settings)
 
 public:
-	Settings(Option *parent);
+    Settings(Option *parent);
 
     static Settings *instance();
 

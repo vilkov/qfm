@@ -37,117 +37,117 @@ using namespace ::Tools::Events;
 class CompositeValueWidgetPrivate
 {
 public:
-	class ICallback
-	{
-	public:
-		virtual ~ICallback();
+    class ICallback
+    {
+    public:
+        virtual ~ICallback();
 
-		virtual NestedDialog *parent() = 0;
-		virtual void critical(const QString &text) = 0;
-	};
+        virtual NestedDialog *parent() = 0;
+        virtual void critical(const QString &text) = 0;
+    };
 
-	typedef MouseDoubleClickEventSource<
-				KeyboardEventSource<
-					EventSourceBase<
-						QTreeView
-					>
-				>
-			> TreeView;
+    typedef MouseDoubleClickEventSource<
+                KeyboardEventSource<
+                    EventSourceBase<
+                        QTreeView
+                    >
+                >
+            > TreeView;
 
 public:
-	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value);
-	CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files);
+    CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue &value);
+    CompositeValueWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValue &value, const CompositeValueModel::Files &files);
 
-	const IdmContainer &container() const { return m_container; }
-	IdmContainer &container() { return m_container; }
+    const IdmContainer &container() const { return m_container; }
+    IdmContainer &container() { return m_container; }
 
-	const TreeView &view() const { return m_view; }
-	TreeView &view() { return m_view; }
+    const TreeView &view() const { return m_view; }
+    TreeView &view() { return m_view; }
 
-	const CompositeValueModel &model() const { return m_model; }
-	CompositeValueModel &model() { return m_model; }
+    const CompositeValueModel &model() const { return m_model; }
+    CompositeValueModel &model() { return m_model; }
 
-	void open(const QModelIndex &index);
-	void addValue(const QModelIndex &index);
-	void removeValue(const QModelIndex &index);
+    void open(const QModelIndex &index);
+    void addValue(const QModelIndex &index);
+    void removeValue(const QModelIndex &index);
 
 private:
-	ICallback *m_callback;
-	IdmContainer m_container;
-	EntityValue::Holder m_value;
-	TreeView m_view;
-	CompositeValueModel m_model;
-	CompositeValueDelegate m_delegate;
+    ICallback *m_callback;
+    IdmContainer m_container;
+    EntityValue m_value;
+    TreeView m_view;
+    CompositeValueModel m_model;
+    CompositeValueDelegate m_delegate;
 };
 
 
 class MainCompositeValueWidget : public BaseNestedWidget, public CompositeValueWidgetPrivate::ICallback
 {
 public:
-	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent);
-	MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue::Holder &value, const CompositeValueModel::Files &files, NestedDialog *parent);
+    MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue &value, NestedDialog *parent);
+    MainCompositeValueWidget(EventHandler *handler, const IdmContainer &container, const EntityValue &value, const CompositeValueModel::Files &files, NestedDialog *parent);
 
-	/* BaseNestedWidget */
-	virtual QWidget *centralWidget();
-	virtual void setReadOnly(bool value);
-	virtual void setFocus();
+    /* BaseNestedWidget */
+    virtual QWidget *centralWidget();
+    virtual void setReadOnly(bool value);
+    virtual void setFocus();
 
-	/* CompositeValueWidgetPrivate::ICallback */
-	virtual NestedDialog *parent();
-	virtual void critical(const QString &text);
+    /* CompositeValueWidgetPrivate::ICallback */
+    virtual NestedDialog *parent();
+    virtual void critical(const QString &text);
 
     QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
 
     const IdmContainer &container() const { return m_private.container(); }
-	IdmContainer &container() { return m_private.container(); }
+    IdmContainer &container() { return m_private.container(); }
 
-	const CompositeValueModel &model() const { return m_private.model(); }
-	CompositeValueModel &model() { return m_private.model(); }
+    const CompositeValueModel &model() const { return m_private.model(); }
+    CompositeValueModel &model() { return m_private.model(); }
 
-	void open(const QModelIndex &index) { m_private.open(index); }
-	void edit(const QModelIndex &index) { m_private.view().edit(index); }
-	void addValue(const QModelIndex &index) { m_private.addValue(index); }
-	void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
-	void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
+    void open(const QModelIndex &index) { m_private.open(index); }
+    void edit(const QModelIndex &index) { m_private.view().edit(index); }
+    void addValue(const QModelIndex &index) { m_private.addValue(index); }
+    void removeValue(const QModelIndex &index) { m_private.removeValue(index); }
+    void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
 
 private:
-	CompositeValueWidgetPrivate m_private;
+    CompositeValueWidgetPrivate m_private;
 };
 
 
 class CompositeValueWidget : public NestedWidget, public CompositeValueWidgetPrivate::ICallback
 {
 public:
-	CompositeValueWidget(const IdmContainer &container, const EntityValue::Holder &value, NestedDialog *parent, const QString &title);
+    CompositeValueWidget(const IdmContainer &container, const EntityValue &value, NestedDialog *parent, const QString &title);
 
-	/* BaseNestedWidget */
-	virtual void setFocus();
+    /* BaseNestedWidget */
+    virtual void setFocus();
 
-	/* CompositeValueWidgetPrivate::ICallback */
-	virtual NestedDialog *parent();
-	virtual void critical(const QString &text);
+    /* CompositeValueWidgetPrivate::ICallback */
+    virtual NestedDialog *parent();
+    virtual void critical(const QString &text);
 
     QModelIndex currentIndex() const { return m_private.view().selectionModel()->currentIndex(); }
 
     const IdmContainer &container() const { return m_private.container(); }
-	IdmContainer &container() { return m_private.container(); }
+    IdmContainer &container() { return m_private.container(); }
 
-	const CompositeValueModel &model() const { return m_private.model(); }
-	CompositeValueModel &model() { return m_private.model(); }
+    const CompositeValueModel &model() const { return m_private.model(); }
+    CompositeValueModel &model() { return m_private.model(); }
 
-	void addValue();
-	void removeValue();
-
-private:
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					CompositeValueWidget
-				>
-			> TreeViewHandler;
+    void addValue();
+    void removeValue();
 
 private:
-	TreeViewHandler m_handler;
-	CompositeValueWidgetPrivate m_private;
+    typedef KeyboardEventHandler<
+                EventHandlerBase<
+                    CompositeValueWidget
+                >
+            > TreeViewHandler;
+
+private:
+    TreeViewHandler m_handler;
+    CompositeValueWidgetPrivate m_private;
 };
 
 #endif /* IDM_COMPOSITEVALUEWIDGET_H_ */

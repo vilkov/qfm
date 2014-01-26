@@ -28,12 +28,12 @@ IDM_PLUGIN_NS_BEGIN
 
 class CreateDbAction : public SyncAction
 {
-	Q_DECLARE_TR_FUNCTIONS(FolderCopyAction)
+    Q_DECLARE_TR_FUNCTIONS(FolderCopyAction)
 
 public:
-	CreateDbAction();
+    CreateDbAction();
 
-	virtual void process(const IFileContainer *container, const FilesList &files) const;
+    virtual void process(const IFileContainer *container, const FilesList &files) const;
 };
 
 IDM_PLUGIN_NS_END

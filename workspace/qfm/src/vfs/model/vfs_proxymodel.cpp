@@ -17,7 +17,6 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vfs_proxymodel.h"
-#include <tools/strings/strnatcmp.h>
 
 
 VFS_NS_BEGIN
@@ -40,9 +39,29 @@ bool ProxyModel::compareByFileNames(const IFileInfo *v1, const IFileInfo *v2)
 			return compareFileNames(v1->fileName(), v2->fileName());
 }
 
+
+#include <QtCore/QChar>
+#define nat_char QChar
+#define nat_isdigit(a) (a).isDigit()
+#define nat_isspace(a) (a).isSpace()
+#define nat_toupper(a) (a).toUpper()
+#include <tools/strings/strnatcmp.h>
+
 bool ProxyModel::compareFileNames(const QString &str1, const QString &str2)
 {
 	return strnatcasecmp(str1.data(), str2.data()) < 0;
+}
+
+
+#undef nat_char
+#undef nat_isdigit
+#undef nat_isspace
+#undef nat_toupper
+#include <tools/strings/strnatcmp.h>
+
+bool ProxyModel::compareFileNames(const char *str1, const char *str2)
+{
+    return strnatcasecmp(str1, str2) < 0;
 }
 
 VFS_NS_END

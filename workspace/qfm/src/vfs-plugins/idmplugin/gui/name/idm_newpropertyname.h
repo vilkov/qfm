@@ -20,18 +20,16 @@
 #define IDM_NEWPROPERTYNAME_H_
 
 #include <QtCore/QList>
+#include <liquiddb/Entity>
 #include <tools/widgets/stringdialog/stringdialog.h>
-#include "../../storage/entities/idm_entity.h"
 
-
-using namespace ::VFS::Plugins::Idm;
 
 class NewPropertyNameDialog : public StringDialog
 {
     Q_OBJECT
 
 public:
-    typedef QList<Entity::Property> Properties;
+    typedef QList<LiquidDb::Entity::Property> Properties;
 
 public:
     NewPropertyNameDialog(const Properties &properties, QWidget *parent = 0);

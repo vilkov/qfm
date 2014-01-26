@@ -29,6 +29,9 @@ template <typename T>
 class Holder : public QExplicitlySharedDataPointer<T>
 {
 public:
+    typedef QExplicitlySharedDataPointer<T> Base;
+
+public:
     inline Holder() :
         QExplicitlySharedDataPointer<T>()
     {}
@@ -37,20 +40,22 @@ public:
         QExplicitlySharedDataPointer<T>(data)
     {}
 
-    inline bool operator<(const T *other) const { return QExplicitlySharedDataPointer<T>::data() < other; }
-    inline bool operator<(const Holder<T> &other) const { return QExplicitlySharedDataPointer<T>::data() < other.data(); }
+    inline bool operator<(const T *other) const { return Base::data() < other; }
+    inline bool operator<(const Holder<T> &other) const { return Base::data() < other.data(); }
 
-    inline bool operator==(const T *other) const { return QExplicitlySharedDataPointer<T>::data() == other; }
-    inline bool operator==(const Holder<T> &other) const { return QExplicitlySharedDataPointer<T>::data() == other.data(); }
+    inline bool operator==(const T *other) const { return Base::data() == other; }
+    inline bool operator==(const Holder<T> &other) const { return Base::data() == other.data(); }
 
-    inline Holder<T> &operator=(T *o) { QExplicitlySharedDataPointer<T>::operator=(o); return *this; }
-    inline Holder<T> &operator=(const Holder<T> &o) { QExplicitlySharedDataPointer<T>::operator=(o); return *this; }
+    inline Holder<T> &operator=(T *o) { Base::operator=(o); return *this; }
+    inline Holder<T> &operator=(const Holder<T> &o) { Base::operator=(o); return *this; }
+
+    inline operator bool() const { return Base::data() != NULL; }
 
     template <typename R> inline
-    R *as() const { return static_cast<R *>(QExplicitlySharedDataPointer<T>::data()); }
+    R *as() const { return static_cast<R *>(Base::data()); }
 
     template <typename R> inline
-    const R *as_const() const { return static_cast<const R *>(QExplicitlySharedDataPointer<T>::data()); }
+    const R *as_const() const { return static_cast<const R *>(Base::data()); }
 
     template <typename Container, typename V>
     inline static typename Container::size_type indexOf(const Container &container, const V &val, const typename Container::size_type defVal = -1)

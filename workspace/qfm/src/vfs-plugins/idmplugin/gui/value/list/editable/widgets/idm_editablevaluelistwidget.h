@@ -31,7 +31,6 @@
 #include "../model/idm_editablevaluelistmodel.h"
 #include "../../../model/idm_valuelistproxymodel.h"
 #include "../../../../../containeres/idm_container.h"
-#include "../../../../../storage/queries/idm_selectquery.h"
 
 
 using namespace ::VFS::Plugins::Idm;
@@ -39,159 +38,159 @@ using namespace ::Tools::Events;
 
 class EditableValueListWidgetPrivate : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	class ICallback
-	{
-	public:
-		virtual ~ICallback();
+    class ICallback
+    {
+    public:
+        virtual ~ICallback();
 
-		virtual void acceptAndClose() = 0;
-		virtual NestedDialog *parent() = 0;
-		virtual void critical(const QString &text) = 0;
-	};
+        virtual void acceptAndClose() = 0;
+        virtual NestedDialog *parent() = 0;
+        virtual void critical(const QString &text) = 0;
+    };
 
-	typedef MouseDoubleClickEventSource<
+    typedef MouseDoubleClickEventSource<
                 KeyboardEventSource<
                     EventSourceBase<
                         QTreeView
                     >
                 >
-	        > TreeView;
+            > TreeView;
 
-	typedef KeyboardEventSource<
-				EventSourceBase<
-					QLineEdit
-				>
-			> LineEdit;
+    typedef KeyboardEventSource<
+                EventSourceBase<
+                    QLineEdit
+                >
+            > LineEdit;
 
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					EditableValueListWidgetPrivate
-				>
-			> LineEditHandler;
+    typedef KeyboardEventHandler<
+                EventHandlerBase<
+                    EditableValueListWidgetPrivate
+                >
+            > LineEditHandler;
 
 public:
-	EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const Select &query);
+    EditableValueListWidgetPrivate(ICallback *callback, EventHandler *handler, const IdmContainer &container, const EntityValueReader &reader);
 
-	const IdmContainer &container() const { return m_container; }
-	IdmContainer &container() { return m_container; }
+    const IdmContainer &container() const { return m_container; }
+    IdmContainer &container() { return m_container; }
 
-    Entity *entity() const { return m_entity; }
+    const Entity &entity() const { return m_entity; }
 
     const TreeView &view() const { return m_view; }
-	TreeView &view() { return m_view; }
+    TreeView &view() { return m_view; }
 
-	const EditableValueListModel &model() const { return m_model; }
-	EditableValueListModel &model() { return m_model; }
+    const EditableValueListModel &model() const { return m_model; }
+    EditableValueListModel &model() { return m_model; }
 
-	const ValueListProxyModel &proxy() const { return m_proxy; }
-	ValueListProxyModel &proxy() { return m_proxy; }
+    const ValueListProxyModel &proxy() const { return m_proxy; }
+    ValueListProxyModel &proxy() { return m_proxy; }
 
     QModelIndex currentIndex() const { return m_proxy.mapToSource(m_view.selectionModel()->currentIndex()); }
 
     void addValue();
-	void removeValue();
+    void removeValue();
 //    void select(const QModelIndex &index);
-	void setFocusToFilter() { m_filter.setFocus(); }
+    void setFocusToFilter() { m_filter.setFocus(); }
 
 private Q_SLOTS:
-	void setFilter();
-	void clearFilter();
-	void selectValue(const QModelIndex &index);
+    void setFilter();
+    void clearFilter();
+    void selectValue(const QModelIndex &index);
 
 private:
     void setCurrentIndex(const QModelIndex &index) const;
 
 private:
-	ICallback *m_callback;
-	IdmContainer m_container;
-	Entity *m_entity;
+    ICallback *m_callback;
+    IdmContainer m_container;
+    const Entity &m_entity;
 
-	QVBoxLayout m_vLayout;
-	QHBoxLayout m_hLayout;
+    QVBoxLayout m_vLayout;
+    QHBoxLayout m_hLayout;
 
-	LineEditHandler m_handler;
-	LineEdit m_filter;
-	QPushButton m_search;
+    LineEditHandler m_handler;
+    LineEdit m_filter;
+    QPushButton m_search;
 
-	TreeView m_view;
-	EditableValueListModel m_model;
-	ValueListProxyModel m_proxy;
+    TreeView m_view;
+    EditableValueListModel m_model;
+    ValueListProxyModel m_proxy;
 };
 
 
 class MainEditableValueListWidget : public BaseNestedWidget, public EditableValueListWidgetPrivate::ICallback
 {
 public:
-	MainEditableValueListWidget(EventHandler *handler, const IdmContainer &container, const Select &query, NestedDialog *parent);
+    MainEditableValueListWidget(EventHandler *handler, const IdmContainer &container, const EntityValueReader &reader, NestedDialog *parent);
 
-	/* BaseNestedWidget */
-	virtual QWidget *centralWidget();
-	virtual void setReadOnly(bool value);
-	virtual void setFocus();
+    /* BaseNestedWidget */
+    virtual QWidget *centralWidget();
+    virtual void setReadOnly(bool value);
+    virtual void setFocus();
 
-	/* EditableValueListWidgetPrivate::ICallback */
-	virtual void acceptAndClose();
-	virtual NestedDialog *parent();
-	virtual void critical(const QString &text);
+    /* EditableValueListWidgetPrivate::ICallback */
+    virtual void acceptAndClose();
+    virtual NestedDialog *parent();
+    virtual void critical(const QString &text);
 
     const IdmContainer &container() const { return m_private.container(); }
-	IdmContainer &container() { return m_private.container(); }
+    IdmContainer &container() { return m_private.container(); }
 
-    Entity *entity() const { return m_private.entity(); }
+    const Entity &entity() const { return m_private.entity(); }
 
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
-	EntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
+    EntityValue takeValue() { return m_private.model().take(currentIndex()); }
 
-	void closeDbContext() { m_private.model().close(); }
+    void closeDbContext() { m_private.model().close(); }
 
     void addValue() { m_private.addValue(); }
-	void removeValue() { m_private.removeValue(); }
+    void removeValue() { m_private.removeValue(); }
 //    void select(const QModelIndex &index) { m_private.select(index); }
-	void setFocusToFilter() { m_private.setFocusToFilter(); }
-	void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
+    void setFocusToFilter() { m_private.setFocusToFilter(); }
+    void setViewToolTip(const QString &value) { m_private.view().setToolTip(value); }
 
 private:
-	EditableValueListWidgetPrivate m_private;
+    EditableValueListWidgetPrivate m_private;
 };
 
 
 class EditableValueListWidget : public NestedWidget, public EditableValueListWidgetPrivate::ICallback
 {
 public:
-	EditableValueListWidget(const IdmContainer &container, const Select &query, NestedDialog *parent);
+    EditableValueListWidget(const IdmContainer &container, const EntityValueReader &reader, NestedDialog *parent);
 
-	/* BaseNestedWidget */
-	virtual void setFocus();
+    /* BaseNestedWidget */
+    virtual void setFocus();
 
-	/* EditableValueListWidgetPrivate::ICallback */
-	virtual void acceptAndClose();
-	virtual NestedDialog *parent();
-	virtual void critical(const QString &text);
+    /* EditableValueListWidgetPrivate::ICallback */
+    virtual void acceptAndClose();
+    virtual NestedDialog *parent();
+    virtual void critical(const QString &text);
 
     const IdmContainer &container() const { return m_private.container(); }
-	IdmContainer &container() { return m_private.container(); }
+    IdmContainer &container() { return m_private.container(); }
 
     QModelIndex currentIndex() const { return m_private.currentIndex(); }
-	EntityValue::Holder takeValue() { return m_private.model().take(currentIndex()); }
+    EntityValue takeValue() { return m_private.model().take(currentIndex()); }
 
     void addValue();
-	void removeValue();
+    void removeValue();
 //    void select(const QModelIndex &index) { m_private.select(index); }
-	void setFocusToFilter();
+    void setFocusToFilter();
 
 private:
-	typedef KeyboardEventHandler<
-				EventHandlerBase<
-					EditableValueListWidget
-				>
-			> TreeViewHandler;
+    typedef KeyboardEventHandler<
+                EventHandlerBase<
+                    EditableValueListWidget
+                >
+            > TreeViewHandler;
 
 private:
-	TreeViewHandler m_handler;
-	EditableValueListWidgetPrivate m_private;
+    TreeViewHandler m_handler;
+    EditableValueListWidgetPrivate m_private;
 };
 
 #endif /* IDM_EDITABLEVALUELISTWIDGET_H_ */

@@ -17,30 +17,31 @@
  * along with QFM. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "idm_compositevaluerealpathitem.h"
+#include "../../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueRealPathItem::CompositeValueRealPathItem(const EntityValue::Holder &value, IdmItem *parent) :
-	CompositeValuePathItem(value, parent)
+CompositeValueRealPathItem::CompositeValueRealPathItem(const EntityValue &value, IdmItem *parent) :
+    CompositeValuePathItem(value, parent)
 {}
 
 QVariant CompositeValueRealPathItem::data(qint32 column, qint32 role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_value->value();
-	else
-		return QVariant();
+    if (role == Qt::DisplayRole)
+        return toQVariant(m_value.value());
+    else
+        return QVariant();
 }
 
 QString CompositeValueRealPathItem::fileName() const
 {
-	return QString();
+    return QString();
 }
 
 bool CompositeValueRealPathItem::isFile() const
 {
-	return false;
+    return false;
 }
 
 void CompositeValueRealPathItem::open() const

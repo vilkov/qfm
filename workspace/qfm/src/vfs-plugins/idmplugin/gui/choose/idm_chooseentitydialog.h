@@ -33,28 +33,25 @@ using namespace ::VFS::Plugins::Idm;
 
 class ChooseEntityDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	typedef QList<Entity *> List;
-
-public:
-	Entity *value() const { return m_container.at(m_comboBox.itemData(m_comboBox.currentIndex()).toInt()); }
-	static Entity *chooseFile(const IdmContainer &container, QWidget *parent = 0);
-	static Entity *chooseProperty(const IdmContainer &container, Entity *entity, QString &propertyName, QWidget *parent = 0);
+    const Entity &value() const { return (*m_container.entities().find(m_comboBox.itemData(m_comboBox.currentIndex()).toLongLong())).second; }
+    static Entity chooseFile(const IdmContainer &container, QWidget *parent = 0);
+    static Entity chooseProperty(const IdmContainer &container, const Entity &entity, ::EFC::String &propertyName, QWidget *parent = 0);
 
 protected:
-	ChooseEntityDialog(const QString &title, const IdmContainer &container, const List &list, QWidget *parent = 0);
+    ChooseEntityDialog(const QString &title, const IdmContainer &container, const LiquidDb::Storage::Entities &entities, QWidget *parent = 0);
 
 protected:
-	const IdmContainer &m_container;
-	QVBoxLayout m_verticatLayout;
+    const IdmContainer &m_container;
+    QVBoxLayout m_verticatLayout;
 
 private:
-	QLabel m_label;
-	QComboBox m_comboBox;
-	QDialogButtonBox m_buttonBox;
-	QHBoxLayout m_horizontalLayout;
+    QLabel m_label;
+    QComboBox m_comboBox;
+    QDialogButtonBox m_buttonBox;
+    QHBoxLayout m_horizontalLayout;
 };
 
 #endif /* IDM_CHOOSEENTITYDIALOG_H_ */

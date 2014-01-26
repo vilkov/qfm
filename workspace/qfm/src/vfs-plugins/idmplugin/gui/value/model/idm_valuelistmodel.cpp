@@ -21,57 +21,57 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-ValueListModel::ValueListModel(const IdmContainer &container, const Select &query, QObject *parent) :
-	QAbstractItemModel(parent),
-	m_reader(container, query)
+ValueListModel::ValueListModel(const EntityValueReader &reader, QObject *parent) :
+    QAbstractItemModel(parent),
+    m_reader(reader)
 {}
 
 int ValueListModel::rowCount(const QModelIndex &parent) const
 {
-	if (parent.isValid())
-		return 0;
-	else
-		return m_items.size();
+    if (parent.isValid())
+        return 0;
+    else
+        return m_items.size();
 }
 
 int ValueListModel::columnCount(const QModelIndex &parent) const
 {
-	return 1;
+    return 1;
 }
 
 QVariant ValueListModel::data(const QModelIndex &index, int role) const
 {
-	if (role == Qt::DisplayRole)
-		return m_items.at(index.row())->value();
-	else
-		return QVariant();
+    if (role == Qt::DisplayRole)
+        return toQVariant(m_items.at(index.row()).value());
+    else
+        return QVariant();
 }
 
 Qt::ItemFlags ValueListModel::flags(const QModelIndex &index) const
 {
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 QVariant ValueListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	return QVariant();
+    return QVariant();
 }
 
 void ValueListModel::fetchMore(const QModelIndex &parent)
 {
-	List list;
-	EntityValue::Holder item;
+    List list;
+    EntityValue item;
 
-	list.reserve(PrefetchLimit);
+    list.reserve(PrefetchLimit);
 
-	for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
-		if (item = m_reader.next())
-			list.push_back(item);
-		else
-			break;
+    for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
+        if ((item = m_reader.next()).isValid())
+            list.push_back(item);
+        else
+            break;
 
-	if (!list.isEmpty())
-		add(list);
+    if (!list.isEmpty())
+        add(list);
 }
 
 bool ValueListModel::canFetchMore(const QModelIndex &parent) const
@@ -81,8 +81,8 @@ bool ValueListModel::canFetchMore(const QModelIndex &parent) const
 
 QModelIndex ValueListModel::index(int row, int column, const QModelIndex &parent) const
 {
-	if (hasIndex(row, column, parent))
-		return createIndex(row, column, m_items.at(row));
+    if (hasIndex(row, column, parent))
+        return createIndex(row, column);
     else
         return QModelIndex();
 }
@@ -92,38 +92,38 @@ QModelIndex ValueListModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-EntityValue::Holder ValueListModel::take(const QModelIndex &index)
+EntityValue ValueListModel::take(const QModelIndex &index)
 {
-	EntityValue::Holder res;
+    EntityValue res;
 
-	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	res = m_items.takeAt(index.row());
-	endRemoveRows();
+    beginRemoveRows(QModelIndex(), index.row(), index.row());
+    res = m_items.takeAt(index.row());
+    endRemoveRows();
 
-	return res;
+    return res;
 }
 
 void ValueListModel::add(const List &list)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
-	m_items.append(list);
-	endInsertRows();
+    beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + list.size() - 1);
+    m_items.append(list);
+    endInsertRows();
 }
 
-QModelIndex ValueListModel::add(const EntityValue::Holder &value)
+QModelIndex ValueListModel::add(const EntityValue &value)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(value);
-	endInsertRows();
+    beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+    m_items.push_back(value);
+    endInsertRows();
 
-	return createIndex(m_items.size() - 1, 0);
+    return createIndex(m_items.size() - 1, 0);
 }
 
 void ValueListModel::remove(const QModelIndex &index)
 {
-	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	m_items.removeAt(index.row());
-	endRemoveRows();
+    beginRemoveRows(QModelIndex(), index.row(), index.row());
+    m_items.removeAt(index.row());
+    endRemoveRows();
 }
 
 IDM_PLUGIN_NS_END

@@ -30,14 +30,14 @@ class CompositeValueDelegate : public Delegate
     Q_DISABLE_COPY(CompositeValueDelegate)
 
 public:
-    CompositeValueDelegate(const EntityValue::Holder &value, const IdmContainer &container, QObject *parent = 0);
+    CompositeValueDelegate(const EntityValue &value, const IdmContainer &container, QObject *parent = 0);
 
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
     virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 private:
-    Entity *m_entity;
+    const Entity &m_entity;
     mutable IdmContainer m_container;
 };
 

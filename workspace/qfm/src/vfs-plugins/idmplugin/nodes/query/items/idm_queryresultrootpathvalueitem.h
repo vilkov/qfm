@@ -19,33 +19,35 @@
 #ifndef IDM_QUERYRESULTROOTPATHVALUEITEM_H_
 #define IDM_QUERYRESULTROOTPATHVALUEITEM_H_
 
+#include <liquiddb/EntityValue>
 #include <QtCore/QCoreApplication>
 #include "idm_queryresultpathitem.h"
-#include "../../../storage/values/idm_entityvalue.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class QueryResultRootPathValueItem : public QueryResultPathItem
 {
-	Q_DECLARE_TR_FUNCTIONS(QueryResultPathValueItem)
+    Q_DECLARE_TR_FUNCTIONS(QueryResultPathValueItem)
 
 public:
-	QueryResultRootPathValueItem(const IFileContainer *container, const EntityValue::Holder &value, Base *parent);
+    QueryResultRootPathValueItem(const IFileContainer *container, const EntityValue &value, Base *parent);
 
-	/* QueryResultItem */
-	virtual bool isRootPathValue();
+    /* QueryResultItem */
+    virtual bool isRootPathValue();
 
-	/* QueryResultPathItem */
-	virtual void open() const;
+    /* QueryResultPathItem */
+    virtual void open() const;
 
-	void update(SnapshotItem *item);
-	const EntityValue::Holder &value() const { return m_value; }
+    void update(SnapshotItem *item);
+    const EntityValue &value() const { return m_value; }
 
 private:
-	EntityValue::Holder m_value;
-	const IFileContainer *m_container;
-	IFileContainer::Holder m_thisContainer;
+    EntityValue m_value;
+    const IFileContainer *m_container;
+    IFileContainer::Holder m_thisContainer;
 };
 
 IDM_PLUGIN_NS_END

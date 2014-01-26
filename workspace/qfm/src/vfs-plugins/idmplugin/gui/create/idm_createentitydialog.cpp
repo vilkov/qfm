@@ -18,15 +18,17 @@
  */
 #include "idm_createentitydialog.h"
 
-#include <tools/widgets/stringdialog/stringdialog.h>
+#include <vfs/model/vfs_proxymodel.h>
 
+#include <liquiddb/EntityTitle>
+#include <tools/widgets/stringdialog/stringdialog.h>
 #include <QtGui/QMessageBox>
 
 
 CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QString &name, QWidget *parent) :
-	QDialog(parent),
-	m_label(this),
-	m_lineEdit(name, this),
+    QDialog(parent),
+    m_label(this),
+    m_lineEdit(name, this),
     m_label2(this),
     m_lineEdit2(this),
     m_label3(this),
@@ -34,13 +36,13 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QStr
     m_view(this),
     m_addEntity(tr("Add"), this),
     m_removeEntity(tr("Remove"), this),
-	m_gridLayout(this),
+    m_gridLayout(this),
     m_buttonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this),
-	m_model(this),
-	m_delegate(container)
+    m_model(this),
+    m_delegate(container)
 {
-	setWindowTitle(tr("Create a new entity"));
-	setListEnabled(false);
+    setWindowTitle(tr("Create a new entity"));
+    setListEnabled(false);
 
     QFont font;
     font.setBold(true);
@@ -86,7 +88,7 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QStr
     m_lineEdit.selectAll();
 
     for (EntityTypes::const_iterator it = container.entityTypes().constBegin(), end = container.entityTypes().constEnd(); it != end; ++it)
-    	m_comboBox.addItem(it->label, it.key());
+        m_comboBox.addItem(it->label, it.key());
 
     m_comboBox.setCurrentIndex(0);
     connect(&m_comboBox, SIGNAL(activated(int)), this, SLOT(activated(int)));
@@ -94,86 +96,90 @@ CreateEntityDialog::CreateEntityDialog(const IdmContainer &container, const QStr
 
 void CreateEntityDialog::accept()
 {
-	if (name().isEmpty())
-		QMessageBox::warning(this, windowTitle(), tr("You must enter the name!"));
-	else
-	{
-		if (m_lineEdit2.isEnabled())
-		{
-			ShortFormat format = shortFormat();
+    if (name().empty())
+        QMessageBox::warning(this, windowTitle(), tr("You must enter the name!"));
+    else
+    {
+        if (m_lineEdit2.isEnabled())
+        {
+            EntityTitle title(CreateEntityDialog::title());
 
-			if (format.isValid())
-			{
-				bool ok;
+            if (title.isValid())
+            {
+                bool ok;
 
-				for (ShortFormat::size_type i = 0, size = format.size(); i < size; ++i)
-					if (format.at(i).type() == ShortFormat::Token::Property)
-					{
-						ok = false;
+                for (auto i : title)
+                    if (i.type() == EntityTitle::Token::Property)
+                    {
+                        ok = false;
 
-						for (size_type q = 0, size = m_model.size(); q < size; ++q)
-							if (m_model.nameAt(q).compare(format.at(i).string(), Qt::CaseSensitive) == 0)
-							{
-								ok = true;
-								break;
-							}
+                        for (size_type q = 0, size = m_model.size(); q < size; ++q)
+                            if (m_model.nameAt(q) == i.string())
+                            {
+                                ok = true;
+                                break;
+                            }
 
-						if (!ok)
-						{
-							QMessageBox::warning(this, windowTitle(), tr("Short format points to property \"%1\" which is not in properties of this entity!").arg(format.at(i).string()));
-							return;
-						}
-					}
-			}
-			else
-			{
-				QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!").arg(format.lastError()));
-				return;
-			}
-		}
+                        if (!ok)
+                        {
+                            QMessageBox::warning(
+                                    this,
+                                    windowTitle(),
+                                    tr("Short format points to property \"%1\" which is not in properties of this entity!").
+                                        arg(toUnicode(i.string())));
+                            return;
+                        }
+                    }
+            }
+            else
+            {
+                QMessageBox::warning(this, windowTitle(), tr("Short format is invalid (%1)!"));
+                return;
+            }
+        }
 
-		for (size_type i = 0, q, size = m_model.size(); i < size; ++i)
-			for (q = i + 1; q < size; ++q)
-				if (m_model.entityAt(q)->id() == m_model.entityAt(i)->id())
-				{
-					QMessageBox::warning(this, windowTitle(), tr("More than one property of type \"%1\"!").arg(m_model.entityAt(i)->name()));
-					return;
-				}
-				else
-					if (m_model.nameAt(q).compare(m_model.nameAt(i), Qt::CaseInsensitive) == 0)
-					{
-						QMessageBox::warning(this, windowTitle(), tr("There is a properties with the same names \"%1\"!").arg(m_model.nameAt(i)));
-						return;
-					}
+        for (size_type i = 0, q, size = m_model.size(); i < size; ++i)
+            for (q = i + 1; q < size; ++q)
+                if (m_model.entityAt(q).id() == m_model.entityAt(i).id())
+                {
+                    QMessageBox::warning(this, windowTitle(), tr("More than one property of type \"%1\"!").arg(toUnicode(m_model.entityAt(i).name())));
+                    return;
+                }
+                else
+                    if (::VFS::ProxyModel::compareFileNames(m_model.nameAt(q).c_str(), m_model.nameAt(i).c_str()) == 0)
+                    {
+                        QMessageBox::warning(this, windowTitle(), tr("There is a properties with the same names \"%1\"!").arg(toUnicode(m_model.nameAt(i))));
+                        return;
+                    }
 
-		QDialog::accept();
-	}
+        QDialog::accept();
+    }
 }
 
 void CreateEntityDialog::activated(int index)
 {
-	setListEnabled(m_comboBox.itemData(index, Qt::UserRole).toInt() == Database::Composite);
+    setListEnabled(m_comboBox.itemData(index, Qt::UserRole).toInt() == Entity::Composite);
 }
 
 void CreateEntityDialog::add()
 {
-	if (m_delegate.container().size() == 0)
-		QMessageBox::warning(this, windowTitle(), tr("There is no entities!"));
-	else
-	{
-		StringDialog dialog(tr("New property name"), tr("Name"), QString(), this);
+    if (m_delegate.container().entities().size() == 0)
+        QMessageBox::warning(this, windowTitle(), tr("There is no entities!"));
+    else
+    {
+        StringDialog dialog(tr("New property name"), tr("Name"), QString(), this);
 
-		if (dialog.exec() == StringDialog::Accepted)
-			m_model.add(m_delegate.container().at(0), dialog.value());
-	}
+        if (dialog.exec() == StringDialog::Accepted)
+            m_model.add((*m_delegate.container().entities().begin()).second, fromUnicode(dialog.value()).data());
+    }
 }
 
 void CreateEntityDialog::remove()
 {
-	QModelIndex index = m_view.currentIndex();
+    QModelIndex index = m_view.currentIndex();
 
-	if (index.isValid())
-		m_model.remove(index);
+    if (index.isValid())
+        m_model.remove(index);
 }
 
 void CreateEntityDialog::setListEnabled(bool enabled)

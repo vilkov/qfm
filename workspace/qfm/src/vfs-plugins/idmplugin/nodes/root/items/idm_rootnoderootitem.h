@@ -27,16 +27,16 @@ IDM_PLUGIN_NS_BEGIN
 class RootNodeRootItem : public RootNodeItem
 {
 public:
-	RootNodeRootItem();
+    RootNodeRootItem();
 
-	/* Base */
-	virtual QVariant data(qint32 column, qint32 role) const;
+    /* Base */
+    virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* RootNodeItem */
-	virtual bool isRoot();
+    /* RootNodeItem */
+    virtual bool isRoot();
 
 private:
-	QVariant m_label;
+    QVariant m_label;
 };
 
 IDM_PLUGIN_NS_END

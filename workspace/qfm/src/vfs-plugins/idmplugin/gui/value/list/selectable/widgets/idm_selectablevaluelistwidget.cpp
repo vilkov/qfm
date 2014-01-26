@@ -19,14 +19,14 @@
 #include "idm_selectablevaluelistwidget.h"
 
 
-SelectableValueListWidget::SelectableValueListWidget(const IdmContainer &container, const Select &query, NestedDialog *parent) :
-	EditableValueListWidget(container, query, parent)
+SelectableValueListWidget::SelectableValueListWidget(const IdmContainer &container, const EntityValueReader &reader, NestedDialog *parent) :
+    EditableValueListWidget(container, reader, parent)
 {}
 
 void SelectableValueListWidget::accept()
 {
-	if (currentIndex().isValid())
-		EditableValueListWidget::accept();
-	else
-		warning(tr("You must choose one of the values."));
+    if (currentIndex().isValid())
+        EditableValueListWidget::accept();
+    else
+        warning(tr("You must choose one of the values."));
 }

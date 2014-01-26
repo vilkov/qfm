@@ -21,23 +21,23 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-EditableValueListModel::EditableValueListModel(const IdmContainer &container, const Select &query, QObject *parent) :
-	ValueListModel(container, query, parent)
+EditableValueListModel::EditableValueListModel(const EntityValueReader &reader, QObject *parent) :
+    ValueListModel(reader, parent)
 {}
 
 void EditableValueListModel::add(const List &list)
 {
-	ValueListModel::add(list);
+    ValueListModel::add(list);
 }
 
-QModelIndex EditableValueListModel::add(const EntityValue::Holder &value)
+QModelIndex EditableValueListModel::add(const EntityValue &value)
 {
-	return ValueListModel::add(value);
+    return ValueListModel::add(value);
 }
 
 void EditableValueListModel::remove(const QModelIndex &index)
 {
-	ValueListModel::remove(index);
+    ValueListModel::remove(index);
 }
 
 IDM_PLUGIN_NS_END

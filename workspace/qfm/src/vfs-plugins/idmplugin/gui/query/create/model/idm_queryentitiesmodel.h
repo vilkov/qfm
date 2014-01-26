@@ -19,25 +19,27 @@
 #ifndef IDM_QUERYENTITIESMODEL_H_
 #define IDM_QUERYENTITIESMODEL_H_
 
+#include <liquiddb/Entity>
 #include "../../../../model/idm_model.h"
-#include "../../../../storage/entities/idm_entity.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class QueryEntitiesModel : public Model
 {
 public:
-	typedef Container::size_type size_type;
+    typedef Container::size_type size_type;
 
 public:
-	QueryEntitiesModel(QObject *parent = 0);
+    QueryEntitiesModel(QObject *parent = 0);
 
-	void add(const Entity::Property &property);
-	void remove(const QModelIndex &index);
+    void add(const Entity::Property &property);
+    void remove(const QModelIndex &index);
 
 private:
-	void expand(IdmItem *parent);
+    void expand(IdmItem *parent);
 };
 
 IDM_PLUGIN_NS_END

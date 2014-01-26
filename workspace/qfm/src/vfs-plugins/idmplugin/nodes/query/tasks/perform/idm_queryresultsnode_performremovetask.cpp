@@ -24,7 +24,7 @@
 IDM_PLUGIN_NS_BEGIN
 
 PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot) :
-	::VFS::Plugins::Default::FilesBaseTask(receiver),
+    ::VFS::Plugins::Default::FilesBaseTask(receiver),
     m_snapshot(snapshot),
     m_progress(receiver),
     m_skipAllIfNotRemove(false)
@@ -32,24 +32,24 @@ PerformRemoveTask::PerformRemoveTask(TasksNode *receiver, const Snapshot &snapsh
 
 void PerformRemoveTask::run(const volatile Flags &aborted)
 {
-	bool tryAgain;
-	SnapshotItem *entry;
+    bool tryAgain;
+    SnapshotItem *entry;
 
-	for (Snapshot::iterator i = m_snapshot.begin(), end = m_snapshot.end(); i != end && !aborted; ++i)
-		if (entry = (*i).second)
-			if (entry->info()->isDir())
-			{
-				m_progress.init((*i).first);
-				removeEntry(i.key(), entry, tryAgain = false, aborted);
-				m_progress.complete();
-			}
-			else
-			{
-				m_progress.clear();
-				removeEntry(i.key(), entry, tryAgain = false, aborted);
-			}
+    for (Snapshot::iterator i = m_snapshot.begin(), end = m_snapshot.end(); i != end && !aborted; ++i)
+        if (entry = (*i).second)
+            if (entry->info()->isDir())
+            {
+                m_progress.init((*i).first);
+                removeEntry(i.key(), entry, tryAgain = false, aborted);
+                m_progress.complete();
+            }
+            else
+            {
+                m_progress.clear();
+                removeEntry(i.key(), entry, tryAgain = false, aborted);
+            }
 
-	postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::RemoveFiles), aborted, m_snapshot));
+    postEvent(new Event(this, static_cast<Event::Type>(ModelEvent::RemoveFiles), aborted, m_snapshot));
 }
 
 void PerformRemoveTask::removeEntry(const Location &location, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted)

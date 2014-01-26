@@ -19,20 +19,23 @@
 #ifndef IDM_INODEQUERYRESULTS_H_
 #define IDM_INODEQUERYRESULTS_H_
 
+#include <liquiddb/EntityValue>
 #include <QtCore/QModelIndex>
-#include "../../../storage/values/idm_entityvalue.h"
+#include "../../../idm_ns.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class IQueryResultsUpdater
 {
 public:
-	virtual ~IQueryResultsUpdater();
+    virtual ~IQueryResultsUpdater();
 
-	virtual void add(const QModelIndex &index, const CompositeEntityValue::List &values) = 0;
-	virtual void remove(const QModelIndex &index, const CompositeEntityValue::List &values) = 0;
-	virtual void refresh(const QModelIndex &index) = 0;
+    virtual void add(const QModelIndex &index, const EntityValue::List &values) = 0;
+    virtual void remove(const QModelIndex &index, const EntityValue::List &values) = 0;
+    virtual void refresh(const QModelIndex &index) = 0;
 };
 
 IDM_PLUGIN_NS_END

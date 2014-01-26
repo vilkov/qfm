@@ -20,25 +20,26 @@
 #define IDM_ENTITYTYPES_H_
 
 #include <QtCore/QMap>
-#include "../storage/entities/idm_entity.h"
+#include <liquiddb/Entity>
+#include "../idm_ns.h"
 
 
 IDM_PLUGIN_NS_BEGIN
 
 struct EntityTypeDescription
 {
-	EntityTypeDescription()
-	{}
-	EntityTypeDescription(const QString &label, const QString &description) :
-		label(label),
-		description(description)
-	{}
+    EntityTypeDescription()
+    {}
+    EntityTypeDescription(const QString &label, const QString &description) :
+        label(label),
+        description(description)
+    {}
 
-	QString label;
-	QString description;
+    QString label;
+    QString description;
 };
 
-typedef QMap<Entity::Type, EntityTypeDescription> EntityTypes;
+typedef QMap<LiquidDb::Entity::Type, EntityTypeDescription> EntityTypes;
 
 IDM_PLUGIN_NS_END
 

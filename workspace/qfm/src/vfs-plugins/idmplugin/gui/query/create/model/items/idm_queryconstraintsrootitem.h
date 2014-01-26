@@ -19,7 +19,7 @@
 #ifndef IDM_QUERYCONSTRAINTSROOTITEM_H_
 #define IDM_QUERYCONSTRAINTSROOTITEM_H_
 
-#include "../../../../../storage/constraints/group/idm_groupconstraint.h"
+#include "../../../../../constraints/group/idm_groupconstraint.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -27,9 +27,9 @@ IDM_PLUGIN_NS_BEGIN
 class QueryConstraintsRootItem : public GroupConstraint
 {
 public:
-	QueryConstraintsRootItem();
+    QueryConstraintsRootItem();
 
-	void clear();
+    void clear();
 };
 
 IDM_PLUGIN_NS_END

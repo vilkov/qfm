@@ -32,10 +32,10 @@ class PerformRemoveTask : public ::VFS::Plugins::Default::FilesBaseTask
     Q_DECLARE_TR_FUNCTIONS(PerformRemoveTask)
 
 public:
-	PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
+    PerformRemoveTask(TasksNode *receiver, const Snapshot &snapshot);
 
 protected:
-	virtual void run(const volatile Flags &aborted);
+    virtual void run(const volatile Flags &aborted);
 
 protected:
     void removeEntry(const Location &location, SnapshotItem *entry, volatile bool &tryAgain, const volatile Flags &aborted);

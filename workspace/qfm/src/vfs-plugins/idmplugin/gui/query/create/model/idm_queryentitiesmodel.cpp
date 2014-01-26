@@ -23,37 +23,37 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryEntitiesModel::QueryEntitiesModel(QObject *parent) :
-	Model(parent)
+    Model(parent)
 {}
 
 void QueryEntitiesModel::add(const Entity::Property &property)
 {
-	QueryEntitiesModelItem *item;
+    QueryEntitiesModelItem *item;
 
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(item = new QueryEntitiesModelItem(property));
-	expand(item);
-	endInsertRows();
+    beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+    m_items.push_back(item = new QueryEntitiesModelItem(property));
+    expand(item);
+    endInsertRows();
 }
 
 void QueryEntitiesModel::remove(const QModelIndex &index)
 {
-//	beginRemoveRows(QModelIndex(), index.row(), index.row());
-//	delete m_items.at(index.row());
-//	m_items.remove(index.row());
-//	endRemoveRows();
+//    beginRemoveRows(QModelIndex(), index.row(), index.row());
+//    delete m_items.at(index.row());
+//    m_items.remove(index.row());
+//    endRemoveRows();
 }
 
 void QueryEntitiesModel::expand(IdmItem *p)
 {
-	QueryEntitiesModelItem *item;
-	QueryEntitiesModelItem *parent = static_cast<QueryEntitiesModelItem*>(p);
+    QueryEntitiesModelItem *item;
+    QueryEntitiesModelItem *parent = static_cast<QueryEntitiesModelItem*>(p);
 
-	for (Entity::size_type i = 0, size = parent->entity()->size(); i < size; ++i)
-	{
-		parent->add(item = new QueryEntitiesModelItem(parent->entity()->at(i), parent));
-		expand(item);
-	}
+    for (auto i : parent->entity().properties())
+    {
+        parent->add(item = new QueryEntitiesModelItem(i.second, parent));
+        expand(item);
+    }
 }
 
 IDM_PLUGIN_NS_END

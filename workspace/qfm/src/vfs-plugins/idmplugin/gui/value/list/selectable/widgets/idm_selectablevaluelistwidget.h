@@ -20,14 +20,15 @@
 #define IDM_SELECTABLEVALUELISTWIDGET_H_
 
 #include "../../editable/widgets/idm_editablevaluelistwidget.h"
+#include "../../../../../containeres/idm_container.h"
 
 
 class SelectableValueListWidget : public EditableValueListWidget
 {
 public:
-	SelectableValueListWidget(const IdmContainer &container, const Select &query, NestedDialog *parent);
+    SelectableValueListWidget(const IdmContainer &container, const EntityValueReader &reader, NestedDialog *parent);
 
-	virtual void accept();
+    virtual void accept();
 };
 
 #endif /* IDM_SELECTABLEVALUELISTWIDGET_H_ */

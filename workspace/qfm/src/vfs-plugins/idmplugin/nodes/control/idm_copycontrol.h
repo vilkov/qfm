@@ -19,25 +19,27 @@
 #ifndef IDM_COPYCONTROL_H_
 #define IDM_COPYCONTROL_H_
 
+#include <liquiddb/Entity>
 #include <QtCore/QCoreApplication>
 #include "../../control/idm_copycontrolbase.h"
-#include "../../storage/entities/idm_entity.h"
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class CopyControl : public CopyControlBase
 {
-	Q_DECLARE_TR_FUNCTIONS(CopyControl)
+    Q_DECLARE_TR_FUNCTIONS(CopyControl)
 
 public:
-	CopyControl(ICopyControl::Holder &dest, const IdmContainer &container, Entity *entity);
+    CopyControl(ICopyControl::Holder &dest, const IdmContainer &container, const Entity &entity);
 
-	/* ICopyControl */
-	virtual bool start(const Snapshot &files, bool move);
+    /* ICopyControl */
+    virtual bool start(const Snapshot &files, bool move);
 
 private:
-	Entity *m_entity;
+    const Entity &m_entity;
 };
 
 IDM_PLUGIN_NS_END

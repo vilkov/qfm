@@ -26,10 +26,10 @@ IDM_PLUGIN_NS_BEGIN
 
 class QueryConstraintsDelegate : public Delegate
 {
-	Q_DISABLE_COPY(QueryConstraintsDelegate)
+    Q_DISABLE_COPY(QueryConstraintsDelegate)
 
 public:
-	QueryConstraintsDelegate(QObject *parent = 0);
+    QueryConstraintsDelegate(QObject *parent = 0);
 
     virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;

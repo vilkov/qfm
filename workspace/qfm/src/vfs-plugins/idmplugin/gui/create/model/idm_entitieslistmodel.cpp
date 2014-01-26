@@ -23,41 +23,41 @@
 IDM_PLUGIN_NS_BEGIN
 
 EntitiesListModel::EntitiesListModel(QObject *parent) :
-	Model(parent)
+    Model(parent)
 {}
 
 int EntitiesListModel::columnCount(const QModelIndex &parent) const
 {
-	return 2;
+    return 2;
 }
 
 Qt::ItemFlags EntitiesListModel::flags(const QModelIndex &index) const
 {
-	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-Entity *EntitiesListModel::entityAt(size_type index) const
+const Entity &EntitiesListModel::entityAt(size_type index) const
 {
-	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->entity();
+    return static_cast<IdmEntitiesListItem *>(m_items.at(index))->entity();
 }
 
-const QString &EntitiesListModel::nameAt(size_type index) const
+const ::EFC::String &EntitiesListModel::nameAt(size_type index) const
 {
-	return static_cast<IdmEntitiesListItem*>(m_items.at(index))->property().name;
+    return static_cast<IdmEntitiesListItem *>(m_items.at(index))->property().name;
 }
 
-void EntitiesListModel::add(Entity *entity, const QString &name)
+void EntitiesListModel::add(const Entity &entity, const ::EFC::String &name)
 {
-	beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-	m_items.push_back(new IdmEntitiesListItem(Entity::Property(entity, name)));
-	endInsertRows();
+    beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
+    m_items.push_back(new IdmEntitiesListItem(Entity::Property(entity, name)));
+    endInsertRows();
 }
 
 void EntitiesListModel::remove(const QModelIndex &index)
 {
-	beginRemoveRows(QModelIndex(), index.row(), index.row());
-	delete m_items.takeAt(index.row());
-	endRemoveRows();
+    beginRemoveRows(QModelIndex(), index.row(), index.row());
+    delete m_items.takeAt(index.row());
+    endRemoveRows();
 }
 
 IDM_PLUGIN_NS_END

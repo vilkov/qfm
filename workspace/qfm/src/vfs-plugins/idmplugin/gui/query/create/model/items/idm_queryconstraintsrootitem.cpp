@@ -22,12 +22,12 @@
 IDM_PLUGIN_NS_BEGIN
 
 QueryConstraintsRootItem::QueryConstraintsRootItem() :
-	GroupConstraint(And)
+    GroupConstraint()
 {}
 
 void QueryConstraintsRootItem::clear()
 {
-	m_items.clear();
+    m_items.clear();
 }
 
 IDM_PLUGIN_NS_END

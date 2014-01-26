@@ -23,23 +23,25 @@
 
 
 IDM_PLUGIN_NS_BEGIN
+using namespace LiquidDb;
+
 
 class CompositeValueValueItem : public CompositeValueItem
 {
 public:
-	CompositeValueValueItem(const EntityValue::Holder &value, IdmItem *parent = 0);
+    CompositeValueValueItem(const EntityValue &value, IdmItem *parent = 0);
 
-	/* IdmItem */
-	virtual QVariant data(qint32 column, qint32 role) const;
+    /* IdmItem */
+    virtual QVariant data(qint32 column, qint32 role) const;
 
-	/* CompositeValueItem */
-	virtual bool isValue() const;
+    /* CompositeValueItem */
+    virtual bool isValue() const;
 
-	const EntityValue::Holder &value() const { return m_value; }
-	EntityValue::Holder take() { EntityValue::Holder res(m_value); m_value.reset(); return res; }
+    const EntityValue &value() const { return m_value; }
+    EntityValue take() { EntityValue res(m_value); m_value = EntityValue(); return res; }
 
 protected:
-	EntityValue::Holder m_value;
+    EntityValue m_value;
 };
 
 IDM_PLUGIN_NS_END

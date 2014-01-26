@@ -32,7 +32,7 @@
 #include <tools/events/qt/imp/keyboardeventhandler.h>
 #include <tools/events/qt/imp/keyboardeventsource.h>
 #include "../../../containeres/idm_container.h"
-#include "../../../storage/constraints/value/idm_constraint.h"
+#include "../../../constraints/idm_baseconstraint.h"
 
 
 using namespace ::VFS::Plugins::Idm;
@@ -40,18 +40,18 @@ using namespace ::Tools::Events;
 
 class ConstraintQueryDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ConstraintQueryDialog(const IdmContainer &container, const Entity::Property &property, QWidget *parent = 0);
+    ConstraintQueryDialog(const IdmContainer &container, const Entity::Property &property, QWidget *parent = 0);
 
-	Constraint::Holder takeConstraint(BaseConstraint *parent);
+    BaseConstraint::Holder takeConstraint(BaseConstraint *parent);
     virtual void accept();
 
 private Q_SLOTS:
-	void chooseValue();
+    void chooseValue();
     void updateValue(const QString &text);
-    void updateValue(const EntityValue::Holder &value);
+    void updateValue(const EntityValue &value);
     void updateValue(int index);
 
 private:
@@ -70,17 +70,17 @@ private:
             > LineEditHandler;
 
 private:
-	IdmContainer m_container;
-	const Entity::Property &m_property;
-	EntityValue::Holder m_value;
-	LineEditHandler m_handler;
-	QLabel m_label;
-	QComboBox m_operator;
-	LineEdit m_edit;
-	QPushButton m_choose;
-	QDialogButtonBox m_buttonBox;
-	QVBoxLayout m_verticatLayout;
-	QHBoxLayout m_horizontalLayout;
+    IdmContainer m_container;
+    const Entity::Property &m_property;
+    EntityValue m_value;
+    LineEditHandler m_handler;
+    QLabel m_label;
+    QComboBox m_operator;
+    LineEdit m_edit;
+    QPushButton m_choose;
+    QDialogButtonBox m_buttonBox;
+    QVBoxLayout m_verticatLayout;
+    QHBoxLayout m_horizontalLayout;
 };
 
 #endif /* IDM_CONSTRAINTQUERYDIALOG_H_ */

@@ -26,7 +26,7 @@
 class RatingValueDialog : public NestedPlainDialog
 {
 public:
-	RatingValueDialog(const QString &title, QWidget *parent = 0);
+    RatingValueDialog(const QString &title, QWidget *parent = 0);
 
     int value() const { return m_mainWidget.value(); }
 

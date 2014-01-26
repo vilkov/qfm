@@ -39,28 +39,28 @@ class CreateEntityDialog : public QDialog
     Q_OBJECT
 
 public:
-	typedef EntitiesListModel::size_type size_type;
+    typedef EntitiesListModel::size_type size_type;
 
 public:
     CreateEntityDialog(const IdmContainer &container, const QString &name = QString(), QWidget *parent = 0);
 
     Entity::Type type() const { return static_cast<Entity::Type>(m_comboBox.itemData(m_comboBox.currentIndex(), Qt::UserRole).toInt()); }
-    QString name() const { return m_lineEdit.text().simplified(); }
-    ShortFormat shortFormat() const { return m_lineEdit2.text().simplified(); }
+    ::EFC::String name() const { return fromUnicode(m_lineEdit.text().simplified()).data(); }
+    ::EFC::String title() const { return fromUnicode(m_lineEdit2.text().simplified()).data(); }
 
-	Entity *property(size_type index) const { return m_model.entityAt(index); }
-	const QString &propertyName(size_type index) const { return m_model.nameAt(index); }
-	size_type size() const { return m_model.size(); }
+    const Entity &property(size_type index) const { return m_model.entityAt(index); }
+    const ::EFC::String &propertyName(size_type index) const { return m_model.nameAt(index); }
+    size_type size() const { return m_model.size(); }
 
     virtual void accept();
 
 private Q_SLOTS:
-	void activated(int index);
-	void add();
-	void remove();
+    void activated(int index);
+    void add();
+    void remove();
 
 private:
-	void setListEnabled(bool enabled);
+    void setListEnabled(bool enabled);
 
 private:
     QLabel m_label;

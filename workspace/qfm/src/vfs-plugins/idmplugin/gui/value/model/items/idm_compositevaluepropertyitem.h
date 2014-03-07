@@ -48,6 +48,7 @@ public:
 
     const Entity &entity() const { return m_property.entity; }
     QString name() const { return toUnicode(m_property.name); }
+    void setName(const QString &value) { m_property.name = fromUnicode(value).data(); }
 
 protected:
     friend class CompositeValueModel;

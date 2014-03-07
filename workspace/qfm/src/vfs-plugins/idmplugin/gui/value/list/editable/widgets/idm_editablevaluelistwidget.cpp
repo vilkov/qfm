@@ -39,7 +39,7 @@ public:
 
 
 template <Entity::Type EntityType>
-inline EntityValue processAddValue(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
+inline EntityValue defaultProcessAddValue(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
 {
     typedef NewValueDialog<EntityType> NewValueDialog;
     NewValueDialog dialog(parent, title);
@@ -48,6 +48,44 @@ inline EntityValue processAddValue(NestedDialog *parent, const QString &title, I
         return container.addValue(entity, toVariant(dialog.value()));
     else
         declined = true;
+
+    return EntityValue();
+}
+
+template <Entity::Type EntityType>
+inline EntityValue processAddValue(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
+{
+    return defaultProcessAddValue<EntityType>(parent, title, container, entity, declined);
+}
+
+template <>
+inline EntityValue processAddValue<Entity::Int>(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
+{
+    if (container.schema(entity) == IdmContainer::Rating)
+    {
+        RatingValueWidget widget(parent, title);
+
+        if (widget.exec() == RatingValueWidget::Accepted)
+            return container.addValue(entity, widget.value());
+        else
+            declined = true;
+    }
+    else
+        return defaultProcessAddValue<Entity::Int>(parent, title, container, entity, declined);
+
+    return EntityValue();
+}
+
+template <>
+inline EntityValue processAddValue<Entity::String>(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
+{
+    if (container.schema(entity) == IdmContainer::Path)
+    {
+        declined = false;
+        return EntityValue();
+    }
+    else
+        return defaultProcessAddValue<Entity::String>(parent, title, container, entity, declined);
 
     return EntityValue();
 }
@@ -85,26 +123,6 @@ inline EntityValue processAddValue<Entity::Composite>(NestedDialog *parent, cons
 
     return EntityValue();
 }
-
-//template <>
-//inline EntityValue processAddValue<Entity::Rating>(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
-//{
-//    RatingValueWidget widget(parent, title);
-//
-//    if (widget.exec() == RatingValueWidget::Accepted)
-//        return container.addValue(entity, widget.value());
-//    else
-//        declined = true;
-//
-//    return EntityValue();
-//}
-//
-//template <>
-//inline EntityValue processAddValue<Entity::Path>(NestedDialog *parent, const QString &title, IdmContainer &container, const Entity &entity, bool &declined)
-//{
-//    declined = false;
-//    return EntityValue();
-//}
 
 
 EditableValueListWidgetPrivate::ICallback::~ICallback()

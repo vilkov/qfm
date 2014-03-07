@@ -26,48 +26,46 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-CompositeValueModel::CompositeValueModel(const EntityValue &value, QObject *parent) :
+CompositeValueModel::CompositeValueModel(const EntityValue &value, const IdmContainer &container, QObject *parent) :
     Model(parent)
 {
-    ValueList list;
     CompositeValuePropertyItem *item;
 
     for (auto i : value.entity().properties())
     {
         m_items.push_back(item = new CompositeValuePropertyItem(i.second));
-        list = CompositeEntityValue(value).values(i.second.entity);
+        const ValueList &list = CompositeEntityValue(value).values(i.second.entity);
 
         for (auto i : list)
-//            if (i.second.entity().type() == Entity::Path)
-//                item->add(new CompositeValueRealPathItem(i.second, item));
-//            else
+            if (container.schema(i.second.entity()) == IdmContainer::Path)
+                item->add(new CompositeValueRealPathItem(i.second, item));
+            else
                 item->add(new CompositeValueValueItem(i.second, item));
     }
 }
 
-CompositeValueModel::CompositeValueModel(const EntityValue &value, const Files &files, QObject *parent) :
+CompositeValueModel::CompositeValueModel(const EntityValue &value, const IdmContainer &container, const Files &files, QObject *parent) :
     Model(parent)
 {
-    ValueList list;
     const SnapshotItem *file;
     CompositeValuePropertyItem *item;
 
     for (auto i : value.entity().properties())
     {
         m_items.push_back(item = new CompositeValuePropertyItem(i.second));
-        list = CompositeEntityValue(value).values(i.second.entity);
+        const ValueList &list = CompositeEntityValue(value).values(i.second.entity);
 
         for (auto i : list)
-//            if (i.entity().type() == Entity::Path)
-//            {
-//                file = files.value(i.id());
-//
-//                if (file->info()->isFile())
-//                    item->add(new CompositeValuePossibleFileItem(list.at(i), file, item));
-//                else
-//                    item->add(new CompositeValuePossibleDirItem(list.at(i), file, item));
-//            }
-//            else
+            if (container.schema(i.second.entity()) == IdmContainer::Path)
+            {
+                file = files.value(i.first);
+
+                if (file->info()->isFile())
+                    item->add(new CompositeValuePossibleFileItem(i.second, file, item));
+                else
+                    item->add(new CompositeValuePossibleDirItem(i.second, file, item));
+            }
+            else
                 item->add(new CompositeValueValueItem(i.second, item));
     }
 }

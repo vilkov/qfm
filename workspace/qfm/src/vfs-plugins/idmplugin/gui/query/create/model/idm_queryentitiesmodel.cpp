@@ -38,10 +38,9 @@ void QueryEntitiesModel::add(const Entity::Property &property)
 
 void QueryEntitiesModel::remove(const QModelIndex &index)
 {
-//    beginRemoveRows(QModelIndex(), index.row(), index.row());
-//    delete m_items.at(index.row());
-//    m_items.remove(index.row());
-//    endRemoveRows();
+    beginRemoveRows(QModelIndex(), index.row(), index.row());
+    delete m_items.takeAt(index.row());
+    endRemoveRows();
 }
 
 void QueryEntitiesModel::expand(IdmItem *p)

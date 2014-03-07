@@ -379,7 +379,7 @@ Location FileContainer::location(const QString &fileName) const
 {
 	QByteArray path(m_path);
 	path.append('/');
-	return IFileContainer::location(Info::codec()->toUnicode(path).append(fileName), path);
+	return IFileContainer::location(Info::codec()->toUnicode(path).append(fileName), path.append(Info::codec()->fromUnicode(fileName)));
 }
 
 bool FileContainer::contains(const QString &fileName) const

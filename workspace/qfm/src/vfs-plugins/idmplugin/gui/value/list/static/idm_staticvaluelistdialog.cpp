@@ -24,10 +24,10 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
     m_handler(this),
     m_widget(&m_handler, container, reader, this)
 {
-//    const QRect &geometry = m_widget.entity()->listGeometry();
-//
-//    if (geometry.isValid())
-//        setGeometry(geometry);
+    QRect geometry = container.listGeometry(m_widget.entity());
+
+    if (geometry.isValid())
+        setGeometry(geometry);
 
     setWindowTitle(tr("Values of \"%1\"").arg(toUnicode(m_widget.entity().name())));
 
@@ -40,8 +40,7 @@ StaticValueListDialog::StaticValueListDialog(const IdmContainer &container, cons
 
 StaticValueListDialog::~StaticValueListDialog()
 {
-//    if (m_widget.entity()->listGeometry() != geometry())
-//        m_widget.container().updateListGeometry(m_widget.entity(), geometry());
+    m_widget.container().setListGeometry(m_widget.entity(), geometry());
 }
 
 EntityValue StaticValueListDialog::takeValue()

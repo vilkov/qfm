@@ -214,17 +214,20 @@ void RootNode::menuAction(INodeView *view, QAction *action)
 
         case Find:
         {
-            Entity entity(ChooseEntityDialog::chooseFile(m_container, Application::mainWindow()));
-
-            if (entity.isValid())
+            if (view->currentIndex().isValid() && static_cast<RootNodeItem *>(view->currentIndex().internalPointer())->isEntity())
             {
-                CreateQueryDialog dialog(m_container, entity, Application::mainWindow());
+                RootNodeEntityItem *item = static_cast<RootNodeEntityItem *>(view->currentIndex().internalPointer());
 
-                if (dialog.exec() == CreateQueryDialog::Accepted)
+                if (item->entity().type() == Entity::Composite)
                 {
-                    EntityValueReader reader(m_container.entityValues(dialog.entity(), dialog.constraint()->constraint()));
+                    CreateQueryDialog dialog(m_container, item->entity(), Application::mainWindow());
 
-                    switchTo(new QueryResultsNode(m_container, reader, this), view);
+                    if (dialog.exec() == CreateQueryDialog::Accepted)
+                    {
+                        EntityValueReader reader(m_container.entityValues(dialog.entity(), dialog.constraint()->constraint()));
+
+                        switchTo(new QueryResultsNode(m_container, reader, this), view);
+                    }
                 }
             }
 

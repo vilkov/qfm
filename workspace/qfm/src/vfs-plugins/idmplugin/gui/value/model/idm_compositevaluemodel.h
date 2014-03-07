@@ -23,6 +23,7 @@
 #include <liquiddb/EntityValue>
 #include <vfs/containers/vfs_snapshot.h>
 #include "../../../model/idm_model.h"
+#include "../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -37,8 +38,8 @@ public:
     typedef QMap<Entity::Id, const SnapshotItem *> Files;
 
 public:
-    CompositeValueModel(const EntityValue &value, QObject *parent = 0);
-    CompositeValueModel(const EntityValue &value, const Files &files, QObject *parent = 0);
+    CompositeValueModel(const EntityValue &value, const IdmContainer &container, QObject *parent = 0);
+    CompositeValueModel(const EntityValue &value, const IdmContainer &container, const Files &files, QObject *parent = 0);
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 

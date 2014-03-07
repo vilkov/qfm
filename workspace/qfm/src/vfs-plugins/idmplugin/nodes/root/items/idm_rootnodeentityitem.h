@@ -46,7 +46,7 @@ protected:
     void remove(size_type index) { delete m_items.takeAt(index); }
 
 private:
-    const Entity &m_entity;
+    Entity m_entity;
 };
 
 IDM_PLUGIN_NS_END

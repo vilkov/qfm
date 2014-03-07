@@ -33,7 +33,7 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
     m_container(container),
     m_value(value),
     m_view(handler),
-    m_model(m_value),
+    m_model(m_value, m_container),
     m_delegate(m_value, m_container)
 {
     m_view.setHeaderHidden(true);
@@ -46,7 +46,7 @@ CompositeValueWidgetPrivate::CompositeValueWidgetPrivate(ICallback *callback, Ev
     m_container(container),
     m_value(value),
     m_view(handler),
-    m_model(m_value, files),
+    m_model(m_value, m_container, files),
     m_delegate(m_value, m_container)
 {
     m_view.setHeaderHidden(true);

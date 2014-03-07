@@ -44,10 +44,16 @@ QWidget *CompositeValueDelegate::createEditor(QWidget *parent, const QStyleOptio
         switch (item->value().entity().type())
         {
             case Entity::Int:
-                return new Editor<typename EntityValueType<Entity::Int>::type>::type(parent);
+//                if (m_container.schema(item->value().entity()) == IdmContainer::Rating)
+//                    return new Editor<typename EntityValueType<Entity::Int>::type>::type(parent);
+//                else
+                    return new Editor<typename EntityValueType<Entity::Int>::type>::type(parent);
 
             case Entity::String:
-                return new Editor<typename EntityValueType<Entity::String>::type>::type(parent);
+//                if (m_container.schema(item->value().entity()) == IdmContainer::Path)
+//                    return new Editor<typename EntityValueType<Entity::String>::type>::type(parent);
+//                else
+                    return new Editor<typename EntityValueType<Entity::String>::type>::type(parent);
 
             case Entity::Date:
                 return new Editor<typename EntityValueType<Entity::Date>::type>::type(parent);
@@ -84,12 +90,6 @@ QWidget *CompositeValueDelegate::createEditor(QWidget *parent, const QStyleOptio
                 break;
             }
 
-//            case Entity::Rating:
-//                return new Editor<typename EntityValueType<Entity::Rating>::type>::type(parent);
-
-//          case Entity::Path:
-//              return new Editor<typename EntityValueType<Entity::Path>::type>::type(parent);
-
             default:
                 break;
         }
@@ -110,11 +110,19 @@ void CompositeValueDelegate::setEditorData(QWidget *editor, const QModelIndex &i
         switch (item->value().entity().type())
         {
             case Entity::Int:
-                EditorValue<typename EntityValueType<Entity::Int>::type>::setValue(editor, index.data(Qt::DisplayRole));
+//                if (m_container.schema(item->value().entity()) == IdmContainer::Rating)
+//                    EditorValue<typename EntityValueType<Entity::Int>::type>::setValue(editor, index.data(Qt::DisplayRole));
+//                else
+                    EditorValue<typename EntityValueType<Entity::Int>::type>::setValue(editor, index.data(Qt::DisplayRole));
+
                 break;
 
             case Entity::String:
-                EditorValue<typename EntityValueType<Entity::String>::type>::setValue(editor, index.data(Qt::DisplayRole));
+//                if (m_container.schema(item->value().entity()) == IdmContainer::Path)
+//                    EditorValue<typename EntityValueType<Entity::String>::type>::setValue(editor, index.data(Qt::DisplayRole));
+//                else
+                    EditorValue<typename EntityValueType<Entity::String>::type>::setValue(editor, index.data(Qt::DisplayRole));
+
                 break;
 
             case Entity::Date:
@@ -132,14 +140,6 @@ void CompositeValueDelegate::setEditorData(QWidget *editor, const QModelIndex &i
             case Entity::Memo:
                 EditorValue<typename EntityValueType<Entity::Memo>::type>::setValue(editor, index.data(Qt::DisplayRole));
                 break;
-
-//            case Entity::Rating:
-//                EditorValue<typename EntityValueType<Entity::Rating>::type>::setValue(editor, index.data(Qt::DisplayRole));
-//                break;
-//
-//          case Entity::Path:
-//              EditorValue<typename EntityValueType<Entity::Path>::type>::setValue(editor, static_cast<QueryResultPathValueItem*>(item)->info().fileName());
-//              break;
 
             case Entity::Composite:
             default:
@@ -183,54 +183,46 @@ void CompositeValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
                 value = toVariant(EditorValue<typename EntityValueType<Entity::Memo>::type>::value(editor));
                 break;
 
-//            case Entity::Rating:
-//                value = EditorValue<typename EntityValueType<Entity::Rating>::type>::value(editor);
-//                break;
-//
-//            case Entity::Path:
-//                value = EditorValue<typename EntityValueType<Entity::Path>::type>::value(editor);
-//                break;
-
             case Entity::Composite:
             default:
                 break;
         }
 
         if (m_container.transaction())
-//            if (item->value()->entity()->type() == Entity::Path)
+//            if (m_container.schema(item->value().entity()) == IdmContainer::Path)
 //            {
-//              QString error;
-//              QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem*>(item);
-//              QString fileName = file->info().fileName();
+//                QString error;
+//                QueryResultPathValueItem *file = static_cast<QueryResultPathValueItem *>(item);
+//                QString fileName = file->info().fileName();
 //
-//              if (file->info().rename(value.toString(), error))
-//                  if (m_container.updateValue(file->value(), file->info().absoluteFilePath(value.toString())))
-//                      if (m_container.commit())
-//                          file->update();
-//                      else
-//                      {
-//                          m_container.rollback();
-//                          file->info().rename(fileName, error);
-//                          QMessageBox::critical(editor, tr("Error"), toUnicode(m_container.lastError()));
-//                      }
-//                  else
-//                  {
-//                      m_container.rollback();
-//                      file->info().rename(fileName, error);
-//                      QMessageBox::critical(
-//                                  editor,
-//                                  tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
-//                                  toUnicode(m_container.lastError()));
-//                  }
-//              else
-//              {
-//                  m_container.rollback();
-//                  QMessageBox::critical(
-//                          editor,
-//                          tr("Failed to rename file \"%1\"").
-//                          arg(file->info().fileName()),
-//                          error);
-//              }
+//                if (file->info().rename(value.toString(), error))
+//                    if (m_container.updateValue(file->value(), file->info().absoluteFilePath(value.toString())))
+//                        if (m_container.commit())
+//                            file->update();
+//                        else
+//                        {
+//                            m_container.rollback();
+//                            file->info().rename(fileName, error);
+//                            QMessageBox::critical(editor, tr("Error"), toUnicode(m_container.lastError()));
+//                        }
+//                    else
+//                    {
+//                        m_container.rollback();
+//                        file->info().rename(fileName, error);
+//                        QMessageBox::critical(
+//                                      editor,
+//                                      tr("Failed to rename file \"%1\"").arg(file->info().fileName()),
+//                                      toUnicode(m_container.lastError()));
+//                    }
+//                else
+//                {
+//                    m_container.rollback();
+//                    QMessageBox::critical(
+//                            editor,
+//                            tr("Failed to rename file \"%1\"").
+//                            arg(file->info().fileName()),
+//                            error);
+//                }
 //            }
 //            else
                 if (m_container.updateValue(item->value(), value))
@@ -256,7 +248,9 @@ void CompositeValueDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
             if (m_container.renameProperty(m_entity, property->entity(), fromUnicode(EditorValue<QString>::value(editor)).data()))
             {
-                if (!m_container.commit())
+                if (m_container.commit())
+                    property->setName(EditorValue<QString>::value(editor));
+                else
                 {
                     QMessageBox::critical(editor, tr("Error"), toUnicode(m_container.lastError()));
                     m_container.rollback();

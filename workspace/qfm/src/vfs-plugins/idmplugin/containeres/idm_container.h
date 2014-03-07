@@ -49,8 +49,6 @@ template <> struct EntityValueType<Entity::Date>     { typedef QDate     type; }
 template <> struct EntityValueType<Entity::Time>     { typedef QTime     type; };
 template <> struct EntityValueType<Entity::DateTime> { typedef QDateTime type; };
 template <> struct EntityValueType<Entity::Memo>     { typedef QString   type; };
-//template <> struct EntityValueType<Entity::Rating>   { typedef int       type; };
-//template <> struct EntityValueType<Entity::Path>     { typedef QString   type; };
 
 /* Meta-function "EntityValueType" */
 inline ::EFC::Variant toVariant(int value) { return ::EFC::Variant(static_cast<uint32_t>(value)); }
@@ -73,6 +71,20 @@ public:
         List
     };
 
+    enum MetaProperties
+    {
+        Schema,
+        EditorGeometry,
+        ListGeometry
+    };
+
+    enum Schemas
+    {
+        Default,
+        Path,
+        Rating
+    };
+
 public:
     IdmContainer(IFileContainer::Holder &container, bool create);
 
@@ -93,9 +105,14 @@ public:
     EntityValueReader entityValues(const Entity &entity) const;
     EntityValueReader entityValues(const Entity &entity, const Constraint &constraint) const;
 
+    Schemas schema(const Entity &entity) const;
+    bool setSchema(const Entity &entity, Schemas schema);
+    QRect editorGeometry(const Entity &entity) const;
+    bool setEditorGeometry(const Entity &entity, const QRect &geometry);
+    QRect listGeometry(const Entity &entity) const;
+    bool setListGeometry(const Entity &entity, const QRect &geometry);
+
     Entity createEntity(Entity::Type type, const ::EFC::String &name, const ::EFC::String &title);
-    bool updateEditorGeometry(const Entity &entity, const QRect &geometry);
-    bool updateListGeometry(const Entity &entity, const QRect &geometry);
     bool removeEntity(const Entity &entity);
 
     bool addProperty(const Entity &entity, const Entity &property, const ::EFC::String &name);

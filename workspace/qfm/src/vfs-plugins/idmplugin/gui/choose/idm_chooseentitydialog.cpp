@@ -103,32 +103,27 @@ ChooseEntityDialog::ChooseEntityDialog(const QString &title, const IdmContainer 
 
 Entity ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget *parent)
 {
-//    QSet<Entity> entities;
-//
-//    for (auto i : container.entities())
-//        if (i.second.type() == Entity::Path)
-//            entities.unite(container.at(i)->parents().toSet());
-//
-//    if (entities.isEmpty())
-//        QMessageBox::information(parent,
-//                                 tr("Entities not found"),
-//                                 tr("There is no entities with a property of type \"%1\".").
+    LiquidDb::Storage::Entities entities;
+
+    for (auto i : container.entities())
+        if (container.schema(i.second) == IdmContainer::Path)
+            entities[i.second.id()] = i.second;
+
+    if (entities.empty())
+        QMessageBox::information(parent,
+                                 tr("Entities not found"),
+                                 tr("There is no entities with a property of type \"%1\"."));
 //                                      arg(container.entityTypes().value(Database::Path).label));
-//    else
-//        if (entities.size() == 1)
-//            return *entities.begin();
-//        else
-//        {
-//            List list(entities.toList());
-//
-//            entities.clear();
-//            qSort(list);
-//
-//            ChooseEntityDialog dialog(tr("Choose entity"), container, list, parent);
-//
-//            if (dialog.exec() == ChooseEntityDialog::Accepted)
-//                return dialog.value();
-//        }
+    else
+        if (entities.size() == 1)
+            return (*entities.begin()).second;
+        else
+        {
+            ChooseEntityDialog dialog(tr("Choose entity"), container, entities, parent);
+
+            if (dialog.exec() == ChooseEntityDialog::Accepted)
+                return dialog.value();
+        }
 
     return Entity();
 }

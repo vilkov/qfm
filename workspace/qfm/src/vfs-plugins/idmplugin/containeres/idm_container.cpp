@@ -100,21 +100,78 @@ EntityValueReader IdmContainer::entityValues(const Entity &entity, const Constra
     return m_data->storage.entityValues(entity, constraint);
 }
 
+IdmContainer::Schemas IdmContainer::schema(const Entity &entity) const
+{
+    ::EFC::Variant value(m_data->storage.metaPropertyValue(entity, Schema));
+
+    if (value.isValid())
+        return static_cast<Schemas>(value.asInt8());
+
+    return Default;
+}
+
+bool IdmContainer::setSchema(const Entity &entity, Schemas schema)
+{
+    return m_data->storage.setMetaPropertyValue(entity, Schema, ::EFC::Variant(schema));
+}
+
+QRect IdmContainer::editorGeometry(const Entity &entity) const
+{
+    ::EFC::Variant value(m_data->storage.metaPropertyValue(entity, EditorGeometry));
+
+    if (value.isValid())
+    {
+        size_t size;
+        const int32_t *data = reinterpret_cast<const int32_t *>(value.asBinary(size));
+        return QRect(QPoint(data[0], data[1]), QPoint(data[2], data[3]));
+    }
+
+    return QRect();
+}
+
+bool IdmContainer::setEditorGeometry(const Entity &entity, const QRect &geometry)
+{
+    unsigned char buffer[sizeof(int32_t) * 4];
+    int32_t *data = reinterpret_cast<int32_t *>(buffer);
+
+    data[0] = geometry.left();
+    data[1] = geometry.top();
+    data[2] = geometry.right();
+    data[3] = geometry.bottom();
+
+    return m_data->storage.setMetaPropertyValue(entity, EditorGeometry, ::EFC::Variant(buffer, sizeof(buffer)));
+}
+
+QRect IdmContainer::listGeometry(const Entity &entity) const
+{
+    ::EFC::Variant value(m_data->storage.metaPropertyValue(entity, ListGeometry));
+
+    if (value.isValid())
+    {
+        size_t size;
+        const int32_t *data = reinterpret_cast<const int32_t *>(value.asBinary(size));
+        return QRect(QPoint(data[0], data[1]), QPoint(data[2], data[3]));
+    }
+
+    return QRect();
+}
+
+bool IdmContainer::setListGeometry(const Entity &entity, const QRect &geometry)
+{
+    unsigned char buffer[sizeof(int32_t) * 4];
+    int32_t *data = reinterpret_cast<int32_t *>(buffer);
+
+    data[0] = geometry.left();
+    data[1] = geometry.top();
+    data[2] = geometry.right();
+    data[3] = geometry.bottom();
+
+    return m_data->storage.setMetaPropertyValue(entity, ListGeometry, ::EFC::Variant(buffer, sizeof(buffer)));
+}
+
 Entity IdmContainer::createEntity(Entity::Type type, const ::EFC::String &name, const ::EFC::String &title)
 {
     return m_data->storage.createEntity(type, name, title);
-}
-
-bool IdmContainer::updateEditorGeometry(const Entity &entity, const QRect &geometry)
-{
-    return false;
-//    return m_data->storage.updateEditorGeometry(entity, geometry);
-}
-
-bool IdmContainer::updateListGeometry(const Entity &entity, const QRect &geometry)
-{
-    return false;
-//    return m_data->storage.updateListGeometry(entity, geometry);
 }
 
 bool IdmContainer::removeEntity(const Entity &entity)

@@ -109,7 +109,7 @@ void CreateDbAction::process(const IFileContainer *container, const FilesList &f
                 }
                 else
                 {
-                    Storage storage(fromUnicode(folder->location(Plugin::fileName())).data(), true);
+                    Storage storage(folder->location(Plugin::fileName()).as<QByteArray>().data(), true);
 
                     if (storage.isValid())
                         QMessageBox::information(

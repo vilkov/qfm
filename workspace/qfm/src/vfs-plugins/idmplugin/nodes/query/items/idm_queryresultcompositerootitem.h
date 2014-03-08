@@ -23,6 +23,7 @@
 #include <vfs/tasks/vfs_tasksnode.h>
 #include <vfs/interfaces/vfs_ifilecontainer.h>
 #include "idm_queryresultrootitem.h"
+#include "../../../containeres/idm_container.h"
 
 
 IDM_PLUGIN_NS_BEGIN
@@ -33,7 +34,7 @@ public:
     typedef QVector<QueryResultItem::Holder> Container;
 
 public:
-    QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const EntityValue &value, Base *parent = 0);
+    QueryResultCompositeRootItem(Snapshot::Files &files, const IdmContainer &container, const EntityValue &value, Base *parent = 0);
 
     /* Base */
     virtual Base *at(size_type index) const;

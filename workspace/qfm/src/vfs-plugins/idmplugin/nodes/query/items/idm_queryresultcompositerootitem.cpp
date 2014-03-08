@@ -23,7 +23,7 @@
 
 IDM_PLUGIN_NS_BEGIN
 
-QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IFileContainer *container, const EntityValue &value, Base *parent) :
+QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &files, const IdmContainer &container, const EntityValue &value, Base *parent) :
     QueryResultRootItem(value, parent),
     m_items(value.entity().properties().size())
 {
@@ -32,12 +32,12 @@ QueryResultCompositeRootItem::QueryResultCompositeRootItem(Snapshot::Files &file
 
     for (auto i : value.entity().properties())
     {
-//        if (i.second.entity.type() == Database::Path)
-//        {
-//            item = new QueryResultPathPropertyItem(i.second, this);
-//            item.as<QueryResultPathPropertyItem>()->add(files, container, CompositeEntityValue(value).values(i.second.entity));
-//        }
-//        else
+        if (container.schema(i.second.entity) == IdmContainer::Path)
+        {
+            item = new QueryResultPathPropertyItem(i.second, this);
+            item.as<QueryResultPathPropertyItem>()->add(files, container.container(), CompositeEntityValue(value).values(i.second.entity));
+        }
+        else
         {
             item = new QueryResultPropertyItem(i.second, this);
             item.as<QueryResultPropertyItem>()->add(CompositeEntityValue(value).values(i.second.entity));

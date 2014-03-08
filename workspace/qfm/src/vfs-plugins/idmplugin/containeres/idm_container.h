@@ -96,7 +96,7 @@ public:
     bool isValid() const { return m_data->storage.isValid(); }
     ::EFC::String lastError() const { return ::EFC::String(); }
 
-    const Storage::Entities entities() const { return m_data->storage.entities(); };
+    const Storage::Entities &entities() const { return m_data->storage.entities(); };
 
     bool transaction() { return m_data->storage.transaction(); }
     bool commit() { return m_data->storage.commit(); }

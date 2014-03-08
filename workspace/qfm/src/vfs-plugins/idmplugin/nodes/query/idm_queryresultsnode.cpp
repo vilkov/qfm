@@ -108,7 +108,7 @@ void QueryResultsNode::fetchMore(const QModelIndex &parent)
     if (m_reader.entity().type() == Entity::Composite)
         for (qint32 actualLimit = 0; actualLimit < PrefetchLimit; ++actualLimit)
             if ((item = m_reader.next()).isValid())
-                list.push_back(Item::Holder(new QueryResultCompositeRootItem(files, m_container.container(), item)));
+                list.push_back(Item::Holder(new QueryResultCompositeRootItem(files, m_container, item)));
             else
                 break;
     else

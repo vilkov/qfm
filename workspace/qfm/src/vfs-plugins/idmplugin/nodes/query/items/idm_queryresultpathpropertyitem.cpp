@@ -48,13 +48,13 @@ void QueryResultPathPropertyItem::add(const IFileContainer *container, const Ent
     qSort(m_items.begin(), m_items.end(), lessThan);
 }
 
-void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContainer *container, const EntityValue::List &values)
+void QueryResultPathPropertyItem::add(Snapshot::Files &files, const IFileContainer *container, const EntityValue::Values &values)
 {
     Holder item;
 
     for (auto i : values)
     {
-        m_items.push_back(item = new QueryResultRootPathValueItem(container, i, this));
+        m_items.push_back(item = new QueryResultRootPathValueItem(container, i.second, this));
         files.add(item.as<QueryResultRootPathValueItem>()->location(), item);
     }
 

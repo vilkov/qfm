@@ -34,7 +34,7 @@ CompositeValueModel::CompositeValueModel(const EntityValue &value, const IdmCont
     for (auto i : value.entity().properties())
     {
         m_items.push_back(item = new CompositeValuePropertyItem(i.second));
-        const ValueList &list = CompositeEntityValue(value).values(i.second.entity);
+        const EntityValue::Values &list = CompositeEntityValue(value).values(i.second.entity);
 
         for (auto i : list)
             if (container.schema(i.second.entity()) == IdmContainer::Path)
@@ -53,7 +53,7 @@ CompositeValueModel::CompositeValueModel(const EntityValue &value, const IdmCont
     for (auto i : value.entity().properties())
     {
         m_items.push_back(item = new CompositeValuePropertyItem(i.second));
-        const ValueList &list = CompositeEntityValue(value).values(i.second.entity);
+        const EntityValue::Values &list = CompositeEntityValue(value).values(i.second.entity);
 
         for (auto i : list)
             if (container.schema(i.second.entity()) == IdmContainer::Path)
@@ -90,8 +90,8 @@ void CompositeValueModel::add(const QModelIndex &index, const ValueList &values)
 
     beginInsertRows(index, item->size(), item->size() + values.size() - 1);
 
-    for (ValueList::size_type i = 0, size = values.size(); i < size; ++i)
-        item->add(new CompositeValueValueItem(values.at(i), item));
+    for (auto i : values)
+        item->add(new CompositeValueValueItem(i, item));
 
     endInsertRows();
 }

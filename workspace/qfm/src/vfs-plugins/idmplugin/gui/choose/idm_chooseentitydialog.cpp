@@ -107,7 +107,8 @@ Entity ChooseEntityDialog::chooseFile(const IdmContainer &container, QWidget *pa
 
     for (auto i : container.entities())
         if (container.schema(i.second) == IdmContainer::Path)
-            entities[i.second.id()] = i.second;
+            for (auto q : i.second.parents())
+                entities.emplace(q);
 
     if (entities.empty())
         QMessageBox::information(parent,

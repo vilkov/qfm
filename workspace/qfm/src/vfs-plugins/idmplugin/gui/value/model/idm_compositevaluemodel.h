@@ -33,7 +33,7 @@ using namespace LiquidDb;
 class CompositeValueModel : public Model
 {
 public:
-    typedef EntityValue::Values                    ValueList;
+    typedef EntityValue::List                      ValueList;
     typedef Container::size_type                   size_type;
     typedef QMap<Entity::Id, const SnapshotItem *> Files;
 

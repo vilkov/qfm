@@ -39,7 +39,7 @@ public:
     virtual bool start(const Snapshot &files, bool move);
 
 private:
-    const Entity &m_entity;
+    Entity m_entity;
 };
 
 IDM_PLUGIN_NS_END

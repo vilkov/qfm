@@ -38,54 +38,57 @@ bool CopyControl::start(const Snapshot &files, bool move)
 
         if (value.isValid())
         {
-//            Entity path;
-//            CompositeValueModel::Files possibleFiles;
-//            CompositeValueModel::ValueList list;
-//            list.reserve(files.size());
-//
-//            for (auto i : m_entity.properties())
-//                if ((path = i.second.entity).type() == Entity::Path)
-//                {
-//                    EntityValue localValue;
-//
-//                    for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
-//                        if (localValue = m_container.addValue(path, QString(m_storage).append((*i).second->info()->fileName())))
-//                        {
-//                            list.push_back(localValue);
-//                            possibleFiles[localValue->id()] = (*i).second;
-//                        }
-//                        else
-//                        {
-//                            QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
-//                            m_container.rollback();
-//                            return false;
-//                        }
-//
-//                    break;
-//                }
-//
-//            if (m_container.addValue(value, list))
-//            {
-//                NewFileValueDialog dialog(m_container, value, possibleFiles, Application::mainWindow());
-//
-//                if (dialog.exec() != NewFileValueDialog::Accepted)
-//                    m_container.rollback();
-//                else
-//                    if (m_container.commit())
-//                        return true;
-//                    else
-//                    {
-//                        QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
-//                        m_container.rollback();
-//                    }
-//
-//                m_container.updateEditorGeometry(m_entity, dialog.geometry());
-//            }
-//            else
-//            {
-//                QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
-//                m_container.rollback();
-//            }
+            Entity path;
+            CompositeValueModel::Files possibleFiles;
+            CompositeValueModel::ValueList list;
+
+            for (auto i : m_entity.properties())
+                if (m_container.schema(path = i.second.entity) == IdmContainer::Path)
+                {
+                    EntityValue localValue;
+
+                    for (Snapshot::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
+                    {
+                        localValue = m_container.addValue(path, fromUnicode(QString(m_storage).append((*i).second->info()->fileName())).data());
+
+                        if (localValue.isValid())
+                        {
+                            list.push_back(localValue);
+                            possibleFiles[localValue.id()] = (*i).second;
+                        }
+                        else
+                        {
+                            QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
+                            m_container.rollback();
+                            return false;
+                        }
+                    }
+
+                    break;
+                }
+
+            if (m_container.addValue(value, list))
+            {
+                NewFileValueDialog dialog(m_container, value, possibleFiles, Application::mainWindow());
+
+                if (dialog.exec() != NewFileValueDialog::Accepted)
+                    m_container.rollback();
+                else
+                    if (m_container.commit())
+                        return true;
+                    else
+                    {
+                        QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
+                        m_container.rollback();
+                    }
+
+                m_container.setEditorGeometry(m_entity, dialog.geometry());
+            }
+            else
+            {
+                QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));
+                m_container.rollback();
+            }
         }
         else
             QMessageBox::critical(Application::mainWindow(), tr("Error"), toUnicode(m_container.lastError()));

@@ -13,3 +13,6 @@
 [submodule "workspace/efc"]
 	path = workspace/efc
 	url = git@github.com:vilkov/efc.git
+[submodule "workspace/lvfs"]
+	path = workspace/lvfs
+	url = git@github.com:vilkov/lvfs.git

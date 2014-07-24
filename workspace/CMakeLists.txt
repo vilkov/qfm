@@ -6,55 +6,52 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/platfor
 
 
 # Versioning
-include (version)
+include (platform/version)
 
 
-# Include file generator
-include (include)
+# Install
+include (platform/install)
 
 
 # Project header
-include (project_header)
+include (platform/project_header)
 print_system_info ()
 
 
 # Tests
-include (tests)
+include (platform/tests)
 add_project_tests_main_target ()
 
 
 # Documentation
-include (doxygen)
+include (platform/doxygen)
 add_project_documentation_main_target ()
 
 
 # Platform definition
-include (platform)
-if (UNIX)
-    platform_options_begin (xdg/cmake/platform_options.cmake
-                            qfm/cmake/platform_options_unix.cmake)
-    platform_option_value (DE_KDE ON)
-else (WIN32)
-    platform_options_begin (qfm/cmake/platform_options_win32.cmake)
-endif ()
+include (platform/options)
+platform_options_begin (lvfs/cmake/platform_options.cmake
+                        lvfs-arc/cmake/platform_options.cmake
+                        xdg/cmake/platform_options.cmake
+                        qfm/cmake/platform_options_unix.cmake)
+    platform_option_value (DE_KDE                           ON)
+    platform_option_value (ENABLE_POSITION_INDEPENDENT_CODE ON)
 platform_options_end ()
-
-
-# Includes
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# Definitions
-
-# Libs
 
 
 # 3rdparty
 add_subdirectory (platform)
 add_subdirectory (brolly)
 add_subdirectory (efc)
+add_subdirectory (lvfs)
 add_subdirectory (liquiddb)
 add_subdirectory (xdg)
+add_subdirectory (libunrar)
+add_subdirectory (kitemviews)
 
+add_subdirectory (lvfs-db)
+add_subdirectory (lvfs-arc)
+add_subdirectory (lvfs-core)
 
 # Project - qfm
 add_subdirectory (qfm)

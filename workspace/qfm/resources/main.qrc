@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/tlds">
-        <file>tlds-alpha-by-domain.txt</file>
-    </qresource>
-</RCC>

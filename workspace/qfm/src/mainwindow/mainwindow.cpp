@@ -47,13 +47,14 @@ void MainWindow::open()
 
     if (LIKELY(node.isValid() == true))
     {
-        Interface::Holder parent = node->as<Core::INode>()->parent();
+        Interface::Holder tmpNode = node;
 
-        while (parent.isValid())
+        do
         {
-            parent->as<Core::INode>()->incLinks(2);
-            parent = parent->as<Core::INode>()->parent();
+            tmpNode->as<Core::INode>()->incLinks(2);
+            tmpNode = tmpNode->as<Core::INode>()->parent();
         }
+        while (tmpNode.isValid());
 
         m_view[0] = Core::INode::view(node);
         m_view[0]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
@@ -136,9 +137,10 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
 
             if (oldViewCoreNode->parent() == node)
                 oldViewCoreNode->decLinks();
+            else
+                node->as<Core::INode>()->incLinks();
         }
 
-        node->as<Core::INode>()->incLinks();
         node->as<Core::INode>()->opened(view);
         node->as<Core::INode>()->refresh();
     }
@@ -162,9 +164,10 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
 
                     if (oldViewCoreNode->parent() == node)
                         oldViewCoreNode->decLinks();
+                    else
+                        node->as<Core::INode>()->incLinks();
                 }
 
-                node->as<Core::INode>()->incLinks();
                 node->as<Core::INode>()->opened(newView);
                 node->as<Core::INode>()->refresh();
 

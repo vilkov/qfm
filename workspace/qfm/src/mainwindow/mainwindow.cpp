@@ -36,32 +36,31 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 MainWindow::~MainWindow()
-{}
+{
+    using namespace LVFS;
+    Core::INode::cleanup();
+}
 
 void MainWindow::open()
 {
     using namespace LVFS;
 
     Module::Error error;
-    Interface::Holder node = Core::INode::open("/home/dav", error);
+    Interface::Holder node = Core::INode::open("file:///home/dav/.gnupg", error);
 
     if (LIKELY(node.isValid() == true))
     {
-        Interface::Holder tmpNode = node;
-
-        do
-        {
-            tmpNode->as<Core::INode>()->incLinks(2);
-            tmpNode = tmpNode->as<Core::INode>()->parent();
-        }
-        while (tmpNode.isValid());
-
-        m_view[0] = Core::INode::view(node);
+        m_view[0] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
         m_view[0]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
         m_centralWidget.addWidget(m_view[0]->as<Core::IView>()->widget());
         show(m_view[0], node);
+    }
 
-        m_view[1] = Core::INode::view(node);
+    node = Core::INode::open("file:///home/dav/.gnupg", error);
+
+    if (LIKELY(node.isValid() == true))
+    {
+        m_view[1] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
         m_view[1]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
         m_centralWidget.addWidget(m_view[1]->as<Core::IView>()->widget());
         show(m_view[1], node);
@@ -71,40 +70,29 @@ void MainWindow::open()
 void MainWindow::close()
 {
     using namespace LVFS;
-
-    Interface::Holder parent;
     Interface::Holder node = m_view[0]->as<Core::IView>()->node();
 
     if (node.isValid())
     {
         node->as<Core::INode>()->closed(m_view[0]);
 
-        do
-        {
-            parent = node->as<Core::INode>()->parent();
-            node->as<Core::INode>()->decLinks();
-            node = parent;
-        }
-        while (node.isValid());
+        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+            n->as<Core::INode>()->decRef();
+
+        node->as<Core::INode>()->clear();
     }
 
-    m_view[0]->as<Core::IView>()->setNode(Interface::Holder());
     node = m_view[1]->as<Core::IView>()->node();
 
     if (node.isValid())
     {
         node->as<Core::INode>()->closed(m_view[1]);
 
-        do
-        {
-            parent = node->as<Core::INode>()->parent();
-            node->as<Core::INode>()->decLinks();
-            node = parent;
-        }
-        while (node.isValid());
-    }
+        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+            n->as<Core::INode>()->decRef();
 
-    m_view[1]->as<Core::IView>()->setNode(Interface::Holder());
+        node->as<Core::INode>()->clear();
+    }
 
     m_view[0].reset();
     m_view[1].reset();
@@ -120,35 +108,36 @@ const LVFS::Interface::Holder &MainWindow::opposite(const LVFS::Interface::Holde
         return m_view[0];
 }
 
-void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface::Holder &node)
+void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface::Holder &n)
 {
     using namespace LVFS;
+    Interface::Holder node(n);
     Core::INode *coreNode = node->as<Core::INode>();
     Core::IView *coreView = view->as<Core::IView>();
     Interface::Holder oldViewNode(coreView->node());
 
     if (coreView->setNode(node))
     {
+        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+            n->as<Core::INode>()->incRef();
+
         if (oldViewNode.isValid())
         {
-            Core::INode *oldViewCoreNode = oldViewNode->as<Core::INode>();
+            oldViewNode->as<Core::INode>()->closed(view);
 
-            oldViewCoreNode->closed(view);
-
-            if (oldViewCoreNode->parent() == node)
-                oldViewCoreNode->decLinks();
-            else
-                node->as<Core::INode>()->incLinks();
+            for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
+                if (n->as<Core::INode>()->decRef() == 0)
+                    n->as<Core::INode>()->clear();
         }
 
         node->as<Core::INode>()->opened(view);
         node->as<Core::INode>()->refresh();
     }
-    else if (Core::IViewFactory *factory = coreNode->file()->as<Core::IViewFactory>())
+    else
     {
-        Interface::Holder newView = factory->createView();
+        Interface::Holder newView = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
 
-        if (LIKELY(newView.isValid() == true))
+        if (LIKELY(newView.isValid()))
         {
             coreView = newView->as<Core::IView>();
 
@@ -156,16 +145,16 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
             {
                 coreView->setMainView(Interface::Holder::fromRawData(this));
 
+                for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+                    n->as<Core::INode>()->incRef();
+
                 if (oldViewNode.isValid())
                 {
-                    Core::INode *oldViewCoreNode = oldViewNode->as<Core::INode>();
+                    oldViewNode->as<Core::INode>()->closed(view);
 
-                    oldViewCoreNode->closed(view);
-
-                    if (oldViewCoreNode->parent() == node)
-                        oldViewCoreNode->decLinks();
-                    else
-                        node->as<Core::INode>()->incLinks();
+                    for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
+                        if (n->as<Core::INode>()->decRef() == 0)
+                            n->as<Core::INode>()->clear();
                 }
 
                 node->as<Core::INode>()->opened(newView);

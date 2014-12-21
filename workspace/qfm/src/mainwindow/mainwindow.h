@@ -40,7 +40,7 @@ public:
 
     /* LVFS::Core::IMainView */
     virtual const LVFS::Interface::Holder &opposite(const LVFS::Interface::Holder &view) const;
-    virtual void show(const LVFS::Interface::Holder &self, const LVFS::Interface::Holder &node);
+    virtual void show(const LVFS::Interface::Holder &view, const LVFS::Interface::Holder &node);
 
     void switchToOtherPanel();
 

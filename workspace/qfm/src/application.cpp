@@ -46,7 +46,6 @@ Application::Application(const QString &name, const QString &organization, const
 Application::~Application()
 {
     m_mainWindow.as<MainWindow>()->close();
-    m_mainWindow.reset();
 }
 
 QString Application::version() const

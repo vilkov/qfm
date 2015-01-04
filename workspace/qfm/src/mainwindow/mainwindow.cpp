@@ -56,7 +56,7 @@ void MainWindow::open()
         show(m_view[0], node);
     }
 
-    node = Core::INode::open("file:///home/dav/.gnupg", error);
+    node = Core::INode::open("file:///home/dav/123", error);
 
     if (LIKELY(node.isValid() == true))
     {
@@ -134,37 +134,38 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
         node->as<Core::INode>()->refresh();
     }
     else
-    {
-        Interface::Holder newView = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
-
-        if (LIKELY(newView.isValid()))
+        if (Core::IViewFactory *factory = node->as<Core::INode>()->file()->as<Core::IViewFactory>())
         {
-            coreView = newView->as<Core::IView>();
+            Interface::Holder newView = factory->createView();
 
-            if (coreView->setNode(node))
+            if (LIKELY(newView.isValid()))
             {
-                coreView->setMainView(Interface::Holder::fromRawData(this));
+                coreView = newView->as<Core::IView>();
 
-                for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-                    n->as<Core::INode>()->incRef();
-
-                if (oldViewNode.isValid())
+                if (coreView->setNode(node))
                 {
-                    oldViewNode->as<Core::INode>()->closed(view);
+                    coreView->setMainView(Interface::Holder::fromRawData(this));
 
-                    for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
-                        if (n->as<Core::INode>()->decRef() == 0)
-                            n->as<Core::INode>()->clear();
+                    for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+                        n->as<Core::INode>()->incRef();
+
+                    if (oldViewNode.isValid())
+                    {
+                        oldViewNode->as<Core::INode>()->closed(view);
+
+                        for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
+                            if (n->as<Core::INode>()->decRef() == 0)
+                                n->as<Core::INode>()->clear();
+                    }
+
+                    node->as<Core::INode>()->opened(newView);
+                    node->as<Core::INode>()->refresh();
+
+                    m_view[0] == view ? m_view[0] = newView : m_view[1] = newView;
+                    m_centralWidget.addWidget(coreView->widget());
                 }
-
-                node->as<Core::INode>()->opened(newView);
-                node->as<Core::INode>()->refresh();
-
-                m_view[0] == view ? m_view[0] = newView : m_view[1] = newView;
-                m_centralWidget.addWidget(coreView->widget());
             }
         }
-    }
 }
 
 void MainWindow::switchToOtherPanel()

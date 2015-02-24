@@ -19,27 +19,26 @@
 
 #include "mainwindow.h"
 
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QApplication>
-
 #include <lvfs/Module>
 #include <lvfs-core/INode>
 #include <lvfs-core/IView>
 #include <lvfs-core/IViewFactory>
 
+#include <QtGui/QDesktopWidget>
+#include <QtGui/QApplication>
+#include <QtGui/QCloseEvent>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    setAttribute(Qt::WA_DeleteOnClose, false);
     setCentralWidget(&m_centralWidget);
     setupGeometry();
 }
 
 MainWindow::~MainWindow()
-{
-    using namespace LVFS;
-    Core::INode::cleanup();
-}
+{}
 
 void MainWindow::open()
 {

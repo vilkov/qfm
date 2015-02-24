@@ -22,6 +22,8 @@
 
 #include <qfm_version.h>
 
+#include <lvfs-core/INode>
+
 #if defined(Q_WS_WIN)
 #	include <QtCore/qt_windows.h>
 #endif
@@ -32,6 +34,7 @@
 #include <QtGui/QMessageBox>
 
 
+
 Application::Application(const QString &name, const QString &organization, const QString &description, int &argc, char **argv, bool GUIenabled) :
 	QApplication(argc, argv, GUIenabled),
     m_mainWindow(new MainWindow())
@@ -39,13 +42,14 @@ Application::Application(const QString &name, const QString &organization, const
 	QApplication::setApplicationName(name);
 	QApplication::setOrganizationName(organization);
 	QApplication::setApplicationVersion(version());
+	connect(this, SIGNAL(lastWindowClosed()), this, SLOT(cleanup()));
 
     m_mainWindow.as<MainWindow>()->open();
 }
 
 Application::~Application()
 {
-    m_mainWindow.as<MainWindow>()->close();
+    LVFS::Core::INode::lastCheck();
 }
 
 QString Application::version() const
@@ -81,4 +85,10 @@ qint32 Application::exec()
 
     m_mainWindow.as<MainWindow>()->show();
     return QApplication::exec();
+}
+
+void Application::cleanup()
+{
+    m_mainWindow.as<MainWindow>()->close();
+    LVFS::Core::INode::cleanup();
 }

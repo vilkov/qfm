@@ -37,6 +37,9 @@ public:
 	qint32 exec();
 	QString version() const;
 
+private Q_SLOTS:
+	void cleanup();
+
 private:
     LVFS::Module module;
     LVFS::Interface::Holder m_mainWindow;

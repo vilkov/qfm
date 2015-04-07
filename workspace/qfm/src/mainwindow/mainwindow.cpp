@@ -34,6 +34,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose, false);
     setCentralWidget(&m_centralWidget);
+
+    m_left.setMargin(0);
+    m_right.setMargin(0);
+    m_leftWidget.setLayout(&m_left);
+    m_rightWidget.setLayout(&m_right);
+    m_centralWidget.addWidget(&m_leftWidget);
+    m_centralWidget.addWidget(&m_rightWidget);
+
     setupGeometry();
 }
 
@@ -45,23 +53,23 @@ void MainWindow::open()
     using namespace LVFS;
 
     Module::Error error;
-    Interface::Holder node = Core::INode::open("file:///home/dav/.gnupg", error);
+    Interface::Holder node = Core::INode::open("file:///media/STORAGE/STORAGE", error);
 
     if (LIKELY(node.isValid() == true))
     {
         m_view[0] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
         m_view[0]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
-        m_centralWidget.addWidget(m_view[0]->as<Core::IView>()->widget());
+        m_left.addWidget(m_view[0]->as<Core::IView>()->widget());
         show(m_view[0], node);
     }
 
-    node = Core::INode::open("file:///home/dav/123", error);
+    node = Core::INode::open("file:///media/STORAGE/STORAGE/DB", error);
 
     if (LIKELY(node.isValid() == true))
     {
         m_view[1] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
         m_view[1]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
-        m_centralWidget.addWidget(m_view[1]->as<Core::IView>()->widget());
+        m_right.addWidget(m_view[1]->as<Core::IView>()->widget());
         show(m_view[1], node);
     }
 }
@@ -111,7 +119,6 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
 {
     using namespace LVFS;
     Interface::Holder node(n);
-    Core::INode *coreNode = node->as<Core::INode>();
     Core::IView *coreView = view->as<Core::IView>();
     Interface::Holder oldViewNode(coreView->node());
 
@@ -160,8 +167,18 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
                     node->as<Core::INode>()->opened(newView);
                     node->as<Core::INode>()->refresh();
 
-                    m_view[0] == view ? m_view[0] = newView : m_view[1] = newView;
-                    m_centralWidget.addWidget(coreView->widget());
+                    if (m_view[0] == view)
+                    {
+                        m_view[0] = newView;
+                        m_left.removeWidget(view->as<Core::IView>()->widget());
+                        m_left.addWidget(newView->as<Core::IView>()->widget());
+                    }
+                    else
+                    {
+                        m_view[1] = newView;
+                        m_right.removeWidget(view->as<Core::IView>()->widget());
+                        m_right.addWidget(newView->as<Core::IView>()->widget());
+                    }
                 }
             }
         }

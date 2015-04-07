@@ -21,6 +21,8 @@
 #define MAINWINDOW_H_
 
 #include <QtGui/QSplitter>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QMainWindow>
 #include <lvfs-core/IMainView>
 
@@ -49,6 +51,12 @@ private Q_SLOTS:
 
 private:
     QSplitter m_centralWidget;
+    QWidget m_leftWidget;
+    QVBoxLayout m_left;
+    QWidget m_rightWidget;
+    QVBoxLayout m_right;
+
+private:
     LVFS::Interface::Holder m_view[2];
 };
 

@@ -122,7 +122,7 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
     Core::IView *coreView = view->as<Core::IView>();
     Interface::Holder oldViewNode(coreView->node());
 
-    if (coreView->setNode(node))
+    if (coreView->isAbleToView(node))
     {
         for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
             n->as<Core::INode>()->incRef();
@@ -136,6 +136,7 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
                     n->as<Core::INode>()->clear();
         }
 
+        coreView->setNode(node);
         node->as<Core::INode>()->opened(view);
         node->as<Core::INode>()->refresh();
     }
@@ -147,38 +148,35 @@ void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface
             if (LIKELY(newView.isValid()))
             {
                 coreView = newView->as<Core::IView>();
+                coreView->setMainView(Interface::Holder::fromRawData(this));
 
-                if (coreView->setNode(node))
+                for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
+                    n->as<Core::INode>()->incRef();
+
+                if (oldViewNode.isValid())
                 {
-                    coreView->setMainView(Interface::Holder::fromRawData(this));
+                    oldViewNode->as<Core::INode>()->closed(view);
 
-                    for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-                        n->as<Core::INode>()->incRef();
+                    for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
+                        if (n->as<Core::INode>()->decRef() == 0)
+                            n->as<Core::INode>()->clear();
+                }
 
-                    if (oldViewNode.isValid())
-                    {
-                        oldViewNode->as<Core::INode>()->closed(view);
+                coreView->setNode(node);
+                node->as<Core::INode>()->opened(newView);
+                node->as<Core::INode>()->refresh();
 
-                        for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
-                            if (n->as<Core::INode>()->decRef() == 0)
-                                n->as<Core::INode>()->clear();
-                    }
-
-                    node->as<Core::INode>()->opened(newView);
-                    node->as<Core::INode>()->refresh();
-
-                    if (m_view[0] == view)
-                    {
-                        m_view[0] = newView;
-                        m_left.removeWidget(view->as<Core::IView>()->widget());
-                        m_left.addWidget(newView->as<Core::IView>()->widget());
-                    }
-                    else
-                    {
-                        m_view[1] = newView;
-                        m_right.removeWidget(view->as<Core::IView>()->widget());
-                        m_right.addWidget(newView->as<Core::IView>()->widget());
-                    }
+                if (m_view[0] == view)
+                {
+                    m_view[0] = newView;
+                    m_left.removeWidget(view->as<Core::IView>()->widget());
+                    m_left.addWidget(newView->as<Core::IView>()->widget());
+                }
+                else
+                {
+                    m_view[1] = newView;
+                    m_right.removeWidget(view->as<Core::IView>()->widget());
+                    m_right.addWidget(newView->as<Core::IView>()->widget());
                 }
             }
         }

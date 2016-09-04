@@ -1,45 +1,17 @@
 project (qfm)
 
 # Project header
-project_cxx_executable_header_default ()
+project_executable_header_default ()
 
 # 3rdparty
-#if (WIN32)
-#    find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml REQUIRED)
-#else (UNIX)
-#    find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui QtXml QtDbus REQUIRED)
-#endif ()
-    find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui REQUIRED)
+find_package (Qt4 4.7.1 COMPONENTS QtCore QtGui REQUIRED)
 include (${QT_USE_FILE})
 list (APPEND ${PROJECT_NAME}_LIBS ${QT_LIBRARIES})
-#add_definitions (${QT_DEFINITIONS} -DQT_NO_CAST_FROM_ASCII)
-
-find_package (Sqlite REQUIRED)
-include_directories (${SQLITE_INCLUDE})
-list (APPEND ${PROJECT_NAME}_LIBS ${SQLITE_LIBRARY})
-
-if (UNIX)
-    find_package (X11 REQUIRED)
-    include_directories (${X11_INCLUDE_DIR})
-    list (APPEND ${PROJECT_NAME}_LIBS ${X11_LIBRARIES})
-endif ()
-
-find_package (LibArchive REQUIRED)
-include_directories (${LIBARCHIVE_INCLUDE_DIR})
-list (APPEND ${PROJECT_NAME}_LIBS ${LIBARCHIVE_LIBRARY})
-
-find_package (LibUnrar REQUIRED)
-include_directories (${LIBUNRAR_INCLUDE})
-list (APPEND ${PROJECT_NAME}_LIBS ${LIBUNRAR_LIBRARY})
+add_definitions (${QT_DEFINITIONS} -DQT_NO_CAST_FROM_ASCII)
 
 list (APPEND ${PROJECT_NAME}_LIBS lvfs)
 list (APPEND ${PROJECT_NAME}_LIBS lvfs-core)
-list (APPEND ${PROJECT_NAME}_LIBS liquiddb)
-list (APPEND ${PROJECT_NAME}_LIBS xdg)
 list (APPEND ${PROJECT_NAME}_LIBS efc)
-
-# Includes
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Sources
 add_subdirectory (src)
@@ -62,7 +34,6 @@ endif ()
 # Target - qfm
 add_executable (qfm ${GUI_TYPE} ${${PROJECT_NAME}_SOURCES})
 target_link_libraries (qfm ${${PROJECT_NAME}_LIBS})
-add_dependencies (qfm platform)
 
 # It is because of Qt (qglobal.h)
 set_target_properties (qfm PROPERTIES COMPILE_FLAGS "-Wno-long-long")
@@ -72,3 +43,15 @@ build_version_file (qfm 1.0.0)
 
 # Documentation
 add_documentation ("QFM" 1.0.0 "Qt File Manager")
+
+# Install rules
+install_target (qfm)
+
+# Prerequisites
+#include (InstallRequiredSystemLibraries)
+
+#set (EXECUTABLE_PATH "${CMAKE_INSTALL_PREFIX}/bin/qfm${CMAKE_EXECUTABLE_SUFFIX}")
+#set (MY_BUNDLE_UTILITIES_PATH "${qfm_SOURCE_DIR}/cmake/MyBundleUtilities.cmake")
+#configure_file("${qfm_SOURCE_DIR}/cmake/FixBundle.cmake.in" "${qfm_BINARY_DIR}/FixBundle.cmake" @ONLY)
+
+#install (SCRIPT "${qfm_BINARY_DIR}/FixBundle.cmake")

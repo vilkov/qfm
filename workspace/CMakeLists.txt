@@ -5,17 +5,13 @@ cmake_minimum_required (VERSION 2.8)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/platform/cmake")
 
 
-# Versioning
-include (platform/version)
+# Platform
+include (platform)
+initialize_platform ()
 
 
 # Install
 include (platform/install)
-
-
-# Project header
-include (platform/project_header)
-print_system_info ()
 
 
 # Tests
@@ -47,10 +43,16 @@ add_subdirectory (lvfs)
 add_subdirectory (liquiddb)
 add_subdirectory (xdg)
 add_subdirectory (libunrar)
-add_subdirectory (kitemviews)
+#add_subdirectory (kitemviews)
+
+include_directories (libtorrent/include)
+add_subdirectory (libtorrent)
 
 add_subdirectory (lvfs-db)
 add_subdirectory (lvfs-arc)
+add_subdirectory (lvfs-qimg)
+add_subdirectory (lvfs-bits)
+add_subdirectory (lvfs-qplayer)
 add_subdirectory (lvfs-core)
 
 # Project - qfm

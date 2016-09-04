@@ -18,188 +18,93 @@
  */
 
 #include "mainwindow.h"
-
-#include <lvfs/Module>
-#include <lvfs-core/INode>
-#include <lvfs-core/IView>
-#include <lvfs-core/IViewFactory>
+#include "tabwidget.h"
 
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QApplication>
 #include <QtGui/QCloseEvent>
+#include <QtCore/QByteArray>
+
+#include <cstring>
 
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+MainWindow::MainWindow(LVFS::Settings::Scope *settings) :
+    QMainWindow(),
+    m_settings("MainWindow"),
+    m_geometry("Geometry"),
+    m_geometryVal({
+                      { "left", -1 },
+                      { "top", -1 },
+                      { "width", -1 },
+                      { "height", -1 }
+                  }),
+    m_tabsSettings({
+                       { "LeftPanel" },
+                       { "RightPanel" }
+                   })
 {
     setAttribute(Qt::WA_DeleteOnClose, false);
     setCentralWidget(&m_centralWidget);
 
-    m_left.setMargin(0);
-    m_right.setMargin(0);
-    m_leftWidget.setLayout(&m_left);
-    m_rightWidget.setLayout(&m_right);
-    m_centralWidget.addWidget(&m_leftWidget);
-    m_centralWidget.addWidget(&m_rightWidget);
+    m_tabs[0].reset(new TabWidget(&m_tabsSettings[0], m_tabs[1]));
+    m_tabs[1].reset(new TabWidget(&m_tabsSettings[1], m_tabs[0]));
 
-    setupGeometry();
+    m_centralWidget.addWidget(m_tabs[0].as<TabWidget>());
+    m_centralWidget.addWidget(m_tabs[1].as<TabWidget>());
+
+    m_geometry.manage(&m_geometryVal[0]);
+    m_geometry.manage(&m_geometryVal[1]);
+    m_geometry.manage(&m_geometryVal[2]);
+    m_geometry.manage(&m_geometryVal[3]);
+
+    m_settings.manage(&m_geometry);
+    m_settings.manage(&m_tabsSettings[0]);
+    m_settings.manage(&m_tabsSettings[1]);
+    settings->manage(&m_settings);
 }
 
 MainWindow::~MainWindow()
-{}
+{
+    m_tabs[0].reset();
+    m_tabs[1].reset();
+}
 
 void MainWindow::open()
 {
-    using namespace LVFS;
-
-    Module::Error error;
-    Interface::Holder node = Core::INode::open("file:///media/STORAGE/STORAGE", error);
-
-    if (LIKELY(node.isValid() == true))
+    if (m_geometryVal[0].value() != -1)
+        setGeometry(QRect(m_geometryVal[0].value(), m_geometryVal[1].value(), m_geometryVal[2].value(), m_geometryVal[3].value()));
+    else
     {
-        m_view[0] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
-        m_view[0]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
-        m_left.addWidget(m_view[0]->as<Core::IView>()->widget());
-        show(m_view[0], node);
+        QRect rect = geometry();
+
+        rect.setWidth(1024);
+        rect.setHeight(768);
+        rect.moveCenter(QApplication::desktop()->availableGeometry().center());
+
+        setGeometry(rect);
     }
 
-    node = Core::INode::open("file:///media/STORAGE/STORAGE/DB", error);
-
-    if (LIKELY(node.isValid() == true))
-    {
-        m_view[1] = node->as<Core::INode>()->file()->as<Core::IViewFactory>()->createView();
-        m_view[1]->as<Core::IView>()->setMainView(Interface::Holder::fromRawData(this));
-        m_right.addWidget(m_view[1]->as<Core::IView>()->widget());
-        show(m_view[1], node);
-    }
+    m_tabs[0].as<TabWidget>()->open();
+    m_tabs[1].as<TabWidget>()->open();
 }
 
 void MainWindow::close()
 {
-    using namespace LVFS;
-    Interface::Holder node = m_view[0]->as<Core::IView>()->node();
+    QRect rect = geometry();
 
-    if (node.isValid())
-    {
-        node->as<Core::INode>()->closed(m_view[0]);
+    m_geometryVal[0].setValue(rect.left());
+    m_geometryVal[1].setValue(rect.top());
+    m_geometryVal[2].setValue(rect.width());
+    m_geometryVal[3].setValue(rect.height());
 
-        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-            n->as<Core::INode>()->decRef();
-
-        node->as<Core::INode>()->clear();
-    }
-
-    node = m_view[1]->as<Core::IView>()->node();
-
-    if (node.isValid())
-    {
-        node->as<Core::INode>()->closed(m_view[1]);
-
-        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-            n->as<Core::INode>()->decRef();
-
-        node->as<Core::INode>()->clear();
-    }
-
-    m_view[0].reset();
-    m_view[1].reset();
-}
-
-const LVFS::Interface::Holder &MainWindow::opposite(const LVFS::Interface::Holder &view) const
-{
-    using namespace LVFS;
-
-    if (m_view[0] == view)
-        return m_view[1];
-    else
-        return m_view[0];
-}
-
-void MainWindow::show(const LVFS::Interface::Holder &view, const LVFS::Interface::Holder &n)
-{
-    using namespace LVFS;
-    Interface::Holder node(n);
-    Core::IView *coreView = view->as<Core::IView>();
-    Interface::Holder oldViewNode(coreView->node());
-
-    if (coreView->isAbleToView(node))
-    {
-        for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-            n->as<Core::INode>()->incRef();
-
-        if (oldViewNode.isValid())
-        {
-            oldViewNode->as<Core::INode>()->closed(view);
-
-            for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
-                if (n->as<Core::INode>()->decRef() == 0)
-                    n->as<Core::INode>()->clear();
-        }
-
-        coreView->setNode(node);
-        node->as<Core::INode>()->opened(view);
-        node->as<Core::INode>()->refresh();
-    }
-    else
-        if (Core::IViewFactory *factory = node->as<Core::INode>()->file()->as<Core::IViewFactory>())
-        {
-            Interface::Holder newView = factory->createView();
-
-            if (LIKELY(newView.isValid()))
-            {
-                coreView = newView->as<Core::IView>();
-                coreView->setMainView(Interface::Holder::fromRawData(this));
-
-                for (Interface::Holder n = node; n.isValid(); n = n->as<Core::INode>()->parent())
-                    n->as<Core::INode>()->incRef();
-
-                if (oldViewNode.isValid())
-                {
-                    oldViewNode->as<Core::INode>()->closed(view);
-
-                    for (Interface::Holder n = oldViewNode; n.isValid(); n = n->as<Core::INode>()->parent())
-                        if (n->as<Core::INode>()->decRef() == 0)
-                            n->as<Core::INode>()->clear();
-                }
-
-                coreView->setNode(node);
-                node->as<Core::INode>()->opened(newView);
-                node->as<Core::INode>()->refresh();
-
-                if (m_view[0] == view)
-                {
-                    m_view[0] = newView;
-                    m_left.removeWidget(view->as<Core::IView>()->widget());
-                    m_left.addWidget(newView->as<Core::IView>()->widget());
-                }
-                else
-                {
-                    m_view[1] = newView;
-                    m_right.removeWidget(view->as<Core::IView>()->widget());
-                    m_right.addWidget(newView->as<Core::IView>()->widget());
-                }
-            }
-        }
+    m_tabs[0].as<TabWidget>()->close();
+    m_tabs[1].as<TabWidget>()->close();
 }
 
 void MainWindow::switchToOtherPanel()
 {
-    using namespace LVFS;
-    Core::IView *view[2] = { m_view[0]->as<Core::IView>(), m_view[1]->as<Core::IView>() };
-
-    if (view[0]->widget()->hasFocus())
-        view[1]->widget()->setFocus();
+    if (m_tabs[0].as<TabWidget>()->hasFocus())
+        m_tabs[1].as<TabWidget>()->setFocus();
     else
-        view[0]->widget()->setFocus();
-}
-
-void MainWindow::setupGeometry()
-{
-    QRect rect = geometry();
-
-    rect.setWidth(1024);
-    rect.setHeight(768);
-    rect.moveCenter(QApplication::desktop()->availableGeometry().center());
-
-    setGeometry(rect);
+        m_tabs[0].as<TabWidget>()->setFocus();
 }

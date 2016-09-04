@@ -20,19 +20,19 @@
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_
 
+#include <lvfs/Interface>
+#include <lvfs/settings/Scope>
+#include <lvfs/settings/IntOption>
 #include <QtGui/QSplitter>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
 #include <QtGui/QMainWindow>
-#include <lvfs-core/IMainView>
 
 
-class MainWindow : public QMainWindow, public LVFS::Implements<LVFS::Core::IMainView>
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = NULL);
+    MainWindow(LVFS::Settings::Scope *settings);
     virtual ~MainWindow();
 
     using QMainWindow::show;
@@ -40,24 +40,17 @@ public:
     void open();
     void close();
 
-    /* LVFS::Core::IMainView */
-    virtual const LVFS::Interface::Holder &opposite(const LVFS::Interface::Holder &view) const;
-    virtual void show(const LVFS::Interface::Holder &view, const LVFS::Interface::Holder &node);
-
     void switchToOtherPanel();
 
-private Q_SLOTS:
-    void setupGeometry();
+private:
+    LVFS::Settings::Scope m_settings;
+    LVFS::Settings::Scope m_geometry;
+    LVFS::Settings::IntOption m_geometryVal[4];
+    LVFS::Settings::Scope m_tabsSettings[2];
 
 private:
     QSplitter m_centralWidget;
-    QWidget m_leftWidget;
-    QVBoxLayout m_left;
-    QWidget m_rightWidget;
-    QVBoxLayout m_right;
-
-private:
-    LVFS::Interface::Holder m_view[2];
+    LVFS::Interface::Holder m_tabs[2];
 };
 
 

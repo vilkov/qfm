@@ -20,7 +20,7 @@
 #include "application.h"
 #include "mainwindow/mainwindow.h"
 
-#include <qfm_version.h>
+#include <qfm/qfm_version.h>
 
 #include <lvfs-core/INode>
 
